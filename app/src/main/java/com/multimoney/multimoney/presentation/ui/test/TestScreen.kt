@@ -1,0 +1,32 @@
+package com.multimoney.multimoney.presentation.ui.test
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.multimoney.presentation.util.UiEvent
+
+@Composable
+fun TestScreen(
+    onNavigate: (UiEvent.Navigate) -> Unit,
+    viewModel: TestViewModel = hiltViewModel()
+) {
+    viewModel.hasInternet.observeAsState()
+    LaunchedEffect(key1 = true) {
+        viewModel.getLaunchList()
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        viewModel.data?.let { Text(text = it.cursor, color = MaterialTheme.colors.onBackground) }
+    }
+
+}

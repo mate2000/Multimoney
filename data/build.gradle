@@ -1,0 +1,77 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
+    id("com.apollographql.apollo3").version("3.1.0")
+}
+
+apply from: '../dependencies.gradle'
+
+android {
+    compileSdk compile_sdk_version
+
+    defaultConfig {
+        minSdk min_sdk_version
+        targetSdk target_sdk_version
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField "String", "BASE_URL", System.env.BASE_URL ? "\"${System.env.BASE_URL}\"" : baseUrl
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        stage {
+            testCoverageEnabled true
+        }
+        debug {
+            testCoverageEnabled true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+apollo {
+    packageName.set("com.multimoney.data.networking.apollomodel")
+}
+
+dependencies {
+
+    implementation project(path: ':domain')
+
+    // Room
+    implementation room.runtime
+    kapt room.compiler
+    testImplementation room.testing
+
+    // Hilt
+    implementation hilt.android
+    kapt hilt.compiler
+
+    // Coroutines
+    implementation coroutines.android
+
+    // Apollo
+    implementation apollo.runtime
+
+    // OkHttp3
+    implementation okhttp3.interceptor
+
+    // Common Test
+    testImplementation common_test.junit
+    androidTestImplementation common_test.ext_junit
+    androidTestImplementation common_test.espresso
+    testImplementation common_test.robolectric
+    testImplementation common_test.mockito_core
+}

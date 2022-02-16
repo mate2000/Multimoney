@@ -1,0 +1,105 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
+}
+
+apply from: '../dependencies.gradle'
+
+android {
+    compileSdk compile_sdk_version
+
+    defaultConfig {
+        applicationId "com.multimoney.multimoney"
+        minSdk min_sdk_version
+        targetSdk target_sdk_version
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        stage {
+            testCoverageEnabled true
+        }
+        debug {
+            testCoverageEnabled true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+
+    implementation project(path: ':data')
+    implementation project(path: ':domain')
+
+    // Common
+    implementation common.core_ktlx
+
+    // Activity
+    implementation activity.compose
+
+    // Lifecycle
+    implementation lifecycle.runtime
+    kapt lifecycle.compiler
+    implementation lifecycle.view_model
+    implementation lifecycle.view_model_compose
+    implementation lifecycle.view_model_saved_state
+
+    // Navigation
+    implementation navigation.compose
+    androidTestImplementation navigation.test
+
+    // Compose
+    implementation compose.ui
+    implementation compose.material
+    debugImplementation compose.tooling
+    implementation compose.foundation
+    implementation compose.livedata
+    androidTestImplementation compose.test
+
+    // Hilt
+    implementation hilt.android
+    kapt hilt.compiler
+    implementation hilt.navigation
+
+    // Coroutines
+    implementation coroutines.android
+
+    // Preferences
+    implementation preferences.data_store
+
+    // Common Test
+    testImplementation common_test.junit
+    androidTestImplementation common_test.ext_junit
+    androidTestImplementation common_test.espresso
+    testImplementation common_test.robolectric
+    testImplementation common_test.mockito_core
+}

@@ -12,6 +12,7 @@ import javax.inject.Inject
 class LaunchRepositoryImpl @Inject constructor() : BaseRepository(), LaunchRepository {
 
     override suspend fun getLaunchList(): Flow<MultimoneyResult<LaunchConnection>> = fetchData(
-        apolloCall = MultimoneyApi.getLaunchList()
-    ).mapToModel()
+        apolloCall = MultimoneyApi.getLaunchList(),
+
+        ).mapToModel()
 }

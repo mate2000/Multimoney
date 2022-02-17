@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.GetLaunchListUseCase
 import com.multimoney.domain.model.launch.LaunchConnection
 import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,9 @@ class TestViewModel @Inject constructor(
             }
             result.onFailure {
                 isLoading = false
+            }
+            result.onLoading {
+                isLoading = true
             }
         }
     }

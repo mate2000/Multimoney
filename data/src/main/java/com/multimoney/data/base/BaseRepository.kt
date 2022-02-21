@@ -5,7 +5,7 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.exception.ApolloException
 import com.apollographql.apollo3.exception.ApolloParseException
-import com.multimoney.data.database.util.DB_ENTRY_ERROR
+import com.multimoney.data.database.util.DbConstants
 import com.multimoney.data.util.exeption.DataSourceException
 import com.multimoney.data.util.exeption.MultimoneyException
 import com.multimoney.domain.model.util.HttpError
@@ -33,31 +33,33 @@ abstract class BaseRepository {
                 is MultimoneyResult.Failure -> {
                     emit(MultimoneyResult.Failure(apolloResponse.httpError))
                 }
+                else -> {}// NO-OP
             }
-        }.onStart { emit(MultimoneyResult.Loading) }
+        }.onStart { emit(MultimoneyResult.Loading(true)) }
     }
 
     /**
      * Use this if you need to cache data after fetching it from the api,
      * or retrieve something from cache
      */
-    protected suspend fun <T : Operation.Data, R : DomainMapper<T>> fetchData(
+    protected suspend fun <T : Operation.Data, U : DomainMapper<V>, V : Any> fetchData(
         apolloCall: ApolloCall<T>,
-        dbSaveAction: () -> T?,
-        dbDataProvider: suspend () -> R?,
+        dbSaveAction: suspend (T) -> Unit?,
+        dbDataProvider: suspend () -> U?,
         forceLoadFromCache: Boolean = false
-    ): Flow<MultimoneyResult<T>> {
+    ): Flow<MultimoneyResult<Any>> {
         return flow {
             if (forceLoadFromCache) {
                 dbDataProvider()?.let {
                     emit(MultimoneyResult.Success(it.mapToDomainModel()))
-                } ?: emit(MultimoneyResult.Failure(HttpError(Throwable(DB_ENTRY_ERROR))))
+                }
+                    ?: emit(MultimoneyResult.Failure(HttpError(Throwable(DbConstants.NoResults.message))))
             } else {
                 when (val apolloResponse = invokeDataProvider(apolloCall)) {
                     is MultimoneyResult.Success -> {
                         apolloResponse.data?.let {
                             emit(MultimoneyResult.Success(it))
-                            dbSaveAction
+                            dbSaveAction(it)
                         }
                     }
                     is MultimoneyResult.Failure -> {
@@ -65,16 +67,16 @@ abstract class BaseRepository {
                             emit(MultimoneyResult.Success(it.mapToDomainModel()))
                         } ?: emit(MultimoneyResult.Failure(apolloResponse.httpError))
                     }
+                    else -> {}// NO-OP
                 }
             }
-        }.onStart { emit(MultimoneyResult.Loading) }
+        }.onStart { emit(MultimoneyResult.Loading(true)) }
     }
 
     private suspend fun <T : Operation.Data> invokeDataProvider(apolloCall: ApolloCall<T>) =
         try {
             withContext(Dispatchers.IO) {
                 val apolloResponse = apolloCall.execute()
-                apolloResponse.hasErrors()
                 if (apolloResponse.hasErrors()) {
                     MultimoneyResult.Failure(
                         HttpError(

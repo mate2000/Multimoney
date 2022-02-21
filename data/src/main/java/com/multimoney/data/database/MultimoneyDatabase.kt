@@ -10,7 +10,7 @@ import com.multimoney.data.database.model.TestEntity
     version = 1,
     exportSchema = false
 )
-//@TypeConverters(Converters::class)
+// @TypeConverters(Converters::class)
 abstract class MultimoneyDatabase : RoomDatabase() {
 
     abstract fun testDao(): TestDao

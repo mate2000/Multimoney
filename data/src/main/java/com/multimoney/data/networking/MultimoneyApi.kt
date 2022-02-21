@@ -1,9 +1,12 @@
 package com.multimoney.data.networking
 
 import com.apollographql.apollo3.ApolloCall
-import com.multimoney.data.networking.MultimoneyApiClient.apolloClient
+import com.apollographql.apollo3.ApolloClient
 import com.multimoney.data.networking.apollomodel.LaunchListQuery
+import javax.inject.Inject
 
-object MultimoneyApi {
-    fun getLaunchList(): ApolloCall<LaunchListQuery.Data> = apolloClient().query(LaunchListQuery())
+class MultimoneyApi @Inject constructor(
+    private val apolloClient: ApolloClient
+) {
+    fun getLaunchList(): ApolloCall<LaunchListQuery.Data> = apolloClient.query(LaunchListQuery())
 }

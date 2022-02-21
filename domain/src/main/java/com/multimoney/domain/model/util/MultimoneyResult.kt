@@ -3,7 +3,7 @@ package com.multimoney.domain.model.util
 sealed class MultimoneyResult<out T> {
     data class Success<out T>(val data: T) : MultimoneyResult<T>()
     data class Failure(val httpError: HttpError) : MultimoneyResult<Nothing>()
-    object Loading : MultimoneyResult<Nothing>()
+    data class Loading(val isLoading: Boolean) : MultimoneyResult<Nothing>()
 }
 
 inline fun <T : Any> MultimoneyResult<T>.onSuccess(action: (T) -> Unit): MultimoneyResult<T> {

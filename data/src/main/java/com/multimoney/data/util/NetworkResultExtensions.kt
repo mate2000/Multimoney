@@ -8,6 +8,6 @@ inline fun <T, R> MultimoneyResult<T>.onMapping(action: (T) -> MultimoneyResult<
             data.run(action)
         is MultimoneyResult.Failure ->
             this
-        else -> MultimoneyResult.Loading
+        else -> MultimoneyResult.Loading(true)
     }
 }

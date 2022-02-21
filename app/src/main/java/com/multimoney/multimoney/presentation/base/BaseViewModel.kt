@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.base
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.connectivity.Connectivity
@@ -19,13 +18,7 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
     var isLoading by mutableStateOf(false)
 
     @Inject
-    protected lateinit var connectivity: Connectivity
-
-    /**
-     * Use this val to monitor and check internet connection
-     **/
-    val hasInternet: LiveData<Boolean>
-        get() = connectivity.hasNetworkAccess
+    lateinit var connectivity: Connectivity
 
     /**
      * Use this val to store one time events defined in UiEvent Class
@@ -42,7 +35,7 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
         crossinline noInternetAction: suspend () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (hasInternet.value == true) {
+            if (connectivity.hasNetworkAccess()) {
                 action()
             } else {
                 noInternetAction()
@@ -56,7 +49,7 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (checkConnection) {
-                if (hasInternet.value == true) {
+                if (connectivity.hasNetworkAccess()) {
                     action()
                 }
             } else {

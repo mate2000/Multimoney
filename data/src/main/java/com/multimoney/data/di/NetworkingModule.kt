@@ -1,12 +1,23 @@
-package com.multimoney.data.networking
+package com.multimoney.data.di
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.network.okHttpClient
 import com.multimoney.data.BuildConfig
+import com.multimoney.data.networking.MultimoneyApi
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import javax.inject.Singleton
 
-object MultimoneyApiClient {
+@Module
+@InstallIn(SingletonComponent::class)
+class NetworkingModule {
+
+    @Singleton
+    @Provides
     fun apolloClient(): ApolloClient {
         val logging = HttpLoggingInterceptor()
 
@@ -25,4 +36,8 @@ object MultimoneyApiClient {
             .okHttpClient(okHttpClient)
             .build()
     }
+
+    @Singleton
+    @Provides
+    fun multimoneyApi(): MultimoneyApi = MultimoneyApi(apolloClient())
 }

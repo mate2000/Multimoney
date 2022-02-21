@@ -4,13 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import com.multimoney.data.base.BaseDao
 import com.multimoney.data.database.model.TestEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface TestDao : BaseDao<TestEntity> {
-
+interface TestDao {
     @Insert(onConflict = REPLACE)
     suspend fun insertTest(testEntity: TestEntity)
 
@@ -18,5 +15,5 @@ interface TestDao : BaseDao<TestEntity> {
     suspend fun deleteTest()
 
     @Query("SELECT * FROM TestEntity")
-    fun getTest(): Flow<TestEntity>
+    fun getTest(): TestEntity
 }

@@ -6,7 +6,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -17,7 +16,6 @@ fun TestScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: TestViewModel = hiltViewModel()
 ) {
-    viewModel.hasInternet.observeAsState()
     LaunchedEffect(key1 = true) {
         viewModel.getLaunchList()
     }

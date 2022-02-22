@@ -22,12 +22,15 @@ abstract class BaseRepository {
     /**
      * Use this when communicating only with the api service
      */
-    protected suspend fun <T : Operation.Data> fetchData(apolloCall: ApolloCall<T>): Flow<MultimoneyResult<T>> {
+    protected suspend fun <T : Operation.Data, U : Any> fetchData(
+        apolloCall: ApolloCall<T>,
+        apolloCallMapper: suspend (T) -> U
+    ): Flow<MultimoneyResult<U>> {
         return flow {
             when (val apolloResponse = invokeDataProvider(apolloCall)) {
                 is MultimoneyResult.Success -> {
                     apolloResponse.data?.let {
-                        emit(MultimoneyResult.Success(it))
+                        emit(MultimoneyResult.Success(apolloCallMapper(it)))
                     }
                 }
                 is MultimoneyResult.Failure -> {
@@ -42,12 +45,13 @@ abstract class BaseRepository {
      * Use this if you need to cache data after fetching it from the api,
      * or retrieve something from cache
      */
-    protected suspend fun <T : Operation.Data, U : DomainMapper<V>, V : Any> fetchData(
+    protected suspend fun <T : Operation.Data, U : Any, V : DomainMapper<U>> fetchData(
         apolloCall: ApolloCall<T>,
+        apolloCallMapper: suspend (T) -> U,
         dbSaveAction: suspend (T) -> Unit?,
-        dbDataProvider: suspend () -> U?,
+        dbDataProvider: suspend () -> V?,
         forceLoadFromCache: Boolean = false
-    ): Flow<MultimoneyResult<Any>> {
+    ): Flow<MultimoneyResult<U>> {
         return flow {
             if (forceLoadFromCache) {
                 dbDataProvider()?.let {
@@ -58,7 +62,7 @@ abstract class BaseRepository {
                 when (val apolloResponse = invokeDataProvider(apolloCall)) {
                     is MultimoneyResult.Success -> {
                         apolloResponse.data?.let {
-                            emit(MultimoneyResult.Success(it))
+                            emit(MultimoneyResult.Success(apolloCallMapper(it)))
                             dbSaveAction(it)
                         }
                     }

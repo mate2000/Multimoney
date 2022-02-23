@@ -1,12 +1,16 @@
 package com.multimoney.data.di
 
+import android.content.Context
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.cache.normalized.normalizedCache
+import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import com.multimoney.data.BuildConfig
 import com.multimoney.data.networking.MultimoneyApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,7 +23,7 @@ class NetworkingModule {
 
     @Singleton
     @Provides
-    fun apolloClient(): ApolloClient {
+    fun apolloClient(@ApplicationContext context: Context): ApolloClient {
         val logging = HttpLoggingInterceptor()
 
         logging.level = if (BuildConfig.DEBUG) {
@@ -35,17 +39,22 @@ class NetworkingModule {
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .build()
 
+        val sqlNormalizedCacheFactory = SqlNormalizedCacheFactory(context, APOLLO_DB)
+
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.BASE_URL)
+            .normalizedCache(sqlNormalizedCacheFactory)
             .okHttpClient(okHttpClient)
             .build()
     }
 
     @Singleton
     @Provides
-    fun multimoneyApi(): MultimoneyApi = MultimoneyApi(apolloClient())
+    fun multimoneyApi(@ApplicationContext context: Context): MultimoneyApi =
+        MultimoneyApi(apolloClient(context))
 
     companion object {
         const val TIMEOUT = 30L
+        const val APOLLO_DB = "multimoney_apollo_db"
     }
 }

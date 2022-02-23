@@ -65,6 +65,8 @@ dependencies {
 
     // Apollo
     implementation apollo.runtime
+    implementation apollo.cache
+    implementation apollo.cache_sqlite
 
     // OkHttp3
     implementation okhttp3.interceptor

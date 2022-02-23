@@ -55,7 +55,7 @@ ext {
     room = [
             runtime : "androidx.room:room-runtime:${room_version}",
             compiler: "androidx.room:room-compiler:${room_version}",
-            ktx: "androidx.room:room-ktx:${room_version}",
+            ktx     : "androidx.room:room-ktx:${room_version}",
             testing : "androidx.room:room-testing:${room_version}"
     ]
 
@@ -81,7 +81,9 @@ ext {
     apollo_version = '3.1.0'
 
     apollo = [
-            runtime: "com.apollographql.apollo3:apollo-runtime:${apollo_version}"
+            runtime     : "com.apollographql.apollo3:apollo-runtime:${apollo_version}",
+            cache       : "com.apollographql.apollo3:apollo-normalized-cache:${apollo_version}",
+            cache_sqlite: "com.apollographql.apollo3:apollo-normalized-cache-sqlite:${apollo_version}"
     ]
 
     // OkHttp3

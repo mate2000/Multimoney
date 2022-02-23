@@ -16,6 +16,6 @@ abstract class MultimoneyDatabase : RoomDatabase() {
     abstract fun testDao(): TestDao
 
     companion object {
-        const val DATABASE_NAME = "multimoney_database"
+        const val DATABASE_NAME = "multimoney_db"
     }
 }

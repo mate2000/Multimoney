@@ -10,6 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -29,6 +30,9 @@ class NetworkingModule {
 
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(logging)
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .build()
 
         return ApolloClient.Builder()
@@ -40,4 +44,8 @@ class NetworkingModule {
     @Singleton
     @Provides
     fun multimoneyApi(): MultimoneyApi = MultimoneyApi(apolloClient())
+
+    companion object {
+        const val TIMEOUT = 30L
+    }
 }

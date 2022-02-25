@@ -48,6 +48,9 @@ dependencies {
     // Coroutines
     implementation coroutines.android
 
+    // Sentry
+    api sentry.android
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit

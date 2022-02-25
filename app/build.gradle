@@ -21,6 +21,9 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        buildConfigField "String", "ANDROID_SENTRY_DSN", System.env.ANDROID_SENTRY_DSN ? "\"${System.env.ANDROID_SENTRY_DSN}\"" : androidSentryDsn
+        buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : appEnvironment
     }
 
     buildTypes {

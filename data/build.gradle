@@ -29,7 +29,7 @@ android {
             testCoverageEnabled true
             buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : apiUrl
         }
-        development {
+        debug {
             testCoverageEnabled true
             buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : apiUrl
         }

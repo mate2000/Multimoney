@@ -42,7 +42,7 @@ class NetworkingModule {
         val sqlNormalizedCacheFactory = SqlNormalizedCacheFactory(context, APOLLO_DB)
 
         return ApolloClient.Builder()
-            .serverUrl(BuildConfig.BASE_URL)
+            .serverUrl(BuildConfig.API_URL)
             .normalizedCache(sqlNormalizedCacheFactory)
             .okHttpClient(okHttpClient)
             .build()

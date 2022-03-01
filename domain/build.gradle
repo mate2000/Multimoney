@@ -26,7 +26,7 @@ android {
         staging {
             testCoverageEnabled true
         }
-        development {
+        debug {
             testCoverageEnabled true
         }
     }

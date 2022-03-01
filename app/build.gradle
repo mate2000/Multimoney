@@ -14,8 +14,8 @@ android {
         applicationId "com.multimoney.multimoney"
         minSdk min_sdk_version
         targetSdk target_sdk_version
-        versionCode System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : versionCode
-        versionName System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : versionName
+        versionCode version_code
+        versionName version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -36,7 +36,7 @@ android {
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : sentryDsn
         }
-        development {
+        debug {
             applicationIdSuffix ".dev"
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : sentryDsn

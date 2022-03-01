@@ -13,7 +13,7 @@ class SentryHelper {
 
         fun initSentry(context: Context) {
             SentryAndroid.init(context) { options ->
-                options.dsn = BuildConfig.ANDROID_SENTRY_DSN
+                options.dsn = BuildConfig.SENTRY_DSN
                 options.environment = BuildConfig.APP_ENVIRONMENT
                 options.sampleRate = 1.0
             }

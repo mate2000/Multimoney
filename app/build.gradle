@@ -22,20 +22,24 @@ android {
             useSupportLibrary true
         }
 
-        buildConfigField "String", "ANDROID_SENTRY_DSN", System.env.ANDROID_SENTRY_DSN ? "\"${System.env.ANDROID_SENTRY_DSN}\"" : androidSentryDsn
         buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : appEnvironment
     }
 
     buildTypes {
-        release {
+        production {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : sentryDsn
         }
-        stage {
+        staging {
+            applicationIdSuffix ".staging"
             testCoverageEnabled true
+            buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : sentryDsn
         }
-        debug {
+        development {
+            applicationIdSuffix ".dev"
             testCoverageEnabled true
+            buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : sentryDsn
         }
     }
     compileOptions {

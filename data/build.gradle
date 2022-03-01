@@ -17,20 +17,23 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-
-        buildConfigField "String", "BASE_URL", System.env.BASE_URL ? "\"${System.env.BASE_URL}\"" : baseUrl
     }
 
     buildTypes {
-        release {
+        production {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL? "\"${System.env.PRODUCTION_API_URL}\"" : apiUrl
         }
-        stage {
+        staging {
+            applicationIdSuffix ".staging"
             testCoverageEnabled true
+            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : apiUrl
         }
-        debug {
+        development {
+            applicationIdSuffix ".dev"
             testCoverageEnabled true
+            buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : apiUrl
         }
     }
     compileOptions {

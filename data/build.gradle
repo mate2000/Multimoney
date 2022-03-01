@@ -23,15 +23,13 @@ android {
         production {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL? "\"${System.env.PRODUCTION_API_URL}\"" : apiUrl
+            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : apiUrl
         }
         staging {
-            applicationIdSuffix ".staging"
             testCoverageEnabled true
             buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : apiUrl
         }
         development {
-            applicationIdSuffix ".dev"
             testCoverageEnabled true
             buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : apiUrl
         }

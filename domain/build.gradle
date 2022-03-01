@@ -19,14 +19,16 @@ android {
     }
 
     buildTypes {
-        release {
+        production {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        stage {
+        staging {
+            applicationIdSuffix ".staging"
             testCoverageEnabled true
         }
-        debug {
+        development {
+            applicationIdSuffix ".dev"
             testCoverageEnabled true
         }
     }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.domain.model.launch.LaunchConnection
 import com.multimoney.multimoney.presentation.util.UiEvent
 
 @Composable
@@ -20,11 +21,24 @@ fun TestScreen(
         viewModel.getLaunchList()
     }
 
+    TestScreen(viewModel.data)
+}
+
+/**
+ * Defining the compose screen without viewModel,
+ * passing the data directly as parameters makes
+ * ui testing easier
+ */
+@Composable
+fun TestScreen(
+    data: LaunchConnection?
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        viewModel.data?.let { Text(text = it.cursor, color = MaterialTheme.colors.onBackground) }
+        data?.let {
+            Text(text = data.cursor, color = MaterialTheme.colors.onBackground)
+        }
     }
-
 }

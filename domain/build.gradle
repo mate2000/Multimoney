@@ -24,11 +24,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         staging {
-            applicationIdSuffix ".staging"
             testCoverageEnabled true
         }
         development {
-            applicationIdSuffix ".dev"
             testCoverageEnabled true
         }
     }

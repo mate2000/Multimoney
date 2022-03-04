@@ -9,6 +9,8 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -33,6 +35,14 @@ class TestViewModel @Inject constructor(
                 isLoading = true
             }
         }
+    }
+
+    fun navigateToChart() {
+        sendUiEvent(
+            UiEvent.Navigate(
+                route = Screen.ChartScreen.route
+            )
+        )
     }
 
 }

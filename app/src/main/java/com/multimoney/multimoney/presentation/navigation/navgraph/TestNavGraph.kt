@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TEST_ROUTE
+import com.multimoney.multimoney.presentation.ui.chart.ChartScreen
 import com.multimoney.multimoney.presentation.ui.test.TestScreen
 
 fun NavGraphBuilder.testNavGraph(navController: NavHostController) {
@@ -15,6 +16,13 @@ fun NavGraphBuilder.testNavGraph(navController: NavHostController) {
     ) {
         composable(route = Screen.TestScreen.route) {
             TestScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+        composable(route = Screen.ChartScreen.route) {
+            ChartScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 }

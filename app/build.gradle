@@ -103,6 +103,9 @@ dependencies {
     // Preferences
     implementation preferences.data_store
 
+    // Chart
+    implementation chart.mp_android_chart
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit

@@ -15,6 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class AppModule {
 
+    // Binds
     @ExperimentalCoroutinesApi
     @Singleton
     @Binds

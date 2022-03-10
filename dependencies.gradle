@@ -148,6 +148,13 @@ ext {
             timber: "com.jakewharton.timber:timber:${timber_version}"
     ]
 
+    // OnFido
+    onfido_version = "11.3.0"
+
+    onfido = [
+            capture: "com.onfido.sdk.capture:onfido-capture-sdk:${onfido_version}"
+    ]
+
     // Common Test
     junit_version = "4.13.2"
     ext_junit_version = "1.1.3"

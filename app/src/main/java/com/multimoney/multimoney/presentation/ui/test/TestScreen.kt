@@ -1,6 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.test
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -12,7 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.domain.model.launch.LaunchConnection
 import com.multimoney.multimoney.presentation.util.UiEvent
+import com.onfido.android.sdk.capture.ExitCode
+import com.onfido.android.sdk.capture.Onfido
+import com.onfido.android.sdk.capture.errors.OnfidoException
+import com.onfido.android.sdk.capture.upload.Captures
 import kotlinx.coroutines.flow.collect
+
 
 @Composable
 fun TestScreen(
@@ -29,14 +38,52 @@ fun TestScreen(
         }
     }
 
+    // Display api response data
     TestScreen(viewModel.data)
-    ChartButton { viewModel.navigateToChart() }
+
+    // Create start activity result for OnFido
+    val launchOnFidoActivityResult =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            viewModel.onFidoHelper.getOnFidoClient().handleActivityResult(
+                result.resultCode,
+                result.data,
+                object : Onfido.OnfidoResultListener {
+                    override fun userCompleted(captures: Captures) {
+                        Log.d("ONFIDO", "Captured")
+                    }
+
+                    override fun userExited(exitCode: ExitCode) {
+                        Log.d("ONFIDO", "ExitCode")
+                    }
+
+                    override fun onError(exception: OnfidoException) {
+                        Log.d("ONFIDO", "OnfidoException")
+                    }
+                })
+
+        }
+
+    Column {
+        ChartButton {
+            viewModel.navigateToChart()
+        }
+        OnFidoButton {
+            launchOnFidoActivityResult.launch(viewModel.onFidoHelper.getOnFidoIntent())
+        }
+    }
 }
 
 @Composable
 fun ChartButton(navigateToChart: () -> Unit) {
     Button(onClick = navigateToChart, content = {
         Text(text = "Chart")
+    })
+}
+
+@Composable
+fun OnFidoButton(navigateToChart: () -> Unit) {
+    Button(onClick = navigateToChart, content = {
+        Text(text = "OnFido")
     })
 }
 

@@ -11,13 +11,15 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.UiEvent
+import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @HiltViewModel
 class TestViewModel @Inject constructor(
-    private val getLaunchListUseCase: GetLaunchListUseCase
+    private val getLaunchListUseCase: GetLaunchListUseCase,
+    val onFidoHelper: OnFidoHelper
 ) : BaseViewModel() {
 
     var data by mutableStateOf<LaunchConnection?>(null)

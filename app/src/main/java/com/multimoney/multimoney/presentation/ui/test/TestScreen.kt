@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.test
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -21,6 +20,7 @@ import com.onfido.android.sdk.capture.Onfido
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import kotlinx.coroutines.flow.collect
+import timber.log.Timber
 
 
 @Composable
@@ -49,15 +49,15 @@ fun TestScreen(
                 result.data,
                 object : Onfido.OnfidoResultListener {
                     override fun userCompleted(captures: Captures) {
-                        Log.d("ONFIDO", "Captured")
+                        Timber.d("ONFIDO", "Captured")
                     }
 
                     override fun userExited(exitCode: ExitCode) {
-                        Log.d("ONFIDO", "ExitCode")
+                        Timber.d("ONFIDO", "ExitCode")
                     }
 
                     override fun onError(exception: OnfidoException) {
-                        Log.d("ONFIDO", "OnfidoException")
+                        Timber.d("ONFIDO", "OnfidoException")
                     }
                 })
 

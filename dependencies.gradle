@@ -129,16 +129,19 @@ ext {
     firebase_version = "29.1.0"
     firebase_instalations_version = "17.0.0"
     firebase_perf_classpath_version = "1.4.1"
+    firebase_crashlytics_classpath_version = "2.8.1"
 
     firebase = [
-            bom           : "com.google.firebase:firebase-bom:${firebase_version}",
-            config        : "com.google.firebase:firebase-config-ktx",
-            perf          : "com.google.firebase:firebase-perf-ktx",
-            perf_classpath: "com.google.firebase:perf-plugin:${firebase_perf_classpath_version}",
-            dynamic_links : "com.google.firebase:firebase-dynamic-links-ktx",
-            messaging     : "com.google.firebase:firebase-messaging-ktx",
-            analytics     : "com.google.firebase:firebase-analytics-ktx",
-            installations : "com.google.firebase:firebase-installations:${firebase_instalations_version}"
+            bom                  : "com.google.firebase:firebase-bom:${firebase_version}",
+            config               : "com.google.firebase:firebase-config-ktx",
+            perf                 : "com.google.firebase:firebase-perf-ktx",
+            perf_classpath       : "com.google.firebase:perf-plugin:${firebase_perf_classpath_version}",
+            dynamic_links        : "com.google.firebase:firebase-dynamic-links-ktx",
+            messaging            : "com.google.firebase:firebase-messaging-ktx",
+            crashlytics          : "com.google.firebase:firebase-crashlytics-ktx",
+            crashlytics_classpath: "com.google.firebase:firebase-crashlytics-gradle:${firebase_crashlytics_classpath_version}",
+            analytics            : "com.google.firebase:firebase-analytics-ktx",
+            installations        : "com.google.firebase:firebase-installations:${firebase_instalations_version}"
     ]
 
     // Timber

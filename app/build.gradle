@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'com.google.firebase.firebase-perf'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 apply from: '../dependencies.gradle'
@@ -117,6 +120,16 @@ dependencies {
 
     // Chart
     implementation chart.mp_android_chart
+
+    // Firebase
+    implementation platform(firebase.bom)
+    implementation firebase.config
+    implementation firebase.perf
+    implementation firebase.dynamic_links
+    implementation firebase.messaging
+    implementation firebase.crashlytics
+    implementation firebase.analytics
+    implementation firebase.installations
 
     // OnFido
     implementation onfido.capture

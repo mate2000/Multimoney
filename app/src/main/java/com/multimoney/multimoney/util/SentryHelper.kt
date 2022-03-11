@@ -2,21 +2,17 @@ package com.multimoney.multimoney.util
 
 import android.content.Context
 import com.multimoney.multimoney.BuildConfig
-import io.sentry.SentryEvent
-import io.sentry.SentryLevel
-import io.sentry.SentryOptions
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.sentry.android.core.SentryAndroid
+import javax.inject.Inject
 
-class SentryHelper {
+class SentryHelper @Inject constructor(@ApplicationContext private val context: Context) {
 
-    companion object {
-
-        fun initSentry(context: Context) {
-            SentryAndroid.init(context) { options ->
-                options.dsn = BuildConfig.SENTRY_DSN
-                options.environment = BuildConfig.APP_ENVIRONMENT
-                options.sampleRate = 1.0
-            }
+    fun initSentry() {
+        SentryAndroid.init(context) { options ->
+            options.dsn = BuildConfig.SENTRY_DSN
+            options.environment = BuildConfig.APP_ENVIRONMENT
+            options.sampleRate = 1.0
         }
     }
 }

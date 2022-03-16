@@ -1,0 +1,20 @@
+# DexGuard's default settings are fine for this sample application.
+
+# We'll just display some more statistics about the processed code.
+-verbose
+
+# Obfuscate the code of all methods in the class with strength
+# set to 'high'.
+#-obfuscatecode,high class com.example.HelloWorldActivity
+
+# If necessary, we can specify the methods to obfuscate.
+#-obfuscatecode,high class com.example.HelloWorldActivity {
+#     *** onCreate(...);
+#}
+
+# Alternatively, we can obfuscate all classes in a package.
+#-obfuscatecode class com.multimoney.multimoney.**
+
+# Alternatively, we can use different strength settings.
+# If no strength is specified, 'low' will be used instead.
+#-obfuscatecode,low class com.example.HelloWorldActivity

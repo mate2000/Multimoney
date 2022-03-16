@@ -1,12 +1,19 @@
 buildscript {
     apply from: 'dependencies.gradle'
+    repositories {
+        maven  {
+            url '../DexGuard-9.3.1/DexGuard-9.3.1/lib'          // For the DexGuard plugin.
+        }
+    }
     dependencies {
         classpath hilt.plugin
         classpath firebase.perf_classpath
         classpath firebase.crashlytics_classpath
         classpath google_services.plugin
+        classpath 'com.guardsquare:dexguard-gradle-plugin:+'
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 plugins {
     id 'com.android.application' version '7.1.0' apply false
     id 'com.android.library' version '7.1.0' apply false
@@ -16,3 +23,37 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+//dexguard {
+//    path = '../../..'
+//    // We can build the sample with the sample license file
+//    license = '../../../lib/dexguard-license.txt'
+//    configurations {
+//        debug {
+//            defaultConfiguration 'dexguard-debug.pro'
+//            configuration 'dexguard-project.txt'
+////            configuration 'proguard-project.txt'
+//        }
+//        release {
+//            defaultConfiguration 'dexguard-release-aggressive.pro'
+//            configuration 'dexguard-project.txt'
+////            configuration 'proguard-project.txt'
+//        }
+//    }
+//}
+
+//dexguard {
+//    path = '../Users/DavidGuevara/Downloads/DexGuard-9.3.1/DexGuard-9.3.1'
+//    // We can build the sample with the sample license file
+//    license = '../Users/DavidGuevara/Downloads/DexGuard-9.3.1/DexGuard-9.3.1/lib/dexguard-license.txt'
+//    configurations {
+//        debug {
+//            defaultConfiguration 'dexguard-debug.pro'
+//            configuration 'dexguard-project.txt'
+//        }
+//        release {
+//            defaultConfiguration 'dexguard-release-aggressive.pro'
+//            configuration 'dexguard-project.txt'
+//        }
+//    }
+//}

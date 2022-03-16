@@ -1,5 +1,8 @@
 pluginManagement {
     repositories {
+//        maven {
+//            url '../DexGuard-9.3.1'          // For the DexGuard plugin.
+//        }
         gradlePluginPortal()
         google()
         mavenCentral()

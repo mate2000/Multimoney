@@ -120,9 +120,11 @@ ext {
 
     // Google Services
     google_services_version = "4.3.10"
+    google_services_ads_version = "17.0.1"
 
     google_services = [
-            plugin: "com.google.gms:google-services:${google_services_version}"
+            plugin: "com.google.gms:google-services:${google_services_version}",
+            ads   : "com.google.android.gms:play-services-ads-identifier:${google_services_ads_version}"
     ]
 
     // Firebase
@@ -156,6 +158,16 @@ ext {
 
     onfido = [
             capture: "com.onfido.sdk.capture:onfido-capture-sdk:${onfido_version}"
+    ]
+
+    // Adjust
+    adjust_version = "4.28.9"
+    adjust_installreferrer_version = "2.2"
+
+    adjust = [
+            android        : "com.adjust.sdk:adjust-android:${adjust_version}",
+            webbridge      : "com.adjust.sdk:adjust-android-webbridge:${adjust_version}",
+            installreferrer: "com.android.installreferrer:installreferrer:${adjust_installreferrer_version}"
     ]
 
     // Common Test

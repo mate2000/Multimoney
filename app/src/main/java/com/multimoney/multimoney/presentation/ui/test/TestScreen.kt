@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.domain.model.launch.LaunchConnection
+import com.multimoney.multimoney.presentation.uielement.common.CustomButton
 import com.multimoney.multimoney.presentation.util.UiEvent
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido
@@ -75,9 +76,10 @@ fun TestScreen(
 
 @Composable
 fun ChartButton(navigateToChart: () -> Unit) {
-    Button(onClick = navigateToChart, content = {
-        Text(text = "Chart")
-    })
+    CustomButton(
+        onClick = navigateToChart,
+        text = "Chart"
+    )
 }
 
 @Composable

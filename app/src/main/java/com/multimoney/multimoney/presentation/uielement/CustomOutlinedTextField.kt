@@ -153,9 +153,9 @@ fun CustomOutlinedTextField(
             trailingIcon = if (isPassword) {
                 {
                     val image = if (passwordVisible) {
-                        painterResource(id = R.drawable.ic_launcher_background)
+                        painterResource(id = R.drawable.ic_view_off)
                     } else {
-                        painterResource(id = R.drawable.ic_password)
+                        painterResource(id = R.drawable.ic_view)
                     }
 
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Multimoney</string>
+
+    <!-- Common -->
+    <string name="button_continue">Continuar</string>
+
+    <!-- Errors -->
+    <string name="error_empty_field">Este campo no puede ser vacío</string>
 </resources>

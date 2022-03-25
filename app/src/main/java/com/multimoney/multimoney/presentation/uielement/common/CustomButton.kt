@@ -12,13 +12,12 @@ import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,12 +43,12 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
  * CustomButton: Button to match design style across the hole app, in order to use it.
  *
  * Parameters:
- * @param modifier: Apply style
- * @param buttonType: Button type sealed class to change color
- * @param text: Set button text
- * @param enableButton: Enable button
- * @param enableArrowIcon: Display arrow icon
- * @param onClick: Action to perform on click triggered
+ * @param modifier: Apply style.
+ * @param buttonType: Button type sealed class to change color.
+ * @param text: Set button text.
+ * @param enableButton: Enable button.
+ * @param enableArrowIcon: Display arrow icon.
+ * @param onClick: Action to perform on click triggered.
  */
 
 @Composable
@@ -280,7 +279,7 @@ fun CustomButton(
         modifier = modifier,
         onClick = onClick,
         colors = buttonColor,
-        shape = RoundedCornerShape(30),
+        shape = RoundedCornerShape(25),
         border = borderStroke,
         enabled = enableButton,
         interactionSource = interactionSource
@@ -292,7 +291,7 @@ fun CustomButton(
         if (enableArrowIcon) {
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Icon(
-                Icons.Filled.Favorite,
+                painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = "",
                 modifier = Modifier.size(ButtonDefaults.IconSize),
                 tint = arrowIconTint

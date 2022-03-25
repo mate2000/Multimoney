@@ -14,14 +14,19 @@ val Primary700 = Color(0xFF002E86)
 // Secondary
 val Secondary500 = Color(0xFF5E5BDB)
 
+// Semantic Negative
+val SemanticNegative500 = Color(0xFFE91616)
+
 // GrayScale
 val DefaultWhite = Color(0xFFFFFFFF)
 val DefaultBlack = Color(0xFF000000)
 val GrayScale200 = Color(0xFFF2F2F2)
+val GrayScale300 = Color(0xFFD9D9D9)
 val GrayScale400 = Color(0xFFB8B8B8)
 val GrayScale500 = Color(0xFF808080)
 val GrayScale600 = Color(0xFF6B6B6B)
 val GrayScale700 = Color(0xFF404040)
+val GrayScale800 = Color(0xFF1A1A1A)
 
 // WhiteTransparency
 val WhiteTransparency10 = Color(0xFFFFFFFF).copy(alpha = 0.1f)

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.uielement.common
+package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -46,7 +46,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
  * @param modifier: Apply style.
  * @param buttonType: Button type sealed class to change color.
  * @param text: Set button text.
- * @param enableButton: Enable button.
+ * @param enable: Enable button.
  * @param enableArrowIcon: Display arrow icon.
  * @param onClick: Action to perform on click triggered.
  */
@@ -57,7 +57,7 @@ fun CustomButton(
     modifier: Modifier = Modifier,
     buttonType: CustomButtonType = CustomButtonType.PrimaryPrimary,
     text: String = stringResource(id = R.string.button_continue),
-    enableButton: Boolean = true,
+    enable: Boolean = true,
     enableArrowIcon: Boolean = false,
     onClick: () -> Unit = {}
 ) {
@@ -83,7 +83,7 @@ fun CustomButton(
                 disabledBackgroundColor = GrayScale200,
                 disabledContentColor = GrayScale500
             )
-            arrowIconTint = if (enableButton) {
+            arrowIconTint = if (enable) {
                 DefaultWhite
             } else {
                 GrayScale500
@@ -101,7 +101,7 @@ fun CustomButton(
                     disabledBackgroundColor = DefaultBlack,
                     disabledContentColor = GrayScale400
                 )
-                if (enableButton) {
+                if (enable) {
                     borderStroke = BorderStroke(1.dp, DefaultWhite)
                     arrowIconTint = DefaultWhite
                 } else {
@@ -119,7 +119,7 @@ fun CustomButton(
                     disabledBackgroundColor = DefaultWhite,
                     disabledContentColor = GrayScale400
                 )
-                if (enableButton) {
+                if (enable) {
                     borderStroke = BorderStroke(1.dp, Primary400)
                     arrowIconTint = Primary500
                 } else {
@@ -140,7 +140,7 @@ fun CustomButton(
                     disabledBackgroundColor = DefaultBlack,
                     disabledContentColor = GrayScale400
                 )
-                arrowIconTint = if (enableButton) {
+                arrowIconTint = if (enable) {
                     DefaultWhite
                 } else {
                     GrayScale400
@@ -156,7 +156,7 @@ fun CustomButton(
                     disabledBackgroundColor = DefaultWhite,
                     disabledContentColor = GrayScale400
                 )
-                arrowIconTint = if (enableButton) {
+                arrowIconTint = if (enable) {
                     Primary500
                 } else {
                     GrayScale400
@@ -175,7 +175,7 @@ fun CustomButton(
                     disabledBackgroundColor = GrayScale700,
                     disabledContentColor = GrayScale400
                 )
-                arrowIconTint = if (enableButton) {
+                arrowIconTint = if (enable) {
                     DefaultWhite
                 } else {
                     GrayScale400
@@ -191,7 +191,7 @@ fun CustomButton(
                     disabledBackgroundColor = GrayScale200,
                     disabledContentColor = GrayScale500
                 )
-                arrowIconTint = if (enableButton) {
+                arrowIconTint = if (enable) {
                     Primary700
                 } else {
                     GrayScale500
@@ -210,7 +210,7 @@ fun CustomButton(
                     disabledBackgroundColor = DefaultBlack,
                     disabledContentColor = GrayScale400
                 )
-                if (enableButton) {
+                if (enable) {
                     borderStroke = BorderStroke(1.dp, DefaultWhite)
                     arrowIconTint = DefaultWhite
                 } else {
@@ -228,7 +228,7 @@ fun CustomButton(
                     disabledBackgroundColor = Primary500,
                     disabledContentColor = GrayScale200
                 )
-                if (enableButton) {
+                if (enable) {
                     borderStroke = BorderStroke(1.dp, DefaultWhite)
                     arrowIconTint = DefaultWhite
                 } else {
@@ -249,7 +249,7 @@ fun CustomButton(
                     disabledBackgroundColor = DefaultBlack,
                     disabledContentColor = GrayScale400
                 )
-                arrowIconTint = if (enableButton) {
+                arrowIconTint = if (enable) {
                     DefaultWhite
                 } else {
                     GrayScale400
@@ -265,7 +265,7 @@ fun CustomButton(
                     disabledBackgroundColor = Primary500,
                     disabledContentColor = GrayScale200
                 )
-                arrowIconTint = if (enableButton) {
+                arrowIconTint = if (enable) {
                     Primary500
                 } else {
                     GrayScale200
@@ -281,7 +281,7 @@ fun CustomButton(
         colors = buttonColor,
         shape = RoundedCornerShape(25),
         border = borderStroke,
-        enabled = enableButton,
+        enabled = enable,
         interactionSource = interactionSource
     ) {
         Text(

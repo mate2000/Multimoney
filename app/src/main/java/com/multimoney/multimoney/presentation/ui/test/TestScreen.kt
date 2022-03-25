@@ -23,8 +23,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.domain.model.launch.LaunchConnection
-import com.multimoney.multimoney.presentation.uielement.common.CustomButton
-import com.multimoney.multimoney.presentation.uielement.common.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.UiEvent
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido
@@ -92,6 +93,11 @@ fun TestScreen(
             ),
             keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
             isPassword = true
+        )
+        var checked by remember { mutableStateOf(true) }
+        CustomCheckBox(
+            checked = checked,
+            onCheckedChange = { checked = it }
         )
     }
 }

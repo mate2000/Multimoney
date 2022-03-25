@@ -6,13 +6,14 @@ import androidx.compose.ui.graphics.Color
 
 // Primary
 val Primary200 = Color(0xFFDBE7FF)
+val Primary300 = Color(0xFF97BBFF)
 val Primary400 = Color(0xFF538EFF)
 val Primary500 = Color(0xFF0F62FF)
 val Primary600 = Color(0xFF0046CA)
 val Primary700 = Color(0xFF002E86)
 
 // Secondary
-val Secondary500 = Color(0xFF5E5BDB)
+val Secondary500 = Color(0xFF4C49CD)
 
 // Semantic Negative
 val SemanticNegative500 = Color(0xFFE91616)
@@ -31,6 +32,7 @@ val GrayScale800 = Color(0xFF1A1A1A)
 // WhiteTransparency
 val WhiteTransparency10 = Color(0xFFFFFFFF).copy(alpha = 0.1f)
 val WhiteTransparency12 = Color(0xFFFFFFFF).copy(alpha = 0.12f)
+val WhiteTransparency30 = Color(0xFFFFFFFF).copy(alpha = 0.3f)
 val WhiteTransparency70 = Color(0xFFFFFFFF).copy(alpha = 0.7f)
 
 // Dark Theme

@@ -1,7 +1,8 @@
-package com.multimoney.multimoney.presentation.uielement.common
+package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -205,18 +206,20 @@ fun CustomOutlinedTextField(
         // Display error message
         errorMessage?.let {
             if (isError || emptyError) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_exclamation_mark),
-                    modifier = Modifier.size(ButtonDefaults.IconSize),
-                    contentDescription = "",
-                    tint = SemanticNegative500
-                )
-                Text(
-                    text = if (emptyError) stringResource(id = R.string.error_empty_field) else errorMessage,
-                    color = SemanticNegative500,
-                    modifier = Modifier.padding(start = 16.dp, top = 8.dp),
-                    style = Typography.caption
-                )
+                Row {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_exclamation_mark),
+                        modifier = Modifier.size(ButtonDefaults.IconSize),
+                        contentDescription = "",
+                        tint = SemanticNegative500
+                    )
+                    Text(
+                        text = if (emptyError) stringResource(id = R.string.error_empty_field) else errorMessage,
+                        color = SemanticNegative500,
+                        modifier = Modifier.padding(start = 16.dp, top = 8.dp),
+                        style = Typography.caption
+                    )
+                }
             }
         }
     }

@@ -170,6 +170,12 @@ ext {
             installreferrer: "com.android.installreferrer:installreferrer:${adjust_installreferrer_version}"
     ]
 
+    lottie_version = "5.0.3"
+
+    lottieDependency = [
+        lottie: "com.airbnb.android:lottie-compose:$lottie_version"
+    ]
+
     // Common Test
     junit_version = "4.13.2"
     ext_junit_version = "1.1.3"

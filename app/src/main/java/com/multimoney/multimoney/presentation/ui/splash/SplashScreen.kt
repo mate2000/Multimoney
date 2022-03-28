@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.Primary200
 import com.multimoney.multimoney.presentation.uielement.CustomLottie
 import com.multimoney.multimoney.presentation.util.UiEvent
 import kotlinx.coroutines.flow.collect
@@ -39,7 +40,7 @@ fun SplashScreen(
 fun SplashScreen(navigateToLogin: () -> Unit) {
     Column(
         Modifier
-            .background(Color.White)
+            .background(Primary200)
             .fillMaxHeight()
     ) {
         Image(

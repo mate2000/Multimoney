@@ -7,5 +7,6 @@ const val TEST_ROUTE = "test_route"
  * **/
 sealed class Screen(val route: String) {
     object TestScreen : Screen("test_screen")
+    object SplashScreen: Screen("splash_screen")
     object ChartScreen : Screen("chart_screen")
 }

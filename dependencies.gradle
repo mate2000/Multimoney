@@ -170,6 +170,7 @@ ext {
             installreferrer: "com.android.installreferrer:installreferrer:${adjust_installreferrer_version}"
     ]
 
+    // Lottie
     lottie_version = "5.0.3"
 
     lottieDependency = [

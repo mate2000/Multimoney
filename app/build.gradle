@@ -140,6 +140,9 @@ dependencies {
     // OnFido
     implementation onfido.capture
 
+    // Lottie
+    implementation lottieDependency.lottie
+
     // Adjust
     implementation adjust.android
     implementation adjust.webbridge

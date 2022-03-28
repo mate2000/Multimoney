@@ -14,7 +14,7 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency
 import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
-import com.multimoney.multimoney.presentation.theme.Teal200
+import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.util.UiEvent
 import kotlinx.coroutines.flow.collect
 
@@ -45,7 +45,7 @@ fun ChartScreen(
 fun ChartScreen() {
     AndroidView(modifier = Modifier.fillMaxSize(), factory = { context ->
         CandleStickChart(context).apply {
-            setBackgroundColor(Teal200.hashCode())
+            setBackgroundColor(Primary500.hashCode())
             description.isEnabled = false
             setMaxVisibleValueCount(60)
             setPinchZoom(true)

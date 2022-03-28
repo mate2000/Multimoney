@@ -1,4 +1,4 @@
-package com.multimoney.multimoney
+package com.multimoney.multimoney.presentation.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

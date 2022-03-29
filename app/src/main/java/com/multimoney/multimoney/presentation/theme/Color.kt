@@ -1,7 +1,8 @@
 package com.multimoney.multimoney.presentation.theme
 
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 // Primary
@@ -39,14 +40,40 @@ val WhiteTransparency70 = Color(0xFFFFFFFF).copy(alpha = 0.7f)
 val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
 
-val DarkColorPalette = darkColors(
-    primary = Primary500,
-    secondary = Secondary500,
-    background = DefaultWhite
+@Immutable
+data class MultimoneyColors(
+    val primary: Color,
+    val secondary: Color,
+    val background: Color,
+    val backgroundSplash: Color,
+    val text: Color,
+    val link: Color
 )
 
-val LightColorPalette = lightColors(
+val DarkColorPalette = MultimoneyColors(
     primary = Purple700,
     secondary = Purple500,
-    background = DefaultBlack
+    background = DefaultBlack,
+    backgroundSplash = Primary200,
+    text = DefaultWhite,
+    link = Primary500
 )
+
+val LightColorPalette = MultimoneyColors(
+    primary = Primary500,
+    secondary = Secondary500,
+    background = DefaultWhite,
+    backgroundSplash = Primary200,
+    text = GrayScale800,
+    link = Primary500
+)
+
+val LocalMultimoneyColors = staticCompositionLocalOf {
+    DarkColorPalette
+}
+
+object MultimoneyTheme {
+    val colors: MultimoneyColors
+        @Composable
+        get() = LocalMultimoneyColors.current
+}

@@ -40,7 +40,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency12
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 
 /**
- * CustomButton: Button to match design style across the hole app, in order to use it.
+ * CustomButton: Button to match design style across the whole app, in order to use it.
  *
  * Parameters:
  * @param modifier: Apply style.

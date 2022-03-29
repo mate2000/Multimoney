@@ -4,15 +4,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.TEST_ROUTE
-import com.multimoney.multimoney.presentation.ui.chart.ChartScreen
+import com.multimoney.multimoney.presentation.ui.login.LoginScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
+import com.multimoney.multimoney.presentation.ui.test.TestScreen
 
 fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
     navigation(
         startDestination = Screen.SplashScreen.route,
-        route = TEST_ROUTE
+        route = LOGIN_ROUTE
     ) {
         composable(route = Screen.SplashScreen.route) {
             SplashScreen(
@@ -21,8 +22,15 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.ChartScreen.route) {
-            ChartScreen(
+        composable(route = Screen.LoginScreen.route) {
+            LoginScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+        composable(route = Screen.TestScreen.route) {
+            TestScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 }

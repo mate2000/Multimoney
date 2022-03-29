@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.splash
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -9,10 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomLottie
 import com.multimoney.multimoney.presentation.util.UiEvent
 import kotlinx.coroutines.flow.collect
@@ -31,30 +31,28 @@ fun SplashScreen(
         }
     }
     SplashScreen {
-        viewModel.navigateToChart()
+        viewModel.navigateToScreen(Screen.LoginScreen.route)
     }
 }
 
 @Composable
-fun SplashScreen(navigateToLogin: () -> Unit) {
+fun SplashScreen(navigateToScreen: () -> Unit) {
     Column(
         Modifier
-            .background(Color.White)
+            .background(MultimoneyTheme.colors.backgroundSplash)
             .fillMaxHeight()
     ) {
-        Image(
-            painterResource(R.drawable.ic_splash_top),
-            contentDescription = "",
+        CustomImage(
+            drawableResource = R.drawable.ic_splash_top,
             modifier = Modifier
                 .weight(1f)
                 .wrapContentHeight(Alignment.Top)
         )
         CustomLottie(resource = R.raw.placeholder_splash, Modifier.weight(4f)) {
-            navigateToLogin()
+            navigateToScreen()
         }
-        Image(
-            painterResource(R.drawable.ic_splash_bottom),
-            contentDescription = "",
+        CustomImage(
+            drawableResource = R.drawable.ic_splash_bottom,
             modifier = Modifier
                 .weight(1f)
                 .wrapContentHeight(Alignment.Bottom)

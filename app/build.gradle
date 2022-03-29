@@ -113,6 +113,9 @@ dependencies {
     implementation compose.livedata
     androidTestImplementation compose.test
 
+    // Accompanist
+    implementation accompanist.insets
+
     // Hilt
     implementation hilt.android
     kapt hilt.compiler

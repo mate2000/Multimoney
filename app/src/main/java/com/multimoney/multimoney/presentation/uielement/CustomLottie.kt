@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.airbnb.lottie.compose.LottieAnimation
@@ -15,8 +16,10 @@ fun CustomLottie(resource: Int, modifier: Modifier = Modifier, onLottieComplete:
     val progress by animateLottieCompositionAsState(splashLottie, restartOnPlay = false)
 
     LottieAnimation(splashLottie, progress, modifier = modifier)
-
-    if (progress == PROGRESS_COMPLETED) onLottieComplete()
+    if (progress == PROGRESS_COMPLETED)
+        LaunchedEffect(true) {
+            onLottieComplete()
+        }
 }
 
 const val PROGRESS_COMPLETED = 1.0f

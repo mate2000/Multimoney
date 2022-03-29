@@ -67,6 +67,17 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    /**
+     * Use this function to navigate to specified screen
+     **/
+    fun navigateToScreen(screen: String) {
+        sendUiEvent(
+            UiEvent.Navigate(
+                route = screen
+            )
+        )
+    }
+
     fun goBack() {
         sendUiEvent(UiEvent.PopBackStack)
     }

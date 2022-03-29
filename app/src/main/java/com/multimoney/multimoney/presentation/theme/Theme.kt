@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
 @Composable
 fun MultimoneyTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
@@ -11,11 +12,11 @@ fun MultimoneyTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
     } else {
         LightColorPalette
     }
-
-    MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+    CompositionLocalProvider(LocalMultimoneyColors provides colors) {
+        MaterialTheme(
+            typography = Typography,
+            shapes = Shapes,
+            content = content
+        )
+    }
 }

@@ -1,4 +1,6 @@
 <resources>
+
+    <!-- App -->
     <string name="app_name">Multimoney</string>
 
     <!-- Common -->
@@ -6,4 +8,16 @@
 
     <!-- Errors -->
     <string name="error_empty_field">Este campo no puede ser vacío</string>
+
+    <!-- Login -->
+    <string name="login">Iniciar sesión</string>
+    <string name="login_welcome">¡Que bueno \ntenerte por acá!</string>
+    <string name="login_welcome_name">Hola %s, \n</string>
+    <string name="login_welcome_no_name">¡Que bueno tenerte por acá!</string>
+    <string name="login_label_email">Correo electrónico</string>
+    <string name="login_label_password">Contraseña</string>
+    <string name="login_forgot_password">Olvidé mi contraseña</string>
+    <string name="login_activate_fingerprint">Activar huella digital</string>
+    <string name="login_create_account">No tengo cuenta</string>
+
 </resources>

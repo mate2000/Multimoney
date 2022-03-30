@@ -10,7 +10,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.util.UiEvent
+import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
@@ -40,8 +40,8 @@ class TestViewModel @Inject constructor(
     }
 
     fun navigateToChart() {
-        sendUiEvent(
-            UiEvent.Navigate(
+        sendNavigationEvent(
+            NavEvent.Navigate(
                 route = Screen.ChartScreen.route
             )
         )

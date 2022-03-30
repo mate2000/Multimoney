@@ -7,6 +7,7 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,10 +70,9 @@ fun CustomCheckBox(
         disabledIndeterminateColor = Primary500
     }
 
-    Row {
+    Row(modifier = modifier) {
         Checkbox(
             checked = checked,
-            modifier = modifier,
             enabled = enabled,
             onCheckedChange = { onCheckedChange(it) },
             colors = CheckboxDefaults.colors(
@@ -87,7 +87,9 @@ fun CustomCheckBox(
         text?.let {
             Text(
                 text = text,
-                modifier = Modifier.padding(11.dp),
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 11.dp),
                 style = Typography.subtitle2,
                 color = textColor
             )

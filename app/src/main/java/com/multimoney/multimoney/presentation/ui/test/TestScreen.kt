@@ -26,28 +26,22 @@ import com.multimoney.domain.model.launch.LaunchConnection
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.UiEvent
+import com.multimoney.multimoney.presentation.util.NavEvent
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
-import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 
 
 @Composable
 fun TestScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onNavigate: (NavEvent.Navigate) -> Unit,
     viewModel: TestViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.getLaunchList()
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is UiEvent.Navigate -> onNavigate(event)
-                else -> Unit
-            }
-        }
+        viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
     // Display api response data

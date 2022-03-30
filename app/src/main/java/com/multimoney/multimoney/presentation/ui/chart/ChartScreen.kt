@@ -15,21 +15,15 @@ import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
 import com.multimoney.multimoney.presentation.theme.Primary500
-import com.multimoney.multimoney.presentation.util.UiEvent
-import kotlinx.coroutines.flow.collect
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun ChartScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onNavigate: (NavEvent.Navigate) -> Unit,
     viewModel: ChartViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is UiEvent.Navigate -> onNavigate(event)
-                else -> Unit
-            }
-        }
+        viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
     ChartScreen()

@@ -36,22 +36,16 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.UiEvent
-import kotlinx.coroutines.flow.collect
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun LoginScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onNavigate: (NavEvent.Navigate) -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     // Navigation
     LaunchedEffect(true) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is UiEvent.Navigate -> onNavigate(event)
-                else -> Unit
-            }
-        }
+        viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
     // Properties
@@ -63,10 +57,9 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
-                .padding(16.dp)
                 .verticalScroll(rememberScrollState())
+                .padding(16.dp)
                 .navigationBarsWithImePadding()
-
         ) {
 
             // Welcome section
@@ -75,7 +68,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .wrapContentSize()
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 56.dp)
+                    .padding(top = 40.dp)
             )
 
             Text(

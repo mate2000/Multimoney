@@ -69,7 +69,7 @@ val LightColorPalette = MultimoneyColors(
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {
-    DarkColorPalette
+    LightColorPalette
 }
 
 object MultimoneyTheme {

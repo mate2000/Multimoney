@@ -14,29 +14,26 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomLottie
-import com.multimoney.multimoney.presentation.util.UiEvent
-import kotlinx.coroutines.flow.collect
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SplashScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: SplashScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is UiEvent.Navigate -> onNavigate(event)
-                else -> Unit
-            }
-        }
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
     SplashScreen {
-        viewModel.navigateToScreen(Screen.LoginScreen.route)
+        viewModel.popAndNavigateTo(
+            route = Screen.LoginScreen.route,
+            popTo = Screen.SplashScreen.route
+        )
     }
 }
 
 @Composable
-fun SplashScreen(navigateToScreen: () -> Unit) {
+fun SplashScreen(popAndNavigateToScreen: () -> Unit) {
     Column(
         Modifier
             .background(MultimoneyTheme.colors.backgroundSplash)
@@ -49,7 +46,7 @@ fun SplashScreen(navigateToScreen: () -> Unit) {
                 .wrapContentHeight(Alignment.Top)
         )
         CustomLottie(resource = R.raw.placeholder_splash, Modifier.weight(4f)) {
-            navigateToScreen()
+            popAndNavigateToScreen()
         }
         CustomImage(
             drawableResource = R.drawable.ic_splash_bottom,

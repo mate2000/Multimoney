@@ -39,6 +39,9 @@ val WhiteTransparency12 = Color(0xFFFFFFFF).copy(alpha = 0.12f)
 val WhiteTransparency30 = Color(0xFFFFFFFF).copy(alpha = 0.3f)
 val WhiteTransparency70 = Color(0xFFFFFFFF).copy(alpha = 0.7f)
 
+// BlackTransparency
+val BlackTransparency50 = Color(0xFF000000).copy(alpha = 0.5f)
+
 // Dark Theme
 val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
@@ -50,7 +53,8 @@ data class MultimoneyColors(
     val background: Color,
     val backgroundSplash: Color,
     val text: Color,
-    val link: Color
+    val link: Color,
+    val circularProgressIndicator: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -59,7 +63,8 @@ val DarkColorPalette = MultimoneyColors(
     background = DefaultBlack,
     backgroundSplash = Primary200,
     text = DefaultWhite,
-    link = Primary500
+    link = Primary500,
+    circularProgressIndicator = DefaultWhite
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -68,7 +73,8 @@ val LightColorPalette = MultimoneyColors(
     background = DefaultWhite,
     backgroundSplash = Primary200,
     text = GrayScale800,
-    link = Primary500
+    link = Primary500,
+    circularProgressIndicator = Primary500
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

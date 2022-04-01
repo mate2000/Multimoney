@@ -28,7 +28,7 @@ fun SplashScreen(
     }
     SplashScreen {
         viewModel.popAndNavigateTo(
-            route = Screen.LoginScreen.route,
+            route = Screen.OnBoardingScreen.route,
             popTo = Screen.SplashScreen.route
         )
     }

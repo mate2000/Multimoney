@@ -3,7 +3,15 @@ package com.multimoney.multimoney.presentation.ui.onboarding
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.Complementary500
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Primary600
@@ -37,16 +46,26 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun OnBoardingScreen(
-    onNavigate: (NavEvent.Navigate) -> Unit,
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
     OnBoarding(
         steps = 3,
-        navigateToRegister = { viewModel.navigateToLogin() },
-        navigateToLogin = { viewModel.navigateToRegister() }
+        navigateToRegister = {
+            viewModel.popAndNavigateTo(
+                route = Screen.LoginScreen.route,
+                popTo = Screen.OnBoardingScreen.route
+            )
+        },
+        navigateToLogin = {
+            viewModel.popAndNavigateTo(
+                route = Screen.LoginScreen.route,
+                popTo = Screen.OnBoardingScreen.route
+            )
+        }
     )
 }
 
@@ -175,7 +194,9 @@ fun OnBoarding(
                     .weight(0.11f),
                 buttonType = CustomButtonType.PrimaryTertiary,
                 text = stringResource(id = R.string.registration),
-                onClick = navigateToRegister
+                onClick = {
+                    navigateToRegister()
+                }
             )
             Row(
                 Modifier
@@ -205,7 +226,9 @@ fun OnBoarding(
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(start = 4.dp),
-                    onClick = { navigateToLogin() }
+                    onClick = {
+                        navigateToLogin()
+                    }
                 )
             }
         }

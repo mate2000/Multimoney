@@ -19,5 +19,8 @@
     <string name="login_forgot_password">Olvidé mi contraseña</string>
     <string name="login_activate_fingerprint">Activar huella digital</string>
     <string name="login_create_account">No tengo cuenta</string>
+    <string name="login_required_email">El correo electrónico es requerido</string>
+    <string name="login_required_password">La contraseña es requerido</string>
+    <string name="login_validation">El correo y/o contraseña es incorrecta</string>
 
 </resources>

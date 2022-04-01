@@ -53,13 +53,6 @@ ext {
             test      : "androidx.compose.ui:ui-test-junit4:$compose_version"
     ]
 
-    // Accompanist
-    accompanist_version = "0.23.1"
-
-    accompanist = [
-            insets: "com.google.accompanist:accompanist-insets:$accompanist_version"
-    ]
-
     // Room
     room_version = "2.4.1"
 
@@ -183,6 +176,23 @@ ext {
     lottieDependency = [
             lottie: "com.airbnb.android:lottie-compose:$lottie_version"
     ]
+
+    // Cognito
+    cognito_version = "1.33.0"
+
+    cognito = [
+            core: "com.amplifyframework:core:$cognito_version",
+            auth: "com.amplifyframework:aws-auth-cognito:$cognito_version"
+    ]
+
+    // Desugar
+    desugar_version = "1.1.5"
+
+    desugar = [
+            jdk: "com.android.tools:desugar_jdk_libs:$desugar_version"
+    ]
+
+    'com.android.tools:desugar_jdk_libs:1.1.5'
 
     // Common Test
     junit_version = "4.13.2"

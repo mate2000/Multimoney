@@ -7,6 +7,7 @@ import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.LoginScreen
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
 import com.multimoney.multimoney.presentation.ui.test.TestScreen
 
@@ -24,6 +25,15 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
+
+        composable(route = Screen.OnBoardingScreen.route) {
+            OnBoardingScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
         composable(route = Screen.LoginScreen.route) {
             LoginScreen(
                 onNavigate = {

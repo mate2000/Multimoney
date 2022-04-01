@@ -33,21 +33,15 @@ import com.multimoney.multimoney.presentation.theme.Primary600
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomStoryProgressBar
-import com.multimoney.multimoney.presentation.util.UiEvent
-import kotlinx.coroutines.flow.collect
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun OnBoardingScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
+    onNavigate: (NavEvent.Navigate) -> Unit,
     viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(key1 = true) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is UiEvent.Navigate -> onNavigate(event)
-                else -> Unit
-            }
-        }
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onNavigate = onNavigate)
     }
     OnBoarding(
         steps = 3,

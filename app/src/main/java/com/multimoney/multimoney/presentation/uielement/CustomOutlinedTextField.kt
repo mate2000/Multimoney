@@ -1,15 +1,18 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
@@ -18,14 +21,19 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -38,6 +46,7 @@ import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import kotlinx.coroutines.launch
 
 /**
  * CustomOutlinedTextField: This OutlinedTextField is used to match design system
@@ -58,6 +67,8 @@ import com.multimoney.multimoney.presentation.theme.Typography
  * @param isPassword: Enable password behavior.
  * @param onValueChange: Function to handle input changes.
  * **/
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CustomOutlinedTextField(
     modifier: Modifier = Modifier,
@@ -69,6 +80,7 @@ fun CustomOutlinedTextField(
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
     isRequired: Boolean = true,
+    isRequiredMessage: String? = null,
     isError: Boolean = false,
     errorMessage: String? = null,
     enabled: Boolean = true,
@@ -77,6 +89,8 @@ fun CustomOutlinedTextField(
 ) {
     var emptyError by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
 
     // Set colors depending on system theme
     val labelColor: Color
@@ -89,7 +103,7 @@ fun CustomOutlinedTextField(
         backgroundColor = GrayScale600
         when {
             isError -> {
-                iconTintColor = SemanticNegative500
+                iconTintColor = Primary400
                 textColor = DefaultWhite
             }
             enabled -> {
@@ -107,7 +121,7 @@ fun CustomOutlinedTextField(
         backgroundColor = DefaultWhite
         when {
             isError -> {
-                iconTintColor = SemanticNegative500
+                iconTintColor = Primary400
                 textColor = GrayScale800
             }
             enabled -> {
@@ -137,7 +151,17 @@ fun CustomOutlinedTextField(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .bringIntoViewRequester(bringIntoViewRequester)
+                .onFocusChanged {
+                    if (it.isFocused) {
+                        coroutineScope.launch {
+                            // This sends a request to all parents that asks them to scroll so
+                            // that this item is brought into view.
+                            bringIntoViewRequester.bringIntoView()
+                        }
+                    }
+                },
             value = value ?: "",
             shape = RoundedCornerShape(25),
             leadingIcon = leadingIcon?.let {
@@ -189,7 +213,7 @@ fun CustomOutlinedTextField(
                     style = Typography.body2
                 )
             },
-            isError = isError,
+            isError = isError || emptyError,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = backgroundColor,
                 focusedIndicatorColor = Primary500,
@@ -198,27 +222,37 @@ fun CustomOutlinedTextField(
                 textColor = textColor
             ),
             enabled = enabled,
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible || !isPassword) VisualTransformation.None else PasswordVisualTransformation(),
             textStyle = Typography.body2
         )
 
         // Display error message
-        errorMessage?.let {
-            if (isError || emptyError) {
-                Row {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_exclamation_mark),
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
-                        contentDescription = "",
-                        tint = SemanticNegative500
-                    )
-                    Text(
-                        text = if (emptyError) stringResource(id = R.string.error_empty_field) else errorMessage,
-                        color = SemanticNegative500,
-                        modifier = Modifier.padding(start = 16.dp, top = 8.dp),
-                        style = Typography.caption
-                    )
-                }
+        if (isError && errorMessage.isNullOrBlank().not() || emptyError) {
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_exclamation_mark),
+                    modifier = Modifier
+                        .size(width = 11.dp, height = 11.dp),
+                    contentDescription = "",
+                    tint = SemanticNegative500
+                )
+                Text(
+                    text = if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
+                        isRequiredMessage ?: ""
+                    } else if (emptyError) {
+                        stringResource(id = R.string.error_empty_field)
+                    } else {
+                        errorMessage ?: ""
+                    },
+                    color = SemanticNegative500,
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .wrapContentSize(),
+                    style = Typography.caption.copy(textAlign = TextAlign.Center)
+                )
             }
         }
     }

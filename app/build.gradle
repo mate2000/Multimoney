@@ -52,6 +52,7 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -113,9 +114,6 @@ dependencies {
     implementation compose.livedata
     androidTestImplementation compose.test
 
-    // Accompanist
-    implementation accompanist.insets
-
     // Hilt
     implementation hilt.android
     kapt hilt.compiler
@@ -143,13 +141,20 @@ dependencies {
     // OnFido
     implementation onfido.capture
 
-    // Lottie
-    implementation lottieDependency.lottie
-
     // Adjust
     implementation adjust.android
     implementation adjust.webbridge
     implementation adjust.installreferrer
+
+    // Lottie
+    implementation lottieDependency.lottie
+
+    // Cognito
+    implementation cognito.core
+    implementation cognito.auth
+
+    // Desugar
+    coreLibraryDesugaring desugar.jdk
 
     // Common Test
     testImplementation common_test.junit

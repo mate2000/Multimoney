@@ -2,12 +2,14 @@ package com.multimoney.multimoney.presentation.ui.splash
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -36,23 +38,27 @@ fun SplashScreen(
 fun SplashScreen(popAndNavigateToScreen: () -> Unit) {
     Column(
         Modifier
+            .fillMaxSize()
             .background(MultimoneyTheme.colors.backgroundSplash)
-            .fillMaxHeight()
     ) {
         CustomImage(
             drawableResource = R.drawable.ic_splash_top,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
-                .weight(1f)
+                .fillMaxWidth()
                 .wrapContentHeight(Alignment.Top)
+                .weight(1f)
         )
         CustomLottie(resource = R.raw.placeholder_splash, Modifier.weight(4f)) {
             popAndNavigateToScreen()
         }
         CustomImage(
             drawableResource = R.drawable.ic_splash_bottom,
+            contentScale = ContentScale.FillBounds,
             modifier = Modifier
-                .weight(1f)
+                .fillMaxWidth()
                 .wrapContentHeight(Alignment.Bottom)
+                .weight(1f)
         )
     }
 }

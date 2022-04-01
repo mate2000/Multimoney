@@ -22,7 +22,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -64,8 +63,8 @@ fun CustomOutlinedTextField(
     modifier: Modifier = Modifier,
     labelText: String? = null,
     value: String? = null,
-    leadingIcon: ImageVector? = null,
-    trailingIcon: ImageVector? = null,
+    leadingIcon: Int? = null,
+    trailingIcon: Int? = null,
     placeHolder: String = "",
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
@@ -144,7 +143,7 @@ fun CustomOutlinedTextField(
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
-                        imageVector = it,
+                        painter = painterResource(id = it),
                         contentDescription = "",
                         tint = iconTintColor
                     )
@@ -170,7 +169,7 @@ fun CustomOutlinedTextField(
                 trailingIcon?.let {
                     {
                         Icon(
-                            imageVector = it,
+                            painter = painterResource(id = it),
                             contentDescription = "",
                             tint = iconTintColor
                         )

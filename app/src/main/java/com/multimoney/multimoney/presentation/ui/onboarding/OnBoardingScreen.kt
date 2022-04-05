@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -23,14 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,9 +36,13 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.Complementary500
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Primary600
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_ICON
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_SUBTITLE
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_TITLE
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.CustomStoryProgressBar
+import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.StoryProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -54,26 +55,14 @@ fun OnBoardingScreen(
     }
     OnBoarding(
         steps = 3,
-        navigateToRegister = {
-            viewModel.popAndNavigateTo(
-                route = Screen.LoginScreen.route,
-                popTo = Screen.OnBoardingScreen.route
-            )
-        },
-        navigateToLogin = {
-            viewModel.popAndNavigateTo(
-                route = Screen.LoginScreen.route,
-                popTo = Screen.OnBoardingScreen.route
-            )
-        }
+        viewModel
     )
 }
 
 @Composable
 fun OnBoarding(
     steps: Int,
-    navigateToRegister: () -> Unit,
-    navigateToLogin: () -> Unit
+    viewModel: OnBoardingViewModel
 ) {
     val isPressed = remember { mutableStateOf(false) }
     val title = remember { mutableStateOf(R.string.onboarding_step_one_title) }
@@ -83,7 +72,7 @@ fun OnBoarding(
     val goToNextScreen = {
         if (mutableCurrentStep.value <= steps) {
             mutableCurrentStep.value++
-            val newValues = getStepContent(mutableCurrentStep.value)
+            val newValues = viewModel.getStepContent(mutableCurrentStep.value)
             title.value = newValues[STEP_TITLE]
             subtitle.value = newValues[STEP_SUBTITLE]
             icon.value = newValues[STEP_ICON]
@@ -92,7 +81,7 @@ fun OnBoarding(
     val goToPreviousScreen = {
         if (mutableCurrentStep.value - 1 > 0) {
             mutableCurrentStep.value--
-            val newValues = getStepContent(mutableCurrentStep.value)
+            val newValues = viewModel.getStepContent(mutableCurrentStep.value)
             title.value = newValues[STEP_TITLE]
             subtitle.value = newValues[STEP_SUBTITLE]
             icon.value = newValues[STEP_ICON]
@@ -104,10 +93,9 @@ fun OnBoarding(
             .background(Primary600)
     ) {
         Spacer(modifier = Modifier.weight(0.4f))
-        Image(
-            painter = painterResource(id = R.drawable.ic_onboarding_background),
-            contentDescription = "",
-            Modifier
+        CustomImage(
+            drawableResource = R.drawable.ic_onboarding_background,
+            modifier = Modifier
                 .weight(0.6f)
                 .fillMaxWidth(),
             contentScale = ContentScale.FillBounds
@@ -142,7 +130,7 @@ fun OnBoarding(
             }
     ) {
         Column(Modifier.weight(0.4f)) {
-            CustomStoryProgressBar(
+            StoryProgressBar(
                 steps,
                 mutableCurrentStep.value,
                 isPressed.value,
@@ -179,9 +167,8 @@ fun OnBoarding(
                 .fillMaxSize()
                 .weight(0.6f)
         ) {
-            Image(
-                painterResource(icon.value),
-                contentDescription = "",
+            CustomImage(
+                drawableResource = icon.value,
                 modifier = Modifier
                     .wrapContentSize()
                     .align(Alignment.CenterHorizontally)
@@ -195,7 +182,10 @@ fun OnBoarding(
                 buttonType = CustomButtonType.PrimaryTertiary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
-                    navigateToRegister()
+                    viewModel.popAndNavigateTo(
+                        route = Screen.LoginScreen.route,
+                        popTo = Screen.OnBoardingScreen.route
+                    )
                 }
             )
             Row(
@@ -227,50 +217,14 @@ fun OnBoarding(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        navigateToLogin()
+                        viewModel.popAndNavigateTo(
+                            route = Screen.LoginScreen.route,
+                            popTo = Screen.OnBoardingScreen.route
+                        )
+
                     }
                 )
             }
         }
     }
 }
-
-fun getStepContent(step: Int): List<Int> = when (step) {
-    1 -> {
-        listOf(
-            R.string.onboarding_step_one_title,
-            R.string.onboarding_step_one_sub_title,
-            R.drawable.ic_onboarding_step_one
-        )
-    }
-    2 -> {
-        listOf(
-            R.string.onboarding_step_two_title,
-            R.string.onboarding_step_two_sub_title,
-            R.drawable.ic_onboarding_step_two
-        )
-    }
-    else -> {
-        listOf(
-            R.string.onboarding_step_three_title,
-            R.string.onboarding_step_three_sub_title,
-            R.drawable.ic_onboarding_step_three
-        )
-    }
-}
-
-@Composable
-@Preview
-fun OnBoardingPreview() {
-    Column(Modifier.fillMaxSize()) {
-        OnBoarding(
-            steps = 3,
-            navigateToRegister = {},
-            navigateToLogin = {}
-        )
-    }
-}
-
-const val STEP_TITLE = 0
-const val STEP_SUBTITLE = 1
-const val STEP_ICON = 2

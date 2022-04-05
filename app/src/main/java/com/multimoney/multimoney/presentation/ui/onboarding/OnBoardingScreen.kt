@@ -31,9 +31,10 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.theme.Complementary500
+import com.multimoney.multimoney.presentation.theme.Complementary3500
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Primary600
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_ICON
@@ -53,15 +54,11 @@ fun OnBoardingScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
-    OnBoarding(
-        steps = 3,
-        viewModel
-    )
+    OnBoarding(viewModel)
 }
 
 @Composable
 fun OnBoarding(
-    steps: Int,
     viewModel: OnBoardingViewModel
 ) {
     val isPressed = remember { mutableStateOf(false) }
@@ -70,7 +67,7 @@ fun OnBoarding(
     val subtitle = remember { mutableStateOf(R.string.onboarding_step_one_sub_title) }
     val icon = remember { mutableStateOf(R.drawable.ic_onboarding_step_one) }
     val goToNextScreen = {
-        if (mutableCurrentStep.value <= steps) {
+        if (mutableCurrentStep.value <= OnBoardingViewModel.MAX_STEPS) {
             mutableCurrentStep.value++
             val newValues = viewModel.getStepContent(mutableCurrentStep.value)
             title.value = newValues[STEP_TITLE]
@@ -131,12 +128,12 @@ fun OnBoarding(
     ) {
         Column(Modifier.weight(0.4f)) {
             StoryProgressBar(
-                steps,
+                OnBoardingViewModel.MAX_STEPS,
                 mutableCurrentStep.value,
                 isPressed.value,
                 goToNextScreen,
                 Color.White.copy(alpha = 0.4f),
-                Complementary500,
+                Complementary3500,
                 Modifier
                     .wrapContentHeight()
                     .padding(top = 12.dp)

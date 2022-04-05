@@ -56,7 +56,7 @@ fun StoryProgressBar(
                                 else -> it
                             }
                         },
-                ) {}
+                )
             }
             if (index != steps) {
                 Spacer(modifier = Modifier.width(4.dp))

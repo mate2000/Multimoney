@@ -15,4 +15,5 @@ sealed class Screen(val route: String) {
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen")
+    object OnBoardingScreen: Screen("onboarding_screen")
 }

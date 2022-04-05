@@ -31,6 +31,7 @@ class OnBoardingViewModel @Inject constructor() : BaseViewModel() {
     }
 
     companion object {
+        const val MAX_STEPS = 3
         const val STEP_ONE = 1
         const val STEP_TWO = 2
         const val STEP_TITLE = 0

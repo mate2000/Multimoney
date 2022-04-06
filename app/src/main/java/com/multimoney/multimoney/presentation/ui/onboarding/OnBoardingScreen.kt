@@ -56,13 +56,13 @@ fun OnBoardingScreen(
         steps = 3,
         navigateToRegister = {
             viewModel.popAndNavigateTo(
-                route = Screen.LoginScreen.route,
+                route = Screen.SignUpScreen.route,
                 popTo = Screen.OnBoardingScreen.route
             )
         },
         navigateToLogin = {
             viewModel.popAndNavigateTo(
-                route = Screen.LoginScreen.route,
+                route = Screen.SignInScreen.route,
                 popTo = Screen.OnBoardingScreen.route
             )
         }

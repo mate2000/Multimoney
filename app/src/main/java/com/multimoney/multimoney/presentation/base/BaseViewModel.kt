@@ -62,7 +62,7 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
     /**
      * Use this function to trigger one time events defined in NavigationEvent Class
      **/
-    fun sendNavigationEvent(event: NavEvent) {
+    private fun sendNavigationEvent(event: NavEvent) {
         viewModelScope.launch {
             _navigationEvent.send(event)
         }
@@ -84,14 +84,14 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
     fun executeNavigation(
         onNavigate: (NavEvent.Navigate) -> Unit = {},
         onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-        popBackStack: () -> Unit = {}
+        onPopBackStack: () -> Unit = {}
     ) {
         viewModelScope.launch {
             navigationEvent.collect { event ->
                 when (event) {
                     is NavEvent.Navigate -> onNavigate(event)
                     is NavEvent.PopAndNavigate -> onPopAndNavigate(event)
-                    is NavEvent.PopBackStack -> popBackStack()
+                    is NavEvent.PopBackStack -> onPopBackStack()
                     else -> Unit
                 }
             }

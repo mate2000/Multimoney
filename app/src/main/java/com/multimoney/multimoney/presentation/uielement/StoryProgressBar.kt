@@ -6,15 +6,18 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CustomStoryProgressBar(
+fun StoryProgressBar(
     steps: Int,
     currentStep: Int,
     paused: Boolean,
@@ -32,10 +35,13 @@ fun CustomStoryProgressBar(
     modifier: Modifier
 ) {
     val percent = remember { Animatable(0f) }
+    var previousStep by remember { mutableStateOf(0) }
     LaunchedEffect(paused, currentStep) {
-        if (paused) percent.stop()
-        else {
-            if (!paused) {
+        if (paused) {
+            percent.stop()
+        } else {
+            if (!paused && currentStep != previousStep) {
+                previousStep = currentStep
                 percent.snapTo(0f)
             }
             percent.animateTo(
@@ -45,7 +51,6 @@ fun CustomStoryProgressBar(
                     easing = LinearEasing
                 )
             )
-            percent.snapTo(0f)
             onFinished()
         }
     }
@@ -62,13 +67,16 @@ fun CustomStoryProgressBar(
                     modifier = Modifier
                         .background(progressColor)
                         .fillMaxHeight().let {
-                            when (index) {
-                                currentStep -> it.fillMaxWidth(percent.value)
-                                in 0..currentStep -> it.fillMaxWidth(1f)
-                                else -> it
+                            when {
+                                index == currentStep && previousStep == currentStep ->
+                                    it.fillMaxWidth(percent.value)
+                                index < currentStep ->
+                                    it.fillMaxWidth(1f)
+                                else ->
+                                    it.fillMaxWidth(0f)
                             }
                         },
-                ) {}
+                )
             }
             if (index != steps) {
                 Spacer(modifier = Modifier.width(4.dp))

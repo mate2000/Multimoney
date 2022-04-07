@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.login.signup
+package com.multimoney.multimoney.presentation.ui.login.signup.email
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -21,16 +22,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
 @Preview
 fun SignUpEmailScreen(
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: SignUpEmailViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
     // Properties
     val focusManager = LocalFocusManager.current
+    LaunchedEffect(true) {
+        sharedViewModel.isContinueEnabled = viewModel.isFormValid()
+    }
 
     Column(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)) {
         Text(
@@ -52,9 +58,8 @@ fun SignUpEmailScreen(
             onValueChange = {
                 viewModel.apply {
                     userEmail = it
-                    isFormStepValid()
+                    sharedViewModel.isContinueEnabled = isFormValid()
                 }
-
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,

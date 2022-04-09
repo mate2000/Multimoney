@@ -79,10 +79,10 @@ fun SignInScreen(
                         style = Typography.h5.toSpanStyle()
                             .copy(fontWeight = FontWeight.SemiBold)
                     ) {
-                        append(stringResource(id = R.string.sign_in_welcome_name, it))
+                        append(stringResource(id = R.string.sign_in_title_name, it))
                     }
                     withStyle(style = Typography.subtitle1.toSpanStyle()) {
-                        append(stringResource(id = R.string.sign_in_welcome_no_name))
+                        append(stringResource(id = R.string.sign_in_title_no_name))
                     }
                 }
             } ?: run {
@@ -91,7 +91,7 @@ fun SignInScreen(
                         style = Typography.h5.toSpanStyle()
                             .copy(fontWeight = FontWeight.SemiBold)
                     ) {
-                        append(stringResource(id = R.string.sign_in_welcome))
+                        append(stringResource(id = R.string.sign_in_title))
                     }
 
                 }
@@ -162,7 +162,7 @@ fun SignInScreen(
                 .padding(top = 4.dp),
             style = Typography.body2.copy(
                 textDecoration = TextDecoration.Underline,
-                color = MultimoneyTheme.colors.link
+                color = MultimoneyTheme.colors.textLink
             ),
             onClick = {}
         )
@@ -187,7 +187,7 @@ fun SignInScreen(
                 .padding(top = 24.dp),
             style = Typography.body2.copy(
                 textDecoration = TextDecoration.Underline,
-                color = MultimoneyTheme.colors.link
+                color = MultimoneyTheme.colors.textLink
             ),
             onClick = {
                 viewModel.navigateTo(route = Screen.SignUpScreen.route)

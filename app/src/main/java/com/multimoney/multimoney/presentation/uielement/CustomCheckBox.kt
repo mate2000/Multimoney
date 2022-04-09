@@ -1,8 +1,10 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Text
@@ -37,8 +39,10 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 fun CustomCheckBox(
     modifier: Modifier = Modifier,
     text: String? = null,
+    isTextStart: Boolean = false,
     checked: Boolean = false,
     enabled: Boolean = true,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     onCheckedChange: (newValue: Boolean) -> Unit = {}
 ) {
 
@@ -70,7 +74,20 @@ fun CustomCheckBox(
         disabledIndeterminateColor = Primary500
     }
 
-    Row(modifier = modifier) {
+    Row(modifier = modifier, horizontalArrangement = horizontalArrangement) {
+        if (isTextStart) {
+            // Add text next to checkbox
+            text?.let {
+                Text(
+                    text = text,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 11.dp),
+                    style = Typography.subtitle2,
+                    color = textColor
+                )
+            }
+        }
         Checkbox(
             checked = checked,
             enabled = enabled,
@@ -81,18 +98,23 @@ fun CustomCheckBox(
                 checkmarkColor = checkmarkColor,
                 disabledColor = disabledColor,
                 disabledIndeterminateColor = disabledIndeterminateColor
-            )
+            ),
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(0.dp)
         )
-        // Add text next to checkbox
-        text?.let {
-            Text(
-                text = text,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 11.dp),
-                style = Typography.subtitle2,
-                color = textColor
-            )
+        if (!isTextStart) {
+            // Add text next to checkbox
+            text?.let {
+                Text(
+                    text = text,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(start = 11.dp),
+                    style = Typography.subtitle2,
+                    color = textColor
+                )
+            }
         }
     }
 }

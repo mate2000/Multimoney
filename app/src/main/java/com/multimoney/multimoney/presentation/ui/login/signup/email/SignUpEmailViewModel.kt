@@ -16,19 +16,19 @@ class SignUpEmailViewModel @Inject constructor() : BaseViewModel() {
     var userEmail by mutableStateOf("")
     var userEmailError by mutableStateOf(Pair(false, R.string.sign_up_email_required))
 
-    fun isFormValid(): Boolean {
-        userEmailError = Pair(false, R.string.error_empty)
-        return when {
-            userEmail.isBlank() -> {
-                false
-            }
-            isEmailValid(userEmail).not() -> {
-                userEmailError = Pair(true, R.string.sign_up_email_not_valid)
-                false
-            }
-            else -> {
-                true
-            }
+    fun isFormValid() = when {
+        userEmail.isBlank() -> false
+        isEmailValid(userEmail).not() -> false
+        else -> true
+    }
+
+    fun isUserEmailValid() {
+        if (isEmailValid(userEmail).not()) {
+            userEmailError = Pair(true, R.string.sign_up_email_not_valid)
         }
+    }
+
+    fun clearUserEmailError() {
+        userEmailError = Pair(false, R.string.error_empty)
     }
 }

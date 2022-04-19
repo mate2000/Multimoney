@@ -58,9 +58,11 @@ fun SignUpEmailScreen(
             onValueChange = {
                 viewModel.apply {
                     userEmail = it
+                    clearUserEmailError()
                     sharedViewModel.isContinueEnabled = isFormValid()
                 }
             },
+            onDebounceValidation = { viewModel.isUserEmailValid() },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next

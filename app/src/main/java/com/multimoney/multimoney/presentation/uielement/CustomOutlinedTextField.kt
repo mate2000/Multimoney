@@ -19,6 +19,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +47,12 @@ import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 /**
@@ -68,7 +75,10 @@ import kotlinx.coroutines.launch
  * @param onValueChange: Function to handle input changes.
  * **/
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class, kotlinx.coroutines.FlowPreview::class,
+    kotlinx.coroutines.ExperimentalCoroutinesApi::class
+)
 @Composable
 fun CustomOutlinedTextField(
     modifier: Modifier = Modifier,
@@ -85,12 +95,25 @@ fun CustomOutlinedTextField(
     errorMessage: String? = null,
     enabled: Boolean = true,
     isPassword: Boolean = false,
-    onValueChange: (newText: String) -> Unit = {}
+    onValueChange: (newText: String) -> Unit = {},
+    onDebounceValidation: (newText: String) -> Unit = {}
 ) {
     var emptyError by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
+
+    val textDebounce = remember { MutableStateFlow("") }
+    val textDebounceFlow: Flow<String> = remember {
+        textDebounce.debounce(500)
+            .distinctUntilChanged()
+            .flatMapLatest {
+                if (it.isNotEmpty()) {
+                    onDebounceValidation(it)
+                }
+                flowOf(it)
+            }
+    }
 
     // Set colors depending on system theme
     val labelColor: Color
@@ -146,7 +169,6 @@ fun CustomOutlinedTextField(
                 style = Typography.body2
             )
         }
-
         // Display textField
         OutlinedTextField(
             modifier = Modifier
@@ -204,6 +226,7 @@ fun CustomOutlinedTextField(
             keyboardActions = keyboardActions,
             onValueChange = {
                 onValueChange(it)
+                textDebounce.value = it
                 if (isRequired) emptyError = it.isEmpty()
             },
             placeholder = {
@@ -225,6 +248,9 @@ fun CustomOutlinedTextField(
             visualTransformation = if (passwordVisible || !isPassword) VisualTransformation.None else PasswordVisualTransformation(),
             textStyle = Typography.body2
         )
+
+        // This is required to execute the debounce
+        val textDebounceFlowValue by textDebounceFlow.collectAsState("")
 
         // Display error message
         if (isError && errorMessage.isNullOrBlank().not() || emptyError) {

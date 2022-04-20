@@ -5,21 +5,35 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.togitech.ccp.data.utils.checkPhoneNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
 
+    var countryCode = ""
+
     // Fields
+    var phoneCode by mutableStateOf("")
+    var phoneNumber by mutableStateOf("")
+    var phoneNumberError by mutableStateOf(Pair(false, R.string.error_empty))
     var whatsapp by mutableStateOf(true)
     var call by mutableStateOf(true)
 
-    // TODO: Remove email fields
-    var userEmail by mutableStateOf("")
-    var userEmailError by mutableStateOf(Pair(false, R.string.sign_up_email_required))
+    fun isFormValid() = checkPhoneNumber(
+        phone = phoneNumber,
+        fullPhoneNumber = "$phoneCode${phoneNumber}",
+        countryCode = countryCode
+    )
 
-    fun isFormValid(): Boolean {
-        return false
+    fun isPhoneValid() {
+        if (isFormValid().not()) {
+            phoneNumberError = Pair(true, R.string.sign_up_phone_not_valid)
+        }
+    }
+
+    fun clearPhoneError() {
+        phoneNumberError = Pair(false, R.string.error_empty)
     }
 }

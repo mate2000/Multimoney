@@ -7,18 +7,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,10 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.PhoneTextField
+import com.togitech.ccp.data.utils.getDefaultLangCode
+import com.togitech.ccp.data.utils.getDefaultPhoneCode
+import com.togitech.ccp.data.utils.getLibCountries
 
 @Composable
 @Preview
@@ -40,8 +44,16 @@ fun SignUpPhoneScreen(
 
     // Properties
     val focusManager = LocalFocusManager.current
+    val getDefaultCountryCode = getDefaultLangCode()
+    val getDefaultPhoneCode = getDefaultPhoneCode()
+    var defaultCountryCode by rememberSaveable { mutableStateOf(getDefaultCountryCode) }
+
     LaunchedEffect(true) {
-        sharedViewModel.isContinueEnabled = viewModel.isFormValid()
+        viewModel.apply {
+            sharedViewModel.isContinueEnabled = isFormValid()
+            phoneCode = getDefaultPhoneCode
+            countryCode = getDefaultCountryCode
+        }
     }
 
     Column(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)) {
@@ -67,29 +79,37 @@ fun SignUpPhoneScreen(
         }
 
         // Fields
-        CustomOutlinedTextField(
-            value = viewModel.userEmail,
+        PhoneTextField(
+            value = viewModel.phoneNumber,
             onValueChange = {
                 viewModel.apply {
-                    userEmail = it
+                    phoneNumber = it
+                    clearPhoneError()
                     sharedViewModel.isContinueEnabled = isFormValid()
                 }
             },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
+            onDebounceValidation = { viewModel.isPhoneValid() },
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.label_email),
-            leadingIcon = R.drawable.ic_envelope,
+            labelText = stringResource(id = R.string.sign_up_phone_label_phone),
             modifier = Modifier
                 .padding(top = 24.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_email_required),
-            isError = viewModel.userEmailError.first,
-            errorMessage = stringResource(id = viewModel.userEmailError.second)
+            isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
+            isError = viewModel.phoneNumberError.first,
+            errorMessage = stringResource(id = viewModel.phoneNumberError.second),
+            defaultCountry = getLibCountries().single { it.countryCode == defaultCountryCode },
+            pickedCountry = {
+                defaultCountryCode = it.countryCode
+                viewModel.apply {
+                    phoneCode = it.countryPhoneCode
+                    countryCode = it.countryCode
+                    phoneNumber = ""
+                    clearPhoneError()
+                    sharedViewModel.isContinueEnabled = isFormValid()
+                }
+            }
         )
         Text(
             text = stringResource(id = R.string.sign_up_phone_contact_by),

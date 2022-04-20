@@ -44,12 +44,16 @@
     <!-- Sign Up Phone -->
     <string name="sign_up_phone_title">¿Cuál es tu número de \nteléfono personal?</string>
     <string name="sign_up_phone_information">Lo registramos por motivos de seguridad</string>
-    <string name="sign_up_phone_label_phone">Correo electrónico requerido</string>
+    <string name="sign_up_phone_label_phone">Teléfono</string>
     <string name="sign_up_phone_required">Número de teléfono requerido</string>
     <string name="sign_up_phone_not_valid">Número de teléfono incorrecto</string>
     <string name="sign_up_phone_contact_by">Contactar por:</string>
     <string name="sign_up_phone_contact_by_email">Correo electrónico</string>
     <string name="sign_up_phone_contact_by_whatsapp">WhatsApp</string>
     <string name="sign_up_phone_contact_by_call">WhatsApp</string>
+
+    <!-- Phone Country Dialog-->
+    <string name="phone_country_dialog_title">Seleccionar país</string>
+    <string name="phone_country_dialog_search">Buscar</string>
 
 </resources>

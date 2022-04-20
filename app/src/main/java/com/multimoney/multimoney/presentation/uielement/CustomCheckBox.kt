@@ -19,7 +19,6 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.Primary300
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
@@ -66,11 +65,7 @@ fun CustomCheckBox(
         checkedColor = Primary500
         uncheckedColor = GrayScale500
         checkmarkColor = DefaultWhite
-        disabledColor = if (checked) {
-            Primary300
-        } else {
-            GrayScale400
-        }
+        disabledColor = GrayScale400
         disabledIndeterminateColor = Primary500
     }
 

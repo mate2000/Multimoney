@@ -53,7 +53,10 @@ data class MultimoneyColors(
     val background: Color,
     val backgroundSplash: Color,
     val text: Color,
-    val link: Color,
+    val textLink: Color,
+    val textInformation: Color,
+    val textSubhead: Color,
+    val divider: Color,
     val circularProgressIndicator: Color
 )
 
@@ -63,7 +66,10 @@ val DarkColorPalette = MultimoneyColors(
     background = DefaultBlack,
     backgroundSplash = Primary200,
     text = DefaultWhite,
-    link = Primary500,
+    textLink = Primary500,
+    textInformation = Primary500,
+    textSubhead = GrayScale600,
+    divider = GrayScale400,
     circularProgressIndicator = DefaultWhite
 )
 
@@ -73,7 +79,10 @@ val LightColorPalette = MultimoneyColors(
     background = DefaultWhite,
     backgroundSplash = Primary200,
     text = GrayScale800,
-    link = Primary500,
+    textLink = Primary500,
+    textInformation = Primary500,
+    textSubhead = GrayScale600,
+    divider = GrayScale400,
     circularProgressIndicator = Primary500
 )
 

@@ -29,11 +29,7 @@ class SignInViewModel @Inject constructor() : BaseViewModel() {
 
     fun signIn() {
         isLoading = true
-        userEmailError = Pair(false, R.string.error_empty)
-        userPasswordError = Pair(false, R.string.sign_in_validation)
-
-        Amplify.Auth.confirmSignUp("", "", {}, {})
-
+        clearUserEmailError()
         Amplify.Auth.signIn(userEmail, userPassword, {
             if (it.isSignInComplete) {
                 Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
@@ -57,25 +53,33 @@ class SignInViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun isFormValid() {
-        userEmailError = Pair(false, R.string.error_empty)
-        userPasswordError = Pair(false, R.string.error_empty)
-        when {
-            userEmail.isBlank() -> {
-                isSignInEnabled = false
-            }
-            isEmailValid(userEmail).not() -> {
-                userEmailError = Pair(true, R.string.sign_up_email_not_valid)
-                isSignInEnabled = false
-            }
-            userPassword.isBlank() -> {
-                isSignInEnabled = false
-            }
-            else -> {
-                isSignInEnabled = true
-            }
+        isSignInEnabled = when {
+            userEmail.isBlank() -> false
+            isEmailValid(userEmail).not() -> false
+            userPassword.isBlank() -> false
+            else -> true
         }
     }
 
+    fun isUserEmailValid() {
+        if (isEmailValid(userEmail).not()) {
+            userEmailError = Pair(true, R.string.sign_in_email_not_valid)
+        }
+    }
+
+    fun clearUserEmailError() {
+        userEmailError = Pair(false, R.string.error_empty)
+        if (userPasswordError.second == R.string.sign_in_validation) {
+            userPasswordError = Pair(false, R.string.error_empty)
+        }
+    }
+
+    fun clearUserPasswordError() {
+        if (userPasswordError.second == R.string.sign_in_validation) {
+            userEmailError = Pair(false, R.string.error_empty)
+            userPasswordError = Pair(false, R.string.error_empty)
+        }
+    }
 
     private fun cognitoError() {
         userEmailError = Pair(true, R.string.error_empty)

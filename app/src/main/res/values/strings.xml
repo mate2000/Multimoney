@@ -23,20 +23,37 @@
     <string name="onboarding_account_already_created">Ya tengo cuenta</string>
 
     <!-- Sign In -->
-    <string name="sign_in_welcome">¡Que bueno \ntenerte por acá!</string>
-    <string name="sign_in_welcome_name">Hola %s, \n</string>
-    <string name="sign_in_welcome_no_name">¡Que bueno tenerte por acá!</string>
+    <string name="sign_in_title">¡Que bueno \ntenerte por acá!</string>
+    <string name="sign_in_title_name">Hola %s, \n</string>
+    <string name="sign_in_title_no_name">¡Que bueno tenerte por acá!</string>
     <string name="sign_in_label_password">Contraseña</string>
     <string name="sign_in_forgot_password">Olvidé mi contraseña</string>
     <string name="sign_in_activate_fingerprint">Activar huella digital</string>
     <string name="sign_in_create_account">No tengo cuenta</string>
-    <string name="sign_in_required_email">El correo electrónico es requerido</string>
-    <string name="sign_in_required_password">La contraseña es requerido</string>
+    <string name="sign_in_email_required">El correo electrónico es requerido</string>
+    <string name="sign_in_email_not_valid">El correo ingresado es incorrecto</string>
+    <string name="sign_in_password_required">La contraseña es requerida</string>
     <string name="sign_in_validation">El correo y/o contraseña es incorrecta</string>
 
-    <!-- Sign Up -->
-    <string name="sign_up_email_welcome">¡Nos alegra \ntenerte aquí 👋!</string>
+    <!-- Sign Up Email -->
+    <string name="sign_up_email_title">¡Nos alegra \ntenerte aquí 👋!</string>
     <string name="sign_up_email_required">Correo electrónico requerido</string>
+    <string name="sign_up_email_placeholder">name@email.com</string>
     <string name="sign_up_email_not_valid">Correo electrónico incorrecto</string>
+
+    <!-- Sign Up Phone -->
+    <string name="sign_up_phone_title">¿Cuál es tu número de \nteléfono personal?</string>
+    <string name="sign_up_phone_information">Lo registramos por motivos de seguridad</string>
+    <string name="sign_up_phone_label_phone">Celular</string>
+    <string name="sign_up_phone_required">Número de celular requerido</string>
+    <string name="sign_up_phone_not_valid">Número de celular incorrecto</string>
+    <string name="sign_up_phone_contact_by">Contactar por:</string>
+    <string name="sign_up_phone_contact_by_email">Correo electrónico</string>
+    <string name="sign_up_phone_contact_by_whatsapp">WhatsApp</string>
+    <string name="sign_up_phone_contact_by_call">Llamada</string>
+
+    <!-- Phone Country Dialog-->
+    <string name="phone_country_dialog_title">Seleccionar país</string>
+    <string name="phone_country_dialog_search">Buscar</string>
 
 </resources>

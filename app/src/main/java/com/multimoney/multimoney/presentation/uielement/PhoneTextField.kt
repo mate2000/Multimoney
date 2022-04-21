@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
@@ -32,8 +31,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
@@ -43,10 +42,12 @@ import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.Primary400
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.util.PhoneNumberTransformation
+import com.togitech.ccp.data.CountryData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -56,23 +57,27 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 /**
- * CustomOutlinedTextField: This OutlinedTextField is used to match design system
+ * PhoneTextField: This PhoneTextField is used to handle phone
  *
  * Parameters:
  * @param modifier: Apply style.
  * @param labelText: Text above the textField to describe its function.
  * @param value: Variable to store the input value.
- * @param leadingIcon: Landing icon to display, by default there is no icon.
- * @param trailingIcon: Trailing icon to display, by default there is no icon.
- * @param placeHolder: Hint for the textField.
- * @param keyboardOptions: Settings for textField input.
+ * @param defaultCountry: Default country to start phone text field.
  * @param keyboardActions: Actions to take when ime button is click.
  * @param isRequired: Field is required.
  * @param isRequiredMessage: Message to be displayed for required text field
  * @param isError: Display error.
  * @param errorMessage: Error message to be displayed.
  * @param enabled: Enable or Disable field.
- * @param isPassword: Enable password behavior.
+ * @param pickedCountry: Function to handle picked country selected.
+ * @param dialogAppBarColor: Change select country dialog AppBarColor.
+ * @param dialogAppBarTextColor: Change select country dialog AppBarTextColor.
+ * @param dialogFocusedBorderColorSearch: Change select country dialog FocusedBorderColorSearch.
+ * @param dialogUnFocusedBorderColorSearch: Change select country dialog UnFocusedBorderColorSearch.
+ * @param dialogCursorColorSearch: Change select country dialog CursorColorSearch.
+ * @param showCountryCode: Show country code.
+ * @param showCountryFlag: Show country flag.
  * @param onValueChange: Function to handle input changes.
  * @param onDebounceValidation: Function to handle validations with a debounce of 0.5 seg.
  * **/
@@ -82,26 +87,34 @@ import kotlinx.coroutines.launch
     kotlinx.coroutines.ExperimentalCoroutinesApi::class
 )
 @Composable
-fun CustomOutlinedTextField(
+fun PhoneTextField(
     modifier: Modifier = Modifier,
     labelText: String? = null,
     value: String? = null,
-    leadingIcon: Int? = null,
-    trailingIcon: Int? = null,
-    placeHolder: String = "",
-    keyboardOptions: KeyboardOptions,
+    defaultCountry: CountryData,
     keyboardActions: KeyboardActions,
     isRequired: Boolean = true,
     isRequiredMessage: String? = null,
     isError: Boolean = false,
     errorMessage: String? = null,
     enabled: Boolean = true,
-    isPassword: Boolean = false,
+    pickedCountry: (CountryData) -> Unit,
+    dialogAppBarColor: Color = MultimoneyTheme.colors.primary,
+    dialogAppBarTextColor: Color = Color.White,
+    dialogFocusedBorderColorSearch: Color = Color.Transparent,
+    dialogUnFocusedBorderColorSearch: Color = Color.Transparent,
+    dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary,
+    showCountryCode: Boolean = true,
+    showCountryFlag: Boolean = true,
     onValueChange: (newText: String) -> Unit = {},
     onDebounceValidation: (newText: String) -> Unit = {}
 ) {
+    var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value ?: "")) }
+    val textFieldValue = textFieldValueState.copy(text = value ?: "")
+    val phoneNumberTransformation =
+        PhoneNumberTransformation(defaultCountry.countryCode.uppercase())
+
     var emptyError by rememberSaveable { mutableStateOf(false) }
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
 
@@ -120,7 +133,6 @@ fun CustomOutlinedTextField(
     // Set colors depending on system theme
     val labelColor: Color
     var backgroundColor: Color
-    val iconTintColor: Color
     val textColor: Color
 
     if (isSystemInDarkTheme()) {
@@ -128,16 +140,13 @@ fun CustomOutlinedTextField(
         backgroundColor = GrayScale600
         when {
             isError -> {
-                iconTintColor = Primary400
                 textColor = DefaultWhite
             }
             enabled -> {
-                iconTintColor = Primary400
                 textColor = DefaultWhite
             }
             else -> {
                 backgroundColor = GrayScale500
-                iconTintColor = GrayScale400
                 textColor = GrayScale400
             }
         }
@@ -146,16 +155,13 @@ fun CustomOutlinedTextField(
         backgroundColor = DefaultWhite
         when {
             isError -> {
-                iconTintColor = Primary400
                 textColor = GrayScale800
             }
             enabled -> {
-                iconTintColor = Primary400
                 textColor = GrayScale800
             }
             else -> {
                 backgroundColor = GrayScale300
-                iconTintColor = GrayScale500
                 textColor = GrayScale500
             }
         }
@@ -171,6 +177,7 @@ fun CustomOutlinedTextField(
                 style = Typography.body2
             )
         }
+
         // Display textField
         OutlinedTextField(
             modifier = Modifier
@@ -186,58 +193,37 @@ fun CustomOutlinedTextField(
                         }
                     }
                 },
-            value = value ?: "",
+            value = textFieldValue,
             shape = RoundedCornerShape(25),
-            leadingIcon = leadingIcon?.let {
-                {
-                    Icon(
-                        painter = painterResource(id = it),
-                        contentDescription = "",
-                        tint = iconTintColor
-                    )
-                }
-            },
-            trailingIcon = if (isPassword) {
-                {
-                    val image = if (passwordVisible) {
-                        painterResource(id = R.drawable.ic_view_off)
-                    } else {
-                        painterResource(id = R.drawable.ic_view)
-                    }
-
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(
-                            painter = image,
-                            contentDescription = "",
-                            tint = iconTintColor
-                        )
-                    }
-                }
-            } else {
-                trailingIcon?.let {
-                    {
-                        Icon(
-                            painter = painterResource(id = it),
-                            contentDescription = "",
-                            tint = iconTintColor
-                        )
-                    }
-                }
-            },
-            keyboardOptions = keyboardOptions,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.NumberPassword,
+                autoCorrect = true,
+            ),
             keyboardActions = keyboardActions,
             onValueChange = {
-                onValueChange(it)
-                textDebounce.value = it
-                if (isRequired) emptyError = it.isEmpty()
+                if (it.text.length <= phoneNumberTransformation.mobileMaxLength) {
+                    textFieldValueState = it
+                    onValueChange(it.text)
+                    textDebounce.value = it.text
+                    if (isRequired) emptyError = it.text.isEmpty()
+                }
             },
-            placeholder = {
-                Text(
-                    text = placeHolder,
-                    color = GrayScale500,
-                    style = Typography.body2
+            placeholder = { Text(text = phoneNumberTransformation.mobileTextExample.text) },
+            visualTransformation = phoneNumberTransformation,
+            leadingIcon = {
+                PhoneCountryDialog(
+                    pickedCountry = pickedCountry,
+                    defaultSelectedCountry = defaultCountry,
+                    dialogAppBarColor = dialogAppBarColor,
+                    dialogAppBarTextColor = dialogAppBarTextColor,
+                    showCountryCode = showCountryCode,
+                    showCountryFlag = showCountryFlag,
+                    dialogFocusedBorderColorSearch = dialogFocusedBorderColorSearch,
+                    dialogUnFocusedBorderColorSearch = dialogUnFocusedBorderColorSearch,
+                    dialogCursorColorSearch = dialogCursorColorSearch,
                 )
             },
+            singleLine = true,
             isError = isError || emptyError,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = backgroundColor,
@@ -246,8 +232,6 @@ fun CustomOutlinedTextField(
                 errorIndicatorColor = SemanticNegative500,
                 textColor = textColor
             ),
-            enabled = enabled,
-            visualTransformation = if (passwordVisible || !isPassword) VisualTransformation.None else PasswordVisualTransformation(),
             textStyle = Typography.body2
         )
 

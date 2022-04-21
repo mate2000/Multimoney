@@ -38,14 +38,14 @@ fun SignUpEmailScreen(
         sharedViewModel.isContinueEnabled = viewModel.isFormValid()
     }
 
-    Column(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)) {
+    Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
         Text(
             text = buildAnnotatedString {
                 withStyle(
                     style = Typography.h4.toSpanStyle()
                         .copy(fontWeight = FontWeight.SemiBold)
                 ) {
-                    append(stringResource(id = R.string.sign_up_email_welcome))
+                    append(stringResource(id = R.string.sign_up_email_title))
                 }
             },
             textAlign = TextAlign.Start,
@@ -58,9 +58,11 @@ fun SignUpEmailScreen(
             onValueChange = {
                 viewModel.apply {
                     userEmail = it
+                    clearUserEmailError()
                     sharedViewModel.isContinueEnabled = isFormValid()
                 }
             },
+            onDebounceValidation = { viewModel.isUserEmailValid() },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -69,6 +71,7 @@ fun SignUpEmailScreen(
                 focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.label_email),
+            placeHolder = stringResource(id = R.string.sign_up_email_placeholder),
             leadingIcon = R.drawable.ic_envelope,
             modifier = Modifier
                 .padding(top = 24.dp),

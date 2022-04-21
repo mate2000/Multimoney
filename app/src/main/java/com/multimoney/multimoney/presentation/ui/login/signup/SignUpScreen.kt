@@ -23,7 +23,9 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_ONE
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_THREE
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -46,8 +48,6 @@ fun SignUpScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
             BackCloseNavBar(
@@ -63,20 +63,25 @@ fun SignUpScreen(
             StepProgressBar(
                 steps = SIGN_UP_TOTAL_STEPS,
                 currentStep = viewModel.currentStep,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
             )
-            GetStepContent(step = viewModel.currentStep, viewModel = viewModel)
         }
 
-        CustomButton(
-            onClick = { viewModel.nextStep() },
-            text = stringResource(id = R.string.button_continue),
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(align = Alignment.Bottom)
-                .padding(top = 16.dp, bottom = 32.dp, start = 16.dp, end = 16.dp),
-            enable = viewModel.isContinueEnabled
-        )
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            GetStepContent(step = viewModel.currentStep, viewModel = viewModel)
+            CustomButton(
+                onClick = { viewModel.nextStep() },
+                text = stringResource(id = R.string.button_continue),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(align = Alignment.Bottom)
+                    .padding(top = 16.dp, bottom = 32.dp, start = 16.dp, end = 16.dp),
+                enable = viewModel.isContinueEnabled
+            )
+        }
     }
 
     LoadingIndicator(viewModel.isLoading)
@@ -93,6 +98,7 @@ fun GetStepContent(
 ) {
     when (step) {
         STEP_ONE -> SignUpEmailScreen(sharedViewModel = viewModel)
+        STEP_THREE -> SignUpPhoneScreen(sharedViewModel = viewModel)
         else -> SignUpEmailScreen(sharedViewModel = viewModel)
     }
 }

@@ -11,7 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor() : BaseViewModel() {
 
-    var currentStep by mutableStateOf(1)
+    var currentStep by mutableStateOf(STEP_ONE)
 
     // Interactions
     var isCloseVisible by mutableStateOf(false)

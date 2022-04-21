@@ -48,7 +48,6 @@ import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.util.PhoneNumberTransformation
 import com.togitech.ccp.data.CountryData
-import com.togitech.ccp.data.utils.getNumberHint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -202,14 +201,14 @@ fun PhoneTextField(
             ),
             keyboardActions = keyboardActions,
             onValueChange = {
-                if (it.text.length <= phoneNumberTransformation.maxLength) {
+                if (it.text.length <= phoneNumberTransformation.mobileMaxLength) {
                     textFieldValueState = it
                     onValueChange(it.text)
                     textDebounce.value = it.text
                     if (isRequired) emptyError = it.text.isEmpty()
                 }
             },
-            placeholder = { Text(text = stringResource(id = getNumberHint(defaultCountry.countryCode))) },
+            placeholder = { Text(text = phoneNumberTransformation.mobileTextExample.text) },
             visualTransformation = phoneNumberTransformation,
             leadingIcon = {
                 PhoneCountryDialog(

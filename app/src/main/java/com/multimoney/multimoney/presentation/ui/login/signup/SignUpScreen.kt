@@ -48,8 +48,6 @@ fun SignUpScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
             BackCloseNavBar(
@@ -65,20 +63,25 @@ fun SignUpScreen(
             StepProgressBar(
                 steps = SIGN_UP_TOTAL_STEPS,
                 currentStep = viewModel.currentStep,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
             )
-            GetStepContent(step = viewModel.currentStep, viewModel = viewModel)
         }
 
-        CustomButton(
-            onClick = { viewModel.nextStep() },
-            text = stringResource(id = R.string.button_continue),
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(align = Alignment.Bottom)
-                .padding(top = 16.dp, bottom = 32.dp, start = 16.dp, end = 16.dp),
-            enable = viewModel.isContinueEnabled
-        )
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            GetStepContent(step = viewModel.currentStep, viewModel = viewModel)
+            CustomButton(
+                onClick = { viewModel.nextStep() },
+                text = stringResource(id = R.string.button_continue),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(align = Alignment.Bottom)
+                    .padding(top = 16.dp, bottom = 32.dp, start = 16.dp, end = 16.dp),
+                enable = viewModel.isContinueEnabled
+            )
+        }
     }
 
     LoadingIndicator(viewModel.isLoading)

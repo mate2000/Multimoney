@@ -38,7 +38,7 @@ fun SignUpEmailScreen(
         sharedViewModel.isContinueEnabled = viewModel.isFormValid()
     }
 
-    Column(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)) {
+    Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
         Text(
             text = buildAnnotatedString {
                 withStyle(

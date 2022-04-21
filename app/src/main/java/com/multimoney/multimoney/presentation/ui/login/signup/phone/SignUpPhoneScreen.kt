@@ -56,7 +56,7 @@ fun SignUpPhoneScreen(
         }
     }
 
-    Column(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp)) {
+    Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
         Text(
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             text = stringResource(id = R.string.sign_up_phone_title),
@@ -105,8 +105,9 @@ fun SignUpPhoneScreen(
                 viewModel.apply {
                     phoneCode = it.countryPhoneCode
                     countryCode = it.countryCode
-                    phoneNumber = ""
+
                     clearPhoneError()
+                    phoneNumber = ""
                     sharedViewModel.isContinueEnabled = isFormValid()
                 }
             }

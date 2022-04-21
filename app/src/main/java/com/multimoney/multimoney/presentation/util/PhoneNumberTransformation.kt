@@ -14,8 +14,21 @@ class PhoneNumberTransformation(countryCode: String = Locale.getDefault().countr
 
     private val phoneNumberFormatter =
         PhoneNumberUtil.getInstance().getAsYouTypeFormatter(countryCode)
-    var maxLength =
-        PhoneNumberUtil.getInstance().getExampleNumber(countryCode).nationalNumber.toString().length
+
+    var mobileMaxLength =
+        PhoneNumberUtil.getInstance().getExampleNumberForType(
+            countryCode,
+            PhoneNumberUtil.PhoneNumberType.MOBILE
+        ).nationalNumber.toString().length
+
+    var mobileTextExample = filter(
+        AnnotatedString(
+            PhoneNumberUtil.getInstance().getExampleNumberForType(
+                countryCode,
+                PhoneNumberUtil.PhoneNumberType.MOBILE
+            ).nationalNumber.toString()
+        )
+    )
 
     override fun filter(text: AnnotatedString): TransformedText {
         val transformation =

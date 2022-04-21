@@ -192,7 +192,19 @@ ext {
             jdk: "com.android.tools:desugar_jdk_libs:$desugar_version"
     ]
 
-    'com.android.tools:desugar_jdk_libs:1.1.5'
+    // Togisoft
+    togisoft_version = "1.1.2"
+
+    togisoft = [
+            country_code_picker: "com.github.togisoft:jetpack_compose_country_code_picker:$togisoft_version"
+    ]
+
+    // LibPhoneNumber
+    libphonenumber_version = "8.12.46"
+
+    libphonenumber = [
+            libphonenumber: "com.googlecode.libphonenumber:libphonenumber:$libphonenumber_version"
+    ]
 
     // Common Test
     junit_version = "4.13.2"

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.login
+package com.multimoney.multimoney.presentation.ui.login.signin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -42,9 +43,9 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 @Preview
-fun LoginScreen(
+fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: SignInViewModel = hiltViewModel()
 ) {
     // Navigation
     LaunchedEffect(true) {
@@ -78,10 +79,10 @@ fun LoginScreen(
                         style = Typography.h5.toSpanStyle()
                             .copy(fontWeight = FontWeight.SemiBold)
                     ) {
-                        append(stringResource(id = R.string.login_welcome_name, it))
+                        append(stringResource(id = R.string.sign_in_title_name, it))
                     }
                     withStyle(style = Typography.subtitle1.toSpanStyle()) {
-                        append(stringResource(id = R.string.login_welcome_no_name))
+                        append(stringResource(id = R.string.sign_in_title_no_name))
                     }
                 }
             } ?: run {
@@ -90,7 +91,7 @@ fun LoginScreen(
                         style = Typography.h5.toSpanStyle()
                             .copy(fontWeight = FontWeight.SemiBold)
                     ) {
-                        append(stringResource(id = R.string.login_welcome))
+                        append(stringResource(id = R.string.sign_in_title))
                     }
 
                 }
@@ -104,7 +105,14 @@ fun LoginScreen(
         // Fields
         CustomOutlinedTextField(
             value = viewModel.userEmail,
-            onValueChange = { viewModel.userEmail = it },
+            onValueChange = {
+                viewModel.apply {
+                    userEmail = it
+                    clearUserEmailError()
+                    isFormValid()
+                }
+            },
+            onDebounceValidation = { viewModel.isUserEmailValid() },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -112,17 +120,24 @@ fun LoginScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.login_label_email),
+            labelText = stringResource(id = R.string.label_email),
             leadingIcon = R.drawable.ic_envelope,
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.login_required_email),
-            isError = viewModel.userPasswordError.first
+            isRequiredMessage = stringResource(id = R.string.sign_in_email_required),
+            isError = viewModel.userEmailError.first,
+            errorMessage = stringResource(id = viewModel.userEmailError.second)
         )
         CustomOutlinedTextField(
             value = viewModel.userPassword,
-            onValueChange = { viewModel.userPassword = it },
+            onValueChange = {
+                viewModel.apply {
+                    viewModel.userPassword = it
+                    clearUserPasswordError()
+                    isFormValid()
+                }
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
@@ -130,12 +145,12 @@ fun LoginScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.login_label_password),
+            labelText = stringResource(id = R.string.sign_in_label_password),
             isPassword = true,
             modifier = Modifier
                 .padding(top = 16.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.login_required_password),
+            isRequiredMessage = stringResource(id = R.string.sign_in_password_required),
             isError = viewModel.userPasswordError.first,
             errorMessage = if (viewModel.userPasswordError.first) {
                 stringResource(id = viewModel.userPasswordError.second)
@@ -144,43 +159,41 @@ fun LoginScreen(
             }
         )
         ClickableText(
-            text = AnnotatedString(stringResource(id = R.string.login_forgot_password)),
+            text = AnnotatedString(stringResource(id = R.string.sign_in_forgot_password)),
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(top = 4.dp),
             style = Typography.body2.copy(
                 textDecoration = TextDecoration.Underline,
-                color = MultimoneyTheme.colors.link
+                color = MultimoneyTheme.colors.textLink
             ),
-            onClick = {
-                viewModel.signUp()
-            }
-
+            onClick = {}
         )
         CustomCheckBox(
             checked = viewModel.isFingerprintChecked,
             onCheckedChange = { viewModel.isFingerprintChecked = it },
-            text = stringResource(id = R.string.login_activate_fingerprint),
+            text = stringResource(id = R.string.sign_in_activate_fingerprint),
             modifier = Modifier.padding(top = 51.dp)
         )
         CustomButton(
-            onClick = { viewModel.logIn() },
-            text = stringResource(id = R.string.login),
+            onClick = { viewModel.signIn() },
+            text = stringResource(id = R.string.sign_in),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp)
+                .padding(top = 24.dp),
+            enable = viewModel.isSignInEnabled
         )
         ClickableText(
-            text = AnnotatedString(stringResource(id = R.string.login_create_account)),
+            text = AnnotatedString(stringResource(id = R.string.sign_in_create_account)),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 24.dp),
             style = Typography.body2.copy(
                 textDecoration = TextDecoration.Underline,
-                color = MultimoneyTheme.colors.link
+                color = MultimoneyTheme.colors.textLink
             ),
             onClick = {
-                viewModel.confirmCode()
+                viewModel.navigateTo(route = Screen.SignUpScreen.route)
             }
         )
         Text(

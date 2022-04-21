@@ -4,11 +4,20 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,16 +47,24 @@ fun StoryProgressBar(
     modifier: Modifier
 ) {
     val percent = remember { Animatable(0f) }
+    var previousStep by remember { mutableStateOf(0) }
     LaunchedEffect(paused, currentStep) {
-        percent.snapTo(0f)
-        percent.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(
-                durationMillis = (10000 * (1f - percent.value)).toInt(),
-                easing = LinearEasing
+        if (paused) {
+            percent.stop()
+        } else {
+            if (!paused && currentStep != previousStep) {
+                previousStep = currentStep
+                percent.snapTo(0f)
+            }
+            percent.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(
+                    durationMillis = (10000 * (1f - percent.value)).toInt(),
+                    easing = LinearEasing
+                )
             )
-        )
-        onFinished()
+            onFinished()
+        }
     }
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         for (index in 1..steps) {
@@ -62,10 +79,13 @@ fun StoryProgressBar(
                     modifier = Modifier
                         .background(progressColor)
                         .fillMaxHeight().let {
-                            when (index) {
-                                currentStep -> it.fillMaxWidth(percent.value)
-                                in 0..currentStep -> it.fillMaxWidth(1f)
-                                else -> it
+                            when {
+                                index == currentStep && previousStep == currentStep ->
+                                    it.fillMaxWidth(percent.value)
+                                index < currentStep ->
+                                    it.fillMaxWidth(1f)
+                                else ->
+                                    it.fillMaxWidth(0f)
                             }
                         },
                 )

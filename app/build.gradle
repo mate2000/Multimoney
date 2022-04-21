@@ -156,6 +156,15 @@ dependencies {
     // Desugar
     coreLibraryDesugaring desugar.jdk
 
+    implementation "com.github.togisoft:jetpack_compose_country_code_picker:1.1.2"
+    implementation 'com.googlecode.libphonenumber:libphonenumber:8.12.46'
+
+    // Togisoft
+    implementation togisoft.country_code_picker
+
+    // LibPhoneNumber
+    implementation libphonenumber.libphonenumber
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit

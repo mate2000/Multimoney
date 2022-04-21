@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,8 +14,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,15 +28,13 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.Complementary3500
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Primary600
-import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_ICON
-import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_SUBTITLE
-import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_TITLE
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -61,29 +56,6 @@ fun OnBoardingScreen(
 fun OnBoarding(
     viewModel: OnBoardingViewModel
 ) {
-    val isPressed = remember { mutableStateOf(false) }
-    val title = remember { mutableStateOf(R.string.onboarding_step_one_title) }
-    val mutableCurrentStep = remember { mutableStateOf(1) }
-    val subtitle = remember { mutableStateOf(R.string.onboarding_step_one_sub_title) }
-    val icon = remember { mutableStateOf(R.drawable.ic_onboarding_step_one) }
-    val goToNextScreen = {
-        if (mutableCurrentStep.value <= OnBoardingViewModel.MAX_STEPS) {
-            mutableCurrentStep.value++
-            val newValues = viewModel.getStepContent(mutableCurrentStep.value)
-            title.value = newValues[STEP_TITLE]
-            subtitle.value = newValues[STEP_SUBTITLE]
-            icon.value = newValues[STEP_ICON]
-        }
-    }
-    val goToPreviousScreen = {
-        if (mutableCurrentStep.value - 1 > 0) {
-            mutableCurrentStep.value--
-            val newValues = viewModel.getStepContent(mutableCurrentStep.value)
-            title.value = newValues[STEP_TITLE]
-            subtitle.value = newValues[STEP_SUBTITLE]
-            icon.value = newValues[STEP_ICON]
-        }
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -104,58 +76,33 @@ fun OnBoarding(
         Modifier
             .padding(16.dp)
             .fillMaxSize()
-            .pointerInput(Unit) {
-                val maxWidth = this.size.width
-                detectTapGestures(
-                    onPress = {
-                        val pressStartTime = System.currentTimeMillis()
-                        isPressed.value = true
-                        this.tryAwaitRelease()
-                        val pressEndTime = System.currentTimeMillis()
-                        val totalPressTime = pressEndTime - pressStartTime
-                        if (totalPressTime < 200) {
-                            val isTapOnRightThreeQuarters = (it.x > (maxWidth / 4))
-                            if (isTapOnRightThreeQuarters) {
-                                goToNextScreen()
-                            } else {
-                                goToPreviousScreen()
-                            }
-                        }
-                        isPressed.value = false
-                    },
-                )
-            }
+            .pointerInput(Unit) { viewModel.onPress(this) }
     ) {
         Column(Modifier.weight(0.4f)) {
             StoryProgressBar(
-                OnBoardingViewModel.MAX_STEPS,
-                mutableCurrentStep.value,
-                isPressed.value,
-                goToNextScreen,
-                Color.White.copy(alpha = 0.4f),
-                Complementary3500,
-                Modifier
+                steps = OnBoardingViewModel.MAX_STEPS,
+                currentStep = viewModel.currentStep,
+                paused = viewModel.isPressed,
+                onFinished = viewModel.goToNextScreen,
+                backgroundColor = Color.White.copy(alpha = 0.4f),
+                progressColor = Complementary3500,
+                modifier = Modifier
                     .wrapContentHeight()
                     .padding(top = 12.dp)
             )
             Text(
-                text = stringResource(id = title.value),
+                text = stringResource(id = viewModel.title),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 40.dp),
-                fontFamily = PoppinsFontFamily,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White,
-                fontSize = 34.sp
+                style = Typography.h4.copy(color = DefaultWhite, fontWeight = FontWeight.SemiBold)
             )
             Text(
-                text = stringResource(id = subtitle.value),
+                text = stringResource(id = viewModel.subtitle),
                 textAlign = TextAlign.Left,
                 modifier = Modifier.fillMaxWidth(),
-                fontFamily = PoppinsFontFamily,
-                color = Color.White,
-                fontSize = 20.sp
+                style = Typography.h6.copy(color = DefaultWhite)
             )
         }
 
@@ -165,7 +112,7 @@ fun OnBoarding(
                 .weight(0.6f)
         ) {
             CustomImage(
-                drawableResource = icon.value,
+                drawableResource = viewModel.icon,
                 modifier = Modifier
                     .wrapContentSize()
                     .align(Alignment.CenterHorizontally)
@@ -180,7 +127,7 @@ fun OnBoarding(
                 text = stringResource(id = R.string.registration),
                 onClick = {
                     viewModel.popAndNavigateTo(
-                        route = Screen.LoginScreen.route,
+                        route = Screen.SignUpScreen.route,
                         popTo = Screen.OnBoardingScreen.route
                     )
                 }
@@ -215,10 +162,9 @@ fun OnBoarding(
                         .padding(start = 4.dp),
                     onClick = {
                         viewModel.popAndNavigateTo(
-                            route = Screen.LoginScreen.route,
+                            route = Screen.SignInScreen.route,
                             popTo = Screen.OnBoardingScreen.route
                         )
-
                     }
                 )
             }

@@ -6,10 +6,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.login.LoginScreen
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
-import com.multimoney.multimoney.presentation.ui.test.TestScreen
 
 fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
     navigation(
@@ -25,7 +25,6 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-
         composable(route = Screen.OnBoardingScreen.route) {
             OnBoardingScreen(
                 onPopAndNavigate = {
@@ -35,18 +34,23 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-
-        composable(route = Screen.LoginScreen.route) {
-            LoginScreen(
+        composable(route = Screen.SignInScreen.route) {
+            SignInScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 }
             )
         }
-        composable(route = Screen.TestScreen.route) {
-            TestScreen(
+        composable(route = Screen.SignUpScreen.route) {
+            SignUpScreen(
                 onNavigate = {
                     navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        launchSingleTop = true
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
             )
         }

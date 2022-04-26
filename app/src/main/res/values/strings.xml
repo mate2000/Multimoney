@@ -56,8 +56,11 @@
     <string name="phone_country_dialog_title">Seleccionar país</string>
     <string name="phone_country_dialog_search">Buscar</string>
 
+    <string name="sign_up_dui_not_valid">Número de DUI incorrecto</string>
     <string name="sign_up_dui_required">Número de DUI requerido</string>
+    <string name="sign_up_dpi_not_valid">Número de DPI incorrecto</string>
     <string name="sign_up_dpi_required">Número de DPI requerido</string>
+    <string name="sign_up_id_not_valid">Número de identificacion incorrecta</string>
     <string name="sign_up_id_required">Número de identificación requerido</string>
     <string name="sign_up_nationality_header">¿Cuáles son tus datos personales?</string>
     <string name="sign_up_nationality">Nacionalidad</string>

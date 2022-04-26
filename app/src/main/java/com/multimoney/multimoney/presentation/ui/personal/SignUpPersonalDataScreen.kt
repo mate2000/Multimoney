@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
@@ -19,22 +20,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
+@Preview
 fun SignUpPersonalDataScreen(
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: SignUpPersonalDataViewModel = hiltViewModel()
+    viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
-    SignUpNationalPersonaData(viewModel)
-}
-
-@Composable
-fun SignUpNationalPersonaData(viewModel: SignUpPersonalDataViewModel) {
+    LaunchedEffect(true) {
+        sharedViewModel.isContinueEnabled = viewModel.validateFields()
+    }
     Column(
         Modifier
-            .fillMaxSize()
             .padding(16.dp)
     ) {
         val countries = stringArrayResource(id = R.array.sign_up_nationalities).sorted()
@@ -56,6 +57,7 @@ fun SignUpNationalPersonaData(viewModel: SignUpPersonalDataViewModel) {
             items = countries,
             onValueChange = {
                 viewModel.nationalityValue = it
+                viewModel.validateFields()
             },
             labelText = stringResource(id = R.string.sign_up_nationality),
             value = viewModel.nationalityValue,
@@ -67,10 +69,4 @@ fun SignUpNationalPersonaData(viewModel: SignUpPersonalDataViewModel) {
             countries[2] -> SignUpPersonalDataGtScreen()
         }
     }
-}
-
-@Preview
-@Composable
-fun SignUpPreview() {
-    SignUpNationalPersonaData(SignUpPersonalDataViewModel())
 }

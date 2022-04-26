@@ -136,8 +136,8 @@ fun CustomDropdown(
                     color = GrayScale500,
                     style = Typography.body2
                 )
-            }
-
+            },
+            enabled = false,
         )
         DropdownMenu(
             expanded = expanded,

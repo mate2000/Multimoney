@@ -24,8 +24,10 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_ONE
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_THREE
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_TWO
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
+import com.multimoney.multimoney.presentation.ui.personal.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -98,6 +100,7 @@ fun GetStepContent(
 ) {
     when (step) {
         STEP_ONE -> SignUpEmailScreen(sharedViewModel = viewModel)
+        STEP_TWO -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         STEP_THREE -> SignUpPhoneScreen(sharedViewModel = viewModel)
         else -> SignUpEmailScreen(sharedViewModel = viewModel)
     }

@@ -23,12 +23,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
 
 @Composable
 @Preview
-fun SignUpPersonalDataCrScreen(viewModel: SignUpPersonalDataViewModel = hiltViewModel()) {
+fun SignUpPersonalDataCrScreen(
+    sharedViewModel: SignUpViewModel = hiltViewModel(),
+    viewModel: SignUpPersonalDataViewModel = hiltViewModel()
+) {
     val focusManager = LocalFocusManager.current
     val documents = stringArrayResource(id = R.array.sign_up_costa_rica_documents)
     val customRadioModifier = Modifier
@@ -64,10 +68,12 @@ fun SignUpPersonalDataCrScreen(viewModel: SignUpPersonalDataViewModel = hiltView
             value = viewModel.personalDocumentValue,
             placeHolder = stringResource(id = if (viewModel.crPersonalDocument == documents[0]) R.string.sign_up_cr_id_hint else R.string.sign_up_cr_dimex_hint),
             onValueChange = { newString ->
-                if (viewModel.crPersonalDocument == documents[0] && newString.length <= 9) viewModel.personalDocumentValue =
-                    newString
-                else if (viewModel.crPersonalDocument == documents[1] && newString.length <= 12) viewModel.personalDocumentValue =
-                    newString
+                if (viewModel.crPersonalDocument == documents[0] && newString.length <= ID_LENGTH) {
+                    viewModel.personalDocumentValue = newString.filter { it.isDigit() }
+                } else if (viewModel.crPersonalDocument == documents[1] && newString.length <= DIMEX_LENGTH) {
+                    viewModel.personalDocumentValue = newString.filter { it.isDigit() }
+                }
+                sharedViewModel.isContinueEnabled = viewModel.validateFields()
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -82,10 +88,18 @@ fun SignUpPersonalDataCrScreen(viewModel: SignUpPersonalDataViewModel = hiltView
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_id_required),
             isError = viewModel.personalIDError.first,
-            customTransformation = if (viewModel.crPersonalDocument == documents[0]) formatId() else null
+            customTransformation = if (viewModel.crPersonalDocument == documents[0]) formatId() else null,
+            onDebounceValidation = {
+                viewModel.validId(
+                    if (viewModel.crPersonalDocument == documents[0]) ID_LENGTH else DIMEX_LENGTH,
+                    R.string.sign_up_id_not_valid
+                )
+            }
         )
     }
 }
+const val ID_LENGTH = 9
+const val DIMEX_LENGTH = 12
 
 fun formatId(): VisualTransformation =
     object : VisualTransformation {

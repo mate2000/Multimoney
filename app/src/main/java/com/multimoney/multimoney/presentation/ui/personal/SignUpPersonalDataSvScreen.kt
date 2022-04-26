@@ -20,21 +20,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
 @Preview
-fun SignUpPersonalDataSvScreen(viewModel: SignUpPersonalDataViewModel = hiltViewModel()) {
+fun SignUpPersonalDataSvScreen(
+    sharedViewModel: SignUpViewModel = hiltViewModel(),
+    viewModel: SignUpPersonalDataViewModel = hiltViewModel()
+) {
     val focusManager = LocalFocusManager.current
     Column(
         Modifier
             .fillMaxSize()
-            .padding(top = 16.dp)
     ) {
         CustomOutlinedTextField(
             value = viewModel.personalDocumentValue,
             placeHolder = stringResource(id = R.string.sing_up_sv_id_hint),
-            onValueChange = { if (it.length <= 9) viewModel.personalDocumentValue = it },
+            onValueChange = { text ->
+                if (text.length <= 9) {
+                    viewModel.personalDocumentValue = text.filter { it.isDigit() }
+                }
+            },
+            onDebounceValidation = {
+                sharedViewModel.isContinueEnabled = viewModel.validDui()
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
@@ -49,12 +59,16 @@ fun SignUpPersonalDataSvScreen(viewModel: SignUpPersonalDataViewModel = hiltView
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_dui_required),
             isError = viewModel.personalIDError.first,
+            errorMessage = stringResource(id = viewModel.personalIDError.second),
             customTransformation = formatDui()
         )
         CustomOutlinedTextField(
             placeHolder = stringResource(id = R.string.sing_up_name_hint),
             value = viewModel.nameValue,
-            onValueChange = { viewModel.nameValue = it },
+            onValueChange = {
+                viewModel.nameValue = it
+                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
@@ -72,7 +86,10 @@ fun SignUpPersonalDataSvScreen(viewModel: SignUpPersonalDataViewModel = hiltView
         CustomOutlinedTextField(
             placeHolder = stringResource(id = R.string.sing_up_lastname_hint),
             value = viewModel.lastNameValue,
-            onValueChange = { viewModel.lastNameValue = it },
+            onValueChange = {
+                viewModel.lastNameValue = it
+                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done

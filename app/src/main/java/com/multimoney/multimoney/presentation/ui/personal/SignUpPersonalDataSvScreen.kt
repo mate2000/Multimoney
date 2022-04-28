@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.trasnformation.formatDui
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
@@ -38,7 +39,7 @@ fun SignUpPersonalDataSvScreen(
             value = viewModel.personalDocumentValue,
             placeHolder = stringResource(id = R.string.sing_up_sv_id_hint),
             onValueChange = { text ->
-                if (text.length <= 9) {
+                if (text.length <= Nationalities.ElSalvador.documentSize) {
                     viewModel.personalDocumentValue = text.filter { it.isDigit() }
                 }
             },
@@ -106,29 +107,3 @@ fun SignUpPersonalDataSvScreen(
         )
     }
 }
-
-fun formatDui(): VisualTransformation =
-    object : VisualTransformation {
-        override fun filter(text: AnnotatedString): TransformedText {
-            val offset = object : OffsetMapping {
-                override fun originalToTransformed(offset: Int): Int {
-                    if (offset <= 7) return offset
-                    if (offset <= 8) return offset + 1
-                    return 10
-                }
-
-                override fun transformedToOriginal(offset: Int): Int {
-                    if (offset <= 7) return offset
-                    if (offset <= 8) return offset - 1
-                    return 9
-                }
-            }
-            return if (text.text.length >= 8) {
-                val formattedText =
-                    text.substring(0..7) + "-" + text.substring(8 until text.text.length)
-                TransformedText(AnnotatedString(formattedText), offset)
-            } else {
-                TransformedText(AnnotatedString(text.text), offset)
-            }
-        }
-    }

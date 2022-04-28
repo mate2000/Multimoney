@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.trasnformation.formatDpi
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
@@ -37,7 +38,7 @@ fun SignUpPersonalDataGtScreen(
             value = viewModel.personalDocumentValue,
             placeHolder = stringResource(id = R.string.sing_up_gt_id_hint),
             onValueChange = { newString ->
-                if (newString.length <= 13) {
+                if (newString.length <= Nationalities.Guatemala.documentSize) {
                     viewModel.personalDocumentValue = newString.filter { it.isDigit() }
                 }
             },
@@ -58,7 +59,10 @@ fun SignUpPersonalDataGtScreen(
             customTransformation = formatDpi(),
             onDebounceValidation = {
                 sharedViewModel.isContinueEnabled =
-                    viewModel.validId(13, R.string.sign_up_dpi_not_valid)
+                    viewModel.validId(
+                        Nationalities.Guatemala.documentSize,
+                        R.string.sign_up_dpi_not_valid
+                    )
             }
         )
         CustomOutlinedTextField(
@@ -105,32 +109,3 @@ fun SignUpPersonalDataGtScreen(
         )
     }
 }
-
-fun formatDpi(): VisualTransformation =
-    object : VisualTransformation {
-        override fun filter(text: AnnotatedString): TransformedText {
-            val offset = object : OffsetMapping {
-                override fun originalToTransformed(offset: Int): Int {
-                    if (offset <= 4) return offset
-                    if (offset <= 9) return offset + 1
-                    if (offset <= 15) return offset + 2
-                    return 15
-                }
-
-                override fun transformedToOriginal(offset: Int): Int {
-                    if (offset <= 3) return offset
-                    if (offset <= 10) return offset - 1
-                    if (offset <= 14) return offset - 2
-                    return 14
-                }
-            }
-            var formattedText = ""
-            val trimmed = if (text.text.length >= 15) text.text.substring(0..14) else text.text
-
-            for (i in trimmed.indices) {
-                formattedText += trimmed[i]
-                if (i == 3 || i == 8) formattedText += " "
-            }
-            return TransformedText(AnnotatedString(formattedText), offset)
-        }
-    }

@@ -6,6 +6,7 @@ plugins {
     id 'com.google.firebase.firebase-perf'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'applanga'
 }
 
 apply from: '../dependencies.gradle'
@@ -164,6 +165,9 @@ dependencies {
 
     // LibPhoneNumber
     implementation libphonenumber.libphonenumber
+
+    // AppLanga sdk
+    implementation appLanga.app_langa
 
     // Common Test
     testImplementation common_test.junit

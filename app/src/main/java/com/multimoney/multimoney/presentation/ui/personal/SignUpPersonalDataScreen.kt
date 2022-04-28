@@ -39,7 +39,7 @@ fun SignUpPersonalDataScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 40.dp),
-            text = stringResource(id = R.string.sign_up_nationality_header),
+            text = stringResource(id = R.string.sign_up_personal_data_nationality_header),
             style = Typography.h6.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.SemiBold
@@ -50,14 +50,14 @@ fun SignUpPersonalDataScreen(
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
                 .padding(top = 16.dp),
-            items = stringArrayResource(id = R.array.sign_up_nationalities).sorted(),
+            items = stringArrayResource(id = R.array.sign_up_personal_data_nationalities).sorted(),
             onValueChange = {
                 viewModel.nationalityValue = it
                 viewModel.validateFields()
             },
-            labelText = stringResource(id = R.string.sign_up_nationality),
+            labelText = stringResource(id = R.string.sign_up_personal_data_nationality),
             value = viewModel.nationalityValue,
-            placeHolder = stringResource(id = R.string.sign_up_nationality_placeholder)
+            placeHolder = stringResource(id = R.string.sign_up_personal_data_nationality_placeholder)
         )
         when (viewModel.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()

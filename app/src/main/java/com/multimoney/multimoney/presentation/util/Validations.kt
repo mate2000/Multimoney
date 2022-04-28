@@ -29,7 +29,7 @@ fun validDui(personalDocumentValue: String) =
             10 - verificationNumber.mod(SignUpPersonalDataViewModel.DUI_VERIFICATION_MODULE)
         Pair(
             verificationValue != 10 && verificationValue != duiSplit[duiSplit.lastIndex].toInt(),
-            R.string.sign_up_dui_not_valid
+            R.string.sign_up_personal_data_dui_sv_not_valid
         )
     } else {
         Pair(false, R.string.error_empty)

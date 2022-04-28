@@ -33,7 +33,7 @@ fun SignUpPersonalDataGtScreen(
     ) {
         CustomOutlinedTextField(
             value = viewModel.personalDocumentValue,
-            placeHolder = stringResource(id = R.string.sing_up_gt_id_hint),
+            placeHolder = stringResource(id = R.string.sign_up_personal_data_gt_id_hint),
             onValueChange = { newString ->
                 if (newString.length <= Nationalities.Guatemala.documentSize) {
                     viewModel.personalDocumentValue = newString.filter { it.isDigit() }
@@ -46,18 +46,18 @@ fun SignUpPersonalDataGtScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.sign_up_document_gt),
+            labelText = stringResource(id = R.string.sign_up_personal_data_document_gt),
             leadingIcon = R.drawable.ic_identification,
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_dpi_required),
+            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_gt_id_required),
             isError = viewModel.personalIdError.first,
             customTransformation = formatDpi(),
             onDebounceValidation = {
                 viewModel.personalIdError = validId(
                     Nationalities.Guatemala.documentSize,
-                    R.string.sign_up_dpi_not_valid,
+                    R.string.sign_up_personal_data_dpi_gt_not_valid,
                     viewModel.personalDocumentValue.length
                 )
                 sharedViewModel.isContinueEnabled = viewModel.validateFields()
@@ -76,16 +76,16 @@ fun SignUpPersonalDataGtScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.sign_up_names),
+            labelText = stringResource(id = R.string.sign_up_personal_data_names),
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
-            placeHolder = stringResource(id = R.string.sing_up_name_hint),
-            isRequiredMessage = stringResource(id = R.string.sign_up_name_error),
+            placeHolder = stringResource(id = R.string.sign_up_personal_data_name_hint),
+            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
             isError = viewModel.nameError.first
         )
         CustomOutlinedTextField(
-            placeHolder = stringResource(id = R.string.sing_up_lastname_hint),
+            placeHolder = stringResource(id = R.string.sign_up_personal_data_lastname_hint),
             value = viewModel.lastNameValue,
             onValueChange = {
                 viewModel.lastNameValue = it
@@ -98,11 +98,11 @@ fun SignUpPersonalDataGtScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.sign_up_lastname),
+            labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_lastname_error),
+            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
             isError = viewModel.lastNameError.first
         )
     }

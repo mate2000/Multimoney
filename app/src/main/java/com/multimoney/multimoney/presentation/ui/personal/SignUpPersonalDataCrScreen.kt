@@ -62,7 +62,7 @@ fun SignUpPersonalDataCrScreen(
         )
         CustomOutlinedTextField(
             value = viewModel.personalDocumentValue,
-            placeHolder = stringResource(id = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) R.string.sign_up_cr_id_hint else R.string.sign_up_cr_dimex_hint),
+            placeHolder = stringResource(id = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) R.string.sign_up_personal_data_cr_id_hint else R.string.sign_up_personal_data_cr_dimex_hint),
             onValueChange = { newString ->
                 viewModel.crFilterDocument(newString)
                 sharedViewModel.isContinueEnabled = viewModel.validateFields()
@@ -74,17 +74,17 @@ fun SignUpPersonalDataCrScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.sign_up_document_cr),
+            labelText = stringResource(id = R.string.sign_up_personal_data_document_cr),
             leadingIcon = R.drawable.ic_identification,
             modifier = Modifier.padding(top = 44.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_id_required),
+            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_required),
             isError = viewModel.personalIdError.first,
             customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
                 viewModel.personalIdError = validId(
                     if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
-                    R.string.sign_up_id_not_valid,
+                    R.string.sign_up_personal_data_id_not_valid,
                     viewModel.personalDocumentValue.length
                 )
                 sharedViewModel.isContinueEnabled = viewModel.validateFields()

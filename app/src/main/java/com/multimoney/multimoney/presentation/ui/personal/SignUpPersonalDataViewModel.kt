@@ -12,7 +12,7 @@ import javax.inject.Inject
 class SignUpPersonalDataViewModel @Inject constructor() : BaseViewModel() {
     var nationalityValue by mutableStateOf("")
     var crPersonalDocument by mutableStateOf("")
-    var personalIdError by mutableStateOf(Pair(false, R.string.sign_up_dui_required))
+    var personalIdError by mutableStateOf(Pair(false, R.string.sign_up_personal_data_id_sv_required))
     var nameError by mutableStateOf(Pair(false, 0))
     var lastNameError by mutableStateOf(Pair(false, 0))
     var personalDocumentValue by mutableStateOf("")

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.chart
+package com.multimoney.multimoney.presentation.ui.test.chart
 
 import android.graphics.Color
 import android.graphics.Paint

@@ -91,6 +91,8 @@ dependencies {
 
     // Google Services
     implementation google_services.ads
+    implementation google_services.auth
+    implementation google_services.auth_api_phone
 
     // Activity
     implementation activity.compose
@@ -155,9 +157,6 @@ dependencies {
 
     // Desugar
     coreLibraryDesugaring desugar.jdk
-
-    implementation "com.github.togisoft:jetpack_compose_country_code_picker:1.1.2"
-    implementation 'com.googlecode.libphonenumber:libphonenumber:8.12.46'
 
     // Togisoft
     implementation togisoft.country_code_picker

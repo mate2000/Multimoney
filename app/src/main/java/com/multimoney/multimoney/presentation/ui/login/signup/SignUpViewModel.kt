@@ -11,7 +11,16 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor() : BaseViewModel() {
 
-    var currentStep by mutableStateOf(STEP_ONE)
+    var currentStep by mutableStateOf(STEP_FOUR)
+
+    // Step one data
+    var userEmail = ""
+
+    // Step three data
+    var phoneCode = ""
+    var phoneNumber = ""
+    var whatsapp = true
+    var call = true
 
     // Interactions
     var isCloseVisible by mutableStateOf(false)

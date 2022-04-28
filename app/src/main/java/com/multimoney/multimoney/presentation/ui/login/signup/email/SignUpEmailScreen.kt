@@ -58,6 +58,7 @@ fun SignUpEmailScreen(
             onValueChange = {
                 viewModel.apply {
                     userEmail = it
+                    sharedViewModel.userEmail = it
                     clearUserEmailError()
                     sharedViewModel.isContinueEnabled = isFormValid()
                 }

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
+import android.content.pm.ActivityInfo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
 import com.multimoney.multimoney.presentation.uielement.StoryProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -46,6 +48,7 @@ fun OnBoardingScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
+    LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.splash
 
+import android.content.pm.ActivityInfo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomLottie
+import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -23,6 +25,7 @@ fun SplashScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: SplashScreenViewModel = hiltViewModel()
 ) {
+    LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }

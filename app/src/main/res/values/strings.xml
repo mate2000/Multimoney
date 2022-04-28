@@ -70,10 +70,6 @@
         <item name="sign_up_costa_rica">Costa Rica</item>
         <item name="sign_up_guatemala">Guatemala</item>
     </string-array>
-    <string-array name="sign_up_costa_rica_documents">
-        <item name="sign_up_costa_rica_id">Cédula</item>
-        <item name="sign_up_costa_rica_dimex">Dimex</item>
-    </string-array>
     <string name="sign_up_document_cr">Número de identificación</string>
     <string name="sign_up_document_sv">Número de DUI</string>
     <string name="sign_up_document_gt">Número de DPI</string>

@@ -17,8 +17,8 @@ import com.multimoney.multimoney.presentation.theme.*
  * @param modifier: Dimensions for the row of the radio button.
  * @param radioModifier: Dimensions for radio button.
  * @param text: Header for radio button.
- * @param onOptionSelected: Function that handles selected status
- * @param selected: Selected button status
+ * @param onOptionSelected: Function that handles selected status.
+ * @param selected: Selected button status.
  * */
 @Composable
 fun CustomRadioButton(

@@ -24,6 +24,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+/**
+ * StoryProgressBar: This Row is used to match design system
+ *
+ * Parameters:
+ * @param steps: Number of steps to have on the story style progress bar.
+ * @param currentStep: Current story step.
+ * @param paused: Variable to stop the progress.
+ * @param onFinished: Function to update the step.
+ * @param backgroundColor: Background color where the progress hasn't reached.
+ * @param progressColor: Actual progress color.
+ * @param modifier: Apply style.
+ * **/
 @Composable
 fun StoryProgressBar(
     steps: Int,

@@ -99,6 +99,7 @@ fun CustomOutlinedTextField(
     enabled: Boolean = true,
     isPassword: Boolean = false,
     onValueChange: (newText: String) -> Unit = {},
+    customTransformation: VisualTransformation? = null,
     onDebounceValidation: (newText: String) -> Unit = {}
 ) {
     var emptyError by rememberSaveable { mutableStateOf(false) }
@@ -252,7 +253,10 @@ fun CustomOutlinedTextField(
                 cursorColor = textColor
             ),
             enabled = enabled,
-            visualTransformation = if (passwordVisible || !isPassword) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = customTransformation
+                ?: if (passwordVisible || !isPassword) {
+                    VisualTransformation.None
+                } else PasswordVisualTransformation(),
             textStyle = Typography.body2
         )
 

@@ -71,4 +71,33 @@
     <string name="phone_country_dialog_title">Seleccionar país</string>
     <string name="phone_country_dialog_search">Buscar</string>
 
+    <!-- Personal Data -->
+    <string name="sign_up_personal_data_dui_sv_not_valid">Número de DUI incorrecto</string>
+    <string name="sign_up_personal_data_id_sv_required">Número de DUI requerido</string>
+    <string name="sign_up_personal_data_dpi_gt_not_valid">Número de DPI incorrecto</string>
+    <string name="sign_up_personal_data_gt_id_required">Número de DPI requerido</string>
+    <string name="sign_up_personal_data_id_not_valid">Número de identificacion incorrecta</string>
+    <string name="sign_up_personal_data_id_required">Número de identificación requerido</string>
+    <string name="sign_up_personal_data_nationality_header">¿Cuáles son tus datos personales?</string>
+    <string name="sign_up_personal_data_nationality">Nacionalidad</string>
+    <string name="sign_up_personal_data_nationality_placeholder">Selecciona tu país</string>
+    <string-array name="sign_up_personal_data_nationalities">
+        <item name="sign_up_personal_data_el_salvador">El Salvador</item>
+        <item name="sign_up_personal_data_costa_rica">Costa Rica</item>
+        <item name="sign_up_personal_data_guatemala">Guatemala</item>
+    </string-array>
+    <string name="sign_up_personal_data_document_cr">Número de identificación</string>
+    <string name="sign_up_personal_data_document_sv">Número de DUI</string>
+    <string name="sign_up_personal_data_document_gt">Número de DPI</string>
+    <string name="sign_up_personal_data_names">Nombre(s)</string>
+    <string name="sign_up_personal_data_name_error">Nombres requeridos</string>
+    <string name="sign_up_personal_data_lastname_error">Apellidos requeridos</string>
+    <string name="sign_up_personal_data_lastname">Apellido(s)</string>
+    <string name="sign_up_personal_data_personal_title">¿Cuáles son tus datos personales?</string>
+    <string name="sign_up_personal_data_name_hint">Nombre</string>
+    <string name="sign_up_personal_data_lastname_hint">Apellidos</string>
+    <string name="sign_up_personal_data_sv_id_hint">0000000–0</string>
+    <string name="sign_up_personal_data_gt_id_hint">0000 00000 0000</string>
+    <string name="sign_up_personal_data_cr_dimex_hint">000000000000</string>
+    <string name="sign_up_personal_data_cr_id_hint">0 0000 0000</string>
 </resources>

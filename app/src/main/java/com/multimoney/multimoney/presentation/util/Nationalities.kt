@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.personal
+package com.multimoney.multimoney.presentation.util
 
 sealed class Nationalities(val country: String, val documentSize: Int) {
     object ElSalvador : Nationalities("El Salvador", 9)

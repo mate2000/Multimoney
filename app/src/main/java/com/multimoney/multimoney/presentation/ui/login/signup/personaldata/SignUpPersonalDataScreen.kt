@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.personal
+package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.util.Nationalities
 
 @Composable
 @Preview

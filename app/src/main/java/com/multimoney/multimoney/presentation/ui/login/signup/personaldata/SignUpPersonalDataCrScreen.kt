@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.personal
+package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,9 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.trasnformation.formatId
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
+import com.multimoney.multimoney.presentation.util.CrDocuments
+import com.multimoney.multimoney.presentation.util.Nationalities
+import com.multimoney.multimoney.presentation.util.transformation.formatId
 import com.multimoney.multimoney.presentation.util.validId
 
 @Composable

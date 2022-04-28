@@ -4,8 +4,7 @@ import android.util.Patterns
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.Phonenumber
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.ui.personal.Nationalities
-import com.multimoney.multimoney.presentation.ui.personal.SignUpPersonalDataViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel
 
 fun isEmailValid(email: String?): Boolean {
     return email?.let {

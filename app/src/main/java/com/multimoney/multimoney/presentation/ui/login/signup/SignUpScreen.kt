@@ -27,8 +27,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Co
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_TWO
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
-import com.multimoney.multimoney.presentation.ui.personal.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType

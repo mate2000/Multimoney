@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.personal
+package com.multimoney.multimoney.presentation.util
 
 sealed class CrDocuments(val document: String) {
     object IdDocument : CrDocuments("Cédula")

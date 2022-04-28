@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.personal
+package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,32 +17,28 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.trasnformation.formatDui
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.validDui
+import com.multimoney.multimoney.presentation.util.Nationalities
+import com.multimoney.multimoney.presentation.util.transformation.formatDpi
+import com.multimoney.multimoney.presentation.util.validId
 
 @Composable
 @Preview
-fun SignUpPersonalDataSvScreen(
+fun SignUpPersonalDataGtScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel(),
     viewModel: SignUpPersonalDataViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
     Column(
-        Modifier
-            .fillMaxSize()
+        Modifier.fillMaxSize()
     ) {
         CustomOutlinedTextField(
             value = viewModel.personalDocumentValue,
-            placeHolder = stringResource(id = R.string.sign_up_personal_data_sv_id_hint),
-            onValueChange = { text ->
-                if (text.length <= Nationalities.ElSalvador.documentSize) {
-                    viewModel.personalDocumentValue = text.filter { it.isDigit() }
+            placeHolder = stringResource(id = R.string.sign_up_personal_data_gt_id_hint),
+            onValueChange = { newString ->
+                if (newString.length <= Nationalities.Guatemala.documentSize) {
+                    viewModel.personalDocumentValue = newString.filter { it.isDigit() }
                 }
-            },
-            onDebounceValidation = {
-                viewModel.personalIdError = validDui(viewModel.personalDocumentValue)
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -51,18 +47,24 @@ fun SignUpPersonalDataSvScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.sign_up_personal_data_document_sv),
+            labelText = stringResource(id = R.string.sign_up_personal_data_document_gt),
             leadingIcon = R.drawable.ic_identification,
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_sv_required),
+            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_gt_id_required),
             isError = viewModel.personalIdError.first,
-            errorMessage = stringResource(id = viewModel.personalIdError.second),
-            customTransformation = formatDui()
+            customTransformation = formatDpi(),
+            onDebounceValidation = {
+                viewModel.personalIdError = validId(
+                    Nationalities.Guatemala.documentSize,
+                    R.string.sign_up_personal_data_dpi_gt_not_valid,
+                    viewModel.personalDocumentValue.length
+                )
+                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+            }
         )
         CustomOutlinedTextField(
-            placeHolder = stringResource(id = R.string.sign_up_personal_data_name_hint),
             value = viewModel.nameValue,
             onValueChange = {
                 viewModel.nameValue = it
@@ -76,12 +78,13 @@ fun SignUpPersonalDataSvScreen(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             labelText = stringResource(id = R.string.sign_up_personal_data_names),
-            modifier = Modifier.padding(top = 44.dp),
+            modifier = Modifier
+                .padding(top = 44.dp),
             isRequired = true,
+            placeHolder = stringResource(id = R.string.sign_up_personal_data_name_hint),
             isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
-            isError = viewModel.nameError.first,
+            isError = viewModel.nameError.first
         )
-
         CustomOutlinedTextField(
             placeHolder = stringResource(id = R.string.sign_up_personal_data_lastname_hint),
             value = viewModel.lastNameValue,
@@ -91,7 +94,7 @@ fun SignUpPersonalDataSvScreen(
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)

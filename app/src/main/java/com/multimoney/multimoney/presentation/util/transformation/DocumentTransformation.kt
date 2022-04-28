@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.trasnformation
+package com.multimoney.multimoney.presentation.util.transformation
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping

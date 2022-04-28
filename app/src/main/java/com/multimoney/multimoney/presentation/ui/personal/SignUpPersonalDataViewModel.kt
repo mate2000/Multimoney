@@ -20,7 +20,7 @@ class SignUpPersonalDataViewModel @Inject constructor() : BaseViewModel() {
     var lastNameValue by mutableStateOf("")
 
     fun validDui(): Boolean {
-        personalIDError = if (personalDocumentValue.length == 9) {
+        personalIDError = if (personalDocumentValue.length == ID_LENGTH) {
             val duiSplit = personalDocumentValue.split("").filter { it != "" }
             var verificationNumber = 0
             for (i in duiSplit.indices) {
@@ -48,20 +48,25 @@ class SignUpPersonalDataViewModel @Inject constructor() : BaseViewModel() {
 
     fun validateFields(): Boolean {
         return when (nationalityValue) {
-            EL_SALVADOR -> {
-                personalDocumentValue.isNotBlank() && (personalDocumentValue.length == 9) && !personalIDError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
-            }
-            GUATEMALA -> {
-                personalDocumentValue.isNotBlank() && (personalDocumentValue.length == 13) && !personalIDError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
-            }
-            COSTA_RICA -> {
-                personalDocumentValue.isNotBlank() && (personalDocumentValue.length == 9 || personalDocumentValue.length == 12) && !personalIDError.first && crPersonalDocument.isNotBlank()
-            }
+            EL_SALVADOR -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == ID_LENGTH) && !personalIDError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
+            GUATEMALA -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == DPI_LENGTH) && !personalIDError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
+            COSTA_RICA -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == ID_LENGTH || personalDocumentValue.length == DIMEX_LENGTH) && !personalIDError.first && crPersonalDocument.isNotBlank()
             else -> false
         }
     }
 
+    fun crFilterDocument(id: String) {
+        if (crPersonalDocument == CrDocuments.IdDocument.document && id.length <= Nationalities.CostaRicaId.documentSize) {
+            personalDocumentValue = id.filter { it.isDigit() }
+        } else if (crPersonalDocument == CrDocuments.Dimex.document && id.length <= Nationalities.CostaRicaDimex.documentSize) {
+            personalDocumentValue = id.filter { it.isDigit() }
+        }
+    }
+
     companion object {
+        const val DPI_LENGTH = 13
+        const val ID_LENGTH = 9
+        const val DIMEX_LENGTH = 12
         const val EL_SALVADOR = "El Salvador"
         const val GUATEMALA = "Guatemala"
         const val COSTA_RICA = "Costa Rica"

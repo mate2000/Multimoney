@@ -12,7 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun SignUpScreen(
@@ -43,6 +46,8 @@ fun SignUpScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
+    val focusManager = LocalFocusManager.current
+
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
@@ -57,8 +62,12 @@ fun SignUpScreen(
             BackCloseNavBar(
                 isBackVisible = true,
                 isCloseVisible = viewModel.isCloseVisible,
-                onBackClick = { viewModel.previousStep() },
+                onBackClick = {
+                    focusManager.clearFocus()
+                    viewModel.previousStep()
+                },
                 onCloseClick = {
+                    focusManager.clearFocus()
                     viewModel.popAndNavigateTo(
                         route = Screen.SignInScreen.route,
                         popTo = Screen.SignUpScreen.route
@@ -78,7 +87,10 @@ fun SignUpScreen(
         ) {
             GetStepContent(step = viewModel.currentStep, viewModel = viewModel)
             CustomButton(
-                onClick = { viewModel.nextStep() },
+                onClick = {
+                    focusManager.clearFocus()
+                    viewModel.nextStep()
+                },
                 text = stringResource(id = R.string.button_continue),
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)

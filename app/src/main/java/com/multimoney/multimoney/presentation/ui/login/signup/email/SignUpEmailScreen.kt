@@ -66,7 +66,7 @@ fun SignUpEmailScreen(
             onDebounceValidation = { viewModel.isUserEmailValid() },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()

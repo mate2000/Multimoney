@@ -52,6 +52,7 @@ fun SignUpPhoneScreen(
         viewModel.apply {
             sharedViewModel.isContinueEnabled = isFormValid()
             sharedViewModel.phoneCode = getDefaultPhoneCode
+            sharedViewModel.countryCode = getDefaultCountryCode
             phoneCode = getDefaultPhoneCode
             countryCode = getDefaultCountryCode
         }
@@ -106,6 +107,7 @@ fun SignUpPhoneScreen(
                 defaultCountryCode = it.countryCode
                 sharedViewModel.apply {
                     phoneCode = it.countryPhoneCode
+                    countryCode = it.countryCode
                     phoneNumber = ""
                 }
                 viewModel.apply {

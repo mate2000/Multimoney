@@ -29,6 +29,7 @@ class SignUpOtpViewModel @Inject constructor() : BaseViewModel() {
     fun getOtpFromMessage(message: String) {
         val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
         if (otpMatcher.find()) {
+            clearOtpError()
             otp = otpMatcher.group(0)?.toString() ?: ""
             isOtpFromSms = true
         }
@@ -72,7 +73,8 @@ class SignUpOtpViewModel @Inject constructor() : BaseViewModel() {
         isTimerRunning = true
     }
 
-    fun isFormValid() = otp.trim().isNotEmpty() && otp.trim().length == TOTAL_DIGITS
+    fun isFormValid() =
+        otp.trim().isNotEmpty() && otp.trim().length == TOTAL_DIGITS && phaseCount < PHASE_FIVE
 
     fun clearOtpError() {
         otpError = Pair(false, R.string.error_empty)
@@ -87,7 +89,7 @@ class SignUpOtpViewModel @Inject constructor() : BaseViewModel() {
 
         const val TOTAL_DIGITS = 4
 
-        const val TIMER_DURATION = 5L
+        const val TIMER_DURATION = 5L//59L
         const val TIMER_DELAY = 1000L
 
         const val OTP_MESSAGE_REGEX = "(|^)\\d{$TOTAL_DIGITS}"

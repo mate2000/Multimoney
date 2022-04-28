@@ -94,10 +94,10 @@ fun SignUpPersonalDataGtScreen(
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
             modifier = Modifier

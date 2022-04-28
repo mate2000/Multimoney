@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
@@ -43,6 +44,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import kotlinx.coroutines.delay
 import java.time.Duration
 
@@ -53,7 +55,9 @@ fun SignUpOtpScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
-    // Create start activity result for SMS Retriev
+    val focusManager = LocalFocusManager.current
+
+    // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val data: Intent? = result.data
@@ -107,7 +111,14 @@ fun SignUpOtpScreen(
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
         Text(
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            text = stringResource(id = R.string.sign_up_otp_title, sharedViewModel.phoneNumber),
+            text = stringResource(
+                id = R.string.sign_up_otp_title,
+                PhoneNumberTransformation(sharedViewModel.countryCode.uppercase()).filter(
+                    AnnotatedString(
+                        sharedViewModel.phoneNumber
+                    )
+                ).text
+            ),
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()
         )
@@ -128,7 +139,10 @@ fun SignUpOtpScreen(
                 textDecoration = TextDecoration.Underline,
                 color = MultimoneyTheme.colors.textLink
             ),
-            onClick = { sharedViewModel.previousStep() }
+            onClick = {
+                focusManager.clearFocus()
+                sharedViewModel.previousStep()
+            }
         )
 
         // Fields

@@ -2,9 +2,8 @@ package com.multimoney.multimoney.presentation.ui.personal
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,9 +20,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
-import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 @Preview
@@ -38,7 +35,6 @@ fun SignUpPersonalDataScreen(
         Modifier
             .padding(16.dp)
     ) {
-        val countries = stringArrayResource(id = R.array.sign_up_nationalities).sorted()
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,7 +50,7 @@ fun SignUpPersonalDataScreen(
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
                 .padding(top = 16.dp),
-            items = countries,
+            items = stringArrayResource(id = R.array.sign_up_nationalities).sorted(),
             onValueChange = {
                 viewModel.nationalityValue = it
                 viewModel.validateFields()
@@ -64,9 +60,9 @@ fun SignUpPersonalDataScreen(
             placeHolder = stringResource(id = R.string.sign_up_nationality_placeholder)
         )
         when (viewModel.nationalityValue) {
-            countries[0] -> SignUpPersonalDataCrScreen()
-            countries[1] -> SignUpPersonalDataSvScreen()
-            countries[2] -> SignUpPersonalDataGtScreen()
+            Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
+            Nationalities.ElSalvador.country -> SignUpPersonalDataSvScreen()
+            Nationalities.Guatemala.country -> SignUpPersonalDataGtScreen()
         }
     }
 }

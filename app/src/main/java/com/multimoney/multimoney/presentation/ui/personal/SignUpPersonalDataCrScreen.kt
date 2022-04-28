@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.trasnformation.formatId
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
+import com.multimoney.multimoney.presentation.util.validId
 
 @Composable
 @Preview
@@ -78,13 +79,15 @@ fun SignUpPersonalDataCrScreen(
             modifier = Modifier.padding(top = 44.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_id_required),
-            isError = viewModel.personalIDError.first,
+            isError = viewModel.personalIdError.first,
             customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
-                viewModel.validId(
+                viewModel.personalIdError = validId(
                     if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
-                    R.string.sign_up_id_not_valid
+                    R.string.sign_up_id_not_valid,
+                    viewModel.personalDocumentValue.length
                 )
+                sharedViewModel.isContinueEnabled = viewModel.validateFields()
             }
         )
     }

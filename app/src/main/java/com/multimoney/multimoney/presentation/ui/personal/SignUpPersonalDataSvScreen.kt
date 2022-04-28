@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,6 +19,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.trasnformation.formatDui
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.validDui
 
 @Composable
 @Preview
@@ -40,7 +41,8 @@ fun SignUpPersonalDataSvScreen(
                 }
             },
             onDebounceValidation = {
-                sharedViewModel.isContinueEnabled = viewModel.validDui()
+                viewModel.personalIdError = validDui(viewModel.personalDocumentValue)
+                sharedViewModel.isContinueEnabled = viewModel.validateFields()
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -55,8 +57,8 @@ fun SignUpPersonalDataSvScreen(
                 .padding(top = 44.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_dui_required),
-            isError = viewModel.personalIDError.first,
-            errorMessage = stringResource(id = viewModel.personalIDError.second),
+            isError = viewModel.personalIdError.first,
+            errorMessage = stringResource(id = viewModel.personalIdError.second),
             customTransformation = formatDui()
         )
         CustomOutlinedTextField(

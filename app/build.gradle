@@ -166,7 +166,7 @@ dependencies {
     // LibPhoneNumber
     implementation libphonenumber.libphonenumber
 
-    // AppLanga sdk
+    // AppLanga
     implementation appLanga.app_langa
 
     // Common Test

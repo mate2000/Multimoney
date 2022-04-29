@@ -119,7 +119,10 @@ fun OtpTextField(
 
     if (isValueFromSms) {
         valueCharArray = value.toCharArray()
-        onValueChange(String(valueCharArray))
+        val newValue = String(valueCharArray)
+        emptyError = newValue.trim().isEmpty()
+        onValueChange(newValue)
+        focusManager.clearFocus()
     }
 
     LaunchedEffect(true) {

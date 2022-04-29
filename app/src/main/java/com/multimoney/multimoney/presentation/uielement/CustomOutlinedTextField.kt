@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -98,6 +99,7 @@ fun CustomOutlinedTextField(
     enabled: Boolean = true,
     isPassword: Boolean = false,
     onValueChange: (newText: String) -> Unit = {},
+    customTransformation: VisualTransformation? = null,
     onDebounceValidation: (newText: String) -> Unit = {}
 ) {
     var emptyError by rememberSaveable { mutableStateOf(false) }
@@ -122,10 +124,12 @@ fun CustomOutlinedTextField(
     var backgroundColor: Color
     val iconTintColor: Color
     val textColor: Color
+    val placeholderColor: Color
 
     if (isSystemInDarkTheme()) {
         labelColor = GrayScale300
         backgroundColor = GrayScale600
+        placeholderColor = WhiteTransparency60
         when {
             isError -> {
                 iconTintColor = Primary400
@@ -142,8 +146,9 @@ fun CustomOutlinedTextField(
             }
         }
     } else {
-        labelColor = GrayScale500
+        labelColor = GrayScale800
         backgroundColor = DefaultWhite
+        placeholderColor = GrayScale500
         when {
             isError -> {
                 iconTintColor = Primary400
@@ -234,7 +239,7 @@ fun CustomOutlinedTextField(
             placeholder = {
                 Text(
                     text = placeHolder,
-                    color = GrayScale500,
+                    color = placeholderColor,
                     style = Typography.body2
                 )
             },
@@ -244,10 +249,14 @@ fun CustomOutlinedTextField(
                 focusedIndicatorColor = Primary500,
                 unfocusedIndicatorColor = GrayScale400,
                 errorIndicatorColor = SemanticNegative500,
-                textColor = textColor
+                textColor = textColor,
+                cursorColor = textColor
             ),
             enabled = enabled,
-            visualTransformation = if (passwordVisible || !isPassword) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = customTransformation
+                ?: if (passwordVisible || !isPassword) {
+                    VisualTransformation.None
+                } else PasswordVisualTransformation(),
             textStyle = Typography.body2
         )
 

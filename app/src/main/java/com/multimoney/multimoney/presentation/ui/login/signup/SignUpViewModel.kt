@@ -13,6 +13,16 @@ class SignUpViewModel @Inject constructor() : BaseViewModel() {
 
     var currentStep by mutableStateOf(STEP_ONE)
 
+    // Step one data
+    var userEmail = ""
+
+    // Step three data
+    var countryCode = ""
+    var phoneCode = ""
+    var phoneNumber = ""
+    var whatsapp = true
+    var call = true
+
     // Interactions
     var isCloseVisible by mutableStateOf(false)
     var isContinueEnabled by mutableStateOf(false)

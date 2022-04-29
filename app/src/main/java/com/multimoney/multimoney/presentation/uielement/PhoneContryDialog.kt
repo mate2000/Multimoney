@@ -43,7 +43,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -53,6 +52,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getCountryName
 import com.togitech.ccp.data.utils.getFlags
@@ -86,11 +88,12 @@ fun PhoneCountryDialog(
     showCountryCode: Boolean = true,
     showCountryFlag: Boolean = true,
     pickedCountry: (CountryData) -> Unit = {},
-    dialogAppBarColor: Color = MaterialTheme.colors.primary,
-    dialogAppBarTextColor: Color = Color.White,
-    dialogFocusedBorderColorSearch: Color = MaterialTheme.colors.primary,
-    dialogUnFocusedBorderColorSearch: Color = MaterialTheme.colors.onSecondary,
-    dialogCursorColorSearch: Color = MaterialTheme.colors.primary,
+    countryCodeTextColor: Color = MultimoneyTheme.colors.text,
+    dialogAppBarColor: Color = MultimoneyTheme.colors.primary,
+    dialogAppBarTextColor: Color = DefaultWhite,
+    dialogFocusedBorderColorSearch: Color = MultimoneyTheme.colors.primary,
+    dialogUnFocusedBorderColorSearch: Color = MultimoneyTheme.colors.secondary,
+    dialogCursorColorSearch: Color = MultimoneyTheme.colors.primary,
 ) {
     val countryList: List<CountryData> = getLibCountries()
     var isPickCountry by remember { mutableStateOf(defaultSelectedCountry) }
@@ -109,7 +112,7 @@ fun PhoneCountryDialog(
             ) { isOpenDialog = true },
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -123,8 +126,8 @@ fun PhoneCountryDialog(
             if (showCountryCode) {
                 Text(
                     text = isPickCountry.countryPhoneCode,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(start = 6.dp)
+                    modifier = Modifier.padding(start = 4.dp),
+                    style = Typography.body2.copy(color = countryCodeTextColor)
                 )
                 if (showCountryFlag) {
                     Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
@@ -176,8 +179,10 @@ fun PhoneCountryDialog(
                         }
                     )
                 }
-            ) {
-                Surface(modifier = modifier.fillMaxSize()) {
+            ) { paddingValue ->
+                Surface(modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValue)) {
                     Card(
                         Modifier
                             .fillMaxWidth()

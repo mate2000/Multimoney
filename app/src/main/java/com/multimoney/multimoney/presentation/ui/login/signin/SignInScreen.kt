@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -179,8 +180,9 @@ fun SignInScreen(
             onClick = { viewModel.signIn() },
             text = stringResource(id = R.string.sign_in),
             modifier = Modifier
+                .padding(top = 24.dp)
                 .fillMaxWidth()
-                .padding(top = 24.dp),
+                .height(48.dp),
             enable = viewModel.isSignInEnabled
         )
         ClickableText(

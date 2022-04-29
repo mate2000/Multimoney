@@ -42,7 +42,7 @@ ext {
     ]
 
     // Compose
-    compose_version = "1.1.1"
+    compose_version = "1.2.0-alpha07"
 
     compose = [
             ui        : "androidx.compose.ui:ui:$compose_version",
@@ -121,10 +121,14 @@ ext {
     // Google Services
     google_services_version = "4.3.10"
     google_services_ads_version = "17.0.1"
+    google_services_auth_version = "20.1.0"
+    google_services_auth_api_phone_version = "18.0.1"
 
     google_services = [
-            plugin: "com.google.gms:google-services:${google_services_version}",
-            ads   : "com.google.android.gms:play-services-ads-identifier:${google_services_ads_version}"
+            plugin        : "com.google.gms:google-services:${google_services_version}",
+            ads           : "com.google.android.gms:play-services-ads-identifier:${google_services_ads_version}",
+            auth          : "com.google.android.gms:play-services-auth:$google_services_auth_version",
+            auth_api_phone: "com.google.android.gms:play-services-auth-api-phone:$google_services_auth_api_phone_version"
     ]
 
     // Firebase
@@ -204,6 +208,14 @@ ext {
 
     libphonenumber = [
             libphonenumber: "com.googlecode.libphonenumber:libphonenumber:$libphonenumber_version"
+    ]
+
+    // AppLanga
+    applanga_version = "3.0.163"
+
+    appLanga = [
+            app_langa_classpath: "com.applanga.android:plugin:$applanga_version",
+            app_langa          : "com.applanga.android:Applanga:$applanga_version"
     ]
 
     // Common Test

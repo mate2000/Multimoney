@@ -56,4 +56,15 @@
     <string name="phone_country_dialog_title">Seleccionar país</string>
     <string name="phone_country_dialog_search">Buscar</string>
 
+    <!-- Sign up password -->
+    <string name="sign_up_password_title">Creá tu contraseña</string>
+    <string name="sign_up_label_password">Contraseña</string>
+    <string name="sign_up_label_confirm_password">Confirmar contraseña</string>
+    <string name="sign_up_password_required">Contraseña es requerida</string>
+    <string name="sign_up_password_requirement_eight_characters_minimum">8 Caracteres mínimo</string>
+    <string name="sign_up_password_requirement_one_uppercase">Mayúsculas</string>
+    <string name="sign_up_password_requirement_one_lowercase">Minúsculas</string>
+    <string name="sign_up_password_requirement_one_number">Números</string>
+    <string name="sign_up_password_requirement_no_the_same_consecutive_character">No más de tres caracteres iguales consecutivos ya sean numéricos o alfabéticos.</string>
+
 </resources>

@@ -89,7 +89,7 @@ class SignUpOtpViewModel @Inject constructor() : BaseViewModel() {
 
         const val TOTAL_DIGITS = 4
 
-        const val TIMER_DURATION = 5L//59L
+        const val TIMER_DURATION = 59L
         const val TIMER_DELAY = 1000L
 
         const val OTP_MESSAGE_REGEX = "(|^)\\d{$TOTAL_DIGITS}"

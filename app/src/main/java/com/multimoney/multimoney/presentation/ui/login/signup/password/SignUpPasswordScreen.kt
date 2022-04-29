@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.password
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -16,6 +17,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
@@ -25,6 +27,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
 
 @Composable
+@Preview
 fun SignUpPasswordScreen(
     viewModel: SignUpPasswordViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
@@ -33,7 +36,7 @@ fun SignUpPasswordScreen(
     // Properties
     val focusManager = LocalFocusManager.current
 
-    Column {
+    Column(Modifier.padding(16.dp)) {
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -63,7 +66,7 @@ fun SignUpPasswordScreen(
             labelText = stringResource(id = R.string.sign_up_label_password),
             isPassword = true,
             modifier = Modifier
-                .padding(top = 16.dp),
+                .padding(top = 24.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
             isError = viewModel.userPasswordError.first,
@@ -100,28 +103,33 @@ fun SignUpPasswordScreen(
                 null
             }
         )
-        PasswordRequirementLabels(
-            text = stringResource(id = R.string.sign_up_password_requirement_eight_characters_minimum),
-            isError = viewModel.eightCharactersMinimum
-        )
-        PasswordRequirementLabels(
-            text = stringResource(id = R.string.sign_up_password_requirement_eight_characters_minimum),
-            isError = viewModel.oneUppercase
-        )
-        PasswordRequirementLabels(
-            text = stringResource(id = R.string.sign_up_password_requirement_eight_characters_minimum),
-            isError = viewModel.oneLowercase
-        )
-        PasswordRequirementLabels(
-            text = stringResource(id = R.string.sign_up_password_requirement_eight_characters_minimum),
-            isError = viewModel.oneNumber
-        )
+        Row(Modifier.padding(top = 8.dp)) {
+            PasswordRequirementLabels(
+                text = stringResource(id = R.string.sign_up_password_requirement_eight_characters_minimum),
+                isError = viewModel.eightCharactersMinimum
+            )
+            PasswordRequirementLabels(
+                text = stringResource(id = R.string.sign_up_password_requirement_one_uppercase),
+                isError = viewModel.oneUppercase
+            )
+        }
+        Row {
+            PasswordRequirementLabels(
+                text = stringResource(id = R.string.sign_up_password_requirement_one_lowercase),
+                isError = viewModel.oneLowercase
+            )
+            PasswordRequirementLabels(
+                text = stringResource(id = R.string.sign_up_password_requirement_one_number),
+                isError = viewModel.oneNumber
+            )
+        }
     }
 }
 
 @Composable
-fun PasswordRequirementLabels(text: String, isError: Boolean?) {
+fun PasswordRequirementLabels(modifier: Modifier = Modifier, text: String, isError: Boolean?) {
     CustomPasswordRequirementLabel(
+        modifier,
         text = text,
         successIcon = R.drawable.ic_check,
         errorIcon = R.drawable.ic_close,

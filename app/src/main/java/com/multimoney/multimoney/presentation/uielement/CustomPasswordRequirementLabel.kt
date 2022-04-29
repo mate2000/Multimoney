@@ -1,17 +1,18 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.SemanticPositive600
-import java.lang.reflect.Modifier
 
 /**
  * CustomPasswordRequirementText: This Text is used to match design system
@@ -26,7 +27,7 @@ import java.lang.reflect.Modifier
  */
 @Composable
 fun CustomPasswordRequirementLabel(
-    modifier: Modifier = Modifier(),
+    modifier: Modifier = Modifier,
     text: String,
     successIcon: Int,
     errorIcon: Int,
@@ -50,9 +51,15 @@ fun CustomPasswordRequirementLabel(
             icon = errorIcon
         }
     }
-
-    Row {
-        Icon(painter = painterResource(id = icon), contentDescription = "", tint = statusColor, modifier = modifier.padding(end = 2.dp))
-        Text(text = text, color = statusColor)
+    Box(modifier = modifier) {
+        Row(modifier = Modifier.padding(4.dp)) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = "",
+                tint = statusColor,
+                modifier = Modifier.padding(end = 2.dp)
+            )
+            Text(text = text, color = statusColor)
+        }
     }
 }

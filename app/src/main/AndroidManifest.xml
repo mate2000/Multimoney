@@ -39,15 +39,6 @@
             </intent-filter>
         </service>
 
-<!--        <receiver-->
-<!--            android:name=".util.CustomSmsBroadcastReceiver"-->
-<!--            android:exported="false"-->
-<!--            android:permission="com.google.android.gms.auth.api.phone.permission.SEND">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
-
         <!-- Meta Data -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

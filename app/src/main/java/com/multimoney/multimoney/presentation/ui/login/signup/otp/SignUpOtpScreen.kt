@@ -74,11 +74,12 @@ fun SignUpOtpScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
-            sharedViewModel.isContinueEnabled = isFormValid()
             phaseCount = PHASE_ONE
             isTimerRunning = true
             remainingTime = Duration.ofSeconds(SignUpOtpViewModel.TIMER_DURATION)
             remainingTimeText = remainingTime.format()
+            otp = ""
+            sharedViewModel.isContinueEnabled = isFormValid()
         }
     }
 

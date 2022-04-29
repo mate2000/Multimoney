@@ -246,7 +246,6 @@ fun OtpTextField(
                     ),
                     keyboardActions = KeyboardActions(onNext = {
                         focusManager.moveFocus(FocusDirection.Next)
-                        //isNextButtonFocus = true
                     }, onDone = {
                         focusManager.clearFocus()
                     }),

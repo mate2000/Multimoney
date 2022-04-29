@@ -1,3 +1,5 @@
 /build
 /google-services.json
-/src\debug\assets\applanga_meta.xml
+/src/debug/assets/applanga_meta.xml
+/src/staging/assets/applanga_meta.xml
+/src/production/assets/applanga_meta.xml

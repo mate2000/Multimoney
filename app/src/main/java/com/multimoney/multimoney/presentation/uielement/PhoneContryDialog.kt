@@ -179,8 +179,10 @@ fun PhoneCountryDialog(
                         }
                     )
                 }
-            ) {
-                Surface(modifier = modifier.fillMaxSize()) {
+            ) { paddingValue ->
+                Surface(modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValue)) {
                     Card(
                         Modifier
                             .fillMaxWidth()

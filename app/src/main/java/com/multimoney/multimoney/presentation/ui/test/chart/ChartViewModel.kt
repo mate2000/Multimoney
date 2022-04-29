@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.chart
+package com.multimoney.multimoney.presentation.ui.test.chart
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

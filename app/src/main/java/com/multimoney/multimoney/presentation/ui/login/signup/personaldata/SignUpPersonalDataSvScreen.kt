@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.personal
+package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,8 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.trasnformation.formatDui
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.Nationalities
+import com.multimoney.multimoney.presentation.util.transformation.formatDui
 import com.multimoney.multimoney.presentation.util.validDui
 
 @Composable
@@ -93,8 +94,8 @@ fun SignUpPersonalDataSvScreen(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
             modifier = Modifier

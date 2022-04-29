@@ -1,10 +1,12 @@
-package com.multimoney.multimoney.presentation.ui.personal
+package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.CrDocuments
+import com.multimoney.multimoney.presentation.util.Nationalities
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -12,7 +14,12 @@ import javax.inject.Inject
 class SignUpPersonalDataViewModel @Inject constructor() : BaseViewModel() {
     var nationalityValue by mutableStateOf("")
     var crPersonalDocument by mutableStateOf("")
-    var personalIdError by mutableStateOf(Pair(false, R.string.sign_up_personal_data_id_sv_required))
+    var personalIdError by mutableStateOf(
+        Pair(
+            false,
+            R.string.sign_up_personal_data_id_sv_required
+        )
+    )
     var nameError by mutableStateOf(Pair(false, 0))
     var lastNameError by mutableStateOf(Pair(false, 0))
     var personalDocumentValue by mutableStateOf("")

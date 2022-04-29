@@ -52,6 +52,21 @@
     <string name="sign_up_phone_contact_by_whatsapp">WhatsApp</string>
     <string name="sign_up_phone_contact_by_call">Llamada</string>
 
+    <!-- Sign Up Otp -->
+    <string name="sign_up_otp_title">Te enviamos un SMS \nal %s</string>
+    <string name="sign_up_otp_subtitle">Ingresa el código para vincular tu teléfono a tu cuenta de usuario.</string>
+    <string name="sign_up_otp_change_phone">Corregir número</string>
+    <string name="sign_up_otp_resend">Reenviar código</string>
+    <string name="sign_up_otp_call">Recibir código por llamada</string>
+    <string name="sign_up_otp_expiration_time_phase_one">Código expira en </string>
+    <string name="sign_up_otp_expiration_time_phase_three">Código reenviado expira en </string>
+    <string name="sign_up_otp_expiration_time_phase_five">Código expira en </string>
+    <string name="sign_up_otp_expiration_time_phase_six">Su número de teléfono no ha podido ser verificado.</string>
+    <string name="sign_up_otp_expiration_time_phase_seconds"> segundos.</string>
+    <string name="sign_up_otp_code_placeholder">0</string>
+    <string name="sign_up_otp_code_required">Código de verificación requerido</string>
+    <string name="sign_up_otp_code_not_valid">Código de verificación incorrecto</string>
+
     <!-- Phone Country Dialog-->
     <string name="phone_country_dialog_title">Seleccionar país</string>
     <string name="phone_country_dialog_search">Buscar</string>

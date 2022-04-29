@@ -1,14 +1,44 @@
 package com.multimoney.multimoney.presentation.util
 
 import android.util.Patterns
+import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.Phonenumber
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.ui.personal.Nationalities
-import com.multimoney.multimoney.presentation.ui.personal.SignUpPersonalDataViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel
 
 fun isEmailValid(email: String?): Boolean {
     return email?.let {
         it.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(it).matches()
     } ?: false
+}
+
+fun isPhoneNumberValid(
+    phone: String,
+    fullPhoneNumber: String,
+    countryCode: String,
+    phoneNumberType: PhoneNumberUtil.PhoneNumberType
+): Boolean {
+    val number: Phonenumber.PhoneNumber?
+    if (phone.length > 6) {
+        return try {
+            number = PhoneNumberUtil.getInstance().parse(
+                fullPhoneNumber,
+                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name
+            )
+            if (phoneNumberType == PhoneNumberUtil.PhoneNumberType.MOBILE && PhoneNumberUtil.getInstance()
+                    .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
+                    .getNumberType(number) == phoneNumberType
+            ) {
+                PhoneNumberUtil.getInstance()
+                    .isValidNumberForRegion(number, countryCode.uppercase())
+            } else {
+                false
+            }
+        } catch (ex: Exception) {
+            false
+        }
+    }
+    return false
 }
 
 fun validId(sizeRequired: Int, errorMessage: Int, personalDocumentLength: Int) =

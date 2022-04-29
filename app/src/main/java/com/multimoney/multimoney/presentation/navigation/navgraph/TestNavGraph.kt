@@ -6,8 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.TEST_ROUTE
-import com.multimoney.multimoney.presentation.ui.chart.ChartScreen
 import com.multimoney.multimoney.presentation.ui.test.TestScreen
+import com.multimoney.multimoney.presentation.ui.test.chart.ChartScreen
 
 fun NavGraphBuilder.testNavGraph(navController: NavHostController) {
     navigation(

@@ -51,6 +51,8 @@ fun SignUpPhoneScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             sharedViewModel.isContinueEnabled = isFormValid()
+            sharedViewModel.phoneCode = getDefaultPhoneCode
+            sharedViewModel.countryCode = getDefaultCountryCode
             phoneCode = getDefaultPhoneCode
             countryCode = getDefaultCountryCode
         }
@@ -82,6 +84,7 @@ fun SignUpPhoneScreen(
         PhoneTextField(
             value = viewModel.phoneNumber,
             onValueChange = {
+                sharedViewModel.phoneNumber = it
                 viewModel.apply {
                     phoneNumber = it
                     clearPhoneError()
@@ -102,10 +105,14 @@ fun SignUpPhoneScreen(
             defaultCountry = getLibCountries().single { it.countryCode == defaultCountryCode },
             pickedCountry = {
                 defaultCountryCode = it.countryCode
+                sharedViewModel.apply {
+                    phoneCode = it.countryPhoneCode
+                    countryCode = it.countryCode
+                    phoneNumber = ""
+                }
                 viewModel.apply {
                     phoneCode = it.countryPhoneCode
                     countryCode = it.countryCode
-
                     clearPhoneError()
                     phoneNumber = ""
                     sharedViewModel.isContinueEnabled = isFormValid()
@@ -135,7 +142,10 @@ fun SignUpPhoneScreen(
 
         CustomCheckBox(
             checked = viewModel.whatsapp,
-            onCheckedChange = { viewModel.whatsapp = it },
+            onCheckedChange = {
+                sharedViewModel.whatsapp = it
+                viewModel.whatsapp = it
+            },
             text = stringResource(id = R.string.sign_up_phone_contact_by_whatsapp),
             isTextStart = true,
             modifier = Modifier
@@ -148,7 +158,10 @@ fun SignUpPhoneScreen(
 
         CustomCheckBox(
             checked = viewModel.call,
-            onCheckedChange = { viewModel.call = it },
+            onCheckedChange = {
+                sharedViewModel.call = it
+                viewModel.call = it
+            },
             text = stringResource(id = R.string.sign_up_phone_contact_by_call),
             isTextStart = true,
             modifier = Modifier

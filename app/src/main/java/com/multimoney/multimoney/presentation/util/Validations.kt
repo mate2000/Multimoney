@@ -64,3 +64,19 @@ fun validDui(personalDocumentValue: String) =
     } else {
         Pair(false, R.string.error_empty)
     }
+
+fun passwordHasAUppercaseLetterValidation(password: String): Boolean {
+    return matchRegex(password, getRegex(ONE_UPPERCASE_LETTER_REGEX))
+}
+
+fun passwordHasALowercaseLetterValidation(password: String): Boolean {
+    return matchRegex(password, getRegex(ONE_LOWERCASE_LETTER_REGEX))
+}
+
+fun passwordHasANumberValidation(password: String): Boolean {
+    return matchRegex(password, getRegex(ONE_NUMBER_REGEX))
+}
+
+fun sameConsecutiveCharacterValidationValidation(password: String): Boolean {
+    return matchRegex(password, getRegex(SAME_CONSECUTIVE_CHARACTER))
+}

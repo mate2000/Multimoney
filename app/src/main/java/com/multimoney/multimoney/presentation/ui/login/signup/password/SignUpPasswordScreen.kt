@@ -40,7 +40,7 @@ fun SignUpPasswordScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h4.toSpanStyle()
+                    style = Typography.h6.toSpanStyle()
                         .copy(fontWeight = FontWeight.SemiBold)
                 ) {
                     append(stringResource(id = R.string.sign_up_password_title))
@@ -50,10 +50,10 @@ fun SignUpPasswordScreen(
             modifier = Modifier.fillMaxWidth()
         )
         CustomOutlinedTextField(
-            value = viewModel.userPassword,
+            value = viewModel.password,
             onValueChange = {
                 viewModel.apply {
-                    viewModel.userPassword = it
+                    viewModel.password = it
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -69,9 +69,9 @@ fun SignUpPasswordScreen(
                 .padding(top = 24.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
-            isError = viewModel.userPasswordError.first,
-            errorMessage = if (viewModel.userPasswordError.first) {
-                stringResource(id = viewModel.userPasswordError.second)
+            isError = viewModel.passwordError.first,
+            errorMessage = if (viewModel.passwordError.first) {
+                stringResource(id = viewModel.passwordError.second)
             } else {
                 null
             }
@@ -110,17 +110,17 @@ fun SignUpPasswordScreen(
             )
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_uppercase),
-                isError = viewModel.oneUppercase
+                isError = viewModel.oneUppercaseError
             )
         }
         Row {
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_lowercase),
-                isError = viewModel.oneLowercase
+                isError = viewModel.oneLowercaseError
             )
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_number),
-                isError = viewModel.oneNumber
+                isError = viewModel.oneNumberError
             )
         }
     }

@@ -1,0 +1,10 @@
+# DexGuard license file
+licensee              = Akros Technology
+contact               =  
+contactEmail          = infraestructura@akros.tech
+product               = DexGuard
+version               = 7.*,8.*,9.*
+package               = com.betotepresta.beto.cr,com.multimoney.multimoney.cr,com.multimoney.multimoney.sv,com.multimoney.multimoney.gt,com.pei.latam,com.pei.business
+expiryDate            = 2022-02-07
+maintenanceExpiryDate = 2022-02-07
+key                   = 194b2f23f0cc7601e1ac4fa9930b5f61ad7b71cc999f3f3dd69828f4c5f2bc1fd657599265c1fe35c94c93a1165bae3d928d45af287a39525974f97b391f2370

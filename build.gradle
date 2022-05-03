@@ -2,7 +2,22 @@ buildscript {
     apply from: 'dependencies.gradle'
     repositories {
         maven  {
-            url '../DexGuard-9.3.1/DexGuard-9.3.1/lib'          // For the DexGuard plugin.
+           //url '../DexGuard-9.3.1/DexGuard-9.3.1/lib'          // For the DexGuard plugin.
+            credentials  {
+//                username = "${DEXGUARD_USERNAME}"
+//                password = "${DEXGUARD_PASSWORD}"
+                                username = "maven"
+                password = "QaJpWH8yL97x5SzpZ3LFRLoiIrZajBDTCIFirSuqExeQDC88slgpYVsbHZQR5aCPMPUVlPw7RTi0K23qC2d3FhbLZnrTNS2G9LJN0GdiOOs7IDF59dezBlcYpq19XvJK"
+            }
+            url "https://maven.guardsquare.com"
+            // Only search for artifacts with groupId "com.guardsquare.*",
+            // supported since gradle 5.1.
+            content {
+                includeGroupByRegex "com\\.guardsquare.*"
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
         }
     }
     dependencies {
@@ -23,6 +38,29 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+//allprojects {
+//    repositories {
+//        maven  {
+//            //url '../DexGuard-9.3.1/DexGuard-9.3.1/lib'          // For the DexGuard plugin.
+//            credentials  {
+////                username = "${DEXGUARD_USERNAME}"
+////                password = "${DEXGUARD_PASSWORD}"
+//                username = "maven"
+//                password = "QaJpWH8yL97x5SzpZ3LFRLoiIrZajBDTCIFirSuqExeQDC88slgpYVsbHZQR5aCPMPUVlPw7RTi0K23qC2d3FhbLZnrTNS2G9LJN0GdiOOs7IDF59dezBlcYpq19XvJK"
+//            }
+//            url "https://maven.guardsquare.com"
+//            // Only search for artifacts with groupId "com.guardsquare.*",
+//            // supported since gradle 5.1.
+//            content {
+//                includeGroupByRegex "com\\.guardsquare.*"
+//            }
+//            authentication {
+//                basic(BasicAuthentication)
+//            }
+//        }
+//    }
+//}
 
 //dexguard {
 //    path = '../../..'

@@ -1,0 +1,55 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-multimoney-develop-142030-authRole",
+      "UnauthRoleArn": "arn:aws:iam::711164120812:role/amplify-multimoney-develop-142030-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::711164120812:role/amplify-multimoney-develop-142030-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-multimoney-develop-142030-deployment",
+      "UnauthRoleName": "amplify-multimoney-develop-142030-unauthRole",
+      "StackName": "amplify-multimoney-develop-142030",
+      "StackId": "arn:aws:cloudformation:us-east-1:711164120812:stack/amplify-multimoney-develop-142030/dd2b54c0-b066-11ec-92d4-12e28ced4a39",
+      "AmplifyAppId": "dz3xq4949llgr"
+    }
+  },
+  "auth": {
+    "multimoney85e413f9": {
+      "service": "Cognito",
+      "serviceType": "imported",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "output": {
+        "UserPoolId": "us-east-1_iAsDbOWyY",
+        "UserPoolName": "DevMultimoneyAppUserPool",
+        "AppClientID": "2pevc8e4thq6p4er116ijqq6h9",
+        "AppClientIDWeb": "2pevc8e4thq6p4er116ijqq6h9",
+        "HostedUIDomain": "multimoneyapp",
+        "IdentityPoolId": "us-east-1:f4d58fdc-5a93-4075-bb2c-15f516a57bc6",
+        "IdentityPoolName": "MultimoneyAppIdentityPool"
+      },
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_UPPERCASE",
+            "REQUIRES_NUMBERS",
+            "REQUIRES_SYMBOLS"
+          ]
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [],
+        "verificationMechanisms": []
+      },
+      "lastPushTimeStamp": "2022-04-01T00:24:48.602Z"
+    }
+  }
+}

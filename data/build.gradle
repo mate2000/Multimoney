@@ -45,11 +45,11 @@ android {
         jvmTarget = '1.8'
     }
 
-    dexOptions {
-        incremental = true;
-        preDexLibraries = false
-        javaMaxHeapSize "4g" // 2g should be also OK
-    }
+//    dexOptions {
+//        incremental = true;
+//        preDexLibraries = false
+//        javaMaxHeapSize "4g" // 2g should be also OK
+//    }
 }
 
 apollo {
@@ -89,20 +89,43 @@ dependencies {
     testImplementation common_test.mockito_core
 }
 
-dexguard {
-    path = '../../DexGuard-9.3.1/DexGuard-9.3.1'
-    // We can build the sample with the sample license file
-    license = '../../DexGuard-9.3.1/DexGuard-9.3.1/lib/dexguard-license.txt'
-    configurations {
-        debug {
-            defaultConfiguration 'dexguard-debug.pro'
-            configuration 'dexguard-project.txt'
-            configuration 'proguard-project.txt'
-        }
-        release {
-            defaultConfiguration 'dexguard-release-aggressive.pro'
-            configuration 'dexguard-project.txt'
-            configuration 'proguard-project.txt'
-        }
-    }
-}
+//dexguard {
+//    path = '../../DexGuard-9.3.1/DexGuard-9.3.1'
+//    // We can build the sample with the sample license file
+//    license = '../../DexGuard-9.3.1/DexGuard-9.3.1/lib/dexguard-license.txt'
+//    configurations {
+//        debug {
+//            defaultConfiguration 'dexguard-debug.pro'
+//            configuration 'dexguard-project.txt'
+//            configuration 'proguard-project.txt'
+//        }
+//        release {
+//            defaultConfiguration 'dexguard-release-aggressive.pro'
+//            configuration 'dexguard-project.txt'
+//            configuration 'proguard-project.txt'
+//        }
+//    }
+//}
+//dexguard {
+//
+//    // if you are using dexguard locally
+//    // path = '../../../proguard/DexGuard-9.0.10'
+//
+//    version = '9.3.1'
+//
+//    // Keep the license secure in your CD/CI
+//    license = '../dexguard-license-2022.txt'
+//
+//    configurations {
+//        debug {
+//            defaultConfiguration 'dexguard-debug.pro'
+//            configuration 'dexguard-project.txt'
+//            configuration 'proguard-project.txt'
+//        }
+//        release {
+//            defaultConfiguration 'dexguard-release-aggressive.pro'
+//            configuration 'dexguard-project.txt'
+//            configuration 'proguard-project.txt'
+//        }
+//    }
+//}

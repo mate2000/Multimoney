@@ -53,7 +53,9 @@ fun SignUpPasswordScreen(
             value = viewModel.password,
             onValueChange = {
                 viewModel.apply {
-                    viewModel.password = it
+                    password = it
+                    sharedViewModel.isContinueEnabled = isFormValid()
+                    viewModel.validatePassword()
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -80,7 +82,8 @@ fun SignUpPasswordScreen(
             value = viewModel.confirmPassword,
             onValueChange = {
                 viewModel.apply {
-                    viewModel.confirmPassword = it
+                    confirmPassword = it
+                    sharedViewModel.isContinueEnabled = isFormValid()
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -101,38 +104,41 @@ fun SignUpPasswordScreen(
                 stringResource(id = viewModel.confirmPasswordError.second)
             } else {
                 null
+            },
+            onDebounceValidation = {
+                viewModel.validateConfirmPassword()
             }
         )
         Row(Modifier.padding(top = 8.dp)) {
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_eight_characters_minimum),
-                isError = viewModel.eightCharactersMinimum
+                state = viewModel.eightCharactersMinimumState
             )
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_uppercase),
-                isError = viewModel.oneUppercaseError
+                state = viewModel.oneUppercaseState
             )
         }
         Row {
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_lowercase),
-                isError = viewModel.oneLowercaseError
+                state = viewModel.oneLowercaseState
             )
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_number),
-                isError = viewModel.oneNumberError
+                state = viewModel.oneNumberState
             )
         }
     }
 }
 
 @Composable
-fun PasswordRequirementLabels(modifier: Modifier = Modifier, text: String, isError: Boolean?) {
+fun PasswordRequirementLabels(modifier: Modifier = Modifier, text: String, state: Boolean?) {
     CustomPasswordRequirementLabel(
         modifier,
         text = text,
         successIcon = R.drawable.ic_check,
         errorIcon = R.drawable.ic_close,
-        isError = isError
+        state = state
     )
 }

@@ -25,7 +25,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
  * @param text: Text next to the icon
  * @param successIcon: Icon when is success
  * @param errorIcon: Icon when is error
- * @param isError: flag to handle the different states
+ * @param state: flag to handle the different states
  *
  */
 @Composable
@@ -34,14 +34,14 @@ fun CustomPasswordRequirementLabel(
     text: String,
     successIcon: Int,
     errorIcon: Int,
-    isError: Boolean?
+    state: Boolean?
 ) {
 
     val statusColor: Color
     val icon: Int
 
     if (isSystemInDarkTheme()) {
-        when (isError) {
+        when (state) {
             null -> {
                 statusColor = GrayScale500
                 icon = errorIcon
@@ -56,7 +56,7 @@ fun CustomPasswordRequirementLabel(
             }
         }
     } else {
-        when (isError) {
+        when (state) {
             null -> {
                 statusColor = GrayScale500
                 icon = errorIcon

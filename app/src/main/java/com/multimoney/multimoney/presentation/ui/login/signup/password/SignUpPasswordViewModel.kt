@@ -8,6 +8,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
+import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.sameConsecutiveCharacterValidationValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,23 +21,29 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
     var confirmPassword by mutableStateOf("")
     var confirmPasswordError by mutableStateOf(Pair(false, R.string.error_empty))
 
-    var eightCharactersMinimum by mutableStateOf<Boolean?>(null)
-    var oneUppercaseError by mutableStateOf<Boolean?>(null)
-    var oneLowercaseError by mutableStateOf<Boolean?>(null)
-    var oneNumberError by mutableStateOf<Boolean?>(null)
+    var eightCharactersMinimumState by mutableStateOf<Boolean?>(null)
+    var oneUppercaseState by mutableStateOf<Boolean?>(null)
+    var oneLowercaseState by mutableStateOf<Boolean?>(null)
+    var oneNumberState by mutableStateOf<Boolean?>(null)
 
-    fun isFormValid() {
-        oneLowercaseError?.not() ?: false && oneUppercaseError?.not() ?: false && oneNumberError?.not() ?: false &&
-                confirmPasswordError.first.not()
+    fun isFormValid(): Boolean {
+        return oneLowercaseState ?: false && oneUppercaseState ?: false && oneNumberState ?: false &&
+                passwordHasMinimumCharacters(password) && (confirmPassword == password) && !confirmPasswordError.first
     }
 
     fun validatePassword() {
-        oneUppercaseError = !passwordHasAUppercaseLetterValidation(password)
-        oneLowercaseError = !passwordHasALowercaseLetterValidation(password)
-        oneNumberError = !passwordHasANumberValidation(password)
+        eightCharactersMinimumState = passwordHasMinimumCharacters(password)
+        oneUppercaseState = passwordHasAUppercaseLetterValidation(password) && password.isNotEmpty()
+        oneLowercaseState = passwordHasALowercaseLetterValidation(password) && password.isNotEmpty()
+        oneNumberState = passwordHasANumberValidation(password) && password.isNotEmpty()
+        validateHasTheSameConsecutiveCharacter()
+    }
 
-        if (sameConsecutiveCharacterValidationValidation(password)) {
-            confirmPasswordError = Pair(true, R.string.sign_up_password_requirement_no_the_same_consecutive_character)
+    private fun validateHasTheSameConsecutiveCharacter() {
+        confirmPasswordError = if (sameConsecutiveCharacterValidationValidation(password)) {
+            Pair(true, R.string.sign_up_password_requirement_no_the_same_consecutive_character)
+        } else {
+            Pair(false, R.string.error_empty)
         }
     }
 
@@ -44,13 +51,5 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
         if (confirmPassword != password) {
             confirmPasswordError = Pair(true, R.string.sign_up_password_confirm_password_error)
         }
-    }
-
-    fun clearPassword() {
-        passwordError = Pair(false, R.string.error_empty)
-    }
-
-    fun clearConfirmPassword() {
-        confirmPasswordError = Pair(false, R.string.error_empty)
     }
 }

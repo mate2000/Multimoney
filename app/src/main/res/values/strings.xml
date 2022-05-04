@@ -9,6 +9,7 @@
     <string name="sign_in">iniciar sesión</string>
     <string name="label_email">Correo electrónico</string>
     <string name="finalize">Finalizar</string>
+    <string name="cancel">Cancelar</string>
 
     <!-- Errors -->
     <string name="error_empty"></string>
@@ -121,6 +122,7 @@
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title">¿Inicia sesión con tu biométrica?</string>
     <string name="biometric_dialog_subtitle">Utilice su biometría para autenticarse en la aplicación.</string>
+    <string name="biometric_dialog_description">Utilice su biometría para autenticarse en la aplicación.</string>
 
     <!-- Phone Country Dialog-->
     <string name="phone_country_dialog_title">Seleccionar país</string>

@@ -1,11 +1,12 @@
 package com.multimoney.multimoney.util
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.util.cryptography.CryptographyManagerImpl
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class BiometricHelper @Inject constructor(private val cryptographyManagerImpl: C
             .build()
 
     private fun initBiometricPrompt(
-        activity: AppCompatActivity,
+        activity: FragmentActivity,
         processError: (Int, CharSequence) -> Unit = { _: Int, _: CharSequence -> {} },
         processSuccess: (BiometricPrompt.AuthenticationResult) -> Unit
     ) = BiometricPrompt(
@@ -52,7 +53,7 @@ class BiometricHelper @Inject constructor(private val cryptographyManagerImpl: C
         subtitle: String,
         description: String,
         negative: String,
-        activity: AppCompatActivity,
+        activity: FragmentActivity,
         processError: (Int, CharSequence) -> Unit = { _: Int, _: CharSequence -> {} },
         processSuccess: (BiometricPrompt.AuthenticationResult) -> Unit
     ) = initBiometricPrompt(
@@ -67,7 +68,7 @@ class BiometricHelper @Inject constructor(private val cryptographyManagerImpl: C
             negative = negative
         ),
         BiometricPrompt.CryptoObject(
-            cryptographyManagerImpl.getInitializedCipherForEncryption("BuildConfig.SECRET_KEY_NAME")
+            cryptographyManagerImpl.getInitializedCipherForEncryption(BuildConfig.SECRET_KEY_NAME)
         )
     )
 

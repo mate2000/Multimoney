@@ -13,10 +13,10 @@ import java.io.IOException
 
 abstract class BasePreference(
     val context: Context,
-    preferenceKey: String,
+    val preferenceKey: String,
     val gsonHelper: GsonHelper
 ) {
-    private val Context.dataStore by preferencesDataStore(preferenceKey)
+
 
     protected fun <T : Any> getValue(key: Preferences.Key<T>, def: T) =
         context.dataStore.data.catch { exception ->
@@ -64,5 +64,9 @@ abstract class BasePreference(
         val savedList: MutableList<T> = getList<T>(key).toMutableList()
         savedList.remove(item)
         putList(key, savedList.toList())
+    }
+
+    companion object {
+        private val Context.dataStore by preferencesDataStore("multimoney_preferences")
     }
 }

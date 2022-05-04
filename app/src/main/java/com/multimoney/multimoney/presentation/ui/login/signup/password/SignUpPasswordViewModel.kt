@@ -26,10 +26,12 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
     var oneLowercaseState by mutableStateOf<Boolean?>(null)
     var oneNumberState by mutableStateOf<Boolean?>(null)
 
-    fun isFormValid(): Boolean {
-        return oneLowercaseState ?: false && oneUppercaseState ?: false && oneNumberState ?: false &&
-                passwordHasMinimumCharacters(password) && (confirmPassword == password) && !confirmPasswordError.first
-    }
+//    fun isFormValid(): Boolean {
+//        return oneLowercaseState ?: false && oneUppercaseState ?: false && oneNumberState ?: false &&
+//                passwordHasMinimumCharacters(password) && (confirmPassword == password) && !confirmPasswordError.first
+//    }
+
+    fun isFormValid() = true
 
     fun validatePassword() {
         eightCharactersMinimumState = passwordHasMinimumCharacters(password)

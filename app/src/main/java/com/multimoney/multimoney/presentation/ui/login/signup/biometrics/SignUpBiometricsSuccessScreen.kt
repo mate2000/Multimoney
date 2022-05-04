@@ -66,6 +66,7 @@ fun SignUpBiometricsScreen() {
             text = stringResource(id = R.string.finalize),
             modifier = Modifier
                 .fillMaxWidth()
+                .weight(0.08f)
         )
     }
 }

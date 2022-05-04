@@ -15,7 +15,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
@@ -26,16 +25,14 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 
 @Composable
 @Preview
-fun SignUpBiometricsScreen(
-    viewModel: SignUpBiometricsViewModel = hiltViewModel()
-) {
+fun SignUpBiometricsFailureScreen() {
     Column(
         Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         CustomImage(
-            drawableResource = R.drawable.ic_biometrics,
+            drawableResource = R.drawable.ic_biometrics_failure,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .wrapContentWidth()
@@ -46,13 +43,13 @@ fun SignUpBiometricsScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(0.5f)
+                .weight(0.6f)
         ) {
             Text(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = stringResource(id = R.string.sign_up_biometrics_facial_title),
+                text = stringResource(id = R.string.sign_up_biometric_failure_title),
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
@@ -62,7 +59,7 @@ fun SignUpBiometricsScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .wrapContentWidth(),
-                text = stringResource(id = R.string.sign_up_biometrics_facial_subtitle),
+                text = stringResource(id = R.string.sign_up_biometric_failure_subtitle),
                 style = Typography.body1.copy(
                     color = MultimoneyTheme.colors.textSubhead,
                     fontWeight = FontWeight.SemiBold,
@@ -76,7 +73,7 @@ fun SignUpBiometricsScreen(
                 .weight(0.17f)
         ) {
             ClickableText(
-                text = AnnotatedString(stringResource(id = R.string.sign_up_biometrics_activate_later)),
+                text = AnnotatedString(stringResource(id = R.string.sign_up_biometric_failure_retry)),
                 style = TextStyle(
                     fontFamily = PoppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
@@ -87,15 +84,14 @@ fun SignUpBiometricsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 4.dp),
-                onClick = {
-
-                }
+                onClick = {}
             )
             CustomButton(
-                text = stringResource(id = R.string.sign_up_biometrics_activate_now),
+                text = stringResource(id =R.string.finalize),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp)
+                    .padding(top = 24.dp),
+                onClick = {}
             )
         }
     }

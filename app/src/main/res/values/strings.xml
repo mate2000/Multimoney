@@ -94,4 +94,7 @@
     <string name="sign_up_biometrics_activate_now">Activar ahora</string>
     <string name="sign_up_biometric_success_title">El reconocimiento facial ya está configurado</string>
     <string name="sign_up_biometric_success_subtitle">El reconocimiento facial ya está configurado</string>
+    <string name="sign_up_biometric_failure_title">No pudimos configurar el reconocimiento facial</string>
+    <string name="sign_up_biometric_failure_subtitle">Volvé a intentar más tarde</string>
+    <string name="sign_up_biometric_failure_retry">Volver a intentar</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
 import android.util.Patterns
-import com.github.mikephil.charting.formatter.IFillFormatter
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.Phonenumber
 import com.multimoney.multimoney.R
@@ -66,48 +65,71 @@ fun validDui(personalDocumentValue: String) =
         Pair(false, R.string.error_empty)
     }
 
-fun passwordHasMinimumCharacters(password: String): Boolean {
-    return password.length >= EIGHT_MINIMUM_CHARACTERS
+fun passwordHasMinimumCharacters(value: String): Boolean {
+    return value.length >= EIGHT_MINIMUM_CHARACTERS
 }
 
-fun passwordHasAUppercaseLetterValidation(password: String): Boolean {
-    return matchRegex(password, getRegex(ONE_UPPERCASE_LETTER_REGEX))
+fun passwordHasAUppercaseLetterValidation(value: String): Boolean {
+    return matchRegex(value, getRegex(ONE_UPPERCASE_LETTER_REGEX))
 }
 
-fun passwordHasALowercaseLetterValidation(password: String): Boolean {
-    return matchRegex(password, getRegex(ONE_LOWERCASE_LETTER_REGEX))
+fun passwordHasALowercaseLetterValidation(value: String): Boolean {
+    return matchRegex(value, getRegex(ONE_LOWERCASE_LETTER_REGEX))
 }
 
-fun passwordHasANumberValidation(password: String): Boolean {
-    return matchRegex(password, getRegex(ONE_NUMBER_REGEX))
+fun passwordHasANumberValidation(value: String): Boolean {
+    return matchRegex(value, getRegex(ONE_NUMBER_REGEX))
 }
 
-fun sameConsecutiveCharacterValidationValidation(password: String): Boolean {
-    var hasTheSameConsecutiveCharacter = false
-    if (password.isNotEmpty() && password.length >= CHARACTER_NEED_TO_VALIDATE) {
-        val passwordSplit = password.toCharArray()
-        var characterCounter = 1
-        for (index in 0..passwordSplit.lastIndex) {
-            if (index + 1 < passwordSplit.lastIndex) {
-                for (i in (index + 1)..passwordSplit.lastIndex) {
-                    if (passwordSplit[index] == passwordSplit[i]) {
-                        characterCounter++
-                    } else {
-                        characterCounter = 1
-                    }
-                    if (characterCounter > MIN_CHARACTER_ALLOW) {
-                        hasTheSameConsecutiveCharacter = true
-                        break
-                    }
-                }
-            } else {
-                break
-            }
+fun stringHasOnlyDigitOrLetter(value: String) = value.all { it.isDigit() } || value.all { it.isLetter() }
+
+fun noMoreThanThreeLettersOrNumbers(value: String): Boolean {
+    var error = false
+    if (value.isNotEmpty() && value.length > CHARACTER_NEED_TO_VALIDATE) {
+        val valueChunked = value.chunked(INVALID_CHARACTERS_CHUNKS)
+        if (stringHasOnlyDigitOrLetter(valueChunked.first())) {
+            error = true
+        }
+        if (error.not()) {
+            val newValue = value.drop(1)
+            return noMoreThanThreeLettersOrNumbers(newValue)
         }
     }
-    return hasTheSameConsecutiveCharacter
+    return error
 }
 
+fun noMoreThanTwoConsecutiveLetterOrNumber(value: String): Boolean {
+    var error = false
+    if (value.isNotEmpty() && value.length >= CHARACTER_NEED_TO_VALIDATE) {
+        val valueChunked = value.chunkedSequence(CHARACTER_NEED_TO_VALIDATE)
+        if (stringHasOnlyDigitOrLetter(valueChunked.first())) {
+            val valueSplit = valueChunked.first().lowercase().toCharArray()
+            error = valueSplit.first().code.plus(1) == valueSplit[1].code && value[1].code.plus(1) == valueSplit.last().code
+        }
+        if (error.not()) {
+            val newValue = value.drop(1)
+            return noMoreThanTwoConsecutiveLetterOrNumber(newValue)
+        }
+    }
+    return error
+}
+
+fun noMoreThanTwoSameConsecutiveLetterOrNumber(value: String): Boolean {
+    var error = false
+    if (value.isNotEmpty() && value.length >= CHARACTER_NEED_TO_VALIDATE) {
+        val valueChunked = value.chunkedSequence(CHARACTER_NEED_TO_VALIDATE)
+        if (stringHasOnlyDigitOrLetter(valueChunked.first())) {
+            val valueSplit = valueChunked.first().lowercase().toCharArray()
+            error = valueSplit.first().code == valueSplit[1].code && value[1].code == valueSplit.last().code
+        }
+        if (error.not()) {
+            val newValue = value.drop(1)
+            return noMoreThanTwoSameConsecutiveLetterOrNumber(newValue)
+        }
+    }
+    return error
+}
+
+const val INVALID_CHARACTERS_CHUNKS = 4
 const val CHARACTER_NEED_TO_VALIDATE = 3
-const val MIN_CHARACTER_ALLOW = 2
 const val EIGHT_MINIMUM_CHARACTERS = 8

@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.password
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -20,6 +19,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.flowlayout.FlowRow
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -110,7 +110,10 @@ fun SignUpPasswordScreen(
                 viewModel.validateConfirmPassword()
             }
         )
-        Row(Modifier.padding(top = 8.dp)) {
+        FlowRow(
+            Modifier
+                .padding(top = 8.dp)
+        ) {
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_eight_characters_minimum),
                 state = viewModel.eightCharactersMinimumState
@@ -119,8 +122,6 @@ fun SignUpPasswordScreen(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_uppercase),
                 state = viewModel.oneUppercaseState
             )
-        }
-        Row {
             PasswordRequirementLabels(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_lowercase),
                 state = viewModel.oneLowercaseState

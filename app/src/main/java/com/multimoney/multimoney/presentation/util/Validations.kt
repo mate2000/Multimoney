@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.util
 
 import android.util.Patterns
+import com.github.mikephil.charting.formatter.IFillFormatter
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.Phonenumber
 import com.multimoney.multimoney.R
@@ -64,3 +65,49 @@ fun validDui(personalDocumentValue: String) =
     } else {
         Pair(false, R.string.error_empty)
     }
+
+fun passwordHasMinimumCharacters(password: String): Boolean {
+    return password.length >= EIGHT_MINIMUM_CHARACTERS
+}
+
+fun passwordHasAUppercaseLetterValidation(password: String): Boolean {
+    return matchRegex(password, getRegex(ONE_UPPERCASE_LETTER_REGEX))
+}
+
+fun passwordHasALowercaseLetterValidation(password: String): Boolean {
+    return matchRegex(password, getRegex(ONE_LOWERCASE_LETTER_REGEX))
+}
+
+fun passwordHasANumberValidation(password: String): Boolean {
+    return matchRegex(password, getRegex(ONE_NUMBER_REGEX))
+}
+
+fun sameConsecutiveCharacterValidationValidation(password: String): Boolean {
+    var hasTheSameConsecutiveCharacter = false
+    if (password.isNotEmpty() && password.length >= CHARACTER_NEED_TO_VALIDATE) {
+        val passwordSplit = password.toCharArray()
+        var characterCounter = 1
+        for (index in 0..passwordSplit.lastIndex) {
+            if (index + 1 < passwordSplit.lastIndex) {
+                for (i in (index + 1)..passwordSplit.lastIndex) {
+                    if (passwordSplit[index] == passwordSplit[i]) {
+                        characterCounter++
+                    } else {
+                        characterCounter = 1
+                    }
+                    if (characterCounter > MIN_CHARACTER_ALLOW) {
+                        hasTheSameConsecutiveCharacter = true
+                        break
+                    }
+                }
+            } else {
+                break
+            }
+        }
+    }
+    return hasTheSameConsecutiveCharacter
+}
+
+const val CHARACTER_NEED_TO_VALIDATE = 3
+const val MIN_CHARACTER_ALLOW = 2
+const val EIGHT_MINIMUM_CHARACTERS = 8

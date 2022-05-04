@@ -19,6 +19,9 @@ val Secondary500 = Color(0xFF4C49CD)
 // Semantic Negative
 val SemanticNegative500 = Color(0xFFE91616)
 
+// Semantic Positive
+val SemanticPositive600 = Color(0XFF32AC2A)
+
 // Complementary 3
 val Complementary3500 = Color(0xFFFFBE11)
 

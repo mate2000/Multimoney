@@ -288,7 +288,7 @@ fun CustomOutlinedTextField(
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),
-                    style = Typography.caption.copy(textAlign = TextAlign.Center)
+                    style = Typography.caption
                 )
             }
         }

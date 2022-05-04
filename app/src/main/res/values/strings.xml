@@ -67,11 +67,7 @@
     <string name="sign_up_otp_code_required">Código de verificación requerido</string>
     <string name="sign_up_otp_code_not_valid">Código de verificación incorrecto</string>
 
-    <!-- Phone Country Dialog-->
-    <string name="phone_country_dialog_title">Seleccionar país</string>
-    <string name="phone_country_dialog_search">Buscar</string>
-
-    <!-- Personal Data -->
+    <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_dui_sv_not_valid">Número de DUI incorrecto</string>
     <string name="sign_up_personal_data_id_sv_required">Número de DUI requerido</string>
     <string name="sign_up_personal_data_dpi_gt_not_valid">Número de DPI incorrecto</string>
@@ -101,8 +97,23 @@
     <string name="sign_up_personal_data_cr_dimex_hint">000000000000</string>
     <string name="sign_up_personal_data_cr_id_hint">0 0000 0000</string>
 
+    <!-- Sign up password -->
+    <string name="sign_up_password_title">Creá tu contraseña</string>
+    <string name="sign_up_label_password">Contraseña</string>
+    <string name="sign_up_label_confirm_password">Confirmar contraseña</string>
+    <string name="sign_up_password_required">Contraseña es requerida</string>
+    <string name="sign_up_password_requirement_eight_characters_minimum">8 Caracteres mínimo</string>
+    <string name="sign_up_password_requirement_one_uppercase">Mayúsculas</string>
+    <string name="sign_up_password_requirement_one_lowercase">Minúsculas</string>
+    <string name="sign_up_password_requirement_one_number">Números</string>
+    <string name="sign_up_password_confirm_password_error">Las contraseñas son diferentes</string>
+    <string name="sign_up_password_requirement_no_the_same_consecutive_character">No más de tres caracteres iguales consecutivos ya sean numéricos o alfabéticos.</string>
+
+    <!-- Phone Country Dialog-->
+    <string name="phone_country_dialog_title">Seleccionar país</string>
+    <string name="phone_country_dialog_search">Buscar</string>
+    
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title">¿Inicia sesión con tu biométrica?</string>
     <string name="biometric_dialog_subtitle">Utilice su biometría para autenticarse en la aplicación.</string>
-
 </resources>

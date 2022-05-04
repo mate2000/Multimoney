@@ -5,11 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
+import com.multimoney.multimoney.presentation.util.noMoreThanTwoConsecutiveLetterOrNumber
+import com.multimoney.multimoney.presentation.util.noMoreThanTwoSameConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
-import com.multimoney.multimoney.presentation.util.sameConsecutiveCharacterValidationValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -40,10 +42,26 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
     }
 
     private fun validateHasTheSameConsecutiveCharacter() {
-        confirmPasswordError = if (sameConsecutiveCharacterValidationValidation(password)) {
-            Pair(true, R.string.sign_up_password_requirement_no_the_same_consecutive_character)
-        } else {
-            Pair(false, R.string.error_empty)
+        confirmPasswordError = when {
+            noMoreThanTwoSameConsecutiveLetterOrNumber(password) -> {
+                Pair(
+                    true,
+                    R.string.sign_up_password_requirement_no_more_than_two_the_same_consecutive_character
+                )
+            }
+            noMoreThanTwoConsecutiveLetterOrNumber(password) -> {
+                Pair(
+                    true, R.string.sign_up_password_requirement_no_more_than_two_consecutive_character
+                )
+            }
+            noMoreThanThreeLettersOrNumbers(password) -> {
+                Pair(
+                    true, R.string.sign_up_password_requirement_no_more_than_three_character
+                )
+            }
+            else -> {
+                Pair(false, R.string.error_empty)
+            }
         }
     }
 

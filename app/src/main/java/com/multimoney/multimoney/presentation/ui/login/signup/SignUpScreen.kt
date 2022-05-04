@@ -117,8 +117,7 @@ fun GetStepContent(
     viewModel: SignUpViewModel
 ) {
     when (step) {
-//        STEP_ONE -> SignUpEmailScreen(sharedViewModel = viewModel)
-        STEP_ONE -> SignUpPasswordScreen(sharedViewModel = viewModel)
+        STEP_ONE -> SignUpEmailScreen(sharedViewModel = viewModel)
         STEP_TWO -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         STEP_THREE -> SignUpPhoneScreen(sharedViewModel = viewModel)
         STEP_FOUR -> SignUpOtpScreen(sharedViewModel = viewModel)

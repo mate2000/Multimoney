@@ -100,4 +100,9 @@
     <string name="sign_up_personal_data_gt_id_hint">0000 00000 0000</string>
     <string name="sign_up_personal_data_cr_dimex_hint">000000000000</string>
     <string name="sign_up_personal_data_cr_id_hint">0 0000 0000</string>
+
+    <!-- Biometric Dialog -->
+    <string name="biometric_dialog_title">¿Inicia sesión con tu biométrica?</string>
+    <string name="biometric_dialog_subtitle">Utilice su biometría para autenticarse en la aplicación.</string>
+
 </resources>

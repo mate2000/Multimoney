@@ -1,7 +1,7 @@
 ext {
     // Global versions:
     compile_sdk_version = 32
-    min_sdk_version = 21
+    min_sdk_version = 23
     target_sdk_version = 32
 
     // Vesion code
@@ -216,6 +216,20 @@ ext {
     appLanga = [
             app_langa_classpath: "com.applanga.android:plugin:$applanga_version",
             app_langa          : "com.applanga.android:Applanga:$applanga_version"
+    ]
+
+    // Biometric
+    biometric_version = "1.2.0-alpha04"
+
+    biometric = [
+            biometric: "androidx.biometric:biometric-ktx:$biometric_version"
+    ]
+
+    // Gson
+    gson_version = "2.8.9"
+
+    gson = [
+            gson: "com.google.code.gson:gson:${gson_version}"
     ]
 
     // Common Test

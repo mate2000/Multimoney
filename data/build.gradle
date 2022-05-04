@@ -61,6 +61,9 @@ dependencies {
     implementation hilt.android
     kapt hilt.compiler
 
+    // Preferences
+    api preferences.data_store
+
     // Coroutines
     implementation coroutines.android
 
@@ -71,6 +74,9 @@ dependencies {
 
     // OkHttp3
     implementation okhttp3.interceptor
+
+    // Gson
+    api gson.gson
 
     // Common Test
     testImplementation common_test.junit

@@ -103,7 +103,7 @@ fun SignUpBiometricsScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(0.14f)
+                .weight(0.17f)
         ) {
             ClickableText(
                 text = AnnotatedString(stringResource(id = R.string.sign_up_biometrics_activate_later)),
@@ -117,7 +117,9 @@ fun SignUpBiometricsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 4.dp),
-                onClick = {}
+                onClick = {
+
+                }
             )
             CustomButton(
                 text = stringResource(id = R.string.sign_up_biometrics_activate_now),

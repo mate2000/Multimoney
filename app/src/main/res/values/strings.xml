@@ -100,4 +100,9 @@
     <string name="sign_up_personal_data_gt_id_hint">0000 00000 0000</string>
     <string name="sign_up_personal_data_cr_dimex_hint">000000000000</string>
     <string name="sign_up_personal_data_cr_id_hint">0 0000 0000</string>
+
+
+    <!-- Custom AlertDialog -->
+    <string name="custom_dialog_default_positive_label">Aceptar</string>
+    <string name="custom_dialog_default_negative_label">Cancelar</string>
 </resources>

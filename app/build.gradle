@@ -169,6 +169,7 @@ dependencies {
     // AppLanga
     implementation appLanga.app_langa
 
+    //Accompanist
     implementation accompanist.accompanist_flowlayout
 
     // Common Test

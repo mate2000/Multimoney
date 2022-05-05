@@ -169,7 +169,7 @@ dependencies {
     // AppLanga
     implementation appLanga.app_langa
 
-    implementation "com.google.accompanist:accompanist-flowlayout:0.23.1"
+    implementation accompanist.accompanist_flowlayout
 
     // Common Test
     testImplementation common_test.junit

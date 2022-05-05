@@ -139,7 +139,7 @@ fun PasswordRequirementLabels(modifier: Modifier = Modifier, text: String, state
         modifier,
         text = text,
         successIcon = R.drawable.ic_check,
-        errorIcon = R.drawable.ic_close,
+        errorIcon = R.drawable.ic_error_password,
         state = state
     )
 }

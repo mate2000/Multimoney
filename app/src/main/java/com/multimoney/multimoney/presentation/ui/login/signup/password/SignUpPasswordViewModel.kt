@@ -7,7 +7,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
 import com.multimoney.multimoney.presentation.util.noMoreThanTwoConsecutiveLetterOrNumber
-import com.multimoney.multimoney.presentation.util.noMoreThanTwoSameConsecutiveLetterOrNumber
+import com.multimoney.multimoney.presentation.util.noMoreThanTwoEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
@@ -43,7 +43,7 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
 
     private fun validateHasTheSameConsecutiveCharacter() {
         confirmPasswordError = when {
-            noMoreThanTwoSameConsecutiveLetterOrNumber(password) -> {
+            noMoreThanTwoEqualConsecutiveLetterOrNumber(password) -> {
                 Pair(
                     true,
                     R.string.sign_up_password_requirement_no_more_than_two_the_same_consecutive_character

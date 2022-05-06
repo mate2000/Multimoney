@@ -114,7 +114,7 @@ fun noMoreThanTwoConsecutiveLetterOrNumber(value: String): Boolean {
     return error
 }
 
-fun noMoreThanTwoSameConsecutiveLetterOrNumber(value: String): Boolean {
+fun noMoreThanTwoEqualConsecutiveLetterOrNumber(value: String): Boolean {
     var error = false
     if (value.isNotEmpty() && value.length >= CHARACTER_NEED_TO_VALIDATE) {
         val valueChunked = value.chunkedSequence(CHARACTER_NEED_TO_VALIDATE)
@@ -124,7 +124,7 @@ fun noMoreThanTwoSameConsecutiveLetterOrNumber(value: String): Boolean {
         }
         if (error.not()) {
             val newValue = value.drop(1)
-            return noMoreThanTwoSameConsecutiveLetterOrNumber(newValue)
+            return noMoreThanTwoEqualConsecutiveLetterOrNumber(newValue)
         }
     }
     return error

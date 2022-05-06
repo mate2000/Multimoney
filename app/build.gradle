@@ -168,7 +168,9 @@ dependencies {
 
     // Biometric
     implementation biometric.biometric
-    implementation "com.google.accompanist:accompanist-flowlayout:0.23.1"
+
+    //Accompanist
+    implementation accompanist.accompanist_flowlayout
 
     // Common Test
     testImplementation common_test.junit

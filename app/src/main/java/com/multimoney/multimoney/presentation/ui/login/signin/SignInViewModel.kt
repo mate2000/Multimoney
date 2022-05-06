@@ -1,22 +1,35 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
+import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.isEmailValid
+import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignInViewModel @Inject constructor() : BaseViewModel() {
+class SignInViewModel @Inject constructor(
+    val biometricHelper: BiometricHelper,
+    val dataStorePreferences: DataStorePreferences
+) : BaseViewModel() {
 
     // Interactions
     var isSignInEnabled by mutableStateOf(false)
+    var biometricPromptTitle = ""
+    var biometricPromptSubtitle = ""
+    var biometricPromptDescription = ""
+    var biometricPromptNegative = ""
 
     // Fields
     var userEmail by mutableStateOf("")
@@ -85,5 +98,19 @@ class SignInViewModel @Inject constructor() : BaseViewModel() {
         userEmailError = Pair(true, R.string.error_empty)
         userPasswordError = Pair(true, R.string.sign_in_validation)
         isLoading = false
+    }
+
+    fun biometricPromptError(errorCode: Int, errString: CharSequence) {
+        userPasswordError = Pair(true, R.string.sign_in_validation)
+    }
+
+
+    fun biometricPromptForDecryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
+        result.cryptoObject?.cipher?.apply {
+            viewModelScope.launch {
+                userPassword = dataStorePreferences.getUserPassword(this@apply).first()
+                isFingerprintChecked = dataStorePreferences.isBiometricsEnabled().first()
+            }
+        }
     }
 }

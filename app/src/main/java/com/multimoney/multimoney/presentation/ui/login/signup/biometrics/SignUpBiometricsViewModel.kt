@@ -4,18 +4,19 @@ import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.util.BiometricHelper
-import com.multimoney.multimoney.util.cryptography.CryptographyManagerImpl
-import com.multimoney.multimoney.util.cryptography.UserCredentials
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpBiometricsViewModel @Inject constructor(
     val biometricHelper: BiometricHelper,
-    private val cryptographyManagerImpl: CryptographyManagerImpl
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel() {
 
     var userEmail by mutableStateOf("")
@@ -31,13 +32,13 @@ class SignUpBiometricsViewModel @Inject constructor(
 
     fun biometricPromptForEncryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
         result.cryptoObject?.cipher?.apply {
-            cryptographyManagerImpl.persistCiphertextWrapperToPreferences(
-                cryptographyManagerImpl.encryptData(
-                    UserCredentials(userEmail, userPassword), this
-                )
-            )
+            viewModelScope.launch {
+                dataStorePreferences.setUserEmail(userEmail)
+                dataStorePreferences.setUserPassword(userPassword, this@apply)
+                dataStorePreferences.isBiometricsEnabled(true)
+                onNavigateBack()
+            }
         }
-        onNavigateBack()
     }
 
     fun onNavigateBack() {

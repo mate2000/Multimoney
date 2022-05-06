@@ -12,10 +12,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) : BaseViewModel() {
 
-    var currentStep by mutableStateOf(STEP_FIVE)
+    var currentStep by mutableStateOf(STEP_ONE)
 
     // Step one data
-    var userEmail = "test@test.com"
+    var userEmail = ""
 
     // Step three data
     var countryCode = ""
@@ -25,7 +25,7 @@ class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) 
     var call = true
 
     // Step five data
-    var userPassword = "testUserPassword"
+    var userPassword = ""
     var isBiometricAvailable = false
 
     // Interactions
@@ -55,7 +55,7 @@ class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) 
 
     private fun completedProcessAction() = popAndNavigateTo(
         route = if (isBiometricAvailable) {
-            "${Screen.SignUpBiometricsScreen.route}/$userEmail/$userPassword"
+            "${Screen.SignUpBiometricsScreen.baseRoute}/$userEmail/$userPassword"
         } else {
             Screen.SignInScreen.route
         },

@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -30,7 +31,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -41,6 +44,8 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @Composable
 @Preview
@@ -50,7 +55,19 @@ fun SignInScreen(
 ) {
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate)
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate)
+            userEmail = dataStorePreferences.getUserEmail().first()
+        }
+    }
+
+    val fragmentActivity = LocalContext.current as FragmentActivity
+
+    viewModel.apply {
+        biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title)
+        biometricPromptSubtitle = stringResource(id = R.string.biometric_dialog_subtitle)
+        biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description)
+        biometricPromptNegative = stringResource(id = R.string.cancel)
     }
 
     // Properties
@@ -168,7 +185,23 @@ fun SignInScreen(
                 textDecoration = TextDecoration.Underline,
                 color = MultimoneyTheme.colors.textLink
             ),
-            onClick = {}
+            onClick = {
+                viewModel.apply {
+                    viewModelScope.launch {
+                        biometricHelper.showBiometricPrompt(
+                            title = biometricPromptTitle,
+                            subtitle = biometricPromptSubtitle,
+                            description = biometricPromptDescription,
+                            negative = biometricPromptNegative,
+                            activity = fragmentActivity,
+                            processSuccess = ::biometricPromptForDecryptionSuccess,
+                            processError = ::biometricPromptError,
+                            initializationVector = dataStorePreferences.getUserPasswordVector()
+                                .first()
+                        )
+                    }
+                }
+            }
         )
         CustomCheckBox(
             checked = viewModel.isFingerprintChecked,

@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER_EMAIL_ARG_KEY
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER_PASSWORD_ARG_KEY
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Primary500
@@ -45,12 +46,11 @@ fun SignUpBiometricsScreen(
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
             userEmail = navBackStackEntry.arguments?.getString(USER_EMAIL_ARG_KEY) ?: ""
-            userPassword = navBackStackEntry.arguments?.getString(USER_EMAIL_ARG_KEY) ?: ""
+            userPassword = navBackStackEntry.arguments?.getString(USER_PASSWORD_ARG_KEY) ?: ""
         }
     }
 
-    val fragmentActivity =
-        LocalContext.current as FragmentActivity //.findActivity() //as AppCompatActivity
+    val fragmentActivity = LocalContext.current as FragmentActivity
 
     viewModel.apply {
         biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title)

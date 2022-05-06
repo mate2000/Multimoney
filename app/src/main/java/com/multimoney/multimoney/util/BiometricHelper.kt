@@ -6,11 +6,13 @@ import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import com.multimoney.multimoney.BuildConfig
-import com.multimoney.multimoney.util.cryptography.CryptographyManagerImpl
+import com.multimoney.data.BuildConfig.DATA_STORE_BIOMETRIC_KEY
+import com.multimoney.data.util.cryptography.CryptographyHelper
 import javax.inject.Inject
 
-class BiometricHelper @Inject constructor(private val cryptographyManagerImpl: CryptographyManagerImpl) {
+class BiometricHelper @Inject constructor(
+    private val cryptographyHelper: CryptographyHelper
+) {
 
     private fun setBiometricPromptInfo(
         title: String,
@@ -55,7 +57,8 @@ class BiometricHelper @Inject constructor(private val cryptographyManagerImpl: C
         negative: String,
         activity: FragmentActivity,
         processError: (Int, CharSequence) -> Unit = { _: Int, _: CharSequence -> {} },
-        processSuccess: (BiometricPrompt.AuthenticationResult) -> Unit
+        processSuccess: (BiometricPrompt.AuthenticationResult) -> Unit,
+        initializationVector: ByteArray? = null
     ) = initBiometricPrompt(
         activity = activity,
         processError = processError,
@@ -67,9 +70,19 @@ class BiometricHelper @Inject constructor(private val cryptographyManagerImpl: C
             description = description,
             negative = negative
         ),
-        BiometricPrompt.CryptoObject(
-            cryptographyManagerImpl.getInitializedCipherForEncryption(BuildConfig.SECRET_KEY_NAME)
-        )
+        initializationVector?.let {
+            BiometricPrompt.CryptoObject(
+                cryptographyHelper.getInitializedCipherForDecryption(
+                    DATA_STORE_BIOMETRIC_KEY,
+                    it,
+                    true
+                )
+            )
+        } ?: run {
+            BiometricPrompt.CryptoObject(
+                cryptographyHelper.getInitializedCipherForEncryption(DATA_STORE_BIOMETRIC_KEY, true)
+            )
+        }
     )
 
     fun isBiometricAvailable(context: Context) = BiometricManager.from(context)

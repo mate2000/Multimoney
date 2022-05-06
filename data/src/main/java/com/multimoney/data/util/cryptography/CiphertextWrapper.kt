@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.util.cryptography
+package com.multimoney.data.util.cryptography
 
 data class CiphertextWrapper(val ciphertext: ByteArray, val initializationVector: ByteArray) {
     override fun equals(other: Any?): Boolean {
@@ -15,7 +15,11 @@ data class CiphertextWrapper(val ciphertext: ByteArray, val initializationVector
 
     override fun hashCode(): Int {
         var result = ciphertext.contentHashCode()
-        result = 31 * result + initializationVector.contentHashCode()
+        result = HASH_CODE_BASE * result + initializationVector.contentHashCode()
         return result
+    }
+
+    companion object {
+        const val HASH_CODE_BASE = 31
     }
 }

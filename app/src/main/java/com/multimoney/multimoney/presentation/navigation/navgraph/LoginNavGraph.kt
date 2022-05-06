@@ -55,7 +55,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = "${Screen.SignUpBiometricsScreen.route}/{$USER_EMAIL_ARG_KEY}/{$USER_PASSWORD_ARG_KEY}") { navBackStackEntry ->
+        composable(route = Screen.SignUpBiometricsScreen.route) { navBackStackEntry ->
             SignUpBiometricsScreen(
                 navBackStackEntry,
                 onPopAndNavigate = {

@@ -105,4 +105,10 @@
     <!-- Custom AlertDialog -->
     <string name="custom_dialog_default_positive_label">Aceptar</string>
     <string name="custom_dialog_default_negative_label">Cancelar</string>
+
+    <!-- Active Biometric Dialog-->
+    <string name="active_biometric_title">¿Seguro que querés activar tu huella?</string>
+    <string name="active_biometric_message">Activando tu huella podrás ingresar a la app de forma más rápida y segura.</string>
+    <string name="active_biometric_positive_button_label">Activar</string>
+    <string name="active_biometric_negative_button_label">Cancelar</string>
 </resources>

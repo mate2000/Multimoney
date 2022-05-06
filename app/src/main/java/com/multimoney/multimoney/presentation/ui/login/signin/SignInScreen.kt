@@ -15,6 +15,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -37,6 +39,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -55,6 +58,7 @@ fun SignInScreen(
 
     // Properties
     val focusManager = LocalFocusManager.current
+    val openDialogCustom = remember { mutableStateOf(false) }
 
     // View
     Column(
@@ -172,7 +176,12 @@ fun SignInScreen(
         )
         CustomCheckBox(
             checked = viewModel.isFingerprintChecked,
-            onCheckedChange = { viewModel.isFingerprintChecked = it },
+            onCheckedChange = {
+                viewModel.isFingerprintChecked = it
+                if (it) {
+                    openDialogCustom.value = true
+                }
+            },
             text = stringResource(id = R.string.sign_in_activate_fingerprint),
             modifier = Modifier.padding(top = 51.dp)
         )
@@ -209,4 +218,18 @@ fun SignInScreen(
         )
     }
     LoadingIndicator(viewModel.isLoading)
+
+    // Dialog
+    if (openDialogCustom.value) {
+        CustomDialog(
+            title = stringResource(id = R.string.active_biometric_title),
+            message = stringResource(id = R.string.active_biometric_message),
+            positiveButtonText = stringResource(id = R.string.active_biometric_positive_button_label),
+            negativeButtonText = stringResource(id = R.string.active_biometric_negative_button_label),
+            onPositiveAction = { viewModel.isFingerprintChecked = true },
+            onNegativeAction = { viewModel.isFingerprintChecked = false },
+            onDismissAction = { viewModel.isFingerprintChecked = false },
+            openDialogCustom = openDialogCustom
+        )
+    }
 }

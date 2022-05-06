@@ -23,10 +23,12 @@ import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 @Preview
 fun SignUpBiometricsScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: SignUpBiometricsViewModel = hiltViewModel()
 ) {
     Column(

@@ -80,6 +80,7 @@ fun SignUpPersonalDataCrScreen(
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_required),
             isError = viewModel.personalIdError.first,
+            errorMessage = stringResource(id = viewModel.personalIdError.second),
             customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
                 viewModel.personalIdError = validId(

@@ -53,5 +53,6 @@ class SignUpViewModel @Inject constructor() : BaseViewModel() {
         const val STEP_TWO = 2
         const val STEP_THREE = 3
         const val STEP_FOUR = 4
+        const val STEP_FIVE = 5
     }
 }

@@ -169,6 +169,9 @@ dependencies {
     // AppLanga
     implementation appLanga.app_langa
 
+    //Accompanist
+    implementation accompanist.accompanist_flowlayout
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit

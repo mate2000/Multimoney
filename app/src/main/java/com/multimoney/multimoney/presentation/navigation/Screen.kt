@@ -13,6 +13,8 @@ sealed class Screen(val route: String) {
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen : Screen("sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen")
+    object BiometricsSetUp : Screen("biometrics_setup")
+    object SignUpComplete: Screen("sign_up_complete")
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

@@ -34,7 +34,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.biometrics.SignUpBiometricsScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -52,9 +51,9 @@ fun SignInScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
     }
-    SignUpBiometricsScreen()
+
     // Properties
-    /*val focusManager = LocalFocusManager.current
+    val focusManager = LocalFocusManager.current
 
     // View
     Column(
@@ -207,5 +206,5 @@ fun SignInScreen(
             )
         )
     }
-    LoadingIndicator(viewModel.isLoading)*/
+    LoadingIndicator(viewModel.isLoading)
 }

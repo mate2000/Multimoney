@@ -118,7 +118,7 @@ fun SignUpBiometricsScreen(
                     .fillMaxWidth()
                     .padding(start = 4.dp),
                 onClick = {
-
+                    viewModel.navigateToSignUpCompleted()
                 }
             )
             CustomButton(
@@ -143,6 +143,6 @@ fun SignUpBiometricsScreen(
         }
     }
     BackHandler {
-        viewModel.onNavigateBack()
+        viewModel.navigateToSignUpCompleted()
     }
 }

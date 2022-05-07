@@ -173,15 +173,19 @@ abstract class BaseDataStorePreferences(
         crossinline fetchValue: (value: Preferences) -> String
     ): Flow<T> {
         return map { value ->
-            val ciphertextWrapper =
-                gsonHelper.convertToData(fetchValue(value), CiphertextWrapper::class.java)
+            (if (fetchValue(value).isNotEmpty()) {
+                val ciphertextWrapper =
+                    gsonHelper.convertToData(fetchValue(value), CiphertextWrapper::class.java)
 
-            val decryptedValue = cryptographyHelper.decryptData(
-                DATA_STORE_KEY,
-                ciphertextWrapper.ciphertext,
-                ciphertextWrapper.initializationVector
-            )
-            json.decodeFromString(decryptedValue)
+                val decryptedValue = cryptographyHelper.decryptData(
+                    DATA_STORE_KEY,
+                    ciphertextWrapper.ciphertext,
+                    ciphertextWrapper.initializationVector
+                )
+                json.decodeFromString(decryptedValue)
+            } else {
+                fetchValue(value)
+            }) as T
         }
     }
 
@@ -196,11 +200,15 @@ abstract class BaseDataStorePreferences(
         cipher: Cipher
     ): Flow<T> {
         return map { value ->
-            val ciphertextWrapper =
-                gsonHelper.convertToData(fetchValue(value), CiphertextWrapper::class.java)
-            val decryptedValue =
-                cryptographyHelper.decryptData(ciphertextWrapper.ciphertext, cipher)
-            json.decodeFromString(decryptedValue)
+            (if (fetchValue(value).isNotEmpty()) {
+                val ciphertextWrapper =
+                    gsonHelper.convertToData(fetchValue(value), CiphertextWrapper::class.java)
+                val decryptedValue =
+                    cryptographyHelper.decryptData(ciphertextWrapper.ciphertext, cipher)
+                json.decodeFromString(decryptedValue)
+            } else {
+                fetchValue(value)
+            }) as T
         }
     }
 }

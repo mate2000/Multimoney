@@ -101,7 +101,9 @@ class SignInViewModel @Inject constructor(
     }
 
     fun biometricPromptError(errorCode: Int, errString: CharSequence) {
-        userPasswordError = Pair(true, R.string.sign_in_validation)
+        if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+
+        }
     }
 
 

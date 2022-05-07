@@ -27,7 +27,9 @@ class SignUpBiometricsViewModel @Inject constructor(
     var biometricPromptNegative = ""
 
     fun biometricPromptError(errorCode: Int, errString: CharSequence) {
-        onNavigateBack()
+        if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+            navigateToSignUpCompleted()
+        }
     }
 
     fun biometricPromptForEncryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
@@ -36,14 +38,14 @@ class SignUpBiometricsViewModel @Inject constructor(
                 dataStorePreferences.setUserEmail(userEmail)
                 dataStorePreferences.setUserPassword(userPassword, this@apply)
                 dataStorePreferences.isBiometricsEnabled(true)
-                onNavigateBack()
+                navigateToSignUpCompleted()
             }
         }
     }
 
-    fun onNavigateBack() {
+    fun navigateToSignUpCompleted() {
         popAndNavigateTo(
-            route = Screen.SignInScreen.route,
+            route = Screen.SignUpCompleted.route,
             popTo = Screen.SignUpBiometricsScreen.route
         )
     }

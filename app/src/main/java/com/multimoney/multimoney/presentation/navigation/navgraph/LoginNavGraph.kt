@@ -9,6 +9,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.biometrics.SignUpBiometricsScreen
+import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
 
@@ -58,6 +59,16 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         composable(route = Screen.SignUpBiometricsScreen.route) { navBackStackEntry ->
             SignUpBiometricsScreen(
                 navBackStackEntry,
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        launchSingleTop = true
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(route = Screen.SignUpCompleted.route) {
+            SignUpCompleted(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         launchSingleTop = true

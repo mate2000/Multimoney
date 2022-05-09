@@ -34,6 +34,9 @@
     <string name="sign_in_email_not_valid">El correo ingresado es incorrecto</string>
     <string name="sign_in_password_required">La contraseña es requerida</string>
     <string name="sign_in_validation">El correo y/o contraseña es incorrecta</string>
+    <string name="sign_in_biometric_title">Ingresar con reconocimiento facial</string>
+    <string name="sign_in_biometric_enter_with_password">O podés</string>
+    <string name="sign_in_biometric_enter_with_password_link">ingresar tu contraseña</string>
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_title">¡Nos alegra \ntenerte aquí 👋!</string>

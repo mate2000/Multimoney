@@ -3,8 +3,6 @@ package com.multimoney.multimoney.presentation.ui.login.signin
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -37,8 +35,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.ui.login.signin.biometric.SignInWithBiometric
+import com.multimoney.multimoney.presentation.ui.login.signin.password.SignInWithPassword
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -59,6 +57,7 @@ fun SignInScreen(
     // Properties
     val focusManager = LocalFocusManager.current
     val openDialogCustom = remember { mutableStateOf(false) }
+    val showBiometricSignIn = remember { mutableStateOf(true) }
 
     // View
     Column(
@@ -134,72 +133,29 @@ fun SignInScreen(
             isError = viewModel.userEmailError.first,
             errorMessage = stringResource(id = viewModel.userEmailError.second)
         )
-        CustomOutlinedTextField(
-            value = viewModel.userPassword,
-            onValueChange = {
-                viewModel.apply {
-                    viewModel.userPassword = it
-                    clearUserPasswordError()
-                    isFormValid()
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            }),
-            labelText = stringResource(id = R.string.sign_in_label_password),
-            isPassword = true,
-            modifier = Modifier
-                .padding(top = 16.dp),
-            isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_in_password_required),
-            isError = viewModel.userPasswordError.first,
-            errorMessage = if (viewModel.userPasswordError.first) {
-                stringResource(id = viewModel.userPasswordError.second)
-            } else {
-                null
-            }
-        )
-        ClickableText(
-            text = AnnotatedString(stringResource(id = R.string.sign_in_forgot_password)),
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(top = 4.dp),
-            style = Typography.body2.copy(
-                textDecoration = TextDecoration.Underline,
-                color = MultimoneyTheme.colors.textLink
-            ),
-            onClick = {}
-        )
-        CustomCheckBox(
-            checked = viewModel.isFingerprintChecked,
-            onCheckedChange = {
-                viewModel.isFingerprintChecked = it
-                if (it) {
-                    openDialogCustom.value = true
-                }
-            },
-            text = stringResource(id = R.string.sign_in_activate_fingerprint),
-            modifier = Modifier.padding(top = 51.dp)
-        )
-        CustomButton(
-            onClick = { viewModel.signIn() },
-            text = stringResource(id = R.string.sign_in),
-            modifier = Modifier
-                .padding(top = 24.dp)
-                .fillMaxWidth()
-                .height(48.dp),
-            enable = viewModel.isSignInEnabled
-        )
+
+        if (showBiometricSignIn.value) {
+            SignInWithBiometric(
+                Modifier.padding(top = 32.dp),
+                onSignInWithBiometricAction = {},
+                onLinkEnterWithPassword = { showBiometricSignIn.value = false }
+            )
+        } else {
+            SignInWithPassword(
+                signInViewModel = viewModel,
+                focusManager = focusManager,
+                openDialogCustom = openDialogCustom,
+                showBiometricSignIn = !showBiometricSignIn.value,
+                onSignInWithBiometricLink = { showBiometricSignIn.value = true }
+            )
+        }
+
         ClickableText(
             text = AnnotatedString(stringResource(id = R.string.sign_in_create_account)),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 24.dp),
-            style = Typography.body2.copy(
+            style = Typography.body1.copy(
                 textDecoration = TextDecoration.Underline,
                 color = MultimoneyTheme.colors.textLink
             ),

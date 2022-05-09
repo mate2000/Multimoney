@@ -20,18 +20,6 @@ class TestViewModel @Inject constructor(
     var data by mutableStateOf<LaunchConnection?>(null)
     fun getLaunchList() = executeUseCase {
         isLoading = true
-//        getLaunchListUseCase().collect { result ->
-//            result.onSuccess {
-//                data = it
-//                isLoading = false
-//            }
-//            result.onFailure {
-//                isLoading = false
-//            }
-//            result.onLoading {
-//                isLoading = true
-//            }
-//        }
     }
 
     fun navigateToChart() {

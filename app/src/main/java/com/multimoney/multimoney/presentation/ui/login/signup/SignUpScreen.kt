@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Co
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_TWO
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
@@ -42,7 +44,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Composable
 @Preview
 fun SignUpScreen(
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
@@ -50,7 +51,7 @@ fun SignUpScreen(
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
 
     Column(
@@ -119,6 +120,11 @@ fun GetStepContent(
         STEP_TWO -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         STEP_THREE -> SignUpPhoneScreen(sharedViewModel = viewModel)
         STEP_FOUR -> SignUpOtpScreen(sharedViewModel = viewModel)
-        else -> SignUpEmailScreen(sharedViewModel = viewModel)
+        else -> {
+            SignUpPasswordScreen(sharedViewModel = viewModel)
+            viewModel.apply {
+                isBiometricAvailable = biometricHelper.isBiometricAvailable(LocalContext.current)
+            }
+        }
     }
 }

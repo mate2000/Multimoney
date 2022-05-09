@@ -34,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -54,6 +53,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -116,6 +116,18 @@ fun CustomOutlinedTextField(
                     onDebounceValidation(it)
                 }
                 flowOf(it)
+            }
+    }
+
+    val passwordVisibleDebounce = remember { MutableStateFlow(false) }
+    val passwordVisibleFlow: Flow<Boolean> = remember {
+        passwordVisibleDebounce.debounce((1000 * 10))
+            .onEach { status ->
+                if (status) {
+                    passwordVisible = false
+                    passwordVisibleDebounce.value = false
+                }
+                flowOf(status)
             }
     }
 
@@ -205,12 +217,15 @@ fun CustomOutlinedTextField(
             trailingIcon = if (isPassword) {
                 {
                     val image = if (passwordVisible) {
+                        passwordVisibleDebounce.value = true
                         painterResource(id = R.drawable.ic_view_off)
                     } else {
                         painterResource(id = R.drawable.ic_view)
                     }
 
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    IconButton(onClick = {
+                        passwordVisible = !passwordVisible
+                    }) {
                         Icon(
                             painter = image,
                             contentDescription = "",
@@ -262,6 +277,7 @@ fun CustomOutlinedTextField(
 
         // This is required to execute the debounce
         val textDebounceFlowValue by textDebounceFlow.collectAsState("")
+        val passwordDebounceFlowValue by passwordVisibleFlow.collectAsState(false)
 
         // Display error message
         if (isError && errorMessage.isNullOrBlank().not() || emptyError) {
@@ -288,7 +304,7 @@ fun CustomOutlinedTextField(
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),
-                    style = Typography.caption.copy(textAlign = TextAlign.Center)
+                    style = Typography.caption
                 )
             }
         }

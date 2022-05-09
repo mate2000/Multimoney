@@ -54,6 +54,7 @@ fun SignUpPersonalDataGtScreen(
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_gt_id_required),
             isError = viewModel.personalIdError.first,
+            errorMessage = stringResource(id = viewModel.personalIdError.second),
             customTransformation = formatDpi(),
             onDebounceValidation = {
                 viewModel.personalIdError = validId(

@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -143,6 +144,16 @@ fun SignUpBiometricsScreen(
         }
     }
     BackHandler {
-        viewModel.navigateToSignUpCompleted()
+        viewModel.alertDialogVisibility.value = true
+    }
+    if (viewModel.alertDialogVisibility.value) {
+        CustomDialog(
+            title = stringResource(id = R.string.alert),
+            message = stringResource(id = R.string.sign_up_biometric_dialog_alert),
+            onNegativeAction = { viewModel.navigateToBiometricsFailed() },
+            onPositiveAction = { viewModel.navigateToSignUpCompleted() },
+            onDismissAction = { },
+            openDialogCustom = viewModel.alertDialogVisibility
+        )
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +24,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_TOTAL_STEPS
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_FIVE
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_FOUR
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_ONE
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_THREE
@@ -44,7 +44,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Composable
 @Preview
 fun SignUpScreen(
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
@@ -52,7 +51,7 @@ fun SignUpScreen(
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
 
     Column(
@@ -121,7 +120,11 @@ fun GetStepContent(
         STEP_TWO -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         STEP_THREE -> SignUpPhoneScreen(sharedViewModel = viewModel)
         STEP_FOUR -> SignUpOtpScreen(sharedViewModel = viewModel)
-        STEP_FIVE -> SignUpPasswordScreen(sharedViewModel = viewModel)
-        else -> SignUpEmailScreen(sharedViewModel = viewModel)
+        else -> {
+            SignUpPasswordScreen(sharedViewModel = viewModel)
+            viewModel.apply {
+                isBiometricAvailable = biometricHelper.isBiometricAvailable(LocalContext.current)
+            }
+        }
     }
 }

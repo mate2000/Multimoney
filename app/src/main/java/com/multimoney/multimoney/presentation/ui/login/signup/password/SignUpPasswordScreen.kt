@@ -54,6 +54,7 @@ fun SignUpPasswordScreen(
             onValueChange = {
                 viewModel.apply {
                     password = it
+                    sharedViewModel.userPassword = it
                     sharedViewModel.isContinueEnabled = isFormValid()
                     viewModel.validatePassword()
                 }

@@ -51,7 +51,8 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
             }
             noMoreThanTwoConsecutiveLetterOrNumber(password) -> {
                 Pair(
-                    true, R.string.sign_up_password_requirement_no_more_than_two_consecutive_character
+                    true,
+                    R.string.sign_up_password_requirement_no_more_than_two_consecutive_character
                 )
             }
             noMoreThanThreeLettersOrNumbers(password) -> {

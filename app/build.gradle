@@ -126,9 +126,6 @@ dependencies {
     // Coroutines
     implementation coroutines.android
 
-    // Preferences
-    implementation preferences.data_store
-
     // Chart
     implementation chart.mp_android_chart
 
@@ -168,6 +165,9 @@ dependencies {
 
     // AppLanga
     implementation appLanga.app_langa
+
+    // Biometric
+    implementation biometric.biometric
 
     //Accompanist
     implementation accompanist.accompanist_flowlayout

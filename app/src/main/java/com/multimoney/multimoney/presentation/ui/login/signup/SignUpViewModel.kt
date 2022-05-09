@@ -5,11 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor() : BaseViewModel() {
+class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) : BaseViewModel() {
 
     var currentStep by mutableStateOf(STEP_ONE)
 
@@ -23,6 +24,10 @@ class SignUpViewModel @Inject constructor() : BaseViewModel() {
     var whatsapp = true
     var call = true
 
+    // Step five data
+    var userPassword = ""
+    var isBiometricAvailable = false
+
     // Interactions
     var isCloseVisible by mutableStateOf(false)
     var isContinueEnabled by mutableStateOf(false)
@@ -31,6 +36,8 @@ class SignUpViewModel @Inject constructor() : BaseViewModel() {
         if (currentStep < SIGN_UP_TOTAL_STEPS) {
             currentStep++
             isCloseVisible = currentStep > SIGN_UP_INITIAL_STEP
+        } else {
+            completedProcessAction()
         }
     }
 
@@ -45,6 +52,15 @@ class SignUpViewModel @Inject constructor() : BaseViewModel() {
             )
         }
     }
+
+    private fun completedProcessAction() = popAndNavigateTo(
+        route = if (isBiometricAvailable) {
+            "${Screen.SignUpBiometricsScreen.baseRoute}/$userEmail/$userPassword"
+        } else {
+            Screen.SignInScreen.route
+        },
+        popTo = Screen.SignUpScreen.route
+    )
 
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 5

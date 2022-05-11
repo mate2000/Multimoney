@@ -1,9 +1,8 @@
-package com.multimoney.multimoney.presentation.ui.login.signin.biometric
+package com.multimoney.multimoney.presentation.ui.login.signin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,24 +39,21 @@ fun SignInWithBiometric(
 ) {
     Column(modifier = modifier, horizontalAlignment = CenterHorizontally) {
         Text(text = stringResource(id = R.string.sign_in_biometric_title))
-        Box(
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .clip(CircleShape)
-                .background(Primary500)
-                .border(1.dp, Primary300, CircleShape)
-                .padding(24.dp)
-        ) {
             IconButton(
                 onClick = onSignInWithBiometricAction
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_fingerprint),
                     contentDescription = "",
-                    tint = DefaultWhite
+                    tint = DefaultWhite,
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .clip(CircleShape)
+                        .background(Primary500)
+                        .border(1.dp, Primary300, CircleShape)
+                        .padding(24.dp)
                 )
             }
-        }
         Row(
             Modifier
                 .fillMaxWidth()
@@ -80,7 +76,9 @@ fun SignInWithBiometric(
                 modifier = Modifier
                     .wrapContentSize()
                     .padding(start = 4.dp),
-                onClick = { onLinkEnterWithPassword() }
+                onClick = {
+                    onLinkEnterWithPassword()
+                }
             )
         }
     }

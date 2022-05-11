@@ -55,8 +55,8 @@ fun SignUpPasswordScreen(
                 viewModel.apply {
                     password = it
                     sharedViewModel.userPassword = it
-                    sharedViewModel.isContinueEnabled = isFormValid()
                     viewModel.validatePassword()
+                    sharedViewModel.isContinueEnabled = isFormValid()
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -84,6 +84,7 @@ fun SignUpPasswordScreen(
             onValueChange = {
                 viewModel.apply {
                     confirmPassword = it
+                    viewModel.validateConfirmPassword()
                     sharedViewModel.isContinueEnabled = isFormValid()
                 }
             },
@@ -106,9 +107,6 @@ fun SignUpPasswordScreen(
             } else {
                 null
             },
-            onDebounceValidation = {
-                viewModel.validateConfirmPassword()
-            }
         )
         FlowRow(
             Modifier

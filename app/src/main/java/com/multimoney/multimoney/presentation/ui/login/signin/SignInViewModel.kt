@@ -107,7 +107,7 @@ class SignInViewModel @Inject constructor(
     }
 
     fun biometricPromptError(errorCode: Int, errString: CharSequence) {
-        if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+        if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
 
         }
     }
@@ -115,6 +115,8 @@ class SignInViewModel @Inject constructor(
     fun biometricPromptConfigurationError(errorCode: Int, errString: CharSequence) {
         if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
             // navigate to Home
+        } else {
+
         }
     }
 

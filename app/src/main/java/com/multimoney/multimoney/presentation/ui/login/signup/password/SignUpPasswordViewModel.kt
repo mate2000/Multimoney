@@ -65,14 +65,16 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
                 Pair(false, R.string.error_empty)
             }
         }
+        validateConfirmPassword()
     }
 
     fun validateConfirmPassword() {
-        if (confirmPassword != password) {
-            confirmPasswordError = Pair(true, R.string.sign_up_password_confirm_password_error)
+        confirmPasswordError = if (password.isNotEmpty() && confirmPassword.isNotEmpty() && confirmPassword != password) {
+            Pair(true, R.string.sign_up_password_confirm_password_error)
         } else {
             Pair(false, R.string.error_empty)
         }
+
     }
 
     private fun resetValidationLabel(password: String) {

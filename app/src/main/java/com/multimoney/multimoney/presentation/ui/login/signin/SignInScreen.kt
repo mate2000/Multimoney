@@ -40,8 +40,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.biometric.SignInWithBiometric
-import com.multimoney.multimoney.presentation.ui.login.signin.password.SignInWithPassword
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -68,6 +66,7 @@ fun SignInScreen(
             executeNavigation(onNavigate = onNavigate)
             userEmail = dataStorePreferences.getUserEmail().first()
             isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
+            showBiometricSignIn = isBiometricActive
         }
     }
 
@@ -154,7 +153,7 @@ fun SignInScreen(
             isError = viewModel.userEmailError.first,
             errorMessage = stringResource(id = viewModel.userEmailError.second)
         )
-        if (showBiometricSignIn) {
+        if (isBiometricActive && showBiometricSignIn) {
             SignInWithBiometric(
                 Modifier.padding(top = 32.dp),
                 onSignInWithBiometricAction = {
@@ -173,7 +172,9 @@ fun SignInScreen(
                         }
                     }
                 },
-                onLinkEnterWithPassword = { showBiometricSignIn = false }
+                onLinkEnterWithPassword = {
+                    showBiometricSignIn = false
+                }
             )
         } else {
             SignInWithPassword(
@@ -181,7 +182,6 @@ fun SignInScreen(
                 focusManager = focusManager,
                 openDialogCustom = openDialogCustom,
                 isBiometricActive = isBiometricActive,
-                showBiometricSignIn = showBiometricSignIn,
                 onSignInWithBiometricLink = { showBiometricSignIn = true }
             )
         }

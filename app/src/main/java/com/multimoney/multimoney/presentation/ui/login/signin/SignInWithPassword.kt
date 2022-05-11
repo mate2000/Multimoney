@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.login.signin.password
+package com.multimoney.multimoney.presentation.ui.login.signin
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -33,7 +32,6 @@ fun SignInWithPassword(
     openDialogCustom: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     isBiometricActive: Boolean,
-    showBiometricSignIn: Boolean,
     onSignInWithBiometricLink: () -> Unit
 ) {
     Column(modifier) {
@@ -79,7 +77,19 @@ fun SignInWithPassword(
             ),
             onClick = {}
         )
-        if (!showBiometricSignIn && isBiometricActive) {
+        if (isBiometricActive) {
+            ClickableText(
+                text = AnnotatedString(stringResource(id = R.string.sign_in_activate_fingerprint)),
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(top = 51.dp),
+                style = Typography.body2.copy(
+                    textDecoration = TextDecoration.Underline,
+                    color = MultimoneyTheme.colors.textLink
+                ),
+                onClick = { onSignInWithBiometricLink() }
+            )
+        } else {
             CustomCheckBox(
                 checked = signInViewModel.isFingerprintChecked,
                 onCheckedChange =
@@ -91,18 +101,6 @@ fun SignInWithPassword(
                 },
                 text = stringResource(id = R.string.sign_in_activate_fingerprint),
                 modifier = Modifier.padding(top = 51.dp)
-            )
-        } else {
-            ClickableText(
-                text = AnnotatedString(stringResource(id = R.string.sign_in_activate_fingerprint)),
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(top = 51.dp),
-                style = Typography.body2.copy(
-                    textDecoration = TextDecoration.Underline,
-                    color = MultimoneyTheme.colors.textLink
-                ),
-                onClick = { onSignInWithBiometricLink() }
             )
         }
         CustomButton(

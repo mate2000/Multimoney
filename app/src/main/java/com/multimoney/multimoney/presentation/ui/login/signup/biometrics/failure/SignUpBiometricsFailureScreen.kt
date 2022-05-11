@@ -1,6 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.biometrics.failure
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,7 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -34,21 +36,20 @@ fun SignUpBiometricsFailureScreen(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
         CustomImage(
             drawableResource = R.drawable.ic_biometrics_failure,
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight()
+                .fillMaxSize()
                 .align(Alignment.CenterHorizontally)
                 .weight(0.6f)
         )
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(0.6f)
+                .weight(0.4f)
+                .padding(top = 32.dp, bottom = 32.dp, end = 16.dp, start = 16.dp)
         ) {
             Text(
                 textAlign = TextAlign.Center,
@@ -63,7 +64,8 @@ fun SignUpBiometricsFailureScreen(
             Text(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .wrapContentWidth(),
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
                 text = stringResource(id = R.string.sign_up_biometric_failure_subtitle),
                 style = Typography.body1.copy(
                     color = MultimoneyTheme.colors.textSubhead,
@@ -76,8 +78,8 @@ fun SignUpBiometricsFailureScreen(
             text = stringResource(id = R.string.finalize),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp)
-                .weight(0.12f),
+                .padding(top = 24.dp, bottom = 32.dp, end = 16.dp, start = 16.dp)
+                .weight(0.15f),
             onClick = { viewModel.navigateToSignIn() }
         )
     }

@@ -80,7 +80,7 @@ fun SignUpBiometricsFailureScreen(
                 .fillMaxWidth()
                 .padding(top = 24.dp, bottom = 32.dp, end = 16.dp, start = 16.dp)
                 .weight(0.15f),
-            onClick = { viewModel.navigateToSignIn() }
+            onClick = { viewModel.navigateToCompleted() }
         )
     }
 }

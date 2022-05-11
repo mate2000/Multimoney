@@ -154,7 +154,7 @@ fun SignUpBiometricsScreen(
         CustomDialog(
             title = stringResource(id = R.string.alert),
             message = stringResource(id = R.string.sign_up_biometric_dialog_alert),
-            onNegativeAction = { viewModel.navigateToBiometricsFailed() },
+            onNegativeAction = {  },
             onPositiveAction = { viewModel.navigateToSignUpCompleted() },
             onDismissAction = { },
             openDialogCustom = viewModel.alertDialogVisibility

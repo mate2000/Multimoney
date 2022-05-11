@@ -13,8 +13,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -46,6 +48,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @Composable
 @Preview
@@ -53,11 +56,18 @@ fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: SignInViewModel = hiltViewModel()
 ) {
+    // Properties
+    val focusManager = LocalFocusManager.current
+    val openDialogCustom = remember { mutableStateOf(false) }
+    var isBiometricActive by remember { mutableStateOf(false) }
+    var showBiometricSignIn by remember { mutableStateOf(false) }
+
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate)
             userEmail = dataStorePreferences.getUserEmail().first()
+            isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
         }
     }
 
@@ -69,11 +79,6 @@ fun SignInScreen(
         biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description)
         biometricPromptNegative = stringResource(id = R.string.cancel)
     }
-
-    // Properties
-    val focusManager = LocalFocusManager.current
-    val openDialogCustom = remember { mutableStateOf(false) }
-    val showBiometricSignIn = remember { mutableStateOf(true) }
 
     // View
     Column(
@@ -149,19 +154,35 @@ fun SignInScreen(
             isError = viewModel.userEmailError.first,
             errorMessage = stringResource(id = viewModel.userEmailError.second)
         )
-        if (showBiometricSignIn.value) {
+        if (showBiometricSignIn) {
             SignInWithBiometric(
                 Modifier.padding(top = 32.dp),
-                onSignInWithBiometricAction = {},
-                onLinkEnterWithPassword = { showBiometricSignIn.value = false }
+                onSignInWithBiometricAction = {
+                    viewModel.apply {
+                        viewModelScope.launch {
+                            biometricHelper.showBiometricPrompt(
+                                title = biometricPromptTitle,
+                                subtitle = biometricPromptSubtitle,
+                                description = biometricPromptDescription,
+                                negative = biometricPromptNegative,
+                                activity = fragmentActivity,
+                                processSuccess = ::biometricPromptForDecryptionSuccess,
+                                processError = ::biometricPromptError,
+                                initializationVector = dataStorePreferences.getUserPasswordVector().first()
+                            )
+                        }
+                    }
+                },
+                onLinkEnterWithPassword = { showBiometricSignIn = false }
             )
         } else {
             SignInWithPassword(
                 signInViewModel = viewModel,
                 focusManager = focusManager,
                 openDialogCustom = openDialogCustom,
-                showBiometricSignIn = !showBiometricSignIn.value,
-                onSignInWithBiometricLink = { showBiometricSignIn.value = true }
+                isBiometricActive = isBiometricActive,
+                showBiometricSignIn = showBiometricSignIn,
+                onSignInWithBiometricLink = { showBiometricSignIn = true }
             )
         }
         ClickableText(
@@ -201,5 +222,19 @@ fun SignInScreen(
             onDismissAction = { viewModel.isFingerprintChecked = false },
             openDialogCustom = openDialogCustom
         )
+    }
+
+    if (viewModel.configureBiometric) {
+        viewModel.apply {
+            biometricHelper.showBiometricPrompt(
+                title = biometricPromptTitle,
+                subtitle = biometricPromptSubtitle,
+                description = biometricPromptDescription,
+                negative = biometricPromptNegative,
+                activity = fragmentActivity,
+                processSuccess = ::biometricPromptForEncryptionSuccess,
+                processError = ::biometricPromptConfigurationError
+            )
+        }
     }
 }

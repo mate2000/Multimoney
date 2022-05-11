@@ -32,6 +32,7 @@ fun SignInWithPassword(
     focusManager: FocusManager,
     openDialogCustom: MutableState<Boolean>,
     modifier: Modifier = Modifier,
+    isBiometricActive: Boolean,
     showBiometricSignIn: Boolean,
     onSignInWithBiometricLink: () -> Unit
 ) {
@@ -78,7 +79,7 @@ fun SignInWithPassword(
             ),
             onClick = {}
         )
-        if (!showBiometricSignIn) {
+        if (!showBiometricSignIn && isBiometricActive) {
             CustomCheckBox(
                 checked = signInViewModel.isFingerprintChecked,
                 onCheckedChange =
@@ -105,8 +106,9 @@ fun SignInWithPassword(
             )
         }
         CustomButton(
-            onClick =
-            { signInViewModel.signIn() },
+            onClick = {
+                signInViewModel.signIn()
+            },
             text = stringResource(id = R.string.sign_in),
             modifier = Modifier
                 .padding(top = 24.dp)

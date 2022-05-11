@@ -40,6 +40,8 @@ class SignInViewModel @Inject constructor(
     var isFingerprintChecked by mutableStateOf(false)
     var successMessage by mutableStateOf("")
 
+    var configureBiometric by mutableStateOf(false)
+
     fun signIn() {
         isLoading = true
         clearUserEmailError()
@@ -51,6 +53,10 @@ class SignInViewModel @Inject constructor(
                         AuthSessionResult.Type.SUCCESS -> {
                             successMessage = session.identityId.value ?: ""
                             isLoading = false
+                            if (isFingerprintChecked) {
+                                configureBiometric = true
+                            }
+                            // navigate to home
                         }
                         AuthSessionResult.Type.FAILURE -> cognitoError()
                     }
@@ -106,12 +112,28 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+    fun biometricPromptConfigurationError(errorCode: Int, errString: CharSequence) {
+        if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+            // navigate to Home
+        }
+    }
+
+    fun biometricPromptForEncryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
+        result.cryptoObject?.cipher?.apply {
+            viewModelScope.launch {
+                dataStorePreferences.setUserEmail(userEmail)
+                dataStorePreferences.setUserPassword(userPassword, this@apply)
+                dataStorePreferences.isBiometricsEnabled(true)
+                // navigate to home
+            }
+        }
+    }
 
     fun biometricPromptForDecryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
         result.cryptoObject?.cipher?.apply {
             viewModelScope.launch {
                 userPassword = dataStorePreferences.getUserPassword(this@apply).first()
-                isFingerprintChecked = dataStorePreferences.isBiometricsEnabled().first()
+                signIn()
             }
         }
     }

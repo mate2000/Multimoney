@@ -39,6 +39,7 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
         oneLowercaseState = passwordHasALowercaseLetterValidation(password) && password.isNotEmpty()
         oneNumberState = passwordHasANumberValidation(password) && password.isNotEmpty()
         validateHasTheSameConsecutiveCharacter()
+        resetValidationLabel(password)
     }
 
     private fun validateHasTheSameConsecutiveCharacter() {
@@ -69,6 +70,17 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
     fun validateConfirmPassword() {
         if (confirmPassword != password) {
             confirmPasswordError = Pair(true, R.string.sign_up_password_confirm_password_error)
+        } else {
+            Pair(false, R.string.error_empty)
+        }
+    }
+
+    private fun resetValidationLabel(password: String) {
+        if (password.isEmpty()) {
+            eightCharactersMinimumState = null
+            oneUppercaseState = null
+            oneLowercaseState = null
+            oneNumberState = null
         }
     }
 }

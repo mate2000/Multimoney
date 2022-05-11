@@ -29,7 +29,7 @@ class SignUpBiometricsViewModel @Inject constructor(
 
     fun biometricPromptError(errorCode: Int, errString: CharSequence) {
         if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-            navigateToSignUpCompleted()
+            navigateToBiometricsFailed()
         }
     }
 
@@ -51,7 +51,7 @@ class SignUpBiometricsViewModel @Inject constructor(
         )
     }
 
-    fun navigateToBiometricsFailed(){
+    fun navigateToBiometricsFailed() {
         popAndNavigateTo(
             route = Screen.SignUpBiometricsFailureScreen.route,
             popTo = Screen.SignUpBiometricsScreen.route

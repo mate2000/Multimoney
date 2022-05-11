@@ -72,12 +72,13 @@ fun SignUpBiometricsScreen(
                 .wrapContentWidth()
                 .wrapContentHeight()
                 .align(Alignment.CenterHorizontally)
-                .weight(0.6f)
+                .weight(0.65f)
         )
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(0.5f)
+                .weight(0.4f)
+                .padding(bottom = 32.dp, end = 16.dp, start = 16.dp)
         ) {
             Text(
                 textAlign = TextAlign.Center,
@@ -92,6 +93,7 @@ fun SignUpBiometricsScreen(
             Text(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
+                    .padding(top = 16.dp)
                     .wrapContentWidth(),
                 text = stringResource(id = R.string.sign_up_biometrics_facial_subtitle),
                 style = Typography.body1.copy(
@@ -104,6 +106,7 @@ fun SignUpBiometricsScreen(
         Column(
             Modifier
                 .fillMaxWidth()
+                .padding(bottom = 26.dp)
                 .weight(0.17f)
         ) {
             ClickableText(
@@ -117,7 +120,8 @@ fun SignUpBiometricsScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 4.dp),
+                    .padding(start = 4.dp)
+                    .weight(0.4f),
                 onClick = {
                     viewModel.navigateToSignUpCompleted()
                 }
@@ -126,7 +130,7 @@ fun SignUpBiometricsScreen(
                 text = stringResource(id = R.string.sign_up_biometrics_activate_now),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp),
+                    .weight(0.5f),
                 onClick = {
                     viewModel.apply {
                         biometricHelper.showBiometricPrompt(

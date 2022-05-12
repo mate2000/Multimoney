@@ -39,21 +39,6 @@ fun SignInWithBiometric(
 ) {
     Column(modifier = modifier, horizontalAlignment = CenterHorizontally) {
         Text(text = stringResource(id = R.string.sign_in_biometric_title))
-            IconButton(
-                onClick = onSignInWithBiometricAction
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_fingerprint),
-                    contentDescription = "",
-                    tint = DefaultWhite,
-                    modifier = Modifier
-                        .padding(top = 32.dp)
-                        .clip(CircleShape)
-                        .background(Primary500)
-                        .border(1.dp, Primary300, CircleShape)
-                        .padding(24.dp)
-                )
-            }
         Row(
             Modifier
                 .fillMaxWidth()

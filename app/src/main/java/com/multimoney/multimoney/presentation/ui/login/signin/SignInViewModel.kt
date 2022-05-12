@@ -27,7 +27,6 @@ class SignInViewModel @Inject constructor(
     // Interactions
     var isSignInEnabled by mutableStateOf(false)
     var biometricPromptTitle = ""
-    var biometricPromptSubtitle = ""
     var biometricPromptDescription = ""
     var biometricPromptNegative = ""
 

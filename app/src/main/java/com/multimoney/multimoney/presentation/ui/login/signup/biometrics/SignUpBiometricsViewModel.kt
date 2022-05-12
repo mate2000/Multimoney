@@ -22,7 +22,6 @@ class SignUpBiometricsViewModel @Inject constructor(
     var userEmail by mutableStateOf("")
     var userPassword by mutableStateOf("")
     var biometricPromptTitle = ""
-    var biometricPromptSubtitle = ""
     var biometricPromptDescription = ""
     var biometricPromptNegative = ""
 

@@ -51,7 +51,14 @@ android {
 }
 
 apollo {
-    packageName.set("com.multimoney.data.networking.apollomodel")
+    service("security") {
+        sourceFolder.set("com/multimoney/multimoney/security")
+        packageName.set("com.multimoney.data.networking.security.apollomodel")
+    }
+    service("balances") {
+        sourceFolder.set("com/multimoney/multimoney/balances")
+        packageName.set("com.multimoney.data.networking.balances.apollomodel")
+    }
 }
 
 dependencies {

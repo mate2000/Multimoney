@@ -98,8 +98,7 @@ fun SignUpBiometricsScreen(
                 text = stringResource(id = R.string.sign_up_biometrics_facial_subtitle),
                 style = Typography.body1.copy(
                     color = MultimoneyTheme.colors.textSubhead,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
+                    fontWeight = FontWeight.SemiBold
                 )
             )
         }
@@ -154,7 +153,7 @@ fun SignUpBiometricsScreen(
         CustomDialog(
             title = stringResource(id = R.string.alert),
             message = stringResource(id = R.string.sign_up_biometric_dialog_alert),
-            onNegativeAction = {  },
+            onNegativeAction = { },
             onPositiveAction = { viewModel.navigateToSignUpCompleted() },
             onDismissAction = { },
             openDialogCustom = viewModel.alertDialogVisibility

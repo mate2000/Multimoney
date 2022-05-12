@@ -125,7 +125,7 @@
     <string name="sign_up_biometric_failure_title">No pudimos configurar el reconocimiento facial</string>
     <string name="sign_up_biometric_failure_subtitle">Volvé a intentar más tarde</string>
     <string name="sign_up_biometric_failure_retry">Volver a intentar</string>
-    <string name="sign_up_biometric_dialog_alert">estas seguro que no quieres activar tus biometricos.</string>
+    <string name="sign_up_biometric_dialog_alert">Estás seguro que no quieres activar tus biometricos?</string>
 
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title">¿Inicia sesión con tu biométrica?</string>

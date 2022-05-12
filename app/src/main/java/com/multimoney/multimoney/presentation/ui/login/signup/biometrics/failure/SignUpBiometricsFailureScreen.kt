@@ -69,8 +69,7 @@ fun SignUpBiometricsFailureScreen(
                 text = stringResource(id = R.string.sign_up_biometric_failure_subtitle),
                 style = Typography.body1.copy(
                     color = MultimoneyTheme.colors.textSubhead,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
+                    fontWeight = FontWeight.SemiBold
                 )
             )
         }

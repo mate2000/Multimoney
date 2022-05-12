@@ -10,6 +10,7 @@
     <string name="label_email">Correo electrónico</string>
     <string name="finalize">Finalizar</string>
     <string name="cancel">Cancelar</string>
+    <string name="alert">Advertencia</string>
 
     <!-- Errors -->
     <string name="error_empty"></string>
@@ -124,6 +125,7 @@
     <string name="sign_up_biometric_failure_title">No pudimos configurar el reconocimiento facial</string>
     <string name="sign_up_biometric_failure_subtitle">Volvé a intentar más tarde</string>
     <string name="sign_up_biometric_failure_retry">Volver a intentar</string>
+    <string name="sign_up_biometric_dialog_alert">Estás seguro que no quieres activar tus biometricos?</string>
 
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title">¿Inicia sesión con tu biométrica?</string>
@@ -133,4 +135,14 @@
     <!-- Phone Country Dialog-->
     <string name="phone_country_dialog_title">Seleccionar país</string>
     <string name="phone_country_dialog_search">Buscar</string>
+
+    <!-- Custom AlertDialog -->
+    <string name="custom_dialog_default_positive_label">Aceptar</string>
+    <string name="custom_dialog_default_negative_label">Cancelar</string>
+
+    <!-- Active Biometric Dialog-->
+    <string name="active_biometric_title">¿Seguro que querés activar tu huella?</string>
+    <string name="active_biometric_message">Activando tu huella podrás ingresar a la app de forma más rápida y segura.</string>
+    <string name="active_biometric_positive_button_label">Activar</string>
+    <string name="active_biometric_negative_button_label">Cancelar</string>
 </resources>

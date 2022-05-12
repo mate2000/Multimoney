@@ -21,6 +21,7 @@ class SignUpBiometricsViewModel @Inject constructor(
 
     var userEmail by mutableStateOf("")
     var userPassword by mutableStateOf("")
+    var alertDialogVisibility = mutableStateOf(false)
     var biometricPromptTitle = ""
     var biometricPromptSubtitle = ""
     var biometricPromptDescription = ""
@@ -28,7 +29,7 @@ class SignUpBiometricsViewModel @Inject constructor(
 
     fun biometricPromptError(errorCode: Int, errString: CharSequence) {
         if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-            navigateToSignUpCompleted()
+            navigateToBiometricsFailed()
         }
     }
 
@@ -46,6 +47,13 @@ class SignUpBiometricsViewModel @Inject constructor(
     fun navigateToSignUpCompleted() {
         popAndNavigateTo(
             route = Screen.SignUpCompleted.route,
+            popTo = Screen.SignUpBiometricsScreen.route
+        )
+    }
+
+    fun navigateToBiometricsFailed() {
+        popAndNavigateTo(
+            route = Screen.SignUpBiometricsFailureScreen.route,
             popTo = Screen.SignUpBiometricsScreen.route
         )
     }

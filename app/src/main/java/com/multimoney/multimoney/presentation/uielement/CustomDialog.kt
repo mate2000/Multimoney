@@ -135,7 +135,8 @@ fun CustomDialog(
                         }
                         Text(
                             text = title,
-                            modifier.padding(top = topPaddingTitle), color = titleColor,
+                            modifier.padding(top = topPaddingTitle),
+                            color = titleColor,
                             style = textStyle
                         )
                     }

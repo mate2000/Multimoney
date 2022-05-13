@@ -14,9 +14,9 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -40,7 +40,9 @@ class SignInViewModel @Inject constructor(
     var isFingerprintChecked by mutableStateOf(false)
     var successMessage by mutableStateOf("")
 
+    var biometricErrorDialog by mutableStateOf(Pair(mutableStateOf(false), ""))
     var configureBiometric by mutableStateOf(false)
+    var biometricError by mutableStateOf(false)
 
     fun signIn() {
         isLoading = true
@@ -108,7 +110,8 @@ class SignInViewModel @Inject constructor(
 
     fun biometricPromptError(errorCode: Int, errString: CharSequence) {
         if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-
+            biometricError = true
+            biometricErrorDialog = Pair(mutableStateOf(true), errString.toString())
         }
     }
 

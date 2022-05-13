@@ -167,7 +167,8 @@ fun SignInScreen(
                                 activity = fragmentActivity,
                                 processSuccess = ::biometricPromptForDecryptionSuccess,
                                 processError = ::biometricPromptError,
-                                initializationVector = dataStorePreferences.getUserPasswordVector().first()
+                                initializationVector = dataStorePreferences.getUserPasswordVector()
+                                    .first()
                             )
                         }
                     }
@@ -182,6 +183,7 @@ fun SignInScreen(
                 focusManager = focusManager,
                 openDialogCustom = openDialogCustom,
                 isBiometricActive = isBiometricActive,
+                isBiometricError = viewModel.biometricError,
                 onSignInWithBiometricLink = { showBiometricSignIn = true }
             )
         }
@@ -236,5 +238,15 @@ fun SignInScreen(
                 processError = ::biometricPromptConfigurationError
             )
         }
+    }
+
+    if (viewModel.biometricErrorDialog.first.value) {
+        CustomDialog(
+            title = stringResource(id = R.string.error),
+            message = viewModel.biometricErrorDialog.second,
+            onPositiveAction = { showBiometricSignIn = false },
+            onDismissAction = { showBiometricSignIn = false },
+            openDialogCustom = viewModel.biometricErrorDialog.first
+        )
     }
 }

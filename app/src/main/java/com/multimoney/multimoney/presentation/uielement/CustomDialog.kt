@@ -59,12 +59,12 @@ fun CustomDialog(
     title: String = "",
     message: String = "",
     positiveButtonText: String = stringResource(id = R.string.custom_dialog_default_positive_label),
-    negativeButtonText: String = stringResource(id = R.string.custom_dialog_default_negative_label),
+    negativeButtonText: String = "",
     topIcon: Int? = null,
     shape: Shape = MaterialTheme.shapes.medium,
-    onNegativeAction: () -> Unit,
+    onNegativeAction: () -> Unit = {},
     onPositiveAction: () -> Unit,
-    onDismissAction: () -> Unit,
+    onDismissAction: () -> Unit = {},
     openDialogCustom: MutableState<Boolean> = mutableStateOf(false)
 ) {
 
@@ -150,14 +150,19 @@ fun CustomDialog(
                         .align(Alignment.End)
                         .padding(top = topPaddingButtons)
                 ) {
-                    ClickableText(
-                        text = AnnotatedString(negativeButtonText),
-                        onClick = {
-                            onNegativeAction()
-                            openDialogCustom.value = false
-                        },
-                        style = Typography.button.copy(fontWeight = SemiBold, color = buttonColor)
-                    )
+                    if (negativeButtonText.isNotEmpty()) {
+                        ClickableText(
+                            text = AnnotatedString(negativeButtonText),
+                            onClick = {
+                                onNegativeAction()
+                                openDialogCustom.value = false
+                            },
+                            style = Typography.button.copy(
+                                fontWeight = SemiBold,
+                                color = buttonColor
+                            )
+                        )
+                    }
                     ClickableText(
                         modifier = Modifier.padding(start = 32.dp),
                         text = AnnotatedString(positiveButtonText),

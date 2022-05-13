@@ -31,6 +31,7 @@ fun SignInWithPassword(
     focusManager: FocusManager,
     openDialogCustom: MutableState<Boolean>,
     modifier: Modifier = Modifier,
+    isBiometricError: Boolean,
     isBiometricActive: Boolean,
     onSignInWithBiometricLink: () -> Unit
 ) {
@@ -77,31 +78,33 @@ fun SignInWithPassword(
             ),
             onClick = {}
         )
-        if (isBiometricActive) {
-            ClickableText(
-                text = AnnotatedString(stringResource(id = R.string.sign_in_activate_fingerprint)),
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(top = 51.dp),
-                style = Typography.body2.copy(
-                    textDecoration = TextDecoration.Underline,
-                    color = MultimoneyTheme.colors.textLink
-                ),
-                onClick = { onSignInWithBiometricLink() }
-            )
-        } else {
-            CustomCheckBox(
-                checked = signInViewModel.isFingerprintChecked,
-                onCheckedChange =
-                {
-                    signInViewModel.isFingerprintChecked = it
-                    if (it) {
-                        openDialogCustom.value = true
-                    }
-                },
-                text = stringResource(id = R.string.sign_in_activate_fingerprint),
-                modifier = Modifier.padding(top = 51.dp)
-            )
+        if (!isBiometricError) {
+            if (isBiometricActive) {
+                ClickableText(
+                    text = AnnotatedString(stringResource(id = R.string.sign_in_activate_fingerprint)),
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(top = 51.dp),
+                    style = Typography.body2.copy(
+                        textDecoration = TextDecoration.Underline,
+                        color = MultimoneyTheme.colors.textLink
+                    ),
+                    onClick = { onSignInWithBiometricLink() }
+                )
+            } else {
+                CustomCheckBox(
+                    checked = signInViewModel.isFingerprintChecked,
+                    onCheckedChange =
+                    {
+                        signInViewModel.isFingerprintChecked = it
+                        if (it) {
+                            openDialogCustom.value = true
+                        }
+                    },
+                    text = stringResource(id = R.string.sign_in_activate_fingerprint),
+                    modifier = Modifier.padding(top = 51.dp)
+                )
+            }
         }
         CustomButton(
             onClick = {

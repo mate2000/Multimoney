@@ -68,7 +68,6 @@ fun SignInScreen(
 
     viewModel.apply {
         biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title)
-        biometricPromptSubtitle = stringResource(id = R.string.biometric_dialog_subtitle)
         biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description)
         biometricPromptNegative = stringResource(id = R.string.cancel)
     }
@@ -194,7 +193,6 @@ fun SignInScreen(
                     viewModelScope.launch {
                         biometricHelper.showBiometricPrompt(
                             title = biometricPromptTitle,
-                            subtitle = biometricPromptSubtitle,
                             description = biometricPromptDescription,
                             negative = biometricPromptNegative,
                             activity = fragmentActivity,

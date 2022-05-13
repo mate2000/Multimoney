@@ -23,7 +23,6 @@ class SignUpBiometricsViewModel @Inject constructor(
     var userPassword by mutableStateOf("")
     var alertDialogVisibility = mutableStateOf(false)
     var biometricPromptTitle = ""
-    var biometricPromptSubtitle = ""
     var biometricPromptDescription = ""
     var biometricPromptNegative = ""
 

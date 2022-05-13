@@ -1,0 +1,325 @@
+type SecurityQuery {
+  dataInformationClient(dataInformationClientInput: DataInformationClient): dataInformationClient
+}
+
+type dataInformationClient {
+  """
+  dataInformationClient nombre
+  """
+  nombre: String!
+
+  """
+  dataInformationClient tipoIdentificacion
+  """
+  tipoIdentificacion: String!
+
+  """
+  dataInformationClient Status
+  """
+  status: Boolean!
+
+  """
+  dataInformationClient Message
+  """
+  message: String!
+
+  """
+  dataInformationClient regime
+  """
+  regimen: dataInformationClientRegime
+
+  """
+  dataInformationClient situation
+  """
+  situacion: dataInformationClientSituation
+
+  """
+  dataInformationClient activitiesList
+  """
+  actividades: [dataInformationClientActivity]
+}
+
+type dataInformationClientRegime {
+  """
+  dataInformationClientRegime codigo
+  """
+  codigo: Int!
+
+  """
+  dataInformationClientRegime descripcion
+  """
+  descripcion: String!
+}
+
+type dataInformationClientSituation {
+  """
+  dataInformationClientSituation moroso
+  """
+  moroso: String!
+
+  """
+  dataInformationClientSituation omiso
+  """
+  omiso: String!
+
+  """
+  dataInformationClientSituation estado
+  """
+  estado: String!
+
+  """
+  dataInformationClientSituation administracionTributaria
+  """
+  administracionTributaria: String!
+}
+
+type dataInformationClientActivity {
+  """
+  dataInformationClientActivity estado
+  """
+  estado: String!
+
+  """
+  dataInformationClientActivity tipo
+  """
+  tipo: String!
+
+  """
+  dataInformationClientActivity codigo
+  """
+  codigo: String!
+
+  """
+  dataInformationClientActivity descripcion
+  """
+  descripcion: String!
+}
+
+input DataInformationClient {
+  identification: String!
+
+  idBrand: Int!
+
+  user: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type SecurityMutation {
+  userValidation(userValidationInput: userValidationInput): userValidation
+
+  updateUserRegister(updateUserRegisterInput: UpdateUserRegister): updateUserRegister
+}
+
+type userValidation {
+  """
+  userValidation pkUser
+  """
+  pkUser: String
+
+  """
+  userValidation userName
+  """
+  userName: String
+
+  """
+  userValidation email
+  """
+  email: String
+
+  """
+  userValidation phoneNumber
+  """
+  phoneNumber: String
+
+  """
+  userValidation fullName
+  """
+  fullName: String
+
+  """
+  userValidation firstName
+  """
+  firstName: String
+
+  """
+  userValidation secondName
+  """
+  secondName: String
+
+  """
+  userValidation lastName
+  """
+  lastName: String
+
+  """
+  userValidation secondLastName
+  """
+  secondLastName: String
+
+  """
+  userValidation contactMeans
+  """
+  contactMeans: String
+
+  """
+  userValidation nationality
+  """
+  nationality: String
+
+  """
+  userValidation identification
+  """
+  identification: String
+
+  """
+  userValidation countryCode
+  """
+  countryCode: String
+
+  """
+  userValidation currentStep
+  """
+  currentStep: String
+
+  """
+  userValidation userStatus
+  """
+  userStatus: String
+}
+
+input userValidationInput {
+  email: String!
+
+  currentStep: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type updateUserRegister {
+  """
+  updateUserRegister pkUser
+  """
+  pkUser: String
+
+  """
+  updateUserRegister userName
+  """
+  userName: String
+
+  """
+  updateUserRegister email
+  """
+  email: String
+
+  """
+  updateUserRegister phoneNumber
+  """
+  phoneNumber: String
+
+  """
+  updateUserRegister fullName
+  """
+  fullName: String
+
+  """
+  updateUserRegister firstName
+  """
+  firstName: String
+
+  """
+  updateUserRegister secondName
+  """
+  secondName: String
+
+  """
+  updateUserRegister lastName
+  """
+  lastName: String
+
+  """
+  updateUserRegister secondLastName
+  """
+  secondLastName: String
+
+  """
+  updateUserRegister contactMeans
+  """
+  contactMeans: String
+
+  """
+  updateUserRegister nationality
+  """
+  nationality: String
+
+  """
+  updateUserRegister identification
+  """
+  identification: String
+
+  """
+  updateUserRegister countryCode
+  """
+  countryCode: String
+
+  """
+  updateUserRegister currentStep
+  """
+  currentStep: String
+
+  """
+  updateUserRegister userStatus
+  """
+  userStatus: String
+}
+
+input UpdateUserRegister {
+  identification: String
+
+  fullName: String
+
+  email: String
+
+  phoneNumber: String
+
+  firstName: String
+
+  secondName: String
+
+  lastName: String
+
+  secondLastName: String
+
+  pkUser: String
+
+  userName: String
+
+  contactMeans: String
+
+  nationality: String
+
+  countryCode: String
+
+  currentStep: String
+
+  activateUser: Boolean
+
+  idBrand: Int!
+
+  user: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+schema {
+  query: SecurityQuery
+  mutation: SecurityMutation
+}

@@ -128,9 +128,8 @@
     <string name="sign_up_biometric_dialog_alert">Estás seguro que no quieres activar tus biometricos?</string>
 
     <!-- Biometric Dialog -->
-    <string name="biometric_dialog_title">¿Inicia sesión con tu biométrica?</string>
-    <string name="biometric_dialog_subtitle">Utilice su biometría para autenticarse en la aplicación.</string>
-    <string name="biometric_dialog_description">Utilice su biometría para autenticarse en la aplicación.</string>
+    <string name="biometric_dialog_title">Inicia sesión con biométricos</string>
+    <string name="biometric_dialog_description">Utiliza la autenticación de tu rostro o huella para ingresar de forma rápida y segura.</string>
 
     <!-- Phone Country Dialog-->
     <string name="phone_country_dialog_title">Seleccionar país</string>

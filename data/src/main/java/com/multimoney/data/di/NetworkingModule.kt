@@ -6,7 +6,7 @@ import com.apollographql.apollo3.cache.normalized.normalizedCache
 import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import com.multimoney.data.BuildConfig
-import com.multimoney.data.networking.MultimoneyApi
+import com.multimoney.data.networking.SecurityApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +23,7 @@ class NetworkingModule {
 
     @Singleton
     @Provides
-    fun apolloClient(@ApplicationContext context: Context): ApolloClient {
+    fun okHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor()
 
         logging.level = if (BuildConfig.DEBUG) {
@@ -32,29 +32,38 @@ class NetworkingModule {
             (HttpLoggingInterceptor.Level.BASIC)
         }
 
-        val okHttpClient = OkHttpClient.Builder()
+        return OkHttpClient.Builder()
             .addInterceptor(logging)
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .build()
+    }
 
-        val sqlNormalizedCacheFactory = SqlNormalizedCacheFactory(context, APOLLO_DB)
+    @Singleton
+    @Provides
+    fun apolloClient(@ApplicationContext context: Context, schema: String): ApolloClient {
+
+        val sqlNormalizedCacheFactory =
+            SqlNormalizedCacheFactory(context, APOLLO_PREFIX_DB + schema + APOLLO_SUFFIX_DB)
 
         return ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL)
+            .serverUrl(BuildConfig.API_URL + schema)
             .normalizedCache(sqlNormalizedCacheFactory)
-            .okHttpClient(okHttpClient)
+            .okHttpClient(okHttpClient())
             .build()
     }
 
     @Singleton
     @Provides
-    fun multimoneyApi(@ApplicationContext context: Context): MultimoneyApi =
-        MultimoneyApi(apolloClient(context))
+    fun securityApi(@ApplicationContext context: Context): SecurityApi =
+        SecurityApi(apolloClient(context, SCHEMA_SECURITY))
 
     companion object {
         const val TIMEOUT = 30L
-        const val APOLLO_DB = "multimoney_apollo_db"
+        const val APOLLO_PREFIX_DB = "multimoney_apollo_"
+        const val APOLLO_SUFFIX_DB = "_db"
+        const val SCHEMA_SECURITY = "security"
+        const val SCHEMA_BALANCES = "balances"
     }
 }

@@ -81,7 +81,8 @@ fun passwordHasANumberValidation(value: String): Boolean {
     return matchRegex(value, getRegex(ONE_NUMBER_REGEX))
 }
 
-fun stringHasOnlyDigitOrLetter(value: String) = value.all { it.isDigit() } || value.all { it.isLetter() }
+fun stringHasOnlyDigitOrLetter(value: String) =
+    value.all { it.isDigit() } || value.all { it.isLetter() }
 
 fun noMoreThanThreeLettersOrNumbers(value: String): Boolean {
     var error = false
@@ -98,33 +99,39 @@ fun noMoreThanThreeLettersOrNumbers(value: String): Boolean {
     return error
 }
 
-fun noMoreThanTwoConsecutiveLetterOrNumber(value: String): Boolean {
+fun noMoreThanThreeConsecutiveLetterOrNumber(value: String): Boolean {
     var error = false
-    if (value.isNotEmpty() && value.length >= CHARACTER_NEED_TO_VALIDATE) {
-        val valueChunked = value.chunkedSequence(CHARACTER_NEED_TO_VALIDATE)
+    if (value.isNotEmpty() && value.length > CHARACTER_NEED_TO_VALIDATE) {
+        val valueChunked = value.chunkedSequence(INVALID_CHARACTERS_CHUNKS)
         if (stringHasOnlyDigitOrLetter(valueChunked.first())) {
             val valueSplit = valueChunked.first().lowercase().toCharArray()
-            error = valueSplit.first().code.plus(1) == valueSplit[1].code && value[1].code.plus(1) == valueSplit.last().code
+            error =
+                valueSplit.first().code.plus(1) == valueSplit[1].code &&
+                        valueSplit[1].code.plus(1) == valueSplit[2].code &&
+                        valueSplit[2].code.plus(1) == valueSplit.last().code
         }
         if (error.not()) {
             val newValue = value.drop(1)
-            return noMoreThanTwoConsecutiveLetterOrNumber(newValue)
+            return noMoreThanThreeConsecutiveLetterOrNumber(newValue)
         }
     }
     return error
 }
 
-fun noMoreThanTwoEqualConsecutiveLetterOrNumber(value: String): Boolean {
+fun noMoreThanThreeEqualConsecutiveLetterOrNumber(value: String): Boolean {
     var error = false
-    if (value.isNotEmpty() && value.length >= CHARACTER_NEED_TO_VALIDATE) {
-        val valueChunked = value.chunkedSequence(CHARACTER_NEED_TO_VALIDATE)
+    if (value.isNotEmpty() && value.length > CHARACTER_NEED_TO_VALIDATE) {
+        val valueChunked = value.chunkedSequence(INVALID_CHARACTERS_CHUNKS)
         if (stringHasOnlyDigitOrLetter(valueChunked.first())) {
             val valueSplit = valueChunked.first().lowercase().toCharArray()
-            error = valueSplit.first().code == valueSplit[1].code && value[1].code == valueSplit.last().code
+            error =
+                valueSplit.first().code == valueSplit[1].code &&
+                        valueSplit[1].code == valueSplit[2].code &&
+                        valueSplit[2].code == valueSplit.last().code
         }
         if (error.not()) {
             val newValue = value.drop(1)
-            return noMoreThanTwoEqualConsecutiveLetterOrNumber(newValue)
+            return noMoreThanThreeEqualConsecutiveLetterOrNumber(newValue)
         }
     }
     return error

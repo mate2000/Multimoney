@@ -293,12 +293,15 @@ fun CustomOutlinedTextField(
                     tint = SemanticNegative500
                 )
                 Text(
-                    text = if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
+                    text =
+                    if (isError && errorMessage.isNullOrBlank().not()) {
+                        errorMessage ?: ""
+                    } else if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
                         isRequiredMessage ?: ""
                     } else if (emptyError) {
                         stringResource(id = R.string.error_empty_field)
                     } else {
-                        errorMessage ?: ""
+                        ""
                     },
                     color = SemanticNegative500,
                     modifier = Modifier

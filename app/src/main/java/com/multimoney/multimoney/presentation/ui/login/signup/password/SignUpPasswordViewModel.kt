@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
+import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
-import com.multimoney.multimoney.presentation.util.noMoreThanTwoConsecutiveLetterOrNumber
-import com.multimoney.multimoney.presentation.util.noMoreThanTwoEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
@@ -39,26 +39,31 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
         oneLowercaseState = passwordHasALowercaseLetterValidation(password) && password.isNotEmpty()
         oneNumberState = passwordHasANumberValidation(password) && password.isNotEmpty()
         validateHasTheSameConsecutiveCharacter()
+        resetValidationLabel(password)
     }
 
     private fun validateHasTheSameConsecutiveCharacter() {
         confirmPasswordError = when {
-            noMoreThanTwoEqualConsecutiveLetterOrNumber(password) -> {
+            noMoreThanThreeEqualConsecutiveLetterOrNumber(password) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_no_more_than_two_the_same_consecutive_character
+                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
-            noMoreThanTwoConsecutiveLetterOrNumber(password) -> {
+            noMoreThanThreeConsecutiveLetterOrNumber(password) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_no_more_than_two_consecutive_character
+                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeLettersOrNumbers(password) -> {
                 Pair(
-                    true, R.string.sign_up_password_requirement_no_more_than_three_character
+                    true,
+                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
+            }
+            (password.isNotEmpty() && confirmPassword.isNotEmpty() && confirmPassword != password) -> {
+                Pair(true, R.string.sign_up_password_confirm_password_error)
             }
             else -> {
                 Pair(false, R.string.error_empty)
@@ -66,9 +71,12 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
         }
     }
 
-    fun validateConfirmPassword() {
-        if (confirmPassword != password) {
-            confirmPasswordError = Pair(true, R.string.sign_up_password_confirm_password_error)
+    private fun resetValidationLabel(password: String) {
+        if (password.isEmpty()) {
+            eightCharactersMinimumState = null
+            oneUppercaseState = null
+            oneLowercaseState = null
+            oneNumberState = null
         }
     }
 }

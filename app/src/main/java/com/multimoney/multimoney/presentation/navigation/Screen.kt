@@ -20,6 +20,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_up_biometrics_screen/{$USER_EMAIL_ARG_KEY}/{$USER_PASSWORD_ARG_KEY}",
         "sign_up_biometrics_screen"
     )
+    object SignUpBiometricsFailureScreen : Screen("sign_up_biometrics_failure")
 
     object SignUpCompleted : Screen("sign_up_completed")
 

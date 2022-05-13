@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -54,7 +55,6 @@ fun SignUpBiometricsScreen(
 
     viewModel.apply {
         biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title)
-        biometricPromptSubtitle = stringResource(id = R.string.biometric_dialog_subtitle)
         biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description)
         biometricPromptNegative = stringResource(id = R.string.cancel)
     }
@@ -71,12 +71,13 @@ fun SignUpBiometricsScreen(
                 .wrapContentWidth()
                 .wrapContentHeight()
                 .align(Alignment.CenterHorizontally)
-                .weight(0.6f)
+                .weight(0.65f)
         )
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(0.5f)
+                .weight(0.4f)
+                .padding(bottom = 32.dp, end = 16.dp, start = 16.dp)
         ) {
             Text(
                 textAlign = TextAlign.Center,
@@ -91,18 +92,19 @@ fun SignUpBiometricsScreen(
             Text(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
+                    .padding(top = 16.dp)
                     .wrapContentWidth(),
                 text = stringResource(id = R.string.sign_up_biometrics_facial_subtitle),
                 style = Typography.body1.copy(
                     color = MultimoneyTheme.colors.textSubhead,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
+                    fontWeight = FontWeight.SemiBold
                 )
             )
         }
         Column(
             Modifier
                 .fillMaxWidth()
+                .padding(bottom = 26.dp)
                 .weight(0.17f)
         ) {
             ClickableText(
@@ -116,7 +118,8 @@ fun SignUpBiometricsScreen(
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 4.dp),
+                    .padding(start = 4.dp)
+                    .weight(0.4f),
                 onClick = {
                     viewModel.navigateToSignUpCompleted()
                 }
@@ -125,12 +128,11 @@ fun SignUpBiometricsScreen(
                 text = stringResource(id = R.string.sign_up_biometrics_activate_now),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp),
+                    .weight(0.5f),
                 onClick = {
                     viewModel.apply {
                         biometricHelper.showBiometricPrompt(
                             title = biometricPromptTitle,
-                            subtitle = biometricPromptSubtitle,
                             description = biometricPromptDescription,
                             negative = biometricPromptNegative,
                             activity = fragmentActivity,
@@ -143,6 +145,16 @@ fun SignUpBiometricsScreen(
         }
     }
     BackHandler {
-        viewModel.navigateToSignUpCompleted()
+        viewModel.alertDialogVisibility.value = true
+    }
+    if (viewModel.alertDialogVisibility.value) {
+        CustomDialog(
+            title = stringResource(id = R.string.alert),
+            message = stringResource(id = R.string.sign_up_biometric_dialog_alert),
+            onNegativeAction = { },
+            onPositiveAction = { viewModel.navigateToSignUpCompleted() },
+            onDismissAction = { },
+            openDialogCustom = viewModel.alertDialogVisibility
+        )
     }
 }

@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.launch.LaunchConnection
+import com.multimoney.domain.model.security.User
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -40,7 +40,7 @@ fun TestScreen(
     viewModel: TestViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-        viewModel.getLaunchList()
+//        viewModel.mutationUserValidationUseCase()
         viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
@@ -74,7 +74,8 @@ fun TestScreen(
             viewModel.navigateToChart()
         }
         OnFidoButton {
-            launchOnFidoActivityResult.launch(viewModel.onFidoHelper.getOnFidoIntent())
+            //launchOnFidoActivityResult.launch(viewModel.onFidoHelper.getOnFidoIntent())
+            viewModel.mutationUserValidationUseCase()
         }
         var textValue by remember { mutableStateOf("Hello World Invisible") }
         CustomOutlinedTextField(
@@ -118,14 +119,14 @@ fun OnFidoButton(navigateToChart: () -> Unit) {
  */
 @Composable
 fun TestScreen(
-    data: LaunchConnection?
+    data: User?
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         data?.let {
-            Text(text = data.cursor, color = MaterialTheme.colors.onBackground)
+            Text(text = data.firstName ?: "", color = MaterialTheme.colors.onBackground)
         }
     }
 }

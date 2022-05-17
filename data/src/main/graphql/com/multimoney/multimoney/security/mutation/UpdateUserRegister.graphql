@@ -1,0 +1,52 @@
+mutation UpdateUserRegister(
+    $pkUser: String!,
+    $user: String!,
+    $email: String!,
+    $phoneNumber: String,
+    $fullName: String,
+    $firstName : String,
+    $secondName : String,
+    $lastName : String,
+    $secondLastName : String,
+    $contactMeans : String,
+    $nationality : String,
+    $identification: String,
+    $countryCode : String,
+    $currentStep : String!,
+    $idBrand : Int!){
+    updateUserRegister(
+        updateUserRegisterInput: {
+            pkUser: $pkUser
+            user: $user
+            email: $email
+            phoneNumber:  $phoneNumber
+            fullName: $fullName
+            firstName: $firstName
+            secondName: $secondName
+            lastName: $lastName
+            secondLastName: $secondLastName
+            contactMeans: $contactMeans
+            nationality: $nationality
+            identification: $identification
+            countryCode : $countryCode
+            currentStep : $currentStep
+            idBrand : $idBrand
+        }
+    ) {
+        pkUser
+        email
+        currentStep
+        userStatus
+        identification
+        fullName
+        firstName
+        secondName
+        lastName
+        secondLastName
+        nationality
+        countryCode
+        phoneNumber
+        contactMeans
+        userName
+    }
+}

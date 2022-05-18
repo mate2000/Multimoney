@@ -9,6 +9,7 @@
     <string name="sign_in">iniciar sesión</string>
     <string name="label_email">Correo electrónico</string>
     <string name="finalize">Finalizar</string>
+    <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="error">Error</string>
     <string name="alert">Advertencia</string>

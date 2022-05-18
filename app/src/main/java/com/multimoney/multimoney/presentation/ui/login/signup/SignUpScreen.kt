@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -33,11 +32,11 @@ import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneS
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun SignUpScreen(
@@ -104,6 +103,15 @@ fun SignUpScreen(
 
     BackHandler {
         viewModel.previousStep()
+    }
+
+    if (viewModel.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.openDialog.title),
+            message = viewModel.openDialog.description,
+            onPositiveAction = {},
+            openDialogCustom = viewModel.openDialog.isActive
+        )
     }
 }
 

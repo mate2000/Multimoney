@@ -6,6 +6,7 @@ import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
+import com.multimoney.data.networking.security.apollomodel.ValidationSecurityQuery
 import javax.inject.Inject
 
 class SecurityApi @Inject constructor(
@@ -56,6 +57,16 @@ class SecurityApi @Inject constructor(
                 idBrand
             )
         ).fetchPolicy(
+            FetchPolicy.NetworkOnly
+        )
+
+    fun queryValidationSecurity(
+        pkUser: Int,
+        password: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ValidationSecurityQuery.Data> =
+        apolloClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand)).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -32,6 +33,12 @@ fun SignUpPasswordScreen(
     viewModel: SignUpPasswordViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(true) {
+        viewModel.apply {
+            sharedViewModel.isContinueEnabled = isFormValid()
+        }
+    }
 
     // Properties
     val focusManager = LocalFocusManager.current

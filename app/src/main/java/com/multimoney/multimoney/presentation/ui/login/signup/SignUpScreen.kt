@@ -109,7 +109,8 @@ fun SignUpScreen(
         CustomDialog(
             title = stringResource(id = viewModel.openDialog.title),
             message = viewModel.openDialog.description,
-            onPositiveAction = {},
+            positiveButtonText = stringResource(id = viewModel.openDialog.positiveText),
+            onPositiveAction = { viewModel.openDialog.positiveAction },
             openDialogCustom = viewModel.openDialog.isActive
         )
     }

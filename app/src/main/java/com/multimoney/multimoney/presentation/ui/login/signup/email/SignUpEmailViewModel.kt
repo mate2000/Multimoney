@@ -10,13 +10,16 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpEmailViewModel @Inject constructor(private val mutationUserValidationUseCase: MutationUserValidationUseCase) :
+class SignUpEmailViewModel @Inject constructor(
+    private val mutationUserValidationUseCase: MutationUserValidationUseCase
+) :
     BaseViewModel() {
 
     // Fields
@@ -25,6 +28,9 @@ class SignUpEmailViewModel @Inject constructor(private val mutationUserValidatio
 
     // Interactions
     var onSuccessUserValidation by mutableStateOf<User?>(null)
+    var onFailure by mutableStateOf(DialogParameters())
+    var isFirstLaunch = true
+    var userCompletedDialogDescription = ""
 
     fun isFormValid() = when {
         userEmail.isBlank() -> false
@@ -42,6 +48,8 @@ class SignUpEmailViewModel @Inject constructor(private val mutationUserValidatio
         userEmailError = Pair(false, R.string.error_empty)
     }
 
+    fun isDataChanged() = onSuccessUserValidation?.email != userEmail
+
     fun callMutationUserValidationUseCase(email: String, currentStep: String, idBrand: Int) =
         executeUseCase {
             isLoading = true
@@ -56,7 +64,10 @@ class SignUpEmailViewModel @Inject constructor(private val mutationUserValidatio
                 }
                 result.onFailure {
                     isLoading = false
-                    val error2 = it.getError()
+                    onFailure = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
                 }
                 result.onLoading {
                     isLoading = true

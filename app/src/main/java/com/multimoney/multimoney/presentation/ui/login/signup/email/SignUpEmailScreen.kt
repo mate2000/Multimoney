@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -22,11 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.UserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.util.DialogParameters
 
 @Composable
 @Preview
@@ -38,23 +40,56 @@ fun SignUpEmailScreen(
     // Properties
     val focusManager = LocalFocusManager.current
     LaunchedEffect(true) {
+        viewModel.isFirstLaunch = true
         sharedViewModel.isContinueEnabled = viewModel.isFormValid()
         sharedViewModel.nextAction = {
-            viewModel.callMutationUserValidationUseCase(
-                viewModel.userEmail,
-                SignUpStep.One.name,
-                Brand.Revamp.id
-            )
+            viewModel.apply {
+                if (isDataChanged()) {
+                    callMutationUserValidationUseCase(
+                        userEmail,
+                        SignUpStep.One.name,
+                        Brand.Revamp.id
+                    )
+                } else {
+                    sharedViewModel.nextStep()
+                }
+            }
         }
     }
 
-//    LaunchedEffect(viewModel.isLoading) {
-//        sharedViewModel.isLoading = viewModel.isLoading
-//    }
+    LaunchedEffect(viewModel.isLoading) {
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.isLoading = viewModel.isLoading
+        }
+    }
 
     LaunchedEffect(viewModel.onSuccessUserValidation) {
-        sharedViewModel.user = viewModel.onSuccessUserValidation
-        sharedViewModel.nextStep()
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.user = viewModel.onSuccessUserValidation
+            if (sharedViewModel.user?.userStatus == UserStatus.Incomplete.name) {
+                sharedViewModel.nextStep()
+            } else if (sharedViewModel.user?.userStatus == UserStatus.Active.name) {
+                sharedViewModel.openDialog = DialogParameters(
+                    title = R.string.sign_up_email_user_completed_dialog_title,
+                    description = viewModel.userCompletedDialogDescription,
+                    positiveText = R.string.sign_up_email_user_completed_dialog_positive,
+                    positiveAction = { sharedViewModel.previousStep() },
+                    isActive = mutableStateOf(true)
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(viewModel.onFailure) {
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.openDialog = viewModel.onFailure
+        }
+    }
+
+    viewModel.apply {
+        isFirstLaunch = false
+        userCompletedDialogDescription =
+            stringResource(id = R.string.sign_up_email_user_completed_dialog_description)
     }
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
@@ -101,6 +136,4 @@ fun SignUpEmailScreen(
             errorMessage = stringResource(id = viewModel.userEmailError.second)
         )
     }
-
-    LoadingIndicator(viewModel.isLoading)
 }

@@ -20,10 +20,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 
 @Composable
 @Preview
@@ -36,6 +39,22 @@ fun SignUpEmailScreen(
     val focusManager = LocalFocusManager.current
     LaunchedEffect(true) {
         sharedViewModel.isContinueEnabled = viewModel.isFormValid()
+        sharedViewModel.nextAction = {
+            viewModel.callMutationUserValidationUseCase(
+                viewModel.userEmail,
+                SignUpStep.One.name,
+                Brand.Revamp.id
+            )
+        }
+    }
+
+//    LaunchedEffect(viewModel.isLoading) {
+//        sharedViewModel.isLoading = viewModel.isLoading
+//    }
+
+    LaunchedEffect(viewModel.onSuccessUserValidation) {
+        sharedViewModel.user = viewModel.onSuccessUserValidation
+        sharedViewModel.nextStep()
     }
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
@@ -82,4 +101,6 @@ fun SignUpEmailScreen(
             errorMessage = stringResource(id = viewModel.userEmailError.second)
         )
     }
+
+    LoadingIndicator(viewModel.isLoading)
 }

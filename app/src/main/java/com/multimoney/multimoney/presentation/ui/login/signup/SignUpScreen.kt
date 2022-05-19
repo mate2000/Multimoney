@@ -108,14 +108,14 @@ fun SignUpScreen(
         viewModel.previousStep()
     }
 
-    if (viewModel.dialogParameters.first.value) {
+    if (viewModel.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = R.string.error),
-            message = viewModel.dialogParameters.second ?: "",
+            message = viewModel.openDialog.description,
             onPositiveAction = {
 
             },
-            openDialogCustom = viewModel.dialogParameters.first
+            openDialogCustom = viewModel.openDialog.isActive
         )
     }
 }

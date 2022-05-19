@@ -3,8 +3,14 @@ package com.multimoney.multimoney.presentation.ui.login.signup.password
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
@@ -14,9 +20,13 @@ import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterVa
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @HiltViewModel
-class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
+class SignUpPasswordViewModel @Inject constructor(
+    val validationSecurityUseCase: QueryValidationSecurityUseCase
+) : BaseViewModel() {
 
     var password by mutableStateOf("")
     var passwordError by mutableStateOf(Pair(false, R.string.error_empty))
@@ -67,6 +77,32 @@ class SignUpPasswordViewModel @Inject constructor() : BaseViewModel() {
             }
             else -> {
                 Pair(false, R.string.error_empty)
+            }
+        }
+    }
+
+    private fun savaPassword(pkUser: Int, user: String, idBrant: Int) {
+        viewModelScope.launch {
+            validationSecurityUseCase.invoke(
+                pkUser = pkUser,
+                password = password,
+                user = user,
+                idBrand = idBrant
+            ).collectLatest { result ->
+                result.onSuccess {
+                    isLoading = false
+
+                }
+                result.onLoading {
+                    isLoading = true
+                }
+                result.onFailure {
+                    isLoading = false
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
+import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -25,18 +26,23 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
-    val validationSecurityUseCase: QueryValidationSecurityUseCase
+    val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
 ) : BaseViewModel() {
 
+    //Fields
     var password by mutableStateOf("")
     var passwordError by mutableStateOf(Pair(false, R.string.error_empty))
     var confirmPassword by mutableStateOf("")
     var confirmPasswordError by mutableStateOf(Pair(false, R.string.error_empty))
-
     var eightCharactersMinimumState by mutableStateOf<Boolean?>(null)
     var oneUppercaseState by mutableStateOf<Boolean?>(null)
     var oneLowercaseState by mutableStateOf<Boolean?>(null)
     var oneNumberState by mutableStateOf<Boolean?>(null)
+
+    //Interactions
+    var onSuccessValidationSecurity by mutableStateOf<ValidateSecurity?>(null)
+    var onFailure by mutableStateOf(DialogParameters())
+    var isFirstLaunch = true
 
     fun isFormValid(): Boolean {
         return oneLowercaseState ?: false && oneUppercaseState ?: false && oneNumberState ?: false &&
@@ -81,24 +87,26 @@ class SignUpPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun savaPassword(pkUser: Int, user: String, idBrant: Int) {
+    fun isDataChanged() = onSuccessValidationSecurity?.status == null
+
+    fun callQuerySavePassword(pkUser: String, user: String, idBrant: Int) {
         viewModelScope.launch {
-            validationSecurityUseCase.invoke(
+            queryValidationSecurityUseCase.invoke(
                 pkUser = pkUser,
                 password = password,
                 user = user,
                 idBrand = idBrant
             ).collectLatest { result ->
                 result.onSuccess {
+                    onSuccessValidationSecurity = it
                     isLoading = false
-
                 }
                 result.onLoading {
                     isLoading = true
                 }
                 result.onFailure {
                     isLoading = false
-                    openDialog = DialogParameters(
+                    onFailure = DialogParameters(
                         description = it.getError() ?: "",
                         isActive = mutableStateOf(true)
                     )

@@ -32,7 +32,7 @@ interface SecurityRepository {
     ): Flow<MultimoneyResult<User?>>
 
     suspend fun queryValidationSecurity(
-        pkIUser: Int,
+        pkIUser: String,
         password: String,
         user: String,
         idBrand: Int

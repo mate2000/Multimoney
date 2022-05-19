@@ -7,8 +7,8 @@ import com.multimoney.domain.model.security.User
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SecurityRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
@@ -66,12 +66,12 @@ class SecurityRepositoryImpl @Inject constructor(
     )
 
     override suspend fun queryValidationSecurity(
-        pkIUser: Int,
+        pkIUser: String,
         password: String,
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<ValidateSecurity?>> = fetchData(
-        apolloCall = securityApi.queryValidationSecurity(pkIUser, password, user, idBrand),
+        apolloCall = securityApi.queryValidationSecurity(pkIUser.toInt(), password, user, idBrand),
         apolloCallMapper = { data ->
             data.validateSecurity?.mapToDomainModel()
         }

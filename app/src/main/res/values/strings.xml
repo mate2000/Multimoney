@@ -13,6 +13,7 @@
     <string name="cancel">Cancelar</string>
     <string name="error">Error</string>
     <string name="alert">Advertencia</string>
+    <string name="placeholder_error">Error de proceso</string>
 
     <!-- Errors -->
     <string name="error_empty"></string>

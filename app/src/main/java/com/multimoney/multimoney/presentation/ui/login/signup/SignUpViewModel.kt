@@ -52,7 +52,7 @@ class SignUpViewModel @Inject constructor(
     var nextAction: () -> Unit = {}
 
     fun nextStep() {
-        if (currentStep < SIGN_UP_TOTAL_STEPS) {
+        if (currentStep < SIGN_UP_TOTAL_STEPS + 1) {
             currentStep++
             isCloseVisible = currentStep > SignUpStep.One.id
         } else {
@@ -108,6 +108,6 @@ class SignUpViewModel @Inject constructor(
     }
 
     companion object {
-        const val SIGN_UP_TOTAL_STEPS = 6
+        const val SIGN_UP_TOTAL_STEPS = 5
     }
 }

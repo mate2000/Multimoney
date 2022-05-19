@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -38,12 +39,12 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
-import timber.log.Timber
 
 @Composable
 @Preview
@@ -57,6 +58,7 @@ fun SignUpScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
+    val onfidoError = stringResource(id = R.string.placeholder_error)
 
     val launchOnFidoActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -69,11 +71,14 @@ fun SignUpScreen(
                     }
 
                     override fun userExited(exitCode: ExitCode) {
-                        Timber.d("ONFIDO", "ExitCode")
+                        // Empty on purpose
                     }
 
                     override fun onError(exception: OnfidoException) {
-                        // TODO add open dialog
+                        viewModel.openDialog = DialogParameters(
+                            description = onfidoError,
+                            isActive = mutableStateOf(true)
+                        )
                     }
                 })
         }
@@ -101,7 +106,7 @@ fun SignUpScreen(
             if (viewModel.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
                     steps = SIGN_UP_TOTAL_STEPS,
-                    currentStep = viewModel.currentStep,
+                    currentStep = if (viewModel.currentStep == 6) 5 else viewModel.currentStep,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 )
             }

@@ -106,7 +106,7 @@ fun SignUpScreen(
             if (viewModel.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
                     steps = SIGN_UP_TOTAL_STEPS,
-                    currentStep = if (viewModel.currentStep == 6) 5 else viewModel.currentStep,
+                    currentStep = if (viewModel.currentStep == SignUpStep.Six.id) SignUpStep.Five.id else viewModel.currentStep,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 )
             }
@@ -121,10 +121,14 @@ fun SignUpScreen(
             CustomButton(
                 onClick = {
                     focusManager.clearFocus()
-                    if (viewModel.currentStep == SignUpStep.Five.id) launchOnFidoActivityResult.launch(
-                        viewModel.onFidoHelper.getOnFidoIntent()
-                    )
-                    else viewModel.nextStep()
+                    if (viewModel.currentStep == SignUpStep.Five.id) {
+                        launchOnFidoActivityResult.launch(
+                            viewModel.onFidoHelper.getOnFidoIntent()
+                        )
+                    }
+                    else {
+                        viewModel.nextStep()
+                    }
                 },
                 text = stringResource(id = R.string.button_continue),
                 modifier = Modifier

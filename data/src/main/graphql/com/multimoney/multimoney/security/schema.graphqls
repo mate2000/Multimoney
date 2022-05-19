@@ -1,5 +1,7 @@
 type SecurityQuery {
   dataInformationClient(dataInformationClientInput: DataInformationClient): dataInformationClient
+
+  validateSecurity(validateSecurityInput: validateSecurityInput): validateSecurity
 }
 
 type dataInformationClient {
@@ -101,6 +103,32 @@ input DataInformationClient {
   idBrand: Int!
 
   user: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type validateSecurity {
+  """
+  validateSecurity Status
+  """
+  status: Int
+
+  """
+  validateSecurity Message
+  """
+  message: String
+}
+
+input validateSecurityInput {
+  pkUser: Int!
+
+  password: String!
+
+  user: String!
+
+  idBrand: Int!
 
   tenantId: String
 
@@ -284,7 +312,7 @@ input UpdateUserRegister {
 
   fullName: String
 
-  email: String
+  email: String!
 
   phoneNumber: String
 
@@ -296,7 +324,7 @@ input UpdateUserRegister {
 
   secondLastName: String
 
-  pkUser: String
+  pkUser: String!
 
   userName: String
 
@@ -306,7 +334,7 @@ input UpdateUserRegister {
 
   countryCode: String
 
-  currentStep: String
+  currentStep: String!
 
   activateUser: Boolean
 

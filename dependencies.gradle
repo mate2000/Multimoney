@@ -84,7 +84,7 @@ ext {
     ]
 
     // Apollo
-    apollo_version = '3.1.0'
+    apollo_version = '3.3.0'
 
     apollo = [
             runtime     : "com.apollographql.apollo3:apollo-runtime:${apollo_version}",

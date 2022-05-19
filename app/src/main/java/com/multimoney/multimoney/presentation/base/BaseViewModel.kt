@@ -6,17 +6,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.connectivity.Connectivity
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 open class BaseViewModel @Inject constructor() : ViewModel() {
 
     var isLoading by mutableStateOf(false)
+
+    var openDialog by mutableStateOf(DialogParameters())
 
     @Inject
     lateinit var connectivity: Connectivity

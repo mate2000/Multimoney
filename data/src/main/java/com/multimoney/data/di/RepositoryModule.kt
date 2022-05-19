@@ -1,8 +1,7 @@
 package com.multimoney.data.di
 
-import com.multimoney.data.database.dao.TestDao
-import com.multimoney.data.networking.MultimoneyApi
-import com.multimoney.data.repository.LaunchRepositoryImpl
+import com.multimoney.data.networking.SecurityApi
+import com.multimoney.data.repository.SecurityRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +13,6 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Provides
     @Singleton
-    fun provideLaunchRepository(multimoneyApi: MultimoneyApi, testDao: TestDao) =
-        LaunchRepositoryImpl(multimoneyApi, testDao)
+    fun provideSecurityRepository(securityApi: SecurityApi) =
+        SecurityRepositoryImpl(securityApi)
 }

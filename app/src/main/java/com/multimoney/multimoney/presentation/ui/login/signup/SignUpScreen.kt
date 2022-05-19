@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -22,22 +21,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_TOTAL_STEPS
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_FIVE
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_FOUR
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_ONE
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_THREE
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_TWO
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
-import com.multimoney.multimoney.presentation.uielement.*
+import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido
@@ -45,7 +45,6 @@ import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import timber.log.Timber
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun SignUpScreen(
@@ -99,7 +98,7 @@ fun SignUpScreen(
                         popTo = Screen.SignUpScreen.route
                     )
                 })
-            if (viewModel.currentStep != STEP_FIVE) {
+            if (viewModel.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
                     steps = SIGN_UP_TOTAL_STEPS,
                     currentStep = viewModel.currentStep,
@@ -117,7 +116,7 @@ fun SignUpScreen(
             CustomButton(
                 onClick = {
                     focusManager.clearFocus()
-                    if (viewModel.currentStep == STEP_FIVE) launchOnFidoActivityResult.launch(
+                    if (viewModel.currentStep == SignUpStep.Five.id) launchOnFidoActivityResult.launch(
                         viewModel.onFidoHelper.getOnFidoIntent()
                     )
                     else viewModel.nextStep()
@@ -137,6 +136,16 @@ fun SignUpScreen(
     BackHandler {
         viewModel.previousStep()
     }
+
+    if (viewModel.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.openDialog.title),
+            message = viewModel.openDialog.description,
+            positiveButtonText = stringResource(id = viewModel.openDialog.positiveText),
+            onPositiveAction = { viewModel.openDialog.positiveAction },
+            openDialogCustom = viewModel.openDialog.isActive
+        )
+    }
 }
 
 @Composable
@@ -145,11 +154,11 @@ fun GetStepContent(
     viewModel: SignUpViewModel
 ) {
     when (step) {
-        STEP_ONE -> SignUpEmailScreen(sharedViewModel = viewModel)
-        STEP_TWO -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
-        STEP_THREE -> SignUpPhoneScreen(sharedViewModel = viewModel)
-        STEP_FOUR -> SignUpOtpScreen(sharedViewModel = viewModel)
-        STEP_FIVE -> SignUpIdVerificationScreen(sharedViewModel = viewModel)
+        SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
+        SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
+        SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
+        SignUpStep.Four.id -> SignUpOtpScreen(sharedViewModel = viewModel)
+        SignUpStep.Five.id -> SignUpIdVerificationScreen(sharedViewModel = viewModel)
         else -> {
             SignUpPasswordScreen(sharedViewModel = viewModel)
             viewModel.apply {

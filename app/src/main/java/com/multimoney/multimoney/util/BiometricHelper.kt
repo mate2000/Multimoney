@@ -16,13 +16,11 @@ class BiometricHelper @Inject constructor(
 
     private fun setBiometricPromptInfo(
         title: String,
-        subtitle: String,
         description: String,
         negative: String
     ) =
         BiometricPrompt.PromptInfo.Builder()
             .setTitle(title)
-            .setSubtitle(subtitle)
             .setDescription(description)
             // Authenticate without requiring the user to press a "confirm"
             // button after satisfying the biometric check
@@ -52,7 +50,6 @@ class BiometricHelper @Inject constructor(
 
     fun showBiometricPrompt(
         title: String,
-        subtitle: String,
         description: String,
         negative: String,
         activity: FragmentActivity,
@@ -66,7 +63,6 @@ class BiometricHelper @Inject constructor(
     ).authenticate(
         setBiometricPromptInfo(
             title = title,
-            subtitle = subtitle,
             description = description,
             negative = negative
         ),

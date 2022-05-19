@@ -14,9 +14,9 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -27,7 +27,6 @@ class SignInViewModel @Inject constructor(
     // Interactions
     var isSignInEnabled by mutableStateOf(false)
     var biometricPromptTitle = ""
-    var biometricPromptSubtitle = ""
     var biometricPromptDescription = ""
     var biometricPromptNegative = ""
 
@@ -40,6 +39,10 @@ class SignInViewModel @Inject constructor(
     var isFingerprintChecked by mutableStateOf(false)
     var successMessage by mutableStateOf("")
 
+    var biometricErrorDialog by mutableStateOf(Pair(mutableStateOf(false), ""))
+    var configureBiometric by mutableStateOf(false)
+    var biometricError by mutableStateOf(false)
+
     fun signIn() {
         isLoading = true
         clearUserEmailError()
@@ -51,6 +54,10 @@ class SignInViewModel @Inject constructor(
                         AuthSessionResult.Type.SUCCESS -> {
                             successMessage = session.identityId.value ?: ""
                             isLoading = false
+                            if (isFingerprintChecked) {
+                                configureBiometric = true
+                            }
+                            // navigate to home
                         }
                         AuthSessionResult.Type.FAILURE -> cognitoError()
                     }
@@ -101,17 +108,36 @@ class SignInViewModel @Inject constructor(
     }
 
     fun biometricPromptError(errorCode: Int, errString: CharSequence) {
+        if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+            biometricError = true
+            biometricErrorDialog = Pair(mutableStateOf(true), errString.toString())
+        }
+    }
+
+    fun biometricPromptConfigurationError(errorCode: Int, errString: CharSequence) {
         if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+            // navigate to Home
+        } else {
 
         }
     }
 
+    fun biometricPromptForEncryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
+        result.cryptoObject?.cipher?.apply {
+            viewModelScope.launch {
+                dataStorePreferences.setUserEmail(userEmail)
+                dataStorePreferences.setUserPassword(userPassword, this@apply)
+                dataStorePreferences.isBiometricsEnabled(true)
+                // navigate to home
+            }
+        }
+    }
 
     fun biometricPromptForDecryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
         result.cryptoObject?.cipher?.apply {
             viewModelScope.launch {
                 userPassword = dataStorePreferences.getUserPassword(this@apply).first()
-                isFingerprintChecked = dataStorePreferences.isBiometricsEnabled().first()
+                signIn()
             }
         }
     }

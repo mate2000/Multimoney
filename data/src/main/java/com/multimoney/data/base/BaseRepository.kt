@@ -1,15 +1,13 @@
 package com.multimoney.data.base
 
-import android.util.Log
 import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.exception.ApolloException
 import com.apollographql.apollo3.exception.ApolloParseException
 import com.multimoney.data.database.util.DbConstants
-import com.multimoney.data.util.exeption.DataSourceException
-import com.multimoney.data.util.exeption.MultimoneyException
 import com.multimoney.domain.model.util.HttpError
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.util.MultimoneyException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -22,7 +20,7 @@ abstract class BaseRepository {
     /**
      * Use this when communicating only with the api service
      */
-    protected suspend fun <T : Operation.Data, U : Any> fetchData(
+    protected suspend fun <T : Operation.Data, U : Any?> fetchData(
         apolloCall: ApolloCall<T>,
         apolloCallMapper: suspend (T) -> U
     ): Flow<MultimoneyResult<U>> {
@@ -45,7 +43,7 @@ abstract class BaseRepository {
      * Use this if you need to cache data after fetching it from the api,
      * or retrieve something from cache
      */
-    protected suspend fun <T : Operation.Data, U : Any, V : DomainMapper<U>> fetchData(
+    protected suspend fun <T : Operation.Data, U : Any?, V : DomainMapper<U>> fetchData(
         apolloCall: ApolloCall<T>,
         apolloCallMapper: suspend (T) -> U,
         dbSaveAction: suspend (T) -> Unit?,
@@ -83,57 +81,33 @@ abstract class BaseRepository {
                 val apolloResponse = apolloCall.execute()
                 if (apolloResponse.hasErrors()) {
                     MultimoneyResult.Failure(
-                        HttpError(
-                            Throwable(
-                                DataSourceException.Server(
-                                    apolloResponse.errors?.first()
-                                ).message
-                            )
-                        )
+                        HttpError(throwableList = apolloResponse.errors?.map { Throwable(it.message) })
                     )
                 } else {
                     MultimoneyResult.Success(apolloResponse.data)
                 }
             }
         } catch (apolloException: ApolloException) {
-            Log.w(
-                MultimoneyException.APOLLO_ERROR.name,
-                MultimoneyException.APOLLO_ERROR.description
-            )
             MultimoneyResult.Failure(
                 HttpError(
                     Throwable(
-                        DataSourceException.Unexpected(
-                            MultimoneyException.APOLLO_ERROR
-                        )
+                        MultimoneyException.APOLLO_ERROR.description
                     )
                 )
             )
         } catch (e: ApolloParseException) {
-            Log.w(
-                MultimoneyException.APOLLO_PARSE_EXCEPTION.name,
-                MultimoneyException.APOLLO_PARSE_EXCEPTION.description
-            )
             MultimoneyResult.Failure(
                 HttpError(
                     Throwable(
-                        DataSourceException.Unexpected(
-                            MultimoneyException.APOLLO_PARSE_EXCEPTION
-                        )
+                        MultimoneyException.APOLLO_PARSE_EXCEPTION.description
                     )
                 )
             )
         } catch (e: IOException) {
-            Log.w(
-                MultimoneyException.UNKNOWN_ERROR.name,
-                MultimoneyException.UNKNOWN_ERROR.description
-            )
             MultimoneyResult.Failure(
                 HttpError(
                     Throwable(
-                        DataSourceException.Unexpected(
-                            MultimoneyException.UNKNOWN_ERROR
-                        )
+                        MultimoneyException.UNKNOWN_ERROR.description
                     )
                 )
             )

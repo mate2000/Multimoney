@@ -1,4 +1,4 @@
-package com.multimoney.data.util.exeption
+package com.multimoney.domain.util
 
 enum class MultimoneyException(val description: String) {
     APOLLO_PARSE_EXCEPTION("There was an error trying to parse GraphQL server response"),

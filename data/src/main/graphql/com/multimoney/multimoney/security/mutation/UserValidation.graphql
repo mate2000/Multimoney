@@ -1,21 +1,21 @@
 mutation UserValidation($email: String!, $currentStep: String!,$idBrand: Int!){
-  userValidation(
-    userValidationInput: { email: $email, currentStep: $currentStep, idBrand: $idBrand}
-  ) {
-    pkUser
-    userName
-    email
-    phoneNumber
-    fullName
-    firstName
-    secondName
-    lastName
-    secondLastName
-    contactMeans
-    nationality
-    identification
-    countryCode
-    currentStep
-    userStatus
-  }
+    userValidation(
+        userValidationInput: { email: $email, currentStep: $currentStep, idBrand: $idBrand}
+    ) {
+        pkUser
+        userName
+        email
+        phoneNumber
+        fullName
+        firstName
+        secondName
+        lastName
+        secondLastName
+        contactMeans
+        nationality
+        identification
+        countryCode
+        currentStep
+        userStatus
+    }
 }

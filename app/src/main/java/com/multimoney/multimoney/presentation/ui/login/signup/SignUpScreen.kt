@@ -19,14 +19,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_TOTAL_STEPS
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_FOUR
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_ONE
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_THREE
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.STEP_TWO
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordScreen
@@ -89,7 +86,7 @@ fun SignUpScreen(
             CustomButton(
                 onClick = {
                     focusManager.clearFocus()
-                    viewModel.nextStep()
+                    viewModel.nextAction.invoke()
                 },
                 text = stringResource(id = R.string.button_continue),
                 modifier = Modifier
@@ -110,11 +107,10 @@ fun SignUpScreen(
 
     if (viewModel.openDialog.isActive.value) {
         CustomDialog(
-            title = stringResource(id = R.string.error),
+            title = stringResource(id = viewModel.openDialog.title),
             message = viewModel.openDialog.description,
-            onPositiveAction = {
-
-            },
+            positiveButtonText = stringResource(id = viewModel.openDialog.positiveText),
+            onPositiveAction = { viewModel.openDialog.positiveAction },
             openDialogCustom = viewModel.openDialog.isActive
         )
     }
@@ -126,10 +122,10 @@ fun GetStepContent(
     viewModel: SignUpViewModel
 ) {
     when (step) {
-        STEP_ONE -> SignUpEmailScreen(sharedViewModel = viewModel)
-        STEP_TWO -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
-        STEP_THREE -> SignUpPhoneScreen(sharedViewModel = viewModel)
-        STEP_FOUR -> SignUpOtpScreen(sharedViewModel = viewModel)
+        SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
+        SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
+        SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
+        SignUpStep.Four.id -> SignUpOtpScreen(sharedViewModel = viewModel)
         else -> {
             SignUpPasswordScreen(sharedViewModel = viewModel)
             viewModel.apply {

@@ -48,6 +48,9 @@
     <string name="sign_up_email_required">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder">name@email.com</string>
     <string name="sign_up_email_not_valid">Correo electrónico incorrecto</string>
+    <string name="sign_up_email_user_completed_dialog_title">Ya tenés una cuenta registrada con este correo</string>
+    <string name="sign_up_email_user_completed_dialog_description">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
+    <string name="sign_up_email_user_completed_dialog_positive">Iniciar sesión</string>
 
     <!-- Sign Up Phone -->
     <string name="sign_up_phone_title">¿Cuál es tu número de \nteléfono personal?</string>

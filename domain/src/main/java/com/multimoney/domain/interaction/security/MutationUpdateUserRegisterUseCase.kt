@@ -1,19 +1,11 @@
-package com.multimoney.domain.repository
+package com.multimoney.domain.interaction.security
 
 import com.multimoney.domain.model.security.User
-import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
-interface SecurityRepository {
-
-    suspend fun mutationUserValidation(
-        email: String,
-        currentStep: String,
-        idBrand: Int
-    ): Flow<MultimoneyResult<User?>>
-
-    suspend fun mutationUpdateUserRegister(
+interface MutationUpdateUserRegisterUseCase {
+    suspend operator fun invoke(
         pkUser: String,
         user: String,
         email: String,
@@ -30,12 +22,4 @@ interface SecurityRepository {
         currentStep: String,
         idBrand: Int
     ): Flow<MultimoneyResult<User?>>
-
-    suspend fun queryValidationSecurity(
-        pkIUser: Int,
-        password: String,
-        user: String,
-        idBrand: Int
-    ): Flow<MultimoneyResult<ValidateSecurity?>>
-
 }

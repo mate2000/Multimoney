@@ -3,6 +3,8 @@ package com.multimoney.multimoney.presentation.ui.login.signup
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.domain.model.security.User
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.util.BiometricHelper
@@ -12,7 +14,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) : BaseViewModel() {
 
-    var currentStep by mutableStateOf(STEP_ONE)
+    var currentStep by mutableStateOf(SignUpStep.One.id)
+
+    // Data
+    var user: User? = null
 
     // Step one data
     var userEmail = ""
@@ -31,20 +36,21 @@ class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) 
     // Interactions
     var isCloseVisible by mutableStateOf(false)
     var isContinueEnabled by mutableStateOf(false)
+    var nextAction: () -> Unit = {}
 
     fun nextStep() {
         if (currentStep < SIGN_UP_TOTAL_STEPS) {
             currentStep++
-            isCloseVisible = currentStep > SIGN_UP_INITIAL_STEP
+            isCloseVisible = currentStep > SignUpStep.One.id
         } else {
             completedProcessAction()
         }
     }
 
     fun previousStep() {
-        if (currentStep > SIGN_UP_INITIAL_STEP) {
+        if (currentStep > SignUpStep.One.id) {
             currentStep--
-            isCloseVisible = currentStep > SIGN_UP_INITIAL_STEP
+            isCloseVisible = currentStep > SignUpStep.One.id
         } else {
             popAndNavigateTo(
                 route = Screen.SignInScreen.route,
@@ -65,11 +71,5 @@ class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) 
 
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 5
-        const val SIGN_UP_INITIAL_STEP = 1
-        const val STEP_ONE = 1
-        const val STEP_TWO = 2
-        const val STEP_THREE = 3
-        const val STEP_FOUR = 4
-        const val STEP_FIVE = 5
     }
 }

@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
-    id("com.apollographql.apollo3").version("3.1.0")
+    id("com.apollographql.apollo3").version("3.3.0")
 }
 
 apply from: '../dependencies.gradle'

@@ -5,12 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) : BaseViewModel() {
+class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper , val onFidoHelper: OnFidoHelper) : BaseViewModel() {
 
     var currentStep by mutableStateOf(STEP_ONE)
 
@@ -63,7 +64,7 @@ class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) 
     )
 
     companion object {
-        const val SIGN_UP_TOTAL_STEPS = 5
+        const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INITIAL_STEP = 1
         const val STEP_ONE = 1
         const val STEP_TWO = 2

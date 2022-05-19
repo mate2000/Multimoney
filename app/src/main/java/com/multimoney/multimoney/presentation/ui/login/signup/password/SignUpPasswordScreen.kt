@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.PasswordStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -34,14 +36,49 @@ fun SignUpPasswordScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
+    // Properties
+    val focusManager = LocalFocusManager.current
     LaunchedEffect(true) {
         viewModel.apply {
+            isFirstLaunch = true
             sharedViewModel.isContinueEnabled = isFormValid()
+            sharedViewModel.nextAction = {
+                viewModel.apply {
+                    if (isDataChanged()) {
+                        callQuerySavePassword(
+                            pkUser = sharedViewModel.user?.pkUser ?: "0",
+                            user = "ecruzCR",
+                            Brand.Revamp.id
+                        )
+                    } else {
+                        sharedViewModel.nextStep()
+                    }
+                }
+            }
         }
     }
 
-    // Properties
-    val focusManager = LocalFocusManager.current
+    LaunchedEffect(viewModel.isLoading) {
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.isLoading = viewModel.isLoading
+        }
+    }
+
+    LaunchedEffect(viewModel.onFailure) {
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.openDialog = viewModel.onFailure
+        }
+    }
+
+    LaunchedEffect(viewModel.onSuccessValidationSecurity) {
+        if (viewModel.isFirstLaunch.not()) {
+            if (viewModel.onSuccessValidationSecurity?.status == PasswordStatus.PasswordSaved.status) {
+                sharedViewModel.nextStep()
+            }
+        }
+    }
+
+    viewModel.isFirstLaunch = false
 
     Column(Modifier.padding(16.dp)) {
         Text(

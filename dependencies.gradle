@@ -160,7 +160,7 @@ ext {
     ]
 
     // OnFido
-    onfido_version = "11.3.0"
+    onfido_version = "12.1.0"
 
     onfido = [
             capture: "com.onfido.sdk.capture:onfido-capture-sdk:${onfido_version}"

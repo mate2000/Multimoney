@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -35,8 +36,12 @@ fun SignUpPasswordScreen(
 ) {
 
     LaunchedEffect(true) {
-        viewModel.apply {
-            sharedViewModel.isContinueEnabled = isFormValid()
+        sharedViewModel.apply {
+            isContinueEnabled = viewModel.isFormValid()
+            nextAction = {
+                userData?.currentStep = SignUpStep.Five.name
+                callMutationUpdateUserRegisterUseCase()
+            }
         }
     }
 

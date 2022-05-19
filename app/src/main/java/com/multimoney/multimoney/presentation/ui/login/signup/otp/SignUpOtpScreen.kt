@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
@@ -79,7 +80,13 @@ fun SignUpOtpScreen(
             remainingTime = Duration.ofSeconds(SignUpOtpViewModel.TIMER_DURATION)
             remainingTimeText = remainingTime.format()
             otp = ""
-            sharedViewModel.isContinueEnabled = isFormValid()
+        }
+        sharedViewModel.apply {
+            isContinueEnabled = viewModel.isFormValid()
+            nextAction = {
+                userData?.currentStep = SignUpStep.Four.name
+                callMutationUpdateUserRegisterUseCase()
+            }
         }
     }
 
@@ -116,7 +123,7 @@ fun SignUpOtpScreen(
                 id = R.string.sign_up_otp_title,
                 PhoneNumberTransformation(sharedViewModel.countryCode.uppercase()).filter(
                     AnnotatedString(
-                        sharedViewModel.phoneNumber
+                        sharedViewModel.userData?.phoneNumber ?: ""
                     )
                 ).text
             ),

@@ -3,14 +3,14 @@ package com.multimoney.data.database.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.multimoney.data.base.DomainMapper
-import com.multimoney.domain.model.security.User
+import com.multimoney.domain.model.security.UserData
 
 @Entity
 data class TestEntity(
     @PrimaryKey
     val id: String
-) : DomainMapper<User> {
-    override fun mapToDomainModel() = User(
+) : DomainMapper<UserData> {
+    override fun mapToDomainModel() = UserData(
         pkUser = "pkUser",
         userName = "userName",
         email = "email",

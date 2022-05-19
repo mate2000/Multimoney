@@ -127,6 +127,13 @@
     <string name="sign_up_biometric_failure_retry">Volver a intentar</string>
     <string name="sign_up_biometric_dialog_alert">Estás seguro que no quieres activar tus biometricos?</string>
 
+    <!-- Sign Up Id Validation-->
+    <string name="sign_up_id_validation_title">Validemos tu identidad</string>
+    <string name="sign_up_id_validation_subtitle">Para ello te recomendamos:</string>
+    <string name="sign_up_id_validation_one">Busca buena iluminación para tomar las fotografías</string>
+    <string name="sign_up_id_validation_two">Tené a la mano tu identificación al día</string>
+    <string name="sign_up_id_validation_three">Tomarás una fotografía de tu rostro, no utilices lentes u otros accesorios</string>
+
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title">¿Inicia sesión con tu biométrica?</string>
     <string name="biometric_dialog_subtitle">Utilice su biometría para autenticarse en la aplicación.</string>

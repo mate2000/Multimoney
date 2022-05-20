@@ -61,16 +61,16 @@ fun SignUpPersonalDataScreen(
             items = stringArrayResource(id = R.array.sign_up_personal_data_nationalities).sorted(),
             onValueChange = {
                 viewModel.apply {
+                    viewModel.personalDocumentValue = ""
                     sharedViewModel.userData?.nationality = getNationality(it)
                     nationalityValue = it
-                    validateFields()
+                    sharedViewModel.isContinueEnabled = viewModel.validateFields()
                 }
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_nationality),
             value = viewModel.nationalityValue,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_nationality_placeholder)
         )
-        viewModel.personalDocumentValue = stringResource(id = R.string.error_empty)
         when (viewModel.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
             Nationalities.ElSalvador.country -> SignUpPersonalDataSvScreen()

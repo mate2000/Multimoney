@@ -8,7 +8,6 @@ import com.multimoney.data.util.GsonHelper
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
-import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ContactMeans
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
@@ -17,6 +16,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -28,7 +28,7 @@ class SignUpViewModel @Inject constructor(
     val biometricHelper: BiometricHelper,
     val gsonHelper: GsonHelper,
     private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase,
-    val validationSecurityUseCase: QueryValidationSecurityUseCase
+    val onFidoHelper: OnFidoHelper
 ) : BaseViewModel() {
 
     var currentStep by mutableStateOf(SignUpStep.One.id)
@@ -50,11 +50,11 @@ class SignUpViewModel @Inject constructor(
     var nextAction: () -> Unit = {}
 
     fun nextStep() {
-        if (currentStep < SIGN_UP_TOTAL_STEPS) {
+        if (currentStep <= SIGN_UP_TOTAL_STEPS) {
             currentStep++
             isCloseVisible = currentStep > SignUpStep.One.id
         } else {
-            savaPassword()
+            completedProcessAction()
         }
     }
 
@@ -79,31 +79,6 @@ class SignUpViewModel @Inject constructor(
         popTo = Screen.SignUpScreen.route
     )
 
-    private fun savaPassword() {
-        viewModelScope.launch {
-            validationSecurityUseCase.invoke(
-                pkUser = 229913,
-                password = userPassword,
-                user = "ecruzCR",
-                idBrand = 5
-            ).collectLatest { result ->
-                result.onSuccess {
-                    isLoading = false
-                    completedProcessAction()
-                }
-                result.onLoading {
-                    isLoading = true
-                }
-                result.onFailure {
-                    isLoading = false
-                    openDialog = DialogParameters(
-                        description = it.getError() ?: "",
-                        isActive = mutableStateOf(true)
-                    )
-                }
-            }
-        }
-    }
 
     fun callMutationUpdateUserRegisterUseCase() {
         viewModelScope.launch {

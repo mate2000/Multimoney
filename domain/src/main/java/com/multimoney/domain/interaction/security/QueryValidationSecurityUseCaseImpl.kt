@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 class QueryValidationSecurityUseCaseImpl(val securityRepository: SecurityRepository) : QueryValidationSecurityUseCase {
     override suspend fun invoke(
-        pkUser: Int,
+        pkUser: String,
         password: String,
         user: String,
         idBrand: Int

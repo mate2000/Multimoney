@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -30,7 +31,13 @@ fun SignUpPersonalDataScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
-        sharedViewModel.isContinueEnabled = viewModel.validateFields()
+        sharedViewModel.apply {
+            isContinueEnabled = viewModel.validateFields()
+            nextAction = {
+                userData?.currentStep = SignUpStep.Two.name
+                callMutationUpdateUserRegisterUseCase()
+            }
+        }
     }
     Column(
         Modifier
@@ -53,9 +60,12 @@ fun SignUpPersonalDataScreen(
                 .padding(top = 16.dp),
             items = stringArrayResource(id = R.array.sign_up_personal_data_nationalities).sorted(),
             onValueChange = {
-                viewModel.personalDocumentValue = ""
-                viewModel.nationalityValue = it
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                viewModel.apply {
+                    viewModel.personalDocumentValue = ""
+                    sharedViewModel.userData?.nationality = getNationality(it)
+                    nationalityValue = it
+                    sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                }
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_nationality),
             value = viewModel.nationalityValue,

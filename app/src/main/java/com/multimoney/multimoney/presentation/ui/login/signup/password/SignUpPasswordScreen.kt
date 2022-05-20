@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.PasswordStatus
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -43,16 +43,12 @@ fun SignUpPasswordScreen(
             isFirstLaunch = true
             sharedViewModel.isContinueEnabled = isFormValid()
             sharedViewModel.nextAction = {
-                viewModel.apply {
-                    if (isDataChanged()) {
-                        callQuerySavePassword(
-                            pkUser = sharedViewModel.user?.pkUser ?: "0",
-                            user = "ecruzCR",
-                            Brand.Revamp.id
-                        )
-                    } else {
-                        sharedViewModel.nextStep()
-                    }
+                sharedViewModel.apply {
+                    viewModel.callQuerySavePassword(
+                        pkUser = userData?.pkUser ?: "0",
+                        user = userData?.email ?: "",
+                        Brand.Revamp.id
+                    )
                 }
             }
         }
@@ -72,8 +68,9 @@ fun SignUpPasswordScreen(
 
     LaunchedEffect(viewModel.onSuccessValidationSecurity) {
         if (viewModel.isFirstLaunch.not()) {
-            if (viewModel.onSuccessValidationSecurity?.status == PasswordStatus.PasswordSaved.status) {
-                sharedViewModel.nextStep()
+            sharedViewModel.apply {
+                userData?.currentStep = SignUpStep.Five.name
+                callMutationUpdateUserRegisterUseCase()
             }
         }
     }

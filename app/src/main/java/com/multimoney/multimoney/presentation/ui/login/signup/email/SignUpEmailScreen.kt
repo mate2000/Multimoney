@@ -63,12 +63,12 @@ fun SignUpEmailScreen(
         }
     }
 
-    LaunchedEffect(viewModel.onSuccessUserValidation) {
+    LaunchedEffect(viewModel.onSuccessUserDataValidation) {
         if (viewModel.isFirstLaunch.not()) {
-            sharedViewModel.user = viewModel.onSuccessUserValidation
-            if (sharedViewModel.user?.userStatus == UserStatus.Incomplete.name) {
+            sharedViewModel.userData = viewModel.onSuccessUserDataValidation
+            if (sharedViewModel.userData?.userStatus == UserStatus.Incomplete.name) {
                 sharedViewModel.nextStep()
-            } else if (sharedViewModel.user?.userStatus == UserStatus.Active.name) {
+            } else if (sharedViewModel.userData?.userStatus == UserStatus.Active.name) {
                 sharedViewModel.openDialog = DialogParameters(
                     title = R.string.sign_up_email_user_completed_dialog_title,
                     description = viewModel.userCompletedDialogDescription,
@@ -112,7 +112,6 @@ fun SignUpEmailScreen(
             onValueChange = {
                 viewModel.apply {
                     userEmail = it
-                    sharedViewModel.userEmail = it
                     clearUserEmailError()
                     sharedViewModel.isContinueEnabled = isFormValid()
                 }

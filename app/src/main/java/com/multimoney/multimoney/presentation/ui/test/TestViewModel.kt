@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
-import com.multimoney.domain.model.security.User
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -21,7 +21,7 @@ class TestViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper
 ) : BaseViewModel() {
 
-    var data by mutableStateOf<User?>(null)
+    var data by mutableStateOf<UserData?>(null)
     fun mutationUserValidationUseCase() = executeUseCase {
         isLoading = true
         mutationUserValidationUseCase(

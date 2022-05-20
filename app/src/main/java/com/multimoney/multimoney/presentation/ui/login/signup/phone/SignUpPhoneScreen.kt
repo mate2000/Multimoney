@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -50,9 +51,15 @@ fun SignUpPhoneScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
-            sharedViewModel.isContinueEnabled = isFormValid()
-            sharedViewModel.phoneCode = getDefaultPhoneCode
-            sharedViewModel.countryCode = getDefaultCountryCode
+            sharedViewModel.apply {
+                nextAction = {
+                    userData?.currentStep = SignUpStep.Three.name
+                    userData?.contactMeans = gsonHelper.convertToString(contactMeans)
+                    callMutationUpdateUserRegisterUseCase()
+                }
+                isContinueEnabled = isFormValid()
+                userData?.countryCode = getDefaultPhoneCode
+            }
             phoneCode = getDefaultPhoneCode
             countryCode = getDefaultCountryCode
         }
@@ -84,7 +91,7 @@ fun SignUpPhoneScreen(
         PhoneTextField(
             value = viewModel.phoneNumber,
             onValueChange = {
-                sharedViewModel.phoneNumber = it
+                sharedViewModel.userData?.phoneNumber = it
                 viewModel.apply {
                     phoneNumber = it
                     clearPhoneError()
@@ -106,9 +113,9 @@ fun SignUpPhoneScreen(
             pickedCountry = {
                 defaultCountryCode = it.countryCode
                 sharedViewModel.apply {
-                    phoneCode = it.countryPhoneCode
+                    userData?.countryCode = it.countryPhoneCode
                     countryCode = it.countryCode
-                    phoneNumber = ""
+                    sharedViewModel.userData?.phoneNumber = null
                 }
                 viewModel.apply {
                     phoneCode = it.countryPhoneCode
@@ -143,7 +150,7 @@ fun SignUpPhoneScreen(
         CustomCheckBox(
             checked = viewModel.whatsapp,
             onCheckedChange = {
-                sharedViewModel.whatsapp = it
+                sharedViewModel.contactMeans.whatsapp = it
                 viewModel.whatsapp = it
             },
             text = stringResource(id = R.string.sign_up_phone_contact_by_whatsapp),
@@ -159,7 +166,7 @@ fun SignUpPhoneScreen(
         CustomCheckBox(
             checked = viewModel.call,
             onCheckedChange = {
-                sharedViewModel.call = it
+                sharedViewModel.contactMeans.call = it
                 viewModel.call = it
             },
             text = stringResource(id = R.string.sign_up_phone_contact_by_call),

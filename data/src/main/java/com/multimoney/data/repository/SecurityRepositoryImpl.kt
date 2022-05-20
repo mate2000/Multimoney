@@ -3,7 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.SecurityApi
-import com.multimoney.domain.model.security.User
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SecurityRepository
@@ -19,7 +19,7 @@ class SecurityRepositoryImpl @Inject constructor(
         email: String,
         currentStep: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<User?>> = fetchData(
+    ): Flow<MultimoneyResult<UserData?>> = fetchData(
         apolloCall = securityApi.mutationUserValidation(email, currentStep, idBrand),
         apolloCallMapper = { data ->
             data.userValidation?.mapToDomainModel()
@@ -42,7 +42,7 @@ class SecurityRepositoryImpl @Inject constructor(
         countryCode: String?,
         currentStep: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<User?>> = fetchData(
+    ): Flow<MultimoneyResult<UserData?>> = fetchData(
         apolloCall = securityApi.mutationUpdateUserRegister(
             pkUser,
             user,

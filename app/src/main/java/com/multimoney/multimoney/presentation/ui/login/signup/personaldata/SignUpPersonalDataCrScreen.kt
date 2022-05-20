@@ -66,6 +66,7 @@ fun SignUpPersonalDataCrScreen(
             placeHolder = stringResource(id = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) R.string.sign_up_personal_data_cr_id_hint else R.string.sign_up_personal_data_cr_dimex_hint),
             onValueChange = { newString ->
                 viewModel.crFilterDocument(newString)
+                sharedViewModel.userData?.identification = viewModel.personalDocumentValue
                 sharedViewModel.isContinueEnabled = viewModel.validateFields()
             },
             keyboardOptions = KeyboardOptions(

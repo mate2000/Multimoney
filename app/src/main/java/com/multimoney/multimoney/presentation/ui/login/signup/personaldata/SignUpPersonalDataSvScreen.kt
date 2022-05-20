@@ -39,6 +39,7 @@ fun SignUpPersonalDataSvScreen(
             onValueChange = { text ->
                 if (text.length <= Nationalities.ElSalvador.documentSize) {
                     viewModel.personalDocumentValue = text.filter { it.isDigit() }
+                    sharedViewModel.userData?.identification = viewModel.personalDocumentValue
                 }
             },
             onDebounceValidation = {
@@ -67,7 +68,11 @@ fun SignUpPersonalDataSvScreen(
             value = viewModel.nameValue,
             onValueChange = {
                 viewModel.nameValue = it
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                sharedViewModel.apply {
+                    userData?.firstName = it
+                    userData?.fullName = "$it ${userData?.lastName}"
+                    isContinueEnabled = viewModel.validateFields()
+                }
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -88,7 +93,11 @@ fun SignUpPersonalDataSvScreen(
             value = viewModel.lastNameValue,
             onValueChange = {
                 viewModel.lastNameValue = it
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                sharedViewModel.apply {
+                    userData?.lastName = it
+                    userData?.fullName = "${userData?.firstName} $it"
+                    isContinueEnabled = viewModel.validateFields()
+                }
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,

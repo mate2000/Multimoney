@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface QueryValidationSecurityUseCase {
     suspend operator fun invoke(
-        pkUser: Int,
+        pkUser: String,
         password: String,
         user: String,
         idBrand: Int

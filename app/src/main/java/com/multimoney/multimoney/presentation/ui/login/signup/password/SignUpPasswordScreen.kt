@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -34,14 +36,46 @@ fun SignUpPasswordScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
+    // Properties
+    val focusManager = LocalFocusManager.current
     LaunchedEffect(true) {
         viewModel.apply {
+            isFirstLaunch = true
             sharedViewModel.isContinueEnabled = isFormValid()
+            sharedViewModel.nextAction = {
+                sharedViewModel.apply {
+                    viewModel.callQuerySavePassword(
+                        pkUser = userData?.pkUser ?: "0",
+                        user = userData?.email ?: "",
+                        Brand.Revamp.id
+                    )
+                }
+            }
         }
     }
 
-    // Properties
-    val focusManager = LocalFocusManager.current
+    LaunchedEffect(viewModel.isLoading) {
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.isLoading = viewModel.isLoading
+        }
+    }
+
+    LaunchedEffect(viewModel.onFailure) {
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.openDialog = viewModel.onFailure
+        }
+    }
+
+    LaunchedEffect(viewModel.onSuccessValidationSecurity) {
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.apply {
+                userData?.currentStep = SignUpStep.Five.name
+                callMutationUpdateUserRegisterUseCase()
+            }
+        }
+    }
+
+    viewModel.isFirstLaunch = false
 
     Column(Modifier.padding(16.dp)) {
         Text(

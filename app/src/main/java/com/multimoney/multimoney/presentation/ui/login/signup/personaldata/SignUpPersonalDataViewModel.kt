@@ -54,6 +54,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
         }
     }
 
+    fun getNationality(nationality: String) = when (nationality) {
+        Nationalities.ElSalvador.country -> Nationalities.ElSalvador.name
+        Nationalities.Guatemala.country -> Nationalities.Guatemala.name
+        else -> Nationalities.CostaRicaId.name
+    }
+
     fun crFilterDocument(id: String) {
         if (crPersonalDocument == CrDocuments.IdDocument.document && id.length <= Nationalities.CostaRicaId.documentSize) {
             personalDocumentValue = id.filter { it.isDigit() }

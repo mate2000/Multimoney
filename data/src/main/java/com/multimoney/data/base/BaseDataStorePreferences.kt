@@ -11,16 +11,13 @@ import com.multimoney.data.util.cryptography.CiphertextWrapper
 import com.multimoney.data.util.cryptography.CryptographyHelper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.IOException
 import javax.crypto.Cipher
 
-@OptIn(ExperimentalSerializationApi::class)
 abstract class BaseDataStorePreferences(
     private val dataStore: DataStore<Preferences>,
     private val cryptographyHelper: CryptographyHelper,

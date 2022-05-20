@@ -5,7 +5,5 @@ import com.multimoney.domain.model.security.ClientInfoCr
 
 fun DataInformationClientQuery.DataInformationClient.mapToDomainModel() = ClientInfoCr(
     nombre = nombre,
-    tipoIdentificacion = tipoIdentificacion,
-    status = status,
-    message = message
+    status = status
 )

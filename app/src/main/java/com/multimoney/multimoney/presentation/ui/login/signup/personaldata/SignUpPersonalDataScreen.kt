@@ -32,6 +32,15 @@ fun SignUpPersonalDataScreen(
     LaunchedEffect(true) {
         sharedViewModel.isContinueEnabled = viewModel.validateFields()
     }
+
+    LaunchedEffect(viewModel.isLoading) {
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.isLoading = viewModel.isLoading
+        }
+    }
+
+    viewModel.isFirstLaunch = false
+
     Column(
         Modifier
             .padding(16.dp)

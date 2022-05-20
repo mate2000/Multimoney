@@ -3,7 +3,13 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
+import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.CrDocuments
@@ -11,10 +17,12 @@ import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
-    queryDataInformationClientUseCase: QueryDataInformationClientUseCase
+    val queryDataInformationClientUseCase: QueryDataInformationClientUseCase
 ) : BaseViewModel() {
 
     //Fields
@@ -31,6 +39,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
     var personalDocumentValue by mutableStateOf("")
     var nameValue by mutableStateOf("")
     var lastNameValue by mutableStateOf("")
+    var closeKeyboard by mutableStateOf(false)
+
+    // Interactions
+    var onSuccessDataInformationClient by mutableStateOf<ClientInfoCr?>(null)
+    var isFirstLaunch = false
 
     fun validateFields(): Boolean {
         return when (nationalityValue) {
@@ -49,15 +62,45 @@ class SignUpPersonalDataViewModel @Inject constructor(
         }
     }
 
-    fun validateCrDocument() {
+    fun validateCrDocument(
+        user: String,
+    ) {
         val status = validId(
             if (crPersonalDocument == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
             R.string.sign_up_personal_data_id_not_valid,
             personalDocumentValue.length
         )
         personalIdError = status
-        if (status.first) {
+        if (status.first.not()) {
+            closeKeyboard = true
+            callQueryDataInformationClient(personalDocumentValue, Brand.Revamp.id, user)
+        }
+    }
 
+    private fun callQueryDataInformationClient(
+        identification: String,
+        idBrant: Int,
+        user: String,
+    ) {
+        viewModelScope.launch {
+            queryDataInformationClientUseCase.invoke(
+                identification,
+                idBrant,
+                user
+            ).collectLatest { result ->
+                result.onSuccess {
+                    onSuccessDataInformationClient = it
+                    isLoading = false
+                }
+                result.onFailure {
+                    isLoading = false
+                    onSuccessDataInformationClient = null
+                    personalIdError = Pair(true, R.string.sign_up_personal_data_id_not_valid)
+                }
+                result.onLoading {
+                    isLoading = true
+                }
+            }
         }
     }
 

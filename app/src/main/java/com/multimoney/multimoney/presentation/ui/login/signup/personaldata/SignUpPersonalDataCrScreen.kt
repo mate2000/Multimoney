@@ -2,12 +2,16 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -17,13 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
 import com.multimoney.multimoney.presentation.util.CrDocuments
-import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.transformation.formatId
-import com.multimoney.multimoney.presentation.util.validId
 
 @Composable
 @Preview
@@ -84,9 +89,49 @@ fun SignUpPersonalDataCrScreen(
             errorMessage = stringResource(id = viewModel.personalIdError.second),
             customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
-                viewModel.validateCrDocument()
+                viewModel.validateCrDocument(sharedViewModel.user?.email ?: "")
                 sharedViewModel.isContinueEnabled = viewModel.validateFields()
             }
         )
+        if (viewModel.isLoading) {
+            Row(modifier = Modifier.padding(top = 12.dp)) {
+                CustomImage(
+                    drawableResource = R.drawable.ic_information,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Text(
+                    text = stringResource(id = R.string.sign_up_personal_data_cr_loading_data),
+                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textInformation),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 9.dp)
+                )
+            }
+        }
+        if (viewModel.onSuccessDataInformationClient?.nombre.isNullOrBlank().not()) {
+            Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {
+                CustomImage(
+                    drawableResource = R.drawable.ic_check,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = R.string.sing_up_personal_data_cr_complete_name),
+                    style = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.textSubhead
+                    )
+                )
+            }
+            Text(
+                modifier = Modifier.padding(top = 8.dp, start = 4.dp),
+                text = viewModel.onSuccessDataInformationClient?.nombre.toString(),
+                style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
+            )
+        }
+    }
+
+    if (viewModel.closeKeyboard) {
+        focusManager.clearFocus()
+        viewModel.closeKeyboard = false
     }
 }

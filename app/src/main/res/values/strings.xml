@@ -107,6 +107,8 @@
     <string name="sign_up_personal_data_gt_id_hint">0000 00000 0000</string>
     <string name="sign_up_personal_data_cr_dimex_hint">000000000000</string>
     <string name="sign_up_personal_data_cr_id_hint">0 0000 0000</string>
+    <string name="sign_up_personal_data_cr_loading_data">Un momento, estamos verificando tu número de identificación…</string>
+    <string name="sing_up_personal_data_cr_complete_name">Nombre Completo</string>
 
     <!-- Sign Up Password -->
     <string name="sign_up_password_title">Creá tu contraseña</string>

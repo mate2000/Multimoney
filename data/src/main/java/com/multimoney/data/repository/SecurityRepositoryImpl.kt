@@ -3,12 +3,13 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.SecurityApi
+import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.User
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SecurityRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
@@ -74,6 +75,17 @@ class SecurityRepositoryImpl @Inject constructor(
         apolloCall = securityApi.queryValidationSecurity(pkIUser, password, user, idBrand),
         apolloCallMapper = { data ->
             data.validateSecurity?.mapToDomainModel()
+        }
+    )
+
+    override suspend fun queryDataInformationClient(
+        identification: String,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<ClientInfoCr?>> = fetchData(
+        apolloCall = securityApi.queryDataInformationClient(identification, idBrand, user),
+        apolloCallMapper = { data ->
+            data.dataInformationClient?.mapToDomainModel()
         }
     )
 }

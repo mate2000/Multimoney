@@ -4,6 +4,8 @@ import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseC
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
+import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
 import com.multimoney.domain.repository.SecurityRepository
@@ -30,4 +32,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryValidationSecurityUseCase(securityRepository: SecurityRepository): QueryValidationSecurityUseCase =
         QueryValidationSecurityUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryDataInformationUSerCase(securityRepository: SecurityRepository): QueryDataInformationClientUseCase =
+        QueryDataInformationClientUseCaseImpl(securityRepository)
 }

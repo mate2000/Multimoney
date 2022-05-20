@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.User
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -38,4 +39,9 @@ interface SecurityRepository {
         idBrand: Int
     ): Flow<MultimoneyResult<ValidateSecurity?>>
 
+    suspend fun queryDataInformationClient(
+        identification: String,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<ClientInfoCr?>>
 }

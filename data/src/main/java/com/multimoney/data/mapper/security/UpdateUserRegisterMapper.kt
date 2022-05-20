@@ -1,9 +1,9 @@
 package com.multimoney.data.mapper.security
 
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
-import com.multimoney.domain.model.security.User
+import com.multimoney.domain.model.security.UserData
 
-fun UpdateUserRegisterMutation.UpdateUserRegister.mapToDomainModel() = User(
+fun UpdateUserRegisterMutation.UpdateUserRegister.mapToDomainModel() = UserData(
     pkUser = pkUser ?: "",
     userName = userName ?: "",
     email = email ?: "",

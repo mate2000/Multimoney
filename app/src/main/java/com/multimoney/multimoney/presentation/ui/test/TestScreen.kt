@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.security.User
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -119,7 +119,7 @@ fun OnFidoButton(navigateToChart: () -> Unit) {
  */
 @Composable
 fun TestScreen(
-    data: User?
+    data: UserData?
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),

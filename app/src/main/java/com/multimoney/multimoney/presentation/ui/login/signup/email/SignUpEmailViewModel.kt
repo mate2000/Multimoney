@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
-import com.multimoney.domain.model.security.User
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -27,7 +27,7 @@ class SignUpEmailViewModel @Inject constructor(
     var userEmailError by mutableStateOf(Pair(false, R.string.sign_up_email_required))
 
     // Interactions
-    var onSuccessUserValidation by mutableStateOf<User?>(null)
+    var onSuccessUserDataValidation by mutableStateOf<UserData?>(null)
     var onFailure by mutableStateOf(DialogParameters())
     var isFirstLaunch = true
     var userCompletedDialogDescription = ""
@@ -48,7 +48,7 @@ class SignUpEmailViewModel @Inject constructor(
         userEmailError = Pair(false, R.string.error_empty)
     }
 
-    fun isDataChanged() = onSuccessUserValidation?.email != userEmail
+    fun isDataChanged() = onSuccessUserDataValidation?.email != userEmail
 
     fun callMutationUserValidationUseCase(email: String, currentStep: String, idBrand: Int) =
         executeUseCase {
@@ -59,7 +59,7 @@ class SignUpEmailViewModel @Inject constructor(
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess {
-                    onSuccessUserValidation = it
+                    onSuccessUserDataValidation = it
                     isLoading = false
                 }
                 result.onFailure {

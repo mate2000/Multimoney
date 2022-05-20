@@ -1,6 +1,6 @@
 package com.multimoney.domain.interaction.security
 
-import com.multimoney.domain.model.security.User
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -9,5 +9,5 @@ interface MutationUserValidationUseCase {
         email: String,
         currentStep: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<User?>>
+    ): Flow<MultimoneyResult<UserData?>>
 }

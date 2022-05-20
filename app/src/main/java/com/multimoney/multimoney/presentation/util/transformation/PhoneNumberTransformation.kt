@@ -19,14 +19,14 @@ class PhoneNumberTransformation(countryCode: String = Locale.getDefault().countr
         PhoneNumberUtil.getInstance().getExampleNumberForType(
             countryCode,
             PhoneNumberUtil.PhoneNumberType.MOBILE
-        ).nationalNumber.toString().length
+        )?.nationalNumber.toString().length
 
     var mobileTextExample = filter(
         AnnotatedString(
             PhoneNumberUtil.getInstance().getExampleNumberForType(
                 countryCode,
                 PhoneNumberUtil.PhoneNumberType.MOBILE
-            ).nationalNumber.toString()
+            )?.nationalNumber.toString()
         )
     )
 

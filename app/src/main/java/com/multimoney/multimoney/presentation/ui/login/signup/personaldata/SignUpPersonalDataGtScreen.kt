@@ -38,6 +38,7 @@ fun SignUpPersonalDataGtScreen(
             onValueChange = { newString ->
                 if (newString.length <= Nationalities.Guatemala.documentSize) {
                     viewModel.personalDocumentValue = newString.filter { it.isDigit() }
+                    sharedViewModel.userData?.identification = viewModel.personalDocumentValue
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -69,7 +70,11 @@ fun SignUpPersonalDataGtScreen(
             value = viewModel.nameValue,
             onValueChange = {
                 viewModel.nameValue = it
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                sharedViewModel.apply {
+                    userData?.firstName = it
+                    userData?.fullName = "$it ${userData?.lastName}"
+                    isContinueEnabled = viewModel.validateFields()
+                }
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -91,7 +96,11 @@ fun SignUpPersonalDataGtScreen(
             value = viewModel.lastNameValue,
             onValueChange = {
                 viewModel.lastNameValue = it
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                sharedViewModel.apply {
+                    userData?.lastName = it
+                    userData?.fullName = "${userData?.firstName} $it"
+                    isContinueEnabled = viewModel.validateFields()
+                }
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,

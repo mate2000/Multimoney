@@ -60,6 +60,7 @@ fun SignUpPersonalDataScreen(
             value = viewModel.nationalityValue,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_nationality_placeholder)
         )
+        viewModel.personalDocumentValue = stringResource(id = R.string.error_empty)
         when (viewModel.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
             Nationalities.ElSalvador.country -> SignUpPersonalDataSvScreen()

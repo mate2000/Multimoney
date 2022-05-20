@@ -84,11 +84,7 @@ fun SignUpPersonalDataCrScreen(
             errorMessage = stringResource(id = viewModel.personalIdError.second),
             customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
-                viewModel.personalIdError = validId(
-                    if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
-                    R.string.sign_up_personal_data_id_not_valid,
-                    viewModel.personalDocumentValue.length
-                )
+                viewModel.validateCrDocument()
                 sharedViewModel.isContinueEnabled = viewModel.validateFields()
             }
         )

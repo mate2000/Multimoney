@@ -8,6 +8,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.Nationalities
+import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -15,6 +16,8 @@ import javax.inject.Inject
 class SignUpPersonalDataViewModel @Inject constructor(
     queryDataInformationClientUseCase: QueryDataInformationClientUseCase
 ) : BaseViewModel() {
+
+    //Fields
     var nationalityValue by mutableStateOf("")
     var crPersonalDocument by mutableStateOf("")
     var personalIdError by mutableStateOf(
@@ -43,6 +46,18 @@ class SignUpPersonalDataViewModel @Inject constructor(
             personalDocumentValue = id.filter { it.isDigit() }
         } else if (crPersonalDocument == CrDocuments.Dimex.document && id.length <= Nationalities.CostaRicaDimex.documentSize) {
             personalDocumentValue = id.filter { it.isDigit() }
+        }
+    }
+
+    fun validateCrDocument() {
+        val status = validId(
+            if (crPersonalDocument == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
+            R.string.sign_up_personal_data_id_not_valid,
+            personalDocumentValue.length
+        )
+        personalIdError = status
+        if (status.first) {
+
         }
     }
 

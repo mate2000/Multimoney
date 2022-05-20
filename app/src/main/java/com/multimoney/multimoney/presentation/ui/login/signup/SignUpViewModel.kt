@@ -7,12 +7,16 @@ import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.security.User
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) : BaseViewModel() {
+class SignUpViewModel @Inject constructor(
+    val biometricHelper: BiometricHelper,
+    val onFidoHelper: OnFidoHelper
+) : BaseViewModel() {
 
     var currentStep by mutableStateOf(SignUpStep.One.id)
 
@@ -39,7 +43,7 @@ class SignUpViewModel @Inject constructor(val biometricHelper: BiometricHelper) 
     var nextAction: () -> Unit = {}
 
     fun nextStep() {
-        if (currentStep < SIGN_UP_TOTAL_STEPS) {
+        if (currentStep <= SIGN_UP_TOTAL_STEPS) {
             currentStep++
             isCloseVisible = currentStep > SignUpStep.One.id
         } else {

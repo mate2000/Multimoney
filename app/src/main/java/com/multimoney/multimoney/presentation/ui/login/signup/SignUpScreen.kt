@@ -1,6 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -25,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
+import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
@@ -35,7 +39,12 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.onfido.android.sdk.capture.ExitCode
+import com.onfido.android.sdk.capture.Onfido
+import com.onfido.android.sdk.capture.errors.OnfidoException
+import com.onfido.android.sdk.capture.upload.Captures
 
 @Composable
 @Preview
@@ -49,6 +58,30 @@ fun SignUpScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
+    val onfidoError = stringResource(id = R.string.placeholder_error)
+
+    val launchOnFidoActivityResult =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            viewModel.onFidoHelper.getOnFidoClient().handleActivityResult(
+                result.resultCode,
+                result.data,
+                object : Onfido.OnfidoResultListener {
+                    override fun userCompleted(captures: Captures) {
+                        viewModel.nextStep()
+                    }
+
+                    override fun userExited(exitCode: ExitCode) {
+                        // Empty on purpose
+                    }
+
+                    override fun onError(exception: OnfidoException) {
+                        viewModel.openDialog = DialogParameters(
+                            description = onfidoError,
+                            isActive = mutableStateOf(true)
+                        )
+                    }
+                })
+        }
 
     Column(
         modifier = Modifier
@@ -70,11 +103,13 @@ fun SignUpScreen(
                         popTo = Screen.SignUpScreen.route
                     )
                 })
-            StepProgressBar(
-                steps = SIGN_UP_TOTAL_STEPS,
-                currentStep = viewModel.currentStep,
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-            )
+            if (viewModel.currentStep != SignUpStep.Five.id) {
+                StepProgressBar(
+                    steps = SIGN_UP_TOTAL_STEPS,
+                    currentStep = if (viewModel.currentStep == SignUpStep.Six.id) SignUpStep.Five.id else viewModel.currentStep,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                )
+            }
         }
         Column(
             modifier = Modifier
@@ -86,7 +121,14 @@ fun SignUpScreen(
             CustomButton(
                 onClick = {
                     focusManager.clearFocus()
-                    viewModel.nextAction.invoke()
+                    if (viewModel.currentStep == SignUpStep.Five.id) {
+                        launchOnFidoActivityResult.launch(
+                            viewModel.onFidoHelper.getOnFidoIntent()
+                        )
+                    }
+                    else {
+                        viewModel.nextStep()
+                    }
                 },
                 text = stringResource(id = R.string.button_continue),
                 modifier = Modifier
@@ -98,7 +140,6 @@ fun SignUpScreen(
             )
         }
     }
-
     LoadingIndicator(viewModel.isLoading)
 
     BackHandler {
@@ -126,6 +167,7 @@ fun GetStepContent(
         SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
         SignUpStep.Four.id -> SignUpOtpScreen(sharedViewModel = viewModel)
+        SignUpStep.Five.id -> SignUpIdVerificationScreen(sharedViewModel = viewModel)
         else -> {
             SignUpPasswordScreen(sharedViewModel = viewModel)
             viewModel.apply {

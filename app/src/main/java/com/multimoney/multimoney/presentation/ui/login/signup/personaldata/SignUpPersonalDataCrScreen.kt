@@ -90,11 +90,13 @@ fun SignUpPersonalDataCrScreen(
             errorMessage = stringResource(id = viewModel.personalIdError.second),
             customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
-                viewModel.validateCrDocument(sharedViewModel.user?.email ?: "")
+                viewModel.validateCrDocument(sharedViewModel.userData?.email ?: "")
                 sharedViewModel.isContinueEnabled = viewModel.validateFields()
             }
         )
+
         if (viewModel.isLoading) {
+            sharedViewModel.userData?.fullName = null
             Row(modifier = Modifier.padding(top = 12.dp)) {
                 CustomImage(
                     drawableResource = R.drawable.ic_information,
@@ -109,7 +111,11 @@ fun SignUpPersonalDataCrScreen(
                 )
             }
         }
+
         if (viewModel.onSuccessDataInformationClient?.nombre.isNullOrBlank().not()) {
+            viewModel.onSuccessDataInformationClient?.apply {
+                sharedViewModel.userData?.fullName = nombre
+            }
             Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {
                 CustomImage(
                     drawableResource = R.drawable.ic_check,

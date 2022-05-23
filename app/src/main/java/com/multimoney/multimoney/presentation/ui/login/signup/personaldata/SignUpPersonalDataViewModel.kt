@@ -49,7 +49,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
         return when (nationalityValue) {
             Nationalities.ElSalvador.country -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == Nationalities.ElSalvador.documentSize) && !personalIdError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
             Nationalities.Guatemala.country -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == Nationalities.Guatemala.documentSize) && !personalIdError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
-            Nationalities.CostaRicaId.country -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) && !personalIdError.first && crPersonalDocument.isNotBlank()
+            Nationalities.CostaRicaId.country -> personalDocumentValue.isNotBlank() &&
+                    (personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) &&
+                    !personalIdError.first && crPersonalDocument.isNotBlank() && onSuccessDataInformationClient?.nombre != null
             else -> false
         }
     }
@@ -97,11 +99,13 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 result.onSuccess {
                     onSuccessDataInformationClient = it
                     isLoading = false
+                    validateFields()
                 }
                 result.onFailure {
                     isLoading = false
                     onSuccessDataInformationClient = null
                     personalIdError = Pair(true, R.string.sign_up_personal_data_id_not_valid)
+                    validateFields()
                 }
                 result.onLoading {
                     isLoading = true

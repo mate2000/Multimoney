@@ -82,6 +82,10 @@ class SignUpPersonalDataViewModel @Inject constructor(
         if (status.first.not()) {
             closeKeyboard = true
             callQueryDataInformationClient(personalDocumentValue, Brand.Revamp.id, user)
+        } else {
+            if (onSuccessDataInformationClient?.nombre.isNullOrBlank().not()) {
+                onSuccessDataInformationClient = null
+            }
         }
     }
 

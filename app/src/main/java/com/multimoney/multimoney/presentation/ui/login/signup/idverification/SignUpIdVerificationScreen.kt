@@ -31,7 +31,6 @@ import com.onfido.android.sdk.capture.upload.Captures
 @Composable
 @Preview
 fun SignUpIdVerificationScreen(
-    viewModel: SignUpIdVerificationViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
     sharedViewModel.isContinueEnabled = true
@@ -52,7 +51,7 @@ fun SignUpIdVerificationScreen(
                     }
 
                     override fun onError(exception: OnfidoException) {
-                        viewModel.openDialog = DialogParameters(
+                        sharedViewModel.openDialog = DialogParameters(
                             description = onfidoError,
                             isActive = mutableStateOf(true)
                         )

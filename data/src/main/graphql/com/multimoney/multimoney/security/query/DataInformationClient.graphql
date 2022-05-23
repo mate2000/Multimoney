@@ -1,0 +1,12 @@
+query DataInformationClient($identification:String!, $idBrand:Int!, $user:String!){
+  dataInformationClient(
+    dataInformationClientInput: {
+      identification: $identification
+      idBrand: $idBrand
+      user: $user
+    }
+  ) {
+    nombre
+    status
+  }
+}

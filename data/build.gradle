@@ -3,11 +3,15 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
-    id("com.apollographql.apollo3").version("3.1.0")
     id  'dexguard'
+    id("com.apollographql.apollo3").version("3.3.0")
 }
 
 apply from: '../dependencies.gradle'
+
+// gradle properties
+def properties = new Properties()
+properties.load(new FileInputStream(rootProject.file("custom-gradle.properties")))
 
 android {
     compileSdk compile_sdk_version
@@ -26,15 +30,21 @@ android {
             shrinkResources false
 //            minifyEnabled false
 //            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : apiUrl
+            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "DATA_STORE_KEY", System.env.PRODUCTION_DATA_STORE_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_KEY}\"" : properties.dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
         staging {
             testCoverageEnabled true
-            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : apiUrl
+            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "DATA_STORE_KEY", System.env.STAGING_DATA_STORE_KEY ? "\"${System.env.STAGING_DATA_STORE_KEY}\"" : properties.dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.STAGING_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.STAGING_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
         debug {
             testCoverageEnabled true
-            buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : apiUrl
+            buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "DATA_STORE_KEY", System.env.DEVELOPMENT_DATA_STORE_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_KEY}\"" : properties.dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
     }
     compileOptions {
@@ -43,6 +53,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
     }
 
 //    dexOptions {
@@ -53,12 +64,24 @@ android {
 }
 
 apollo {
-    packageName.set("com.multimoney.data.networking.apollomodel")
+    service("security") {
+        sourceFolder.set("com/multimoney/multimoney/security")
+        packageName.set("com.multimoney.data.networking.security.apollomodel")
+        generateOptionalOperationVariables.set(false)
+    }
+    service("balances") {
+        sourceFolder.set("com/multimoney/multimoney/balances")
+        packageName.set("com.multimoney.data.networking.balances.apollomodel")
+        generateOptionalOperationVariables.set(false)
+    }
 }
 
 dependencies {
 
     implementation project(path: ':domain')
+
+    // Common
+    implementation common.serialization_json
 
     // Room
     implementation room.runtime
@@ -70,6 +93,9 @@ dependencies {
     implementation hilt.android
     kapt hilt.compiler
 
+    // Preferences
+    implementation preferences.data_store
+
     // Coroutines
     implementation coroutines.android
 
@@ -80,6 +106,9 @@ dependencies {
 
     // OkHttp3
     implementation okhttp3.interceptor
+
+    // Gson
+    api gson.gson
 
     // Common Test
     testImplementation common_test.junit

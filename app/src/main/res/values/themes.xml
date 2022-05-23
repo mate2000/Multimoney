@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Multimoney" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Multimoney" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="android:statusBarColor">@color/purple_700</item>
+    </style>
+
+    <style name="OnfidoActivityTheme" parent="OnfidoBaseActivityTheme">
+        <item name="fontFamily">@font/poppins_regular</item>
+    </style>
+
+    <style name="OnfidoToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="fontFamily">@font/poppins_regular</item>
     </style>
 </resources>

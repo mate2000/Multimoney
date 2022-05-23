@@ -8,6 +8,10 @@ plugins {
 
 apply from: '../dependencies.gradle'
 
+// gradle properties
+def properties = new Properties()
+properties.load(new FileInputStream(rootProject.file("custom-gradle.properties")))
+
 android {
     compileSdk compile_sdk_version
 

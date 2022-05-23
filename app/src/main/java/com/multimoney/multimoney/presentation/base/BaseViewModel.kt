@@ -6,25 +6,28 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.connectivity.Connectivity
-import com.multimoney.multimoney.presentation.util.UiEvent
+import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.NavEvent
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 open class BaseViewModel @Inject constructor() : ViewModel() {
 
     var isLoading by mutableStateOf(false)
 
+    var openDialog by mutableStateOf(DialogParameters())
+
     @Inject
     lateinit var connectivity: Connectivity
 
     /**
-     * Use this val to store one time events defined in UiEvent Class
+     * Use this val to store one time events defined in NavigationEvent Class
      **/
-    private val _uiEvent = Channel<UiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
+    private val _navigationEvent = Channel<NavEvent>()
+    val navigationEvent = _navigationEvent.receiveAsFlow()
 
     /**
      * Use this function to call use cases in a coroutine in the viewModel
@@ -59,15 +62,41 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
     }
 
     /**
-     * Use this function to trigger one time events defined in UiEvent Class
+     * Use this function to trigger one time events defined in NavigationEvent Class
      **/
-    fun sendUiEvent(event: UiEvent) {
+    private fun sendNavigationEvent(event: NavEvent) {
         viewModelScope.launch {
-            _uiEvent.send(event)
+            _navigationEvent.send(event)
         }
     }
 
-    fun goBack() {
-        sendUiEvent(UiEvent.PopBackStack)
+    /**
+     * Use this function to navigate to specified screen
+     **/
+    fun navigateTo(route: String) = sendNavigationEvent(NavEvent.Navigate(route = route))
+
+    /**
+     * Use this function to pop to specific screen and navigate to specified screen
+     **/
+    fun popAndNavigateTo(route: String, popTo: String) =
+        sendNavigationEvent(NavEvent.PopAndNavigate(route = route, popTo = popTo))
+
+    fun navigateBack() = sendNavigationEvent(NavEvent.PopBackStack)
+
+    fun executeNavigation(
+        onNavigate: (NavEvent.Navigate) -> Unit = {},
+        onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+        onPopBackStack: () -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            navigationEvent.collect { event ->
+                when (event) {
+                    is NavEvent.Navigate -> onNavigate(event)
+                    is NavEvent.PopAndNavigate -> onPopAndNavigate(event)
+                    is NavEvent.PopBackStack -> onPopBackStack()
+                    else -> Unit
+                }
+            }
+        }
     }
 }

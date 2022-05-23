@@ -1,0 +1,33 @@
+query BalanceAccountSmart($identification: String!, $user: String!,$idBrand: Int!){
+    balanceAccountSmart(
+        checkAccountInput: { identification: $identification, user: $user, idBrand: $idBrand }
+    ) {
+        accounts {
+            code
+            message
+            totalBalance
+            averageBalance
+            accountNumber
+            tokenNumber
+            productType
+            currencyCode
+            email
+            phoneNumber
+            accountStatus
+            customerId
+            gainedInterest
+            activeBroker
+            ibanAccountNumber
+            idCurrencyAccount
+            fullNameCustomer
+            visaDirectId
+            visaDirectUser
+        }
+        request {
+            statusFirm
+            statusOnfido
+            idRequestSysde
+            idRequestGlobal
+        }
+    }
+}

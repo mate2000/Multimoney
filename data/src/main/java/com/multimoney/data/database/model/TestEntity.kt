@@ -3,12 +3,28 @@ package com.multimoney.data.database.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.multimoney.data.base.DomainMapper
-import com.multimoney.domain.model.launch.LaunchConnection
+import com.multimoney.domain.model.security.UserData
 
 @Entity
 data class TestEntity(
     @PrimaryKey
     val id: String
-) : DomainMapper<LaunchConnection> {
-    override fun mapToDomainModel() = LaunchConnection(cursor = id, true, launches = listOf())
+) : DomainMapper<UserData> {
+    override fun mapToDomainModel() = UserData(
+        pkUser = "pkUser",
+        userName = "userName",
+        email = "email",
+        phoneNumber = "phoneNumber",
+        fullName = "fullName",
+        firstName = "firstName",
+        secondName = "secondName",
+        lastName = "lastName",
+        secondLastName = "secondLastName",
+        contactMeans = "contactMeans",
+        nationality = "nationality",
+        identification = "identification",
+        countryCode = "countryCode",
+        currentStep = "currentStep",
+        userStatus = "userStatus"
+    )
 }

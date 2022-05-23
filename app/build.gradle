@@ -6,10 +6,14 @@ plugins {
     id 'com.google.firebase.firebase-perf'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-    id  'dexguard'
+    id 'dexguard'
+    id 'applanga'
 }
-//apply plugin: 'dexguard'
 apply from: '../dependencies.gradle'
+
+// gradle properties
+def properties = new Properties()
+properties.load(new FileInputStream(rootProject.file("custom-gradle.properties")))
 
 android {
     compileSdk compile_sdk_version
@@ -26,15 +30,15 @@ android {
             useSupportLibrary true
         }
 
-        buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : appEnvironment
+        buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : properties.appEnvironment
     }
 
     signingConfigs {
         debug {
-            storeFile     file('../../Users/DavidGuevara/Desktop/Multimoney.jks')
+            storeFile file('../../Users/DavidGuevara/Desktop/Multimoney.jks')
             storePassword 'Multimoney'
-            keyAlias      'Multimoney'
-            keyPassword   'Multimoney'
+            keyAlias 'Multimoney'
+            keyPassword 'Multimoney'
         }
     }
 
@@ -44,28 +48,33 @@ android {
             shrinkResources false
 //            minifyEnabled false
 //            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.PRODUCTION_ONFIDO_API_TOKEN ? "\"${System.env.PRODUCTION_ONFIDO_API_TOKEN}\"" : onfidoApiToken
+            buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : properties.sentryDsn
+            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.PRODUCTION_ONFIDO_API_TOKEN ? "\"${System.env.PRODUCTION_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
+            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
         }
         staging {
             //applicationIdSuffix ".staging"
             testCoverageEnabled true
-            buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : onfidoApiToken
+            buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : properties.sentryDsn
+            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
+            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.STAGING_ADJUST_APP_TOKEN ? "\"${System.env.STAGING_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
         }
         debug {
             //applicationIdSuffix ".dev"
             testCoverageEnabled true
-            buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.DEVELOPMENT_ONFIDO_API_TOKEN ? "\"${System.env.DEVELOPMENT_ONFIDO_API_TOKEN}\"" : onfidoApiToken
+            buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : properties.sentryDsn
+            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.DEVELOPMENT_ONFIDO_API_TOKEN ? "\"${System.env.DEVELOPMENT_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
+            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.DEVELOPMENT_ADJUST_APP_TOKEN ? "\"${System.env.DEVELOPMENT_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
     }
     buildFeatures {
         compose true
@@ -103,6 +112,11 @@ dependencies {
     // Common
     implementation common.core_ktlx
 
+    // Google Services
+    implementation google_services.ads
+    implementation google_services.auth
+    implementation google_services.auth_api_phone
+
     // Activity
     implementation activity.compose
 
@@ -133,9 +147,6 @@ dependencies {
     // Coroutines
     implementation coroutines.android
 
-    // Preferences
-    implementation preferences.data_store
-
     // Chart
     implementation chart.mp_android_chart
 
@@ -151,6 +162,36 @@ dependencies {
 
     // OnFido
     implementation onfido.capture
+
+    // Adjust
+    implementation adjust.android
+    implementation adjust.webbridge
+    implementation adjust.installreferrer
+
+    // Lottie
+    implementation lottieDependency.lottie
+
+    // Cognito
+    implementation cognito.core
+    implementation cognito.auth
+
+    // Desugar
+    coreLibraryDesugaring desugar.jdk
+
+    // Togisoft
+    implementation togisoft.country_code_picker
+
+    // LibPhoneNumber
+    implementation libphonenumber.libphonenumber
+
+    // AppLanga
+    implementation appLanga.app_langa
+
+    // Biometric
+    implementation biometric.biometric
+
+    //Accompanist
+    implementation accompanist.accompanist_flowlayout
 
     // Common Test
     testImplementation common_test.junit

@@ -13,9 +13,6 @@ import com.multimoney.data.extension.safeLet
 import com.multimoney.multimoney.R
 import timber.log.Timber
 
-/**
- * Created by rodrigomiranda on 5/13/20.
- */
 class CustomFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {

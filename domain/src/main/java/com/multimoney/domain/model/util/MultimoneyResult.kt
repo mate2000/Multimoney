@@ -6,17 +6,17 @@ sealed class MultimoneyResult<out T> {
     data class Loading(val isLoading: Boolean) : MultimoneyResult<Nothing>()
 }
 
-inline fun <T : Any> MultimoneyResult<T>.onSuccess(action: (T) -> Unit): MultimoneyResult<T> {
+inline fun <T : Any?> MultimoneyResult<T>.onSuccess(action: (T) -> Unit): MultimoneyResult<T> {
     if (this is MultimoneyResult.Success) action(data)
     return this
 }
 
-inline fun <T : Any> MultimoneyResult<T>.onFailure(action: (HttpError) -> Unit): MultimoneyResult<T> {
+inline fun <T : Any?> MultimoneyResult<T>.onFailure(action: (HttpError) -> Unit): MultimoneyResult<T> {
     if (this is MultimoneyResult.Failure) action(httpError)
     return this
 }
 
-inline fun <T : Any> MultimoneyResult<T>.onLoading(action: () -> Unit): MultimoneyResult<T> {
+inline fun <T : Any?> MultimoneyResult<T>.onLoading(action: () -> Unit): MultimoneyResult<T> {
     if (this is MultimoneyResult.Loading) action()
     return this
 }

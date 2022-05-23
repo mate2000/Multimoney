@@ -139,6 +139,8 @@ type SecurityMutation {
   userValidation(userValidationInput: userValidationInput): userValidation
 
   updateUserRegister(updateUserRegisterInput: UpdateUserRegister): updateUserRegister
+
+  sendPinProccess(sendPinProccessInput: sendPinProccessInput): SendPinProccess
 }
 
 type userValidation {
@@ -337,6 +339,70 @@ input UpdateUserRegister {
   currentStep: String!
 
   activateUser: Boolean
+
+  idBrand: Int!
+
+  user: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type SendPinProccess {
+  """
+  SendPinProccess pk_suv_mtr_usuario
+  """
+  pk_suv_mtr_usuario: Int
+
+  """
+  SendPinProccess correo_electronico
+  """
+  correo_electronico: String
+
+  """
+  SendPinProccess username
+  """
+  username: String
+
+  """
+  SendPinProccess telefono
+  """
+  telefono: String
+
+  """
+  SendPinProccess identificacion
+  """
+  identificacion: String
+
+  """
+  SendPinProccess cantidad_reenvios_pin
+  """
+  cantidad_reenvios_pin: String
+
+  """
+  SendPinProccess cantidad_reenvios_otp
+  """
+  cantidad_reenvios_otp: String
+
+  """
+  SendPinProccess valor_tiempo_exp_pin
+  """
+  valor_tiempo_exp_pin: String
+}
+
+input sendPinProccessInput {
+  identification: String!
+
+  firstName: String!
+
+  email: String!
+
+  cellphone: String!
+
+  sendMethod: String!
+
+  fk_Suv_Mtr_Usuario: Int!
 
   idBrand: Int!
 

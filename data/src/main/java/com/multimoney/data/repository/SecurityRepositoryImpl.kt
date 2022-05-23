@@ -4,6 +4,7 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.SendPinResponse
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -86,6 +87,31 @@ class SecurityRepositoryImpl @Inject constructor(
         apolloCall = securityApi.queryDataInformationClient(identification, idBrand, user),
         apolloCallMapper = { data ->
             data.dataInformationClient?.mapToDomainModel()
+        }
+    )
+
+    override suspend fun mutationSendPinProcess(
+        identification: String,
+        firstName: String,
+        email: String,
+        cellPhone: String,
+        sendMethod: String,
+        pkUser: String,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<SendPinResponse?>> = fetchData(
+        apolloCall = securityApi.mutableSendPinProcess(
+            identification,
+            firstName,
+            email,
+            cellPhone,
+            sendMethod,
+            pkUser.toInt(),
+            idBrand,
+            user
+        ),
+        apolloCallMapper = { data ->
+            data.sendPinProccess?.mapToDomainModel()
         }
     )
 }

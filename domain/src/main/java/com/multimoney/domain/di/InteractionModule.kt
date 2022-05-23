@@ -1,5 +1,7 @@
 package com.multimoney.domain.di
 
+import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
+import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
@@ -35,6 +37,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryDataInformationUSerCase(securityRepository: SecurityRepository): QueryDataInformationClientUseCase =
+    fun provideQueryDataInformationUseCase(securityRepository: SecurityRepository): QueryDataInformationClientUseCase =
         QueryDataInformationClientUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSendPinProcessUseCase(securityRepository: SecurityRepository): MutationSendPinProcessUseCase =
+        MutationSendPinProcessUseCaseImpl(securityRepository)
 }

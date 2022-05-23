@@ -39,6 +39,7 @@ fun SignUpPersonalDataScreen(
             }
         }
     }
+
     Column(
         Modifier
             .padding(16.dp)

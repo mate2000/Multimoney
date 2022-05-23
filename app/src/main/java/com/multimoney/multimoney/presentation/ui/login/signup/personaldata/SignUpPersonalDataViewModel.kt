@@ -43,7 +43,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     // Interactions
     var onSuccessDataInformationClient by mutableStateOf<ClientInfoCr?>(null)
-    var isFirstLaunch = false
 
     fun validateFields(): Boolean {
         return when (nationalityValue) {

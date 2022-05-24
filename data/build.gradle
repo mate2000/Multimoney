@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
-    id  'dexguard'
+    id 'dexguard'
     id("com.apollographql.apollo3").version("3.3.0")
 }
 
@@ -11,7 +11,7 @@ apply from: '../dependencies.gradle'
 
 // gradle properties
 def properties = new Properties()
-properties.load(new FileInputStream(rootProject.file("custom-gradle.properties")))
+properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
 
 android {
     compileSdk compile_sdk_version
@@ -28,8 +28,6 @@ android {
         production {
             minifyEnabled false
             shrinkResources false
-//            minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : properties.apiUrl
             buildConfigField "String", "DATA_STORE_KEY", System.env.PRODUCTION_DATA_STORE_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_KEY}\"" : properties.dataStoreKey
             buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
@@ -55,12 +53,6 @@ android {
         jvmTarget = '1.8'
         freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
     }
-
-//    dexOptions {
-//        incremental = true;
-//        preDexLibraries = false
-//        javaMaxHeapSize "4g" // 2g should be also OK
-//    }
 }
 
 apollo {
@@ -118,43 +110,23 @@ dependencies {
     testImplementation common_test.mockito_core
 }
 
-//dexguard {
-//    path = '../../DexGuard-9.3.1/DexGuard-9.3.1'
-//    // We can build the sample with the sample license file
-//    license = '../../DexGuard-9.3.1/DexGuard-9.3.1/lib/dexguard-license.txt'
-//    configurations {
-//        debug {
-//            defaultConfiguration 'dexguard-debug.pro'
-//            configuration 'dexguard-project.txt'
-//            configuration 'proguard-project.txt'
-//        }
-//        release {
-//            defaultConfiguration 'dexguard-release-aggressive.pro'
-//            configuration 'dexguard-project.txt'
-//            configuration 'proguard-project.txt'
-//        }
-//    }
-//}
-//dexguard {
-//
-//    // if you are using dexguard locally
-//    // path = '../../../proguard/DexGuard-9.0.10'
-//
-//    version = '9.3.1'
-//
-//    // Keep the license secure in your CD/CI
-//    license = '../dexguard-license-2022.txt'
-//
-//    configurations {
-//        debug {
-//            defaultConfiguration 'dexguard-debug.pro'
-//            configuration 'dexguard-project.txt'
-//            configuration 'proguard-project.txt'
-//        }
-//        release {
-//            defaultConfiguration 'dexguard-release-aggressive.pro'
-//            configuration 'dexguard-project.txt'
-//            configuration 'proguard-project.txt'
-//        }
-//    }
-//}
+dexguard {
+
+    version = dexguard_version
+
+    // Keep the license secure in your CD/CI
+    license = "../dexguard-license.txt"
+
+    configurations {
+        debug {
+            defaultConfiguration 'dexguard-debug.pro'
+            configuration 'dexguard-project.txt'
+            configuration 'proguard-project.txt'
+        }
+        production {
+            defaultConfiguration 'dexguard-release-aggressive.pro'
+            configuration 'dexguard-project.txt'
+            configuration 'proguard-project.txt'
+        }
+    }
+}

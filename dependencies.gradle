@@ -44,7 +44,7 @@ ext {
     ]
 
     // Compose
-    compose_version = "1.2.0-alpha07"
+    compose_version = "1.2.0-beta01"
 
     compose = [
             ui        : "androidx.compose.ui:ui:$compose_version",
@@ -234,11 +234,19 @@ ext {
             gson: "com.google.code.gson:gson:${gson_version}"
     ]
 
-    //Accompanist
+    // Accompanist
     accompanist_version = "0.23.1"
 
     accompanist = [
             accompanist_flowlayout: "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+    ]
+
+    // DexGuard
+    dexguard_version = "9.3.8"
+    dexguard_classpath_version = "1.3.8"
+
+    dexguard = [
+            classpath: "com.guardsquare:dexguard-gradle-plugin:$dexguard_classpath_version"
     ]
 
     // Common Test

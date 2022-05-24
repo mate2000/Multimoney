@@ -18,3 +18,22 @@
 # Alternatively, we can use different strength settings.
 # If no strength is specified, 'low' will be used instead.
 #-obfuscatecode,low class com.example.HelloWorldActivity
+
+
+# Encrypt the super security class
+-encryptstrings class com.multimoney.**
+-accessthroughreflection class com.multimoney.**{
+	boolean passEnvironmentChecks (Context);
+	boolean passTamperDetection (Context);
+}
+
+# Code Obfuscation
+-obfuscatecode,high class com.multimoney.**
+
+# Code Virtualization
+-virtualizecode class com.multimoney.** {
+    public java.lang.String[] generateSID();
+}
+
+# Class Encryption
+-encryptclasses com.multimoney.**

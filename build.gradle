@@ -1,13 +1,11 @@
 buildscript {
     apply from: 'dependencies.gradle'
     repositories {
-        maven  {
-           //url '../DexGuard-9.3.1/DexGuard-9.3.1/lib'          // For the DexGuard plugin.
-            credentials  {
-//                username = "${DEXGUARD_USERNAME}"
-//                password = "${DEXGUARD_PASSWORD}"
-                                username = "maven"
-                password = "QaJpWH8yL97x5SzpZ3LFRLoiIrZajBDTCIFirSuqExeQDC88slgpYVsbHZQR5aCPMPUVlPw7RTi0K23qC2d3FhbLZnrTNS2G9LJN0GdiOOs7IDF59dezBlcYpq19XvJK"
+        maven {
+            // For the DexGuard Gradle plugin jar.
+            credentials {
+                username = System.env.DEXGUARD_USERNAME ? "\"${System.env.DEXGUARD_USERNAME}\"" : properties.dexGuardUserName
+                password = System.env.DEXGUARD_PASSWORD ? "\"${System.env.DEXGUARD_PASSWORD}\"" : properties.dexGuardPassword
             }
             url "https://maven.guardsquare.com"
             // Only search for artifacts with groupId "com.guardsquare.*",
@@ -25,7 +23,7 @@ buildscript {
         classpath firebase.perf_classpath
         classpath firebase.crashlytics_classpath
         classpath google_services.plugin
-        classpath 'com.guardsquare:dexguard-gradle-plugin:+'
+        classpath dexguard.classpath
         classpath appLanga.app_langa_classpath
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -33,66 +31,9 @@ buildscript {
 plugins {
     id 'com.android.application' version '7.1.0' apply false
     id 'com.android.library' version '7.1.0' apply false
-    id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
+    id 'org.jetbrains.kotlin.android' version '1.6.21' apply false
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-//allprojects {
-//    repositories {
-//        maven  {
-//            //url '../DexGuard-9.3.1/DexGuard-9.3.1/lib'          // For the DexGuard plugin.
-//            credentials  {
-////                username = "${DEXGUARD_USERNAME}"
-////                password = "${DEXGUARD_PASSWORD}"
-//                username = "maven"
-//                password = "QaJpWH8yL97x5SzpZ3LFRLoiIrZajBDTCIFirSuqExeQDC88slgpYVsbHZQR5aCPMPUVlPw7RTi0K23qC2d3FhbLZnrTNS2G9LJN0GdiOOs7IDF59dezBlcYpq19XvJK"
-//            }
-//            url "https://maven.guardsquare.com"
-//            // Only search for artifacts with groupId "com.guardsquare.*",
-//            // supported since gradle 5.1.
-//            content {
-//                includeGroupByRegex "com\\.guardsquare.*"
-//            }
-//            authentication {
-//                basic(BasicAuthentication)
-//            }
-//        }
-//    }
-//}
-
-//dexguard {
-//    path = '../../..'
-//    // We can build the sample with the sample license file
-//    license = '../../../lib/dexguard-license.txt'
-//    configurations {
-//        debug {
-//            defaultConfiguration 'dexguard-debug.pro'
-//            configuration 'dexguard-project.txt'
-////            configuration 'proguard-project.txt'
-//        }
-//        release {
-//            defaultConfiguration 'dexguard-release-aggressive.pro'
-//            configuration 'dexguard-project.txt'
-////            configuration 'proguard-project.txt'
-//        }
-//    }
-//}
-
-//dexguard {
-//    path = '../Users/DavidGuevara/Downloads/DexGuard-9.3.1/DexGuard-9.3.1'
-//    // We can build the sample with the sample license file
-//    license = '../Users/DavidGuevara/Downloads/DexGuard-9.3.1/DexGuard-9.3.1/lib/dexguard-license.txt'
-//    configurations {
-//        debug {
-//            defaultConfiguration 'dexguard-debug.pro'
-//            configuration 'dexguard-project.txt'
-//        }
-//        release {
-//            defaultConfiguration 'dexguard-release-aggressive.pro'
-//            configuration 'dexguard-project.txt'
-//        }
-//    }
-//}

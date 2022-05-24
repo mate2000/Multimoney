@@ -13,7 +13,7 @@ apply from: '../dependencies.gradle'
 
 // gradle properties
 def properties = new Properties()
-properties.load(new FileInputStream(rootProject.file("custom-gradle.properties")))
+properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
 
 android {
     compileSdk compile_sdk_version
@@ -46,8 +46,6 @@ android {
         production {
             minifyEnabled false
             shrinkResources false
-//            minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : properties.sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.PRODUCTION_ONFIDO_API_TOKEN ? "\"${System.env.PRODUCTION_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
@@ -87,21 +85,6 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-
-    splits {
-        abi {
-            enable true
-            reset()
-            include 'x86', 'x86_64', 'arm64-v8a', 'armeabi-v7a'
-            universalApk false
-        }
-    }
-
-//    dexOptions {
-//        incremental = true;
-//        preDexLibraries = false
-//        javaMaxHeapSize "4g" // 2g should be also OK
-//    }
 }
 
 dependencies {
@@ -134,7 +117,7 @@ dependencies {
     // Compose
     implementation compose.ui
     implementation compose.material
-    debugImplementation compose.tooling
+    implementation compose.tooling
     implementation compose.foundation
     implementation compose.livedata
     androidTestImplementation compose.test
@@ -199,37 +182,14 @@ dependencies {
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
-
-//    implementation "com.guardsquare:dexguard-runtime:9.1.5"
 }
-
-//dexguard {
-//    path = '../../DexGuard-9.3.1/DexGuard-9.3.1'
-//    // We can build the sample with the sample license file
-//    license = '../../DexGuard-9.3.1/DexGuard-9.3.1/lib/dexguard-license.txt'
-//    configurations {
-//        debug {
-//            defaultConfiguration 'dexguard-debug.pro'
-//            configuration 'dexguard-project.txt'
-//            configuration 'proguard-project.txt'
-//        }
-//        release {
-//            defaultConfiguration 'dexguard-release-aggressive.pro'
-//            configuration 'dexguard-project.txt'
-//            configuration 'proguard-project.txt'
-//        }
-//    }
-//}
 
 dexguard {
 
-    // if you are using dexguard locally
-    // path = '../../../proguard/DexGuard-9.0.10'
-
-    version = "+"
+    version = dexguard_version
 
     // Keep the license secure in your CD/CI
-    license = "../dexguard-license-2022.txt"
+    license = "../dexguard-license.txt"
 
     configurations {
         debug {
@@ -237,7 +197,12 @@ dexguard {
             configuration 'dexguard-project.txt'
             configuration 'proguard-project.txt'
         }
-        release {
+        staging {
+            defaultConfiguration 'dexguard-debug.pro'
+            configuration 'dexguard-project.txt'
+            configuration 'proguard-project.txt'
+        }
+        production {
             defaultConfiguration 'dexguard-release-aggressive.pro'
             configuration 'dexguard-project.txt'
             configuration 'proguard-project.txt'

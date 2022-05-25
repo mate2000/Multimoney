@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -40,14 +41,15 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_THREE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_TWO
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DELAY
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
-import kotlinx.coroutines.delay
 import java.time.Duration
+import kotlinx.coroutines.delay
 
 @Composable
 @Preview
@@ -57,6 +59,16 @@ fun SignUpOtpScreen(
 ) {
 
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(true) {
+        sharedViewModel.apply {
+            isContinueEnabled = viewModel.isFormValid()
+            nextAction = {
+                userData?.currentStep = SignUpStep.Four.name
+                callMutationUpdateUserRegisterUseCase()
+            }
+        }
+    }
 
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
@@ -74,21 +86,46 @@ fun SignUpOtpScreen(
         }
 
     LaunchedEffect(true) {
-        viewModel.apply {
-            phaseCount = PHASE_ONE
-            isTimerRunning = true
-            remainingTime = Duration.ofSeconds(SignUpOtpViewModel.TIMER_DURATION)
-            remainingTimeText = remainingTime.format()
-            otp = ""
-        }
+        viewModel.isFirstLoad = true
         sharedViewModel.apply {
-            isContinueEnabled = viewModel.isFormValid()
-            nextAction = {
-                userData?.currentStep = SignUpStep.Four.name
-                callMutationUpdateUserRegisterUseCase()
+            viewModel.callMutationSendPinProcess(
+                userData?.identification ?: "046634164",
+                userData?.firstName ?: "Diego",
+                userData?.email ?: "diego@mail.com",
+                userData?.phoneNumber ?: "71680915",
+                SEND_METHOD_PHONE,
+                userData?.pkUser ?: "90484",
+                Brand.Revamp.id,
+                userData?.email ?: "diego@mail.com"
+            )
+        }
+    }
+
+    LaunchedEffect(viewModel.isLoading) {
+        if (viewModel.isFirstLoad.not()) {
+            sharedViewModel.isLoading = viewModel.isLoading
+        }
+    }
+
+    LaunchedEffect(viewModel.onSuccessOtp) {
+        if (viewModel.isFirstLoad.not()) {
+            viewModel.apply {
+                phaseCount = PHASE_ONE
+                isTimerRunning = true
+                remainingTime = Duration.ofSeconds(SignUpOtpViewModel.TIMER_DURATION)
+                remainingTimeText = remainingTime.format()
+                otp = ""
             }
         }
     }
+
+    LaunchedEffect(viewModel.onFailure) {
+        if (viewModel.isFirstLoad.not()) {
+            sharedViewModel.openDialog = viewModel.onFailure
+        }
+    }
+
+    viewModel.isFirstLoad = false
 
     LaunchedEffect(key1 = viewModel.remainingTime, key2 = viewModel.isTimerRunning) {
         viewModel.apply {
@@ -175,6 +212,7 @@ fun SignUpOtpScreen(
             isError = viewModel.otpError.first,
             errorMessage = stringResource(id = viewModel.otpError.second)
         )
+
         when (viewModel.phaseCount) {
             PHASE_ONE, PHASE_THREE, PHASE_FIVE -> {
                 Row {
@@ -210,7 +248,21 @@ fun SignUpOtpScreen(
                     textDecoration = TextDecoration.Underline,
                     color = MultimoneyTheme.colors.textLink
                 ),
-                onClick = { viewModel.getPhaseAction() }
+                onClick = {
+                    sharedViewModel.apply {
+                        viewModel.callMutationSendPinProcess(
+                            userData?.identification ?: "",
+                            userData?.firstName ?: "",
+                            userData?.email ?: "",
+                            userData?.phoneNumber ?: "",
+                            SEND_METHOD_PHONE,
+                            userData?.pkUser ?: "",
+                            Brand.Revamp.id,
+                            userData?.email ?: ""
+                        )
+                    }
+                    viewModel.getPhaseAction()
+                }
             )
             else -> Text(
                 text = buildAnnotatedString {

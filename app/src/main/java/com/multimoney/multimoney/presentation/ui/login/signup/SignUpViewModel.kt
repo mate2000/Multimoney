@@ -19,9 +19,9 @@ import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -31,7 +31,7 @@ class SignUpViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper
 ) : BaseViewModel() {
 
-    var currentStep by mutableStateOf(SignUpStep.One.id)
+    var currentStep by mutableStateOf(SignUpStep.Four.id)
 
     // Data
     var userData: UserData? = null

@@ -1,17 +1,37 @@
 buildscript {
     apply from: 'dependencies.gradle'
+    repositories {
+        maven {
+            // For the DexGuard Gradle plugin jar.
+            credentials {
+                username = System.env.DEXGUARD_USERNAME ? "\"${System.env.DEXGUARD_USERNAME}\"" : properties.dexGuardUserName
+                password = System.env.DEXGUARD_PASSWORD ? "\"${System.env.DEXGUARD_PASSWORD}\"" : properties.dexGuardPassword
+            }
+            url "https://maven.guardsquare.com"
+            // Only search for artifacts with groupId "com.guardsquare.*",
+            // supported since gradle 5.1.
+            content {
+                includeGroupByRegex "com\\.guardsquare.*"
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
     dependencies {
         classpath hilt.plugin
         classpath firebase.perf_classpath
         classpath firebase.crashlytics_classpath
         classpath google_services.plugin
+        classpath dexguard.classpath
         classpath appLanga.app_langa_classpath
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 plugins {
     id 'com.android.application' version '7.1.0' apply false
     id 'com.android.library' version '7.1.0' apply false
-    id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
+    id 'org.jetbrains.kotlin.android' version '1.6.21' apply false
 }
 
 task clean(type: Delete) {

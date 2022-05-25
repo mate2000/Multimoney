@@ -3,10 +3,15 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'dexguard'
     id("com.apollographql.apollo3").version("3.3.0")
 }
 
 apply from: '../dependencies.gradle'
+
+// gradle properties
+def properties = new Properties()
+properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
 
 android {
     compileSdk compile_sdk_version
@@ -22,22 +27,22 @@ android {
     buildTypes {
         production {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : apiUrl
-            buildConfigField "String", "DATA_STORE_KEY", System.env.PRODUCTION_DATA_STORE_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_KEY}\"" : dataStoreKey
-            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY}\"" : dataStoreBiometricKey
+            shrinkResources false
+            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "DATA_STORE_KEY", System.env.PRODUCTION_DATA_STORE_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_KEY}\"" : properties.dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
         staging {
             testCoverageEnabled true
-            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : apiUrl
-            buildConfigField "String", "DATA_STORE_KEY", System.env.STAGING_DATA_STORE_KEY ? "\"${System.env.STAGING_DATA_STORE_KEY}\"" : dataStoreKey
-            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.STAGING_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.STAGING_DATA_STORE_BIOMETRIC_KEY}\"" : dataStoreBiometricKey
+            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "DATA_STORE_KEY", System.env.STAGING_DATA_STORE_KEY ? "\"${System.env.STAGING_DATA_STORE_KEY}\"" : properties.dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.STAGING_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.STAGING_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
         debug {
             testCoverageEnabled true
-            buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : apiUrl
-            buildConfigField "String", "DATA_STORE_KEY", System.env.DEVELOPMENT_DATA_STORE_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_KEY}\"" : dataStoreKey
-            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY}\"" : dataStoreBiometricKey
+            buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "DATA_STORE_KEY", System.env.DEVELOPMENT_DATA_STORE_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_KEY}\"" : properties.dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
     }
     compileOptions {
@@ -103,4 +108,25 @@ dependencies {
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
+}
+
+dexguard {
+
+    version = dexguard_version
+
+    // Keep the license secure in your CD/CI
+    license = "../dexguard-license.txt"
+
+    configurations {
+        debug {
+            defaultConfiguration 'dexguard-debug.pro'
+            configuration 'dexguard-project.txt'
+            configuration 'proguard-project.txt'
+        }
+        production {
+            defaultConfiguration 'dexguard-release-aggressive.pro'
+            configuration 'dexguard-project.txt'
+            configuration 'proguard-project.txt'
+        }
+    }
 }

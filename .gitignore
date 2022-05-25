@@ -51,3 +51,8 @@ amplify/backend/auth/multimoney85e413f9/parameters.json
 amplify/backend/types/amplify-dependent-resources-ref.d.ts
 amplify/hooks/README.md
 .idea/inspectionProfiles/Project_Default.xml
+/dexguard-license.txt
+/gradle-custom.properties
+app/production/app-production.apk
+app/production/app-production-protected.apk
+app/production/output-metadata.json

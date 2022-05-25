@@ -33,15 +33,6 @@ android {
         buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : properties.appEnvironment
     }
 
-    signingConfigs {
-        debug {
-            storeFile file('../../Users/DavidGuevara/Desktop/Multimoney.jks')
-            storePassword 'Multimoney'
-            keyAlias 'Multimoney'
-            keyPassword 'Multimoney'
-        }
-    }
-
     buildTypes {
         production {
             minifyEnabled false

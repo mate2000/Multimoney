@@ -3,9 +3,14 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'dexguard'
 }
 
 apply from: '../dependencies.gradle'
+
+// gradle properties
+def properties = new Properties()
+properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
 
 android {
     compileSdk compile_sdk_version
@@ -21,7 +26,7 @@ android {
     buildTypes {
         production {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
         }
         staging {
             testCoverageEnabled true
@@ -60,4 +65,25 @@ dependencies {
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
+}
+
+dexguard {
+
+    version = dexguard_version
+
+    // Keep the license secure in your CD/CI
+    license = "../dexguard-license.txt"
+
+    configurations {
+        debug {
+            defaultConfiguration 'dexguard-debug.pro'
+            configuration 'dexguard-project.txt'
+            configuration 'proguard-project.txt'
+        }
+        production {
+            defaultConfiguration 'dexguard-release-aggressive.pro'
+            configuration 'dexguard-project.txt'
+            configuration 'proguard-project.txt'
+        }
+    }
 }

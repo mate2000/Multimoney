@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
@@ -30,7 +31,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
-    val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
+    private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
 ) : BaseViewModel() {
 
     //Fields
@@ -101,7 +102,6 @@ class SignUpPasswordViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     onSuccessValidationSecurity = it
-                    isLoading = false
                 }
                 result.onLoading {
                     isLoading = true
@@ -118,7 +118,6 @@ class SignUpPasswordViewModel @Inject constructor(
     }
 
     fun signUp(
-        userName: String,
         password: String,
         email: String,
         identification: String,
@@ -126,22 +125,20 @@ class SignUpPasswordViewModel @Inject constructor(
         status: String,
         onSuccess: () -> Unit
     ) {
+        val attrs = mapOf(
+            AuthUserAttributeKey.email() to email,
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_IDENTIFICATION) to identification,
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_PK_USER) to pkUser,
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_STATUS) to status,
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to Brand.Revamp.id.toString()
+        )
         val options = AuthSignUpOptions.builder()
-            .userAttribute(AuthUserAttributeKey.email(), email)
-            .userAttribute(
-                AuthUserAttributeKey.custom(COGNITO_CUSTOM_IDENTIFICATION),
-                identification
-            )
-            .userAttribute(AuthUserAttributeKey.custom(COGNITO_CUSTOM_PK_USER), pkUser)
-            .userAttribute(AuthUserAttributeKey.custom(COGNITO_CUSTOM_STATUS), status)
-            .userAttribute(
-                AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND),
-                Brand.Revamp.id.toString()
-            )
+            .userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) })
             .build()
-        Amplify.Auth.signUp(userName, password, options, {
+        Amplify.Auth.signUp(email, password, options, {
             onSuccess.invoke()
         }, {
+            isLoading = false
             onFailure = DialogParameters(
                 description = it.localizedMessage ?: "",
                 isActive = mutableStateOf(true)
@@ -159,9 +156,9 @@ class SignUpPasswordViewModel @Inject constructor(
     }
 
     companion object {
-        const val COGNITO_CUSTOM_IDENTIFICATION = "Identification"
-        const val COGNITO_CUSTOM_PK_USER = "PkUser"
-        const val COGNITO_CUSTOM_STATUS = "Status"
-        const val COGNITO_CUSTOM_ID_BRAND = "IdBrand"
+        const val COGNITO_CUSTOM_IDENTIFICATION = "custom:Identification"
+        const val COGNITO_CUSTOM_PK_USER = "custom:PkUser"
+        const val COGNITO_CUSTOM_STATUS = "custom:Status"
+        const val COGNITO_CUSTOM_ID_BRAND = "custom:IdBrand"
     }
 }

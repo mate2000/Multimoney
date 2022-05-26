@@ -71,7 +71,6 @@ fun SignUpPasswordScreen(
             sharedViewModel.apply {
                 userData?.currentStep = SignUpStep.Five.name
                 viewModel.signUp(
-                    userName = userData?.email ?: "",
                     password = userPassword,
                     email = userData?.email ?: "",
                     identification = userData?.identification ?: "",

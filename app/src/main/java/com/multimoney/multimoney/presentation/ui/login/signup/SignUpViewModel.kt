@@ -31,7 +31,7 @@ class SignUpViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper
 ) : BaseViewModel() {
 
-    var currentStep by mutableStateOf(SignUpStep.Four.id)
+    var currentStep by mutableStateOf(SignUpStep.One.id)
 
     // Data
     var userData: UserData? = null

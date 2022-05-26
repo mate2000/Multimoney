@@ -70,7 +70,14 @@ fun SignUpPasswordScreen(
         if (viewModel.isFirstLaunch.not()) {
             sharedViewModel.apply {
                 userData?.currentStep = SignUpStep.Five.name
-                callMutationUpdateUserRegisterUseCase()
+                viewModel.signUp(
+                    password = userPassword,
+                    email = userData?.email ?: "",
+                    identification = userData?.identification ?: "",
+                    pkUser = userData?.pkUser ?: "",
+                    status = userData?.userStatus ?: "",
+                    onSuccess = { callMutationUpdateUserRegisterUseCase() }
+                )
             }
         }
     }

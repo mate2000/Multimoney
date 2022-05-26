@@ -4,6 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.amplifyframework.auth.AuthUserAttribute
+import com.amplifyframework.auth.AuthUserAttributeKey
+import com.amplifyframework.auth.options.AuthSignUpOptions
+import com.amplifyframework.core.Amplify
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.onFailure
@@ -20,13 +25,13 @@ import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
-    val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
+    private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
 ) : BaseViewModel() {
 
     //Fields
@@ -87,8 +92,6 @@ class SignUpPasswordViewModel @Inject constructor(
         }
     }
 
-    fun isDataChanged() = onSuccessValidationSecurity?.status == null
-
     fun callQuerySavePassword(pkUser: String, user: String, idBrant: Int) {
         viewModelScope.launch {
             queryValidationSecurityUseCase.invoke(
@@ -99,7 +102,6 @@ class SignUpPasswordViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     onSuccessValidationSecurity = it
-                    isLoading = false
                 }
                 result.onLoading {
                     isLoading = true
@@ -115,6 +117,35 @@ class SignUpPasswordViewModel @Inject constructor(
         }
     }
 
+    fun signUp(
+        password: String,
+        email: String,
+        identification: String,
+        pkUser: String,
+        status: String,
+        onSuccess: () -> Unit
+    ) {
+        val attrs = mapOf(
+            AuthUserAttributeKey.email() to email,
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_IDENTIFICATION) to identification,
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_PK_USER) to pkUser,
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_STATUS) to status,
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to Brand.Revamp.id.toString()
+        )
+        val options = AuthSignUpOptions.builder()
+            .userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) })
+            .build()
+        Amplify.Auth.signUp(email, password, options, {
+            onSuccess.invoke()
+        }, {
+            isLoading = false
+            onFailure = DialogParameters(
+                description = it.localizedMessage ?: "",
+                isActive = mutableStateOf(true)
+            )
+        })
+    }
+
     private fun resetValidationLabel(password: String) {
         if (password.isEmpty()) {
             eightCharactersMinimumState = null
@@ -122,5 +153,12 @@ class SignUpPasswordViewModel @Inject constructor(
             oneLowercaseState = null
             oneNumberState = null
         }
+    }
+
+    companion object {
+        const val COGNITO_CUSTOM_IDENTIFICATION = "custom:Identification"
+        const val COGNITO_CUSTOM_PK_USER = "custom:PkUser"
+        const val COGNITO_CUSTOM_STATUS = "custom:Status"
+        const val COGNITO_CUSTOM_ID_BRAND = "custom:IdBrand"
     }
 }

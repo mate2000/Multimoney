@@ -163,5 +163,7 @@ class SignUpOtpViewModel @Inject constructor(
         const val OTP_MESSAGE_REGEX = "(|^)\\d{$TOTAL_DIGITS}"
 
         const val SEND_METHOD_PHONE = "PHONE"
+
+        const val WHATSAPP_LINK = "https://api.whatsapp.com/send/?phone=50371680915&text&app_absent=0"
     }
 }

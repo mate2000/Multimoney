@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DELAY
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.WHATSAPP_LINK
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -291,6 +292,6 @@ fun SignUpOtpScreen(
 
 private fun openWhatsAppDeepLink(context: Context) {
     val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse("https://api.whatsapp.com/send/?phone=50371680915&text&app_absent=0")
+    intent.data = Uri.parse(WHATSAPP_LINK)
     context.startActivity(intent)
 }

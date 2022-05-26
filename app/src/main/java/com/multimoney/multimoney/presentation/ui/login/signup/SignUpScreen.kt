@@ -85,7 +85,7 @@ fun SignUpScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            GetStepContent(step = viewModel.currentStep, viewModel = viewModel)
+            GetStepContent(step = viewModel.currentStep, viewModel = viewModel, onPopAndNavigate)
             CustomButton(
                 onClick = {
                     focusManager.clearFocus()
@@ -112,7 +112,9 @@ fun SignUpScreen(
             title = stringResource(id = viewModel.openDialog.title),
             message = viewModel.openDialog.description,
             positiveButtonText = stringResource(id = viewModel.openDialog.positiveText),
-            onPositiveAction = { viewModel.openDialog.positiveAction },
+            negativeButtonText = stringResource(id = viewModel.openDialog.negativeText),
+            onPositiveAction = viewModel.openDialog.positiveAction,
+            onNegativeAction = viewModel.openDialog.negativeAction,
             openDialogCustom = viewModel.openDialog.isActive
         )
     }
@@ -121,13 +123,17 @@ fun SignUpScreen(
 @Composable
 fun GetStepContent(
     step: Int,
-    viewModel: SignUpViewModel
+    viewModel: SignUpViewModel,
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
     when (step) {
         SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
         SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
-        SignUpStep.Four.id -> SignUpOtpScreen(sharedViewModel = viewModel)
+        SignUpStep.Four.id -> SignUpOtpScreen(
+            onPopAndNavigate,
+            sharedViewModel = viewModel
+        )
         SignUpStep.Five.id -> SignUpIdVerificationScreen(sharedViewModel = viewModel)
         else -> {
             SignUpPasswordScreen(sharedViewModel = viewModel)

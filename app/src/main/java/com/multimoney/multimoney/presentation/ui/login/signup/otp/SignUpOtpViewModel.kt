@@ -3,16 +3,28 @@ package com.multimoney.multimoney.presentation.ui.login.signup.otp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
+import com.multimoney.domain.model.security.SendPinResponse
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Duration
 import java.util.regex.Pattern
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @HiltViewModel
-class SignUpOtpViewModel @Inject constructor() : BaseViewModel() {
+class SignUpOtpViewModel @Inject constructor(
+    val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase
+) : BaseViewModel() {
 
 
     // Fields
@@ -22,9 +34,13 @@ class SignUpOtpViewModel @Inject constructor() : BaseViewModel() {
     // Interactions
     var phaseCount by mutableStateOf(PHASE_ONE)
     var remainingTime: Duration by mutableStateOf(Duration.ofSeconds(TIMER_DURATION))
-    var isTimerRunning by mutableStateOf(true)
+    var isTimerRunning by mutableStateOf(false)
     var remainingTimeText by mutableStateOf(remainingTime.format())
     var isOtpFromSms by mutableStateOf(false)
+
+    var onSuccessOtp by mutableStateOf<SendPinResponse?>(null)
+    var onFailure by mutableStateOf(DialogParameters())
+    var isFirstLoad: Boolean = true
 
     fun getOtpFromMessage(message: String) {
         val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
@@ -80,6 +96,58 @@ class SignUpOtpViewModel @Inject constructor() : BaseViewModel() {
         otpError = Pair(false, R.string.error_empty)
     }
 
+    fun callMutationSendPinProcess(
+        identification: String,
+        firstName: String,
+        email: String,
+        cellphone: String,
+        sendMethod: String,
+        pkUser: String,
+        idBrand: Int,
+        user: String
+    ) {
+        viewModelScope.launch {
+            mutationSendPinProcessUseCase.invoke(
+                identification,
+                firstName,
+                email,
+                cellphone,
+                sendMethod,
+                pkUser,
+                idBrand,
+                user
+            ).collectLatest { result ->
+                result.onSuccess {
+                    onSuccessOtp = it
+                    isLoading = false
+                }
+                result.onFailure {
+                    onFailure =
+                        DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true),
+                            positiveText = R.string.sign_up_otp_error_positive_label,
+                            negativeText = R.string.cancel,
+                            negativeAction = {
+                                navigateToSignIn()
+                            }
+                        )
+                    isLoading = false
+                }
+                result.onLoading {
+                    isLoading = true
+                }
+            }
+        }
+    }
+
+    fun navigateToSignIn() {
+        popAndNavigateTo(
+            route = Screen.SignInScreen.route,
+            popTo = Screen.SignUpScreen.route
+        )
+    }
+
     companion object {
         const val PHASE_ONE = 1
         const val PHASE_TWO = 2
@@ -93,5 +161,9 @@ class SignUpOtpViewModel @Inject constructor() : BaseViewModel() {
         const val TIMER_DELAY = 1000L
 
         const val OTP_MESSAGE_REGEX = "(|^)\\d{$TOTAL_DIGITS}"
+
+        const val SEND_METHOD_PHONE = "PHONE"
+
+        const val PHONE_HARDCODED = "50371680915"
     }
 }

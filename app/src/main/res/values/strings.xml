@@ -14,6 +14,7 @@
     <string name="error">Error</string>
     <string name="alert">Advertencia</string>
     <string name="placeholder_error">Error de proceso</string>
+    <string name="whatsapp_deep_link">https://api.whatsapp.com/send/?phone=%1$s&amp;text&amp;app_absent=0</string>
 
     <!-- Errors -->
     <string name="error_empty"></string>
@@ -78,6 +79,7 @@
     <string name="sign_up_otp_code_placeholder">0</string>
     <string name="sign_up_otp_code_required">Código de verificación requerido</string>
     <string name="sign_up_otp_code_not_valid">Código de verificación incorrecto</string>
+    <string name="sign_up_otp_error_positive_label">Contactar</string>
 
     <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_dui_sv_not_valid">Número de DUI incorrecto</string>

@@ -1,7 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.otp
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -29,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -40,23 +43,39 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_THREE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_TWO
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHONE_HARDCODED
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DELAY
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
+import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
-import kotlinx.coroutines.delay
 import java.time.Duration
+import kotlinx.coroutines.delay
 
 @Composable
 @Preview
 fun SignUpOtpScreen(
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpOtpViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        sharedViewModel.apply {
+            isContinueEnabled = viewModel.isFormValid()
+            nextAction = {
+                userData?.currentStep = SignUpStep.Four.name
+                callMutationUpdateUserRegisterUseCase()
+            }
+        }
+    }
 
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
@@ -74,21 +93,54 @@ fun SignUpOtpScreen(
         }
 
     LaunchedEffect(true) {
-        viewModel.apply {
-            phaseCount = PHASE_ONE
-            isTimerRunning = true
-            remainingTime = Duration.ofSeconds(SignUpOtpViewModel.TIMER_DURATION)
-            remainingTimeText = remainingTime.format()
-            otp = ""
-        }
+        viewModel.isFirstLoad = true
         sharedViewModel.apply {
-            isContinueEnabled = viewModel.isFormValid()
-            nextAction = {
-                userData?.currentStep = SignUpStep.Four.name
-                callMutationUpdateUserRegisterUseCase()
+            viewModel.callMutationSendPinProcess(
+                userData?.identification ?: "",
+                userData?.firstName ?: "",
+                userData?.email ?: "",
+                userData?.phoneNumber ?: "",
+                SEND_METHOD_PHONE,
+                userData?.pkUser ?: "",
+                Brand.Revamp.id,
+                userData?.email ?: ""
+            )
+        }
+    }
+
+    LaunchedEffect(viewModel.isLoading) {
+        if (viewModel.isFirstLoad.not()) {
+            sharedViewModel.isLoading = viewModel.isLoading
+        }
+    }
+
+    LaunchedEffect(viewModel.onSuccessOtp) {
+        if (viewModel.isFirstLoad.not()) {
+            viewModel.apply {
+                phaseCount = PHASE_ONE
+                isTimerRunning = true
+                remainingTime = Duration.ofSeconds(SignUpOtpViewModel.TIMER_DURATION)
+                remainingTimeText = remainingTime.format()
+                otp = ""
             }
         }
     }
+
+    val linkWhatsapp = stringResource(id = R.string.whatsapp_deep_link, PHONE_HARDCODED)
+
+    LaunchedEffect(viewModel.onFailure) {
+        if (viewModel.isFirstLoad.not()) {
+            sharedViewModel.openDialog = viewModel.onFailure.copy(positiveAction = {
+                openWhatsAppDeepLink(
+                    context = context,
+                    linkWhatsapp
+                )
+                viewModel.navigateToSignIn()
+            })
+        }
+    }
+
+    viewModel.isFirstLoad = false
 
     LaunchedEffect(key1 = viewModel.remainingTime, key2 = viewModel.isTimerRunning) {
         viewModel.apply {
@@ -175,6 +227,7 @@ fun SignUpOtpScreen(
             isError = viewModel.otpError.first,
             errorMessage = stringResource(id = viewModel.otpError.second)
         )
+
         when (viewModel.phaseCount) {
             PHASE_ONE, PHASE_THREE, PHASE_FIVE -> {
                 Row {
@@ -210,7 +263,21 @@ fun SignUpOtpScreen(
                     textDecoration = TextDecoration.Underline,
                     color = MultimoneyTheme.colors.textLink
                 ),
-                onClick = { viewModel.getPhaseAction() }
+                onClick = {
+                    sharedViewModel.apply {
+                        viewModel.callMutationSendPinProcess(
+                            userData?.identification ?: "",
+                            userData?.firstName ?: "",
+                            userData?.email ?: "",
+                            userData?.phoneNumber ?: "",
+                            SEND_METHOD_PHONE,
+                            userData?.pkUser ?: "",
+                            Brand.Revamp.id,
+                            userData?.email ?: ""
+                        )
+                    }
+                    viewModel.getPhaseAction()
+                }
             )
             else -> Text(
                 text = buildAnnotatedString {
@@ -226,4 +293,10 @@ fun SignUpOtpScreen(
             )
         }
     }
+}
+
+private fun openWhatsAppDeepLink(context: Context, link: String) {
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = Uri.parse(link)
+    context.startActivity(intent)
 }

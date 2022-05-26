@@ -9,7 +9,7 @@ data class DialogParameters(
     val description: String = "",
     val isActive: MutableState<Boolean> = mutableStateOf(false),
     val positiveText: Int = R.string.accept,
-    val negativeText: Int = R.string.error,
-    val positiveAction: () -> Unit = {},
-    val negativeAction: () -> Unit = {}
+    val negativeText: Int = R.string.error_empty,
+    var positiveAction: () -> Unit = {},
+    var negativeAction: () -> Unit = {}
 )

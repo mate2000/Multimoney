@@ -11,6 +11,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -125,8 +126,10 @@ class SignUpOtpViewModel @Inject constructor(
                         DialogParameters(
                             description = it.getError().toString(),
                             isActive = mutableStateOf(true),
-                            positiveAction = {
-
+                            positiveText = R.string.sign_up_otp_error_positive_label,
+                            negativeText = R.string.cancel,
+                            negativeAction = {
+                                navigateToSignIn()
                             }
                         )
                     isLoading = false
@@ -136,6 +139,13 @@ class SignUpOtpViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun navigateToSignIn() {
+        popAndNavigateTo(
+            route = Screen.SignInScreen.route,
+            popTo = Screen.SignUpScreen.route
+        )
     }
 
     companion object {

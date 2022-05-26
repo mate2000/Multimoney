@@ -43,10 +43,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_THREE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_TWO
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DELAY
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.WHATSAPP_LINK
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -126,10 +126,15 @@ fun SignUpOtpScreen(
         }
     }
 
+    val linkWhatsapp = stringResource(id = R.string.whatsapp_deep_link, PHONE_HARDCODED)
+
     LaunchedEffect(viewModel.onFailure) {
         if (viewModel.isFirstLoad.not()) {
             sharedViewModel.openDialog = viewModel.onFailure.copy(positiveAction = {
-                openWhatsAppDeepLink(context = context)
+                openWhatsAppDeepLink(
+                    context = context,
+                    linkWhatsapp
+                )
                 viewModel.navigateToSignIn()
             })
         }
@@ -290,8 +295,8 @@ fun SignUpOtpScreen(
     }
 }
 
-private fun openWhatsAppDeepLink(context: Context) {
+private fun openWhatsAppDeepLink(context: Context, link: String) {
     val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse(WHATSAPP_LINK)
+    intent.data = Uri.parse(link)
     context.startActivity(intent)
 }

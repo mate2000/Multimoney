@@ -14,6 +14,7 @@
     <string name="error">Error</string>
     <string name="alert">Advertencia</string>
     <string name="placeholder_error">Error de proceso</string>
+    <string name="whatsapp_deep_link">https://api.whatsapp.com/send/?phone=%1$s&amp;text&amp;app_absent=0</string>
 
     <!-- Errors -->
     <string name="error_empty"></string>

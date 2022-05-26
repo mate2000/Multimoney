@@ -100,7 +100,7 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<SendPinResponse?>> = fetchData(
-        apolloCall = securityApi.mutableSendPinProcess(
+        apolloCall = securityApi.mutationSendPinProcess(
             identification,
             firstName,
             email,

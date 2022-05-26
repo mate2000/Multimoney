@@ -83,7 +83,7 @@ class SecurityApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun mutableSendPinProcess(
+    fun mutationSendPinProcess(
         identification: String,
         firstName: String,
         email: String,

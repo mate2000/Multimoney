@@ -95,14 +95,14 @@ fun SignUpOtpScreen(
         viewModel.isFirstLoad = true
         sharedViewModel.apply {
             viewModel.callMutationSendPinProcess(
-                userData?.identification ?: "046634164",
-                userData?.firstName ?: "Diego",
-                userData?.email ?: "diego@mail.com",
-                userData?.phoneNumber ?: "71680915",
+                userData?.identification ?: "",
+                userData?.firstName ?: "",
+                userData?.email ?: "",
+                userData?.phoneNumber ?: "",
                 SEND_METHOD_PHONE,
-                userData?.pkUser ?: "90484",
+                userData?.pkUser ?: "",
                 Brand.Revamp.id,
-                userData?.email ?: "diego@mail.com"
+                userData?.email ?: ""
             )
         }
     }

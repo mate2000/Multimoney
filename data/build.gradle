@@ -109,24 +109,3 @@ dependencies {
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
 }
-
-dexguard {
-
-    version = dexguard_version
-
-    // Keep the license secure in your CD/CI
-    license = "../dexguard-license.txt"
-
-    configurations {
-        debug {
-            defaultConfiguration 'dexguard-debug.pro'
-            configuration 'dexguard-project.txt'
-            configuration 'proguard-project.txt'
-        }
-        production {
-            defaultConfiguration 'dexguard-release-aggressive.pro'
-            configuration 'dexguard-project.txt'
-            configuration 'proguard-project.txt'
-        }
-    }
-}

@@ -19,7 +19,7 @@ android {
     compileSdk compile_sdk_version
 
     defaultConfig {
-        applicationId "com.multimoney.multimoney.sv"
+        applicationId "com.multimoney.multimoney"
         minSdk min_sdk_version
         targetSdk target_sdk_version
         versionCode version_code
@@ -42,14 +42,14 @@ android {
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
         }
         staging {
-            //applicationIdSuffix ".staging"
+            applicationIdSuffix ".staging"
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : properties.sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.STAGING_ADJUST_APP_TOKEN ? "\"${System.env.STAGING_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
         }
         debug {
-            //applicationIdSuffix ".dev"
+            applicationIdSuffix ".dev"
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : properties.sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.DEVELOPMENT_ONFIDO_API_TOKEN ? "\"${System.env.DEVELOPMENT_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
@@ -183,11 +183,6 @@ dexguard {
     license = "../dexguard-license.txt"
 
     configurations {
-        debug {
-            defaultConfiguration 'dexguard-debug.pro'
-            configuration 'dexguard-project.txt'
-            configuration 'proguard-project.txt'
-        }
         staging {
             defaultConfiguration 'dexguard-debug.pro'
             configuration 'dexguard-project.txt'

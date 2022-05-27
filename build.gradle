@@ -1,6 +1,10 @@
 buildscript {
     apply from: 'dependencies.gradle'
     repositories {
+        // gradle properties
+        def properties = new Properties()
+        properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
+
         maven {
             // For the DexGuard Gradle plugin jar.
             credentials {

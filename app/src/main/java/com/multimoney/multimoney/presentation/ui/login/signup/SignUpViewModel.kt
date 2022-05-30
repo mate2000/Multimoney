@@ -74,7 +74,7 @@ class SignUpViewModel @Inject constructor(
         route = if (isBiometricAvailable) {
             "${Screen.SignUpBiometricsScreen.baseRoute}/${userData?.email}/$userPassword"
         } else {
-            Screen.SignInScreen.route
+            Screen.SignUpCompleted.route
         },
         popTo = Screen.SignUpScreen.route
     )

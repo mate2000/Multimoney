@@ -50,6 +50,7 @@ fun SignUpPersonalDataCrScreen(
     ) {
         CustomRadioButton(
             modifier = customRadioModifier.clickable {
+                viewModel.personalDocumentValue = ""
                 viewModel.crPersonalDocument = CrDocuments.IdDocument.document
             },
             radioModifier = Modifier.padding(0.dp),
@@ -59,6 +60,7 @@ fun SignUpPersonalDataCrScreen(
         )
         CustomRadioButton(
             modifier = customRadioModifier.clickable {
+                viewModel.personalDocumentValue = ""
                 viewModel.crPersonalDocument = CrDocuments.Dimex.document
             },
             radioModifier = Modifier.padding(0.dp),

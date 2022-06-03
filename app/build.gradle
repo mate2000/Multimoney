@@ -167,7 +167,7 @@ dependencies {
     //Accompanist
     implementation accompanist.accompanist_flowlayout
 
-    implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.3'
+    implementation shimmer.shimmer
 
     // Common Test
     testImplementation common_test.junit

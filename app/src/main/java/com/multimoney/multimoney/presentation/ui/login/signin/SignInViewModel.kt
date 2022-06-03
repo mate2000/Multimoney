@@ -11,12 +11,13 @@ import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -56,8 +57,9 @@ class SignInViewModel @Inject constructor(
                             isLoading = false
                             if (isFingerprintChecked) {
                                 configureBiometric = true
+                            } else {
+                                navigateToHome()
                             }
-                            // navigate to home
                         }
                         AuthSessionResult.Type.FAILURE -> cognitoError()
                     }
@@ -116,9 +118,9 @@ class SignInViewModel @Inject constructor(
 
     fun biometricPromptConfigurationError(errorCode: Int, errString: CharSequence) {
         if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-            // navigate to Home
+            navigateToHome()
         } else {
-
+            // TODO: Pending logic by business
         }
     }
 
@@ -128,7 +130,7 @@ class SignInViewModel @Inject constructor(
                 dataStorePreferences.setUserEmail(userEmail)
                 dataStorePreferences.setUserPassword(userPassword, this@apply)
                 dataStorePreferences.isBiometricsEnabled(true)
-                // navigate to home
+                navigateToHome()
             }
         }
     }
@@ -141,4 +143,9 @@ class SignInViewModel @Inject constructor(
             }
         }
     }
+
+    private fun navigateToHome() = popAndNavigateTo(
+        route = Screen.HomeScreen.route,
+        popTo = Screen.SignInScreen.route
+    )
 }

@@ -1,6 +1,8 @@
 package com.multimoney.data.di
 
+import com.multimoney.data.networking.BalanceApi
 import com.multimoney.data.networking.SecurityApi
+import com.multimoney.data.repository.BalanceRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -15,4 +17,9 @@ class RepositoryModule {
     @Singleton
     fun provideSecurityRepository(securityApi: SecurityApi) =
         SecurityRepositoryImpl(securityApi)
+
+    @Provides
+    @Singleton
+    fun provideBalanceRepository(balanceApi: BalanceApi) =
+        BalanceRepositoryImpl(balanceApi)
 }

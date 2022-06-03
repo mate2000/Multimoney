@@ -7,3 +7,5 @@ fun ValidationSecurityQuery.ValidateSecurity.mapToDomainModel() = ValidateSecuri
     status = status,
     message = message
 )
+
+fun ValidationSecurityQuery.Data.mapToDomainModel() = validateSecurity?.mapToDomainModel()

@@ -13,6 +13,7 @@ fun Navigation() {
         startDestination = LOGIN_ROUTE
     ) {
         loginNavGraph(navController = navController)
+        homeNavGraph(navController = navController)
         testNavGraph(navController = navController)
     }
 }

@@ -9,8 +9,8 @@ import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SecurityRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
@@ -24,7 +24,7 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
         apolloCall = securityApi.mutationUserValidation(email, currentStep, idBrand),
         apolloCallMapper = { data ->
-            data.userValidation?.mapToDomainModel()
+            data.mapToDomainModel()
         }
     )
 
@@ -63,7 +63,7 @@ class SecurityRepositoryImpl @Inject constructor(
             idBrand
         ),
         apolloCallMapper = { data ->
-            data.updateUserRegister?.mapToDomainModel()
+            data.mapToDomainModel()
         }
     )
 
@@ -75,7 +75,7 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<ValidateSecurity?>> = fetchData(
         apolloCall = securityApi.queryValidationSecurity(pkIUser.toInt(), password, user, idBrand),
         apolloCallMapper = { data ->
-            data.validateSecurity?.mapToDomainModel()
+            data.mapToDomainModel()
         }
     )
 
@@ -86,7 +86,7 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<ClientInfoCr?>> = fetchData(
         apolloCall = securityApi.queryDataInformationClient(identification, idBrand, user),
         apolloCallMapper = { data ->
-            data.dataInformationClient?.mapToDomainModel()
+            data.mapToDomainModel()
         }
     )
 
@@ -111,7 +111,7 @@ class SecurityRepositoryImpl @Inject constructor(
             user
         ),
         apolloCallMapper = { data ->
-            data.sendPinProccess?.mapToDomainModel()
+            data.mapToDomainModel()
         }
     )
 }

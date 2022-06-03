@@ -20,3 +20,5 @@ fun UpdateUserRegisterMutation.UpdateUserRegister.mapToDomainModel() = UserData(
     currentStep = currentStep ?: "",
     userStatus = userStatus
 )
+
+fun UpdateUserRegisterMutation.Data.mapToDomainModel() = updateUserRegister?.mapToDomainModel()

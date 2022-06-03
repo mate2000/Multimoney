@@ -66,7 +66,13 @@ private fun Modifier.shimmer(
     shimmer(customShimmer = shimmer)
 }
 
-private fun createCustomTheme(duration: Int, delay: Int, repeatMode: RepeatMode, rotation: Float, shimmerWidth: Dp) =
+private fun createCustomTheme(
+    duration: Int,
+    delay: Int,
+    repeatMode: RepeatMode,
+    rotation: Float,
+    shimmerWidth: Dp
+) =
     defaultShimmerTheme.copy(
         animationSpec = infiniteRepeatable(
             animation = tween(

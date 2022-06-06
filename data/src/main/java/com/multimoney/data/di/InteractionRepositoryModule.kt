@@ -1,6 +1,8 @@
 package com.multimoney.data.di
 
+import com.multimoney.data.repository.BalanceRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
+import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.SecurityRepository
 import dagger.Binds
 import dagger.Module
@@ -12,4 +14,7 @@ import dagger.hilt.components.SingletonComponent
 abstract class InteractionRepositoryModule {
     @Binds
     abstract fun bindSecurityRepository(securityRepositoryImpl: SecurityRepositoryImpl): SecurityRepository
+
+    @Binds
+    abstract fun bindBalanceRepository(balanceRepositoryImpl: BalanceRepositoryImpl): BalanceRepository
 }

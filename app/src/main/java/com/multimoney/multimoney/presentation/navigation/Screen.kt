@@ -4,6 +4,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER_EMAIL_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER_PASSWORD_ARG_KEY
 
 const val LOGIN_ROUTE = "log_in_route"
+const val HOME_ROUTE = "home_route"
 const val TEST_ROUTE = "test_route"
 
 /**
@@ -20,9 +21,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_up_biometrics_screen/{$USER_EMAIL_ARG_KEY}/{$USER_PASSWORD_ARG_KEY}",
         "sign_up_biometrics_screen"
     )
+
     object SignUpBiometricsFailureScreen : Screen("sign_up_biometrics_failure")
 
     object SignUpCompleted : Screen("sign_up_completed")
+
+    // HomeNavGraph Screens
+    object HomeScreen : Screen("home_screen")
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

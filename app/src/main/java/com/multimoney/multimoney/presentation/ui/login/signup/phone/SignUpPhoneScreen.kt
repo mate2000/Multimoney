@@ -57,11 +57,11 @@ fun SignUpPhoneScreen(
                     userData?.contactMeans = gsonHelper.convertToString(contactMeans)
                     callMutationUpdateUserRegisterUseCase()
                 }
-                isContinueEnabled = isFormValid()
                 userData?.countryCode = getDefaultPhoneCode
+                countryCode = getDefaultCountryCode
+                isContinueEnabled = isFormValid(countryCode)
             }
             phoneCode = getDefaultPhoneCode
-            countryCode = getDefaultCountryCode
         }
     }
 
@@ -91,14 +91,20 @@ fun SignUpPhoneScreen(
         PhoneTextField(
             value = viewModel.phoneNumber,
             onValueChange = {
-                sharedViewModel.userData?.phoneNumber = it
                 viewModel.apply {
                     phoneNumber = it
                     clearPhoneError()
-                    sharedViewModel.isContinueEnabled = isFormValid()
+                }
+                sharedViewModel.apply {
+                    userData?.phoneNumber = it
+                    isContinueEnabled = viewModel.isFormValid(countryCode)
                 }
             },
-            onDebounceValidation = { viewModel.isPhoneValid() },
+            onDebounceValidation = {
+                viewModel.isPhoneValid(
+                    sharedViewModel.countryCode
+                )
+            },
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
@@ -119,10 +125,11 @@ fun SignUpPhoneScreen(
                 }
                 viewModel.apply {
                     phoneCode = it.countryPhoneCode
-                    countryCode = it.countryCode
                     clearPhoneError()
                     phoneNumber = ""
-                    sharedViewModel.isContinueEnabled = isFormValid()
+                }
+                sharedViewModel.apply {
+                    isContinueEnabled = viewModel.isFormValid(countryCode)
                 }
             }
         )

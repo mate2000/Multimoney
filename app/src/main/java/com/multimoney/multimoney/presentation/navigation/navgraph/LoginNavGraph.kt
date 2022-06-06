@@ -42,6 +42,11 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.SignInScreen.route) {
             SignInScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
                 onNavigate = {
                     navController.navigate(it.route)
                 }

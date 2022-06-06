@@ -1,0 +1,57 @@
+query Balance($user: String!,$identification:String!,$idBrand:Int!,$idClient:String!,$idLoanClient:Int!){
+    balanceCredit(
+        balanceCreditInput: {
+            idBrand: $idBrand
+            idClient: $idClient
+            tenantId: ""
+            traceIdentifier: ""
+        }
+    ) {
+        resumen {
+            saldo_Actual_Label
+            saldo_Disponible_Label
+            fecha_Pago_Label
+            cuota_Mensual_Label
+        }
+    }
+    balanceAccountSmart(
+        checkAccountInput:{
+            identification : $identification
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        accounts {
+            totalBalance
+            gainedInterest
+        }
+        request {
+            statusFirm
+            statusOnfido
+            idRequestSysde
+            idRequestGlobal}
+    }
+    balanceCryptoAccount(
+        balanceCryptoInput: {
+            identification: $identification
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        globalBalance
+    }
+    balanceCardInformation(
+        balanceCardInformationInput: {
+            idClient: $idClient
+            identification: $identification
+            idLoanClient: $idLoanClient
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        cardInfo {
+            cardNumber
+        }
+        eSTADO
+    }
+}

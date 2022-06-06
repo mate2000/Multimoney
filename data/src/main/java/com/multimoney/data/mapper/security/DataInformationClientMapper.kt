@@ -7,3 +7,5 @@ fun DataInformationClientQuery.DataInformationClient.mapToDomainModel() = Client
     nombre = nombre,
     status = status
 )
+
+fun DataInformationClientQuery.Data.mapToDomainModel() = dataInformationClient?.mapToDomainModel()

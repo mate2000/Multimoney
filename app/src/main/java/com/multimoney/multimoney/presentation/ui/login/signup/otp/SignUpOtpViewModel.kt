@@ -15,15 +15,15 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.Duration
 import java.util.regex.Pattern
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignUpOtpViewModel @Inject constructor(
-    val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase
+    private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase
 ) : BaseViewModel() {
 
 

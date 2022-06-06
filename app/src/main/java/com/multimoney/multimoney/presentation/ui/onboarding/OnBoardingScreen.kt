@@ -129,10 +129,7 @@ fun OnBoarding(
                 buttonType = CustomButtonType.PrimaryTertiary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
-                    viewModel.popAndNavigateTo(
-                        route = Screen.SignUpScreen.route,
-                        popTo = Screen.OnBoardingScreen.route
-                    )
+                    viewModel.navigateToNextScreen(Screen.SignUpScreen.route)
                 }
             )
             Row(
@@ -164,10 +161,7 @@ fun OnBoarding(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        viewModel.popAndNavigateTo(
-                            route = Screen.SignInScreen.route,
-                            popTo = Screen.OnBoardingScreen.route
-                        )
+                        viewModel.navigateToNextScreen(Screen.SignInScreen.route)
                     }
                 )
             }

@@ -39,9 +39,15 @@ class DataStorePreferences @Inject constructor(
 
     fun isBiometricsEnabled(): Flow<Boolean> = getData(BIOMETRICS_ENABLED_KEY, false)
 
+    suspend fun isOnBoardingEnabled(isOnBoardingEnabled: Boolean) =
+        setData(ON_BOARDING_ENABLED_KEY, isOnBoardingEnabled)
+
+    fun isOnBoardingEnabled(): Flow<Boolean> = getData(ON_BOARDING_ENABLED_KEY, true)
+
     companion object {
         private val USER_EMAIL_KEY = stringPreferencesKey("user_email_key")
         private val USER_PASSWORD_KEY = stringPreferencesKey("user_password_key")
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
+        private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")
     }
 }

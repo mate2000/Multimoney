@@ -167,6 +167,8 @@ dependencies {
     //Accompanist
     implementation accompanist.accompanist_flowlayout
 
+    implementation shimmer.shimmer
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit

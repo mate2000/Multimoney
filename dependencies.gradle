@@ -249,6 +249,12 @@ ext {
             classpath: "com.guardsquare:dexguard-gradle-plugin:$dexguard_classpath_version"
     ]
 
+    // Shimmer
+    shimmer_version = "1.0.3"
+    shimmer = [
+            shimmer: "com.valentinilk.shimmer:compose-shimmer:$shimmer_version"
+    ]
+
     // Common Test
     junit_version = "4.13.2"
     ext_junit_version = "1.1.3"

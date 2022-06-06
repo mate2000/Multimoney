@@ -6,6 +6,7 @@ import com.apollographql.apollo3.cache.normalized.normalizedCache
 import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import com.multimoney.data.BuildConfig
+import com.multimoney.data.networking.BalanceApi
 import com.multimoney.data.networking.SecurityApi
 import dagger.Module
 import dagger.Provides
@@ -58,6 +59,11 @@ class NetworkingModule {
     @Provides
     fun securityApi(@ApplicationContext context: Context): SecurityApi =
         SecurityApi(apolloClient(context, SCHEMA_SECURITY))
+
+    @Singleton
+    @Provides
+    fun balanceApi(@ApplicationContext context: Context): BalanceApi =
+        BalanceApi(apolloClient(context, SCHEMA_BALANCES))
 
     companion object {
         const val TIMEOUT = 30L

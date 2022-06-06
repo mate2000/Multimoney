@@ -13,3 +13,5 @@ fun SendPinProcessMutation.SendPinProccess.mapToDomainModel() = SendPinResponse(
     numberOfOtpForwards = cantidad_reenvios_otp,
     pinExpirationTime = valor_tiempo_exp_pin
 )
+
+fun SendPinProcessMutation.Data.mapToDomainModel() = sendPinProccess?.mapToDomainModel()

@@ -13,8 +13,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
 
-    var countryCode = ""
-
     // Fields
     var phoneCode by mutableStateOf("")
     var phoneNumber by mutableStateOf("")
@@ -22,15 +20,15 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
     var whatsapp by mutableStateOf(true)
     var call by mutableStateOf(true)
 
-    fun isFormValid() = isPhoneNumberValid(
+    fun isFormValid(countryCode: String) = isPhoneNumberValid(
         phone = phoneNumber,
         fullPhoneNumber = "$phoneCode${phoneNumber}",
         countryCode = countryCode,
         phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
     )
 
-    fun isPhoneValid() {
-        if (isFormValid().not()) {
+    fun isPhoneValid(countryCode: String) {
+        if (isFormValid(countryCode).not()) {
             phoneNumberError = Pair(true, R.string.sign_up_phone_not_valid)
         }
     }

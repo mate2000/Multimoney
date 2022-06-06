@@ -52,6 +52,7 @@ import kotlinx.coroutines.launch
 @Preview
 fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignInViewModel = hiltViewModel()
 ) {
     // Properties
@@ -63,7 +64,7 @@ fun SignInScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onNavigate = onNavigate)
+            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
             userEmail = dataStorePreferences.getUserEmail().first()
             isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
             showBiometricSignIn = isBiometricActive

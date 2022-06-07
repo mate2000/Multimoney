@@ -1,0 +1,92 @@
+{
+  ConstraintSets: {
+    start: {
+      header_cards: {
+        height: 200,
+        top: [
+          'parent',
+          'top'
+        ],
+      },
+      header_title: {
+        height: 100,
+        bottom: [
+          'parent',
+          'top'
+        ],
+      },
+      main_card: {
+        height: 200,
+        top: [
+          'header_cards',
+          'bottom',
+          20
+        ]
+      },
+      bottom_start: {
+        top: [
+          'main_card',
+          'bottom',
+          20
+        ],
+        bottom: [
+          'parent',
+          'bottom'
+        ]
+      },
+      bottom_end: {
+        top: [
+          'parent',
+          'bottom'
+        ]
+      }
+    },
+    end: {
+      header_cards: {
+        height: 200,
+        bottom: [
+          'parent',
+          'top'
+        ]
+      },
+      header_title: {
+        height: 100,
+        top: [
+          'parent',
+          'top'
+        ]
+      },
+      main_card: {
+        height: 200,
+        top: [
+          'header_title',
+          'bottom',
+          20
+        ]
+      },
+      bottom_start: {
+        top: [
+          'parent',
+          'bottom'
+        ]
+      },
+      bottom_end: {
+        top: [
+          'main_card',
+          'bottom',
+          20
+        ]
+      }
+    }
+  },
+  Transitions: {
+    onSwipe: {
+      anchor: 'main_card',
+      maxVelocity: 4.2,
+      maxAccel: 3,
+      direction: 'top',
+      side: 'top',
+      mode: 'velocity'
+    }
+  }
+}

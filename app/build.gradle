@@ -167,6 +167,8 @@ dependencies {
     //Accompanist
     implementation accompanist.accompanist_flowlayout
 
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit

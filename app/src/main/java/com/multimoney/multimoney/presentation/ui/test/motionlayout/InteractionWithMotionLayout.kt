@@ -1,13 +1,16 @@
 package com.multimoney.multimoney.presentation.ui.test.motionlayout
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Slider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Text
+import androidx.compose.material.rememberSwipeableState
+import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,28 +31,17 @@ import com.multimoney.multimoney.presentation.theme.Typography
 
 @Composable
 fun InteractionWithMotionLayout() {
-    var progress by remember { mutableStateOf(0f) }
-
     Box(
         modifier = Modifier
             .fillMaxHeight()
     ) {
-        MotionLayoutMM(progress = progress)
-        Slider(
-            value = progress,
-            onValueChange = {
-                progress = it
-            },
-            modifier = Modifier
-                .padding(horizontal = 32.dp)
-                .align(Alignment.BottomCenter)
-        )
+        MotionLayoutMM()
     }
 }
 
-@OptIn(ExperimentalMotionApi::class)
+@OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun MotionLayoutMM(progress: Float) {
+fun MotionLayoutMM() {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
@@ -62,9 +54,13 @@ fun MotionLayoutMM(progress: Float) {
             .readBytes()
             .decodeToString()
     }
+
+    val swipeAbleState = rememberSwipeableState(initialValue = 0)
+    val anchors = mapOf(0f to 0, TOTAL_PERCENTAGE to 1)
+
     MotionLayout(
         motionScene = MotionScene(motionSceneContent),
-        progress = progress,
+        progress = (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
         modifier = Modifier.fillMaxHeight()
     ) {
         Box(
@@ -89,7 +85,16 @@ fun MotionLayoutMM(progress: Float) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.Green)
-                .layoutId("main_card"),
+                .layoutId("main_card")
+                .swipeable(
+                    state = swipeAbleState,
+                    anchors = anchors,
+                    thresholds = { _, _ ->
+                        // Entre mas se aproxima a 1 se tiene que hacer mas scroll para que se autocomplete la animacion
+                        FractionalThreshold(0.8f)
+                    },
+                    orientation = Orientation.Vertical
+                ),
             contentAlignment = Alignment.Center
         ) {
             Text(text = "Card Principal", color = Color.Black, style = Typography.h4)
@@ -116,3 +121,5 @@ fun MotionLayoutMM(progress: Float) {
         }
     }
 }
+
+const val TOTAL_PERCENTAGE = 100F

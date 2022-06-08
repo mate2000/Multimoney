@@ -43,11 +43,19 @@ ext {
             test   : "androidx.navigation:navigation-testing:${navigation_version}"
     ]
 
+    // Constraint Layout
+    constraint_layout_version = "1.0.1"
+
+    constraint_layout = [
+            compose: "androidx.constraintlayout:constraintlayout-compose:$constraint_layout_version"
+    ]
+
     // Compose
     compose_version = "1.2.0-beta01"
 
     compose = [
             ui        : "androidx.compose.ui:ui:$compose_version",
+            util      : "androidx.compose.ui:ui-util:$compose_version",
             material  : "androidx.compose.material:material:$compose_version",
             tooling   : "androidx.compose.ui:ui-tooling:$compose_version",
             foundation: "androidx.compose.foundation:foundation:$compose_version",
@@ -235,10 +243,12 @@ ext {
     ]
 
     // Accompanist
-    accompanist_version = "0.23.1"
+    accompanist_version = "0.24.10-beta"
 
     accompanist = [
-            accompanist_flowlayout: "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+            flowlayout     : "com.google.accompanist:accompanist-flowlayout:$accompanist_version",
+            pager          : "com.google.accompanist:accompanist-pager:$accompanist_version",
+            pager_indicator: "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
     ]
 
     // DexGuard

@@ -107,6 +107,7 @@ dependencies {
 
     // Compose
     implementation compose.ui
+    implementation compose.util
     implementation compose.material
     implementation compose.tooling
     implementation compose.foundation
@@ -165,9 +166,12 @@ dependencies {
     implementation biometric.biometric
 
     //Accompanist
-    implementation accompanist.accompanist_flowlayout
+    implementation accompanist.flowlayout
+    implementation accompanist.pager
+    implementation accompanist.pager_indicator
 
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    // Constraint Layout
+    implementation constraint_layout.compose
 
     // Common Test
     testImplementation common_test.junit

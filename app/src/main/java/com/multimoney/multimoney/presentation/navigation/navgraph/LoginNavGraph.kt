@@ -11,8 +11,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.biometrics.SignUpBiometricsScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.biometrics.failure.SignUpBiometricsFailureScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
-import com.multimoney.multimoney.presentation.ui.test.motionlayout.InteractionWithMotionLayout
 
 const val USER_EMAIL_ARG_KEY = "user_email_arg_key"
 const val USER_PASSWORD_ARG_KEY = "user_password_arg_key"
@@ -32,14 +32,13 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             )
         }
         composable(route = Screen.OnBoardingScreen.route) {
-//            OnBoardingScreen(
-//                onPopAndNavigate = {
-//                    navController.navigate(it.route) {
-//                        popUpTo(it.popTo) { inclusive = true }
-//                    }
-//                }
-//            )
-            InteractionWithMotionLayout()
+            OnBoardingScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
         }
         composable(route = Screen.SignInScreen.route) {
             SignInScreen(

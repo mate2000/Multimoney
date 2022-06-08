@@ -173,6 +173,8 @@ dependencies {
     // Constraint Layout
     implementation constraint_layout.compose
 
+    implementation shimmer.shimmer
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit

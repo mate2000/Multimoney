@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomLottie
@@ -30,10 +29,7 @@ fun SplashScreen(
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
     SplashScreen {
-        viewModel.popAndNavigateTo(
-            route = Screen.OnBoardingScreen.route,
-            popTo = Screen.SplashScreen.route
-        )
+        viewModel.navigateToNextScreen()
     }
 }
 

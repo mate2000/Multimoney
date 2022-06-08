@@ -6,12 +6,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.Screen
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class OnBoardingViewModel @Inject constructor() : BaseViewModel() {
+@HiltViewModel
+class OnBoardingViewModel @Inject constructor(
+    private val dataStorePreferences: DataStorePreferences
+) : BaseViewModel() {
 
     var currentStep by mutableStateOf(1)
     var maxWidth = 0
@@ -33,6 +39,7 @@ class OnBoardingViewModel @Inject constructor() : BaseViewModel() {
             icon = newValues[STEP_ICON]
         }
     }
+
     val goToPreviousScreen = {
         if (currentStep - 1 > 0) {
             currentStep--
@@ -87,6 +94,16 @@ class OnBoardingViewModel @Inject constructor() : BaseViewModel() {
                 R.string.onboarding_step_three_title,
                 R.string.onboarding_step_three_sub_title,
                 R.drawable.ic_onboarding_step_three
+            )
+        }
+    }
+
+    fun navigateToNextScreen(screen: String) {
+        viewModelScope.launch {
+            dataStorePreferences.isOnBoardingEnabled(false)
+            popAndNavigateTo(
+                route = screen,
+                popTo = Screen.OnBoardingScreen.route
             )
         }
     }

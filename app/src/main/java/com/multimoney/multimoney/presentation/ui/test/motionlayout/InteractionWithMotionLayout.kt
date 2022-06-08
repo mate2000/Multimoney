@@ -53,8 +53,8 @@ fun MotionLayoutMM() {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
-    val bottomInitialCardHeight = (screenHeight.value * 0.45).dp
-    val bottomFinalCardHeight = (screenHeight.value * 0.60).dp
+    val bottomInitialCardHeight = (screenHeight.value * FORTY_FIVE_PERCENTAGE_OF_SCREEN).dp
+    val bottomFinalCardHeight = (screenHeight.value * SIXTY_PERCENTAGE_OF_SCREEN).dp
     val context = LocalContext.current
     val motionSceneContent = remember {
         context.resources
@@ -99,7 +99,7 @@ fun MotionLayoutMM() {
         HorizontalPager(
             state = headerTitlePagerState,
             userScrollEnabled = false,
-            count = 3, modifier = Modifier
+            count = TOTAL_PAGES, modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("header_title")
         ) { page ->
@@ -131,21 +131,21 @@ fun MotionLayoutMM() {
                     }
             ) {
                 when (page) {
-                    0 -> Text(
+                    PAGE_ONE -> Text(
                         text = "Action Bar $page",
                         color = Color.White,
                         style = Typography.h4,
                         modifier = Modifier
                             .background(Color.Yellow)
                     )
-                    1 -> Text(
+                    PAGE_TWO -> Text(
                         text = "Action Bar $page",
                         color = Color.White,
                         style = Typography.h4,
                         modifier = Modifier
                             .background(Color.Yellow)
                     )
-                    2 -> Text(
+                    PAGE_THREE -> Text(
                         text = "Action Bar $page",
                         color = Color.White,
                         style = Typography.h4,
@@ -157,7 +157,7 @@ fun MotionLayoutMM() {
         }
         HorizontalPager(
             state = mainCardPagerState,
-            count = 3, modifier = Modifier
+            count = TOTAL_PAGES, modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("main_card")
                 .swipeable(
@@ -198,7 +198,7 @@ fun MotionLayoutMM() {
                     }
             ) {
                 when (page) {
-                    0 ->
+                    PAGE_ONE ->
                         Text(
                             text = "Card Principal $page",
                             color = Color.Black,
@@ -207,7 +207,7 @@ fun MotionLayoutMM() {
                                 .background(Color.Green)
                                 .size(120.dp, 140.dp)
                         )
-                    1 -> Text(
+                    PAGE_TWO -> Text(
                         text = "Card Principal $page",
                         color = Color.Black,
                         style = Typography.h4,
@@ -215,7 +215,7 @@ fun MotionLayoutMM() {
                             .background(Color.Green)
                             .size(120.dp, 140.dp)
                     )
-                    2 -> Text(
+                    PAGE_THREE -> Text(
                         text = "Card Principal $page",
                         color = Color.Black,
                         style = Typography.h4,
@@ -239,7 +239,7 @@ fun MotionLayoutMM() {
         HorizontalPager(
             state = bottomEndPagerState,
             userScrollEnabled = false,
-            count = 3, modifier = Modifier
+            count = TOTAL_PAGES, modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("bottom_end")
         ) { page ->
@@ -272,21 +272,21 @@ fun MotionLayoutMM() {
                     }
             ) {
                 when (page) {
-                    0 -> Text(
+                    PAGE_ONE -> Text(
                         text = "Cards Final $page",
                         color = Color.White,
                         style = Typography.h4,
                         modifier = Modifier
                             .background(Color.Black)
                     )
-                    1 -> Text(
+                    PAGE_TWO -> Text(
                         text = "Cards Final $page",
                         color = Color.White,
                         style = Typography.h4,
                         modifier = Modifier
                             .background(Color.Black)
                     )
-                    2 -> Text(
+                    PAGE_THREE -> Text(
                         text = "Cards Final $page",
                         color = Color.White,
                         style = Typography.h4,
@@ -300,4 +300,10 @@ fun MotionLayoutMM() {
     }
 }
 
+const val FORTY_FIVE_PERCENTAGE_OF_SCREEN = 0.45
+const val SIXTY_PERCENTAGE_OF_SCREEN = 0.60
+const val TOTAL_PAGES = 3
+const val PAGE_ONE = 0
+const val PAGE_TWO = 1
+const val PAGE_THREE = 2
 const val TOTAL_PERCENTAGE = 100F

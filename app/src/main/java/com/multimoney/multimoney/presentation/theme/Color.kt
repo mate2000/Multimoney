@@ -21,6 +21,7 @@ val SemanticNegative500 = Color(0xFFE91616)
 
 // Semantic Positive
 val SemanticPositive600 = Color(0XFF32AC2A)
+val LinkGreen = Color(0xFF69CA59)
 
 // Complementary 3
 val Complementary3500 = Color(0xFFFFBE11)
@@ -39,6 +40,7 @@ val GrayScale800 = Color(0xFF1A1A1A)
 // WhiteTransparency
 val WhiteTransparency10 = Color(0xFFFFFFFF).copy(alpha = 0.1f)
 val WhiteTransparency12 = Color(0xFFFFFFFF).copy(alpha = 0.12f)
+val WhiteTransparency20 = Color(0xFFFFFFFF).copy(alpha = 0.2f)
 val WhiteTransparency30 = Color(0xFFFFFFFF).copy(alpha = 0.3f)
 val WhiteTransparency60 = Color(0xFFFFFFFF).copy(alpha = 0.6f)
 val WhiteTransparency70 = Color(0xFFFFFFFF).copy(alpha = 0.7f)

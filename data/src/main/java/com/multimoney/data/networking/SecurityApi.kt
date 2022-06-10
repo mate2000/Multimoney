@@ -5,6 +5,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.networking.security.apollomodel.DataInformationClientQuery
+import com.multimoney.data.networking.security.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
@@ -105,4 +106,22 @@ class SecurityApi @Inject constructor(
                 user
             )
         )
+
+    fun mutationOnfidoInitialProcess(
+        names: String,
+        lastNames: String,
+        identification: String,
+        applicationId: String,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<OnfidoIntialProcessMutation.Data> = apolloClient.mutation(
+        OnfidoIntialProcessMutation(
+            names,
+            lastNames,
+            identification,
+            applicationId,
+            idBrand,
+            user
+        )
+    )
 }

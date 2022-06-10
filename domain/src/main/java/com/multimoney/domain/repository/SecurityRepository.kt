@@ -1,6 +1,7 @@
 package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinResponse
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateSecurity
@@ -54,6 +55,15 @@ interface SecurityRepository {
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user:String
+        user: String
     ): Flow<MultimoneyResult<SendPinResponse?>>
+
+    suspend fun mutationOnfidoInitialProcess(
+        names: String,
+        lastNames: String,
+        identification: String,
+        applicationId: String,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<OnfidoToken?>>
 }

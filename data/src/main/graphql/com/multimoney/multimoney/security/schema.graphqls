@@ -119,6 +119,11 @@ type validateSecurity {
   validateSecurity Message
   """
   message: String
+
+  """
+  SendPinProccess Detail
+  """
+  detail: String
 }
 
 input validateSecurityInput {
@@ -141,6 +146,10 @@ type SecurityMutation {
   updateUserRegister(updateUserRegisterInput: UpdateUserRegister): updateUserRegister
 
   sendPinProccess(sendPinProccessInput: sendPinProccessInput): SendPinProccess
+
+  onfidoInitialProcess(onfidoInitialProcessInput: OnfidoInitialProcessInput): onfidoInitialProcess
+
+  onfidoCheckProcess(onfidoCheckProcessInputType: onfidoCheckProcessInputType): onfidoCheckProcess
 }
 
 type userValidation {
@@ -389,6 +398,21 @@ type SendPinProccess {
   SendPinProccess valor_tiempo_exp_pin
   """
   valor_tiempo_exp_pin: String
+
+  """
+  SendPinProccess Status
+  """
+  status: Int
+
+  """
+  SendPinProccess Message
+  """
+  message: String
+
+  """
+  SendPinProccess Detail
+  """
+  detail: String
 }
 
 input sendPinProccessInput {
@@ -403,6 +427,63 @@ input sendPinProccessInput {
   sendMethod: String!
 
   fk_Suv_Mtr_Usuario: Int!
+
+  idBrand: Int!
+
+  user: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type onfidoInitialProcess {
+  """
+  onfidoInitialProcess applicantId
+  """
+  applicantId: String!
+
+  """
+  onfidoInitialProcess sdkToken
+  """
+  sdkToken: String!
+}
+
+input OnfidoInitialProcessInput {
+  names: String!
+
+  lastNames: String!
+
+  identification: String!
+
+  applicationId: String!
+
+  idBrand: Int!
+
+  user: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type onfidoCheckProcess {
+  """
+  onfidoCheckProcess id
+  """
+  id: String!
+}
+
+input onfidoCheckProcessInputType {
+  identification: String!
+
+  applicantId: String!
+
+  currentFlow: String!
+
+  pkUser: Int!
+
+  idOnfidoDocumentSdi: String
 
   idBrand: Int!
 

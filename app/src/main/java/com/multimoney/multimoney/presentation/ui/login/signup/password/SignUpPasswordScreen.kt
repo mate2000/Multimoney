@@ -176,6 +176,10 @@ fun SignUpPasswordScreen(
                 text = stringResource(id = R.string.sign_up_password_requirement_one_number),
                 state = viewModel.oneNumberState
             )
+            PasswordRequirementLabels(
+                text = stringResource(id = R.string.sign_up_password_requirement_one_characer),
+                state = viewModel.oneCharacterState
+            )
         }
     }
 }

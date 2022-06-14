@@ -1,9 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.otp
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -38,12 +36,12 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FOUR
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_THREE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_TWO
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DELAY
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
@@ -52,8 +50,8 @@ import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
-import java.time.Duration
 import kotlinx.coroutines.delay
+import java.time.Duration
 
 @Composable
 @Preview
@@ -130,13 +128,15 @@ fun SignUpOtpScreen(
 
     LaunchedEffect(viewModel.onFailure) {
         if (viewModel.isFirstLoad.not()) {
-            sharedViewModel.openDialog = viewModel.onFailure.copy(positiveAction = {
-                openWhatsAppDeepLink(
-                    context = context,
-                    linkWhatsapp
-                )
-                viewModel.navigateToSignIn()
-            })
+            sharedViewModel.apply {
+                openDialog = viewModel.onFailure.copy(positiveAction = {
+                    openWhatsAppDeepLink(
+                        context = context,
+                        linkWhatsapp
+                    )
+                    viewModel.navigateToSignIn()
+                })
+            }
         }
     }
 
@@ -293,10 +293,4 @@ fun SignUpOtpScreen(
             )
         }
     }
-}
-
-private fun openWhatsAppDeepLink(context: Context, link: String) {
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse(link)
-    context.startActivity(intent)
 }

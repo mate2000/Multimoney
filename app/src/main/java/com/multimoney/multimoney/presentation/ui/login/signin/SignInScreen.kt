@@ -199,15 +199,6 @@ fun SignInScreen(
                 viewModel.navigateTo(route = Screen.SignUpScreen.route)
             }
         )
-        Text(
-            text = viewModel.successMessage,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 24.dp),
-            style = Typography.subtitle1.copy(
-                color = MultimoneyTheme.colors.primary
-            )
-        )
     }
     LoadingIndicator(viewModel.isLoading)
 

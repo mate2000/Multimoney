@@ -1,5 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,7 +11,6 @@ import com.multimoney.data.util.GsonHelper
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
-import com.multimoney.domain.model.security.ContactMeans
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -35,7 +37,6 @@ class SignUpViewModel @Inject constructor(
 
     // Data
     var userData: UserData? = null
-    var contactMeans: ContactMeans = ContactMeans()
 
     // Step three data
     var countryCode = ""
@@ -67,6 +68,13 @@ class SignUpViewModel @Inject constructor(
                 route = Screen.SignInScreen.route,
                 popTo = Screen.SignUpScreen.route
             )
+        }
+    }
+
+    fun moveToStep(step: Int) {
+        if (currentStep <= SIGN_UP_TOTAL_STEPS && step <= SIGN_UP_TOTAL_STEPS) {
+            currentStep = step
+            isCloseVisible = currentStep > SignUpStep.One.id
         }
     }
 
@@ -118,7 +126,14 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    fun openWhatsAppDeepLink(context: Context, link: String) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(link)
+        context.startActivity(intent)
+    }
+
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 5
+        const val PHONE_HARDCODED = "50371680915"
     }
 }

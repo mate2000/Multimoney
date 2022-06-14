@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.multimoney.domain.model.security.ContactMeans
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
@@ -12,6 +13,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
+
+    // Data
+    var contactMeans: ContactMeans = ContactMeans()
 
     // Fields
     var phoneCode by mutableStateOf("")

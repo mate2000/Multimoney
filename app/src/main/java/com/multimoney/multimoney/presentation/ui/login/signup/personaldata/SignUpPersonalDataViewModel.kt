@@ -16,13 +16,13 @@ import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
-    val queryDataInformationClientUseCase: QueryDataInformationClientUseCase
+    private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase
 ) : BaseViewModel() {
 
     //Fields
@@ -50,15 +50,22 @@ class SignUpPersonalDataViewModel @Inject constructor(
             Nationalities.Guatemala.country -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == Nationalities.Guatemala.documentSize) && !personalIdError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
             Nationalities.CostaRicaId.country -> personalDocumentValue.isNotBlank() &&
                     (personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) &&
-                    !personalIdError.first && crPersonalDocument.isNotBlank() && onSuccessDataInformationClient?.nombre != null
+                    !personalIdError.first && crPersonalDocument.isNotBlank() && onSuccessDataInformationClient?.fullName != null
             else -> false
         }
     }
 
-    fun getNationality(nationality: String) = when (nationality) {
+    fun getNationality(country: String) = when (country) {
         Nationalities.ElSalvador.country -> Nationalities.ElSalvador.name
         Nationalities.Guatemala.country -> Nationalities.Guatemala.name
         else -> Nationalities.CostaRicaId.name
+    }
+
+    fun getCountry(nationality: String) = when (nationality) {
+        Nationalities.ElSalvador.name -> Nationalities.ElSalvador.country
+        Nationalities.Guatemala.name -> Nationalities.Guatemala.country
+        Nationalities.CostaRicaId.name -> Nationalities.CostaRicaId.country
+        else -> ""
     }
 
     fun crFilterDocument(id: String) {
@@ -82,7 +89,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             closeKeyboard = true
             callQueryDataInformationClient(personalDocumentValue, Brand.Revamp.id, user)
         } else {
-            if (onSuccessDataInformationClient?.nombre.isNullOrBlank().not()) {
+            if (onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
                 onSuccessDataInformationClient = null
             }
         }

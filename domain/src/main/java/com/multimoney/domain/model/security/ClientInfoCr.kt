@@ -1,6 +1,6 @@
 package com.multimoney.domain.model.security
 
 data class ClientInfoCr(
-    val nombre: String,
+    var fullName: String,
     val status: Boolean
 )

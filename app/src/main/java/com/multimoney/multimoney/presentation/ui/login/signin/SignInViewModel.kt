@@ -38,7 +38,6 @@ class SignInViewModel @Inject constructor(
     var userPasswordError by mutableStateOf(Pair(false, R.string.error_empty))
     var userName by mutableStateOf<String?>(null)
     var isFingerprintChecked by mutableStateOf(false)
-    var successMessage by mutableStateOf("")
 
     var biometricErrorDialog by mutableStateOf(Pair(mutableStateOf(false), ""))
     var configureBiometric by mutableStateOf(false)
@@ -53,7 +52,6 @@ class SignInViewModel @Inject constructor(
                     val session = authSessionSuccess as AWSCognitoAuthSession
                     when (session.identityId.type) {
                         AuthSessionResult.Type.SUCCESS -> {
-                            successMessage = session.identityId.value ?: ""
                             isLoading = false
                             if (isFingerprintChecked) {
                                 configureBiometric = true

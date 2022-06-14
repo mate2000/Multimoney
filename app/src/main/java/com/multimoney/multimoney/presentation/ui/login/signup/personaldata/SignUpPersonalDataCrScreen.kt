@@ -114,10 +114,10 @@ fun SignUpPersonalDataCrScreen(
             }
         }
 
-        if (viewModel.onSuccessDataInformationClient?.nombre.isNullOrBlank().not()) {
+        if (viewModel.onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
             viewModel.onSuccessDataInformationClient?.apply {
                 sharedViewModel.isContinueEnabled = viewModel.validateFields()
-                sharedViewModel.userData?.fullName = nombre
+                sharedViewModel.userData?.fullName = fullName
             }
             Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {
                 CustomImage(
@@ -134,7 +134,7 @@ fun SignUpPersonalDataCrScreen(
             }
             Text(
                 modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-                text = viewModel.onSuccessDataInformationClient?.nombre.toString(),
+                text = viewModel.onSuccessDataInformationClient?.fullName.toString(),
                 style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
             )
         }

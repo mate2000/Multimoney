@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -97,7 +98,7 @@ fun SignUpEmailScreen(
             text = buildAnnotatedString {
                 withStyle(
                     style = Typography.h4.toSpanStyle()
-                        .copy(fontWeight = FontWeight.SemiBold)
+                        .copy(fontWeight = FontWeight.SemiBold, color = Color.White)
                 ) {
                     append(stringResource(id = R.string.sign_up_email_title))
                 }
@@ -124,11 +125,9 @@ fun SignUpEmailScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.label_email),
+            labelText = stringResource(id = R.string.sign_up_email_header),
             placeHolder = stringResource(id = R.string.sign_up_email_placeholder),
-            leadingIcon = R.drawable.ic_envelope,
-            modifier = Modifier
-                .padding(top = 24.dp),
+            modifier = Modifier.padding(top = 24.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_email_required),
             isError = viewModel.userEmailError.first,

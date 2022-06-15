@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.ButtonGreen
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale200
@@ -37,6 +38,7 @@ import com.multimoney.multimoney.presentation.theme.Primary700
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency12
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 
 /**
@@ -75,13 +77,13 @@ fun CustomButton(
         CustomButtonType.PrimaryPrimary -> {
             buttonColor = ButtonDefaults.buttonColors(
                 backgroundColor = if (isPressed) {
-                    Primary600
+                    ButtonGreen
                 } else {
-                    Primary500
+                    ButtonGreen
                 },
-                contentColor = DefaultWhite,
-                disabledBackgroundColor = GrayScale200,
-                disabledContentColor = GrayScale500
+                contentColor = DefaultBlack,
+                disabledBackgroundColor = WhiteTransparency20,
+                disabledContentColor = GrayScale400
             )
             arrowIconTint = if (enable) {
                 DefaultWhite
@@ -278,7 +280,7 @@ fun CustomButton(
         modifier = modifier,
         onClick = onClick,
         colors = buttonColor,
-        shape = RoundedCornerShape(25),
+        shape = RoundedCornerShape(50),
         border = borderStroke,
         enabled = enable,
         interactionSource = interactionSource

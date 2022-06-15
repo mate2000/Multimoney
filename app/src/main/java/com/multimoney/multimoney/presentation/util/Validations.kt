@@ -81,6 +81,10 @@ fun passwordHasANumberValidation(value: String): Boolean {
     return matchRegex(value, getRegex(ONE_NUMBER_REGEX))
 }
 
+fun passwordHasSpecialCharacterValidation(value: String): Boolean {
+    return matchRegex(value, getRegex(ONE_CHARACTER_REGEX))
+}
+
 fun stringHasOnlyDigitOrLetter(value: String) =
     value.all { it.isDigit() } || value.all { it.isLetter() }
 

@@ -10,6 +10,9 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnGoToNextScreen
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,56 +22,57 @@ class OnBoardingViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel() {
 
-    var currentStep by mutableStateOf(1)
-    var maxWidth = 0
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
 
-    // Interactions
-    var isPressed by mutableStateOf(false)
+    // Stateless
+    var currentStep = STEP_ONE
+    private var maxWidth = 0
 
-    // Fields
-    var title by mutableStateOf(R.string.onboarding_step_one_title)
-    var subtitle by mutableStateOf(R.string.onboarding_step_one_sub_title)
-    var icon by mutableStateOf(R.drawable.ic_onboarding_step_one)
-
-    val goToNextScreen = {
+    private fun goToNextScreen() {
         if (currentStep < MAX_STEPS) {
             currentStep++
             val newValues = getStepContent(currentStep)
-            title = newValues[STEP_TITLE]
-            subtitle = newValues[STEP_SUBTITLE]
-            icon = newValues[STEP_ICON]
+            uiState = uiState.copy(
+                title = newValues[STEP_TITLE],
+                subtitle = newValues[STEP_SUBTITLE],
+                icon = newValues[STEP_ICON]
+            )
         }
     }
 
-    val goToPreviousScreen = {
+    private fun goToPreviousScreen() {
         if (currentStep - 1 > 0) {
             currentStep--
             val newValues = getStepContent(currentStep)
-            title = newValues[STEP_TITLE]
-            subtitle = newValues[STEP_SUBTITLE]
-            icon = newValues[STEP_ICON]
+            uiState = uiState.copy(
+                title = newValues[STEP_TITLE],
+                subtitle = newValues[STEP_SUBTITLE],
+                icon = newValues[STEP_ICON]
+            )
         }
     }
 
-    fun onPress(pressGestureScope: PointerInputScope) {
+    private fun onPress(pressGestureScope: PointerInputScope) {
         maxWidth = pressGestureScope.size.width
         viewModelScope.launch {
             pressGestureScope.detectTapGestures(
                 onPress = {
                     val pressStartTime = System.currentTimeMillis()
-                    isPressed = true
+                    uiState = uiState.copy(isPressed = true)
                     tryAwaitRelease()
                     val pressEndTime = System.currentTimeMillis()
                     val totalPressTime = pressEndTime - pressStartTime
-                    if (totalPressTime < 300) {
-                        val isTapOnRightThreeQuarters = (it.x > (maxWidth / 4))
+                    if (totalPressTime < TOTAL_PRESS_TIME) {
+                        val isTapOnRightThreeQuarters = (it.x > (maxWidth / QUARTER))
                         if (isTapOnRightThreeQuarters) {
                             goToNextScreen()
                         } else {
                             goToPreviousScreen()
                         }
                     }
-                    isPressed = false
+                    uiState = uiState.copy(isPressed = false)
                 }
             )
         }
@@ -98,7 +102,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    fun navigateToNextScreen(screen: String) {
+    private fun navigateToNextScreen(screen: String) {
         viewModelScope.launch {
             dataStorePreferences.isOnBoardingEnabled(false)
             popAndNavigateTo(
@@ -108,6 +112,30 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    data class UIState(
+        // Fields
+        val title: Int = R.string.onboarding_step_one_title,
+        val subtitle: Int = R.string.onboarding_step_one_sub_title,
+        val icon: Int = R.drawable.ic_onboarding_step_one,
+
+        // Interactions
+        val isPressed: Boolean = false
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
+            is OnGoToNextScreen -> goToNextScreen()
+            is OnPress -> onPress(event.pressGestureScope)
+        }
+    }
+
+    sealed class UIEvent {
+        data class OnNavigateToNextScreen(val screen: String) : UIEvent()
+        data class OnPress(val pressGestureScope: PointerInputScope) : UIEvent()
+        object OnGoToNextScreen : UIEvent()
+    }
+
     companion object {
         const val MAX_STEPS = 3
         const val STEP_ONE = 1
@@ -115,5 +143,7 @@ class OnBoardingViewModel @Inject constructor(
         const val STEP_TITLE = 0
         const val STEP_SUBTITLE = 1
         const val STEP_ICON = 2
+        const val TOTAL_PRESS_TIME = 300
+        const val QUARTER = 4
     }
 }

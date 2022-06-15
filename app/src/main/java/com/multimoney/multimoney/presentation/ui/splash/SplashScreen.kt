@@ -14,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.splash.SplashScreenViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomLottie
 import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
@@ -29,12 +30,12 @@ fun SplashScreen(
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
     SplashScreen {
-        viewModel.navigateToNextScreen()
+        viewModel.onUIEvent(OnNavigateToNextScreen)
     }
 }
 
 @Composable
-fun SplashScreen(popAndNavigateToScreen: () -> Unit) {
+fun SplashScreen(navigateToNextScreen: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -49,7 +50,7 @@ fun SplashScreen(popAndNavigateToScreen: () -> Unit) {
                 .weight(1f)
         )
         CustomLottie(resource = R.raw.placeholder_splash, Modifier.weight(4f)) {
-            popAndNavigateToScreen()
+            navigateToNextScreen()
         }
         CustomImage(
             drawableResource = R.drawable.ic_splash_bottom,

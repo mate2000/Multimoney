@@ -30,6 +30,7 @@ class SignUpEmailViewModel @Inject constructor(
     var onSuccessUserDataValidation by mutableStateOf<UserData?>(null)
     var onFailure by mutableStateOf(DialogParameters())
     var isFirstLaunch = true
+    var isUserStatusIncomplete = true
     var userCompletedDialogDescription = ""
 
     fun isFormValid() = when {

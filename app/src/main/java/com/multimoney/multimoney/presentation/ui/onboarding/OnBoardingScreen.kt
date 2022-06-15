@@ -36,6 +36,9 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Primary600
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnGoToNextScreen
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -48,17 +51,12 @@ fun OnBoardingScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
+
     LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
-    OnBoarding(viewModel)
-}
 
-@Composable
-fun OnBoarding(
-    viewModel: OnBoardingViewModel
-) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,14 +77,14 @@ fun OnBoarding(
         Modifier
             .padding(16.dp)
             .fillMaxSize()
-            .pointerInput(Unit) { viewModel.onPress(this) }
+            .pointerInput(Unit) { viewModel.onUIEvent(OnPress(this)) }
     ) {
         Column(Modifier.weight(0.4f)) {
             StoryProgressBar(
                 steps = OnBoardingViewModel.MAX_STEPS,
                 currentStep = viewModel.currentStep,
-                paused = viewModel.isPressed,
-                onFinished = viewModel.goToNextScreen,
+                paused = viewModel.uiState.isPressed,
+                onFinished = { viewModel.onUIEvent(OnGoToNextScreen) },
                 backgroundColor = Color.White.copy(alpha = 0.4f),
                 progressColor = Complementary3500,
                 modifier = Modifier
@@ -94,7 +92,7 @@ fun OnBoarding(
                     .padding(top = 12.dp)
             )
             Text(
-                text = stringResource(id = viewModel.title),
+                text = stringResource(id = viewModel.uiState.title),
                 textAlign = TextAlign.Left,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -102,7 +100,7 @@ fun OnBoarding(
                 style = Typography.h4.copy(color = DefaultWhite, fontWeight = FontWeight.SemiBold)
             )
             Text(
-                text = stringResource(id = viewModel.subtitle),
+                text = stringResource(id = viewModel.uiState.subtitle),
                 textAlign = TextAlign.Left,
                 modifier = Modifier.fillMaxWidth(),
                 style = Typography.h6.copy(color = DefaultWhite)
@@ -115,7 +113,7 @@ fun OnBoarding(
                 .weight(0.6f)
         ) {
             CustomImage(
-                drawableResource = viewModel.icon,
+                drawableResource = viewModel.uiState.icon,
                 modifier = Modifier
                     .wrapContentSize()
                     .align(Alignment.CenterHorizontally)
@@ -129,7 +127,7 @@ fun OnBoarding(
                 buttonType = CustomButtonType.PrimaryTertiary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
-                    viewModel.navigateToNextScreen(Screen.SignUpScreen.route)
+                    viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignUpScreen.route))
                 }
             )
             Row(
@@ -161,7 +159,7 @@ fun OnBoarding(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        viewModel.navigateToNextScreen(Screen.SignInScreen.route)
+                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.route))
                     }
                 )
             }

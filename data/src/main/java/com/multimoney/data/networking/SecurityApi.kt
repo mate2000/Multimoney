@@ -107,7 +107,7 @@ class SecurityApi @Inject constructor(
             )
         )
 
-    fun mutationOnfidoInitialProcess(
+    fun mutationOnFidoInitialProcess(
         names: String,
         lastNames: String,
         identification: String,

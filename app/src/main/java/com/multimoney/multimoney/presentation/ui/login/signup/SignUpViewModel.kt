@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +15,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.multimoney.multimoney.util.BiometricHelper
@@ -33,8 +32,11 @@ class SignUpViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper
 ) : BaseViewModel() {
 
-    var currentStep by mutableStateOf(SignUpStep.One.id)
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
 
+    //Stateless
     // Data
     var userData: UserData? = null
 
@@ -45,24 +47,27 @@ class SignUpViewModel @Inject constructor(
     var userPassword = ""
     var isBiometricAvailable = false
 
-    // Interactions
-    var isCloseVisible by mutableStateOf(false)
-    var isContinueEnabled by mutableStateOf(false)
     var nextAction: () -> Unit = {}
 
     fun nextStep() {
-        if (currentStep <= SIGN_UP_TOTAL_STEPS) {
-            currentStep++
-            isCloseVisible = currentStep > SignUpStep.One.id
+        if (uiState.currentStep <= SIGN_UP_TOTAL_STEPS) {
+            val nextStep = uiState.currentStep.plus(1)
+            uiState = uiState.copy(
+                currentStep = nextStep,
+                isCloseVisible = nextStep > SignUpStep.One.id
+            )
         } else {
             completedProcessAction()
         }
     }
 
     fun previousStep() {
-        if (currentStep > SignUpStep.One.id) {
-            currentStep--
-            isCloseVisible = currentStep > SignUpStep.One.id
+        if (uiState.currentStep > SignUpStep.One.id) {
+            val previousStep = uiState.currentStep.minus(1)
+            uiState = uiState.copy(
+                currentStep = previousStep,
+                isCloseVisible = previousStep > SignUpStep.One.id
+            )
         } else {
             popAndNavigateTo(
                 route = Screen.SignInScreen.route,
@@ -72,9 +77,11 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun moveToStep(step: Int) {
-        if (currentStep <= SIGN_UP_TOTAL_STEPS && step <= SIGN_UP_TOTAL_STEPS) {
-            currentStep = step
-            isCloseVisible = currentStep > SignUpStep.One.id
+        if (uiState.currentStep <= SIGN_UP_TOTAL_STEPS && step <= SIGN_UP_TOTAL_STEPS) {
+            uiState = uiState.copy(
+                currentStep = step,
+                isCloseVisible = step > SignUpStep.One.id
+            )
         }
     }
 
@@ -126,10 +133,23 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun openWhatsAppDeepLink(context: Context, link: String) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(link)
-        context.startActivity(intent)
+    data class UIState(
+        // Interactions
+        val currentStep: Int = SignUpStep.One.id,
+        var isCloseVisible: Boolean = false,
+        var isContinueEnabled: Boolean = false,
+        val openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
+        val isLoading: Boolean = true
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is OnContinueValueChange -> uiState = uiState.copy(isContinueEnabled = true)
+        }
+    }
+
+    sealed class UIEvent {
+        data class OnContinueValueChange(val value: Boolean) : UIEvent()
     }
 
     companion object {

@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FOUR
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
@@ -49,6 +50,7 @@ import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import kotlinx.coroutines.delay
 import java.time.Duration
@@ -67,7 +69,7 @@ fun SignUpOtpScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
         sharedViewModel.apply {
-            isContinueEnabled = viewModel.isFormValid()
+            sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.isFormValid()))
             nextAction = {
                 userData?.currentStep = SignUpStep.Four.name
                 callMutationUpdateUserRegisterUseCase()
@@ -130,8 +132,7 @@ fun SignUpOtpScreen(
         if (viewModel.isFirstLoad.not()) {
             sharedViewModel.apply {
                 openDialog = viewModel.onFailure.copy(positiveAction = {
-                    openWhatsAppDeepLink(
-                        context = context,
+                    context.openWhatsAppDeepLink(
                         linkWhatsapp
                     )
                     viewModel.navigateToSignIn()
@@ -213,7 +214,7 @@ fun SignUpOtpScreen(
                     otp = it
                     isOtpFromSms = false
                     clearOtpError()
-                    sharedViewModel.isContinueEnabled = isFormValid()
+                    sharedViewModel.onUIEvent(OnContinueValueChange(isFormValid()))
                 }
             },
             isValueFromSms = viewModel.isOtpFromSms,

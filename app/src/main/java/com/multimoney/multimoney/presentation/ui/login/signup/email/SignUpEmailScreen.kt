@@ -28,8 +28,10 @@ import com.multimoney.data.util.catalog.UserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
 @Preview
@@ -49,7 +51,7 @@ fun SignUpEmailScreen(
     val focusManager = LocalFocusManager.current
     LaunchedEffect(true) {
         viewModel.isFirstLaunch = true
-        sharedViewModel.isContinueEnabled = viewModel.isFormValid()
+        sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.isFormValid()))
         sharedViewModel.nextAction = {
             viewModel.apply {
                 if (isDataChanged() || isUserStatusIncomplete.not()) {
@@ -78,7 +80,7 @@ fun SignUpEmailScreen(
                     userData = onSuccessUserDataValidation
                     if (userData?.userStatus == UserStatus.Incomplete.name) {
                         isUserStatusIncomplete = true
-                        if (SignUpStep.Search.getIdByName(userData?.currentStep) == currentStep) {
+                        if (SignUpStep.Search.getIdByName(userData?.currentStep) == uiState.currentStep) {
                             nextStep()
                         } else {
                             moveToStep(SignUpStep.Search.getIdByName(userData?.currentStep))
@@ -101,10 +103,7 @@ fun SignUpEmailScreen(
                             positiveText = R.string.contact,
                             negativeText = R.string.cancel,
                             positiveAction = {
-                                openWhatsAppDeepLink(
-                                    context = context,
-                                    linkWhatsapp
-                                )
+                                context.openWhatsAppDeepLink(linkWhatsapp)
                             }
                         )
                     }
@@ -146,7 +145,7 @@ fun SignUpEmailScreen(
                 viewModel.apply {
                     userEmail = it
                     clearUserEmailError()
-                    sharedViewModel.isContinueEnabled = isFormValid()
+                    sharedViewModel.onUIEvent(OnContinueValueChange(isFormValid()))
                 }
             },
             onDebounceValidation = { viewModel.isUserEmailValid() },

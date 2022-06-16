@@ -4,7 +4,7 @@ import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
-interface MutationOnfidoInitialProcessUseCase {
+interface MutationOnFidoInitialProcessUseCase {
     suspend operator fun invoke(
         names: String,
         lastNames: String,

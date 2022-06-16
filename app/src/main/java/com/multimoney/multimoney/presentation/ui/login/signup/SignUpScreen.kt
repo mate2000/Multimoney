@@ -59,7 +59,7 @@ fun SignUpScreen(
         Column {
             BackCloseNavBar(
                 isBackVisible = true,
-                isCloseVisible = viewModel.isCloseVisible,
+                isCloseVisible = viewModel.uiState.isCloseVisible,
                 onBackClick = {
                     focusManager.clearFocus()
                     viewModel.previousStep()
@@ -71,10 +71,10 @@ fun SignUpScreen(
                         popTo = Screen.SignUpScreen.route
                     )
                 })
-            if (viewModel.currentStep != SignUpStep.Five.id) {
+            if (viewModel.uiState.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
                     steps = SIGN_UP_TOTAL_STEPS,
-                    currentStep = if (viewModel.currentStep == SignUpStep.Six.id) SignUpStep.Five.id else viewModel.currentStep,
+                    currentStep = if (viewModel.uiState.currentStep == SignUpStep.Six.id) SignUpStep.Five.id else viewModel.uiState.currentStep,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 )
             }
@@ -85,7 +85,11 @@ fun SignUpScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            GetStepContent(step = viewModel.currentStep, viewModel = viewModel, onPopAndNavigate)
+            GetStepContent(
+                step = viewModel.uiState.currentStep,
+                viewModel = viewModel,
+                onPopAndNavigate
+            )
             CustomButton(
                 onClick = {
                     focusManager.clearFocus()
@@ -97,7 +101,7 @@ fun SignUpScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 buttonType = CustomButtonType.PrimaryPrimary,
-                enable = viewModel.isContinueEnabled
+                enable = viewModel.uiState.isContinueEnabled
             )
         }
     }

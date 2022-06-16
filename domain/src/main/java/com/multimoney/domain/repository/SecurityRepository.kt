@@ -58,7 +58,7 @@ interface SecurityRepository {
         user: String
     ): Flow<MultimoneyResult<SendPinResponse?>>
 
-    suspend fun mutationOnfidoInitialProcess(
+    suspend fun mutationOnFidoInitialProcess(
         names: String,
         lastNames: String,
         identification: String,

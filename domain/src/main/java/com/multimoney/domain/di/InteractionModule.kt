@@ -2,16 +2,7 @@ package com.multimoney.domain.di
 
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
-import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
-import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
-import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
-import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
-import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
+import com.multimoney.domain.interaction.security.*
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.SecurityRepository
 import dagger.Module
@@ -50,6 +41,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationSendPinProcessUseCase(securityRepository: SecurityRepository): MutationSendPinProcessUseCase =
         MutationSendPinProcessUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationOnFidoInitialProcess(securityRepository: SecurityRepository): MutationOnFidoInitialProcessUseCase =
+        MutationOnFidoInitialProcessUseCaseImpl(securityRepository)
 
     // Balance
     @Provides

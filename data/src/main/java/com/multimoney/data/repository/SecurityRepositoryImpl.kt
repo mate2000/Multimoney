@@ -124,7 +124,7 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<OnfidoToken?>> = fetchData(
-        apolloCall = securityApi.mutationOnfidoInitialProcess(
+        apolloCall = securityApi.mutationOnFidoInitialProcess(
             names,
             lastNames,
             identification,

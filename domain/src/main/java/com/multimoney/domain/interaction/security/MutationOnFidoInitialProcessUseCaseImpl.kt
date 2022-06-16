@@ -5,8 +5,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SecurityRepository
 import kotlinx.coroutines.flow.Flow
 
-class MutationOnfidoInitialProcessUseCaseImpl(val securityRepository: SecurityRepository) :
-    MutationOnfidoInitialProcessUseCase {
+class MutationOnFidoInitialProcessUseCaseImpl(val securityRepository: SecurityRepository) :
+    MutationOnFidoInitialProcessUseCase {
     override suspend fun invoke(
         names: String,
         lastNames: String,

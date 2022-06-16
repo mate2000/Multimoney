@@ -162,7 +162,6 @@ fun SignInScreen(
             SignInWithPassword(
                 viewModel = viewModel,
                 focusManager = focusManager,
-                openDialogCustom = viewModel.uiState.openDialogCustom,
                 isBiometricActive = viewModel.uiState.isBiometricActive,
                 isBiometricError = viewModel.uiState.biometricError,
                 onSignInWithBiometricLink = { viewModel.onUIEvent(OnShowBiometricSignInChanged(true)) }

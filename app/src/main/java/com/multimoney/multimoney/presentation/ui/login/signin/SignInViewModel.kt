@@ -42,9 +42,9 @@ class SignInViewModel @Inject constructor(
         private set
 
     // Stateless
-    var biometricPromptTitle = ""
-    var biometricPromptDescription = ""
-    var biometricPromptNegative = ""
+    private var biometricPromptTitle = ""
+    private var biometricPromptDescription = ""
+    private var biometricPromptNegative = ""
 
     private fun onStart() {
         viewModelScope.launch {

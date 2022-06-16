@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -32,7 +31,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 fun SignInWithPassword(
     viewModel: SignInViewModel,
     focusManager: FocusManager,
-    openDialogCustom: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     isBiometricError: Boolean,
     isBiometricActive: Boolean,

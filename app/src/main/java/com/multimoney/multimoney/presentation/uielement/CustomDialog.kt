@@ -63,7 +63,7 @@ fun CustomDialog(
     topIcon: Int? = null,
     shape: Shape = MaterialTheme.shapes.medium,
     onNegativeAction: () -> Unit = {},
-    onPositiveAction: () -> Unit,
+    onPositiveAction: () -> Unit = {},
     onDismissAction: () -> Unit = {},
     openDialogCustom: MutableState<Boolean> = mutableStateOf(false)
 ) {

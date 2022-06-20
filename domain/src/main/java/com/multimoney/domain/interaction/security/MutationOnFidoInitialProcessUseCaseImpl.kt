@@ -15,5 +15,5 @@ class MutationOnFidoInitialProcessUseCaseImpl(val securityRepository: SecurityRe
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<OnfidoToken?>> =
-        securityRepository.mutationOnfidoInitialProcess(names, lastNames, identification, applicationId, idBrand, user)
+        securityRepository.mutationOnFidoInitialProcess(names, lastNames, identification, applicationId, idBrand, user)
 }

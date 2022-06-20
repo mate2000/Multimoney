@@ -116,7 +116,7 @@ class SecurityRepositoryImpl @Inject constructor(
         }
     )
 
-    override suspend fun mutationOnfidoInitialProcess(
+    override suspend fun mutationOnFidoInitialProcess(
         names: String,
         lastNames: String,
         identification: String,

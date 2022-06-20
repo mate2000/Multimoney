@@ -17,7 +17,6 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -28,8 +27,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     val biometricHelper: BiometricHelper,
     val gsonHelper: GsonHelper,
-    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase,
-    val onFidoHelper: OnFidoHelper
+    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
 ) : BaseViewModel() {
 
     // UIState

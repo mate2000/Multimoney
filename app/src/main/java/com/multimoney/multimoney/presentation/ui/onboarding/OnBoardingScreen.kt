@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.LinkGreen
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -61,7 +62,7 @@ fun OnBoarding(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
         Modifier
-            .background(Color.Black)
+            .background(DefaultBlack)
             .fillMaxSize()
             .pointerInput(Unit) { viewModel.onPress(this) }
     ) {

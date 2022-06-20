@@ -26,6 +26,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.UserStatus
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -98,7 +99,7 @@ fun SignUpEmailScreen(
             text = buildAnnotatedString {
                 withStyle(
                     style = Typography.h4.toSpanStyle()
-                        .copy(fontWeight = FontWeight.SemiBold, color = Color.White)
+                        .copy(fontWeight = FontWeight.SemiBold, color = DefaultWhite)
                 ) {
                     append(stringResource(id = R.string.sign_up_email_title))
                 }

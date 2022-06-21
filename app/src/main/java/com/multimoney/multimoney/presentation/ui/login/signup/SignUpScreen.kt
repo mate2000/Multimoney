@@ -21,9 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_TOTAL_STEPS
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
@@ -60,17 +63,8 @@ fun SignUpScreen(
             BackCloseNavBar(
                 isBackVisible = true,
                 isCloseVisible = viewModel.uiState.isCloseVisible,
-                onBackClick = {
-                    focusManager.clearFocus()
-                    viewModel.previousStep()
-                },
-                onCloseClick = {
-                    focusManager.clearFocus()
-                    viewModel.popAndNavigateTo(
-                        route = Screen.SignInScreen.route,
-                        popTo = Screen.SignUpScreen.route
-                    )
-                })
+                onBackClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
+                onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
             if (viewModel.uiState.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
                     steps = SIGN_UP_TOTAL_STEPS,
@@ -91,10 +85,7 @@ fun SignUpScreen(
                 onPopAndNavigate
             )
             CustomButton(
-                onClick = {
-                    focusManager.clearFocus()
-                    viewModel.nextAction.invoke()
-                },
+                onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
                 text = stringResource(id = R.string.button_continue),
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
@@ -105,21 +96,19 @@ fun SignUpScreen(
             )
         }
     }
-    LoadingIndicator(viewModel.isLoading)
+    LoadingIndicator(viewModel.uiState.isLoading)
 
     BackHandler {
-        viewModel.previousStep()
+        viewModel.onUIEvent(OnBackClick(focusManager))
     }
 
-    if (viewModel.openDialog.isActive.value) {
+    if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.openDialog.title),
-            message = viewModel.openDialog.description,
-            positiveButtonText = stringResource(id = viewModel.openDialog.positiveText),
-            negativeButtonText = stringResource(id = viewModel.openDialog.negativeText),
-            onPositiveAction = viewModel.openDialog.positiveAction,
-            onNegativeAction = viewModel.openDialog.negativeAction,
-            openDialogCustom = viewModel.openDialog.isActive
+            title = stringResource(id = viewModel.uiState.openDialog.title),
+            message = viewModel.uiState.openDialog.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveText),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeText),
+            openDialogCustom = viewModel.uiState.openDialog.isActive
         )
     }
 }
@@ -142,7 +131,7 @@ fun GetStepContent(
         else -> {
             SignUpPasswordScreen(sharedViewModel = viewModel)
             viewModel.apply {
-                isBiometricAvailable = biometricHelper.isBiometricAvailable(LocalContext.current)
+                onUIEvent(OnIsBiometricAvailable(biometricHelper.isBiometricAvailable(LocalContext.current)))
             }
         }
     }

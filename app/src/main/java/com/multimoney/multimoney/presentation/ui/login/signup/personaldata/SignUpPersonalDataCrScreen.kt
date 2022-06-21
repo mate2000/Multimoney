@@ -24,7 +24,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
@@ -75,7 +75,7 @@ fun SignUpPersonalDataCrScreen(
             onValueChange = { newString ->
                 viewModel.crFilterDocument(newString)
                 sharedViewModel.userData?.identification = viewModel.personalDocumentValue
-                sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -94,7 +94,7 @@ fun SignUpPersonalDataCrScreen(
             customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
                 viewModel.validateCrDocument(sharedViewModel.userData?.email ?: "")
-                sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
             }
         )
 
@@ -117,7 +117,7 @@ fun SignUpPersonalDataCrScreen(
 
         if (viewModel.onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
             viewModel.onSuccessDataInformationClient?.apply {
-                sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
                 sharedViewModel.userData?.fullName = fullName
             }
             Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {

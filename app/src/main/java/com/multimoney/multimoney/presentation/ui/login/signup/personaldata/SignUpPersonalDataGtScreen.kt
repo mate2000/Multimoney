@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.transformation.formatDpi
@@ -64,7 +64,7 @@ fun SignUpPersonalDataGtScreen(
                     R.string.sign_up_personal_data_dpi_gt_not_valid,
                     viewModel.personalDocumentValue.length
                 )
-                sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
             }
         )
         CustomOutlinedTextField(
@@ -74,7 +74,7 @@ fun SignUpPersonalDataGtScreen(
                 sharedViewModel.apply {
                     userData?.firstName = it
                     userData?.fullName = "$it ${userData?.lastName}"
-                    sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                    sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -100,7 +100,7 @@ fun SignUpPersonalDataGtScreen(
                 sharedViewModel.apply {
                     userData?.lastName = it
                     userData?.fullName = "${userData?.firstName} $it"
-                    sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                    sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
                 }
             },
             keyboardOptions = KeyboardOptions(

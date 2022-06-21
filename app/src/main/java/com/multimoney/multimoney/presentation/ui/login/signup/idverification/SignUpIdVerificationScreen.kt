@@ -18,12 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.domain.model.security.OnfidoToken
-import com.multimoney.domain.model.util.HttpError
-import com.multimoney.domain.model.util.MultimoneyResult
-import com.multimoney.domain.model.util.MultimoneyResult.Failure
-import com.multimoney.domain.model.util.MultimoneyResult.Loading
-import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -31,7 +25,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnInitValues
@@ -49,7 +43,6 @@ fun SignUpIdVerificationScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(OnContinueValueChange(true))
 //        viewModel.onUIEvent(
 //            OnCallInFidoToken(
 //                sharedViewModel.userData?.firstName ?: "",
@@ -60,6 +53,7 @@ fun SignUpIdVerificationScreen(
 //                sharedViewModel.userData?.email ?: ""
 //            )
 //        )
+        sharedViewModel.onUIEvent(OnContinueClick(true))
         viewModel.onUIEvent(
             OnCallInFidoToken(
                 "Diego",

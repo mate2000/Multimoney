@@ -28,7 +28,7 @@ import com.multimoney.data.util.catalog.UserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
@@ -51,7 +51,7 @@ fun SignUpEmailScreen(
     val focusManager = LocalFocusManager.current
     LaunchedEffect(true) {
         viewModel.isFirstLaunch = true
-        sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.isFormValid()))
+        sharedViewModel.onUIEvent(OnContinueClick(viewModel.isFormValid()))
         sharedViewModel.nextAction = {
             viewModel.apply {
                 if (isDataChanged() || isUserStatusIncomplete.not()) {
@@ -145,7 +145,7 @@ fun SignUpEmailScreen(
                 viewModel.apply {
                     userEmail = it
                     clearUserEmailError()
-                    sharedViewModel.onUIEvent(OnContinueValueChange(isFormValid()))
+                    sharedViewModel.onUIEvent(OnContinueClick(isFormValid()))
                 }
             },
             onDebounceValidation = { viewModel.isUserEmailValid() },

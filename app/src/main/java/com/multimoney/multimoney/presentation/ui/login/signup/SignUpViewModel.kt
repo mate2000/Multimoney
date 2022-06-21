@@ -1,9 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.GsonHelper
 import com.multimoney.data.util.catalog.Brand
@@ -15,7 +15,11 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,30 +33,22 @@ class SignUpViewModel @Inject constructor(
     val gsonHelper: GsonHelper,
     private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
 ) : BaseViewModel() {
-
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
-    //Stateless
-    // Data
+    // Stateless
     var userData: UserData? = null
-
-    // Step three data
     var countryCode = ""
-
-    // Step five data
     var userPassword = ""
     var isBiometricAvailable = false
-
     var nextAction: () -> Unit = {}
 
     fun nextStep() {
         if (uiState.currentStep <= SIGN_UP_TOTAL_STEPS) {
-            val nextStep = uiState.currentStep.plus(1)
             uiState = uiState.copy(
-                currentStep = nextStep,
-                isCloseVisible = nextStep > SignUpStep.One.id
+                currentStep = uiState.currentStep + 1,
+                isCloseVisible = uiState.currentStep > SignUpStep.One.id
             )
         } else {
             completedProcessAction()
@@ -61,10 +57,9 @@ class SignUpViewModel @Inject constructor(
 
     fun previousStep() {
         if (uiState.currentStep > SignUpStep.One.id) {
-            val previousStep = uiState.currentStep.minus(1)
             uiState = uiState.copy(
-                currentStep = previousStep,
-                isCloseVisible = previousStep > SignUpStep.One.id
+                currentStep = uiState.currentStep - 1,
+                isCloseVisible = uiState.currentStep > SignUpStep.One.id
             )
         } else {
             popAndNavigateTo(
@@ -78,7 +73,7 @@ class SignUpViewModel @Inject constructor(
         if (uiState.currentStep <= SIGN_UP_TOTAL_STEPS && step <= SIGN_UP_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
-                isCloseVisible = step > SignUpStep.One.id
+                isCloseVisible = uiState.currentStep > SignUpStep.One.id
             )
         }
     }
@@ -131,23 +126,48 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    private fun onBackClick(focusManager: FocusManager) {
+        focusManager.clearFocus()
+        previousStep()
+    }
+
+    private fun onCloseClick(focusManager: FocusManager) {
+        focusManager.clearFocus()
+        popAndNavigateTo(
+            route = Screen.SignInScreen.route,
+            popTo = Screen.SignUpScreen.route
+        )
+    }
+
+    private fun onContinueClick(focusManager: FocusManager) {
+        focusManager.clearFocus()
+        nextAction.invoke()
+    }
+
     data class UIState(
         // Interactions
-        val currentStep: Int = SignUpStep.Five.id,
-        var isCloseVisible: Boolean = false,
-        var isContinueEnabled: Boolean = false,
-        val openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
-        val isLoading: Boolean = true
+        val currentStep: Int = SignUpStep.One.id,
+        val isCloseVisible: Boolean = false,
+        val isContinueEnabled: Boolean = false,
+        val isLoading: Boolean = true,
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnContinueValueChange -> uiState = uiState.copy(isContinueEnabled = true)
+            is OnBackClick -> onBackClick(event.focusManager)
+            is OnCloseClick -> onCloseClick(event.focusManager)
+            is OnContinueClick -> onContinueClick(event.focusManager)
+            is OnIsBiometricAvailable -> isBiometricAvailable = event.value
         }
     }
 
     sealed class UIEvent {
-        data class OnContinueValueChange(val value: Boolean) : UIEvent()
+        data class OnBackClick(val focusManager: FocusManager) : UIEvent()
+        data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
+        data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
+        data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
+
     }
 
     companion object {

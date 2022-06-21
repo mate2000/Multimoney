@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.transformation.formatDui
@@ -45,7 +45,7 @@ fun SignUpPersonalDataSvScreen(
             },
             onDebounceValidation = {
                 viewModel.personalIdError = validDui(viewModel.personalDocumentValue)
-                sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -72,7 +72,7 @@ fun SignUpPersonalDataSvScreen(
                 sharedViewModel.apply {
                     userData?.firstName = it
                     userData?.fullName = "$it ${userData?.lastName}"
-                    sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                    sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -97,7 +97,7 @@ fun SignUpPersonalDataSvScreen(
                 sharedViewModel.apply {
                     userData?.lastName = it
                     userData?.fullName = "${userData?.firstName} $it"
-                    sharedViewModel.onUIEvent(OnContinueValueChange(viewModel.validateFields()))
+                    sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
                 }
             },
             keyboardOptions = KeyboardOptions(

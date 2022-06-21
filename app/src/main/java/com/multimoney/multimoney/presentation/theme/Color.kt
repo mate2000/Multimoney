@@ -54,6 +54,9 @@ val BlackTransparency50 = Color(0xFF000000).copy(alpha = 0.5f)
 val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
 
+// Todo this probably will change when the team of design update the design system
+val PrimaryBlack = Color(0xFF080808)
+
 @Immutable
 data class MultimoneyColors(
     val primary: Color,
@@ -72,7 +75,7 @@ val DarkColorPalette = MultimoneyColors(
     primary = Purple700,
     secondary = Purple500,
     background = DefaultBlack,
-    backgroundSplash = Primary200,
+    backgroundSplash = PrimaryBlack,
     text = DefaultWhite,
     textLink = Primary500,
     textInformation = Primary500,
@@ -84,7 +87,7 @@ val DarkColorPalette = MultimoneyColors(
 val LightColorPalette = MultimoneyColors(
     primary = Primary500,
     secondary = Secondary500,
-    background = DefaultBlack,
+    background = DefaultWhite,
     backgroundSplash = Primary200,
     text = GrayScale800,
     textLink = Primary500,

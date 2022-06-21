@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterVa
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
 import com.multimoney.multimoney.presentation.util.passwordHasAUppercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
+import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -43,6 +44,7 @@ class SignUpPasswordViewModel @Inject constructor(
     var oneUppercaseState by mutableStateOf<Boolean?>(null)
     var oneLowercaseState by mutableStateOf<Boolean?>(null)
     var oneNumberState by mutableStateOf<Boolean?>(null)
+    var oneCharacterState by mutableStateOf<Boolean?>(null)
 
     //Interactions
     var onSuccessValidationSecurity by mutableStateOf<ValidateSecurity?>(null)
@@ -59,6 +61,7 @@ class SignUpPasswordViewModel @Inject constructor(
         oneUppercaseState = passwordHasAUppercaseLetterValidation(password) && password.isNotEmpty()
         oneLowercaseState = passwordHasALowercaseLetterValidation(password) && password.isNotEmpty()
         oneNumberState = passwordHasANumberValidation(password) && password.isNotEmpty()
+        oneCharacterState = passwordHasSpecialCharacterValidation(password) && password.isNotEmpty()
         validateHasTheSameConsecutiveCharacter()
         resetValidationLabel(password)
     }
@@ -152,6 +155,7 @@ class SignUpPasswordViewModel @Inject constructor(
             oneUppercaseState = null
             oneLowercaseState = null
             oneNumberState = null
+            oneCharacterState = null
         }
     }
 

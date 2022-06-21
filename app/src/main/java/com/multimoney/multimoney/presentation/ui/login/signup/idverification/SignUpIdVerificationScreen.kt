@@ -18,15 +18,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.security.OnfidoToken
+import com.multimoney.domain.model.util.HttpError
+import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.MultimoneyResult.Failure
+import com.multimoney.domain.model.util.MultimoneyResult.Loading
+import com.multimoney.domain.model.util.MultimoneyResult.Success
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnInitValues
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnOpenOnFidoSdk
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 @Preview
@@ -39,14 +50,24 @@ fun SignUpIdVerificationScreen(
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(OnContinueValueChange(true))
+//        viewModel.onUIEvent(
+//            OnCallInFidoToken(
+//                sharedViewModel.userData?.firstName ?: "",
+//                sharedViewModel.userData?.lastName ?: "",
+//                sharedViewModel.userData?.email ?: "",
+//                context.packageName,
+//                Brand.Revamp.id,
+//                sharedViewModel.userData?.email ?: ""
+//            )
+//        )
         viewModel.onUIEvent(
             OnCallInFidoToken(
-                sharedViewModel.userData?.firstName ?: "",
-                sharedViewModel.userData?.lastName ?: "",
-                sharedViewModel.userData?.email ?: "",
+                "Diego",
+                "Sanchez",
+                "diegomm2@gmail.com",
                 context.packageName,
                 Brand.Revamp.id,
-                sharedViewModel.userData?.email ?: ""
+                "diegomm2@gmail.com"
             )
         )
     }
@@ -56,21 +77,48 @@ fun SignUpIdVerificationScreen(
             viewModel.onUIEvent(OnOpenOnFidoSdk(result))
         }
 
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collectLatest { event ->
+            when (event) {
+                is OnOnFidoCompleted -> sharedViewModel.nextStep()
+            }
+        }
+        viewModel.onFidoTokenEvent.collectLatest { event ->
+            event.onSuccess {
+
+            }.onLoading {
+
+            }.onFailure {
+
+            }
+        }
+    }
+
     LaunchedEffect(viewModel.uiState.onFidoTokenSuccess) {
-        sharedViewModel.nextAction = {
-            launchOnFidoActivityResult.launch(
-                viewModel.onFidoHelper.getOnFidoIntent(
-                    viewModel.uiState.onFidoTokenSuccess.second?.sdkToken ?: "",
-                    viewModel.onRefreshToken(
-                        sharedViewModel.userData?.firstName ?: "",
-                        sharedViewModel.userData?.lastName ?: "",
-                        sharedViewModel.userData?.email ?: "",
-                        context.packageName,
-                        Brand.Revamp.id,
-                        sharedViewModel.userData?.email ?: ""
+        if (viewModel.isFirstLaunch.not()) {
+            sharedViewModel.nextAction = {
+                launchOnFidoActivityResult.launch(
+                    viewModel.onFidoHelper.getOnFidoIntent(
+                        viewModel.uiState.onFidoTokenSuccess.second?.sdkToken ?: "",
+//                    viewModel.onRefreshToken(
+//                        sharedViewModel.userData?.firstName ?: "",
+//                        sharedViewModel.userData?.lastName ?: "",
+//                        sharedViewModel.userData?.email ?: "",
+//                        context.packageName,
+//                        Brand.Revamp.id,
+//                        sharedViewModel.userData?.email ?: ""
+//                    )
+                        viewModel.onRefreshToken(
+                            "Diego",
+                            "Sanchez",
+                            "diegomm2@gmail.com",
+                            context.packageName,
+                            Brand.Revamp.id,
+                            "diegomm2@gmail.com"
+                        )
                     )
                 )
-            )
+            }
         }
     }
 
@@ -83,12 +131,6 @@ fun SignUpIdVerificationScreen(
     LaunchedEffect(viewModel.uiState.onFidoTokenFailure) {
         if (viewModel.isFirstLaunch.not()) {
             sharedViewModel.openDialog = viewModel.uiState.onFidoTokenFailure
-        }
-    }
-
-    LaunchedEffect(viewModel.uiState.hasOnFidoCompleted) {
-        if (viewModel.isFirstLaunch.not()) {
-            sharedViewModel.nextStep()
         }
     }
 

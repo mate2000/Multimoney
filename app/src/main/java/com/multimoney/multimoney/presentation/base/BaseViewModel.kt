@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.connectivity.Connectivity
+import com.multimoney.domain.model.security.OnfidoToken
+import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,8 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
     var isLoading by mutableStateOf(false)
 
     var openDialog by mutableStateOf(DialogParameters())
+
+    var baseEvent = MutableSharedFlow<Any>()
 
     @Inject
     lateinit var connectivity: Connectivity
@@ -96,6 +100,12 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
                     else -> Unit
                 }
             }
+        }
+    }
+
+    fun emitBaseEvent(data: Any) {
+        viewModelScope.launch {
+            baseEvent.emit(data)
         }
     }
 }

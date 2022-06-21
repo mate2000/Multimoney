@@ -37,6 +37,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
@@ -77,7 +79,7 @@ fun OnBoarding(
                 progressColor = WhiteTransparency70,
                 modifier = Modifier
                     .wrapContentHeight()
-                    .padding(top = 12.dp)
+                    .padding(top = 16.dp, end = 16.dp, start = 16.dp)
             )
         }
 
@@ -94,7 +96,7 @@ fun OnBoarding(
                     .fillMaxWidth()
                     .padding(top = 40.dp)
                     .weight(0.13f),
-                style = Typography.h4.copy(color = DefaultWhite, fontWeight = FontWeight.SemiBold)
+                style = Typography.h4.copy(color = WhiteTransparency90, fontWeight = FontWeight.SemiBold)
             )
             Text(
                 text = stringResource(id = viewModel.subtitle),
@@ -102,7 +104,7 @@ fun OnBoarding(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.11f),
-                style = Typography.h6.copy(color = DefaultWhite)
+                style = Typography.h6.copy(color = WhiteTransparency80)
             )
             CustomButton(
                 modifier = Modifier

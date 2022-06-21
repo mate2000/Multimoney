@@ -17,10 +17,12 @@ val Primary700 = Color(0xFF002E86)
 val Secondary500 = Color(0xFF4C49CD)
 
 // Semantic Negative
+val SemanticNegative400 = Color(0xFFF37C7C)
 val SemanticNegative500 = Color(0xFFE91616)
 
 // Semantic Positive
 val SemanticPositive600 = Color(0XFF32AC2A)
+val ButtonGreen = Color(0xFF49D249)
 val LinkGreen = Color(0xFF69CA59)
 
 // Complementary 3

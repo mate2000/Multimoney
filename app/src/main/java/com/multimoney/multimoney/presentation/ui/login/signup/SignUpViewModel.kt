@@ -1,8 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,7 +21,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -35,8 +31,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     val biometricHelper: BiometricHelper,
     val gsonHelper: GsonHelper,
-    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase,
-    val onFidoHelper: OnFidoHelper
+    private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
 ) : BaseViewModel() {
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -129,12 +124,6 @@ class SignUpViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun openWhatsAppDeepLink(context: Context, link: String) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(link)
-        context.startActivity(intent)
     }
 
     private fun onBackClick(focusManager: FocusManager) {

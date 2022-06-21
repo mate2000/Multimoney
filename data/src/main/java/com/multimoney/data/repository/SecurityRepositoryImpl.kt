@@ -4,13 +4,14 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinResponse
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SecurityRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
@@ -107,6 +108,27 @@ class SecurityRepositoryImpl @Inject constructor(
             cellPhone,
             sendMethod,
             pkUser.toInt(),
+            idBrand,
+            user
+        ),
+        apolloCallMapper = { data ->
+            data.mapToDomainModel()
+        }
+    )
+
+    override suspend fun mutationOnFidoInitialProcess(
+        names: String,
+        lastNames: String,
+        identification: String,
+        applicationId: String,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<OnfidoToken?>> = fetchData(
+        apolloCall = securityApi.mutationOnFidoInitialProcess(
+            names,
+            lastNames,
+            identification,
+            applicationId,
             idBrand,
             user
         ),

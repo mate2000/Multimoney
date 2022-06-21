@@ -26,6 +26,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
@@ -80,7 +81,7 @@ fun SignUpPhoneScreen(
                     }
                 }
 
-                isContinueEnabled = isFormValid(countryCode)
+                sharedViewModel.onUIEvent(OnContinueClick(isFormValid(countryCode)))
             }
         }
     }
@@ -117,7 +118,8 @@ fun SignUpPhoneScreen(
                 }
                 sharedViewModel.apply {
                     userData?.phoneNumber = it
-                    isContinueEnabled = viewModel.isFormValid(countryCode)
+
+                    sharedViewModel.onUIEvent(OnContinueClick(viewModel.isFormValid(countryCode)))
                 }
             },
             onDebounceValidation = {
@@ -145,7 +147,7 @@ fun SignUpPhoneScreen(
                         phoneCode = it.countryPhoneCode
                         clearPhoneError()
                         phoneNumber = ""
-                        isContinueEnabled = isFormValid(countryCode)
+                        sharedViewModel.onUIEvent(OnContinueClick(isFormValid(countryCode)))
                     }
                 }
             }

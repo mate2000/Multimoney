@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.LinkGreen
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -62,7 +63,7 @@ fun OnBoarding(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
         Modifier
-            .background(DefaultBlack)
+            .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
             .pointerInput(Unit) { viewModel.onPress(this) }
     ) {

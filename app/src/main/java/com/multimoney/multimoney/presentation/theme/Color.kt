@@ -45,6 +45,7 @@ val WhiteTransparency30 = Color(0xFFFFFFFF).copy(alpha = 0.3f)
 val WhiteTransparency60 = Color(0xFFFFFFFF).copy(alpha = 0.6f)
 val WhiteTransparency70 = Color(0xFFFFFFFF).copy(alpha = 0.7f)
 val WhiteTransparency80 = Color(0xFFFFFFFF).copy(alpha = 0.8f)
+val WhiteTransparency90 = Color(0xFFFFFFFF).copy(alpha = 0.9f)
 
 // BlackTransparency
 val BlackTransparency50 = Color(0xFF000000).copy(alpha = 0.5f)

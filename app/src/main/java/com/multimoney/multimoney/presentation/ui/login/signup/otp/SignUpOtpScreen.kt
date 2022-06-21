@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FOUR
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
@@ -69,7 +70,7 @@ fun SignUpOtpScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
         sharedViewModel.apply {
-            sharedViewModel.onUIEvent(OnContinueClick(viewModel.isFormValid()))
+            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
             nextAction = {
                 userData?.currentStep = SignUpStep.Four.name
                 callMutationUpdateUserRegisterUseCase()
@@ -214,7 +215,7 @@ fun SignUpOtpScreen(
                     otp = it
                     isOtpFromSms = false
                     clearOtpError()
-                    sharedViewModel.onUIEvent(OnContinueClick(isFormValid()))
+                    sharedViewModel.onUIEvent(OnContinueEnable(isFormValid()))
                 }
             },
             isValueFromSms = viewModel.isOtpFromSms,

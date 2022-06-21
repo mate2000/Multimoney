@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.Nationalities
 
@@ -48,7 +49,7 @@ fun SignUpPersonalDataScreen(
             userData?.firstName?.let { viewModel.nameValue = it }
             userData?.lastName?.let { viewModel.lastNameValue = it }
             userData?.fullName?.let { viewModel.onSuccessDataInformationClient?.fullName = it }
-            sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
+            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
         }
     }
 
@@ -82,7 +83,7 @@ fun SignUpPersonalDataScreen(
                         userData?.firstName = ""
                         userData?.lastName = ""
                         userData?.fullName = ""
-                        sharedViewModel.onUIEvent(OnContinueClick(viewModel.validateFields()))
+                        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
                     }
                 }
             },

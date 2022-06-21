@@ -25,7 +25,9 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnInitValues
@@ -53,7 +55,7 @@ fun SignUpIdVerificationScreen(
 //                sharedViewModel.userData?.email ?: ""
 //            )
 //        )
-        sharedViewModel.onUIEvent(OnContinueClick(true))
+        sharedViewModel.onUIEvent(OnContinueEnable(true))
         viewModel.onUIEvent(
             OnCallInFidoToken(
                 "Diego",
@@ -80,10 +82,16 @@ fun SignUpIdVerificationScreen(
         viewModel.onFidoTokenEvent.collectLatest { event ->
             event.onSuccess {
 
+                sharedViewModel.onUIEvent(OnLoadingValueChange(false))
             }.onLoading {
-
+                sharedViewModel.onUIEvent(OnLoadingValueChange(true))
             }.onFailure {
-
+                sharedViewModel.onUIEvent(
+                    OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = viewModel.uiState.onFidoTokenFailure
+                    )
+                )
             }
         }
     }
@@ -113,18 +121,6 @@ fun SignUpIdVerificationScreen(
                     )
                 )
             }
-        }
-    }
-
-    LaunchedEffect(viewModel.uiState.isLoading) {
-        if (viewModel.isFirstLaunch.not()) {
-            sharedViewModel.isLoading = viewModel.uiState.isLoading
-        }
-    }
-
-    LaunchedEffect(viewModel.uiState.onFidoTokenFailure) {
-        if (viewModel.isFirstLaunch.not()) {
-            sharedViewModel.openDialog = viewModel.uiState.onFidoTokenFailure
         }
     }
 

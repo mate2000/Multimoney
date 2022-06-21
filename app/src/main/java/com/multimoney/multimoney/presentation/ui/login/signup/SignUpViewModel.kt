@@ -19,7 +19,11 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnIsBiometricAvailable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -146,7 +150,7 @@ class SignUpViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val currentStep: Int = SignUpStep.One.id,
+        val currentStep: Int = SignUpStep.Five.id,
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = true,
@@ -158,7 +162,12 @@ class SignUpViewModel @Inject constructor(
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
+            is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnIsBiometricAvailable -> isBiometricAvailable = event.value
+            is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
+            is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState =
+                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
         }
     }
 
@@ -166,8 +175,14 @@ class SignUpViewModel @Inject constructor(
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
+        data class OnContinueEnable(val enable: Boolean) : UIEvent()
         data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
-
+        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
+        data class OnFailureWithDialog(
+            val isLoading: Boolean,
+            val openDialog: DialogParameters
+        ) : UIEvent()
     }
 
     companion object {

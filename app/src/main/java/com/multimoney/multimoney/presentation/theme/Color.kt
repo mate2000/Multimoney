@@ -23,6 +23,7 @@ val SemanticNegative500 = Color(0xFFE91616)
 // Semantic Positive
 val SemanticPositive600 = Color(0XFF32AC2A)
 val ButtonGreen = Color(0xFF49D249)
+val LinkGreen = Color(0xFF69CA59)
 
 // Complementary 3
 val Complementary3500 = Color(0xFFFFBE11)
@@ -46,6 +47,7 @@ val WhiteTransparency30 = Color(0xFFFFFFFF).copy(alpha = 0.3f)
 val WhiteTransparency60 = Color(0xFFFFFFFF).copy(alpha = 0.6f)
 val WhiteTransparency70 = Color(0xFFFFFFFF).copy(alpha = 0.7f)
 val WhiteTransparency80 = Color(0xFFFFFFFF).copy(alpha = 0.8f)
+val WhiteTransparency90 = Color(0xFFFFFFFF).copy(alpha = 0.9f)
 
 // BlackTransparency
 val BlackTransparency50 = Color(0xFF000000).copy(alpha = 0.5f)
@@ -87,8 +89,8 @@ val DarkColorPalette = MultimoneyColors(
 val LightColorPalette = MultimoneyColors(
     primary = Primary500,
     secondary = Secondary500,
-    background = DefaultWhite,
-    backgroundSplash = Primary200,
+    background = PrimaryBlack,
+    backgroundSplash = PrimaryBlack,
     text = GrayScale800,
     textLink = Primary500,
     textInformation = Primary500,

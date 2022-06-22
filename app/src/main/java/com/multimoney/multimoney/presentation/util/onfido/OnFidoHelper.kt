@@ -5,14 +5,14 @@ import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUs
 import com.onfido.android.sdk.capture.DocumentType
 import com.onfido.android.sdk.capture.OnfidoConfig
 import com.onfido.android.sdk.capture.OnfidoFactory
-import com.onfido.android.sdk.capture.token.TokenExpirationHandler
 import com.onfido.android.sdk.capture.ui.options.FlowStep
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class OnFidoHelper @Inject constructor(@ApplicationContext private val context: Context) {
+class OnFidoHelper @Inject constructor(
+    @ApplicationContext private val context: Context,
+    val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase
+) {
 
     private val flowStepsWithOptions: Array<FlowStep> = arrayOf(
         FlowStep.CAPTURE_DOCUMENT,
@@ -25,16 +25,16 @@ class OnFidoHelper @Inject constructor(@ApplicationContext private val context: 
 
     private fun getOnFidoConfig(
         onFidoSDKToken: String,
-        tokenExpirationHandler: TokenExpirationHandler
-    ) = OnfidoConfig.builder(context)
-        .withSDKToken(
-            onFidoSDKToken,
-            tokenExpirationHandler = tokenExpirationHandler
-        )
-        .withCustomFlow(flowStepsWithOptions).withAllowedDocumentTypes(onFidoDocuments).build()
+    ) = OnfidoConfig.builder(context).withSDKToken(
+        onFidoSDKToken,
+        OnFidoExpirationHandler(mutationOnFidoInitialProcessUseCase)
+    ).withCustomFlow(flowStepsWithOptions).withAllowedDocumentTypes(onFidoDocuments).build()
 
     fun getOnFidoClient() = OnfidoFactory.create(context).client
 
-    fun getOnFidoIntent(onFidoSDKToken: String, tokenExpirationHandler: TokenExpirationHandler) =
-        getOnFidoClient().createIntent(getOnFidoConfig(onFidoSDKToken, tokenExpirationHandler))
+    fun getOnFidoIntent(
+        onFidoSDKToken: String,
+    ) = getOnFidoClient().createIntent(
+        getOnFidoConfig(onFidoSDKToken)
+    )
 }

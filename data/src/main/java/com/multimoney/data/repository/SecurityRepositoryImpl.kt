@@ -12,11 +12,11 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SecurityRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import java.io.Serializable
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
-) : BaseRepository(),
-    SecurityRepository {
+) : BaseRepository(), SecurityRepository, Serializable {
 
     override suspend fun mutationUserValidation(
         email: String,

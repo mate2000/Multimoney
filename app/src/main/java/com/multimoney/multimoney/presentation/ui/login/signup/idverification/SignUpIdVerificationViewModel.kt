@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.idverification
 
 import androidx.activity.result.ActivityResult
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.model.security.OnfidoToken
@@ -21,10 +22,10 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpIdVerificationViewModel @Inject constructor(
@@ -65,14 +66,15 @@ class SignUpIdVerificationViewModel @Inject constructor(
         identification: String,
         applicationId: String,
         idBrand: Int,
-        user: String
+        user: String,
+        injectNewToken: (String?) -> Unit
     ) {
         viewModelScope.launch {
             mutationOnFidoInitialProcessUseCase.invoke(
                 names, lastNames, identification, applicationId, idBrand, user
             ).collectLatest { result ->
                 result.onSuccess {
-                    //onFidoHelper.refreshToken.invoke(it?.sdkToken ?: "")
+                    injectNewToken(it?.sdkToken ?: "")
                 }
                 result.onFailure {
                     // Close the sdk
@@ -99,7 +101,14 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 }
 
                 override fun onError(exception: OnfidoException) {
-                    emitBaseEvent(OnOnFidoError(DialogParameters(description = onFidoError)))
+                    emitBaseEvent(
+                        OnOnFidoError(
+                            DialogParameters(
+                                description = onFidoError,
+                                isActive = mutableStateOf(true)
+                            )
+                        )
+                    )
                 }
             })
     }
@@ -122,7 +131,8 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 event.identification,
                 event.applicationId,
                 event.idBrand,
-                event.user
+                event.user,
+                event.injectNewToken
             )
         }
     }
@@ -145,7 +155,8 @@ class SignUpIdVerificationViewModel @Inject constructor(
             val identification: String,
             val applicationId: String,
             val idBrand: Int,
-            val user: String
+            val user: String,
+            val injectNewToken: (String?) -> Unit
         ) : UIEvent()
     }
 

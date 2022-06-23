@@ -1,12 +1,15 @@
 package com.multimoney.multimoney.presentation.util.onfido
 
-import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.onfido.android.sdk.capture.token.TokenExpirationHandler
 
-class OnFidoExpirationHandler(val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase) :
+class OnFidoExpirationHandler(@Transient val onRefresh: RefreshToken) :
     TokenExpirationHandler {
 
     override fun refreshToken(injectNewToken: (String?) -> Unit) {
-        injectNewToken("")
+        onRefresh.refreshToke(injectNewToken)
+    }
+
+    interface RefreshToken {
+        fun refreshToke(injectNewToken: (String?) -> Unit)
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -71,15 +72,21 @@ fun SignUpIdVerificationScreen(
                     launchOnFidoActivityResult.launch(
                         viewModel.onFidoHelper.getOnFidoIntent(
                             it?.sdkToken ?: "",
-//                RefreshOnFidoToken(
-//                sharedViewModel.userData?.firstName ?: "",
-//                sharedViewModel.userData?.lastName ?: "",
-//                sharedViewModel.userData?.email ?: "",
-//                context.packageName,
-//                Brand.Revamp.id,
-//                sharedViewModel.userData?.email ?: ""
-//                )
+                            onRefreshToke = { refreshToken ->
+                                viewModel.onUIEvent(
+                                    RefreshOnFidoToken(
+                                        sharedViewModel.userData?.firstName ?: "",
+                                        sharedViewModel.userData?.lastName ?: "",
+                                        sharedViewModel.userData?.email ?: "",
+                                        context.packageName,
+                                        Brand.Revamp.id,
+                                        sharedViewModel.userData?.email ?: "",
+                                        refreshToken
+                                    )
+                                )
+                            }
                         )
+
                     )
                 }
             }.onLoading {
@@ -89,7 +96,8 @@ fun SignUpIdVerificationScreen(
                     OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            description = it.getError() ?: ""
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
                         )
                     )
                 )
@@ -98,24 +106,14 @@ fun SignUpIdVerificationScreen(
     }
 
     LaunchedEffect(true) {
-//        viewModel.onUIEvent(
-//            OnCallInFidoToken(
-//                sharedViewModel.userData?.firstName ?: "",
-//                sharedViewModel.userData?.lastName ?: "",
-//                sharedViewModel.userData?.email ?: "",
-//                context.packageName,
-//                Brand.Revamp.id,
-//                sharedViewModel.userData?.email ?: ""
-//            )
-//        )
         viewModel.onUIEvent(
             OnCallInFidoToken(
-                "Diego",
-                "Sanchez",
-                "diegomm2@gmail.com",
+                sharedViewModel.userData?.firstName ?: "",
+                sharedViewModel.userData?.lastName ?: "",
+                sharedViewModel.userData?.email ?: "",
                 context.packageName,
                 Brand.Revamp.id,
-                "diegomm2@gmail.com"
+                sharedViewModel.userData?.email ?: ""
             )
         )
     }

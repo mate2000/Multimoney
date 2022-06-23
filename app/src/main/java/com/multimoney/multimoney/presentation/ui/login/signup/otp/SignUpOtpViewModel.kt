@@ -126,7 +126,7 @@ class SignUpOtpViewModel @Inject constructor(
                         DialogParameters(
                             description = it.getError().toString(),
                             isActive = mutableStateOf(true),
-                            positiveText = R.string.sign_up_otp_error_positive_label,
+                            positiveText = R.string.contact,
                             negativeText = R.string.cancel,
                             negativeAction = {
                                 navigateToSignIn()
@@ -163,7 +163,5 @@ class SignUpOtpViewModel @Inject constructor(
         const val OTP_MESSAGE_REGEX = "(|^)\\d{$TOTAL_DIGITS}"
 
         const val SEND_METHOD_PHONE = "PHONE"
-
-        const val PHONE_HARDCODED = "50371680915"
     }
 }

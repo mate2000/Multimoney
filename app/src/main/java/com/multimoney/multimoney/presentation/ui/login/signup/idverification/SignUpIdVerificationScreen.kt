@@ -1,7 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.idverification
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,59 +12,110 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoError
+import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken
+import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnInitValues
+import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnOpenOnFidoSdk
+import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.onfido.android.sdk.capture.ExitCode
-import com.onfido.android.sdk.capture.Onfido
-import com.onfido.android.sdk.capture.errors.OnfidoException
-import com.onfido.android.sdk.capture.upload.Captures
 
 @Composable
 @Preview
 fun SignUpIdVerificationScreen(
-    sharedViewModel: SignUpViewModel = hiltViewModel()
+    sharedViewModel: SignUpViewModel = hiltViewModel(),
+    viewModel: SignUpIdVerificationViewModel = hiltViewModel()
 ) {
-    sharedViewModel.isContinueEnabled = true
-    val onfidoError = stringResource(id = R.string.placeholder_error)
 
+    val context = LocalContext.current
     val launchOnFidoActivityResult =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            sharedViewModel.onFidoHelper.getOnFidoClient().handleActivityResult(
-                result.resultCode,
-                result.data,
-                object : Onfido.OnfidoResultListener {
-                    override fun userCompleted(captures: Captures) {
-                        sharedViewModel.nextStep()
-                    }
+        rememberLauncherForActivityResult(StartActivityForResult()) { result ->
+            viewModel.onUIEvent(OnOpenOnFidoSdk(result))
+        }
 
-                    override fun userExited(exitCode: ExitCode) {
-                        // Empty on purpose
-                    }
+    viewModel.onUIEvent(OnInitValues(false, stringResource(id = R.string.placeholder_error)))
 
-                    override fun onError(exception: OnfidoException) {
-                        sharedViewModel.openDialog = DialogParameters(
-                            description = onfidoError,
+    LaunchedEffect(context) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnOnFidoCompleted -> sharedViewModel.nextStep()
+                is OnOnFidoError -> sharedViewModel.onUIEvent(OnOpenDialogValueChange(event.error))
+            }
+        }
+    }
+
+    LaunchedEffect(context) {
+        viewModel.onFidoTokenEvent.collect { event ->
+            event.onSuccess {
+                sharedViewModel.onUIEvent(OnLoadingValueChange(false))
+                sharedViewModel.onUIEvent(OnContinueEnable(true))
+                sharedViewModel.nextAction = {
+                    launchOnFidoActivityResult.launch(
+                        viewModel.onFidoHelper.getOnFidoIntent(
+                            it?.sdkToken ?: "",
+                            onRefreshToke = { refreshToken ->
+                                viewModel.onUIEvent(
+                                    RefreshOnFidoToken(
+                                        sharedViewModel.userData?.firstName ?: "",
+                                        sharedViewModel.userData?.lastName ?: "",
+                                        sharedViewModel.userData?.email ?: "",
+                                        context.packageName,
+                                        Brand.Revamp.id,
+                                        sharedViewModel.userData?.email ?: "",
+                                        refreshToken
+                                    )
+                                )
+                            }
+                        )
+
+                    )
+                }
+            }.onLoading {
+                sharedViewModel.onUIEvent(OnLoadingValueChange(true))
+            }.onFailure {
+                sharedViewModel.onUIEvent(
+                    OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         )
-                    }
-                })
+                    )
+                )
+            }
         }
+    }
 
     LaunchedEffect(true) {
-        sharedViewModel.nextAction = {
-            launchOnFidoActivityResult.launch(
-                sharedViewModel.onFidoHelper.getOnFidoIntent()
+        viewModel.onUIEvent(
+            OnCallInFidoToken(
+                sharedViewModel.userData?.firstName ?: "",
+                sharedViewModel.userData?.lastName ?: "",
+                sharedViewModel.userData?.email ?: "",
+                context.packageName,
+                Brand.Revamp.id,
+                sharedViewModel.userData?.email ?: ""
             )
-        }
+        )
     }
 
     Column(

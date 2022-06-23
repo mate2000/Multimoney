@@ -6,13 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.connectivity.Connectivity
+import com.multimoney.domain.model.security.OnfidoToken
+import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 open class BaseViewModel @Inject constructor() : ViewModel() {
 
@@ -20,14 +22,15 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
 
     var openDialog by mutableStateOf(DialogParameters())
 
+    var baseEvent = MutableSharedFlow<Any>()
+
     @Inject
     lateinit var connectivity: Connectivity
 
     /**
      * Use this val to store one time events defined in NavigationEvent Class
      **/
-    private val _navigationEvent = Channel<NavEvent>()
-    val navigationEvent = _navigationEvent.receiveAsFlow()
+    private val navigationEvent = MutableSharedFlow<NavEvent>()
 
     /**
      * Use this function to call use cases in a coroutine in the viewModel
@@ -66,7 +69,7 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
      **/
     private fun sendNavigationEvent(event: NavEvent) {
         viewModelScope.launch {
-            _navigationEvent.send(event)
+            navigationEvent.emit(event)
         }
     }
 
@@ -89,7 +92,7 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
         onPopBackStack: () -> Unit = {}
     ) {
         viewModelScope.launch {
-            navigationEvent.collect { event ->
+            navigationEvent.collectLatest { event ->
                 when (event) {
                     is NavEvent.Navigate -> onNavigate(event)
                     is NavEvent.PopAndNavigate -> onPopAndNavigate(event)
@@ -97,6 +100,12 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
                     else -> Unit
                 }
             }
+        }
+    }
+
+    fun emitBaseEvent(data: Any) {
+        viewModelScope.launch {
+            baseEvent.emit(data)
         }
     }
 }

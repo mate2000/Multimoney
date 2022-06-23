@@ -45,6 +45,9 @@ val SemanticPositive600 = Color(0XFF32AC2A)
 val SemanticPositive700 = Color(0XFF1E6719)
 val SemanticPositive800 = Color(0XFF0C290A)
 
+// Complementary 3
+val Complementary3500 = Color(0xFFFFBE11)
+
 // GrayScale
 val DefaultWhite = Color(0xFFFFFFFF)
 val DefaultBlack = Color(0xFF000000)

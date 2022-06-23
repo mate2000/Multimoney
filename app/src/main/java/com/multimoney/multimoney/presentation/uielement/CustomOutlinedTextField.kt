@@ -44,6 +44,7 @@ import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -171,8 +172,8 @@ fun CustomOutlinedTextField(
             }
         }
     } else {
-        labelColor = GrayScale800
-        backgroundColor = DefaultWhite
+        labelColor = DefaultWhite
+        backgroundColor = WhiteTransparency10
         placeholderColor = GrayScale500
         unfocusedIndicatorColor = GrayScale400
         errorIndicatorColor = SemanticNegative500

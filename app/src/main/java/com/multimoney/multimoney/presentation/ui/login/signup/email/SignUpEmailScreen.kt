@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailV
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserEmailValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -56,17 +57,6 @@ fun SignUpEmailScreen(
     // Properties
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-
-    viewModel.onUIEvent(
-        OnStart(
-            userCompletedDialogDescription = stringResource(id = R.string.sign_up_email_user_completed_dialog_description),
-            linkWhatsapp = stringResource(
-                id = R.string.whatsapp_deep_link,
-                SignUpViewModel.PHONE_HARDCODED
-            ),
-            blockedMessage = stringResource(id = R.string.sign_up_email_blocked_dialog_description)
-        )
-    )
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(OnNextActionValueChange {
@@ -85,6 +75,8 @@ fun SignUpEmailScreen(
     }
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(OnValidateForm)
+
         viewModel.onUserDataValidationEvent.collect { event ->
             event.onSuccess { userData ->
                 viewModel.onUIEvent(
@@ -120,6 +112,17 @@ fun SignUpEmailScreen(
             }
         }
     }
+
+    viewModel.onUIEvent(
+        OnStart(
+            userCompletedDialogDescription = stringResource(id = R.string.sign_up_email_user_completed_dialog_description),
+            linkWhatsapp = stringResource(
+                id = R.string.whatsapp_deep_link,
+                SignUpViewModel.PHONE_HARDCODED
+            ),
+            blockedMessage = stringResource(id = R.string.sign_up_email_blocked_dialog_description)
+        )
+    )
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
         Text(

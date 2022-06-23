@@ -54,9 +54,10 @@ class SignUpViewModel @Inject constructor(
 
     fun nextStep() {
         if (uiState.currentStep <= SIGN_UP_TOTAL_STEPS) {
+            val newCurrentStep = uiState.currentStep + 1
             uiState = uiState.copy(
-                currentStep = uiState.currentStep + 1,
-                isCloseVisible = uiState.currentStep > SignUpStep.One.id
+                currentStep = newCurrentStep,
+                isCloseVisible = newCurrentStep > SignUpStep.One.id
             )
         } else {
             completedProcessAction()
@@ -65,9 +66,10 @@ class SignUpViewModel @Inject constructor(
 
     fun previousStep() {
         if (uiState.currentStep > SignUpStep.One.id) {
+            val newCurrentStep = uiState.currentStep - 1
             uiState = uiState.copy(
-                currentStep = uiState.currentStep - 1,
-                isCloseVisible = uiState.currentStep > SignUpStep.One.id
+                currentStep = newCurrentStep,
+                isCloseVisible = newCurrentStep > SignUpStep.One.id
             )
         } else {
             popAndNavigateTo(

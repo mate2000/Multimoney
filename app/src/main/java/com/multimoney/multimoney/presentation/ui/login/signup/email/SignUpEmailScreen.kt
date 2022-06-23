@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -105,7 +106,10 @@ fun SignUpEmailScreen(
                 sharedViewModel.onUIEvent(
                     OnFailureWithDialog(
                         isLoading = false,
-                        openDialog = DialogParameters(description = it.getError() ?: "")
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
                     )
                 )
             }.onLoading {

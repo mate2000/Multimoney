@@ -36,16 +36,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary400
-import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -139,7 +140,7 @@ fun CustomOutlinedTextField(
     val placeholderColor: Color
 
     if (isSystemInDarkTheme()) {
-        labelColor = GrayScale300
+        labelColor = DefaultWhite
         backgroundColor = GrayScale600
         placeholderColor = WhiteTransparency60
         when {
@@ -154,21 +155,21 @@ fun CustomOutlinedTextField(
             else -> {
                 backgroundColor = GrayScale500
                 iconTintColor = GrayScale400
-                textColor = GrayScale400
+                textColor = DefaultWhite
             }
         }
     } else {
-        labelColor = GrayScale800
-        backgroundColor = DefaultWhite
+        labelColor = DefaultWhite
+        backgroundColor = WhiteTransparency10
         placeholderColor = GrayScale500
         when {
             isError -> {
-                iconTintColor = Primary400
-                textColor = GrayScale800
+                iconTintColor = SemanticNegative400
+                textColor = SemanticNegative400
             }
             enabled -> {
                 iconTintColor = Primary400
-                textColor = GrayScale800
+                textColor = DefaultWhite
             }
             else -> {
                 backgroundColor = GrayScale300
@@ -204,7 +205,7 @@ fun CustomOutlinedTextField(
                     }
                 },
             value = value ?: "",
-            shape = RoundedCornerShape(25),
+            shape = RoundedCornerShape(50),
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
@@ -261,8 +262,8 @@ fun CustomOutlinedTextField(
             isError = isError || emptyError,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = backgroundColor,
-                focusedIndicatorColor = Primary500,
-                unfocusedIndicatorColor = GrayScale400,
+                focusedIndicatorColor = DefaultBlack,
+                unfocusedIndicatorColor = DefaultBlack,
                 errorIndicatorColor = SemanticNegative500,
                 textColor = textColor,
                 cursorColor = textColor

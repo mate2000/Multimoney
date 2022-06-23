@@ -17,10 +17,13 @@ val Primary700 = Color(0xFF002E86)
 val Secondary500 = Color(0xFF4C49CD)
 
 // Semantic Negative
+val SemanticNegative400 = Color(0xFFF37C7C)
 val SemanticNegative500 = Color(0xFFE91616)
 
 // Semantic Positive
 val SemanticPositive600 = Color(0XFF32AC2A)
+val ButtonGreen = Color(0xFF49D249)
+val LinkGreen = Color(0xFF69CA59)
 
 // Complementary 3
 val Complementary3500 = Color(0xFFFFBE11)
@@ -39,10 +42,12 @@ val GrayScale800 = Color(0xFF1A1A1A)
 // WhiteTransparency
 val WhiteTransparency10 = Color(0xFFFFFFFF).copy(alpha = 0.1f)
 val WhiteTransparency12 = Color(0xFFFFFFFF).copy(alpha = 0.12f)
+val WhiteTransparency20 = Color(0xFFFFFFFF).copy(alpha = 0.2f)
 val WhiteTransparency30 = Color(0xFFFFFFFF).copy(alpha = 0.3f)
 val WhiteTransparency60 = Color(0xFFFFFFFF).copy(alpha = 0.6f)
 val WhiteTransparency70 = Color(0xFFFFFFFF).copy(alpha = 0.7f)
 val WhiteTransparency80 = Color(0xFFFFFFFF).copy(alpha = 0.8f)
+val WhiteTransparency90 = Color(0xFFFFFFFF).copy(alpha = 0.9f)
 
 // BlackTransparency
 val BlackTransparency50 = Color(0xFF000000).copy(alpha = 0.5f)
@@ -50,6 +55,9 @@ val BlackTransparency50 = Color(0xFF000000).copy(alpha = 0.5f)
 // Dark Theme
 val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
+
+// Todo this probably will change when the team of design update the design system
+val PrimaryBlack = Color(0xFF080808)
 
 @Immutable
 data class MultimoneyColors(
@@ -69,7 +77,7 @@ val DarkColorPalette = MultimoneyColors(
     primary = Purple700,
     secondary = Purple500,
     background = DefaultBlack,
-    backgroundSplash = Primary200,
+    backgroundSplash = PrimaryBlack,
     text = DefaultWhite,
     textLink = Primary500,
     textInformation = Primary500,
@@ -81,8 +89,8 @@ val DarkColorPalette = MultimoneyColors(
 val LightColorPalette = MultimoneyColors(
     primary = Primary500,
     secondary = Secondary500,
-    background = DefaultWhite,
-    backgroundSplash = Primary200,
+    background = PrimaryBlack,
+    backgroundSplash = PrimaryBlack,
     text = GrayScale800,
     textLink = Primary500,
     textInformation = Primary500,

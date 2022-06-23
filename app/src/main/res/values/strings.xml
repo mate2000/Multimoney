@@ -47,9 +47,10 @@
     <string name="sign_in_biometric_enter_with_password_link">ingresar tu contraseña</string>
 
     <!-- Sign Up Email -->
-    <string name="sign_up_email_title">¡Nos alegra \ntenerte aquí 👋!</string>
+    <string name="sign_up_email_header">Ingresá tu correo electrónico</string>
+    <string name="sign_up_email_title">¡Nos alegra \ntenerte aquí!</string>
     <string name="sign_up_email_required">Correo electrónico requerido</string>
-    <string name="sign_up_email_placeholder">name@email.com</string>
+    <string name="sign_up_email_placeholder">nombre@email.com</string>
     <string name="sign_up_email_not_valid">Correo electrónico incorrecto</string>
     <string name="sign_up_email_user_completed_dialog_title">Ya tenés una cuenta registrada con este correo</string>
     <string name="sign_up_email_user_completed_dialog_description">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
@@ -124,6 +125,7 @@
     <string name="sign_up_password_requirement_one_uppercase">Mayúsculas</string>
     <string name="sign_up_password_requirement_one_lowercase">Minúsculas</string>
     <string name="sign_up_password_requirement_one_number">Números</string>
+    <string name="sign_up_password_requirement_one_characer">1 caracter especial</string>
     <string name="sign_up_password_confirm_password_error">Las contraseñas son diferentes</string>
     <string name="sign_up_password_requirement_no_the_same_consecutive_character">No más de tres caracteres iguales consecutivos ya sean numéricos o alfabéticos.</string>
     <string name="sign_up_password_requirement_max_three_characters_or_number_consecutive">Máximo 3 caracteres numérico o alfabéticos consecutivos.</string>

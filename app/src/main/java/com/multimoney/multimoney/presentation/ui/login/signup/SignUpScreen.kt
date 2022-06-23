@@ -108,7 +108,8 @@ fun SignUpScreen(
             message = viewModel.uiState.openDialog.description,
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveText),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeText),
-            openDialogCustom = viewModel.uiState.openDialog.isActive
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
 }

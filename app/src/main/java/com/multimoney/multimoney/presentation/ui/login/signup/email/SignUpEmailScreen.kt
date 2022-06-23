@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -22,17 +21,30 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
-import com.multimoney.data.util.catalog.UserStatus
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserEmailValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
 @Preview
@@ -41,88 +53,72 @@ fun SignUpEmailScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
-    val linkWhatsapp = stringResource(
-        id = R.string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
-    )
-    val blockedMessage = stringResource(id = R.string.sign_up_email_blocked_dialog_description)
-    val context = LocalContext.current
-
     // Properties
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
+    viewModel.onUIEvent(
+        OnStart(
+            userCompletedDialogDescription = stringResource(id = R.string.sign_up_email_user_completed_dialog_description),
+            linkWhatsapp = stringResource(
+                id = R.string.whatsapp_deep_link,
+                SignUpViewModel.PHONE_HARDCODED
+            ),
+            blockedMessage = stringResource(id = R.string.sign_up_email_blocked_dialog_description)
+        )
+    )
+
     LaunchedEffect(true) {
-        viewModel.isFirstLaunch = true
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
-        sharedViewModel.nextAction = {
-            viewModel.apply {
-                if (isDataChanged() || isUserStatusIncomplete.not()) {
-                    callMutationUserValidationUseCase(
-                        userEmail,
-                        SignUpStep.One.name,
-                        Brand.Revamp.id
+        sharedViewModel.onUIEvent(OnNextActionValueChange {
+            viewModel.onUIEvent(OnNextActionClick {
+                sharedViewModel.onUIEvent(
+                    OnNextStep
+                )
+            })
+        })
+
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.onUserDataValidationEvent.collect { event ->
+            event.onSuccess { userData ->
+                viewModel.onUIEvent(
+                    OnUserDataValidationSuccess(
+                        context = context,
+                        currentStep = sharedViewModel.uiState.currentStep,
+                        userData = userData,
+                        onUseDataValueChange = { sharedViewModel.onUIEvent(OnUseDataValueChange(userData)) },
+                        nextStepAction = { sharedViewModel.onUIEvent(OnNextStep) },
+                        moveToStepAction = {
+                            sharedViewModel.onUIEvent(
+                                OnMoveToStep(
+                                    SignUpStep.Search.getIdByName(
+                                        userData?.currentStep
+                                    )
+                                )
+                            )
+                        },
+                        previousStepAction = { sharedViewModel.onUIEvent(OnPreviousStep) },
+                        onLoadingValueChange = { sharedViewModel.onUIEvent(OnLoadingValueChange(false)) },
+                        onOpenDialog = { dialog -> sharedViewModel.onUIEvent(OnOpenDialogValueChange(dialog)) }
                     )
-                } else {
-                    sharedViewModel.nextStep()
-                }
+                )
+            }.onFailure {
+                sharedViewModel.onUIEvent(
+                    OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(description = it.getError() ?: "")
+                    )
+                )
+            }.onLoading {
+                sharedViewModel.onUIEvent(OnLoadingValueChange(true))
             }
         }
-    }
-
-    LaunchedEffect(viewModel.isLoading) {
-        if (viewModel.isFirstLaunch.not()) {
-            sharedViewModel.isLoading = viewModel.isLoading
-        }
-    }
-
-    LaunchedEffect(viewModel.onSuccessUserDataValidation) {
-        viewModel.apply {
-            if (isFirstLaunch.not()) {
-                sharedViewModel.apply {
-                    userData = onSuccessUserDataValidation
-                    if (userData?.userStatus == UserStatus.Incomplete.name) {
-                        isUserStatusIncomplete = true
-                        if (SignUpStep.Search.getIdByName(userData?.currentStep) == uiState.currentStep) {
-                            nextStep()
-                        } else {
-                            moveToStep(SignUpStep.Search.getIdByName(userData?.currentStep))
-                        }
-                    } else if (userData?.userStatus == UserStatus.Active.name) {
-                        isUserStatusIncomplete = false
-                        openDialog = DialogParameters(
-                            title = R.string.sign_up_email_user_completed_dialog_title,
-                            description = userCompletedDialogDescription,
-                            positiveText = R.string.sign_up_email_user_completed_dialog_positive,
-                            positiveAction = { previousStep() },
-                            isActive = mutableStateOf(true)
-                        )
-                    } else if (userData?.userStatus == UserStatus.Blocked.name) {
-                        isUserStatusIncomplete = false
-                        openDialog = DialogParameters(
-                            title = R.string.sign_up_email_blocked_dialog_title,
-                            description = blockedMessage,
-                            isActive = mutableStateOf(true),
-                            positiveText = R.string.contact,
-                            negativeText = R.string.cancel,
-                            positiveAction = {
-                                context.openWhatsAppDeepLink(linkWhatsapp)
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(viewModel.onFailure) {
-        if (viewModel.isFirstLaunch.not()) {
-            sharedViewModel.openDialog = viewModel.onFailure
-        }
-    }
-
-    viewModel.apply {
-        isFirstLaunch = false
-        userCompletedDialogDescription =
-            stringResource(id = R.string.sign_up_email_user_completed_dialog_description)
     }
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
@@ -141,15 +137,9 @@ fun SignUpEmailScreen(
 
         // Fields
         CustomOutlinedTextField(
-            value = viewModel.userEmail,
-            onValueChange = {
-                viewModel.apply {
-                    userEmail = it
-                    clearUserEmailError()
-                    sharedViewModel.onUIEvent(OnContinueEnable(isFormValid()))
-                }
-            },
-            onDebounceValidation = { viewModel.isUserEmailValid() },
+            value = viewModel.uiState.userEmail,
+            onValueChange = { value -> viewModel.onUIEvent(OnUserEmailValueChange(value)) },
+            onDebounceValidation = { viewModel.onUIEvent(OnValidateUserEmail) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Done
@@ -164,8 +154,8 @@ fun SignUpEmailScreen(
                 .padding(top = 24.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_email_required),
-            isError = viewModel.userEmailError.first,
-            errorMessage = stringResource(id = viewModel.userEmailError.second)
+            isError = viewModel.uiState.userEmailError.first,
+            errorMessage = stringResource(id = viewModel.uiState.userEmailError.second)
         )
     }
 }

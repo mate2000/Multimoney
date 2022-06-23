@@ -150,7 +150,7 @@ class SignUpViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val currentStep: Int = SignUpStep.Five.id,
+        val currentStep: Int = SignUpStep.One.id,
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = true,

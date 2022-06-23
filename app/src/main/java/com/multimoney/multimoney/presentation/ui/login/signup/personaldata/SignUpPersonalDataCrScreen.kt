@@ -84,7 +84,6 @@ fun SignUpPersonalDataCrScreen(
                 focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.sign_up_personal_data_document_cr),
-            leadingIcon = R.drawable.ic_identification,
             modifier = Modifier.padding(top = 44.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_required),

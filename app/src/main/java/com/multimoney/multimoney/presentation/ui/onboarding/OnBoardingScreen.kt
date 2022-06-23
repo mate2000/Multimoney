@@ -29,14 +29,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.theme.DefaultBlack
-import com.multimoney.multimoney.presentation.theme.LinkGreen
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
+import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -96,7 +94,10 @@ fun OnBoarding(
                     .fillMaxWidth()
                     .padding(top = 40.dp)
                     .weight(0.13f),
-                style = Typography.h4.copy(color = WhiteTransparency90, fontWeight = FontWeight.SemiBold)
+                style = Typography.h4.copy(
+                    color = WhiteTransparency90,
+                    fontWeight = FontWeight.SemiBold
+                )
             )
             Text(
                 text = stringResource(id = viewModel.subtitle),
@@ -109,8 +110,8 @@ fun OnBoarding(
             CustomButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.04f),
-                buttonType = CustomButtonType.PrimaryTertiary,
+                    .weight(0.035f),
+                buttonType = CustomButtonType.PrimaryPrimary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
                     viewModel.navigateToNextScreen(Screen.SignUpScreen.route)
@@ -137,7 +138,7 @@ fun OnBoarding(
                     style = TextStyle(
                         fontFamily = PoppinsFontFamily,
                         fontWeight = FontWeight.SemiBold,
-                        color = LinkGreen,
+                        color = MultimoneyTheme.colors.textLink,
                         fontSize = 14.sp,
                         textDecoration = TextDecoration.Underline
                     ),

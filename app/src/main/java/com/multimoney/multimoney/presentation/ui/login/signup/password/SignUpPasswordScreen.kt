@@ -24,6 +24,7 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -89,7 +90,10 @@ fun SignUpPasswordScreen(
             text = buildAnnotatedString {
                 withStyle(
                     style = Typography.h6.toSpanStyle()
-                        .copy(fontWeight = FontWeight.SemiBold)
+                        .copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
                 ) {
                     append(stringResource(id = R.string.sign_up_password_title))
                 }

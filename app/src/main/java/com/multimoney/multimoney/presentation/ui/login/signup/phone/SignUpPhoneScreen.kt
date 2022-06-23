@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -67,7 +68,10 @@ fun SignUpPhoneScreen(
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
         Text(
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            style = Typography.h6.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.SemiBold
+            ),
             text = stringResource(id = R.string.sign_up_phone_title),
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()
@@ -133,57 +137,5 @@ fun SignUpPhoneScreen(
                 }
             }
         )
-        Text(
-            text = stringResource(id = R.string.sign_up_phone_contact_by),
-            style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textSubhead),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp, bottom = 12.dp)
-        )
-        CustomCheckBox(
-            checked = true,
-            enabled = false,
-            onCheckedChange = { },
-            text = stringResource(id = R.string.sign_up_phone_contact_by_email),
-            isTextStart = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(bottom = 6.dp, end = 9.dp, top = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        )
-        Divider(color = MultimoneyTheme.colors.divider, thickness = 2.dp)
-
-        CustomCheckBox(
-            checked = viewModel.whatsapp,
-            onCheckedChange = {
-                sharedViewModel.contactMeans.whatsapp = it
-                viewModel.whatsapp = it
-            },
-            text = stringResource(id = R.string.sign_up_phone_contact_by_whatsapp),
-            isTextStart = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(bottom = 6.dp, end = 9.dp, top = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        )
-        Divider(color = MultimoneyTheme.colors.divider, thickness = 2.dp)
-
-        CustomCheckBox(
-            checked = viewModel.call,
-            onCheckedChange = {
-                sharedViewModel.contactMeans.call = it
-                viewModel.call = it
-            },
-            text = stringResource(id = R.string.sign_up_phone_contact_by_call),
-            isTextStart = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(bottom = 6.dp, end = 9.dp, top = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        )
-        Divider(color = MultimoneyTheme.colors.divider, thickness = 2.dp)
     }
 }

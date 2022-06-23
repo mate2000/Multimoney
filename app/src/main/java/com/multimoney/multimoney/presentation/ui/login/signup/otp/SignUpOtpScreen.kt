@@ -52,8 +52,8 @@ import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
-import java.time.Duration
 import kotlinx.coroutines.delay
+import java.time.Duration
 
 @Composable
 @Preview
@@ -170,7 +170,10 @@ fun SignUpOtpScreen(
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
         Text(
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            style = Typography.h6.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.SemiBold
+            ),
             text = stringResource(
                 id = R.string.sign_up_otp_title,
                 PhoneNumberTransformation(sharedViewModel.countryCode.uppercase()).filter(
@@ -244,7 +247,7 @@ fun SignUpOtpScreen(
                             .padding(top = 32.dp)
                             .width(45.dp),
                         style = Typography.body2.copy(
-                            color = MultimoneyTheme.colors.textInformation,
+                            color = MultimoneyTheme.colors.timerColor,
                             fontWeight = FontWeight.SemiBold
                         )
                     )

@@ -26,6 +26,8 @@ import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
 
@@ -41,7 +43,8 @@ fun SignUpPasswordScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             isFirstLaunch = true
-            sharedViewModel.isContinueEnabled = isFormValid()
+            sharedViewModel.onUIEvent(OnContinueEnable(isFormValid()))
+            sharedViewModel.onUIEvent(OnContinueEnable(isFormValid()))
             sharedViewModel.nextAction = {
                 sharedViewModel.apply {
                     viewModel.callQuerySavePassword(
@@ -104,7 +107,7 @@ fun SignUpPasswordScreen(
                     password = it
                     sharedViewModel.userPassword = it
                     viewModel.validatePassword()
-                    sharedViewModel.isContinueEnabled = isFormValid()
+                    sharedViewModel.onUIEvent(OnContinueEnable(isFormValid()))
                 }
             },
             keyboardOptions = KeyboardOptions(
@@ -133,7 +136,7 @@ fun SignUpPasswordScreen(
                 viewModel.apply {
                     confirmPassword = it
                     viewModel.validatePassword()
-                    sharedViewModel.isContinueEnabled = isFormValid()
+                    sharedViewModel.onUIEvent(OnContinueEnable(isFormValid()))
                 }
             },
             keyboardOptions = KeyboardOptions(

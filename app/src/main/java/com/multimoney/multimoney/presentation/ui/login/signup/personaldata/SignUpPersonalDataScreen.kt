@@ -21,6 +21,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.Nationalities
 
@@ -32,11 +34,22 @@ fun SignUpPersonalDataScreen(
 ) {
     LaunchedEffect(true) {
         sharedViewModel.apply {
-            isContinueEnabled = viewModel.validateFields()
             nextAction = {
                 userData?.currentStep = SignUpStep.Two.name
                 callMutationUpdateUserRegisterUseCase()
             }
+            // Load Data from api
+            userData?.nationality?.let { viewModel.nationalityValue = viewModel.getCountry(it) }
+            userData?.identification?.let {
+                viewModel.apply {
+                    crPersonalDocument = it
+                    personalDocumentValue = it
+                }
+            }
+            userData?.firstName?.let { viewModel.nameValue = it }
+            userData?.lastName?.let { viewModel.lastNameValue = it }
+            userData?.fullName?.let { viewModel.onSuccessDataInformationClient?.fullName = it }
+            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
         }
     }
 
@@ -62,10 +75,16 @@ fun SignUpPersonalDataScreen(
             items = stringArrayResource(id = R.array.sign_up_personal_data_nationalities).sorted(),
             onValueChange = {
                 viewModel.apply {
-                    viewModel.personalDocumentValue = ""
-                    sharedViewModel.userData?.nationality = getNationality(it)
+                    personalDocumentValue = ""
                     nationalityValue = it
-                    sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                    sharedViewModel.apply {
+                        userData?.nationality = getNationality(it)
+                        userData?.identification = ""
+                        userData?.firstName = ""
+                        userData?.lastName = ""
+                        userData?.fullName = ""
+                        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                    }
                 }
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_nationality),

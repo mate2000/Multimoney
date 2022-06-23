@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -21,15 +20,17 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
 fun SignInWithPassword(
-    signInViewModel: SignInViewModel,
+    viewModel: SignInViewModel,
     focusManager: FocusManager,
-    openDialogCustom: MutableState<Boolean>,
     modifier: Modifier = Modifier,
     isBiometricError: Boolean,
     isBiometricActive: Boolean,
@@ -37,15 +38,8 @@ fun SignInWithPassword(
 ) {
     Column(modifier) {
         CustomOutlinedTextField(
-            value = signInViewModel.userPassword,
-            onValueChange =
-            {
-                signInViewModel.apply {
-                    signInViewModel.userPassword = it
-                    clearUserPasswordError()
-                    isFormValid()
-                }
-            },
+            value = viewModel.uiState.userPassword,
+            onValueChange = { viewModel.onUIEvent(OnUserPasswordValueChange(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
@@ -60,9 +54,9 @@ fun SignInWithPassword(
                 .padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_in_password_required),
-            isError = signInViewModel.userPasswordError.first,
-            errorMessage = if (signInViewModel.userPasswordError.first) {
-                stringResource(id = signInViewModel.userPasswordError.second)
+            isError = viewModel.uiState.userPasswordError.first,
+            errorMessage = if (viewModel.uiState.userPasswordError.first) {
+                stringResource(id = viewModel.uiState.userPasswordError.second)
             } else {
                 null
             }
@@ -93,29 +87,21 @@ fun SignInWithPassword(
                 )
             } else {
                 CustomCheckBox(
-                    checked = signInViewModel.isFingerprintChecked,
-                    onCheckedChange =
-                    {
-                        signInViewModel.isFingerprintChecked = it
-                        if (it) {
-                            openDialogCustom.value = true
-                        }
-                    },
+                    checked = viewModel.uiState.isFingerprintChecked,
+                    onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it)) },
                     text = stringResource(id = R.string.sign_in_activate_fingerprint),
                     modifier = Modifier.padding(top = 51.dp)
                 )
             }
         }
         CustomButton(
-            onClick = {
-                signInViewModel.signIn()
-            },
+            onClick = { viewModel.onUIEvent(OnCallCognitoSignIn) },
             text = stringResource(id = R.string.sign_in),
             modifier = Modifier
                 .padding(top = 24.dp)
                 .fillMaxWidth()
                 .height(48.dp),
-            enable = signInViewModel.isSignInEnabled
+            enable = viewModel.uiState.isSignInEnabled
         )
     }
 }

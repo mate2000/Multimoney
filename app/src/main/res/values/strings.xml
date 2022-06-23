@@ -11,6 +11,7 @@
     <string name="finalize">Finalizar</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
+    <string name="contact">Contactar</string>
     <string name="error">Error</string>
     <string name="alert">Advertencia</string>
     <string name="placeholder_error">Error de proceso</string>
@@ -54,6 +55,8 @@
     <string name="sign_up_email_user_completed_dialog_title">Ya tenés una cuenta registrada con este correo</string>
     <string name="sign_up_email_user_completed_dialog_description">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
     <string name="sign_up_email_user_completed_dialog_positive">Iniciar sesión</string>
+    <string name="sign_up_email_blocked_dialog_title">Usuario bloqueado.</string>
+    <string name="sign_up_email_blocked_dialog_description">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
 
     <!-- Sign Up Phone -->
     <string name="sign_up_phone_title">¿Cuál es tu número de \nteléfono personal?</string>
@@ -80,7 +83,6 @@
     <string name="sign_up_otp_code_placeholder">0</string>
     <string name="sign_up_otp_code_required">Código de verificación requerido</string>
     <string name="sign_up_otp_code_not_valid">Código de verificación incorrecto</string>
-    <string name="sign_up_otp_error_positive_label">Contactar</string>
 
     <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_dui_sv_not_valid">Número de DUI incorrecto</string>

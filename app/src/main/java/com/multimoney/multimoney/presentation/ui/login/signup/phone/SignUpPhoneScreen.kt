@@ -11,10 +11,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -25,10 +21,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.domain.model.security.ContactMeans
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
@@ -47,21 +46,44 @@ fun SignUpPhoneScreen(
     val focusManager = LocalFocusManager.current
     val getDefaultCountryCode = getDefaultLangCode()
     val getDefaultPhoneCode = getDefaultPhoneCode()
-    var defaultCountryCode by rememberSaveable { mutableStateOf(getDefaultCountryCode) }
+    val selectedCountry =
+        getLibCountries().single {
+            it.countryPhoneCode == if (sharedViewModel.userData?.countryCode.isNullOrEmpty()) {
+                getDefaultPhoneCode
+            } else {
+                sharedViewModel.userData?.countryCode
+            }
+        }
 
     LaunchedEffect(true) {
         viewModel.apply {
             sharedViewModel.apply {
                 nextAction = {
                     userData?.currentStep = SignUpStep.Three.name
-                    userData?.contactMeans = gsonHelper.convertToString(contactMeans)
+                    userData?.contactMeans = gsonHelper.convertToString(viewModel.contactMeans)
                     callMutationUpdateUserRegisterUseCase()
                 }
-                userData?.countryCode = getDefaultPhoneCode
-                countryCode = getDefaultCountryCode
-                isContinueEnabled = isFormValid(countryCode)
+
+                // Load Data from api
+                userData?.phoneNumber?.let { phoneNumber = it }
+                userData?.countryCode?.let {
+                    countryCode = selectedCountry.countryCode
+                    phoneCode = selectedCountry.countryPhoneCode
+                } ?: run {
+                    userData?.countryCode = getDefaultPhoneCode
+                    countryCode = getDefaultCountryCode
+                    phoneCode = getDefaultPhoneCode
+                }
+                userData?.contactMeans?.let {
+                    if (it.isNotBlank()) {
+                        contactMeans = gsonHelper.convertToData(it, ContactMeans::class.java)
+                        contactMeans.call?.let { callEnabled -> call = callEnabled }
+                        contactMeans.whatsapp?.let { whatsappEnabled -> whatsapp = whatsappEnabled }
+                    }
+                }
+
+                sharedViewModel.onUIEvent(OnContinueEnable(isFormValid(countryCode)))
             }
-            phoneCode = getDefaultPhoneCode
         }
     }
 
@@ -97,7 +119,8 @@ fun SignUpPhoneScreen(
                 }
                 sharedViewModel.apply {
                     userData?.phoneNumber = it
-                    isContinueEnabled = viewModel.isFormValid(countryCode)
+
+                    sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(countryCode)))
                 }
             },
             onDebounceValidation = {
@@ -115,21 +138,18 @@ fun SignUpPhoneScreen(
             isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
             isError = viewModel.phoneNumberError.first,
             errorMessage = stringResource(id = viewModel.phoneNumberError.second),
-            defaultCountry = getLibCountries().single { it.countryCode == defaultCountryCode },
+            defaultCountry = selectedCountry,
             pickedCountry = {
-                defaultCountryCode = it.countryCode
                 sharedViewModel.apply {
                     userData?.countryCode = it.countryPhoneCode
                     countryCode = it.countryCode
-                    sharedViewModel.userData?.phoneNumber = null
-                }
-                viewModel.apply {
-                    phoneCode = it.countryPhoneCode
-                    clearPhoneError()
-                    phoneNumber = ""
-                }
-                sharedViewModel.apply {
-                    isContinueEnabled = viewModel.isFormValid(countryCode)
+                    userData?.phoneNumber = null
+                    viewModel.apply {
+                        phoneCode = it.countryPhoneCode
+                        clearPhoneError()
+                        phoneNumber = ""
+                        sharedViewModel.onUIEvent(OnContinueEnable(isFormValid(countryCode)))
+                    }
                 }
             }
         )
@@ -157,8 +177,10 @@ fun SignUpPhoneScreen(
         CustomCheckBox(
             checked = viewModel.whatsapp,
             onCheckedChange = {
-                sharedViewModel.contactMeans.whatsapp = it
-                viewModel.whatsapp = it
+                viewModel.apply {
+                    contactMeans.whatsapp = it
+                    whatsapp = it
+                }
             },
             text = stringResource(id = R.string.sign_up_phone_contact_by_whatsapp),
             isTextStart = true,
@@ -173,8 +195,10 @@ fun SignUpPhoneScreen(
         CustomCheckBox(
             checked = viewModel.call,
             onCheckedChange = {
-                sharedViewModel.contactMeans.call = it
-                viewModel.call = it
+                viewModel.apply {
+                    contactMeans.call = it
+                    call = it
+                }
             },
             text = stringResource(id = R.string.sign_up_phone_contact_by_call),
             isTextStart = true,

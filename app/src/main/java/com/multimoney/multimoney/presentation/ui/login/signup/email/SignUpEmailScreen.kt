@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -29,8 +29,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
 @Preview
@@ -39,14 +41,21 @@ fun SignUpEmailScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
+    val linkWhatsapp = stringResource(
+        id = R.string.whatsapp_deep_link,
+        SignUpViewModel.PHONE_HARDCODED
+    )
+    val blockedMessage = stringResource(id = R.string.sign_up_email_blocked_dialog_description)
+    val context = LocalContext.current
+
     // Properties
     val focusManager = LocalFocusManager.current
     LaunchedEffect(true) {
         viewModel.isFirstLaunch = true
-        sharedViewModel.isContinueEnabled = viewModel.isFormValid()
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.nextAction = {
             viewModel.apply {
-                if (isDataChanged()) {
+                if (isDataChanged() || isUserStatusIncomplete.not()) {
                     callMutationUserValidationUseCase(
                         userEmail,
                         SignUpStep.One.name,
@@ -66,18 +75,40 @@ fun SignUpEmailScreen(
     }
 
     LaunchedEffect(viewModel.onSuccessUserDataValidation) {
-        if (viewModel.isFirstLaunch.not()) {
-            sharedViewModel.userData = viewModel.onSuccessUserDataValidation
-            if (sharedViewModel.userData?.userStatus == UserStatus.Incomplete.name) {
-                sharedViewModel.nextStep()
-            } else if (sharedViewModel.userData?.userStatus == UserStatus.Active.name) {
-                sharedViewModel.openDialog = DialogParameters(
-                    title = R.string.sign_up_email_user_completed_dialog_title,
-                    description = viewModel.userCompletedDialogDescription,
-                    positiveText = R.string.sign_up_email_user_completed_dialog_positive,
-                    positiveAction = { sharedViewModel.previousStep() },
-                    isActive = mutableStateOf(true)
-                )
+        viewModel.apply {
+            if (isFirstLaunch.not()) {
+                sharedViewModel.apply {
+                    userData = onSuccessUserDataValidation
+                    if (userData?.userStatus == UserStatus.Incomplete.name) {
+                        isUserStatusIncomplete = true
+                        if (SignUpStep.Search.getIdByName(userData?.currentStep) == uiState.currentStep) {
+                            nextStep()
+                        } else {
+                            moveToStep(SignUpStep.Search.getIdByName(userData?.currentStep))
+                        }
+                    } else if (userData?.userStatus == UserStatus.Active.name) {
+                        isUserStatusIncomplete = false
+                        openDialog = DialogParameters(
+                            title = R.string.sign_up_email_user_completed_dialog_title,
+                            description = userCompletedDialogDescription,
+                            positiveText = R.string.sign_up_email_user_completed_dialog_positive,
+                            positiveAction = { previousStep() },
+                            isActive = mutableStateOf(true)
+                        )
+                    } else if (userData?.userStatus == UserStatus.Blocked.name) {
+                        isUserStatusIncomplete = false
+                        openDialog = DialogParameters(
+                            title = R.string.sign_up_email_blocked_dialog_title,
+                            description = blockedMessage,
+                            isActive = mutableStateOf(true),
+                            positiveText = R.string.contact,
+                            negativeText = R.string.cancel,
+                            positiveAction = {
+                                context.openWhatsAppDeepLink(linkWhatsapp)
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -115,7 +146,7 @@ fun SignUpEmailScreen(
                 viewModel.apply {
                     userEmail = it
                     clearUserEmailError()
-                    sharedViewModel.isContinueEnabled = isFormValid()
+                    sharedViewModel.onUIEvent(OnContinueEnable(isFormValid()))
                 }
             },
             onDebounceValidation = { viewModel.isUserEmailValid() },

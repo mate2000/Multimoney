@@ -24,6 +24,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
@@ -74,7 +76,7 @@ fun SignUpPersonalDataCrScreen(
             onValueChange = { newString ->
                 viewModel.crFilterDocument(newString)
                 sharedViewModel.userData?.identification = viewModel.personalDocumentValue
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -93,7 +95,7 @@ fun SignUpPersonalDataCrScreen(
             customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
                 viewModel.validateCrDocument(sharedViewModel.userData?.email ?: "")
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
+                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
             }
         )
 
@@ -114,10 +116,10 @@ fun SignUpPersonalDataCrScreen(
             }
         }
 
-        if (viewModel.onSuccessDataInformationClient?.nombre.isNullOrBlank().not()) {
+        if (viewModel.onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
             viewModel.onSuccessDataInformationClient?.apply {
-                sharedViewModel.isContinueEnabled = viewModel.validateFields()
-                sharedViewModel.userData?.fullName = nombre
+                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                sharedViewModel.userData?.fullName = fullName
             }
             Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {
                 CustomImage(
@@ -134,7 +136,7 @@ fun SignUpPersonalDataCrScreen(
             }
             Text(
                 modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-                text = viewModel.onSuccessDataInformationClient?.nombre.toString(),
+                text = viewModel.onSuccessDataInformationClient?.fullName.toString(),
                 style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
             )
         }

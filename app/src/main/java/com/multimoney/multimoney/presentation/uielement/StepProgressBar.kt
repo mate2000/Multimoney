@@ -14,9 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.multimoney.multimoney.presentation.theme.GrayScale300
-import com.multimoney.multimoney.presentation.theme.Primary300
-import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 
 /**
  * StepProgressBar: Display the current step in a process
@@ -40,18 +39,12 @@ fun StepProgressBar(
                     .height(6.dp)
                     .clip(RoundedCornerShape(50, 50, 50, 50))
                     .weight(1f)
-                    .background(GrayScale300)
+                    .background(WhiteTransparency20)
             ) {
-                val boxColor = when {
-                    index < currentStep -> {
-                        Primary300
-                    }
-                    index == currentStep -> {
-                        Primary500
-                    }
-                    else -> {
-                        GrayScale300
-                    }
+                val boxColor = if (index < currentStep || index == currentStep) {
+                    WhiteTransparency70
+                } else {
+                    WhiteTransparency20
                 }
 
                 Box(

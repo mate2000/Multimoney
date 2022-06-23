@@ -107,6 +107,7 @@ dependencies {
 
     // Compose
     implementation compose.ui
+    implementation compose.util
     implementation compose.material
     implementation compose.tooling
     implementation compose.foundation
@@ -165,7 +166,12 @@ dependencies {
     implementation biometric.biometric
 
     //Accompanist
-    implementation accompanist.accompanist_flowlayout
+    implementation accompanist.flowlayout
+    implementation accompanist.pager
+    implementation accompanist.pager_indicator
+
+    // Constraint Layout
+    implementation constraint_layout.compose
 
     implementation shimmer.shimmer
 

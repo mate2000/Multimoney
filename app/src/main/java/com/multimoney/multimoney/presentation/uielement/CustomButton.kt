@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.ButtonGreen
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale200
@@ -30,10 +29,10 @@ import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale700
+import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary200
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
-import com.multimoney.multimoney.presentation.theme.Primary600
 import com.multimoney.multimoney.presentation.theme.Primary700
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
@@ -77,16 +76,16 @@ fun CustomButton(
         CustomButtonType.PrimaryPrimary -> {
             buttonColor = ButtonDefaults.buttonColors(
                 backgroundColor = if (isPressed) {
-                    ButtonGreen
+                    Primary400
                 } else {
-                    ButtonGreen
+                    Primary500
                 },
-                contentColor = DefaultBlack,
+                contentColor = GrayScale800,
                 disabledBackgroundColor = WhiteTransparency20,
-                disabledContentColor = GrayScale400
+                disabledContentColor = GrayScale500
             )
             arrowIconTint = if (enable) {
-                DefaultWhite
+                GrayScale800
             } else {
                 GrayScale500
             }
@@ -104,7 +103,7 @@ fun CustomButton(
                     disabledContentColor = GrayScale400
                 )
                 if (enable) {
-                    borderStroke = BorderStroke(1.dp, DefaultWhite)
+                    borderStroke = BorderStroke(1.dp, Primary400)
                     arrowIconTint = DefaultWhite
                 } else {
                     borderStroke = BorderStroke(1.dp, GrayScale400)
@@ -113,7 +112,7 @@ fun CustomButton(
             } else {
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        Primary200
+                        Primary400
                     } else {
                         DefaultWhite
                     },
@@ -140,7 +139,7 @@ fun CustomButton(
                     },
                     contentColor = DefaultWhite,
                     disabledBackgroundColor = DefaultBlack,
-                    disabledContentColor = GrayScale400
+                    disabledContentColor = DefaultWhite
                 )
                 arrowIconTint = if (enable) {
                     DefaultWhite

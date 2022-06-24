@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
@@ -55,9 +56,14 @@ import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -149,35 +155,48 @@ fun OtpTextField(
     var backgroundColor: Color
     val textColor: Color
     val placeholderColor: Color
+    val focusedIndicatorColor: Color
+    val unfocusedIndicatorColor: Color
+    val errorIndicatorColor: Color
 
     if (isSystemInDarkTheme()) {
-        labelColor = GrayScale300
-        backgroundColor = GrayScale600
-        placeholderColor = WhiteTransparency60
+        labelColor = WhiteTransparency70
+        backgroundColor = WhiteTransparency10
+        placeholderColor = WhiteTransparency30
+        unfocusedIndicatorColor = DefaultBlack
+        errorIndicatorColor = SemanticNegative400
         when {
             isError -> {
-                textColor = DefaultWhite
+                focusedIndicatorColor = SemanticNegative400
+                textColor = WhiteTransparency90
             }
             enabled -> {
-                textColor = DefaultWhite
+                focusedIndicatorColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
+                focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
-                textColor = GrayScale400
+                textColor = WhiteTransparency30
             }
         }
     } else {
         labelColor = GrayScale500
         backgroundColor = DefaultWhite
         placeholderColor = GrayScale400
+        unfocusedIndicatorColor = GrayScale400
+        errorIndicatorColor = SemanticNegative500
         when {
             isError -> {
+                focusedIndicatorColor = SemanticNegative500
                 textColor = GrayScale800
             }
             enabled -> {
+                focusedIndicatorColor = Primary500
                 textColor = GrayScale800
             }
             else -> {
+                focusedIndicatorColor = GrayScale400
                 backgroundColor = GrayScale300
                 textColor = GrayScale500
             }
@@ -286,9 +305,9 @@ fun OtpTextField(
                     isError = isError || emptyError,
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = backgroundColor,
-                        focusedIndicatorColor = Primary500,
-                        unfocusedIndicatorColor = GrayScale400,
-                        errorIndicatorColor = SemanticNegative500,
+                        focusedIndicatorColor = focusedIndicatorColor,
+                        unfocusedIndicatorColor = unfocusedIndicatorColor,
+                        errorIndicatorColor = errorIndicatorColor,
                         textColor = textColor,
                         cursorColor = Color.Transparent,
                         errorCursorColor = Color.Transparent,
@@ -314,7 +333,7 @@ fun OtpTextField(
                     modifier = Modifier
                         .size(width = 11.dp, height = 11.dp),
                     contentDescription = "",
-                    tint = SemanticNegative500
+                    tint = errorIndicatorColor
                 )
                 Text(
                     text = if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
@@ -324,7 +343,7 @@ fun OtpTextField(
                     } else {
                         errorMessage ?: ""
                     },
-                    color = SemanticNegative500,
+                    color = errorIndicatorColor,
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),

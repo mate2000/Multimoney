@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.security.ContactMeans
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -89,7 +90,10 @@ fun SignUpPhoneScreen(
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
         Text(
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            style = Typography.h6.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.SemiBold
+            ),
             text = stringResource(id = R.string.sign_up_phone_title),
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()
@@ -153,6 +157,7 @@ fun SignUpPhoneScreen(
                 }
             }
         )
+
         Text(
             text = stringResource(id = R.string.sign_up_phone_contact_by),
             style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textSubhead),

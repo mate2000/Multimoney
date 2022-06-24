@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.theme.LinkGreen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -92,7 +91,10 @@ fun OnBoardingScreen(
                     .fillMaxWidth()
                     .padding(top = 40.dp)
                     .weight(0.13f),
-                style = Typography.h4.copy(color = WhiteTransparency90, fontWeight = FontWeight.SemiBold)
+                style = Typography.h4.copy(
+                    color =  MultimoneyTheme.colors.onBoardingText,
+                    fontWeight = FontWeight.SemiBold
+                )
             )
             Text(
                 text = stringResource(id = viewModel.uiState.subtitle),
@@ -100,13 +102,13 @@ fun OnBoardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.11f),
-                style = Typography.h6.copy(color = WhiteTransparency80)
+                style = Typography.h6.copy(color = MultimoneyTheme.colors.onBoardingSubText)
             )
             CustomButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.04f),
-                buttonType = CustomButtonType.PrimaryTertiary,
+                    .weight(0.035f),
+                buttonType = CustomButtonType.PrimaryPrimary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
                     viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignUpScreen.route))
@@ -133,7 +135,7 @@ fun OnBoardingScreen(
                     style = TextStyle(
                         fontFamily = PoppinsFontFamily,
                         fontWeight = FontWeight.SemiBold,
-                        color = LinkGreen,
+                        color = MultimoneyTheme.colors.textLink,
                         fontSize = 14.sp,
                         textDecoration = TextDecoration.Underline
                     ),

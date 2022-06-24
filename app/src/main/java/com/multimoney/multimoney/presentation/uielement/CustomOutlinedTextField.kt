@@ -41,13 +41,18 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale600
+import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary400
+import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -138,40 +143,53 @@ fun CustomOutlinedTextField(
     val iconTintColor: Color
     val textColor: Color
     val placeholderColor: Color
+    val focusedIndicatorColor: Color
+    val unfocusedIndicatorColor: Color
+    val errorIndicatorColor: Color
 
     if (isSystemInDarkTheme()) {
-        labelColor = DefaultWhite
-        backgroundColor = GrayScale600
-        placeholderColor = WhiteTransparency60
+        labelColor = WhiteTransparency70
+        backgroundColor = WhiteTransparency10
+        placeholderColor = WhiteTransparency30
+        unfocusedIndicatorColor = DefaultBlack
+        errorIndicatorColor = SemanticNegative400
         when {
             isError -> {
-                iconTintColor = Primary400
-                textColor = DefaultWhite
+                focusedIndicatorColor = SemanticNegative400
+                iconTintColor = SemanticNegative400
+                textColor = WhiteTransparency90
             }
             enabled -> {
-                iconTintColor = Primary400
-                textColor = DefaultWhite
+                focusedIndicatorColor = WhiteTransparency60
+                iconTintColor = WhiteTransparency60
+                textColor = WhiteTransparency90
             }
             else -> {
+                focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
-                iconTintColor = GrayScale400
-                textColor = DefaultWhite
+                iconTintColor = WhiteTransparency60
+                textColor = WhiteTransparency30
             }
         }
     } else {
         labelColor = DefaultWhite
         backgroundColor = WhiteTransparency10
         placeholderColor = GrayScale500
+        unfocusedIndicatorColor = GrayScale400
+        errorIndicatorColor = SemanticNegative500
         when {
             isError -> {
-                iconTintColor = SemanticNegative400
-                textColor = SemanticNegative400
+                focusedIndicatorColor = SemanticNegative500
+                iconTintColor = SemanticNegative500
+                textColor = GrayScale800
             }
             enabled -> {
-                iconTintColor = Primary400
-                textColor = DefaultWhite
+                focusedIndicatorColor = Primary500
+                iconTintColor = Primary500
+                textColor = GrayScale800
             }
             else -> {
+                focusedIndicatorColor = GrayScale400
                 backgroundColor = GrayScale300
                 iconTintColor = GrayScale500
                 textColor = GrayScale500
@@ -262,9 +280,9 @@ fun CustomOutlinedTextField(
             isError = isError || emptyError,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = backgroundColor,
-                focusedIndicatorColor = DefaultBlack,
-                unfocusedIndicatorColor = DefaultBlack,
-                errorIndicatorColor = SemanticNegative500,
+                focusedIndicatorColor = focusedIndicatorColor,
+                unfocusedIndicatorColor = unfocusedIndicatorColor,
+                errorIndicatorColor = errorIndicatorColor,
                 textColor = textColor,
                 cursorColor = textColor
             ),
@@ -291,7 +309,7 @@ fun CustomOutlinedTextField(
                     modifier = Modifier
                         .size(width = 11.dp, height = 11.dp),
                     contentDescription = "",
-                    tint = SemanticNegative500
+                    tint = errorIndicatorColor
                 )
                 Text(
                     text =
@@ -304,7 +322,7 @@ fun CustomOutlinedTextField(
                     } else {
                         ""
                     },
-                    color = SemanticNegative500,
+                    color = errorIndicatorColor,
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),

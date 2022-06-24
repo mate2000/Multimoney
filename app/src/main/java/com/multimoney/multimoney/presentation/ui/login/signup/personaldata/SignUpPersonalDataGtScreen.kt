@@ -51,7 +51,6 @@ fun SignUpPersonalDataGtScreen(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             labelText = stringResource(id = R.string.sign_up_personal_data_document_gt),
-            leadingIcon = R.drawable.ic_identification,
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -33,8 +34,10 @@ import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale600
+import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Primary300
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
@@ -55,13 +58,15 @@ fun CustomDropdown(
     var backgroundColor: Color
     val iconTintColor: Color
     val textColor: Color
+    val focusedColor: Color
     var expanded by remember { mutableStateOf(false) }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
     val icon = if (expanded) R.drawable.ic_dropdown_close else R.drawable.ic_dropdown_open
 
     if (isSystemInDarkTheme()) {
+        focusedColor = GrayScale700
         labelColor = GrayScale300
-        backgroundColor = GrayScale600
+        backgroundColor = GrayScale700
         when {
             isError -> {
                 iconTintColor = Primary400
@@ -78,6 +83,7 @@ fun CustomDropdown(
             }
         }
     } else {
+        focusedColor = Primary300
         labelColor = GrayScale500
         backgroundColor = DefaultWhite
         when {
@@ -86,13 +92,13 @@ fun CustomDropdown(
                 textColor = GrayScale800
             }
             enabled -> {
-                iconTintColor = Primary400
-                textColor = GrayScale800
+                iconTintColor = Primary500
+                textColor = GrayScale600
             }
             else -> {
-                backgroundColor = GrayScale300
-                iconTintColor = GrayScale500
-                textColor = GrayScale500
+                backgroundColor = DefaultWhite
+                iconTintColor = Primary500
+                textColor = GrayScale400
             }
         }
     }
@@ -109,7 +115,7 @@ fun CustomDropdown(
             value = value,
             onValueChange = {
             },
-            shape = RoundedCornerShape(25),
+            shape = RoundedCornerShape(50),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
@@ -121,7 +127,7 @@ fun CustomDropdown(
                 },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = backgroundColor,
-                focusedIndicatorColor = Primary500,
+                focusedIndicatorColor = focusedColor,
                 unfocusedIndicatorColor = GrayScale400,
                 errorIndicatorColor = SemanticNegative500,
                 textColor = textColor
@@ -136,7 +142,7 @@ fun CustomDropdown(
             placeholder = {
                 Text(
                     text = placeHolder ?: "",
-                    color = GrayScale500,
+                    color = GrayScale400,
                     style = Typography.body2
                 )
             },
@@ -146,8 +152,7 @@ fun CustomDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .padding(top = 8.dp)
-                .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                .width(with(LocalDensity.current) { textFieldSize.width.toDp() }).background(backgroundColor)
         ) {
             items.forEach { label ->
                 DropdownMenuItem(onClick = {

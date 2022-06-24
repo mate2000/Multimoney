@@ -98,7 +98,10 @@ fun SignInScreen(
                 buildAnnotatedString {
                     withStyle(
                         style = Typography.h5.toSpanStyle()
-                            .copy(fontWeight = FontWeight.SemiBold)
+                            .copy(
+                                color = MultimoneyTheme.colors.text,
+                                fontWeight = FontWeight.SemiBold
+                            )
                     ) {
                         append(stringResource(id = R.string.sign_in_title_name, it))
                     }

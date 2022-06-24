@@ -83,10 +83,6 @@ val BlackTransparency70 = Color(0xFF000000).copy(alpha = 0.7f)
 val BlackTransparency80 = Color(0xFF000000).copy(alpha = 0.8f)
 val BlackTransparency90 = Color(0xFF000000).copy(alpha = 0.9f)
 
-// Dark Theme
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-
 @Immutable
 data class MultimoneyColors(
     val primary: Color,
@@ -94,6 +90,8 @@ data class MultimoneyColors(
     val background: Color,
     val backgroundSplash: Color,
     val text: Color,
+    val onBoardingText: Color,
+    val onBoardingSubText: Color,
     val textLink: Color,
     val textInformation: Color,
     val textSubhead: Color,
@@ -103,11 +101,13 @@ data class MultimoneyColors(
 )
 
 val DarkColorPalette = MultimoneyColors(
-    primary = Purple700,
-    secondary = Purple500,
+    primary = Primary700,
+    secondary = Secondary500,
     background = GrayScale800,
     backgroundSplash = GrayScale800,
     text = DefaultWhite,
+    onBoardingText = WhiteTransparency90,
+    onBoardingSubText = WhiteTransparency90,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
@@ -119,9 +119,11 @@ val DarkColorPalette = MultimoneyColors(
 val LightColorPalette = MultimoneyColors(
     primary = Primary500,
     secondary = Secondary500,
-    background = GrayScale200,
-    backgroundSplash = GrayScale200,
-    text = GrayScale800,
+    background = GrayScale800,
+    backgroundSplash = GrayScale800,
+    text = DefaultWhite,
+    onBoardingText = WhiteTransparency90,
+    onBoardingSubText = WhiteTransparency90,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,

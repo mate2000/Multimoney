@@ -92,7 +92,7 @@ fun OnBoardingScreen(
                     .padding(top = 40.dp)
                     .weight(0.13f),
                 style = Typography.h4.copy(
-                    color = WhiteTransparency90,
+                    color =  MultimoneyTheme.colors.onBoardingText,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -102,7 +102,7 @@ fun OnBoardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.11f),
-                style = Typography.h6.copy(color = WhiteTransparency80)
+                style = Typography.h6.copy(color = MultimoneyTheme.colors.onBoardingSubText)
             )
             CustomButton(
                 modifier = Modifier

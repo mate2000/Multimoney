@@ -25,9 +25,9 @@
     <string name="onboarding_step_one_title">Invertí de forma Smart</string>
     <string name="onboarding_step_one_sub_title">Ganá hasta 7% de interés anual con tu cuenta Multimoney Smart.</string>
     <string name="onboarding_step_two_title">Tu crédito sin papeleos</string>
-    <string name="onboarding_step_two_sub_title">Con sólo tu identificación consigue hasta (moneda) (monto máx) en minutos.</string>
+    <string name="onboarding_step_two_sub_title">Con sólo tu identificación consigue hasta [moneda] [monto máx] en minutos.</string>
     <string name="onboarding_step_three_title">Hacé tu inversión en cripto</string>
-    <string name="onboarding_step_three_sub_title">Comprá y vendé cripto de forma simple y rápido.</string>
+    <string name="onboarding_step_three_sub_title">Comprá y vendé cripto de forma simple y rápida.</string>
     <string name="onboarding_account_already_created">Ya tengo cuenta</string>
 
     <!-- Sign In -->

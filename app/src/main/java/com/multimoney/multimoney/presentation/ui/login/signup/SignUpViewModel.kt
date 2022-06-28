@@ -15,6 +15,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegister
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
@@ -30,8 +31,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -175,6 +176,7 @@ class SignUpViewModel @Inject constructor(
             is OnUseDataValueChange -> userData = event.userData
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
+            is OnCallMutationUpdateUserRegister -> callMutationUpdateUserRegisterUseCase()
         }
     }
 
@@ -193,6 +195,7 @@ class SignUpViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
+        object OnCallMutationUpdateUserRegister : UIEvent()
     }
 
     companion object {

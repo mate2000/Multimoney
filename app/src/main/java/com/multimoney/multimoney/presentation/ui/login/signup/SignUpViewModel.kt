@@ -116,19 +116,23 @@ class SignUpViewModel @Inject constructor(
             idBrand = Brand.Revamp.id
         ).collectLatest { result ->
             result.onSuccess {
-                isLoading = false
-                userData = it
-                nextStep()
+                onUIEvent(OnLoadingValueChange(false))
+                onUIEvent(OnUseDataValueChange(it))
+                onUIEvent(OnNextStep)
             }
             result.onFailure {
-                isLoading = false
-                openDialog = DialogParameters(
-                    description = it.getError() ?: "",
-                    isActive = mutableStateOf(true)
+                onUIEvent(
+                    OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
                 )
             }
             result.onLoading {
-                isLoading = true
+                onUIEvent(OnLoadingValueChange(true))
             }
         }
     }

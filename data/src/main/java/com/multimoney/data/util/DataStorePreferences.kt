@@ -25,6 +25,11 @@ class DataStorePreferences @Inject constructor(
 
     fun getUserEmail(): Flow<String> = getSecuredData(USER_EMAIL_KEY, "")
 
+    suspend fun setUserName(userName: String) =
+        setSecuredData(USER_NAME_KEY, userName)
+
+    fun getUserName(): Flow<String> = getSecuredData(USER_NAME_KEY, "")
+
     suspend fun setUserPassword(userPassword: String, cipher: Cipher) =
         setSecuredData(USER_PASSWORD_KEY, userPassword, cipher)
 
@@ -46,6 +51,7 @@ class DataStorePreferences @Inject constructor(
 
     companion object {
         private val USER_EMAIL_KEY = stringPreferencesKey("user_email_key")
+        private val USER_NAME_KEY = stringPreferencesKey("user_name_key")
         private val USER_PASSWORD_KEY = stringPreferencesKey("user_password_key")
         private val BIOMETRICS_ENABLED_KEY = booleanPreferencesKey("biometrics_enabled_key")
         private val ON_BOARDING_ENABLED_KEY = booleanPreferencesKey("on_boarding_enabled_key")

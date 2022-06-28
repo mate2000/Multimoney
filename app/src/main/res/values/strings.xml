@@ -6,7 +6,7 @@
     <!-- Common -->
     <string name="button_continue">Continuar</string>
     <string name="registration">Registrarme</string>
-    <string name="sign_in">iniciar sesión</string>
+    <string name="sign_in">Iniciar sesión</string>
     <string name="label_email">Correo electrónico</string>
     <string name="finalize">Finalizar</string>
     <string name="accept">Aceptar</string>

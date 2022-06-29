@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
@@ -91,6 +92,7 @@ fun SignInScreen(
                 .wrapContentSize()
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 40.dp)
+                .size(64.dp, 67.dp)
         )
 
         Text(
@@ -98,14 +100,11 @@ fun SignInScreen(
                 buildAnnotatedString {
                     withStyle(
                         style = Typography.h5.toSpanStyle()
-                            .copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            .copy(color = MultimoneyTheme.colors.text, fontWeight = FontWeight.SemiBold)
                     ) {
                         append(stringResource(id = R.string.sign_in_title_name, it))
                     }
-                    withStyle(style = Typography.subtitle1.toSpanStyle()) {
+                    withStyle(style = Typography.subtitle1.toSpanStyle().copy(color = MultimoneyTheme.colors.text)) {
                         append(stringResource(id = R.string.sign_in_title_no_name))
                     }
                 }
@@ -113,7 +112,7 @@ fun SignInScreen(
                 buildAnnotatedString {
                     withStyle(
                         style = Typography.h5.toSpanStyle()
-                            .copy(fontWeight = FontWeight.SemiBold)
+                            .copy(color = MultimoneyTheme.colors.text, fontWeight = FontWeight.SemiBold)
                     ) {
                         append(stringResource(id = R.string.sign_in_title))
                     }
@@ -141,7 +140,6 @@ fun SignInScreen(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             labelText = stringResource(id = R.string.label_email),
-            leadingIcon = R.drawable.ic_envelope,
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
@@ -184,7 +182,7 @@ fun SignInScreen(
             }
         )
     }
-    LoadingIndicator(viewModel.isLoading)
+    LoadingIndicator(viewModel.uiState.isLoading)
 
     // Dialog
     if (viewModel.uiState.openDialogCustom.value) {

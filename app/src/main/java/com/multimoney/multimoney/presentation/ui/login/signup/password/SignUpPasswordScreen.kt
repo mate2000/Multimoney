@@ -112,6 +112,7 @@ fun SignUpPasswordScreen(
                         pkUser = userData?.pkUser ?: "",
                         status = userData?.userStatus ?: "",
                         onSuccess = {
+                            sharedViewModel.onUIEvent(OnLoadingValueChange(false))
                             viewModel.onUIEvent(
                                 OnShowBiometricPromptForEncryption(
                                     fragmentActivity = fragmentActivity,

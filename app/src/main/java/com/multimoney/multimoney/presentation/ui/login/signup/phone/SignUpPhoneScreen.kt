@@ -1,13 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.phone
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,15 +18,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
-import com.multimoney.domain.model.security.ContactMeans
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.togitech.ccp.data.utils.getDefaultLangCode
@@ -57,33 +56,42 @@ fun SignUpPhoneScreen(
         }
 
     LaunchedEffect(true) {
-        viewModel.apply {
-            sharedViewModel.apply {
-                nextAction = {
-                    userData?.currentStep = SignUpStep.Three.name
-                    userData?.contactMeans = gsonHelper.convertToString(viewModel.contactMeans)
-                    callMutationUpdateUserRegisterUseCase()
-                }
+        sharedViewModel.apply {
+            onUIEvent(OnNextActionValueChange {
+                viewModel.onUIEvent(OnNextActionClick({
+                    onUIEvent(
+                        OnUseDataValueChange(userData?.copy(currentStep = SignUpStep.Three.name))
+                    )
+                }, { callMutationUpdateUserRegisterUseCase() }))
+            })
 
-                // Load Data from api
-                userData?.phoneNumber?.let { phoneNumber = it }
-                userData?.countryCode?.let {
-                    countryCode = selectedCountry.countryCode
-                    phoneCode = selectedCountry.countryPhoneCode
-                } ?: run {
-                    userData?.countryCode = getDefaultPhoneCode
-                    countryCode = getDefaultCountryCode
-                    phoneCode = getDefaultPhoneCode
-                }
-                userData?.contactMeans?.let {
-                    if (it.isNotBlank()) {
-                        contactMeans = gsonHelper.convertToData(it, ContactMeans::class.java)
-                        contactMeans.call?.let { callEnabled -> call = callEnabled }
-                        contactMeans.whatsapp?.let { whatsappEnabled -> whatsapp = whatsappEnabled }
+            // Load Data from api
+            var countryCodeValue = ""
+            userData?.countryCode?.let {
+                countryCodeValue = selectedCountry.countryCode
+            } ?: run {
+                countryCodeValue = getDefaultCountryCode
+            }
+
+            viewModel.onUIEvent(
+                OnStart(
+                    phoneNumber = userData?.phoneNumber ?: "",
+                    phoneCode = selectedCountry.countryPhoneCode.ifBlank { getDefaultPhoneCode },
+                    signUpStartData = {
+                        OnCountryCountryCodeValueChange(
+                            countryCodeValue,
+                            selectedCountry.countryPhoneCode
+                        )
+                    }
+                )
+            )
+
+            viewModel.baseEvent.collect { event ->
+                when (event) {
+                    is SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted -> {
+                        onUIEvent(OnContinueEnable(event.isFormValid))
                     }
                 }
-
-                sharedViewModel.onUIEvent(OnContinueEnable(isFormValid(countryCode)))
             }
         }
     }
@@ -115,104 +123,34 @@ fun SignUpPhoneScreen(
 
         // Fields
         PhoneTextField(
-            value = viewModel.phoneNumber,
+            value = viewModel.uiState.phoneNumber,
             onValueChange = {
-                viewModel.apply {
-                    phoneNumber = it
-                    clearPhoneError()
-                }
-                sharedViewModel.apply {
-                    userData?.phoneNumber = it
-
-                    sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(countryCode)))
-                }
+                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged(
+                    it
+                ) { sharedViewModel.onUIEvent(OnPhoneNumberValueChange(it)) })
             },
             onDebounceValidation = {
-                viewModel.isPhoneValid(
-                    sharedViewModel.countryCode
-                )
+                SignUpPhoneViewModel.UIEvent.OnValidatePhone(sharedViewModel.countryCode)
             },
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.sign_up_phone_label_phone),
-            modifier = Modifier
-                .padding(top = 24.dp),
+            modifier = Modifier.padding(top = 24.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
-            isError = viewModel.phoneNumberError.first,
-            errorMessage = stringResource(id = viewModel.phoneNumberError.second),
+            isError = viewModel.uiState.phoneNumberError.first,
+            errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
             defaultCountry = selectedCountry,
             pickedCountry = {
-                sharedViewModel.apply {
-                    userData?.countryCode = it.countryPhoneCode
-                    countryCode = it.countryCode
-                    userData?.phoneNumber = null
-                    viewModel.apply {
-                        phoneCode = it.countryPhoneCode
-                        clearPhoneError()
-                        phoneNumber = ""
-                        sharedViewModel.onUIEvent(OnContinueEnable(isFormValid(countryCode)))
-                    }
-                }
+                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged(
+                    it.countryCode
+                ) {
+                    sharedViewModel.onUIEvent(
+                        OnCountryCountryCodeValueChange(it.countryCode, it.countryPhoneCode)
+                    )
+                })
             }
         )
-
-        Text(
-            text = stringResource(id = R.string.sign_up_phone_contact_by),
-            style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textSubhead),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp, bottom = 12.dp)
-        )
-        CustomCheckBox(
-            checked = true,
-            enabled = false,
-            onCheckedChange = { },
-            text = stringResource(id = R.string.sign_up_phone_contact_by_email),
-            isTextStart = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(bottom = 6.dp, end = 9.dp, top = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        )
-        Divider(color = MultimoneyTheme.colors.divider, thickness = 2.dp)
-
-        CustomCheckBox(
-            checked = viewModel.whatsapp,
-            onCheckedChange = {
-                viewModel.apply {
-                    contactMeans.whatsapp = it
-                    whatsapp = it
-                }
-            },
-            text = stringResource(id = R.string.sign_up_phone_contact_by_whatsapp),
-            isTextStart = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(bottom = 6.dp, end = 9.dp, top = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        )
-        Divider(color = MultimoneyTheme.colors.divider, thickness = 2.dp)
-
-        CustomCheckBox(
-            checked = viewModel.call,
-            onCheckedChange = {
-                viewModel.apply {
-                    contactMeans.call = it
-                    call = it
-                }
-            },
-            text = stringResource(id = R.string.sign_up_phone_contact_by_call),
-            isTextStart = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(bottom = 6.dp, end = 9.dp, top = 2.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        )
-        Divider(color = MultimoneyTheme.colors.divider, thickness = 2.dp)
     }
 }

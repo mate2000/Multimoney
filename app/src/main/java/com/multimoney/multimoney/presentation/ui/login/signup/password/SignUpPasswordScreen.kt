@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.multimoney.data.util.catalog.Brand
@@ -41,7 +43,9 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnPasswordValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -58,6 +62,8 @@ fun SignUpPasswordScreen(
 
     // Properties
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    val fragmentActivity = LocalContext.current as FragmentActivity
 
     viewModel.onUIEvent(
         OnInitializeDialogTexts(
@@ -69,6 +75,12 @@ fun SignUpPasswordScreen(
             biometricDialogFailureDescription = stringResource(id = R.string.dialog_failure_biometric_description),
         )
     )
+
+    LaunchedEffect(context) {
+        viewModel.apply {
+            onUIEvent(OnIsBiometricAvailable(biometricHelper.isBiometricAvailable(context)))
+        }
+    }
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidForm(
@@ -99,7 +111,19 @@ fun SignUpPasswordScreen(
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "",
                         status = userData?.userStatus ?: "",
-                        onSuccess = { sharedViewModel.onUIEvent(OnCallMutationUpdateUserRegister) },
+                        onSuccess = {
+                            viewModel.onUIEvent(
+                                OnShowBiometricPromptForEncryption(
+                                    fragmentActivity = fragmentActivity,
+                                    userEmail = userData?.email ?: "",
+                                    onCallMutationUpdateUserRegister = {
+                                        sharedViewModel.onUIEvent(
+                                            OnCallMutationUpdateUserRegister
+                                        )
+                                    }
+                                )
+                            )
+                        },
                         onFailureWithDialog = { dialog ->
                             sharedViewModel.onUIEvent(OnFailureWithDialog(false, dialog))
                         }
@@ -139,7 +163,6 @@ fun SignUpPasswordScreen(
         CustomOutlinedTextField(
             value = viewModel.uiState.password,
             onValueChange = {
-                sharedViewModel.userPassword = it
                 viewModel.onUIEvent(OnPasswordValueChange(it, onContinueEnable = { isEnable ->
                     sharedViewModel.onUIEvent(OnContinueEnable(isEnable))
                 }))

@@ -12,8 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale500
+import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
+import com.multimoney.multimoney.presentation.theme.SemanticPositive400
 import com.multimoney.multimoney.presentation.theme.SemanticPositive600
 import com.multimoney.multimoney.presentation.theme.Typography
 
@@ -43,15 +46,15 @@ fun CustomPasswordRequirementLabel(
     if (isSystemInDarkTheme()) {
         when (state) {
             null -> {
-                statusColor = GrayScale500
+                statusColor = GrayScale300
                 icon = errorIcon
             }
             true -> {
-                statusColor = SemanticPositive600
+                statusColor = SemanticPositive400
                 icon = successIcon
             }
             false -> {
-                statusColor = SemanticNegative500
+                statusColor = SemanticNegative400
                 icon = errorIcon
             }
         }

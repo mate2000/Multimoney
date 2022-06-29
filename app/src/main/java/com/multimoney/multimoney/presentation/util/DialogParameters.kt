@@ -11,5 +11,6 @@ data class DialogParameters(
     val positiveText: Int = R.string.accept,
     val negativeText: Int = R.string.error_empty,
     var positiveAction: () -> Unit = {},
-    var negativeAction: () -> Unit = {}
+    var negativeAction: () -> Unit = {},
+    var dismissAction: () -> Unit = {}
 )

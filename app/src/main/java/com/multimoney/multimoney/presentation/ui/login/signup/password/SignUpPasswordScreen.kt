@@ -39,8 +39,12 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -54,6 +58,17 @@ fun SignUpPasswordScreen(
 
     // Properties
     val focusManager = LocalFocusManager.current
+
+    viewModel.onUIEvent(
+        OnInitializeDialogTexts(
+            biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title),
+            biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description),
+            biometricPromptNegative = stringResource(id = R.string.cancel),
+            biometricDialogDescription = stringResource(id = R.string.active_biometric_message),
+            biometricDialogSuccessDescription = stringResource(id = R.string.dialog_success_biometric_description),
+            biometricDialogFailureDescription = stringResource(id = R.string.dialog_failure_biometric_description),
+        )
+    )
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidForm(
@@ -79,6 +94,8 @@ fun SignUpPasswordScreen(
                     userData?.currentStep = SignUpStep.Five.name
                     viewModel.onUIEvent(OnCallCognitoSignUp(
                         email = userData?.email ?: "",
+                        firstName = userData?.firstName ?: "",
+                        lastName = userData?.lastName ?: "",
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "",
                         status = userData?.userStatus ?: "",
@@ -107,9 +124,9 @@ fun SignUpPasswordScreen(
         Text(
             text = buildAnnotatedString {
                 withStyle(
-                    style = Typography.h6.toSpanStyle()
+                    style = Typography.h5.toSpanStyle()
                         .copy(
-                            color = MultimoneyTheme.colors.text,
+                            color = MultimoneyTheme.colors.title,
                             fontWeight = FontWeight.SemiBold
                         )
                 ) {
@@ -199,6 +216,26 @@ fun SignUpPasswordScreen(
                 state = viewModel.uiState.oneCharacterState
             )
         }
+        CustomCheckBox(
+            checked = viewModel.uiState.isFingerprintChecked,
+            onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it)) },
+            text = stringResource(id = R.string.sign_in_activate_fingerprint),
+            modifier = Modifier.padding(top = 24.dp)
+        )
+    }
+
+    // Dialog
+    if (viewModel.uiState.openDialogCustom.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialogCustom.title),
+            message = viewModel.uiState.openDialogCustom.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialogCustom.positiveText),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialogCustom.negativeText),
+            onPositiveAction = viewModel.uiState.openDialogCustom.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialogCustom.negativeAction,
+            onDismissAction = viewModel.uiState.openDialogCustom.dismissAction,
+            openDialogCustom = viewModel.uiState.openDialogCustom.isActive
+        )
     }
 }
 

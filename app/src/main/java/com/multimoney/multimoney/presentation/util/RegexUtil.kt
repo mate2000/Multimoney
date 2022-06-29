@@ -8,4 +8,4 @@ fun getRegex(regex: String) = regex.toRegex()
 const val ONE_UPPERCASE_LETTER_REGEX = "(.*[A-Z].*)"
 const val ONE_LOWERCASE_LETTER_REGEX = "(.*[a-z].*)"
 const val ONE_NUMBER_REGEX = "(.*\\d.*)"
-const val ONE_CHARACTER_REGEX = "(.*[!@#$%^&*()-_=+{}';:?/>.<,].*)"
+const val ONE_CHARACTER_REGEX = "[!@#\$%&*()_+=|<.>?{}\\\\[\\\\]~-]"

@@ -92,7 +92,7 @@ fun OnBoardingScreen(
                     .padding(top = 40.dp)
                     .weight(0.13f),
                 style = Typography.h4.copy(
-                    color =  MultimoneyTheme.colors.onBoardingText,
+                    color =  MultimoneyTheme.colors.title,
                     fontWeight = FontWeight.SemiBold
                 )
             )

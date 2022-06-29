@@ -126,7 +126,7 @@ fun SignUpPasswordScreen(
                 withStyle(
                     style = Typography.h5.toSpanStyle()
                         .copy(
-                            color = MultimoneyTheme.colors.title,
+                            color = MultimoneyTheme.colors.onBoardingTitle,
                             fontWeight = FontWeight.SemiBold
                         )
                 ) {

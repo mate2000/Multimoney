@@ -47,7 +47,7 @@ fun SignUpPhoneScreen(
     val getDefaultCountryCode = getDefaultLangCode()
     val getDefaultPhoneCode = getDefaultPhoneCode()
     val selectedCountry =
-        getLibCountries().single {
+        getLibCountries().first {
             it.countryPhoneCode == if (sharedViewModel.userData?.countryCode.isNullOrEmpty()) {
                 getDefaultPhoneCode
             } else {

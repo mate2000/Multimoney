@@ -8,7 +8,6 @@ mutation UpdateUserRegister(
     $secondName : String,
     $lastName : String,
     $secondLastName : String,
-    $contactMeans : String,
     $nationality : String,
     $identification: String,
     $countryCode : String,
@@ -25,7 +24,6 @@ mutation UpdateUserRegister(
             secondName: $secondName
             lastName: $lastName
             secondLastName: $secondLastName
-            contactMeans: $contactMeans
             nationality: $nationality
             identification: $identification
             countryCode : $countryCode
@@ -46,7 +44,6 @@ mutation UpdateUserRegister(
         nationality
         countryCode
         phoneNumber
-        contactMeans
         userName
     }
 }

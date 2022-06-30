@@ -24,7 +24,7 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onStart(phoneCode: String, phoneNumber: String, signUpStartData:() -> Unit) {
+    private fun onStart(phoneCode: String, phoneNumber: String, signUpStartData: () -> Unit) {
         uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
         signUpStartData()
     }
@@ -45,15 +45,18 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
     )
 
     private fun onUserPhoneValueChanged(value: String, updateUserInfoPhone: () -> Unit) {
-        uiState = uiState.copy(phoneNumber = value)
-        clearPhoneError()
+        uiState =
+            uiState.copy(phoneNumber = value, phoneNumberError = Pair(false, R.string.error_empty))
         isFormValid(uiState.phoneCode)
         updateUserInfoPhone.invoke()
     }
 
     private fun onCountryCodeValueChanged(value: String, updateUserCountryCode: () -> Unit) {
-        uiState = uiState.copy(phoneCode = value, phoneNumber = "")
-        clearPhoneError()
+        uiState = uiState.copy(
+            phoneCode = value,
+            phoneNumber = "",
+            phoneNumberError = Pair(false, R.string.error_empty)
+        )
         isFormValid(uiState.phoneCode)
         updateUserCountryCode.invoke()
     }
@@ -126,7 +129,11 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
             val onCallMutationUpdateUserRegisterUseCase: () -> Unit
         ) : UIEvent()
 
-        data class OnStart(val phoneCode: String, val phoneNumber: String, val signUpStartData: () -> Unit) : UIEvent()
+        data class OnStart(
+            val phoneCode: String,
+            val phoneNumber: String,
+            val signUpStartData: () -> Unit
+        ) : UIEvent()
 
         object OnClearPhoneError : UIEvent()
     }

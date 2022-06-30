@@ -27,8 +27,12 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.togitech.ccp.data.utils.getDefaultLangCode
@@ -64,10 +68,18 @@ fun SignUpPhoneScreen(
                     )
                 }, { callMutationUpdateUserRegisterUseCase() }))
             })
+            viewModel.baseEvent.collect { event ->
+                when (event) {
+                    is OnFormValidateCompleted -> onUIEvent(OnContinueEnable(event.isFormValid))
+                }
+            }
+        }
+    }
 
+    LaunchedEffect(true) {
             // Load Data from api
             var countryCodeValue = ""
-            userData?.countryCode?.let {
+            sharedViewModel.userData?.countryCode?.let {
                 countryCodeValue = selectedCountry.countryCode
             } ?: run {
                 countryCodeValue = getDefaultCountryCode
@@ -75,7 +87,7 @@ fun SignUpPhoneScreen(
 
             viewModel.onUIEvent(
                 OnStart(
-                    phoneNumber = userData?.phoneNumber ?: "",
+                    phoneNumber = sharedViewModel.userData?.phoneNumber ?: "",
                     phoneCode = selectedCountry.countryPhoneCode.ifBlank { getDefaultPhoneCode },
                     signUpStartData = {
                         OnCountryCountryCodeValueChange(
@@ -86,14 +98,7 @@ fun SignUpPhoneScreen(
                 )
             )
 
-            viewModel.baseEvent.collect { event ->
-                when (event) {
-                    is SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted -> {
-                        onUIEvent(OnContinueEnable(event.isFormValid))
-                    }
-                }
-            }
-        }
+        viewModel.onUIEvent(UIEvent.OnValidateForm(countryCodeValue))
     }
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
@@ -125,7 +130,7 @@ fun SignUpPhoneScreen(
         PhoneTextField(
             value = viewModel.uiState.phoneNumber,
             onValueChange = {
-                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged(
+                viewModel.onUIEvent(OnUserPhoneValueChanged(
                     it
                 ) { sharedViewModel.onUIEvent(OnPhoneNumberValueChange(it)) })
             },

@@ -88,15 +88,17 @@ fun SignUpPasswordScreen(
                 sharedViewModel.onUIEvent(OnContinueEnable(isEnabled))
             }
         ))
-        sharedViewModel.onUIEvent(OnNextActionValueChange {
-            viewModel.onUIEvent(
-                OnCallPasswordSave(
-                    pkUser = sharedViewModel.userData?.pkUser ?: "0",
-                    user = sharedViewModel.userData?.email ?: "",
-                    Brand.Revamp.id
+        sharedViewModel.apply {
+            onUIEvent(OnNextActionValueChange {
+                viewModel.onUIEvent(
+                    OnCallPasswordSave(
+                        pkUser = userData?.pkUser ?: "0",
+                        user = userData?.email ?: "",
+                        Brand.Revamp.id
+                    )
                 )
-            )
-        })
+            })
+        }
     }
 
     LaunchedEffect(true) {
@@ -112,13 +114,13 @@ fun SignUpPasswordScreen(
                         pkUser = userData?.pkUser ?: "",
                         status = userData?.userStatus ?: "",
                         onSuccess = {
-                            sharedViewModel.onUIEvent(OnLoadingValueChange(false))
+                            onUIEvent(OnLoadingValueChange(false))
                             viewModel.onUIEvent(
                                 OnShowBiometricPromptForEncryption(
                                     fragmentActivity = fragmentActivity,
                                     userEmail = userData?.email ?: "",
                                     onCallMutationUpdateUserRegister = {
-                                        sharedViewModel.onUIEvent(
+                                        onUIEvent(
                                             OnCallMutationUpdateUserRegister
                                         )
                                     }
@@ -126,7 +128,7 @@ fun SignUpPasswordScreen(
                             )
                         },
                         onFailureWithDialog = { dialog ->
-                            sharedViewModel.onUIEvent(OnFailureWithDialog(false, dialog))
+                            onUIEvent(OnFailureWithDialog(false, dialog))
                         }
                     ))
                 }
@@ -151,7 +153,7 @@ fun SignUpPasswordScreen(
                 withStyle(
                     style = Typography.h5.toSpanStyle()
                         .copy(
-                            color = MultimoneyTheme.colors.onBoardingTitle,
+                            color = MultimoneyTheme.colors.onBoardingTitleText,
                             fontWeight = FontWeight.SemiBold
                         )
                 ) {

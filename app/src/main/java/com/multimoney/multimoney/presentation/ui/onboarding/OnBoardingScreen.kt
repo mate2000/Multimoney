@@ -34,8 +34,6 @@ import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
@@ -92,7 +90,7 @@ fun OnBoardingScreen(
                     .padding(top = 40.dp)
                     .weight(0.13f),
                 style = Typography.h4.copy(
-                    color =  MultimoneyTheme.colors.onBoardingTitle,
+                    color = MultimoneyTheme.colors.onBoardingTitleText,
                     fontWeight = FontWeight.SemiBold
                 )
             )

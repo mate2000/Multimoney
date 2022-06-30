@@ -33,7 +33,7 @@ val SemanticInformative700 = Color(0xFF003380)
 val SemanticInformative800 = Color(0xFF001433)
 
 // Semantic Negative
-val SemanticNegative400 = Color (0xFFF37C7C)
+val SemanticNegative400 = Color(0xFFF37C7C)
 val SemanticNegative500 = Color(0xFFE91616)
 
 // Semantic Positive
@@ -90,7 +90,7 @@ data class MultimoneyColors(
     val background: Color,
     val backgroundSplash: Color,
     val text: Color,
-    val onBoardingTitle: Color,
+    val onBoardingTitleText: Color,
     val onBoardingSubText: Color,
     val textLink: Color,
     val textInformation: Color,
@@ -106,7 +106,7 @@ val DarkColorPalette = MultimoneyColors(
     background = GrayScale800,
     backgroundSplash = GrayScale800,
     text = DefaultWhite,
-    onBoardingTitle = WhiteTransparency90,
+    onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency90,
     textLink = Primary400,
     textInformation = SemanticInformative400,
@@ -122,7 +122,7 @@ val LightColorPalette = MultimoneyColors(
     background = GrayScale800,
     backgroundSplash = GrayScale800,
     text = DefaultWhite,
-    onBoardingTitle = WhiteTransparency90,
+    onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency90,
     textLink = Primary400,
     textInformation = SemanticInformative400,

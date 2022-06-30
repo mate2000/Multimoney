@@ -30,9 +30,11 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnValidatePhone
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.togitech.ccp.data.utils.getDefaultLangCode
@@ -135,7 +137,7 @@ fun SignUpPhoneScreen(
                 ) { sharedViewModel.onUIEvent(OnPhoneNumberValueChange(it)) })
             },
             onDebounceValidation = {
-                SignUpPhoneViewModel.UIEvent.OnValidatePhone(sharedViewModel.countryCode)
+                OnValidatePhone(sharedViewModel.countryCode)
             },
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
@@ -148,7 +150,7 @@ fun SignUpPhoneScreen(
             errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
             defaultCountry = selectedCountry,
             pickedCountry = {
-                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged(
+                viewModel.onUIEvent(OnCountryCodeValueChanged(
                     it.countryCode
                 ) {
                     sharedViewModel.onUIEvent(

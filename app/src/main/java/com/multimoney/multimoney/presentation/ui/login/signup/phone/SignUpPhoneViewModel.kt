@@ -4,8 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberType.MOBILE
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnClearPhoneError
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnNextActionClick
@@ -30,14 +32,14 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
     }
 
     private fun isFormValid(countryCode: String) = emitBaseEvent(
-        BaseEvent.OnFormValidateCompleted(
+        OnFormValidateCompleted(
             when {
                 uiState.phoneCode.isBlank() || uiState.phoneNumber.isBlank() -> false
                 isPhoneNumberValid(
                     phone = uiState.phoneNumber,
                     fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
                     countryCode = countryCode,
-                    phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
+                    phoneNumberType = MOBILE
                 ) -> false
                 else -> true
             }
@@ -66,7 +68,7 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
                 phone = uiState.phoneNumber,
                 fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
                 countryCode = countryCode,
-                phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
+                phoneNumberType = MOBILE
             ).not()
         ) uiState = uiState.copy(phoneNumberError = Pair(true, R.string.sign_up_phone_not_valid))
     }

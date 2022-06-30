@@ -20,7 +20,6 @@ data class TestEntity(
         secondName = "secondName",
         lastName = "lastName",
         secondLastName = "secondLastName",
-        contactMeans = "contactMeans",
         nationality = "nationality",
         identification = "identification",
         countryCode = "countryCode",

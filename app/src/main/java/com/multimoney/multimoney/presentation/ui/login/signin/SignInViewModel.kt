@@ -184,7 +184,9 @@ class SignInViewModel @Inject constructor(
     private fun biometricPromptForEncryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
         result.cryptoObject?.cipher?.apply {
             viewModelScope.launch {
+                uiState = uiState.copy(configureBiometric = false)
                 dataStorePreferences.setUserEmail(uiState.userEmail)
+                dataStorePreferences.setUserName(uiState.userEmail)
                 dataStorePreferences.setUserPassword(uiState.userPassword, this@apply)
                 dataStorePreferences.isBiometricsEnabled(true)
                 navigateToHome()
@@ -264,7 +266,7 @@ class SignInViewModel @Inject constructor(
         val openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
         val isBiometricActive: Boolean = false,
         val showBiometricSignIn: Boolean = false,
-        val isLoading: Boolean = true
+        val isLoading: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {

@@ -23,11 +23,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.security.ContactMeans
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -48,7 +46,7 @@ fun SignUpPhoneScreen(
     val getDefaultCountryCode = getDefaultLangCode()
     val getDefaultPhoneCode = getDefaultPhoneCode()
     val selectedCountry =
-        getLibCountries().single {
+        getLibCountries().first {
             it.countryPhoneCode == if (sharedViewModel.userData?.countryCode.isNullOrEmpty()) {
                 getDefaultPhoneCode
             } else {

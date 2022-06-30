@@ -22,6 +22,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
@@ -68,7 +69,7 @@ fun SignUpPhoneScreen(
                     onUIEvent(
                         OnUseDataValueChange(userData?.copy(currentStep = SignUpStep.Three.name))
                     )
-                }, { callMutationUpdateUserRegisterUseCase() }))
+                }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
             })
             viewModel.baseEvent.collect { event ->
                 when (event) {
@@ -79,7 +80,6 @@ fun SignUpPhoneScreen(
     }
 
     LaunchedEffect(true) {
-            // Load Data from api
             var countryCodeValue = ""
             sharedViewModel.userData?.countryCode?.let {
                 countryCodeValue = selectedCountry.countryCode

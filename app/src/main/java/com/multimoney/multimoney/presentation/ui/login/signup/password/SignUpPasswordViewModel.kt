@@ -91,27 +91,29 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun onPasswordValueChange(password: String, onContinueEnable: (isEnable: Boolean) -> Unit) {
         uiState = uiState.copy(password = password)
         validatePassword()
-        onContinueEnable.invoke(isFormValid())
+        onContinueEnable(isFormValid())
     }
 
     private fun onConfirmPasswordValueChange(confirmPassword: String, onContinueEnable: (isEnable: Boolean) -> Unit) {
         uiState = uiState.copy(confirmPassword = confirmPassword)
         validatePassword()
-        onContinueEnable.invoke(isFormValid())
+        onContinueEnable(isFormValid())
     }
 
     private fun validatePassword() {
-        uiState.eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.password)
-        uiState.oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty()
-        uiState.oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty()
-        uiState.oneNumberState = passwordHasANumberValidation(uiState.password) && uiState.password.isNotEmpty()
-        uiState.oneCharacterState = passwordHasSpecialCharacterValidation(uiState.password) && uiState.password.isNotEmpty()
-        validateHasTheSameConsecutiveCharacter()
+        uiState = uiState.copy(
+            eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.password),
+            oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty(),
+            oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty(),
+            oneNumberState = passwordHasANumberValidation(uiState.password) && uiState.password.isNotEmpty(),
+            oneCharacterState = passwordHasSpecialCharacterValidation(uiState.password) && uiState.password.isNotEmpty(),
+            confirmPasswordError = validateHasTheSameConsecutiveCharacter()
+        )
         resetValidationLabel(uiState.password)
     }
 
-    private fun validateHasTheSameConsecutiveCharacter() {
-        uiState.confirmPasswordError = when {
+    private fun validateHasTheSameConsecutiveCharacter(): Pair<Boolean, Int> {
+        return when {
             noMoreThanThreeEqualConsecutiveLetterOrNumber(uiState.password) -> {
                 Pair(
                     true,
@@ -297,11 +299,13 @@ class SignUpPasswordViewModel @Inject constructor(
 
     private fun resetValidationLabel(password: String) {
         if (password.isEmpty()) {
-            uiState.eightCharactersMinimumState = null
-            uiState.oneUppercaseState = null
-            uiState.oneLowercaseState = null
-            uiState.oneNumberState = null
-            uiState.oneCharacterState = null
+            uiState = uiState.copy(
+                eightCharactersMinimumState = null,
+                oneUppercaseState = null,
+                oneLowercaseState = null,
+                oneNumberState = null,
+                oneCharacterState = null
+            )
         }
     }
 

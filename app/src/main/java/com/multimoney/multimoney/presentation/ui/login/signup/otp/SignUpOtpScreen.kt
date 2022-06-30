@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -30,31 +31,45 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.SignUpStep.Four
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.PHONE_HARDCODED
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FOUR
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_THREE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_TWO
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DELAY
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcess
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcessSuccess
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnGetOtpFromMessage
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnInitializeTimer
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNavigateToSignIn
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnOtpValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.format
-import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
-import kotlinx.coroutines.delay
-import java.time.Duration
 
 @Composable
 @Preview
@@ -67,17 +82,6 @@ fun SignUpOtpScreen(
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
-        sharedViewModel.apply {
-            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
-            nextAction = {
-                userData?.currentStep = SignUpStep.Four.name
-                callMutationUpdateUserRegisterUseCase()
-            }
-        }
-    }
-
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -86,71 +90,80 @@ fun SignUpOtpScreen(
                 Activity.RESULT_OK -> {
                     data?.apply {
                         getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)?.let {
-                            viewModel.getOtpFromMessage(it)
+                            viewModel.onUIEvent(OnGetOtpFromMessage(it))
                         }
                     }
                 }
             }
         }
 
+    viewModel.onUIEvent(OnStart(stringResource(id = R.string.whatsapp_deep_link, PHONE_HARDCODED)))
+
     LaunchedEffect(true) {
-        viewModel.isFirstLoad = true
-        sharedViewModel.apply {
-            viewModel.callMutationSendPinProcess(
-                userData?.identification ?: "",
-                userData?.firstName ?: "",
-                userData?.email ?: "",
-                userData?.phoneNumber ?: "",
-                SEND_METHOD_PHONE,
-                userData?.pkUser ?: "",
-                Brand.Revamp.id,
-                userData?.email ?: ""
-            )
-        }
-    }
-
-    LaunchedEffect(viewModel.isLoading) {
-        if (viewModel.isFirstLoad.not()) {
-            sharedViewModel.isLoading = viewModel.isLoading
-        }
-    }
-
-    LaunchedEffect(viewModel.onSuccessOtp) {
-        if (viewModel.isFirstLoad.not()) {
-            viewModel.apply {
-                phaseCount = PHASE_ONE
-                isTimerRunning = true
-                remainingTime = Duration.ofSeconds(SignUpOtpViewModel.TIMER_DURATION)
-                remainingTimeText = remainingTime.format()
-                otp = ""
-            }
-        }
-    }
-
-    val linkWhatsapp = stringResource(id = R.string.whatsapp_deep_link, PHONE_HARDCODED)
-
-    LaunchedEffect(viewModel.onFailure) {
-        if (viewModel.isFirstLoad.not()) {
-            sharedViewModel.apply {
-                openDialog = viewModel.onFailure.copy(positiveAction = {
-                    context.openWhatsAppDeepLink(
-                        linkWhatsapp
-                    )
-                    viewModel.navigateToSignIn()
-                })
-            }
-        }
-    }
-
-    viewModel.isFirstLoad = false
-
-    LaunchedEffect(key1 = viewModel.remainingTime, key2 = viewModel.isTimerRunning) {
         viewModel.apply {
-            if (isTimerTick()) {
-                delay(TIMER_DELAY)
-                onTimerTick()
-            } else if (viewModel.isTimerRunning) {
-                onTimerFinish()
+            executeNavigation(onPopAndNavigate = onPopAndNavigate)
+            onUIEvent(OnInitializeTimer(PHASE_ONE))
+            baseEvent.collect { event ->
+                when (event) {
+                    is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
+                }
+            }
+        }
+    }
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnValidateForm)
+        sharedViewModel.apply {
+            viewModel.onUIEvent(
+                OnCallMutationSendPinProcess(
+                    userData?.identification ?: "",
+                    userData?.firstName ?: "",
+                    userData?.email ?: "",
+                    userData?.phoneNumber ?: "",
+                    SEND_METHOD_PHONE,
+                    userData?.pkUser ?: "",
+                    Brand.Revamp.id,
+                    userData?.email ?: ""
+                )
+            )
+            onUIEvent(OnNextActionValueChange {
+                viewModel.onUIEvent(
+                    OnNextActionClick(
+                        onUseDataValueChange = {
+                            onUIEvent(
+                                OnUseDataValueChange(userData = userData?.copy(currentStep = Four.name))
+                            )
+                        },
+                        onCallMutationUpdateUserRegisterUseCase = {
+                            onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
+                        })
+                )
+            })
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.onCallMutationSendPinProcessEvent.collect { event ->
+            event.onSuccess {
+                viewModel.onUIEvent(
+                    OnCallMutationSendPinProcessSuccess { sharedViewModel.onUIEvent(OnLoadingValueChange(false)) }
+                )
+            }.onFailure {
+                sharedViewModel.onUIEvent(
+                    OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true),
+                            positiveText = R.string.contact,
+                            negativeText = R.string.cancel,
+                            negativeAction = {
+                                viewModel.onUIEvent(OnNavigateToSignIn)
+                            }
+                        )
+                    )
+                )
+            }.onLoading {
+                sharedViewModel.onUIEvent(OnLoadingValueChange(true))
             }
         }
     }
@@ -204,24 +217,14 @@ fun SignUpOtpScreen(
                 textDecoration = TextDecoration.Underline,
                 color = MultimoneyTheme.colors.textLink
             ),
-            onClick = {
-                focusManager.clearFocus()
-                sharedViewModel.previousStep()
-            }
+            onClick = { sharedViewModel.onUIEvent(OnBackClick(focusManager)) }
         )
 
         // Fields
         OtpTextField(
-            value = viewModel.otp,
-            onValueChange = {
-                viewModel.apply {
-                    otp = it
-                    isOtpFromSms = false
-                    clearOtpError()
-                    sharedViewModel.onUIEvent(OnContinueEnable(isFormValid()))
-                }
-            },
-            isValueFromSms = viewModel.isOtpFromSms,
+            value = viewModel.uiState.otp,
+            onValueChange = { viewModel.onUIEvent(OnOtpValueChange(it)) },
+            isValueFromSms = viewModel.uiState.isOtpFromSms,
             digits = TOTAL_DIGITS,
             placeHolder = stringResource(id = R.string.sign_up_otp_code_placeholder),
             modifier = Modifier
@@ -229,11 +232,11 @@ fun SignUpOtpScreen(
                 .padding(top = 32.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_otp_code_required),
-            isError = viewModel.otpError.first,
-            errorMessage = stringResource(id = viewModel.otpError.second)
+            isError = viewModel.uiState.otpError.first,
+            errorMessage = stringResource(id = viewModel.uiState.otpError.second)
         )
 
-        when (viewModel.phaseCount) {
+        when (viewModel.uiState.phaseCount) {
             PHASE_ONE, PHASE_THREE, PHASE_FIVE -> {
                 Row {
                     Text(
@@ -243,7 +246,7 @@ fun SignUpOtpScreen(
                         style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
                     )
                     Text(
-                        text = viewModel.remainingTimeText,
+                        text = viewModel.uiState.remainingTimeText,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .padding(top = 32.dp)
@@ -270,18 +273,19 @@ fun SignUpOtpScreen(
                 ),
                 onClick = {
                     sharedViewModel.apply {
-                        viewModel.callMutationSendPinProcess(
-                            userData?.identification ?: "",
-                            userData?.firstName ?: "",
-                            userData?.email ?: "",
-                            userData?.phoneNumber ?: "",
-                            SEND_METHOD_PHONE,
-                            userData?.pkUser ?: "",
-                            Brand.Revamp.id,
-                            userData?.email ?: ""
+                        viewModel.onUIEvent(
+                            OnCallMutationSendPinProcess(
+                                userData?.identification ?: "",
+                                userData?.firstName ?: "",
+                                userData?.email ?: "",
+                                userData?.phoneNumber ?: "",
+                                SEND_METHOD_PHONE,
+                                userData?.pkUser ?: "",
+                                Brand.Revamp.id,
+                                userData?.email ?: ""
+                            )
                         )
                     }
-                    viewModel.getPhaseAction()
                 }
             )
             else -> Text(

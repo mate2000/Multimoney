@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnOtpValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,8 +58,11 @@ class SignUpOtpViewModel @Inject constructor(
     private fun getOtpFromMessage(message: String) {
         val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
         if (otpMatcher.find()) {
-            clearOtpError()
-            uiState = uiState.copy(otp = otpMatcher.group(0)?.toString() ?: "", isOtpFromSms = true)
+            uiState = uiState.copy(
+                otp = otpMatcher.group(0)?.toString() ?: "",
+                isOtpFromSms = true,
+                otpError = Pair(false, R.string.error_empty)
+            )
         }
     }
 
@@ -119,10 +123,6 @@ class SignUpOtpViewModel @Inject constructor(
         )
     )
 
-    private fun clearOtpError() {
-        uiState = uiState.copy(otpError = Pair(false, R.string.error_empty))
-    }
-
     private fun callMutationSendPinProcess(
         identification: String,
         firstName: String,
@@ -170,8 +170,7 @@ class SignUpOtpViewModel @Inject constructor(
     }
 
     private fun onOtpValueChange(value: String) {
-        uiState = uiState.copy(otp = value, isOtpFromSms = false)
-        clearOtpError()
+        uiState = uiState.copy(otp = value, isOtpFromSms = false, otpError = Pair(false, R.string.error_empty))
         isFormValid()
     }
 
@@ -282,8 +281,6 @@ class SignUpOtpViewModel @Inject constructor(
 
         const val TIMER_DURATION = 5L
         const val TIMER_DELAY = 1L
-
-        const val OTP_MESSAGE_REGEX = "(|^)\\d{$TOTAL_DIGITS}"
 
         const val SEND_METHOD_PHONE = "PHONE"
     }

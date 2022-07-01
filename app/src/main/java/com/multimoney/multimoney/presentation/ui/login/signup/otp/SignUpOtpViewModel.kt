@@ -6,66 +6,95 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.model.security.SendPinResponse
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcess
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcessSuccess
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnGetOtpFromMessage
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnInitializeTimer
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNavigateToSignIn
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnOtpValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import java.time.Duration
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class SignUpOtpViewModel @Inject constructor(
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase
 ) : BaseViewModel() {
 
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
 
-    // Fields
-    var otp by mutableStateOf("")
-    var otpError by mutableStateOf(Pair(false, R.string.sign_up_otp_code_not_valid))
+    // Stateless
+    private var linkWhatsapp = ""
 
-    // Interactions
-    var phaseCount by mutableStateOf(PHASE_ONE)
-    var remainingTime: Duration by mutableStateOf(Duration.ofSeconds(TIMER_DURATION))
-    var isTimerRunning by mutableStateOf(false)
-    var remainingTimeText by mutableStateOf(remainingTime.format())
-    var isOtpFromSms by mutableStateOf(false)
+    // Events
+    val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinResponse?>>()
 
-    var onSuccessOtp by mutableStateOf<SendPinResponse?>(null)
-    var onFailure by mutableStateOf(DialogParameters())
-    var isFirstLoad: Boolean = true
+    private fun onStart(linkWhatsapp: String) {
+        this.linkWhatsapp = linkWhatsapp
+    }
 
-    fun getOtpFromMessage(message: String) {
+    private fun getOtpFromMessage(message: String) {
         val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
         if (otpMatcher.find()) {
-            clearOtpError()
-            otp = otpMatcher.group(0)?.toString() ?: ""
-            isOtpFromSms = true
+            uiState = uiState.copy(
+                otp = otpMatcher.group(0)?.toString() ?: "",
+                isOtpFromSms = true,
+                otpError = Pair(false, R.string.error_empty)
+            )
         }
     }
 
-    fun isTimerTick() = remainingTime.seconds > 0 && isTimerRunning
+    private fun isTimerTick() = uiState.remainingTime.inWholeSeconds > 0 && uiState.isTimerRunning
 
-    fun onTimerTick() {
-        remainingTime = remainingTime.minusSeconds(1L)
-        remainingTimeText = remainingTime.format()
+    private fun onTimerTick() {
+        val newRemainingTime = uiState.remainingTime.minus(TIMER_DELAY.seconds)
+        uiState = uiState.copy(remainingTime = newRemainingTime, remainingTimeText = newRemainingTime.format())
     }
 
-    fun onTimerFinish() {
-        isTimerRunning = false
-        remainingTime = remainingTime.plusSeconds(TIMER_DURATION)
-        remainingTimeText = remainingTime.format()
-        phaseCount++
+    private fun initializeTimer(phaseCount: Int = uiState.phaseCount) {
+        val newRemainingTime = TIMER_DURATION.seconds
+        uiState = uiState.copy(
+            phaseCount = phaseCount,
+            isTimerRunning = true,
+            remainingTime = newRemainingTime,
+            remainingTimeText = newRemainingTime.format(),
+            otp = ""
+        )
     }
 
-    fun getPhaseResourceString() = when (phaseCount) {
+    private fun onTimerFinish() {
+        val newRemainingTime = uiState.remainingTime.plus(TIMER_DURATION.seconds)
+        uiState = uiState.copy(
+            isTimerRunning = false,
+            remainingTime = newRemainingTime,
+            remainingTimeText = newRemainingTime.format(),
+            phaseCount = uiState.phaseCount.plus(1)
+        )
+    }
+
+    fun getPhaseResourceString() = when (uiState.phaseCount) {
         PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
         PHASE_TWO -> R.string.sign_up_otp_resend
         PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
@@ -74,29 +103,27 @@ class SignUpOtpViewModel @Inject constructor(
         else -> R.string.sign_up_otp_expiration_time_phase_six
     }
 
-    fun getPhaseAction() = when (phaseCount) {
-        PHASE_TWO -> resend()
-        else -> call()
+    private fun getPhaseAction() {
+        when (uiState.phaseCount) {
+            PHASE_TWO, PHASE_FOUR -> resend()
+        }
     }
 
     private fun resend() {
-        phaseCount++
-        isTimerRunning = true
+        uiState = uiState.copy(
+            isTimerRunning = true,
+            phaseCount = uiState.phaseCount.plus(1)
+        )
     }
 
-    private fun call() {
-        phaseCount++
-        isTimerRunning = true
-    }
+    private fun isFormValid() = emitBaseEvent(
+        OnFormValidateCompleted(
+            uiState.otp.trim()
+                .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS && uiState.phaseCount < PHASE_FIVE
+        )
+    )
 
-    fun isFormValid() =
-        otp.trim().isNotEmpty() && otp.trim().length == TOTAL_DIGITS && phaseCount < PHASE_FIVE
-
-    fun clearOtpError() {
-        otpError = Pair(false, R.string.error_empty)
-    }
-
-    fun callMutationSendPinProcess(
+    private fun callMutationSendPinProcess(
         identification: String,
         firstName: String,
         email: String,
@@ -105,47 +132,142 @@ class SignUpOtpViewModel @Inject constructor(
         pkUser: String,
         idBrand: Int,
         user: String
-    ) {
-        viewModelScope.launch {
-            mutationSendPinProcessUseCase.invoke(
-                identification,
-                firstName,
-                email,
-                cellphone,
-                sendMethod,
-                pkUser,
-                idBrand,
-                user
-            ).collectLatest { result ->
-                result.onSuccess {
-                    onSuccessOtp = it
-                    isLoading = false
-                }
-                result.onFailure {
-                    onFailure =
-                        DialogParameters(
-                            description = it.getError().toString(),
-                            isActive = mutableStateOf(true),
-                            positiveText = R.string.contact,
-                            negativeText = R.string.cancel,
-                            negativeAction = {
-                                navigateToSignIn()
-                            }
-                        )
-                    isLoading = false
-                }
-                result.onLoading {
-                    isLoading = true
-                }
-            }
+    ) = executeUseCase {
+        mutationSendPinProcessUseCase.invoke(
+            identification,
+            firstName,
+            email,
+            cellphone,
+            sendMethod,
+            pkUser,
+            idBrand,
+            user
+        ).collectLatest { result ->
+            onCallMutationSendPinProcessEvent.emit(result)
         }
     }
 
-    fun navigateToSignIn() {
+    private fun navigateToSignIn() {
         popAndNavigateTo(
             route = Screen.SignInScreen.route,
             popTo = Screen.SignUpScreen.route
         )
+    }
+
+    private fun onNextActionClick(
+        onUseDataValueChange: () -> Unit,
+        onCallMutationUpdateUserRegisterUseCase: () -> Unit
+    ) {
+        onUseDataValueChange()
+        onCallMutationUpdateUserRegisterUseCase()
+    }
+
+    private fun onCallMutationSendPinProcessSuccess(onLoadingValueChange: () -> Unit) {
+        initializeTimer()
+        getPhaseAction()
+        onExecuteTimer()
+        onLoadingValueChange.invoke()
+    }
+
+    private fun onOtpValueChange(value: String) {
+        uiState = uiState.copy(otp = value, isOtpFromSms = false, otpError = Pair(false, R.string.error_empty))
+        isFormValid()
+    }
+
+    private fun onExecuteTimer() {
+        tickerFlow(period = TIMER_DELAY.seconds, initialDelay = TIMER_DELAY.seconds, duration = TIMER_DURATION.seconds)
+            .map {
+                LocalDateTime.now()
+            }
+            .distinctUntilChanged { old, new ->
+                old.second == new.second
+            }
+            .onEach {
+                if (isTimerTick()) {
+                    onTimerTick()
+                } else if (uiState.isTimerRunning) {
+                    onTimerFinish()
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    data class UIState(
+        // Fields
+        val otp: String = "",
+        val otpError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
+
+        // Interactions
+        val phaseCount: Int = PHASE_ONE,
+        val remainingTime: Duration = TIMER_DURATION.seconds,
+        val isTimerRunning: Boolean = false,
+        val remainingTimeText: String = remainingTime.format(),
+        val isOtpFromSms: Boolean = false
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is OnStart -> onStart(event.linkWhatsapp)
+            is OnNextActionClick -> onNextActionClick(
+                event.onUseDataValueChange,
+                event.onCallMutationUpdateUserRegisterUseCase
+            )
+            is OnGetOtpFromMessage -> getOtpFromMessage(event.message)
+            is OnCallMutationSendPinProcess -> callMutationSendPinProcess(
+                event.identification,
+                event.firstName,
+                event.email,
+                event.cellphone,
+                event.sendMethod,
+                event.pkUser,
+                event.idBrand,
+                event.user
+            )
+            is OnValidateForm -> isFormValid()
+            is OnNavigateToSignIn -> navigateToSignIn()
+            is OnCallMutationSendPinProcessSuccess -> onCallMutationSendPinProcessSuccess(event.onLoadingValueChange)
+            is OnOtpValueChange -> onOtpValueChange(event.value)
+            is OnInitializeTimer -> initializeTimer(event.phaseCount)
+        }
+    }
+
+    sealed class UIEvent {
+        data class OnStart(
+            val linkWhatsapp: String
+        ) : UIEvent()
+
+        data class OnNextActionClick(
+            val onUseDataValueChange: () -> Unit,
+            val onCallMutationUpdateUserRegisterUseCase: () -> Unit
+        ) : UIEvent()
+
+        data class OnGetOtpFromMessage(val message: String) : UIEvent()
+
+        data class OnCallMutationSendPinProcess(
+            val identification: String,
+            val firstName: String,
+            val email: String,
+            val cellphone: String,
+            val sendMethod: String,
+            val pkUser: String,
+            val idBrand: Int,
+            val user: String
+        ) : UIEvent()
+
+        data class OnCallMutationSendPinProcessSuccess(
+            val onLoadingValueChange: () -> Unit
+        ) : UIEvent()
+
+        data class OnInitializeTimer(val phaseCount: Int) : UIEvent()
+
+        data class OnOtpValueChange(val value: String) : UIEvent()
+
+        object OnValidateForm : UIEvent()
+        object OnNavigateToSignIn : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
     }
 
     companion object {
@@ -157,10 +279,8 @@ class SignUpOtpViewModel @Inject constructor(
 
         const val TOTAL_DIGITS = 4
 
-        const val TIMER_DURATION = 59L
-        const val TIMER_DELAY = 1000L
-
-        const val OTP_MESSAGE_REGEX = "(|^)\\d{$TOTAL_DIGITS}"
+        const val TIMER_DURATION = 5L
+        const val TIMER_DELAY = 1L
 
         const val SEND_METHOD_PHONE = "PHONE"
     }

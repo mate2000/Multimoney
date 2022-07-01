@@ -15,7 +15,6 @@ interface MutationUpdateUserRegisterUseCase {
         secondName: String?,
         lastName: String?,
         secondLastName: String?,
-        contactMeans: String?,
         nationality: String?,
         identification: String?,
         countryCode: String?,

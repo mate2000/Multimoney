@@ -74,20 +74,38 @@ fun CustomButton(
 
     when (buttonType) {
         CustomButtonType.PrimaryPrimary -> {
-            buttonColor = ButtonDefaults.buttonColors(
-                backgroundColor = if (isPressed) {
-                    Primary400
+            if (isSystemInDarkTheme()) {
+                buttonColor = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isPressed) {
+                        Primary500
+                    } else {
+                        Primary400
+                    },
+                    contentColor = GrayScale800,
+                    disabledBackgroundColor = WhiteTransparency20,
+                    disabledContentColor = GrayScale500
+                )
+                arrowIconTint = if (enable) {
+                    GrayScale800
                 } else {
-                    Primary500
-                },
-                contentColor = GrayScale800,
-                disabledBackgroundColor = WhiteTransparency20,
-                disabledContentColor = GrayScale500
-            )
-            arrowIconTint = if (enable) {
-                GrayScale800
+                    GrayScale500
+                }
             } else {
-                GrayScale500
+                buttonColor = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isPressed) {
+                        Primary400
+                    } else {
+                        Primary500
+                    },
+                    contentColor = GrayScale800,
+                    disabledBackgroundColor = WhiteTransparency20,
+                    disabledContentColor = GrayScale500
+                )
+                arrowIconTint = if (enable) {
+                    GrayScale800
+                } else {
+                    GrayScale500
+                }
             }
         }
         CustomButtonType.PrimarySecondary -> {

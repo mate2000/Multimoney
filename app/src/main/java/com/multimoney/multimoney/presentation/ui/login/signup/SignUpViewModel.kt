@@ -21,7 +21,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
@@ -33,8 +32,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -50,8 +49,6 @@ class SignUpViewModel @Inject constructor(
     // Stateless
     var userData: UserData? = null
     var countryCode = ""
-    var userPassword = ""
-    var isBiometricAvailable = false
     var nextAction: () -> Unit = {}
 
     fun nextStep() {
@@ -91,11 +88,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun completedProcessAction() = popAndNavigateTo(
-        route = if (isBiometricAvailable) {
-            "${Screen.SignUpBiometricsScreen.baseRoute}/${userData?.email}/$userPassword"
-        } else {
-            Screen.SignUpCompleted.route
-        },
+        route = Screen.SignUpCompleted.route,
         popTo = Screen.SignUpScreen.route
     )
 
@@ -183,7 +176,6 @@ class SignUpViewModel @Inject constructor(
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
-            is OnIsBiometricAvailable -> isBiometricAvailable = event.value
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
             is OnFailureWithDialog -> uiState =
@@ -207,7 +199,6 @@ class SignUpViewModel @Inject constructor(
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
-        data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :

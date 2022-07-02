@@ -37,7 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
@@ -89,7 +89,7 @@ fun SignUpPasswordScreen(
             }
         ))
         sharedViewModel.apply {
-            onUIEvent(OnNextActionValueChange {
+            onUIEvent(OnSetNavigation(nextAction = {
                 viewModel.onUIEvent(
                     OnCallPasswordSave(
                         pkUser = userData?.pkUser ?: "0",
@@ -97,7 +97,7 @@ fun SignUpPasswordScreen(
                         Brand.Revamp.id
                     )
                 )
-            })
+            }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id))
         }
     }
 

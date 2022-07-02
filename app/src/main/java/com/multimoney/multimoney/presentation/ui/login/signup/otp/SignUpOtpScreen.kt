@@ -31,7 +31,7 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SignUpStep.Four
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -46,7 +46,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
@@ -125,19 +125,19 @@ fun SignUpOtpScreen(
                     userData?.email ?: ""
                 )
             )
-            onUIEvent(OnNextActionValueChange {
+            onUIEvent(OnSetNavigation(nextAction = {
                 viewModel.onUIEvent(
                     OnNextActionClick(
                         onUseDataValueChange = {
                             onUIEvent(
-                                OnUseDataValueChange(userData = userData?.copy(currentStep = Four.name))
+                                OnUseDataValueChange(userData = userData?.copy(currentStep = SignUpStep.Three.name))
                             )
                         },
                         onCallMutationUpdateUserRegisterUseCase = {
                             onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
                         })
                 )
-            })
+            }, nextStep = SignUpStep.Five.id, previousStep = SignUpStep.Three.id))
         }
     }
 

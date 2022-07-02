@@ -23,17 +23,17 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -50,25 +50,25 @@ class SignUpViewModel @Inject constructor(
     var userData: UserData? = null
     var countryCode = ""
     var nextAction: () -> Unit = {}
+    private var nextStep: Int = SignUpStep.One.id
+    private var previousStep: Int = SignUpStep.One.id
 
-    fun nextStep() {
-        if (uiState.currentStep <= SIGN_UP_TOTAL_STEPS) {
-            val newCurrentStep = uiState.currentStep + 1
+    private fun nextStep() {
+        if (nextStep <= SIGN_UP_TOTAL_STEPS) {
             uiState = uiState.copy(
-                currentStep = newCurrentStep,
-                isCloseVisible = newCurrentStep > SignUpStep.One.id
+                currentStep = nextStep,
+                isCloseVisible = nextStep > SignUpStep.One.id
             )
         } else {
             completedProcessAction()
         }
     }
 
-    fun previousStep() {
-        if (uiState.currentStep > SignUpStep.One.id) {
-            val newCurrentStep = uiState.currentStep - 1
+    private fun previousStep() {
+        if (previousStep > SignUpStep.One.id) {
             uiState = uiState.copy(
-                currentStep = newCurrentStep,
-                isCloseVisible = newCurrentStep > SignUpStep.One.id
+                currentStep = previousStep,
+                isCloseVisible = previousStep > SignUpStep.One.id
             )
         } else {
             popAndNavigateTo(
@@ -79,7 +79,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun moveToStep(step: Int) {
-        if (uiState.currentStep <= SIGN_UP_TOTAL_STEPS && step <= SIGN_UP_TOTAL_STEPS) {
+        if (step <= SIGN_UP_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
                 isCloseVisible = step > SignUpStep.One.id
@@ -161,6 +161,12 @@ class SignUpViewModel @Inject constructor(
         nextAction.invoke()
     }
 
+    private fun onSetNavigation(nextAction: () -> Unit, nextStep: Int, previousStep: Int) {
+        this.nextAction = nextAction
+        this.nextStep = nextStep
+        this.previousStep = previousStep
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SignUpStep.One.id,
@@ -172,6 +178,7 @@ class SignUpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
+            is OnSetNavigation -> onSetNavigation(event.nextAction, event.nextStep, event.previousStep)
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
@@ -181,7 +188,6 @@ class SignUpViewModel @Inject constructor(
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
-            is OnNextActionValueChange -> nextAction = event.nextAction
             is OnUseDataValueChange -> userData = event.userData
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
@@ -204,8 +210,9 @@ class SignUpViewModel @Inject constructor(
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
 
-        data class OnNextActionValueChange(val nextAction: () -> Unit) : UIEvent()
+        data class OnSetNavigation(val nextAction: () -> Unit, val nextStep: Int, val previousStep: Int) : UIEvent()
         data class OnUseDataValueChange(val userData: UserData?) : UIEvent()
+
         data class OnMoveToStep(val step: Int) : UIEvent()
         data class OnPhoneNumberValueChange(val phoneNumber: String) : UIEvent()
         data class OnCountryCountryCodeValueChange(
@@ -219,7 +226,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     companion object {
-        const val SIGN_UP_TOTAL_STEPS = 5
+        const val SIGN_UP_TOTAL_STEPS = 6
         const val PHONE_HARDCODED = "50371680915"
     }
 }

@@ -76,7 +76,7 @@ fun SignUpIdVerificationScreen(
                                 viewModel.onUIEvent(
                                     RefreshOnFidoToken(
                                         sharedViewModel.userData?.firstName ?: "",
-                                        sharedViewModel.userData?.lastName ?: "",
+                                        sharedViewModel.userData?.firstLastName ?: "",
                                         sharedViewModel.userData?.email ?: "",
                                         context.packageName,
                                         Brand.Revamp.id,
@@ -109,7 +109,7 @@ fun SignUpIdVerificationScreen(
         viewModel.onUIEvent(
             OnCallInFidoToken(
                 sharedViewModel.userData?.firstName ?: "",
-                sharedViewModel.userData?.lastName ?: "",
+                sharedViewModel.userData?.firstLastName ?: "",
                 sharedViewModel.userData?.email ?: "",
                 context.packageName,
                 Brand.Revamp.id,

@@ -8,7 +8,7 @@ data class UserData(
     var fullName: String? = null,
     var firstName: String? = null,
     var secondName: String? = null,
-    var lastName: String? = null,
+    var firstLastName: String? = null,
     var secondLastName: String? = null,
     var contactMeans: String? = null,
     var nationality: String? = null,

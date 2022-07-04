@@ -63,13 +63,19 @@ fun SignUpPhoneScreen(
 
     LaunchedEffect(true) {
         sharedViewModel.apply {
-            onUIEvent(OnSetNavigation(nextAction = {
-                viewModel.onUIEvent(OnNextActionClick({
-                    onUIEvent(
-                        OnUseDataValueChange(userData?.copy(currentStep = SignUpStep.Three.name))
-                    )
-                }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
-            }, nextStep = SignUpStep.Four.id, previousStep = SignUpStep.Two.id))
+            onUIEvent(
+                OnSetNavigation(
+                    nextAction = {
+                        viewModel.onUIEvent(OnNextActionClick({
+                            onUIEvent(
+                                OnUseDataValueChange(userData?.copy(currentStep = viewModel.getNextStep(sharedViewModel.isPhoneVerified, isOnFidoVerified).name))
+                            )
+                        }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
+                    },
+                    nextStep = viewModel.getNextStep(sharedViewModel.isPhoneVerified, isOnFidoVerified).id,
+                    previousStep = SignUpStep.Two.id
+                )
+            )
             viewModel.baseEvent.collect { event ->
                 when (event) {
                     is OnFormValidateCompleted -> onUIEvent(OnContinueEnable(event.isFormValid))

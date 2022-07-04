@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
-import com.multimoney.data.util.catalog.SignUpStep.Three
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -93,7 +92,7 @@ fun SignUpIdVerificationScreen(
                             )
 
                         )
-                    }, nextStep = SignUpStep.Six.id, previousStep = Three.id))
+                    }, nextStep = SignUpStep.Six.id, previousStep = SignUpStep.Three.id))
                 }
             }.onLoading {
                 sharedViewModel.onUIEvent(OnLoadingValueChange(true))

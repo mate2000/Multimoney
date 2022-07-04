@@ -3,8 +3,8 @@ package com.multimoney.multimoney.presentation.ui.login.signup.phone
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberType.MOBILE
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
@@ -83,6 +83,14 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
     ) {
         onUserDataValueChange()
         onCallMutationUpdateUserRegisterUseCase()
+    }
+
+    fun getNextStep(isPhoneVerified: Boolean, isOnFidoVerified: Boolean) = if (isPhoneVerified.not()) {
+        SignUpStep.Four
+    } else if (isOnFidoVerified.not()) {
+        SignUpStep.Five
+    }else{
+        SignUpStep.Six
     }
 
     data class UIState(

@@ -38,10 +38,10 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
@@ -208,7 +208,7 @@ class SignUpPasswordViewModel @Inject constructor(
         })
     }
 
-    private fun showBiometricSuccess(onCallMutationUpdateUserRegister: () -> Unit) {
+    private fun showBiometricSuccess(onNextStep: () -> Unit) {
         uiState = uiState.copy(
             openDialogCustom = DialogParameters(
                 title = R.string.dialog_success_biometric_title,
@@ -216,16 +216,16 @@ class SignUpPasswordViewModel @Inject constructor(
                 positiveText = R.string.dialog_success_biometric_positive_text,
                 isActive = mutableStateOf(true),
                 positiveAction = {
-                    onCallMutationUpdateUserRegister()
+                    onNextStep()
                 },
                 dismissAction = {
-                    onCallMutationUpdateUserRegister()
+                    onNextStep()
                 }
             )
         )
     }
 
-    private fun showBiometricsFailed(onCallMutationUpdateUserRegister: () -> Unit) {
+    private fun showBiometricsFailed(onNextStep: () -> Unit) {
         uiState = uiState.copy(
             openDialogCustom = DialogParameters(
                 title = R.string.dialog_failure_biometric_title,
@@ -233,10 +233,10 @@ class SignUpPasswordViewModel @Inject constructor(
                 positiveText = R.string.dialog_failure_biometric_positive_text,
                 isActive = mutableStateOf(true),
                 positiveAction = {
-                    onCallMutationUpdateUserRegister()
+                    onNextStep()
                 },
                 dismissAction = {
-                    onCallMutationUpdateUserRegister()
+                    onNextStep()
                 }
             ))
     }
@@ -244,23 +244,23 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun biometricPromptError(
         errorCode: Int,
         errString: CharSequence,
-        onCallMutationUpdateUserRegister: () -> Unit
+        onNextStep: () -> Unit
     ) {
-        showBiometricsFailed(onCallMutationUpdateUserRegister)
+        showBiometricsFailed(onNextStep)
     }
 
     private fun biometricPromptForEncryptionSuccess(
         result: BiometricPrompt.AuthenticationResult,
         userEmail: String,
         userPassword: String,
-        onCallMutationUpdateUserRegister: () -> Unit
+        onNextStep: () -> Unit
     ) {
         result.cryptoObject?.cipher?.apply {
             viewModelScope.launch {
                 dataStorePreferences.setUserEmail(userEmail)
                 dataStorePreferences.setUserPassword(userPassword, this@apply)
                 dataStorePreferences.isBiometricsEnabled(true)
-                showBiometricSuccess(onCallMutationUpdateUserRegister)
+                showBiometricSuccess(onNextStep)
             }
         }
     }
@@ -268,7 +268,7 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun onShowBiometricPromptForEncryption(
         fragmentActivity: FragmentActivity,
         userEmail: String,
-        onCallMutationUpdateUserRegister: () -> Unit
+        onNextStep: () -> Unit
     ) {
         if (isBiometricAvailable) {
             biometricHelper.showBiometricPrompt(
@@ -281,19 +281,19 @@ class SignUpPasswordViewModel @Inject constructor(
                         result,
                         userEmail,
                         uiState.password,
-                        onCallMutationUpdateUserRegister
+                        onNextStep
                     )
                 },
                 processError = { errorCode, errString ->
                     biometricPromptError(
                         errorCode,
                         errString,
-                        onCallMutationUpdateUserRegister
+                        onNextStep
                     )
                 }
             )
         } else {
-            onCallMutationUpdateUserRegister()
+            onNextStep()
         }
     }
 
@@ -356,7 +356,7 @@ class SignUpPasswordViewModel @Inject constructor(
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
                 uiEvent.userEmail,
-                uiEvent.onCallMutationUpdateUserRegister
+                uiEvent.onNextStep
             )
             is OnIsBiometricAvailable -> isBiometricAvailable = uiEvent.value
         }
@@ -410,7 +410,7 @@ class SignUpPasswordViewModel @Inject constructor(
         data class OnShowBiometricPromptForEncryption(
             val fragmentActivity: FragmentActivity,
             val userEmail: String,
-            val onCallMutationUpdateUserRegister: () -> Unit
+            val onNextStep: () -> Unit
         ) : UIEvent()
 
         data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()

@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallPasswordSave
@@ -119,11 +120,7 @@ fun SignUpPasswordScreen(
                                 OnShowBiometricPromptForEncryption(
                                     fragmentActivity = fragmentActivity,
                                     userEmail = userData?.email ?: "",
-                                    onCallMutationUpdateUserRegister = {
-                                        onUIEvent(
-                                            OnCallMutationUpdateUserRegisterUseCase
-                                        )
-                                    }
+                                    onNextStep = {onUIEvent(OnNextStep)}
                                 )
                             )
                         },

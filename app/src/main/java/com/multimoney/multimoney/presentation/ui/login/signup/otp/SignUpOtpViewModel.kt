@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.model.security.SendPinResponse
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -101,6 +102,12 @@ class SignUpOtpViewModel @Inject constructor(
         PHASE_FOUR -> R.string.sign_up_otp_call
         PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_five
         else -> R.string.sign_up_otp_expiration_time_phase_six
+    }
+
+    fun getNextStep(isPhoneVerified: Boolean) = if(isPhoneVerified){
+        SignUpStep.Four
+    }else{
+        SignUpStep.Six
     }
 
     private fun getPhaseAction() {

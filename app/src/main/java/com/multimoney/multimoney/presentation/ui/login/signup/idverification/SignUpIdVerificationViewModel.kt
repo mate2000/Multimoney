@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SignUpIdVerificationViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
-    val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase
+    private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase
 ) : BaseViewModel() {
 
     var onFidoError: String = ""

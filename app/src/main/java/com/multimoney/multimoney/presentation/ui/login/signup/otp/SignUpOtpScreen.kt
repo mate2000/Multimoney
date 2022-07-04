@@ -130,14 +130,14 @@ fun SignUpOtpScreen(
                     OnNextActionClick(
                         onUseDataValueChange = {
                             onUIEvent(
-                                OnUseDataValueChange(userData = userData?.copy(currentStep = SignUpStep.Three.name))
+                                OnUseDataValueChange(userData = userData?.copy(currentStep = viewModel.getNextStep(sharedViewModel.isOnFidoVerified).name))
                             )
                         },
                         onCallMutationUpdateUserRegisterUseCase = {
                             onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
                         })
                 )
-            }, nextStep = SignUpStep.Five.id, previousStep = SignUpStep.Three.id))
+            }, nextStep = viewModel.getNextStep(sharedViewModel.isOnFidoVerified).id, previousStep = SignUpStep.Three.id))
         }
     }
 

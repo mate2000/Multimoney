@@ -18,13 +18,16 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -97,6 +100,14 @@ class SignUpViewModel @Inject constructor(
     )
 
 
+    private fun onNationalityChange(nationality: String) {
+        userData?.nationality = nationality
+        userData?.identification = ""
+        userData?.firstName = ""
+        userData?.firstLastName = ""
+        userData?.fullName = ""
+    }
+
     fun callMutationUpdateUserRegisterUseCase() = executeUseCase {
         mutationUpdateUserRegisterUseCase.invoke(
             pkUser = userData?.pkUser ?: "",
@@ -106,7 +117,7 @@ class SignUpViewModel @Inject constructor(
             fullName = userData?.fullName,
             firstName = userData?.firstName,
             secondName = userData?.secondName,
-            lastName = userData?.lastName,
+            lastName = userData?.firstLastName,
             secondLastName = userData?.secondLastName,
             contactMeans = userData?.contactMeans,
             nationality = userData?.nationality,
@@ -179,6 +190,12 @@ class SignUpViewModel @Inject constructor(
             is OnUseDataValueChange -> userData = event.userData
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
+            is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
+            is OnNationalityValueChange -> onNationalityChange(event.nationality)
+            is OnCountryCountryCodeValueChange -> onCountryCodeChange(
+                event.countryCode,
+                event.countryPhoneCode
+            )
         }
     }
 
@@ -194,9 +211,19 @@ class SignUpViewModel @Inject constructor(
         data class OnNextActionValueChange(val nextAction: () -> Unit) : UIEvent()
         data class OnUseDataValueChange(val userData: UserData?) : UIEvent()
         data class OnMoveToStep(val step: Int) : UIEvent()
+        data class OnPhoneNumberValueChange(val phoneNumber: String) : UIEvent()
+        data class OnNationalityValueChange(val nationality: String) : UIEvent()
+        data class OnCountryCountryCodeValueChange(
+            val countryCode: String,
+            val countryPhoneCode: String
+        ) : UIEvent()
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
+
+        sealed class BaseEvent {
+            data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+        }
     }
 
     companion object {

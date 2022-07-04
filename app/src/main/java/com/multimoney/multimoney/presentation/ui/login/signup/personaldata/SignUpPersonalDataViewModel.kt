@@ -12,6 +12,10 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.validId
@@ -25,9 +29,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase
 ) : BaseViewModel() {
 
-    //Fields
-    var nationalityValue by mutableStateOf("")
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
+
     var crPersonalDocument by mutableStateOf("")
+
     var personalIdError by mutableStateOf(
         Pair(
             false,
@@ -36,32 +43,29 @@ class SignUpPersonalDataViewModel @Inject constructor(
     )
     var nameError by mutableStateOf(Pair(false, 0))
     var lastNameError by mutableStateOf(Pair(false, 0))
-    var personalDocumentValue by mutableStateOf("")
-    var nameValue by mutableStateOf("")
-    var lastNameValue by mutableStateOf("")
     var closeKeyboard by mutableStateOf(false)
 
     // Interactions
     var onSuccessDataInformationClient by mutableStateOf<ClientInfoCr?>(null)
 
     fun validateFields(): Boolean {
-        return when (nationalityValue) {
-            Nationalities.ElSalvador.country -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == Nationalities.ElSalvador.documentSize) && !personalIdError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
-            Nationalities.Guatemala.country -> personalDocumentValue.isNotBlank() && (personalDocumentValue.length == Nationalities.Guatemala.documentSize) && !personalIdError.first && nameValue.isNotBlank() && lastNameValue.isNotBlank()
-            Nationalities.CostaRicaId.country -> personalDocumentValue.isNotBlank() &&
-                    (personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) &&
+        return when (uiState.nationalityValue) {
+            Nationalities.ElSalvador.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.ElSalvador.documentSize) && !personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+            Nationalities.Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.Guatemala.documentSize) && !personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+            Nationalities.CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
+                    (uiState.personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || uiState.personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) &&
                     !personalIdError.first && crPersonalDocument.isNotBlank() && onSuccessDataInformationClient?.fullName != null
             else -> false
         }
     }
 
-    fun getNationality(country: String) = when (country) {
+    private fun getNationality(country: String) = when (country) {
         Nationalities.ElSalvador.country -> Nationalities.ElSalvador.name
         Nationalities.Guatemala.country -> Nationalities.Guatemala.name
         else -> Nationalities.CostaRicaId.name
     }
 
-    fun getCountry(nationality: String) = when (nationality) {
+    private fun getCountry(nationality: String) = when (nationality) {
         Nationalities.ElSalvador.name -> Nationalities.ElSalvador.country
         Nationalities.Guatemala.name -> Nationalities.Guatemala.country
         Nationalities.CostaRicaId.name -> Nationalities.CostaRicaId.country
@@ -70,9 +74,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     fun crFilterDocument(id: String) {
         if (crPersonalDocument == CrDocuments.IdDocument.document && id.length <= Nationalities.CostaRicaId.documentSize) {
-            personalDocumentValue = id.filter { it.isDigit() }
+            uiState = uiState.copy(crPersonalDocumentValue = id.filter { it.isDigit() })
         } else if (crPersonalDocument == CrDocuments.Dimex.document && id.length <= Nationalities.CostaRicaDimex.documentSize) {
-            personalDocumentValue = id.filter { it.isDigit() }
+            uiState = uiState.copy(crPersonalDocumentValue = id.filter { it.isDigit() })
         }
     }
 
@@ -82,12 +86,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val status = validId(
             if (crPersonalDocument == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
             R.string.sign_up_personal_data_id_not_valid,
-            personalDocumentValue.length
+            uiState.personalDocumentValue.length
         )
         personalIdError = status
         if (status.first.not()) {
             closeKeyboard = true
-            callQueryDataInformationClient(personalDocumentValue, Brand.Revamp.id, user)
+            callQueryDataInformationClient(uiState.personalDocumentValue, Brand.Revamp.id, user)
         } else {
             if (onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
                 onSuccessDataInformationClient = null
@@ -122,6 +126,92 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun onNationalityChange(
+        nationality: String,
+        updateNationality: (nationality: String) -> Unit
+    ) {
+        uiState = uiState.copy(nationalityValue = nationality, personalDocumentValue = "")
+        updateNationality.invoke(getNationality(nationality))
+    }
+
+    private fun onFirstNameChange(firstName: String) {
+        uiState = uiState.copy(firstLastNameValue = firstName.filter { it.isDigit() })
+    }
+
+    private fun onStart(
+        nationality: String,
+        crPersonalDocument: String,
+        identification: String,
+        firstName: String,
+        secondName: String,
+        firstLastName: String,
+        secondLastName: String,
+        fullName: String
+    ) {
+        uiState = uiState.copy(
+            nationalityValue = getCountry(nationality),
+            crPersonalDocumentValue = crPersonalDocument,
+            personalDocumentValue = identification,
+            firstNameValue = firstName,
+            secondNameValue = secondName,
+            firstLastNameValue = firstLastName,
+            secondLastNameValue = secondLastName,
+            fullNameValue = fullName
+        )
+    }
+
+    data class UIState(
+        val nationalityValue: String = "",
+        val crPersonalDocumentValue: String = "",
+        val personalDocumentValue: String = "",
+        val firstNameValue: String = "",
+        val secondNameValue: String = "",
+        val firstLastNameValue: String = "",
+        val secondLastNameValue: String = "",
+        val fullNameValue: String = ""
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is OnStart -> onStart(
+                event.nationality,
+                event.crPersonalDocumentValue,
+                event.identification,
+                event.firstName,
+                event.secondName,
+                event.firstLastName,
+                event.secondLastName,
+                event.fullName
+            )
+            is OnNationalityChange -> onNationalityChange(
+                event.nationality,
+                event.updateNationality
+            )
+            is OnFirstNameChange -> onFirstNameChange(event.firstName)
+        }
+    }
+
+    sealed class UIEvent {
+        data class OnStart(
+            val nationality: String,
+            val crPersonalDocumentValue: String,
+            val identification: String,
+            val firstName: String,
+            val secondName: String,
+            val firstLastName: String,
+            val secondLastName: String,
+            val fullName: String
+        ) : UIEvent()
+
+        data class OnNationalityChange(
+            val nationality: String,
+            val updateNationality: (nationality: String) -> Unit
+        ) :
+            UIEvent()
+
+        data class OnFirstNameChange(val firstName: String) : UIEvent()
     }
 
     companion object {

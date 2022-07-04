@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.transformation.formatDui
@@ -36,16 +36,16 @@ fun SignUpPersonalDataSvScreen(
             .fillMaxSize()
     ) {
         CustomOutlinedTextField(
-            value = viewModel.personalDocumentValue,
+            value = viewModel.uiState.personalDocumentValue,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_sv_id_hint),
             onValueChange = { text ->
                 if (text.length <= Nationalities.ElSalvador.documentSize) {
-                    viewModel.personalDocumentValue = text.filter { it.isDigit() }
-                    sharedViewModel.userData?.identification = viewModel.personalDocumentValue
+                    viewModel.onUIEvent(OnFirstNameChange(text))
+                    sharedViewModel.userData?.identification = viewModel.uiState.personalDocumentValue
                 }
             },
             onDebounceValidation = {
-                viewModel.personalIdError = validDui(viewModel.personalDocumentValue)
+                viewModel.personalIdError = validDui(viewModel.uiState.personalDocumentValue)
                 sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
             },
             keyboardOptions = KeyboardOptions(
@@ -66,12 +66,12 @@ fun SignUpPersonalDataSvScreen(
         )
         CustomOutlinedTextField(
             placeHolder = stringResource(id = R.string.sign_up_personal_data_name_hint),
-            value = viewModel.nameValue,
+            value = viewModel.uiState.firstNameValue,
             onValueChange = {
-                viewModel.nameValue = it
+                //viewModel.nameValue = it
                 sharedViewModel.apply {
                     userData?.firstName = it
-                    userData?.fullName = "$it ${userData?.lastName}"
+                    userData?.fullName = "$it ${userData?.firstLastName}"
                     sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
                 }
             },
@@ -91,11 +91,11 @@ fun SignUpPersonalDataSvScreen(
 
         CustomOutlinedTextField(
             placeHolder = stringResource(id = R.string.sign_up_personal_data_lastname_hint),
-            value = viewModel.lastNameValue,
+            value = viewModel.uiState.firstLastNameValue,
             onValueChange = {
-                viewModel.lastNameValue = it
+                //viewModel.lastNameValue = it
                 sharedViewModel.apply {
-                    userData?.lastName = it
+                    userData?.firstLastName = it
                     userData?.fullName = "${userData?.firstName} $it"
                     sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
                 }

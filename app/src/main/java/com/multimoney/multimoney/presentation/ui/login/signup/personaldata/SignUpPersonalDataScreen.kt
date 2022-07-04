@@ -21,8 +21,11 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.Nationalities
 
@@ -39,17 +42,24 @@ fun SignUpPersonalDataScreen(
                 callMutationUpdateUserRegisterUseCase()
             }
             // Load Data from api
-            userData?.nationality?.let { viewModel.nationalityValue = viewModel.getCountry(it) }
-            userData?.identification?.let {
-                viewModel.apply {
-                    crPersonalDocument = it
-                    personalDocumentValue = it
+            viewModel.onUIEvent(
+                OnStart(
+                    nationality = userData?.nationality ?: "",
+                    identification = userData?.identification ?: "",
+                    crPersonalDocumentValue = userData?.identification ?: "",
+                    firstName = userData?.firstName ?: "",
+                    secondName = userData?.secondName ?: "",
+                    firstLastName = userData?.firstLastName ?: "",
+                    secondLastName = userData?.secondLastName ?: "",
+                    fullName = userData?.fullName ?: ""
+                )
+            )
+            userData?.fullName?.let { viewModel.onSuccessDataInformationClient?.fullName = it }
+            viewModel.baseEvent.collect { event ->
+                when (event) {
+                    is OnFormValidateCompleted -> onUIEvent(OnContinueEnable(event.isFormValid))
                 }
             }
-            userData?.firstName?.let { viewModel.nameValue = it }
-            userData?.lastName?.let { viewModel.lastNameValue = it }
-            userData?.fullName?.let { viewModel.onSuccessDataInformationClient?.fullName = it }
-            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
         }
     }
 
@@ -73,25 +83,26 @@ fun SignUpPersonalDataScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = stringArrayResource(id = R.array.sign_up_personal_data_nationalities).sorted(),
-            onValueChange = {
-                viewModel.apply {
-                    personalDocumentValue = ""
-                    nationalityValue = it
-                    sharedViewModel.apply {
-                        userData?.nationality = getNationality(it)
-                        userData?.identification = ""
-                        userData?.firstName = ""
-                        userData?.lastName = ""
-                        userData?.fullName = ""
-                        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                    }
-                }
+            onValueChange = { value ->
+                viewModel.onUIEvent(OnNationalityChange(value) {
+                    sharedViewModel.onUIEvent(
+                        OnNationalityValueChange(it)
+                    )
+                })
+                /*sharedViewModel.apply {
+                    userData?.nationality = getNationality(it)
+                    userData?.identification = ""
+                    userData?.firstName = ""
+                    userData?.firstLastName = ""
+                    userData?.fullName = ""
+                    sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                }*/
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_nationality),
-            value = viewModel.nationalityValue,
+            value = viewModel.uiState.nationalityValue,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_nationality_placeholder)
         )
-        when (viewModel.nationalityValue) {
+        when (viewModel.uiState.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
             Nationalities.ElSalvador.country -> SignUpPersonalDataSvScreen()
             Nationalities.Guatemala.country -> SignUpPersonalDataGtScreen()

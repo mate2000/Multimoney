@@ -18,7 +18,7 @@ data class TestEntity(
         fullName = "fullName",
         firstName = "firstName",
         secondName = "secondName",
-        lastName = "lastName",
+        firstLastName = "lastName",
         secondLastName = "secondLastName",
         contactMeans = "contactMeans",
         nationality = "nationality",

@@ -1,12 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
@@ -24,11 +22,9 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
 import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.transformation.formatId
 
@@ -39,43 +35,17 @@ fun SignUpPersonalDataCrScreen(
     viewModel: SignUpPersonalDataViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
-    val customRadioModifier = Modifier
-        .wrapContentSize()
-        .selectable(
-            selected = true,
-            onClick = {}
-        )
     Column(
         Modifier
             .wrapContentSize()
             .padding(top = 16.dp)
     ) {
-        CustomRadioButton(
-            modifier = customRadioModifier.clickable {
-                viewModel.personalDocumentValue = ""
-                viewModel.crPersonalDocument = CrDocuments.IdDocument.document
-            },
-            radioModifier = Modifier.padding(0.dp),
-            text = CrDocuments.IdDocument.document,
-            selected = viewModel.crPersonalDocument == CrDocuments.IdDocument.document,
-            onOptionSelected = { viewModel.crPersonalDocument = CrDocuments.IdDocument.document }
-        )
-        CustomRadioButton(
-            modifier = customRadioModifier.clickable {
-                viewModel.personalDocumentValue = ""
-                viewModel.crPersonalDocument = CrDocuments.Dimex.document
-            },
-            radioModifier = Modifier.padding(0.dp),
-            selected = viewModel.crPersonalDocument == CrDocuments.Dimex.document,
-            text = CrDocuments.Dimex.document,
-            onOptionSelected = { viewModel.crPersonalDocument = CrDocuments.Dimex.document }
-        )
         CustomOutlinedTextField(
-            value = viewModel.personalDocumentValue,
+            value = viewModel.uiState.personalDocumentValue,
             placeHolder = stringResource(id = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) R.string.sign_up_personal_data_cr_id_hint else R.string.sign_up_personal_data_cr_dimex_hint),
             onValueChange = { newString ->
                 viewModel.crFilterDocument(newString)
-                sharedViewModel.userData?.identification = viewModel.personalDocumentValue
+                sharedViewModel.userData?.identification = viewModel.uiState.personalDocumentValue
                 sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
             },
             keyboardOptions = KeyboardOptions(

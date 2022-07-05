@@ -3,10 +3,12 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -17,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.CrDocuments
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +31,6 @@ import javax.inject.Inject
 class SignUpPersonalDataViewModel @Inject constructor(
     private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase
 ) : BaseViewModel() {
-
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
@@ -162,6 +164,20 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     }
 
+    private fun cleanUI() {
+        uiState = uiState.copy(
+            nationalityValue = "",
+            crPersonalDocument = "",
+            personalIdError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
+            nameError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
+            lastNameError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
+            personalDocumentValue = "",
+            nameValue = "",
+            lastNameValue = "",
+            closeKeyboard = false
+        )
+    }
+
     data class UIState(
         val nationalityValue: String = "",
         val crPersonalDocumentValue: String = "",
@@ -170,7 +186,18 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val secondNameValue: String = "",
         val firstLastNameValue: String = "",
         val secondLastNameValue: String = "",
-        val fullNameValue: String = ""
+        val fullNameValue: String = "",
+        val crPersonalDocument: String = "",
+        val personalIdError: Pair<Boolean, Int> = Pair(
+            false,
+            R.string.sign_up_personal_data_id_sv_required
+        ),
+
+        val nameError: Pair<Boolean, Int> = Pair(false, 0),
+        val lastNameError: Pair<Boolean, Int> = Pair(false, 0),
+        val nameValue: String = "",
+        val lastNameValue: String = "",
+        val closeKeyboard: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -212,6 +239,26 @@ class SignUpPersonalDataViewModel @Inject constructor(
             UIEvent()
 
         data class OnFirstNameChange(val firstName: String) : UIEvent()
+        data class OnBackClick(val focusManager: FocusManager) : UIEvent()
+        data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
+        data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
+        data class OnContinueEnable(val enable: Boolean) : UIEvent()
+        data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
+        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
+        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
+            UIEvent()
+
+        data class OnNextActionValueChange(val nextAction: () -> Unit) : UIEvent()
+        data class OnUseDataValueChange(val userData: UserData?) : UIEvent()
+        data class OnMoveToStep(val step: Int) : UIEvent()
+
+        object OnNextStep : UIEvent()
+        object OnPreviousStep : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
     }
 
     companion object {

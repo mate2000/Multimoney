@@ -87,7 +87,7 @@ fun SignUpPersonalDataGtScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
-            placeHolder = stringResource(id = R.string.sign_up_personal_data_name_hint),
+            placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
             isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
             isError = viewModel.nameError.first
         )

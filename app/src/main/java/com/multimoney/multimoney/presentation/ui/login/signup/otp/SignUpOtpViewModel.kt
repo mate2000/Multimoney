@@ -104,9 +104,9 @@ class SignUpOtpViewModel @Inject constructor(
         else -> R.string.sign_up_otp_expiration_time_phase_six
     }
 
-    fun getNextStep(isPhoneVerified: Boolean) = if(isPhoneVerified){
-        SignUpStep.Four
-    }else{
+    fun getNextStep(isOnFidoVerified: Boolean) = if (isOnFidoVerified.not()) {
+        SignUpStep.Five
+    } else {
         SignUpStep.Six
     }
 

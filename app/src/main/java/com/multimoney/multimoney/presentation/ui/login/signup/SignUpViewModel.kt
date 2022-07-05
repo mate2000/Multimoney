@@ -7,6 +7,7 @@ import androidx.compose.ui.focus.FocusManager
 import com.multimoney.data.util.GsonHelper
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
@@ -124,6 +125,7 @@ class SignUpViewModel @Inject constructor(
             idBrand = Brand.Revamp.id
         ).collectLatest { result ->
             result.onSuccess {
+                nextStep = Search.getIdByName(it?.currentStep)
                 onUIEvent(OnLoadingValueChange(false))
                 onUIEvent(OnUseDataValueChange(it))
                 onUIEvent(OnNextStep)

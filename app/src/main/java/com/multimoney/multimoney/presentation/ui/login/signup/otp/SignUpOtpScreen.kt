@@ -79,7 +79,6 @@ fun SignUpOtpScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
 
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     // Create start activity result for SMS Retrieve
@@ -125,19 +124,31 @@ fun SignUpOtpScreen(
                     userData?.email ?: ""
                 )
             )
-            onUIEvent(OnSetNavigation(nextAction = {
-                viewModel.onUIEvent(
-                    OnNextActionClick(
-                        onUseDataValueChange = {
-                            onUIEvent(
-                                OnUseDataValueChange(userData = userData?.copy(currentStep = viewModel.getNextStep(sharedViewModel.isOnFidoVerified).name))
-                            )
-                        },
-                        onCallMutationUpdateUserRegisterUseCase = {
-                            onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
-                        })
+            onUIEvent(
+                OnSetNavigation(
+                    nextAction = {
+                        viewModel.onUIEvent(
+                            OnNextActionClick(
+                                onUseDataValueChange = {
+                                    onUIEvent(
+                                        OnUseDataValueChange(
+                                            userData = userData?.copy(
+                                                currentStep = viewModel.getNextStep(
+                                                    sharedViewModel.isOnFidoVerified
+                                                ).name
+                                            )
+                                        )
+                                    )
+                                },
+                                onCallMutationUpdateUserRegisterUseCase = {
+                                    onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
+                                })
+                        )
+                    },
+                    nextStep = viewModel.getNextStep(sharedViewModel.isOnFidoVerified).id,
+                    previousStep = SignUpStep.Three.id
                 )
-            }, nextStep = viewModel.getNextStep(sharedViewModel.isOnFidoVerified).id, previousStep = SignUpStep.Three.id))
+            )
         }
     }
 

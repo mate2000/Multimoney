@@ -15,12 +15,12 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnIsBiometricAvailable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.util.BiometricHelper
@@ -50,8 +51,6 @@ class SignUpViewModel @Inject constructor(
     // Stateless
     var userData: UserData? = null
     var countryCode = ""
-    var userPassword = ""
-    var isBiometricAvailable = false
     var nextAction: () -> Unit = {}
 
     fun nextStep() {
@@ -91,14 +90,21 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun completedProcessAction() = popAndNavigateTo(
-        route = if (isBiometricAvailable) {
-            "${Screen.SignUpBiometricsScreen.baseRoute}/${userData?.email}/$userPassword"
-        } else {
-            Screen.SignUpCompleted.route
-        },
+        route = Screen.SignUpCompleted.route,
         popTo = Screen.SignUpScreen.route
     )
 
+    private fun onPhoneNumberChange(phoneNumber: String) {
+        userData?.phoneNumber = phoneNumber
+    }
+
+    private fun onCountryCodeChange(countryCode: String, countryPhoneCode: String) {
+        userData?.let {
+            it.countryCode = countryPhoneCode
+            it.phoneNumber = null
+        }
+        this.countryCode = countryCode
+    }
 
     private fun onNationalityChange(nationality: String) {
         userData?.nationality = nationality
@@ -106,6 +112,10 @@ class SignUpViewModel @Inject constructor(
         userData?.firstName = ""
         userData?.firstLastName = ""
         userData?.fullName = ""
+    }
+
+    private fun onDocumentValueChange(document: String) {
+        userData = userData?.copy(identification = document)
     }
 
     fun callMutationUpdateUserRegisterUseCase() = executeUseCase {
@@ -119,7 +129,6 @@ class SignUpViewModel @Inject constructor(
             secondName = userData?.secondName,
             lastName = userData?.firstLastName,
             secondLastName = userData?.secondLastName,
-            contactMeans = userData?.contactMeans,
             nationality = userData?.nationality,
             identification = userData?.identification,
             countryCode = userData?.countryCode,
@@ -181,21 +190,23 @@ class SignUpViewModel @Inject constructor(
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
-            is OnIsBiometricAvailable -> isBiometricAvailable = event.value
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog -> uiState = uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState =
+                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnNextActionValueChange -> nextAction = event.nextAction
             is OnUseDataValueChange -> userData = event.userData
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
+            is OnSharedIdentificationValueChange -> onDocumentValueChange(event.identificationValue)
             is OnNationalityValueChange -> onNationalityChange(event.nationality)
             is OnCountryCountryCodeValueChange -> onCountryCodeChange(
                 event.countryCode,
                 event.countryPhoneCode
             )
+            is OnCallMutationUpdateUserRegisterUseCase -> callMutationUpdateUserRegisterUseCase()
         }
     }
 
@@ -204,13 +215,15 @@ class SignUpViewModel @Inject constructor(
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
-        data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
-        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
+        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
+            UIEvent()
+
         data class OnNextActionValueChange(val nextAction: () -> Unit) : UIEvent()
         data class OnUseDataValueChange(val userData: UserData?) : UIEvent()
         data class OnMoveToStep(val step: Int) : UIEvent()
+        data class OnSharedIdentificationValueChange(val identificationValue: String) : UIEvent()
         data class OnPhoneNumberValueChange(val phoneNumber: String) : UIEvent()
         data class OnNationalityValueChange(val nationality: String) : UIEvent()
         data class OnCountryCountryCodeValueChange(
@@ -220,10 +233,11 @@ class SignUpViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
-
         sealed class BaseEvent {
             data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
         }
+
+        object OnCallMutationUpdateUserRegisterUseCase : UIEvent()
     }
 
     companion object {

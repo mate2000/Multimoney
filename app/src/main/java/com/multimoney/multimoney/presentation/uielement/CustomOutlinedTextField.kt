@@ -42,9 +42,7 @@ import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
-import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -229,6 +227,7 @@ fun CustomOutlinedTextField(
                     Icon(
                         painter = painterResource(id = it),
                         contentDescription = "",
+                        modifier = Modifier.padding(start = 8.dp),
                         tint = iconTintColor
                     )
                 }
@@ -248,6 +247,7 @@ fun CustomOutlinedTextField(
                         Icon(
                             painter = image,
                             contentDescription = "",
+                            modifier = Modifier.padding(end = 8.dp),
                             tint = iconTintColor
                         )
                     }

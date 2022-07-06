@@ -13,7 +13,6 @@ fun UserValidationMutation.UserValidation.mapToDomainModel() = UserData(
     secondName = secondName,
     firstLastName = lastName,
     secondLastName = secondLastName,
-    contactMeans = contactMeans,
     nationality = nationality,
     identification = identification,
     countryCode = countryCode,

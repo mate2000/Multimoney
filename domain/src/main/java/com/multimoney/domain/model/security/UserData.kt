@@ -10,7 +10,6 @@ data class UserData(
     var secondName: String? = null,
     var firstLastName: String? = null,
     var secondLastName: String? = null,
-    var contactMeans: String? = null,
     var nationality: String? = null,
     var identification: String? = null,
     var countryCode: String? = null,

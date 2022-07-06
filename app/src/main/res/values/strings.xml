@@ -142,7 +142,7 @@
     <string name="sign_up_password_requirement_one_uppercase">Mayúsculas</string>
     <string name="sign_up_password_requirement_one_lowercase">Minúsculas</string>
     <string name="sign_up_password_requirement_one_number">Números</string>
-    <string name="sign_up_password_requirement_one_characer">1 caracter especial</string>
+    <string name="sign_up_password_requirement_one_characer">Carácter especial</string>
     <string name="sign_up_password_confirm_password_error">Las contraseñas son diferentes</string>
     <string name="sign_up_password_requirement_no_the_same_consecutive_character">No más de tres caracteres iguales consecutivos ya sean numéricos o alfabéticos.</string>
     <string name="sign_up_password_requirement_max_three_characters_or_number_consecutive">Máximo 3 caracteres numérico o alfabéticos consecutivos.</string>
@@ -180,8 +180,18 @@
     <string name="custom_dialog_default_negative_label">Cancelar</string>
 
     <!-- Active Biometric Dialog-->
-    <string name="active_biometric_title">¿Seguro que querés activar tu huella?</string>
-    <string name="active_biometric_message">Activando tu huella podrás ingresar a la app de forma más rápida y segura.</string>
+    <string name="active_biometric_title">¿Estás seguro que querés activar tus Biométricos?</string>
+    <string name="active_biometric_message">Activando tus biometricos podrás ingresar a la app de forma más rápida y segura.</string>
     <string name="active_biometric_positive_button_label">Activar</string>
     <string name="active_biometric_negative_button_label">Cancelar</string>
+
+    <!-- Biometric Dialog Success -->
+    <string name="dialog_success_biometric_title">¡Listo!</string>
+    <string name="dialog_success_biometric_description">Tu Biometrico fue configurado exitosamente.</string>
+    <string name="dialog_success_biometric_positive_text">Finalizar</string>
+
+    <!-- Biometric Dialog Failure -->
+    <string name="dialog_failure_biometric_title">¡Oh no!</string>
+    <string name="dialog_failure_biometric_description">Por el momento no hemos podido configurar tu Face ID.</string>
+    <string name="dialog_failure_biometric_positive_text">Activar más tarde</string>
 </resources>

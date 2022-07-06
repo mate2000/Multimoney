@@ -30,8 +30,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoError
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnInitValues
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnOpenOnFidoSdk
@@ -49,26 +47,21 @@ fun SignUpIdVerificationScreen(
     val context = LocalContext.current
     val launchOnFidoActivityResult =
         rememberLauncherForActivityResult(StartActivityForResult()) { result ->
-            viewModel.onUIEvent(OnOpenOnFidoSdk(result))
+            viewModel.onUIEvent(
+                OnOpenOnFidoSdk(
+                    result,
+                    onOnFidoCompleted = { sharedViewModel.nextStep() },
+                    onOnFidoError = {
+                        sharedViewModel.onUIEvent(OnOpenDialogValueChange(it))
+                    },
+                    onContinueEnable = {
+                        sharedViewModel.onUIEvent(OnContinueEnable(it))
+                    }
+                )
+            )
         }
 
     viewModel.onUIEvent(OnInitValues(false, stringResource(id = R.string.placeholder_error)))
-
-    LaunchedEffect(context) {
-        viewModel.baseEvent.collect { event ->
-            when (event) {
-                is OnOnFidoCompleted -> {
-                    if (event.isCompleted) {
-                        sharedViewModel.nextStep()
-                    }
-                }
-                is OnOnFidoError -> {
-                    sharedViewModel.onUIEvent(OnContinueEnable(false))
-                    sharedViewModel.onUIEvent(OnOpenDialogValueChange(event.error))
-                }
-            }
-        }
-    }
 
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->

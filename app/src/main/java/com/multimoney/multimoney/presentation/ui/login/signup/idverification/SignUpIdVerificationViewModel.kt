@@ -11,8 +11,6 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoError
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnInitValues
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnOpenOnFidoSdk
@@ -87,13 +85,18 @@ class SignUpIdVerificationViewModel @Inject constructor(
         this.onFidoError = onFidoError
     }
 
-    private fun onOpenOnFidoSDK(result: ActivityResult) {
+    private fun onOpenOnFidoSDK(
+        result: ActivityResult,
+        onOnFidoCompleted: () -> Unit,
+        onOnFidoError: (DialogParameters) -> Unit,
+        onContinueValueChanged: (value: Boolean) -> Unit
+    ) {
         onFidoHelper.getOnFidoClient().handleActivityResult(
             result.resultCode,
             result.data,
             object : OnfidoResultListener {
                 override fun userCompleted(captures: Captures) {
-                    emitBaseEvent(OnOnFidoCompleted(true))
+                    onOnFidoCompleted()
                 }
 
                 override fun userExited(exitCode: ExitCode) {
@@ -101,12 +104,11 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 }
 
                 override fun onError(exception: OnfidoException) {
-                    emitBaseEvent(
-                        OnOnFidoError(
-                            DialogParameters(
-                                description = onFidoError,
-                                isActive = mutableStateOf(true)
-                            )
+                    onContinueValueChanged(false)
+                    onOnFidoError(
+                        DialogParameters(
+                            description = onFidoError,
+                            isActive = mutableStateOf(true)
                         )
                     )
                 }
@@ -123,7 +125,12 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 event.userData?.email ?: "",
             )
             is OnInitValues -> onInitValues(onFidoError)
-            is OnOpenOnFidoSdk -> onOpenOnFidoSDK(event.result)
+            is OnOpenOnFidoSdk -> onOpenOnFidoSDK(
+                event.result,
+                event.onOnFidoCompleted,
+                event.onOnFidoError,
+                event.onContinueEnable
+            )
             is RefreshOnFidoToken -> onRefreshToken(
                 event.userData?.firstName ?: "",
                 event.userData?.lastName ?: "",
@@ -142,16 +149,17 @@ class SignUpIdVerificationViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnInitValues(val isFirstLaunch: Boolean, val onFidoError: String) : UIEvent()
-        data class OnOpenOnFidoSdk(val result: ActivityResult) : UIEvent()
+        data class OnOpenOnFidoSdk(
+            val result: ActivityResult,
+            val onOnFidoCompleted: () -> Unit,
+            val onOnFidoError: (dialogParameters: DialogParameters) -> Unit,
+            val onContinueEnable: (value: Boolean) -> Unit
+        ) : UIEvent()
+
         data class RefreshOnFidoToken(
             val userData: UserData?,
             val applicationId: String,
             val injectNewToken: (String?) -> Unit
         ) : UIEvent()
-    }
-
-    sealed class BaseEvent {
-        data class OnOnFidoCompleted(val isCompleted: Boolean) : BaseEvent()
-        data class OnOnFidoError(val error: DialogParameters) : BaseEvent()
     }
 }

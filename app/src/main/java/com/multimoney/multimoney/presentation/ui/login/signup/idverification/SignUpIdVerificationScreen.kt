@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -29,6 +28,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.BaseEvent.OnOnFidoError
@@ -57,8 +57,15 @@ fun SignUpIdVerificationScreen(
     LaunchedEffect(context) {
         viewModel.baseEvent.collect { event ->
             when (event) {
-                is OnOnFidoCompleted -> sharedViewModel.nextStep()
-                is OnOnFidoError -> sharedViewModel.onUIEvent(OnOpenDialogValueChange(event.error))
+                is OnOnFidoCompleted -> {
+                    if (event.isCompleted) {
+                        sharedViewModel.nextStep()
+                    }
+                }
+                is OnOnFidoError -> {
+                    sharedViewModel.onUIEvent(OnContinueEnable(false))
+                    sharedViewModel.onUIEvent(OnOpenDialogValueChange(event.error))
+                }
             }
         }
     }
@@ -68,19 +75,15 @@ fun SignUpIdVerificationScreen(
             event.onSuccess {
                 sharedViewModel.onUIEvent(OnLoadingValueChange(false))
                 sharedViewModel.onUIEvent(OnContinueEnable(true))
-                sharedViewModel.nextAction = {
+                sharedViewModel.onUIEvent(OnNextActionValueChange {
                     launchOnFidoActivityResult.launch(
                         viewModel.onFidoHelper.getOnFidoIntent(
                             it?.sdkToken ?: "",
                             onRefreshToke = { refreshToken ->
                                 viewModel.onUIEvent(
                                     RefreshOnFidoToken(
-                                        sharedViewModel.userData?.firstName ?: "",
-                                        sharedViewModel.userData?.lastName ?: "",
-                                        sharedViewModel.userData?.email ?: "",
+                                        sharedViewModel.userData,
                                         context.packageName,
-                                        Brand.Revamp.id,
-                                        sharedViewModel.userData?.email ?: "",
                                         refreshToken
                                     )
                                 )
@@ -89,6 +92,7 @@ fun SignUpIdVerificationScreen(
 
                     )
                 }
+                )
             }.onLoading {
                 sharedViewModel.onUIEvent(OnLoadingValueChange(true))
             }.onFailure {
@@ -108,12 +112,8 @@ fun SignUpIdVerificationScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(
             OnCallInFidoToken(
-                sharedViewModel.userData?.firstName ?: "",
-                sharedViewModel.userData?.lastName ?: "",
-                sharedViewModel.userData?.email ?: "",
-                context.packageName,
-                Brand.Revamp.id,
-                sharedViewModel.userData?.email ?: ""
+                sharedViewModel.userData,
+                context.packageName
             )
         )
     }

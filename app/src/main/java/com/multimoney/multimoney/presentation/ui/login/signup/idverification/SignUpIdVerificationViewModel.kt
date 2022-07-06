@@ -3,8 +3,10 @@ package com.multimoney.multimoney.presentation.ui.login.signup.idverification
 import androidx.activity.result.ActivityResult
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.model.security.OnfidoToken
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
@@ -43,7 +45,6 @@ class SignUpIdVerificationViewModel @Inject constructor(
         lastNames: String,
         identification: String,
         applicationId: String,
-        idBrand: Int,
         user: String
     ) {
         viewModelScope.launch {
@@ -52,7 +53,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 lastNames,
                 identification,
                 applicationId,
-                idBrand,
+                Brand.Revamp.id,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
@@ -65,13 +66,12 @@ class SignUpIdVerificationViewModel @Inject constructor(
         lastNames: String,
         identification: String,
         applicationId: String,
-        idBrand: Int,
         user: String,
         injectNewToken: (String?) -> Unit
     ) {
         viewModelScope.launch {
             mutationOnFidoInitialProcessUseCase.invoke(
-                names, lastNames, identification, applicationId, idBrand, user
+                names, lastNames, identification, applicationId, Brand.Revamp.id, user
             ).collectLatest { result ->
                 result.onSuccess {
                     injectNewToken(it?.sdkToken ?: "")
@@ -116,22 +116,20 @@ class SignUpIdVerificationViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnCallInFidoToken -> callMutationOnFidoInitialProcess(
-                event.names,
-                event.lastNames,
-                event.identification,
+                event.userData?.firstName ?: "",
+                event.userData?.lastName ?: "",
+                event.userData?.identification ?: "",
                 event.applicationId,
-                event.idBrand,
-                event.user
+                event.userData?.email ?: "",
             )
             is OnInitValues -> onInitValues(onFidoError)
             is OnOpenOnFidoSdk -> onOpenOnFidoSDK(event.result)
             is RefreshOnFidoToken -> onRefreshToken(
-                event.names,
-                event.lastNames,
-                event.identification,
+                event.userData?.firstName ?: "",
+                event.userData?.lastName ?: "",
+                event.userData?.identification ?: "",
                 event.applicationId,
-                event.idBrand,
-                event.user,
+                event.userData?.email ?: "",
                 event.injectNewToken
             )
         }
@@ -139,23 +137,15 @@ class SignUpIdVerificationViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnCallInFidoToken(
-            val names: String,
-            val lastNames: String,
-            val identification: String,
-            val applicationId: String,
-            val idBrand: Int,
-            val user: String
+            val userData: UserData?,
+            val applicationId: String
         ) : UIEvent()
 
         data class OnInitValues(val isFirstLaunch: Boolean, val onFidoError: String) : UIEvent()
         data class OnOpenOnFidoSdk(val result: ActivityResult) : UIEvent()
         data class RefreshOnFidoToken(
-            val names: String,
-            val lastNames: String,
-            val identification: String,
+            val userData: UserData?,
             val applicationId: String,
-            val idBrand: Int,
-            val user: String,
             val injectNewToken: (String?) -> Unit
         ) : UIEvent()
     }

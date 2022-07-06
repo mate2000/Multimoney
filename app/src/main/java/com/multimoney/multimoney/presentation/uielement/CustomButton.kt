@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
@@ -27,18 +28,15 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary200
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
-import com.multimoney.multimoney.presentation.theme.Primary700
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency12
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 
 /**
  * CustomButton: Button to match design style across the whole app, in order to use it.
@@ -72,6 +70,9 @@ fun CustomButton(
     val arrowIconTint: Color
     var borderStroke: BorderStroke? = null
 
+    val textColor: Color
+    var underLined: Boolean = false
+
     when (buttonType) {
         CustomButtonType.PrimaryPrimary -> {
             if (isSystemInDarkTheme()) {
@@ -81,10 +82,10 @@ fun CustomButton(
                     } else {
                         Primary400
                     },
-                    contentColor = GrayScale800,
                     disabledBackgroundColor = WhiteTransparency20,
                     disabledContentColor = GrayScale500
                 )
+                textColor = GrayScale800
                 arrowIconTint = if (enable) {
                     GrayScale800
                 } else {
@@ -97,10 +98,10 @@ fun CustomButton(
                     } else {
                         Primary500
                     },
-                    contentColor = GrayScale800,
                     disabledBackgroundColor = WhiteTransparency20,
                     disabledContentColor = GrayScale500
                 )
+                textColor = GrayScale800
                 arrowIconTint = if (enable) {
                     GrayScale800
                 } else {
@@ -116,10 +117,10 @@ fun CustomButton(
                     } else {
                         DefaultBlack
                     },
-                    contentColor = DefaultWhite,
                     disabledBackgroundColor = DefaultBlack,
                     disabledContentColor = GrayScale400
                 )
+                textColor = DefaultWhite
                 if (enable) {
                     borderStroke = BorderStroke(1.dp, Primary400)
                     arrowIconTint = DefaultWhite
@@ -134,10 +135,10 @@ fun CustomButton(
                     } else {
                         DefaultWhite
                     },
-                    contentColor = Primary500,
                     disabledBackgroundColor = DefaultWhite,
                     disabledContentColor = GrayScale400
                 )
+                textColor = Primary500
                 if (enable) {
                     borderStroke = BorderStroke(1.dp, Primary400)
                     arrowIconTint = Primary500
@@ -153,12 +154,12 @@ fun CustomButton(
                     backgroundColor = if (isPressed) {
                         WhiteTransparency12
                     } else {
-                        DefaultBlack
+                        GrayScale800
                     },
-                    contentColor = DefaultWhite,
                     disabledBackgroundColor = DefaultBlack,
-                    disabledContentColor = DefaultWhite
+                    disabledContentColor = GrayScale400
                 )
+                textColor = Primary400
                 arrowIconTint = if (enable) {
                     DefaultWhite
                 } else {
@@ -171,10 +172,10 @@ fun CustomButton(
                     } else {
                         DefaultWhite
                     },
-                    contentColor = Primary500,
                     disabledBackgroundColor = DefaultWhite,
                     disabledContentColor = GrayScale400
                 )
+                textColor = Primary500
                 arrowIconTint = if (enable) {
                     Primary500
                 } else {
@@ -182,18 +183,19 @@ fun CustomButton(
                 }
             }
         }
-        CustomButtonType.SecondaryPrimary -> {
+        PrimaryTertiaryUnderLined -> {
             if (isSystemInDarkTheme()) {
+                underLined = true
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        GrayScale500
+                        WhiteTransparency12
                     } else {
-                        GrayScale600
+                        GrayScale800
                     },
-                    contentColor = DefaultWhite,
-                    disabledBackgroundColor = GrayScale700,
+                    disabledBackgroundColor = DefaultBlack,
                     disabledContentColor = GrayScale400
                 )
+                textColor = Primary400
                 arrowIconTint = if (enable) {
                     DefaultWhite
                 } else {
@@ -202,57 +204,18 @@ fun CustomButton(
             } else {
                 buttonColor = ButtonDefaults.buttonColors(
                     backgroundColor = if (isPressed) {
-                        WhiteTransparency70
+                        Primary200
                     } else {
                         DefaultWhite
                     },
-                    contentColor = Primary700,
-                    disabledBackgroundColor = GrayScale200,
-                    disabledContentColor = GrayScale500
-                )
-                arrowIconTint = if (enable) {
-                    Primary700
-                } else {
-                    GrayScale500
-                }
-            }
-        }
-        CustomButtonType.SecondarySecondary -> {
-            if (isSystemInDarkTheme()) {
-                buttonColor = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isPressed) {
-                        WhiteTransparency12
-                    } else {
-                        DefaultBlack
-                    },
-                    contentColor = DefaultWhite,
-                    disabledBackgroundColor = DefaultBlack,
+                    disabledBackgroundColor = DefaultWhite,
                     disabledContentColor = GrayScale400
                 )
-                if (enable) {
-                    borderStroke = BorderStroke(1.dp, DefaultWhite)
-                    arrowIconTint = DefaultWhite
+                textColor = Primary500
+                arrowIconTint = if (enable) {
+                    Primary500
                 } else {
-                    borderStroke = BorderStroke(1.dp, GrayScale400)
-                    arrowIconTint = GrayScale400
-                }
-            } else {
-                buttonColor = ButtonDefaults.buttonColors(
-                    backgroundColor = if (isPressed) {
-                        Primary200
-                    } else {
-                        Primary500
-                    },
-                    contentColor = DefaultWhite,
-                    disabledBackgroundColor = Primary500,
-                    disabledContentColor = GrayScale200
-                )
-                if (enable) {
-                    borderStroke = BorderStroke(1.dp, DefaultWhite)
-                    arrowIconTint = DefaultWhite
-                } else {
-                    borderStroke = BorderStroke(1.dp, GrayScale200)
-                    arrowIconTint = GrayScale200
+                    GrayScale400
                 }
             }
         }
@@ -264,10 +227,10 @@ fun CustomButton(
                     } else {
                         DefaultBlack
                     },
-                    contentColor = DefaultWhite,
                     disabledBackgroundColor = DefaultBlack,
                     disabledContentColor = GrayScale400
                 )
+                textColor = DefaultWhite
                 arrowIconTint = if (enable) {
                     DefaultWhite
                 } else {
@@ -280,10 +243,10 @@ fun CustomButton(
                     } else {
                         Primary500
                     },
-                    contentColor = DefaultWhite,
                     disabledBackgroundColor = Primary500,
                     disabledContentColor = GrayScale200
                 )
+                textColor = DefaultWhite
                 arrowIconTint = if (enable) {
                     Primary500
                 } else {
@@ -304,7 +267,12 @@ fun CustomButton(
     ) {
         Text(
             text = text,
-            style = Typography.button,
+            style = if (underLined) {
+                Typography.button.copy(textDecoration = TextDecoration.Underline)
+            } else {
+                Typography.button
+            },
+            color = textColor,
         )
         if (enableArrowIcon) {
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
@@ -322,7 +290,5 @@ sealed class CustomButtonType() {
     object PrimaryPrimary : CustomButtonType()
     object PrimarySecondary : CustomButtonType()
     object PrimaryTertiary : CustomButtonType()
-    object SecondaryPrimary : CustomButtonType()
-    object SecondarySecondary : CustomButtonType()
-    object SecondaryTertiary : CustomButtonType()
+    object PrimaryTertiaryUnderLined : CustomButtonType()
 }

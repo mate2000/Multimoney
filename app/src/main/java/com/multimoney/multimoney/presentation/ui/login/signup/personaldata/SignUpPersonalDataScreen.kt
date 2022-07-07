@@ -16,15 +16,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.SignUpStep.Two
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.Nationalities
@@ -37,16 +41,19 @@ fun SignUpPersonalDataScreen(
 ) {
     LaunchedEffect(true) {
         sharedViewModel.apply {
-            nextAction = {
-                userData?.currentStep = SignUpStep.Two.name
-                callMutationUpdateUserRegisterUseCase()
-            }
-            // Load Data from api
+            onUIEvent(OnNextActionValueChange {
+                viewModel.onUIEvent(OnNextActionClick({
+                    onUIEvent(
+                        OnUseDataValueChange(userData?.copy(currentStep = Two.name))
+                    )
+                }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
+            })
+
             viewModel.onUIEvent(
                 OnStart(
                     nationality = userData?.nationality ?: "",
-                    identification = userData?.identification ?: "",
-                    crPersonalDocumentValue = userData?.identification ?: "",
+                    identificationType = userData?.identificationValueType ?: "",
+                    identificationValue = userData?.identification ?: "",
                     firstName = userData?.firstName ?: "",
                     secondName = userData?.secondName ?: "",
                     firstLastName = userData?.firstLastName ?: "",
@@ -54,7 +61,6 @@ fun SignUpPersonalDataScreen(
                     fullName = userData?.fullName ?: ""
                 )
             )
-            userData?.fullName?.let { viewModel.onSuccessDataInformationClient?.fullName = it }
             viewModel.baseEvent.collect { event ->
                 when (event) {
                     is OnFormValidateCompleted -> onUIEvent(OnContinueEnable(event.isFormValid))
@@ -89,14 +95,6 @@ fun SignUpPersonalDataScreen(
                         OnNationalityValueChange(it)
                     )
                 })
-                /*sharedViewModel.apply {
-                    userData?.nationality = getNationality(it)
-                    userData?.identification = ""
-                    userData?.firstName = ""
-                    userData?.firstLastName = ""
-                    userData?.fullName = ""
-                    sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                }*/
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_nationality),
             value = viewModel.uiState.nationalityValue,

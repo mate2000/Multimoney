@@ -25,7 +25,14 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.array
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.Nationalities
@@ -50,25 +57,28 @@ fun SignUpPersonalDataSvScreen(
                 .padding(top = 16.dp),
             items = stringArrayResource(id = array.sign_up_personal_sv_documents).sorted(),
             onValueChange = {
-
+                viewModel.onUIEvent(OnIdentificationTypeValueChange(it))
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_document_label),
-            value = viewModel.uiState.personalDocumentValue,
+            value = viewModel.uiState.identificationValueType,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_document_hint)
         )
         CustomOutlinedTextField(
             value = viewModel.uiState.personalDocumentValue,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_sv_id_hint),
             onValueChange = { text ->
-                if (text.length <= Nationalities.ElSalvador.documentSize) {
-                    viewModel.onUIEvent(OnFirstNameChange(text))
-                    sharedViewModel.userData?.identification =
-                        viewModel.uiState.personalDocumentValue
-                }
+                viewModel.onUIEvent(OnIdentificationValueChange(text, {
+                    sharedViewModel.onUIEvent(
+                        OnSharedIdentificationValueChange(text)
+                    )
+                }, Nationalities.ElSalvador.documentSize))
             },
             onDebounceValidation = {
-                viewModel.personalIdError = validDui(viewModel.uiState.personalDocumentValue)
-                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                viewModel.onUIEvent(
+                    OnValidateDocument(
+                        { validDui(viewModel.uiState.personalDocumentValue) },
+                        { sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields())) })
+                )
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -77,178 +87,131 @@ fun SignUpPersonalDataSvScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.sign_up_personal_data_document_sv),
+            labelText = stringResource(id = R.string.sign_up_personal_data_document_number_label),
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_sv_required),
-            isError = viewModel.personalIdError.first,
-            errorMessage = stringResource(id = viewModel.personalIdError.second),
+            isError = viewModel.uiState.personalIdError.first,
+            errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
             customTransformation = formatDui()
         )
-        CustomOutlinedTextField(
-            placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),
-            value = viewModel.uiState.firstNameValue,
-            onValueChange = {
-                //viewModel.nameValue = it
-                sharedViewModel.apply {
-                    userData?.firstName = it
-                    userData?.fullName = "$it ${userData?.firstLastName}"
-                    sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
-            }),
-            labelText = stringResource(id = R.string.sign_up_personal_data_names),
-            modifier = Modifier.padding(top = 44.dp),
-            isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
-            isError = viewModel.nameError.first,
-        )
 
-        CustomOutlinedTextField(
-            placeHolder = stringResource(id = R.string.sign_up_personal_data_lastname_hint),
-            value = viewModel.uiState.firstLastNameValue,
-            onValueChange = {
-                //viewModel.lastNameValue = it
-                sharedViewModel.apply {
-                    userData?.firstLastName = it
-                    userData?.fullName = "${userData?.firstName} $it"
-                    sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            }),
-            labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
-            modifier = Modifier
-                .padding(top = 44.dp),
-            isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
-            isError = viewModel.lastNameError.first
-        )
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 44.dp)
-        ) {
-            CustomOutlinedTextField(
-                placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
-                value = viewModel.uiState.nameValue,
-                onValueChange = {
-                    //viewModel.nameValue = it
-                    sharedViewModel.apply {
-                        userData?.firstName = it
-                        userData?.fullName = "$it ${userData?.firstName}"
-                        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(onNext = {
-                    focusManager.moveFocus(FocusDirection.Down)
-                }),
-                labelText = stringResource(id = R.string.sign_up_personal_data_names),
-                modifier = Modifier
-                    .weight(0.5f)
-                    .padding(end = 4.dp),
-                isRequired = true,
-                isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
-                isError = viewModel.nameError.first,
-            )
+        if (viewModel.uiState.identificationValueType.isNotBlank()) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 44.dp)
+            ) {
+                CustomOutlinedTextField(
+                    placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
+                    value = viewModel.uiState.firstNameValue,
+                    onValueChange = {
+                        viewModel.onUIEvent(OnFirstNameChange(it))
+                        // TODO pasar en onfirst name change, reciba userdatavaluechange(un evento)
+                        sharedViewModel.apply {
+                            userData?.firstName = it
+                            userData?.fullName = "$it ${userData?.firstName}"
+                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }),
+                    labelText = stringResource(id = R.string.sign_up_personal_data_names),
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(end = 4.dp),
+                    isRequired = true,
+                    isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
+                    isError = viewModel.uiState.nameError.first,
+                )
 
-            CustomOutlinedTextField(
-                placeHolder = stringResource(id = R.string.sign_up_personal_data_second_name_hint),
-                value = viewModel.uiState.secondNameValue,
-                onValueChange = {
-                    //viewModel.nameValue = it
-                    sharedViewModel.apply {
-                        userData?.firstName = it
-                        userData?.fullName = "$it ${userData?.secondName}"
-                        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                labelText = stringResource(id = R.string.error_empty),
-                keyboardActions = KeyboardActions(onNext = {
-                    focusManager.moveFocus(FocusDirection.Down)
-                }),
-                modifier = Modifier
-                    .weight(0.5f)
-                    .padding(start = 4.dp),
-                isError = viewModel.nameError.first,
-            )
-        }
+                CustomOutlinedTextField(
+                    placeHolder = stringResource(id = R.string.sign_up_personal_data_second_name_hint),
+                    value = viewModel.uiState.secondNameValue,
+                    onValueChange = {
+                        viewModel.onUIEvent(OnSecondNameChange(it))
+                        sharedViewModel.apply {
+                            userData?.firstName = it
+                            userData?.fullName = "$it ${userData?.secondName}"
+                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    labelText = stringResource(id = R.string.error_empty),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }),
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(start = 6.dp)
+                )
+            }
 
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 44.dp)
-        ) {
-            CustomOutlinedTextField(
-                placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),
-                value = viewModel.uiState.lastNameValue,
-                onValueChange = {
-                    //viewModel.lastNameValue = it
-                    sharedViewModel.apply {
-                        userData?.firstLastName = it
-                        userData?.fullName = "${userData?.firstName} $it"
-                        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.clearFocus()
-                }),
-                labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
-                modifier = Modifier
-                    .padding(top = 44.dp),
-                isRequired = true,
-                isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
-                isError = viewModel.nameError.first,
-            )
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 44.dp)
+            ) {
+                CustomOutlinedTextField(
+                    placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),
+                    value = viewModel.uiState.firstLastNameValue,
+                    onValueChange = {
+                        viewModel.onUIEvent(OnFirstLastNameChange(it))
+                        sharedViewModel.apply {
+                            userData?.firstLastName = it
+                            userData?.fullName = "${userData?.firstName} $it"
+                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(top = 4.dp),
+                    isRequired = true,
+                    isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
+                    isError = viewModel.uiState.lastNameError.first,
+                )
 
-            CustomOutlinedTextField(
-                placeHolder = stringResource(id = R.string.sign_up_personal_data_second_lastname_hint),
-                value = viewModel.uiState.secondLastNameValue,
-                onValueChange = {
-                    //viewModel.nameValue = it
-                    sharedViewModel.apply {
-                        userData?.firstName = it
-                        userData?.fullName = "$it ${userData?.secondLastName}"
-                        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                    }
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                labelText = stringResource(id = R.string.error_empty),
-                keyboardActions = KeyboardActions(onNext = {
-                    focusManager.moveFocus(FocusDirection.Down)
-                }),
-                modifier = Modifier
-                    .weight(0.5f)
-                    .padding(start = 4.dp),
-                isError = viewModel.nameError.first,
-            )
+                CustomOutlinedTextField(
+                    placeHolder = stringResource(id = R.string.sign_up_personal_data_second_lastname_hint),
+                    value = viewModel.uiState.secondLastNameValue,
+                    onValueChange = {
+                        viewModel.onUIEvent(OnSecondLastNameChange(it))
+                        sharedViewModel.apply {
+                            userData?.firstName = it
+                            userData?.fullName = "$it ${userData?.secondLastName}"
+                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    labelText = stringResource(id = R.string.error_empty),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }),
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(start = 6.dp)
+                )
+            }
         }
     }
 }

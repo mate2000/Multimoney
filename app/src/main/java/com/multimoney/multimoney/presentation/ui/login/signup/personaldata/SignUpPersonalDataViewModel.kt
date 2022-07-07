@@ -3,23 +3,26 @@ package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
 import com.multimoney.domain.model.security.ClientInfoCr
-import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.CrDocuments
-import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,16 +38,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    var crPersonalDocument by mutableStateOf("")
-
-    var personalIdError by mutableStateOf(
-        Pair(
-            false,
-            R.string.sign_up_personal_data_id_sv_required
-        )
-    )
-    var nameError by mutableStateOf(Pair(false, 0))
-    var lastNameError by mutableStateOf(Pair(false, 0))
     var closeKeyboard by mutableStateOf(false)
 
     // Interactions
@@ -52,11 +45,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     fun validateFields(): Boolean {
         return when (uiState.nationalityValue) {
-            Nationalities.ElSalvador.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.ElSalvador.documentSize) && !personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
-            Nationalities.Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.Guatemala.documentSize) && !personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+            Nationalities.ElSalvador.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.ElSalvador.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+            Nationalities.Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
             Nationalities.CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
                     (uiState.personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || uiState.personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) &&
-                    !personalIdError.first && crPersonalDocument.isNotBlank() && onSuccessDataInformationClient?.fullName != null
+                    !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && onSuccessDataInformationClient?.fullName != null
             else -> false
         }
     }
@@ -75,22 +68,21 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     fun crFilterDocument(id: String) {
-        if (crPersonalDocument == CrDocuments.IdDocument.document && id.length <= Nationalities.CostaRicaId.documentSize) {
-            uiState = uiState.copy(crPersonalDocumentValue = id.filter { it.isDigit() })
-        } else if (crPersonalDocument == CrDocuments.Dimex.document && id.length <= Nationalities.CostaRicaDimex.documentSize) {
-            uiState = uiState.copy(crPersonalDocumentValue = id.filter { it.isDigit() })
+        if (uiState.identificationValueType == CrDocuments.IdDocument.document && id.length <= Nationalities.CostaRicaId.documentSize) {
+            uiState = uiState.copy(personalDocumentValue = id.filter { it.isDigit() })
+        } else if (uiState.identificationValueType == CrDocuments.Dimex.document && id.length <= Nationalities.CostaRicaDimex.documentSize) {
+            uiState = uiState.copy(personalDocumentValue = id.filter { it.isDigit() })
         }
     }
 
     fun validateCrDocument(
         user: String,
-    ) {
+    ): Pair<Boolean, Int> {
         val status = validId(
-            if (crPersonalDocument == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
+            if (uiState.identificationValueType == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
             R.string.sign_up_personal_data_id_not_valid,
             uiState.personalDocumentValue.length
         )
-        personalIdError = status
         if (status.first.not()) {
             closeKeyboard = true
             callQueryDataInformationClient(uiState.personalDocumentValue, Brand.Revamp.id, user)
@@ -99,6 +91,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 onSuccessDataInformationClient = null
             }
         }
+        return status
     }
 
     private fun callQueryDataInformationClient(
@@ -120,7 +113,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 result.onFailure {
                     isLoading = false
                     onSuccessDataInformationClient = null
-                    personalIdError = Pair(true, R.string.sign_up_personal_data_id_not_valid)
+                    uiState = uiState.copy(
+                        personalIdError = Pair(
+                            true,
+                            R.string.sign_up_personal_data_id_not_valid
+                        )
+                    )
                     validateFields()
                 }
                 result.onLoading {
@@ -135,17 +133,14 @@ class SignUpPersonalDataViewModel @Inject constructor(
         updateNationality: (nationality: String) -> Unit
     ) {
         uiState = uiState.copy(nationalityValue = nationality, personalDocumentValue = "")
+        cleanUI()
         updateNationality.invoke(getNationality(nationality))
-    }
-
-    private fun onFirstNameChange(firstName: String) {
-        uiState = uiState.copy(firstLastNameValue = firstName.filter { it.isDigit() })
     }
 
     private fun onStart(
         nationality: String,
-        crPersonalDocument: String,
-        identification: String,
+        identificationValue: String,
+        identificationType: String,
         firstName: String,
         secondName: String,
         firstLastName: String,
@@ -154,34 +149,84 @@ class SignUpPersonalDataViewModel @Inject constructor(
     ) {
         uiState = uiState.copy(
             nationalityValue = getCountry(nationality),
-            crPersonalDocumentValue = crPersonalDocument,
-            personalDocumentValue = identification,
+            identificationValueType = identificationValue,
+            personalDocumentValue = identificationType,
             firstNameValue = firstName,
             secondNameValue = secondName,
             firstLastNameValue = firstLastName,
             secondLastNameValue = secondLastName,
             fullNameValue = fullName
         )
+        onSuccessDataInformationClient?.fullName = fullName
     }
 
     private fun cleanUI() {
         uiState = uiState.copy(
-            nationalityValue = "",
             crPersonalDocument = "",
+            identificationValueType = "",
             personalIdError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
             nameError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
             lastNameError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
             personalDocumentValue = "",
-            nameValue = "",
-            lastNameValue = "",
+            firstNameValue = "",
+            secondNameValue = "",
+            firstLastNameValue = "",
+            secondLastNameValue = "",
             closeKeyboard = false
         )
     }
 
+    private fun onIdentificationTypeValueChange(documentType: String) {
+        uiState = uiState.copy(identificationValueType = documentType)
+    }
+
+    private fun onIdentificationValueChange(
+        identificationValue: String,
+        identificationShareViewModelChange: () -> Unit,
+        documentNationality: Int
+    ) {
+        if (identificationValue.length <= documentNationality) {
+            uiState = uiState.copy(personalDocumentValue = identificationValue)
+            identificationShareViewModelChange()
+        }
+    }
+
+    private fun onFirstNameValueChange(firstName: String) {
+        uiState = uiState.copy(firstNameValue = firstName)
+    }
+
+    private fun onSecondNameValueChange(secondName: String) {
+        uiState = uiState.copy(secondNameValue = secondName)
+    }
+
+    private fun onFirstLastNameValueChange(firstLastName: String) {
+        uiState = uiState.copy(firstLastNameValue = firstLastName)
+    }
+
+    private fun onSecondLastNameValueChange(secondLastName: String) {
+        uiState = uiState.copy(secondLastNameValue = secondLastName)
+    }
+
+    private fun onNextActionClick(
+        onUserDataValueChange: () -> Unit,
+        onCallMutationUpdateUserRegisterUseCase: () -> Unit
+    ) {
+        onUserDataValueChange()
+        onCallMutationUpdateUserRegisterUseCase()
+    }
+
+    private fun validateDui(
+        documentValidation: () -> Pair<Boolean, Int>,
+        sharedDocumentValidation: () -> Unit
+    ) {
+        uiState = uiState.copy(personalIdError = documentValidation())
+        sharedDocumentValidation()
+    }
+
     data class UIState(
         val nationalityValue: String = "",
-        val crPersonalDocumentValue: String = "",
         val personalDocumentValue: String = "",
+        val identificationValueType: String = "",
         val firstNameValue: String = "",
         val secondNameValue: String = "",
         val firstLastNameValue: String = "",
@@ -195,8 +240,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
         val nameError: Pair<Boolean, Int> = Pair(false, 0),
         val lastNameError: Pair<Boolean, Int> = Pair(false, 0),
-        val nameValue: String = "",
-        val lastNameValue: String = "",
         val closeKeyboard: Boolean = false
     )
 
@@ -204,8 +247,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         when (event) {
             is OnStart -> onStart(
                 event.nationality,
-                event.crPersonalDocumentValue,
-                event.identification,
+                event.identificationValue,
+                event.identificationType,
                 event.firstName,
                 event.secondName,
                 event.firstLastName,
@@ -216,15 +259,32 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.nationality,
                 event.updateNationality
             )
-            is OnFirstNameChange -> onFirstNameChange(event.firstName)
+            is OnFirstNameChange -> onFirstNameValueChange(event.firstName)
+            is OnSecondNameChange -> onSecondNameValueChange(event.secondName)
+            is OnFirstLastNameChange -> onFirstLastNameValueChange(event.firstLastName)
+            is OnSecondLastNameChange -> onSecondLastNameValueChange(event.secondLastName)
+            is OnIdentificationTypeValueChange -> onIdentificationTypeValueChange(event.identificationType)
+            is OnIdentificationValueChange -> onIdentificationValueChange(
+                event.identification,
+                event.identificationShareViewModelChange,
+                event.documentNationality
+            )
+            is OnNextActionClick -> onNextActionClick(
+                event.onUserDataValueChange,
+                event.onCallMutationUpdateUserRegisterUseCase
+            )
+            is OnValidateDocument -> validateDui(
+                event.documentValidation,
+                event.sharedDocumentValidation
+            )
         }
     }
 
     sealed class UIEvent {
         data class OnStart(
             val nationality: String,
-            val crPersonalDocumentValue: String,
-            val identification: String,
+            val identificationValue: String,
+            val identificationType: String,
             val firstName: String,
             val secondName: String,
             val firstLastName: String,
@@ -239,21 +299,29 @@ class SignUpPersonalDataViewModel @Inject constructor(
             UIEvent()
 
         data class OnFirstNameChange(val firstName: String) : UIEvent()
-        data class OnBackClick(val focusManager: FocusManager) : UIEvent()
-        data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
-        data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
+        data class OnSecondNameChange(val secondName: String) : UIEvent()
+        data class OnFirstLastNameChange(val firstLastName: String) : UIEvent()
+        data class OnSecondLastNameChange(val secondLastName: String) : UIEvent()
+        data class OnIdentificationTypeValueChange(val identificationType: String) : UIEvent()
+        data class OnIdentificationValueChange(
+            val identification: String,
+            val identificationShareViewModelChange: () -> Unit,
+            val documentNationality: Int,
+            val isFromCr: Boolean? = false
+        ) : UIEvent()
+
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
-        data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
-        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-        data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
-        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
-            UIEvent()
 
-        data class OnNextActionValueChange(val nextAction: () -> Unit) : UIEvent()
-        data class OnUseDataValueChange(val userData: UserData?) : UIEvent()
-        data class OnMoveToStep(val step: Int) : UIEvent()
+        data class OnNextActionClick(
+            val onUserDataValueChange: () -> Unit,
+            val onCallMutationUpdateUserRegisterUseCase: () -> Unit
+        ) : UIEvent()
 
-        object OnNextStep : UIEvent()
+        data class OnValidateDocument(
+            val documentValidation: () -> Pair<Boolean, Int>,
+            val sharedDocumentValidation: () -> Unit
+        ) : UIEvent()
+
         object OnPreviousStep : UIEvent()
     }
 

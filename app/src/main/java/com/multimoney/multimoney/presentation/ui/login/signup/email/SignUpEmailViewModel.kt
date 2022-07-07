@@ -75,11 +75,11 @@ class SignUpEmailViewModel @Inject constructor(
 
     private fun isDataChanged() = previousUserEmail != uiState.userEmail
 
-    private fun callMutationUserValidationUseCase(email: String, currentStep: String, idBrand: Int) =
+    private fun callMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
         executeUseCase {
             mutationUserValidationUseCase(
                 email = email,
-                currentStep = currentStep,
+                currentStep = nextStep,
                 idBrand = idBrand
             ).collectLatest { result ->
                 onUserDataValidationEvent.emit(result)
@@ -90,7 +90,7 @@ class SignUpEmailViewModel @Inject constructor(
         if (isDataChanged() || isUserStatusIncomplete.not()) {
             callMutationUserValidationUseCase(
                 uiState.userEmail,
-                SignUpStep.One.name,
+                SignUpStep.Two.name,
                 Brand.Revamp.id
             )
         } else {

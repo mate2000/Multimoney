@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -25,11 +26,14 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOnFidoVerifiedChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnInitValues
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationViewModel.UIEvent.OnOpenOnFidoSdk
@@ -50,7 +54,13 @@ fun SignUpIdVerificationScreen(
             viewModel.onUIEvent(
                 OnOpenOnFidoSdk(
                     result,
-                    onOnFidoCompleted = { sharedViewModel.nextStep() },
+                    onOnFidoCompleted = {
+                        sharedViewModel.apply {
+                            onUIEvent(OnUseDataValueChange(userData = userData?.copy(currentStep = SignUpStep.Six.name)))
+                            onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
+                            onUIEvent(OnOnFidoVerifiedChanged(true))
+                        }
+                    },
                     onOnFidoError = {
                         sharedViewModel.onUIEvent(OnOpenDialogValueChange(it))
                     },
@@ -66,26 +76,27 @@ fun SignUpIdVerificationScreen(
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
             event.onSuccess {
-                sharedViewModel.onUIEvent(OnLoadingValueChange(false))
-                sharedViewModel.onUIEvent(OnContinueEnable(true))
-                sharedViewModel.onUIEvent(OnNextActionValueChange {
-                    launchOnFidoActivityResult.launch(
-                        viewModel.onFidoHelper.getOnFidoIntent(
-                            it?.sdkToken ?: "",
-                            onRefreshToke = { refreshToken ->
-                                viewModel.onUIEvent(
-                                    RefreshOnFidoToken(
-                                        sharedViewModel.userData,
-                                        context.packageName,
-                                        refreshToken
+                sharedViewModel.apply {
+                    onUIEvent(OnLoadingValueChange(false))
+                    onUIEvent(OnContinueEnable(true))
+                    onUIEvent(OnSetNavigation(nextAction = {
+                        launchOnFidoActivityResult.launch(
+                            viewModel.onFidoHelper.getOnFidoIntent(
+                                it?.sdkToken ?: "",
+                                onRefreshToke = { refreshToken ->
+                                    viewModel.onUIEvent(
+                                        RefreshOnFidoToken(
+                                            sharedViewModel.userData,
+                                            context.packageName,
+                                            refreshToken
+                                        )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
 
-                    )
+                        )
+                    }, nextStep = SignUpStep.Six.id, previousStep = SignUpStep.Three.id))
                 }
-                )
             }.onLoading {
                 sharedViewModel.onUIEvent(OnLoadingValueChange(true))
             }.onFailure {

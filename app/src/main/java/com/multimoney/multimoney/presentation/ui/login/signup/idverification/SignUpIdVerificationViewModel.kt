@@ -22,15 +22,15 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpIdVerificationViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
-    val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase
+    private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase
 ) : BaseViewModel() {
 
     var onFidoError: String = ""

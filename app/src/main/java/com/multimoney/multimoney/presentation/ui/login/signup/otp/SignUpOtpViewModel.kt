@@ -140,6 +140,7 @@ class SignUpOtpViewModel @Inject constructor(
         idBrand: Int,
         user: String
     ) = executeUseCase {
+        uiState = uiState.copy(isTimerRunning = false)
         mutationSendPinProcessUseCase.invoke(
             identification,
             firstName,

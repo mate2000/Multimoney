@@ -27,7 +27,7 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
 
     private fun onStart(phoneCode: String, phoneNumber: String, signUpStartData: () -> Unit) {
         uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
-        signUpStartData()
+        signUpStartData.invoke()
         isFormValid(uiState.phoneCode)
     }
 

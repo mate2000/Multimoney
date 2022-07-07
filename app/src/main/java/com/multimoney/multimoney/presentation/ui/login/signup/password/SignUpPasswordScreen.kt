@@ -102,6 +102,7 @@ fun SignUpPasswordScreen(
                         email = userData?.email ?: "",
                         firstName = userData?.firstName ?: "",
                         lastName = userData?.lastName ?: "",
+                        phone = "${userData?.countryCode ?: ""}${userData?.phoneNumber ?: ""}",
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "",
                         status = userData?.userStatus ?: "",
@@ -240,7 +241,14 @@ fun SignUpPasswordScreen(
         }
         CustomCheckBox(
             checked = viewModel.uiState.isFingerprintChecked,
-            onCheckedChange = { viewModel.onUIEvent(SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(it, it)) },
+            onCheckedChange = {
+                viewModel.onUIEvent(
+                    SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(
+                        it,
+                        it
+                    )
+                )
+            },
             text = stringResource(id = R.string.sign_in_activate_fingerprint),
             modifier = Modifier.padding(top = 24.dp)
         )

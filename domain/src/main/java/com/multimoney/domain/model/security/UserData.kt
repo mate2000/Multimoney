@@ -11,6 +11,7 @@ data class UserData(
     var firstLastName: String? = null,
     var secondLastName: String? = null,
     var nationality: String? = null,
+    var identificationValueType: String? = null,
     var identification: String? = null,
     var countryCode: String? = null,
     var currentStep: String? = null,

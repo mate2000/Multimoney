@@ -3,11 +3,12 @@ package com.multimoney.multimoney.presentation.ui.login.signin
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -20,13 +21,11 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,6 +43,8 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -139,7 +140,13 @@ fun SignInScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            labelText = stringResource(id = R.string.label_email),
+            labelText = if (viewModel.uiState.isBiometricActive) {
+                stringResource(id = R.string.sign_in_biometric_email_hint)
+            } else {
+                stringResource(
+                    id = R.string.label_email
+                )
+            },
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
@@ -168,18 +175,16 @@ fun SignInScreen(
                 onSignInWithBiometricLink = { viewModel.onUIEvent(OnShowBiometricSignInChanged(true)) }
             )
         }
-        ClickableText(
-            text = AnnotatedString(stringResource(id = R.string.sign_in_create_account)),
+        CustomButton(
+            text = stringResource(id = R.string.sign_in_create_account),
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 24.dp),
-            style = Typography.body1.copy(
-                textDecoration = TextDecoration.Underline,
-                color = MultimoneyTheme.colors.textLink
-            ),
+                .padding(top = 12.dp)
+                .fillMaxWidth()
+                .height(48.dp),
             onClick = {
                 viewModel.navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
-            }
+            },
+            buttonType = PrimaryTertiaryUnderLined
         )
     }
     LoadingIndicator(viewModel.uiState.isLoading)

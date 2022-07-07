@@ -22,20 +22,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnValidatePhone
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.togitech.ccp.data.utils.getDefaultLangCode
@@ -64,43 +50,58 @@ fun SignUpPhoneScreen(
 
     LaunchedEffect(true) {
         sharedViewModel.apply {
-            onUIEvent(OnNextActionValueChange {
-                viewModel.onUIEvent(OnNextActionClick({
-                    onUIEvent(
-                        OnUseDataValueChange(userData?.copy(currentStep = SignUpStep.Three.name))
-                    )
-                }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
-            })
+            onUIEvent(
+                SignUpViewModel.UIEvent.OnSetNavigation(
+                    nextAction = {
+                        viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnNextActionClick({
+                            onUIEvent(
+                                SignUpViewModel.UIEvent.OnUseDataValueChange(
+                                    userData?.copy(
+                                        currentStep = viewModel.getNextStep(
+                                            sharedViewModel.isPhoneVerified,
+                                            isOnFidoVerified
+                                        ).name
+                                    )
+                                )
+                            )
+                        }, { onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase) }))
+                    },
+                    nextStep = viewModel.getNextStep(sharedViewModel.isPhoneVerified, isOnFidoVerified).id,
+                    previousStep = SignUpStep.Two.id
+                )
+            )
             viewModel.baseEvent.collect { event ->
                 when (event) {
-                    is OnFormValidateCompleted -> onUIEvent(OnContinueEnable(event.isFormValid))
+                    is SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted -> onUIEvent(
+                        SignUpViewModel.UIEvent.OnContinueEnable(
+                            event.isFormValid
+                        )
+                    )
                 }
             }
         }
     }
 
     LaunchedEffect(true) {
-            var countryCodeValue = ""
-            sharedViewModel.userData?.countryCode?.let {
-                countryCodeValue = selectedCountry.countryCode
-            } ?: run {
-                countryCodeValue = getDefaultCountryCode
-            }
+        var countryCodeValue = ""
+        sharedViewModel.userData?.countryCode?.let {
+            countryCodeValue = selectedCountry.countryCode
+        } ?: run {
+            countryCodeValue = getDefaultCountryCode
+        }
 
-            viewModel.onUIEvent(
-                OnStart(
-                    phoneNumber = sharedViewModel.userData?.phoneNumber ?: "",
-                    phoneCode = selectedCountry.countryPhoneCode.ifBlank { getDefaultPhoneCode },
-                    signUpStartData = {
-                        OnCountryCountryCodeValueChange(
-                            countryCodeValue,
-                            selectedCountry.countryPhoneCode
-                        )
-                    }
-                )
+        viewModel.onUIEvent(
+            SignUpPhoneViewModel.UIEvent.OnStart(
+                phoneNumber = sharedViewModel.userData?.phoneNumber ?: "",
+                phoneCode = selectedCountry.countryPhoneCode.ifBlank { getDefaultPhoneCode },
+                signUpStartData = {
+                    SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
+                        countryCodeValue,
+                        selectedCountry.countryPhoneCode
+                    )
+                }
             )
-
-        viewModel.onUIEvent(UIEvent.OnValidateForm(countryCodeValue))
+        )
     }
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
@@ -132,12 +133,12 @@ fun SignUpPhoneScreen(
         PhoneTextField(
             value = viewModel.uiState.phoneNumber,
             onValueChange = {
-                viewModel.onUIEvent(OnUserPhoneValueChanged(
+                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged(
                     it
-                ) { sharedViewModel.onUIEvent(OnPhoneNumberValueChange(it)) })
+                ) { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnPhoneNumberValueChange(it)) })
             },
             onDebounceValidation = {
-                OnValidatePhone(sharedViewModel.countryCode)
+                SignUpPhoneViewModel.UIEvent.OnValidatePhone(sharedViewModel.countryCode)
             },
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
@@ -150,11 +151,11 @@ fun SignUpPhoneScreen(
             errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
             defaultCountry = selectedCountry,
             pickedCountry = {
-                viewModel.onUIEvent(OnCountryCodeValueChanged(
+                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged(
                     it.countryCode
                 ) {
                     sharedViewModel.onUIEvent(
-                        OnCountryCountryCodeValueChange(it.countryCode, it.countryPhoneCode)
+                        SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(it.countryCode, it.countryPhoneCode)
                     )
                 })
             }

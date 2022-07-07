@@ -21,8 +21,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.Nationalities
 
@@ -34,8 +34,16 @@ fun SignUpPersonalDataScreen(
 ) {
     LaunchedEffect(true) {
         sharedViewModel.apply {
+            sharedViewModel.onUIEvent(
+                OnSetNavigation(
+                    nextAction = {},
+                    nextStep = SignUpStep.Three.id,
+                    previousStep = SignUpStep.One.id
+                )
+            )
+
             nextAction = {
-                userData?.currentStep = SignUpStep.Two.name
+                userData?.currentStep = SignUpStep.Three.name
                 callMutationUpdateUserRegisterUseCase()
             }
             // Load Data from api

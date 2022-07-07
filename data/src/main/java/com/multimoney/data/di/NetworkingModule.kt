@@ -6,8 +6,10 @@ import com.apollographql.apollo3.cache.normalized.normalizedCache
 import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import com.multimoney.data.BuildConfig
+import com.multimoney.data.R
 import com.multimoney.data.networking.BalanceApi
 import com.multimoney.data.networking.SecurityApi
+import com.multimoney.data.util.CertificateUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,13 +20,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkingModule {
 
     @Singleton
     @Provides
-    fun okHttpClient(): OkHttpClient {
+    fun okHttpClient(certificateUtil: CertificateUtil): OkHttpClient {
         val logging = HttpLoggingInterceptor()
 
         logging.level = if (BuildConfig.DEBUG) {
@@ -35,6 +38,10 @@ class NetworkingModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(logging)
+            .sslSocketFactory(
+                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+                certificateUtil.getX509TrustManager()
+            )
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -43,7 +50,11 @@ class NetworkingModule {
 
     @Singleton
     @Provides
-    fun apolloClient(@ApplicationContext context: Context, schema: String): ApolloClient {
+    fun apolloClient(
+        @ApplicationContext context: Context,
+        schema: String,
+        certificateUtil: CertificateUtil
+    ): ApolloClient {
 
         val sqlNormalizedCacheFactory =
             SqlNormalizedCacheFactory(context, APOLLO_PREFIX_DB + schema + APOLLO_SUFFIX_DB)
@@ -51,19 +62,19 @@ class NetworkingModule {
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL + schema)
             .normalizedCache(sqlNormalizedCacheFactory)
-            .okHttpClient(okHttpClient())
+            .okHttpClient(okHttpClient(certificateUtil))
             .build()
     }
 
     @Singleton
     @Provides
-    fun securityApi(@ApplicationContext context: Context): SecurityApi =
-        SecurityApi(apolloClient(context, SCHEMA_SECURITY))
+    fun securityApi(@ApplicationContext context: Context, certificateUtil: CertificateUtil): SecurityApi =
+        SecurityApi(apolloClient(context, SCHEMA_SECURITY, certificateUtil))
 
     @Singleton
     @Provides
-    fun balanceApi(@ApplicationContext context: Context): BalanceApi =
-        BalanceApi(apolloClient(context, SCHEMA_BALANCES))
+    fun balanceApi(@ApplicationContext context: Context, certificateUtil: CertificateUtil): BalanceApi =
+        BalanceApi(apolloClient(context, SCHEMA_BALANCES, certificateUtil))
 
     companion object {
         const val TIMEOUT = 30L

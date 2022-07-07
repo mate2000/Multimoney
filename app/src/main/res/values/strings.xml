@@ -42,9 +42,9 @@
     <string name="sign_in_email_not_valid">El correo ingresado es incorrecto</string>
     <string name="sign_in_password_required">La contraseña es requerida</string>
     <string name="sign_in_validation">El correo y/o contraseña es incorrecta</string>
-    <string name="sign_in_biometric_title">Ingresar con reconocimiento facial</string>
-    <string name="sign_in_biometric_enter_with_password">O podés</string>
-    <string name="sign_in_biometric_enter_with_password_link">ingresar tu contraseña</string>
+    <string name="sign_in_biometric_title">Ingresar con biometrico</string>
+    <string name="sign_in_biometric_enter_with_password">O podés ingresar tu contraseña</string>
+    <string name="sign_in_biometric_email_hint">Ingresá tu correo electrónica</string>
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back">¡Nos alegra\nque regresés!</string>

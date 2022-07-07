@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenSplashComeBack
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.BaseEvent.OnFormValidateCompleted
@@ -88,9 +89,9 @@ fun SignUpEmailScreen(
                         userData = userData,
                         onUseDataValueChange = { sharedViewModel.onUIEvent(OnUseDataValueChange(userData)) },
                         nextStepAction = { sharedViewModel.onUIEvent(OnNextStep) },
-                        moveToStepAction = {
+                        openSignUpSplashComeBack = {
                             sharedViewModel.onUIEvent(
-                                OnMoveToStep(
+                                OnOpenSplashComeBack(
                                     SignUpStep.Search.getIdByName(
                                         userData?.currentStep
                                     )

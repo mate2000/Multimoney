@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenSplashComeBack
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
@@ -54,9 +55,7 @@ class SignUpViewModel @Inject constructor(
     var nextAction: () -> Unit = {}
     var closeDialogDescription: String = ""
 
-    private fun onInitializeTexts(
-        description: String,
-    ) {
+    private fun onInitializeTexts(description: String) {
         closeDialogDescription = description
     }
 
@@ -85,6 +84,10 @@ class SignUpViewModel @Inject constructor(
                 popTo = Screen.SignUpScreen.route
             )
         }
+    }
+
+    private fun navigateToSplashComeBack(step: Int) {
+        navigateTo(Screen.SignUpSplashComeBackScreen.route.plus(step))
     }
 
     private fun moveToStep(step: Int) {
@@ -193,7 +196,7 @@ class SignUpViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnInitializeText -> onInitializeTexts(
-                event.title,
+                event.description,
             )
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
@@ -214,15 +217,13 @@ class SignUpViewModel @Inject constructor(
                 event.countryPhoneCode
             )
             is OnCallMutationUpdateUserRegisterUseCase -> callMutationUpdateUserRegisterUseCase()
+            is OnOpenSplashComeBack -> navigateToSplashComeBack(event.step)
         }
     }
 
     sealed class UIEvent {
         data class OnInitializeText(
-            val title: String,
-            val description: String,
-            val positiveButtonText: String,
-            val negativeTextButton: String
+            val description: String
         ) : UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
@@ -242,6 +243,8 @@ class SignUpViewModel @Inject constructor(
             val countryCode: String,
             val countryPhoneCode: String
         ) : UIEvent()
+
+        data class OnOpenSplashComeBack(val step: Int) : UIEvent()
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()

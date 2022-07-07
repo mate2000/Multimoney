@@ -178,7 +178,7 @@ fun SignInScreen(
                 color = MultimoneyTheme.colors.textLink
             ),
             onClick = {
-                viewModel.navigateTo(route = Screen.SignUpScreen.route)
+                viewModel.navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
             }
         )
     }

@@ -16,6 +16,7 @@ import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
 
 const val USER_EMAIL_ARG_KEY = "user_email_arg_key"
 const val USER_PASSWORD_ARG_KEY = "user_password_arg_key"
+const val SIGN_UP_STEP = "sign_up_step"
 
 fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
     navigation(
@@ -52,8 +53,9 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SignUpScreen.route) {
+        composable(route = Screen.SignUpScreen.route) { navBackStackEntry ->
             SignUpScreen(
+                navBackStackEntry = navBackStackEntry,
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         launchSingleTop = true

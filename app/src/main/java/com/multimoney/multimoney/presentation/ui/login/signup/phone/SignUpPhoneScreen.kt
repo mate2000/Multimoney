@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnStart
@@ -68,7 +67,14 @@ fun SignUpPhoneScreen(
                     nextAction = {
                         viewModel.onUIEvent(OnNextActionClick({
                             onUIEvent(
-                                OnUseDataValueChange(userData?.copy(currentStep = viewModel.getNextStep(sharedViewModel.isPhoneVerified, isOnFidoVerified).name))
+                                OnUseDataValueChange(
+                                    userData?.copy(
+                                        currentStep = viewModel.getNextStep(
+                                            sharedViewModel.isPhoneVerified,
+                                            isOnFidoVerified
+                                        ).name
+                                    )
+                                )
                             )
                         }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
                     },
@@ -104,8 +110,6 @@ fun SignUpPhoneScreen(
                 }
             )
         )
-
-        viewModel.onUIEvent(UIEvent.OnValidateForm(countryCodeValue))
     }
 
     Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {

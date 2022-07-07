@@ -25,8 +25,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOnFidoVerifiedChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneVerifiedChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
@@ -96,6 +98,7 @@ class SignUpViewModel @Inject constructor(
     )
 
     private fun onPhoneNumberChange(phoneNumber: String) {
+        isPhoneVerified = phoneNumber == userData?.phoneNumber
         userData?.phoneNumber = phoneNumber
     }
 
@@ -201,6 +204,8 @@ class SignUpViewModel @Inject constructor(
                 event.countryPhoneCode
             )
             is OnCallMutationUpdateUserRegisterUseCase -> callMutationUpdateUserRegisterUseCase()
+            is OnPhoneVerifiedChanged -> isPhoneVerified = event.isPhoneVerified
+            is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
         }
     }
 
@@ -224,6 +229,9 @@ class SignUpViewModel @Inject constructor(
             val countryPhoneCode: String
         ) : UIEvent()
 
+        data class OnPhoneVerifiedChanged(val isPhoneVerified: Boolean) : UIEvent()
+        data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
+
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
         object OnCallMutationUpdateUserRegisterUseCase : UIEvent()
@@ -231,6 +239,7 @@ class SignUpViewModel @Inject constructor(
 
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 6
+        const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
         const val PHONE_HARDCODED = "50371680915"
     }
 }

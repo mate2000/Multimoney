@@ -13,7 +13,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneV
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnValidatePhone
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +28,7 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
     private fun onStart(phoneCode: String, phoneNumber: String, signUpStartData: () -> Unit) {
         uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
         signUpStartData()
+        isFormValid(uiState.phoneCode)
     }
 
     private fun isFormValid(countryCode: String) = emitBaseEvent(
@@ -89,7 +89,7 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
         SignUpStep.Four
     } else if (isOnFidoVerified.not()) {
         SignUpStep.Five
-    }else{
+    } else {
         SignUpStep.Six
     }
 
@@ -102,7 +102,6 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnValidateForm -> isFormValid(event.countryCode)
             is OnValidatePhone -> isPhoneValid(event.countryCode)
             is OnUserPhoneValueChanged -> onUserPhoneValueChanged(
                 event.phoneNumber,
@@ -122,7 +121,6 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
     }
 
     sealed class UIEvent {
-        data class OnValidateForm(val countryCode: String) : UIEvent()
         data class OnValidatePhone(val countryCode: String) : UIEvent()
         data class OnUserPhoneValueChanged(
             val phoneNumber: String,

@@ -11,17 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale500
-import com.multimoney.multimoney.presentation.theme.GrayScale700
-import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.Primary200
 import com.multimoney.multimoney.presentation.theme.Primary300
-import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 
 /**
  *
@@ -46,9 +44,9 @@ fun CustomBiometricIconButton(
     val backgroundColor: Color
     val borderColor: Color
     if (isSystemInDarkTheme()) {
-        tintColor = DefaultWhite
-        backgroundColor = Primary500
-        borderColor = Primary300
+        tintColor = Primary200
+        backgroundColor = WhiteTransparency10
+        borderColor = Transparent
     } else {
         tintColor = DefaultWhite
         backgroundColor = Primary500

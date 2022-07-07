@@ -163,10 +163,12 @@ class SignUpOtpViewModel @Inject constructor(
 
     private fun onNextActionClick(
         onUseDataValueChange: () -> Unit,
-        onCallMutationUpdateUserRegisterUseCase: () -> Unit
+        onCallMutationUpdateUserRegisterUseCase: () -> Unit,
+        onPhoneVerifiedChanged: () -> Unit
     ) {
-        onUseDataValueChange()
-        onCallMutationUpdateUserRegisterUseCase()
+        onUseDataValueChange.invoke()
+        onPhoneVerifiedChanged.invoke()
+        onCallMutationUpdateUserRegisterUseCase.invoke()
     }
 
     private fun onCallMutationSendPinProcessSuccess(onLoadingValueChange: () -> Unit) {
@@ -217,7 +219,8 @@ class SignUpOtpViewModel @Inject constructor(
             is OnStart -> onStart(event.linkWhatsapp)
             is OnNextActionClick -> onNextActionClick(
                 event.onUseDataValueChange,
-                event.onCallMutationUpdateUserRegisterUseCase
+                event.onCallMutationUpdateUserRegisterUseCase,
+                event.onPhoneVerifiedChanged
             )
             is OnGetOtpFromMessage -> getOtpFromMessage(event.message)
             is OnCallMutationSendPinProcess -> callMutationSendPinProcess(
@@ -245,7 +248,8 @@ class SignUpOtpViewModel @Inject constructor(
 
         data class OnNextActionClick(
             val onUseDataValueChange: () -> Unit,
-            val onCallMutationUpdateUserRegisterUseCase: () -> Unit
+            val onCallMutationUpdateUserRegisterUseCase: () -> Unit,
+            val onPhoneVerifiedChanged: () -> Unit
         ) : UIEvent()
 
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
@@ -286,7 +290,7 @@ class SignUpOtpViewModel @Inject constructor(
 
         const val TOTAL_DIGITS = 4
 
-        const val TIMER_DURATION = 5L
+        const val TIMER_DURATION = 59L
         const val TIMER_DELAY = 1L
 
         const val SEND_METHOD_PHONE = "PHONE"

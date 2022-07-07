@@ -21,7 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_TOTAL_STEPS
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
@@ -65,7 +65,7 @@ fun SignUpScreen(
                 onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
             if (viewModel.uiState.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
-                    steps = SIGN_UP_TOTAL_STEPS,
+                    steps = SIGN_UP_INDICATOR_TOTAL_STEPS,
                     currentStep = if (viewModel.uiState.currentStep == SignUpStep.Six.id) SignUpStep.Five.id else viewModel.uiState.currentStep,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 )

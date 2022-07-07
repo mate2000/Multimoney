@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneVerifiedChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
@@ -142,7 +143,8 @@ fun SignUpOtpScreen(
                                 },
                                 onCallMutationUpdateUserRegisterUseCase = {
                                     onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
-                                })
+                                },
+                                onPhoneVerifiedChanged = { onUIEvent(OnPhoneVerifiedChanged(true)) })
                         )
                     },
                     nextStep = viewModel.getNextStep(sharedViewModel.isOnFidoVerified).id,

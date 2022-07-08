@@ -26,10 +26,11 @@ import com.multimoney.multimoney.R.array
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
@@ -38,7 +39,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.transformation.formatId
-import com.multimoney.multimoney.presentation.util.validDui
 
 @Composable
 @Preview
@@ -68,10 +68,12 @@ fun SignUpPersonalDataCrScreen(
         CustomOutlinedTextField(
             value = viewModel.uiState.personalDocumentValue,
             placeHolder = stringResource(id = if (viewModel.uiState.identificationValueType == CrDocuments.IdDocument.document) R.string.sign_up_personal_data_cr_id_hint else R.string.sign_up_personal_data_cr_dimex_hint),
-            onValueChange = { newString ->
-                viewModel.crFilterDocument(newString)
-                sharedViewModel.userData?.identification = viewModel.uiState.personalDocumentValue
-                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+            onValueChange = { document ->
+                viewModel.onUIEvent(OnIdentificationValueChange(document) {
+                    sharedViewModel.onUIEvent(
+                        OnSharedIdentificationValueChange(document)
+                    )
+                })
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -90,11 +92,16 @@ fun SignUpPersonalDataCrScreen(
             onDebounceValidation = {
                 viewModel.onUIEvent(
                     OnValidateDocument(
-                        { validDui(viewModel.uiState.personalDocumentValue) },
-                        { sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields())) })
+                        { viewModel.validateCrDocument(sharedViewModel.userData?.email ?: "") },
+                        {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnContinueEnable(
+                                    viewModel.validateFields()
+                                )
+                            )
+                        })
                 )
-                viewModel.validateCrDocument(sharedViewModel.userData?.email ?: "")
-                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields()))
             }
         )
 
@@ -107,13 +114,22 @@ fun SignUpPersonalDataCrScreen(
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
                     value = viewModel.uiState.firstNameValue,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnFirstNameChange(it))
-                        sharedViewModel.apply {
-                            userData?.firstName = it
-                            userData?.fullName = "$it ${userData?.firstName}"
-                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                        }
+                    onValueChange = { firstName ->
+                        viewModel.onUIEvent(
+                            OnFirstNameChange(
+                                firstName = firstName,
+                                onSharedViewModelFirstNameChange = {
+                                    SignUpViewModel.UIEvent.OnFirstNameValueChange(
+                                        firstName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields())
+                                    )
+                                }
+                            )
+                        )
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -134,14 +150,25 @@ fun SignUpPersonalDataCrScreen(
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_second_name_hint),
                     value = viewModel.uiState.secondNameValue,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnSecondNameChange(it))
-                        sharedViewModel.apply {
-                            userData?.firstName = it
-                            userData?.fullName = "$it ${userData?.secondName}"
-                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                        }
+                    onValueChange = { secondName ->
+                        viewModel.onUIEvent(
+                            OnSecondNameChange(
+                                secondName = secondName,
+                                onSharedViewModelSecondNameChange = {
+                                    SignUpViewModel.UIEvent.OnSecondNameValueChange(
+                                        secondName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
                     },
+                    isRequired = false,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next
@@ -164,13 +191,23 @@ fun SignUpPersonalDataCrScreen(
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),
                     value = viewModel.uiState.firstLastNameValue,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnFirstLastNameChange(it))
-                        sharedViewModel.apply {
-                            userData?.firstLastName = it
-                            userData?.fullName = "${userData?.firstName} $it"
-                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                        }
+                    onValueChange = { firstLastName ->
+                        viewModel.onUIEvent(
+                            OnFirstLastNameChange(
+                                firstLastName = firstLastName,
+                                onSharedViewModelFirstLastNameChange = {
+                                    SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
+                                        firstLastName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -191,13 +228,24 @@ fun SignUpPersonalDataCrScreen(
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_second_lastname_hint),
                     value = viewModel.uiState.secondLastNameValue,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnSecondLastNameChange(it))
-                        sharedViewModel.apply {
-                            userData?.firstName = it
-                            userData?.fullName = "$it ${userData?.secondLastName}"
-                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                        }
+                    isRequired = false,
+                    onValueChange = { secondLastName ->
+                        viewModel.onUIEvent(
+                            OnSecondLastNameChange(
+                                secondLastName = secondLastName,
+                                onSharedViewModelSecondLastNameChange = {
+                                    SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
+                                        secondLastName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -232,7 +280,7 @@ fun SignUpPersonalDataCrScreen(
 
             if (viewModel.onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
                 viewModel.onSuccessDataInformationClient?.apply {
-                    sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields()))
                     sharedViewModel.userData?.fullName = fullName
                 }
                 Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {

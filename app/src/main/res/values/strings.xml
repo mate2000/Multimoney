@@ -157,7 +157,7 @@
     <string name="sign_up_id_validation_three">Tomarás una fotografía de tu rostro, no utilices lentes u otros accesorios</string>
 
     <!-- Sign Up Complete -->
-    <string name="sign_up_complete_title">Estamos felices/nde tenerte en</string>
+    <string name="sign_up_complete_title">Estamos felices\nde tenerte en</string>
     <string name="sign_up_complete_subtitle">Multimoney</string>
 
     <!-- Biometric Dialog -->

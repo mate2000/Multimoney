@@ -21,6 +21,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFirstLastNameValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFirstNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
@@ -29,6 +31,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSecondLastNameValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSecondNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -94,6 +98,22 @@ class SignUpViewModel @Inject constructor(
         popTo = Screen.SignUpScreen.route
     )
 
+    private fun onFirstNameChange(firstName: String) {
+        userData?.firstName = firstName
+    }
+
+    private fun onSecondNameChange(secondName: String) {
+        userData?.secondName = secondName
+    }
+
+    private fun onFirstLastNameChange(firstLastName: String) {
+        userData?.firstLastName = firstLastName
+    }
+
+    private fun onSecondLastNameChange(secondLastName: String) {
+        userData?.secondLastName = secondLastName
+    }
+
     private fun onPhoneNumberChange(phoneNumber: String) {
         userData?.phoneNumber = phoneNumber
     }
@@ -118,7 +138,7 @@ class SignUpViewModel @Inject constructor(
         userData = userData?.copy(identification = document)
     }
 
-    fun callMutationUpdateUserRegisterUseCase() = executeUseCase {
+    private fun callMutationUpdateUserRegisterUseCase() = executeUseCase {
         mutationUpdateUserRegisterUseCase.invoke(
             pkUser = userData?.pkUser ?: "",
             user = userData?.userName ?: "",
@@ -207,6 +227,10 @@ class SignUpViewModel @Inject constructor(
                 event.countryPhoneCode
             )
             is OnCallMutationUpdateUserRegisterUseCase -> callMutationUpdateUserRegisterUseCase()
+            is OnFirstNameValueChange -> onFirstNameChange(event.firstName)
+            is OnSecondNameValueChange -> onSecondNameChange(event.secondName)
+            is OnFirstLastNameValueChange -> onFirstLastNameChange(event.firstLastName)
+            is OnSecondLastNameValueChange -> onSecondLastNameChange(event.secondLastName)
         }
     }
 
@@ -230,6 +254,11 @@ class SignUpViewModel @Inject constructor(
             val countryCode: String,
             val countryPhoneCode: String
         ) : UIEvent()
+
+        data class OnFirstNameValueChange(val firstName: String) : UIEvent()
+        data class OnSecondNameValueChange(val secondName: String) : UIEvent()
+        data class OnFirstLastNameValueChange(val firstLastName: String) : UIEvent()
+        data class OnSecondLastNameValueChange(val secondLastName: String) : UIEvent()
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()

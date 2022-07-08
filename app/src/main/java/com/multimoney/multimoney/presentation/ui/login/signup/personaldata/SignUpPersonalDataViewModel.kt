@@ -43,6 +43,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
     // Interactions
     var onSuccessDataInformationClient by mutableStateOf<ClientInfoCr?>(null)
 
+    // Stateless
+    var documentLength = 0
+
     fun validateFields(): Boolean {
         return when (uiState.nationalityValue) {
             Nationalities.ElSalvador.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.ElSalvador.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
@@ -67,11 +70,23 @@ class SignUpPersonalDataViewModel @Inject constructor(
         else -> ""
     }
 
-    fun crFilterDocument(id: String) {
-        if (uiState.identificationValueType == CrDocuments.IdDocument.document && id.length <= Nationalities.CostaRicaId.documentSize) {
-            uiState = uiState.copy(personalDocumentValue = id.filter { it.isDigit() })
-        } else if (uiState.identificationValueType == CrDocuments.Dimex.document && id.length <= Nationalities.CostaRicaDimex.documentSize) {
-            uiState = uiState.copy(personalDocumentValue = id.filter { it.isDigit() })
+    private fun getDocumentLength(documentType: String) {
+        documentLength = when (documentType) {
+            Nationalities.ElSalvador.documentType -> {
+                Nationalities.ElSalvador.documentSize
+            }
+            Nationalities.Guatemala.documentType -> {
+                Nationalities.Guatemala.documentSize
+            }
+            Nationalities.CostaRicaDimex.documentType -> {
+                Nationalities.CostaRicaDimex.documentSize
+            }
+            Nationalities.CostaRicaId.documentType -> {
+                Nationalities.CostaRicaId.documentSize
+            }
+            else -> {
+                0
+            }
         }
     }
 
@@ -162,7 +177,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun cleanUI() {
         uiState = uiState.copy(
-            crPersonalDocument = "",
             identificationValueType = "",
             personalIdError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
             nameError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
@@ -177,40 +191,66 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     private fun onIdentificationTypeValueChange(documentType: String) {
+        getDocumentLength(documentType)
         uiState = uiState.copy(identificationValueType = documentType)
     }
 
     private fun onIdentificationValueChange(
         identificationValue: String,
-        identificationShareViewModelChange: () -> Unit,
-        documentNationality: Int
+        identificationShareViewModelChange: () -> Unit
     ) {
-        if (identificationValue.length <= documentNationality) {
+        if (identificationValue.length <= documentLength) {
             uiState = uiState.copy(personalDocumentValue = identificationValue)
             identificationShareViewModelChange()
         }
     }
 
-    private fun onFirstNameValueChange(firstName: String) {
+    private fun onFirstNameValueChange(
+        firstName: String,
+        onSharedViewModelFirstNameChange: () -> Unit,
+        onSharedViewModelsValidateFields: () -> Unit
+    ) {
         uiState = uiState.copy(firstNameValue = firstName)
+        onSharedViewModelFirstNameChange.invoke()
+        onSharedViewModelsValidateFields.invoke()
     }
 
-    private fun onSecondNameValueChange(secondName: String) {
+    private fun onSecondNameValueChange(
+        secondName: String,
+        onSharedViewModelSecondNameChange: () -> Unit,
+        onSharedViewModelsValidateFields: () -> Unit
+    ) {
         uiState = uiState.copy(secondNameValue = secondName)
+        onSharedViewModelSecondNameChange.invoke()
+        onSharedViewModelsValidateFields.invoke()
     }
 
-    private fun onFirstLastNameValueChange(firstLastName: String) {
+    private fun onFirstLastNameValueChange(
+        firstLastName: String,
+        onSharedViewModelFirstLastNameChange: () -> Unit,
+        onSharedViewModelsValidateFields: () -> Unit
+    ) {
         uiState = uiState.copy(firstLastNameValue = firstLastName)
+        onSharedViewModelFirstLastNameChange.invoke()
+        onSharedViewModelsValidateFields.invoke()
     }
 
-    private fun onSecondLastNameValueChange(secondLastName: String) {
+    private fun onSecondLastNameValueChange(
+        secondLastName: String,
+        onSharedViewModelSecondLastNameChange: () -> Unit,
+        onSharedViewModelsValidateFields: () -> Unit
+    ) {
         uiState = uiState.copy(secondLastNameValue = secondLastName)
+        onSharedViewModelSecondLastNameChange.invoke()
+        onSharedViewModelsValidateFields.invoke()
     }
 
     private fun onNextActionClick(
         onUserDataValueChange: () -> Unit,
         onCallMutationUpdateUserRegisterUseCase: () -> Unit
     ) {
+        uiState =
+            uiState.copy(fullNameValue = "${uiState.firstNameValue} ${uiState.secondNameValue} ${uiState.firstLastNameValue} ${uiState.secondLastNameValue}")
         onUserDataValueChange()
         onCallMutationUpdateUserRegisterUseCase()
     }
@@ -232,7 +272,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val firstLastNameValue: String = "",
         val secondLastNameValue: String = "",
         val fullNameValue: String = "",
-        val crPersonalDocument: String = "",
         val personalIdError: Pair<Boolean, Int> = Pair(
             false,
             R.string.sign_up_personal_data_id_sv_required
@@ -259,15 +298,30 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.nationality,
                 event.updateNationality
             )
-            is OnFirstNameChange -> onFirstNameValueChange(event.firstName)
-            is OnSecondNameChange -> onSecondNameValueChange(event.secondName)
-            is OnFirstLastNameChange -> onFirstLastNameValueChange(event.firstLastName)
-            is OnSecondLastNameChange -> onSecondLastNameValueChange(event.secondLastName)
+            is OnFirstNameChange -> onFirstNameValueChange(
+                event.firstName,
+                event.onSharedViewModelFirstNameChange,
+                event.onSharedViewModelValidateFields
+            )
+            is OnSecondNameChange -> onSecondNameValueChange(
+                event.secondName,
+                event.onSharedViewModelSecondNameChange,
+                event.onSharedViewModelValidateFields
+            )
+            is OnFirstLastNameChange -> onFirstLastNameValueChange(
+                event.firstLastName,
+                event.onSharedViewModelFirstLastNameChange,
+                event.onSharedViewModelValidateFields
+            )
+            is OnSecondLastNameChange -> onSecondLastNameValueChange(
+                event.secondLastName,
+                event.onSharedViewModelSecondLastNameChange,
+                event.onSharedViewModelValidateFields
+            )
             is OnIdentificationTypeValueChange -> onIdentificationTypeValueChange(event.identificationType)
             is OnIdentificationValueChange -> onIdentificationValueChange(
                 event.identification,
-                event.identificationShareViewModelChange,
-                event.documentNationality
+                event.identificationShareViewModelChange
             )
             is OnNextActionClick -> onNextActionClick(
                 event.onUserDataValueChange,
@@ -298,16 +352,34 @@ class SignUpPersonalDataViewModel @Inject constructor(
         ) :
             UIEvent()
 
-        data class OnFirstNameChange(val firstName: String) : UIEvent()
-        data class OnSecondNameChange(val secondName: String) : UIEvent()
-        data class OnFirstLastNameChange(val firstLastName: String) : UIEvent()
-        data class OnSecondLastNameChange(val secondLastName: String) : UIEvent()
+        data class OnFirstNameChange(
+            val firstName: String,
+            val onSharedViewModelFirstNameChange: () -> Unit,
+            val onSharedViewModelValidateFields: () -> Unit
+        ) : UIEvent()
+
+        data class OnSecondNameChange(
+            val secondName: String,
+            val onSharedViewModelSecondNameChange: () -> Unit,
+            val onSharedViewModelValidateFields: () -> Unit
+        ) : UIEvent()
+
+        data class OnFirstLastNameChange(
+            val firstLastName: String,
+            val onSharedViewModelFirstLastNameChange: () -> Unit,
+            val onSharedViewModelValidateFields: () -> Unit
+        ) : UIEvent()
+
+        data class OnSecondLastNameChange(
+            val secondLastName: String,
+            val onSharedViewModelSecondLastNameChange: () -> Unit,
+            val onSharedViewModelValidateFields: () -> Unit
+        ) : UIEvent()
+
         data class OnIdentificationTypeValueChange(val identificationType: String) : UIEvent()
         data class OnIdentificationValueChange(
             val identification: String,
-            val identificationShareViewModelChange: () -> Unit,
-            val documentNationality: Int,
-            val isFromCr: Boolean? = false
+            val identificationShareViewModelChange: () -> Unit
         ) : UIEvent()
 
         data class OnContinueEnable(val enable: Boolean) : UIEvent()

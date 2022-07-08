@@ -156,6 +156,10 @@
     <string name="sign_up_id_validation_two">Tené a la mano tu identificación al día</string>
     <string name="sign_up_id_validation_three">Tomarás una fotografía de tu rostro, no utilices lentes u otros accesorios</string>
 
+    <!-- Sign Up Complete -->
+    <string name="sign_up_complete_title">Estamos felices/nde tenerte en</string>
+    <string name="sign_up_complete_subtitle">Multimoney</string>
+
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title">¿Inicia sesión con tu biométrica?</string>
     <string name="biometric_dialog_subtitle">Utilice su biometría para autenticarse en la aplicación.</string>

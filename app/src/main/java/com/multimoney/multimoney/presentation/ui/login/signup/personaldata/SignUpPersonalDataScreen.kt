@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Two
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -24,7 +25,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
@@ -41,13 +41,20 @@ fun SignUpPersonalDataScreen(
 ) {
     LaunchedEffect(true) {
         sharedViewModel.apply {
-            onUIEvent(OnNextActionValueChange {
-                viewModel.onUIEvent(OnNextActionClick({
-                    onUIEvent(
-                        OnUseDataValueChange(userData?.copy(currentStep = Two.name))
+            SignUpViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(OnNextActionClick({
+                        onUIEvent(
+                            OnUseDataValueChange(userData?.copy(currentStep = Two.name))
+                        )
+                    }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
+                    sharedViewModel.onUIEvent(
+                        SignUpViewModel.UIEvent.OnNextStep
                     )
-                }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
-            })
+                },
+                nextStep = SignUpStep.Three.id,
+                previousStep = SignUpStep.One.id
+            )
 
             viewModel.onUIEvent(
                 OnStart(

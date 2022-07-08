@@ -33,20 +33,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallPasswordSave
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnIsBiometricAvailable
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnPasswordValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -66,7 +52,7 @@ fun SignUpPasswordScreen(
     val fragmentActivity = LocalContext.current as FragmentActivity
 
     viewModel.onUIEvent(
-        OnInitializeDialogTexts(
+        SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts(
             biometricPromptTitle = stringResource(id = R.string.biometric_dialog_title),
             biometricPromptDescription = stringResource(id = R.string.biometric_dialog_description),
             biometricPromptNegative = stringResource(id = R.string.cancel),
@@ -78,26 +64,32 @@ fun SignUpPasswordScreen(
 
     LaunchedEffect(context) {
         viewModel.apply {
-            onUIEvent(OnIsBiometricAvailable(biometricHelper.isBiometricAvailable(context)))
+            onUIEvent(
+                SignUpPasswordViewModel.UIEvent.OnIsBiometricAvailable(
+                    biometricHelper.isBiometricAvailable(
+                        context
+                    )
+                )
+            )
         }
     }
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnValidForm(
+        viewModel.onUIEvent(SignUpPasswordViewModel.UIEvent.OnValidForm(
             onContinueEnable = { isEnabled ->
-                sharedViewModel.onUIEvent(OnContinueEnable(isEnabled))
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(isEnabled))
             }
         ))
         sharedViewModel.apply {
-            onUIEvent(OnNextActionValueChange {
+            onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
                 viewModel.onUIEvent(
-                    OnCallPasswordSave(
+                    SignUpPasswordViewModel.UIEvent.OnCallPasswordSave(
                         pkUser = userData?.pkUser ?: "0",
                         user = userData?.email ?: "",
                         Brand.Revamp.id
                     )
                 )
-            })
+            }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id))
         }
     }
 
@@ -106,37 +98,34 @@ fun SignUpPasswordScreen(
             event.onSuccess {
                 sharedViewModel.apply {
                     userData?.currentStep = SignUpStep.Five.name
-                    viewModel.onUIEvent(OnCallCognitoSignUp(
+                    viewModel.onUIEvent(SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp(
                         email = userData?.email ?: "",
                         firstName = userData?.firstName ?: "",
                         lastName = userData?.firstLastName ?: "",
+                        phone = "${userData?.countryCode ?: ""}${userData?.phoneNumber ?: ""}",
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "",
                         status = userData?.userStatus ?: "",
                         onSuccess = {
-                            onUIEvent(OnLoadingValueChange(false))
+                            onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
                             viewModel.onUIEvent(
-                                OnShowBiometricPromptForEncryption(
+                                SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption(
                                     fragmentActivity = fragmentActivity,
                                     userEmail = userData?.email ?: "",
-                                    onCallMutationUpdateUserRegister = {
-                                        onUIEvent(
-                                            OnCallMutationUpdateUserRegisterUseCase
-                                        )
-                                    }
+                                    onNextStep = { onUIEvent(SignUpViewModel.UIEvent.OnNextStep) }
                                 )
                             )
                         },
                         onFailureWithDialog = { dialog ->
-                            onUIEvent(OnFailureWithDialog(false, dialog))
+                            onUIEvent(SignUpViewModel.UIEvent.OnFailureWithDialog(false, dialog))
                         }
                     ))
                 }
             }.onLoading {
-                sharedViewModel.onUIEvent(OnLoadingValueChange(true))
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }.onFailure {
                 sharedViewModel.onUIEvent(
-                    OnFailureWithDialog(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
                         false, DialogParameters(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
@@ -166,9 +155,13 @@ fun SignUpPasswordScreen(
         CustomOutlinedTextField(
             value = viewModel.uiState.password,
             onValueChange = {
-                viewModel.onUIEvent(OnPasswordValueChange(it, onContinueEnable = { isEnable ->
-                    sharedViewModel.onUIEvent(OnContinueEnable(isEnable))
-                }))
+                viewModel.onUIEvent(
+                    SignUpPasswordViewModel.UIEvent.OnPasswordValueChange(
+                        it,
+                        onContinueEnable = { isEnable ->
+                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(isEnable))
+                        })
+                )
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
@@ -193,9 +186,13 @@ fun SignUpPasswordScreen(
         CustomOutlinedTextField(
             value = viewModel.uiState.confirmPassword,
             onValueChange = {
-                viewModel.onUIEvent(OnConfirmPasswordValueChange(it, onContinueEnable = { isEnable ->
-                    sharedViewModel.onUIEvent(OnContinueEnable(isEnable))
-                }))
+                viewModel.onUIEvent(
+                    SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange(
+                        it,
+                        onContinueEnable = { isEnable ->
+                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(isEnable))
+                        })
+                )
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
@@ -244,7 +241,14 @@ fun SignUpPasswordScreen(
         }
         CustomCheckBox(
             checked = viewModel.uiState.isFingerprintChecked,
-            onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it)) },
+            onCheckedChange = {
+                viewModel.onUIEvent(
+                    SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(
+                        it,
+                        it
+                    )
+                )
+            },
             text = stringResource(id = R.string.sign_in_activate_fingerprint),
             modifier = Modifier.padding(top = 24.dp)
         )

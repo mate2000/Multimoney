@@ -30,22 +30,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextActionValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserEmailValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
 
@@ -61,50 +46,66 @@ fun SignUpEmailScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(OnNextActionValueChange {
-            viewModel.onUIEvent(OnNextActionClick {
+        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
+            viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnNextActionClick {
                 sharedViewModel.onUIEvent(
-                    OnNextStep
+                    SignUpViewModel.UIEvent.OnNextStep
                 )
             })
-        })
+        }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id))
 
         viewModel.baseEvent.collect { event ->
             when (event) {
-                is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
+                is SignUpEmailViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnContinueEnable(
+                        event.isFormValid
+                    )
+                )
             }
         }
     }
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnValidateForm)
+        viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateForm)
 
         viewModel.onUserDataValidationEvent.collect { event ->
             event.onSuccess { userData ->
                 viewModel.onUIEvent(
-                    OnUserDataValidationSuccess(
+                    SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess(
                         context = context,
                         currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
-                        onUseDataValueChange = { sharedViewModel.onUIEvent(OnUseDataValueChange(userData)) },
-                        nextStepAction = { sharedViewModel.onUIEvent(OnNextStep) },
+                        onUseDataValueChange = { sharedViewModel.onUIEvent(
+                            OnUseDataValueChange(
+                                userData
+                            )
+                        ) },
+                        nextStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) },
                         moveToStepAction = {
                             sharedViewModel.onUIEvent(
-                                OnMoveToStep(
+                                SignUpViewModel.UIEvent.OnMoveToStep(
                                     SignUpStep.Search.getIdByName(
                                         userData?.currentStep
                                     )
                                 )
                             )
                         },
-                        previousStepAction = { sharedViewModel.onUIEvent(OnPreviousStep) },
-                        onLoadingValueChange = { sharedViewModel.onUIEvent(OnLoadingValueChange(false)) },
-                        onOpenDialog = { dialog -> sharedViewModel.onUIEvent(OnOpenDialogValueChange(dialog)) }
+                        previousStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnPreviousStep) },
+                        onLoadingValueChange = { sharedViewModel.onUIEvent(
+                            SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                false
+                            )
+                        ) },
+                        onOpenDialog = { dialog -> sharedViewModel.onUIEvent(
+                            SignUpViewModel.UIEvent.OnOpenDialogValueChange(
+                                dialog
+                            )
+                        ) }
                     )
                 )
             }.onFailure {
                 sharedViewModel.onUIEvent(
-                    OnFailureWithDialog(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
                             title = R.string.error_empty,
@@ -114,13 +115,13 @@ fun SignUpEmailScreen(
                     )
                 )
             }.onLoading {
-                sharedViewModel.onUIEvent(OnLoadingValueChange(true))
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }
         }
     }
 
     viewModel.onUIEvent(
-        OnStart(
+        SignUpEmailViewModel.UIEvent.OnStart(
             userCompletedDialogDescription = stringResource(id = R.string.sign_up_email_user_completed_dialog_description),
             linkWhatsapp = stringResource(
                 id = R.string.whatsapp_deep_link,
@@ -150,8 +151,8 @@ fun SignUpEmailScreen(
         // Fields
         CustomOutlinedTextField(
             value = viewModel.uiState.userEmail,
-            onValueChange = { value -> viewModel.onUIEvent(OnUserEmailValueChange(value)) },
-            onDebounceValidation = { viewModel.onUIEvent(OnValidateUserEmail) },
+            onValueChange = { value -> viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnUserEmailValueChange(value)) },
+            onDebounceValidation = { viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateUserEmail) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Done

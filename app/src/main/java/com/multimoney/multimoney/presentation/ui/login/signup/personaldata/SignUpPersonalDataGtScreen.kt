@@ -24,7 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.array
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
@@ -37,7 +36,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.transformation.formatDpi
-import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 
 @Composable
@@ -67,11 +65,11 @@ fun SignUpPersonalDataGtScreen(
             value = viewModel.uiState.personalDocumentValue,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_gt_id_hint),
             onValueChange = { text ->
-                viewModel.onUIEvent(OnIdentificationValueChange(text, {
+                viewModel.onUIEvent(OnIdentificationValueChange(text) {
                     sharedViewModel.onUIEvent(
                         OnSharedIdentificationValueChange(text)
                     )
-                }, Nationalities.Guatemala.documentSize))
+                })
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -91,10 +89,20 @@ fun SignUpPersonalDataGtScreen(
             onDebounceValidation = {
                 viewModel.onUIEvent(
                     OnValidateDocument(
-                        { validId( Nationalities.Guatemala.documentSize,
-                            R.string.sign_up_personal_data_dpi_gt_not_valid,
-                            viewModel.uiState.personalDocumentValue.length) },
-                        { sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields())) })
+                        {
+                            validId(
+                                Nationalities.Guatemala.documentSize,
+                                R.string.sign_up_personal_data_dpi_gt_not_valid,
+                                viewModel.uiState.personalDocumentValue.length
+                            )
+                        },
+                        {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnContinueEnable(
+                                    viewModel.validateFields()
+                                )
+                            )
+                        })
                 )
             }
         )
@@ -107,13 +115,22 @@ fun SignUpPersonalDataGtScreen(
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
                     value = viewModel.uiState.firstNameValue,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnFirstNameChange(it))
-                        sharedViewModel.apply {
-                            userData?.firstName = it
-                            userData?.fullName = "$it ${userData?.firstName}"
-                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                        }
+                    onValueChange = { firstName ->
+                        viewModel.onUIEvent(
+                            OnFirstNameChange(
+                                firstName = firstName,
+                                onSharedViewModelFirstNameChange = {
+                                    SignUpViewModel.UIEvent.OnFirstNameValueChange(
+                                        firstName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields())
+                                    )
+                                }
+                            )
+                        )
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -134,13 +151,24 @@ fun SignUpPersonalDataGtScreen(
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_second_name_hint),
                     value = viewModel.uiState.secondNameValue,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnSecondNameChange(it))
-                        sharedViewModel.apply {
-                            userData?.firstName = it
-                            userData?.fullName = "$it ${userData?.secondName}"
-                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                        }
+                    isRequired = false,
+                    onValueChange = { secondName ->
+                        viewModel.onUIEvent(
+                            OnSecondNameChange(
+                                secondName = secondName,
+                                onSharedViewModelSecondNameChange = {
+                                    SignUpViewModel.UIEvent.OnSecondNameValueChange(
+                                        secondName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -164,13 +192,23 @@ fun SignUpPersonalDataGtScreen(
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),
                     value = viewModel.uiState.firstLastNameValue,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnFirstLastNameChange(it))
-                        sharedViewModel.apply {
-                            userData?.firstLastName = it
-                            userData?.fullName = "${userData?.firstName} $it"
-                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                        }
+                    onValueChange = { firstLastName ->
+                        viewModel.onUIEvent(
+                            OnFirstLastNameChange(
+                                firstLastName = firstLastName,
+                                onSharedViewModelFirstLastNameChange = {
+                                    SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
+                                        firstLastName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -191,13 +229,24 @@ fun SignUpPersonalDataGtScreen(
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_second_lastname_hint),
                     value = viewModel.uiState.secondLastNameValue,
-                    onValueChange = {
-                        viewModel.onUIEvent(OnSecondLastNameChange(it))
-                        sharedViewModel.apply {
-                            userData?.firstName = it
-                            userData?.fullName = "$it ${userData?.secondLastName}"
-                            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                        }
+                    isRequired = false,
+                    onValueChange = { secondLastName ->
+                        viewModel.onUIEvent(
+                            OnSecondLastNameChange(
+                                secondLastName = secondLastName,
+                                onSharedViewModelSecondLastNameChange = {
+                                    SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
+                                        secondLastName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,

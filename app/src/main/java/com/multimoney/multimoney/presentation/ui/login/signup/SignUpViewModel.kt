@@ -34,8 +34,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSecondLastNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSecondNameValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.util.BiometricHelper
@@ -101,28 +101,16 @@ class SignUpViewModel @Inject constructor(
         popTo = Screen.SignUpScreen.route
     )
 
-    private fun onFirstNameChange(firstName: String) {
-        userData?.firstName = firstName
-    }
-
-    private fun onSecondNameChange(secondName: String) {
-        userData?.secondName = secondName
-    }
-
-    private fun onFirstLastNameChange(firstLastName: String) {
-        userData?.firstLastName = firstLastName
-    }
-
-    private fun onSecondLastNameChange(secondLastName: String) {
-        userData?.secondLastName = secondLastName
-    }
-
     private fun onPhoneNumberChange(phoneNumber: String) {
         isPhoneVerified = phoneNumber == userData?.phoneNumber
         userData?.phoneNumber = phoneNumber
     }
 
-    private fun onCountryCodeChange(countryCode: String, countryPhoneCode: String, isResetPhoneNumber: Boolean) {
+    private fun onCountryCodeChange(
+        countryCode: String,
+        countryPhoneCode: String,
+        isResetPhoneNumber: Boolean
+    ) {
         userData?.let {
             it.countryCode = countryPhoneCode
             it.phoneNumber = if (isResetPhoneNumber) {
@@ -142,10 +130,6 @@ class SignUpViewModel @Inject constructor(
         userData?.firstLastName = ""
         userData?.secondLastName = ""
         userData?.fullName = ""
-    }
-
-    private fun onDocumentValueChange(document: String) {
-        userData = userData?.copy(identification = document)
     }
 
     private fun callMutationUpdateUserRegisterUseCase() = executeUseCase {
@@ -223,7 +207,11 @@ class SignUpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnSetNavigation -> onSetNavigation(event.nextAction, event.nextStep, event.previousStep)
+            is OnSetNavigation -> onSetNavigation(
+                event.nextAction,
+                event.nextStep,
+                event.previousStep
+            )
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
@@ -237,7 +225,7 @@ class SignUpViewModel @Inject constructor(
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
-            is OnSharedIdentificationValueChange -> onDocumentValueChange(event.identificationValue)
+            is OnSharedIdentificationValueChange -> userData = userData?.copy(identification = event.identificationValue)
             is OnNationalityValueChange -> onNationalityChange(event.nationality)
             is OnCountryCountryCodeValueChange -> onCountryCodeChange(
                 event.countryCode,
@@ -245,10 +233,10 @@ class SignUpViewModel @Inject constructor(
                 event.isResetPhoneNumber
             )
             is OnCallMutationUpdateUserRegisterUseCase -> callMutationUpdateUserRegisterUseCase()
-            is OnFirstNameValueChange -> onFirstNameChange(event.firstName)
-            is OnSecondNameValueChange -> onSecondNameChange(event.secondName)
-            is OnFirstLastNameValueChange -> onFirstLastNameChange(event.firstLastName)
-            is OnSecondLastNameValueChange -> onSecondLastNameChange(event.secondLastName)
+            is OnFirstNameValueChange -> userData?.firstName = event.firstName
+            is OnSecondNameValueChange -> userData?.secondName = event.secondName
+            is OnFirstLastNameValueChange -> userData?.firstLastName = event.firstLastName
+            is OnSecondLastNameValueChange -> userData?.secondLastName = event.secondLastName
             is OnPhoneVerifiedChanged -> isPhoneVerified = event.isPhoneVerified
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
         }
@@ -264,7 +252,12 @@ class SignUpViewModel @Inject constructor(
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
 
-        data class OnSetNavigation(val nextAction: () -> Unit, val nextStep: Int, val previousStep: Int) : UIEvent()
+        data class OnSetNavigation(
+            val nextAction: () -> Unit,
+            val nextStep: Int,
+            val previousStep: Int
+        ) : UIEvent()
+
         data class OnUseDataValueChange(val userData: UserData?) : UIEvent()
 
         data class OnMoveToStep(val step: Int) : UIEvent()

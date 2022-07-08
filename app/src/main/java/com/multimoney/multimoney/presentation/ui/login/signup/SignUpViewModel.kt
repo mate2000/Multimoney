@@ -92,7 +92,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun navigateToSplashComeBack(step: Int) {
-        navigateTo(Screen.SignUpSplashComeBackScreen.route.plus(step))
+        navigateTo("${Screen.SignUpSplashComeBackScreen.baseRoute}/".plus(step))
     }
 
     private fun moveToStep(step: Int) {

@@ -25,7 +25,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object SignUpSplashComeBackScreen :
         Screen(
-            "sign_up_splash_come_back_scree/${SIGN_UP_STEP}",
+            "sign_up_splash_come_back_scree/{$SIGN_UP_STEP}",
             "sign_up_splash_come_back_scree"
         )
 

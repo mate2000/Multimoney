@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.biometrics.SignUpBiometricsScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.biometrics.failure.SignUpBiometricsFailureScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBack
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
 
@@ -56,6 +57,9 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         composable(route = Screen.SignUpScreen.route) { navBackStackEntry ->
             SignUpScreen(
                 navBackStackEntry = navBackStackEntry,
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         launchSingleTop = true
@@ -64,6 +68,18 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
+        composable(route = Screen.SignUpSplashComeBackScreen.route) { navBackStackEntry ->
+            SignUpSplashComeBack(
+                navBackStackEntry = navBackStackEntry,
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        launchSingleTop = true
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+
         composable(route = Screen.SignUpBiometricsScreen.route) { navBackStackEntry ->
             SignUpBiometricsScreen(
                 navBackStackEntry,

@@ -46,6 +46,7 @@ fun SignUpEmailScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
+
         sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
             viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnNextActionClick {
                 sharedViewModel.onUIEvent(

@@ -95,9 +95,12 @@ fun SignUpPhoneScreen(
                 phoneNumber = sharedViewModel.userData?.phoneNumber ?: "",
                 phoneCode = selectedCountry.countryPhoneCode.ifBlank { getDefaultPhoneCode },
                 signUpStartData = {
-                    SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
-                        countryCodeValue,
-                        selectedCountry.countryPhoneCode
+                    sharedViewModel.onUIEvent(
+                        SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
+                            countryCodeValue,
+                            selectedCountry.countryPhoneCode,
+                            false
+                        )
                     )
                 }
             )
@@ -155,7 +158,11 @@ fun SignUpPhoneScreen(
                     it.countryCode
                 ) {
                     sharedViewModel.onUIEvent(
-                        SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(it.countryCode, it.countryPhoneCode)
+                        SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
+                            it.countryCode,
+                            it.countryPhoneCode,
+                            true
+                        )
                     )
                 })
             }

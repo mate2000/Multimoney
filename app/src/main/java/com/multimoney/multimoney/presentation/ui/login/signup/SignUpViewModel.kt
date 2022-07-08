@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
-import com.multimoney.data.util.GsonHelper
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
@@ -41,7 +40,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     val biometricHelper: BiometricHelper,
-    val gsonHelper: GsonHelper,
     private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
 ) : BaseViewModel() {
 
@@ -102,10 +100,14 @@ class SignUpViewModel @Inject constructor(
         userData?.phoneNumber = phoneNumber
     }
 
-    private fun onCountryCodeChange(countryCode: String, countryPhoneCode: String) {
+    private fun onCountryCodeChange(countryCode: String, countryPhoneCode: String, isResetPhoneNumber: Boolean) {
         userData?.let {
             it.countryCode = countryPhoneCode
-            it.phoneNumber = null
+            it.phoneNumber = if (isResetPhoneNumber) {
+                null
+            } else {
+                it.phoneNumber
+            }
         }
         this.countryCode = countryCode
     }
@@ -201,7 +203,8 @@ class SignUpViewModel @Inject constructor(
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
             is OnCountryCountryCodeValueChange -> onCountryCodeChange(
                 event.countryCode,
-                event.countryPhoneCode
+                event.countryPhoneCode,
+                event.isResetPhoneNumber
             )
             is OnCallMutationUpdateUserRegisterUseCase -> callMutationUpdateUserRegisterUseCase()
             is OnPhoneVerifiedChanged -> isPhoneVerified = event.isPhoneVerified
@@ -226,7 +229,8 @@ class SignUpViewModel @Inject constructor(
         data class OnPhoneNumberValueChange(val phoneNumber: String) : UIEvent()
         data class OnCountryCountryCodeValueChange(
             val countryCode: String,
-            val countryPhoneCode: String
+            val countryPhoneCode: String,
+            val isResetPhoneNumber: Boolean
         ) : UIEvent()
 
         data class OnPhoneVerifiedChanged(val isPhoneVerified: Boolean) : UIEvent()

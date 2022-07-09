@@ -46,6 +46,13 @@
     <string name="sign_in_biometric_enter_with_password">O podés ingresar tu contraseña</string>
     <string name="sign_in_biometric_email_hint">Ingresá tu correo electrónica</string>
 
+    <!-- Sign Up General-->
+    <string name="sign_up_splash_come_back">¡Nos alegra\nque regresés!</string>
+    <string name="sign_up_close_dialog_title">¿Estás seguro que quieres salir?</string>
+    <string name="sign_up_close_dialog_description">Podrás retomar el registro cuando quieras</string>
+    <string name="sign_up_close_dialog_positive_button_text">Salir</string>
+    <string name="sign_up_close_dialog_negative_button_text">Cancelar</string>
+
     <!-- Sign Up Email -->
     <string name="sign_up_email_header">Ingresá tu correo electrónico</string>
     <string name="sign_up_email_title">¡Nos alegra \ntenerte aquí!</string>

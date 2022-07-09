@@ -8,14 +8,12 @@ import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
-import com.multimoney.multimoney.presentation.ui.login.signup.biometrics.SignUpBiometricsScreen
-import com.multimoney.multimoney.presentation.ui.login.signup.biometrics.failure.SignUpBiometricsFailureScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBack
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
 
-const val USER_EMAIL_ARG_KEY = "user_email_arg_key"
-const val USER_PASSWORD_ARG_KEY = "user_password_arg_key"
+const val SIGN_UP_STEP = "sign_up_step"
 
 fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
     navigation(
@@ -52,8 +50,14 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SignUpScreen.route) {
+        composable(route = Screen.SignUpScreen.route) { navBackStackEntry ->
             SignUpScreen(
+                // Workaround to solve compose issue when launchSingleTop is combine with arguments
+                // (Use: navController.currentBackStackEntry ?: navBackStackEntry)
+                navBackStackEntry = navController.currentBackStackEntry ?: navBackStackEntry,
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         launchSingleTop = true
@@ -62,19 +66,9 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SignUpBiometricsScreen.route) { navBackStackEntry ->
-            SignUpBiometricsScreen(
-                navBackStackEntry,
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        launchSingleTop = true
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable(route = Screen.SignUpBiometricsFailureScreen.route) {
-            SignUpBiometricsFailureScreen(
+        composable(route = Screen.SignUpSplashComeBackScreen.route) { navBackStackEntry ->
+            SignUpSplashComeBack(
+                navBackStackEntry = navBackStackEntry,
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         launchSingleTop = true

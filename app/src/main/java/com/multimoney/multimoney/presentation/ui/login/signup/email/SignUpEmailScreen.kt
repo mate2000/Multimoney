@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -30,7 +31,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
 
@@ -46,6 +46,7 @@ fun SignUpEmailScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
+
         sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
             viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnNextActionClick {
                 sharedViewModel.onUIEvent(
@@ -75,32 +76,38 @@ fun SignUpEmailScreen(
                         context = context,
                         currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
-                        onUseDataValueChange = { sharedViewModel.onUIEvent(
-                            OnUseDataValueChange(
-                                userData
-                            )
-                        ) },
-                        nextStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) },
-                        moveToStepAction = {
+                        onUseDataValueChange = {
                             sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnMoveToStep(
-                                    SignUpStep.Search.getIdByName(
+                                SignUpViewModel.UIEvent.OnUseDataValueChange(
+                                    userData
+                                )
+                            )
+                        },
+                        nextStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) },
+                        openSignUpSplashComeBack = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnOpenSplashComeBack(
+                                    Search.getIdByName(
                                         userData?.currentStep
                                     )
                                 )
                             )
                         },
                         previousStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnPreviousStep) },
-                        onLoadingValueChange = { sharedViewModel.onUIEvent(
-                            SignUpViewModel.UIEvent.OnLoadingValueChange(
-                                false
+                        onLoadingValueChange = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                    false
+                                )
                             )
-                        ) },
-                        onOpenDialog = { dialog -> sharedViewModel.onUIEvent(
-                            SignUpViewModel.UIEvent.OnOpenDialogValueChange(
-                                dialog
+                        },
+                        onOpenDialog = { dialog ->
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnOpenDialogValueChange(
+                                    dialog
+                                )
                             )
-                        ) }
+                        }
                     )
                 )
             }.onFailure {

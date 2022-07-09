@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.takeWhile
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -186,6 +187,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     private fun onExecuteTimer() {
         tickerFlow(period = TIMER_DELAY.seconds, initialDelay = TIMER_DELAY.seconds, duration = TIMER_DURATION.seconds)
+            .takeWhile { uiState.isTimerRunning }
             .map {
                 LocalDateTime.now()
             }

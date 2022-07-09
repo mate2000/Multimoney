@@ -15,22 +15,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
+import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -40,8 +44,9 @@ import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-@Preview
 fun SignUpScreen(
+    navBackStackEntry: NavBackStackEntry,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
@@ -49,8 +54,15 @@ fun SignUpScreen(
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        navBackStackEntry.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP)?.let { step ->
+            if (step != DEFAULT_STEP) {
+                viewModel.onUIEvent(OnMoveToStep(step.toInt()))
+            }
+        }
     }
+
+    viewModel.onUIEvent(OnInitializeText(stringResource(id = R.string.sign_up_close_dialog_description)))
 
     Column(
         modifier = Modifier
@@ -94,6 +106,7 @@ fun SignUpScreen(
             )
         }
     }
+
     LoadingIndicator(viewModel.uiState.isLoading)
 
     BackHandler {

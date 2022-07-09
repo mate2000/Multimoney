@@ -16,7 +16,7 @@ class SignUpSplashComeBackViewModel @Inject constructor() : BaseViewModel() {
     private fun openStep() {
         popAndNavigateTo(
             route = "${Screen.SignUpScreen.baseRoute}/".plus(step),
-            popTo = Screen.SignUpBiometricsScreen.route
+            popTo = Screen.SignUpSplashComeBackScreen.route
         )
     }
 

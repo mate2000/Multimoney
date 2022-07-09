@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER_EMAIL_ARG_KEY
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER_PASSWORD_ARG_KEY
 
 const val LOGIN_ROUTE = "log_in_route"
 const val HOME_ROUTE = "home_route"
@@ -18,18 +16,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen : Screen("sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
-    object SignUpBiometricsScreen : Screen(
-        "sign_up_biometrics_screen/{$USER_EMAIL_ARG_KEY}/{$USER_PASSWORD_ARG_KEY}",
-        "sign_up_biometrics_screen"
-    )
 
     object SignUpSplashComeBackScreen :
         Screen(
             "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
             "sign_up_splash_come_back_screen"
         )
-
-    object SignUpBiometricsFailureScreen : Screen("sign_up_biometrics_failure")
 
     object SignUpCompleted : Screen("sign_up_completed")
 

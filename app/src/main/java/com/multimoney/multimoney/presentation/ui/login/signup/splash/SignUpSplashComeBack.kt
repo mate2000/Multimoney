@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.login.signup.completed
+package com.multimoney.multimoney.presentation.ui.login.signup.splash
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -22,11 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompletedViewModel.UIEvent.OnNavigateToSignIn
+import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBackViewModel.UIEvent.OnOpenStep
+import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBackViewModel.UIEvent.OnStepValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.FlowPreview
@@ -38,19 +40,28 @@ import kotlinx.coroutines.flow.onEach
 
 @OptIn(FlowPreview::class)
 @Composable
-fun SignUpCompleted(
+fun SignUpSplashComeBack(
+    navBackStackEntry: NavBackStackEntry,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SignUpCompletedViewModel = hiltViewModel()
+    viewModel: SignUpSplashComeBackViewModel = hiltViewModel()
 ) {
+
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.apply {
+            executeNavigation(onPopAndNavigate = onPopAndNavigate)
+            viewModel.onUIEvent(
+                OnStepValueChange(
+                    navBackStackEntry.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP) ?: DEFAULT_STEP
+                )
+            )
+        }
     }
 
-    val navigateToSignInDebounce = remember { MutableStateFlow(true) }
-    val navigateToSignFlow: Flow<Boolean> = remember {
-        navigateToSignInDebounce.debounce(TIME_TO_WAIT_IN_MILLI_SECOND)
+    val openStepDebounce = remember { MutableStateFlow(true) }
+    val openStepFlow: Flow<Boolean> = remember {
+        openStepDebounce.debounce(TIME_TO_WAIT_IN_MILLI_SECOND)
             .onEach { status ->
-                viewModel.onUIEvent(OnNavigateToSignIn)
+                viewModel.onUIEvent(OnOpenStep)
                 flowOf(status)
             }
     }
@@ -60,38 +71,33 @@ fun SignUpCompleted(
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
             .clickable {
-                viewModel.onUIEvent(OnNavigateToSignIn)
+                viewModel.onUIEvent(OnOpenStep)
             },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CustomImage(
-            drawableResource = drawable.ic_logo_multimoney,
+            drawableResource = R.drawable.ic_logo_multimoney,
             modifier = Modifier
                 .wrapContentSize()
                 .size(64.dp, 64.dp)
         )
         Text(
-            text = stringResource(id = R.string.sign_up_complete_title),
+            text = stringResource(id = R.string.sign_up_splash_come_back),
             modifier = Modifier.padding(top = 32.dp),
             style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text,
             textAlign = TextAlign.Center
         )
-        Text(
-            text = stringResource(id = R.string.sign_up_complete_subtitle),
-            modifier = Modifier.padding(top = 12.dp),
-            style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.textLink
-        )
     }
 
     BackHandler {
-        viewModel.onUIEvent(OnNavigateToSignIn)
+        viewModel.onUIEvent(OnOpenStep)
     }
 
     // this is required to execute the debounce
-    val navigateToSignInFlowValue by navigateToSignFlow.collectAsState(false)
+    val openStepFlowValue by openStepFlow.collectAsState(false)
 }
 
-const val TIME_TO_WAIT_IN_MILLI_SECOND = 10000L
+const val TIME_TO_WAIT_IN_MILLI_SECOND = 3000L
+const val DEFAULT_STEP = "0"

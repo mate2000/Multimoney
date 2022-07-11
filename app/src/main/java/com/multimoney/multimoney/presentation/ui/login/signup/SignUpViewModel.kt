@@ -12,6 +12,7 @@ import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
@@ -23,12 +24,14 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFirstLastNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFirstNameValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOnFidoVerifiedChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenSplashComeBack
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPhoneVerifiedChanged
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnPreviousStep
@@ -59,8 +62,13 @@ class SignUpViewModel @Inject constructor(
     var userData: UserData? = null
     var countryCode = ""
     var nextAction: () -> Unit = {}
+    var closeDialogDescription: String = ""
     private var nextStep: Int = SignUpStep.One.id
     private var previousStep: Int = SignUpStep.One.id
+
+    private fun onInitializeTexts(description: String) {
+        closeDialogDescription = description
+    }
 
     private fun nextStep() {
         if (nextStep <= SIGN_UP_TOTAL_STEPS) {
@@ -85,6 +93,10 @@ class SignUpViewModel @Inject constructor(
                 popTo = Screen.SignUpScreen.route
             )
         }
+    }
+
+    private fun navigateToSplashComeBack(step: Int) {
+        navigateTo("${Screen.SignUpSplashComeBackScreen.baseRoute}/".plus(step))
     }
 
     private fun moveToStep(step: Int) {
@@ -179,9 +191,20 @@ class SignUpViewModel @Inject constructor(
 
     private fun onCloseClick(focusManager: FocusManager) {
         focusManager.clearFocus()
-        popAndNavigateTo(
-            route = Screen.SignInScreen.route,
-            popTo = Screen.SignUpScreen.route
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                title = R.string.sign_up_close_dialog_title,
+                description = closeDialogDescription,
+                positiveText = R.string.sign_up_close_dialog_positive_button_text,
+                negativeText = R.string.sign_up_close_dialog_negative_button_text,
+                positiveAction = {
+                    popAndNavigateTo(
+                        route = Screen.SignInScreen.route,
+                        popTo = Screen.SignUpScreen.route
+                    )
+                },
+                isActive = mutableStateOf(true)
+            )
         )
     }
 
@@ -207,11 +230,10 @@ class SignUpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnSetNavigation -> onSetNavigation(
-                event.nextAction,
-                event.nextStep,
-                event.previousStep
+            is OnInitializeText -> onInitializeTexts(
+                event.description,
             )
+            is OnSetNavigation -> onSetNavigation(event.nextAction, event.nextStep, event.previousStep)
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
@@ -237,12 +259,17 @@ class SignUpViewModel @Inject constructor(
             is OnSecondNameValueChange -> userData?.secondName = event.secondName
             is OnFirstLastNameValueChange -> userData?.firstLastName = event.firstLastName
             is OnSecondLastNameValueChange -> userData?.secondLastName = event.secondLastName
+            is OnOpenSplashComeBack -> navigateToSplashComeBack(event.step)
             is OnPhoneVerifiedChanged -> isPhoneVerified = event.isPhoneVerified
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
         }
     }
 
     sealed class UIEvent {
+        data class OnInitializeText(
+            val description: String
+        ) : UIEvent()
+
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
@@ -269,12 +296,11 @@ class SignUpViewModel @Inject constructor(
             val countryPhoneCode: String,
             val isResetPhoneNumber: Boolean
         ) : UIEvent()
-
-
         data class OnFirstNameValueChange(val firstName: String) : UIEvent()
         data class OnSecondNameValueChange(val secondName: String) : UIEvent()
         data class OnFirstLastNameValueChange(val firstLastName: String) : UIEvent()
         data class OnSecondLastNameValueChange(val secondLastName: String) : UIEvent()
+        data class OnOpenSplashComeBack(val step: Int) : UIEvent()
         data class OnPhoneVerifiedChanged(val isPhoneVerified: Boolean) : UIEvent()
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
 

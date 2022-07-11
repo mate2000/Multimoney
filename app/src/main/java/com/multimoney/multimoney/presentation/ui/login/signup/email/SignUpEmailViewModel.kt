@@ -104,7 +104,7 @@ class SignUpEmailViewModel @Inject constructor(
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
         nextStepAction: () -> Unit,
-        moveToStepAction: () -> Unit,
+        openSignUpSplashComeBack: () -> Unit,
         previousStepAction: () -> Unit,
         onLoadingValueChange: () -> Unit,
         onOpenDialog: (DialogParameters) -> Unit
@@ -117,7 +117,7 @@ class SignUpEmailViewModel @Inject constructor(
             if (SignUpStep.Search.getIdByName(userData.currentStep) == currentStep) {
                 nextStepAction()
             } else {
-                moveToStepAction()
+                openSignUpSplashComeBack()
             }
         } else if (userData?.userStatus == UserStatus.Active.name) {
             isUserStatusIncomplete = false
@@ -170,7 +170,7 @@ class SignUpEmailViewModel @Inject constructor(
                 event.userData,
                 event.onUseDataValueChange,
                 event.nextStepAction,
-                event.moveToStepAction,
+                event.openSignUpSplashComeBack,
                 event.previousStepAction,
                 event.onLoadingValueChange,
                 event.onOpenDialog
@@ -194,7 +194,7 @@ class SignUpEmailViewModel @Inject constructor(
             val userData: UserData?,
             val onUseDataValueChange: () -> Unit,
             val nextStepAction: () -> Unit,
-            val moveToStepAction: () -> Unit,
+            val openSignUpSplashComeBack: () -> Unit,
             val previousStepAction: () -> Unit,
             val onLoadingValueChange: () -> Unit,
             val onOpenDialog: (DialogParameters) -> Unit

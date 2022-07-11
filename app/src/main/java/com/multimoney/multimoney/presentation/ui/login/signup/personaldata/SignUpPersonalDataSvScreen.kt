@@ -65,17 +65,21 @@ fun SignUpPersonalDataSvScreen(
             value = viewModel.uiState.personalDocumentValue,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_sv_id_hint),
             onValueChange = { document ->
-                viewModel.onUIEvent(OnIdentificationValueChange(document) {
-                    sharedViewModel.onUIEvent(
-                        OnSharedIdentificationValueChange(document)
-                    )
-                })
+                viewModel.onUIEvent(
+                    OnIdentificationValueChange(
+                        identification = document,
+                        identificationShareViewModelChange = {
+                            sharedViewModel.onUIEvent(
+                                OnSharedIdentificationValueChange(document)
+                            )
+                        })
+                )
             },
             onDebounceValidation = {
                 viewModel.onUIEvent(
                     OnValidateDocument(
-                        { validDui(viewModel.uiState.personalDocumentValue) },
-                        {
+                        documentValidation = { validDui(viewModel.uiState.personalDocumentValue) },
+                        sharedDocumentValidation = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnContinueEnable(
                                     viewModel.validateFields()

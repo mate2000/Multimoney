@@ -44,16 +44,22 @@ fun SignUpPersonalDataScreen(
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(
                     nextAction = {
-                        viewModel.onUIEvent(OnNextActionClick({
-                            onUIEvent(
-                                OnUseDataValueChange(
-                                    userData?.copy(
-                                        currentStep = Three.name,
-                                        fullName = viewModel.getFullName()
+                        viewModel.onUIEvent(
+                            OnNextActionClick(
+                                onUserDataValueChange = {
+                                    onUIEvent(
+                                        OnUseDataValueChange(
+                                            userData = userData?.copy(
+                                                currentStep = Three.name,
+                                                fullName = viewModel.getFullName()
+                                            )
+                                        )
                                     )
-                                )
-                            )
-                        }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
+                                },
+                                onCallMutationUpdateUserRegisterUseCase = {
+                                    onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
+                                })
+                        )
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id

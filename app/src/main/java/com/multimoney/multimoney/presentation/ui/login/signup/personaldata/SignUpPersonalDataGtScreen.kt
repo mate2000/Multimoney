@@ -89,14 +89,14 @@ fun SignUpPersonalDataGtScreen(
             onDebounceValidation = {
                 viewModel.onUIEvent(
                     OnValidateDocument(
-                        {
+                        documentValidation = {
                             validId(
                                 Nationalities.Guatemala.documentSize,
                                 R.string.sign_up_personal_data_dpi_gt_not_valid,
                                 viewModel.uiState.personalDocumentValue.length
                             )
                         },
-                        {
+                        sharedDocumentValidation = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnContinueEnable(
                                     viewModel.validateFields()

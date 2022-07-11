@@ -44,7 +44,13 @@ fun SignUpIdVerificationScreen(
                     result,
                     onOnFidoCompleted = {
                         sharedViewModel.apply {
-                            onUIEvent(SignUpViewModel.UIEvent.OnUseDataValueChange(userData = userData?.copy(currentStep = SignUpStep.Six.name)))
+                            onUIEvent(
+                                SignUpViewModel.UIEvent.OnUseDataValueChange(
+                                    userData = userData?.copy(
+                                        currentStep = SignUpStep.Six.name
+                                    )
+                                )
+                            )
                             onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
                             onUIEvent(SignUpViewModel.UIEvent.OnOnFidoVerifiedChanged(true))
                         }

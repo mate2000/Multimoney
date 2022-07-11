@@ -118,8 +118,8 @@ class SignUpIdVerificationViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnCallInFidoToken -> callMutationOnFidoInitialProcess(
-                event.userData?.firstName ?: "",
-                event.userData?.lastName ?: "",
+                "${event.userData?.firstName} ${event.userData?.secondName}",
+                "${event.userData?.firstLastName} ${event.userData?.secondLastName}",
                 event.userData?.identification ?: "",
                 event.applicationId,
                 event.userData?.email ?: "",
@@ -132,8 +132,8 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 event.onContinueEnable
             )
             is RefreshOnFidoToken -> onRefreshToken(
-                event.userData?.firstName ?: "",
-                event.userData?.lastName ?: "",
+                "${event.userData?.firstName} ${event.userData?.secondName}",
+                "${event.userData?.firstLastName} ${event.userData?.secondLastName}",
                 event.userData?.identification ?: "",
                 event.applicationId,
                 event.userData?.email ?: "",

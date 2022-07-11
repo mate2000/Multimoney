@@ -17,12 +17,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.SignUpStep.Three
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.Nationalities
 
@@ -34,30 +41,48 @@ fun SignUpPersonalDataScreen(
 ) {
     LaunchedEffect(true) {
         sharedViewModel.apply {
-            sharedViewModel.onUIEvent(
-                OnSetNavigation(
-                    nextAction = {},
-                    nextStep = SignUpStep.Three.id,
+            onUIEvent(
+                SignUpViewModel.UIEvent.OnSetNavigation(
+                    nextAction = {
+                        viewModel.onUIEvent(
+                            OnNextActionClick(
+                                onUserDataValueChange = {
+                                    onUIEvent(
+                                        OnUseDataValueChange(
+                                            userData = userData?.copy(
+                                                currentStep = Three.name,
+                                                fullName = viewModel.getFullName()
+                                            )
+                                        )
+                                    )
+                                },
+                                onCallMutationUpdateUserRegisterUseCase = {
+                                    onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
+                                })
+                        )
+                    },
+                    nextStep = Three.id,
                     previousStep = SignUpStep.One.id
                 )
             )
 
-            nextAction = {
-                userData?.currentStep = SignUpStep.Three.name
-                callMutationUpdateUserRegisterUseCase()
-            }
-            // Load Data from api
-            userData?.nationality?.let { viewModel.nationalityValue = viewModel.getCountry(it) }
-            userData?.identification?.let {
-                viewModel.apply {
-                    crPersonalDocument = it
-                    personalDocumentValue = it
+            viewModel.onUIEvent(
+                OnStart(
+                    nationality = userData?.nationality ?: "",
+                    identificationType = userData?.identificationValueType ?: "",
+                    identificationValue = userData?.identification ?: "",
+                    firstName = userData?.firstName ?: "",
+                    secondName = userData?.secondName ?: "",
+                    firstLastName = userData?.firstLastName ?: "",
+                    secondLastName = userData?.secondLastName ?: "",
+                    fullName = userData?.fullName ?: ""
+                )
+            )
+            viewModel.baseEvent.collect { event ->
+                when (event) {
+                    is OnFormValidateCompleted -> onUIEvent(OnContinueEnable(event.isFormValid))
                 }
             }
-            userData?.firstName?.let { viewModel.nameValue = it }
-            userData?.lastName?.let { viewModel.lastNameValue = it }
-            userData?.fullName?.let { viewModel.onSuccessDataInformationClient?.fullName = it }
-            sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
         }
     }
 
@@ -81,25 +106,18 @@ fun SignUpPersonalDataScreen(
                 .focusable(false)
                 .padding(top = 16.dp),
             items = stringArrayResource(id = R.array.sign_up_personal_data_nationalities).sorted(),
-            onValueChange = {
-                viewModel.apply {
-                    personalDocumentValue = ""
-                    nationalityValue = it
-                    sharedViewModel.apply {
-                        userData?.nationality = getNationality(it)
-                        userData?.identification = ""
-                        userData?.firstName = ""
-                        userData?.lastName = ""
-                        userData?.fullName = ""
-                        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                    }
-                }
+            onValueChange = { value ->
+                viewModel.onUIEvent(OnNationalityChange(value) {
+                    sharedViewModel.onUIEvent(
+                        OnNationalityValueChange(it)
+                    )
+                })
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_nationality),
-            value = viewModel.nationalityValue,
+            value = viewModel.uiState.nationalityValue,
             placeHolder = stringResource(id = R.string.sign_up_personal_data_nationality_placeholder)
         )
-        when (viewModel.nationalityValue) {
+        when (viewModel.uiState.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
             Nationalities.ElSalvador.country -> SignUpPersonalDataSvScreen()
             Nationalities.Guatemala.country -> SignUpPersonalDataGtScreen()

@@ -106,15 +106,29 @@
         <item name="sign_up_personal_data_costa_rica">Costa Rica</item>
         <item name="sign_up_personal_data_guatemala">Guatemala</item>
     </string-array>
-    <string name="sign_up_personal_data_document_cr">Número de identificación</string>
-    <string name="sign_up_personal_data_document_sv">Número de DUI</string>
-    <string name="sign_up_personal_data_document_gt">Número de DPI</string>
+    <string-array name="sign_up_personal_sv_documents">
+        <item name="sign_up_personal_sv_document_dui">DUI</item>
+        <item name="sign_up_personal_sv_document_passwport">Pasaporte</item>
+    </string-array>
+    <string-array name="sign_up_personal_cr_documents">
+        <item name="sign_up_personal_cr_document_id">Cédula</item>
+        <item name="sign_up_personal_cr_document_dimex">Dimex</item>
+    </string-array>
+    <string-array name="sign_up_personal_gt_documents">
+        <item name="sign_up_personal_cr_document_dpi">DPI</item>
+    </string-array>
+    <string name="sign_up_personal_data_document_label">Documento de identidad</string>
+    <string name="sign_up_personal_data_document_hint">Selecciona tu documento </string>
+    <string name="sign_up_personal_data_document_number_label">Número de identificación</string>
     <string name="sign_up_personal_data_names">Nombre(s)</string>
-    <string name="sign_up_personal_data_name_error">Nombres requeridos</string>
-    <string name="sign_up_personal_data_lastname_error">Apellidos requeridos</string>
+    <string name="sign_up_personal_data_name_error">Primer nombre requerido</string>
+    <string name="sign_up_personal_data_lastname_error">Primer apellido requerido</string>
     <string name="sign_up_personal_data_lastname">Apellido(s)</string>
     <string name="sign_up_personal_data_personal_title">¿Cuáles son tus datos personales?</string>
-    <string name="sign_up_personal_data_name_hint">Nombre</string>
+    <string name="sign_up_personal_data_first_name_hint">Primer nombre*</string>
+    <string name="sign_up_personal_data_second_name_hint">Segundo nombre</string>
+    <string name="sign_up_personal_data_first_lastname_hint">Primer apellido*</string>
+    <string name="sign_up_personal_data_second_lastname_hint">Segundo apellido</string>
     <string name="sign_up_personal_data_lastname_hint">Apellidos</string>
     <string name="sign_up_personal_data_sv_id_hint">0000000–0</string>
     <string name="sign_up_personal_data_gt_id_hint">0000 00000 0000</string>

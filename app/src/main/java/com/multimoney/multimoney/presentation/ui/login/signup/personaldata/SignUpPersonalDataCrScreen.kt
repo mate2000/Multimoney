@@ -1,19 +1,20 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -21,14 +22,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.array
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
 import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.transformation.formatId
 
@@ -39,44 +47,33 @@ fun SignUpPersonalDataCrScreen(
     viewModel: SignUpPersonalDataViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
-    val customRadioModifier = Modifier
-        .wrapContentSize()
-        .selectable(
-            selected = true,
-            onClick = {}
-        )
     Column(
         Modifier
             .wrapContentSize()
             .padding(top = 16.dp)
     ) {
-        CustomRadioButton(
-            modifier = customRadioModifier.clickable {
-                viewModel.personalDocumentValue = ""
-                viewModel.crPersonalDocument = CrDocuments.IdDocument.document
+        CustomDropdown(
+            modifier = Modifier
+                .wrapContentSize(Alignment.TopStart)
+                .focusable(false)
+                .padding(top = 16.dp),
+            items = stringArrayResource(id = array.sign_up_personal_cr_documents).sorted(),
+            onValueChange = {
+                viewModel.onUIEvent(OnIdentificationTypeValueChange(it))
             },
-            radioModifier = Modifier.padding(0.dp),
-            text = CrDocuments.IdDocument.document,
-            selected = viewModel.crPersonalDocument == CrDocuments.IdDocument.document,
-            onOptionSelected = { viewModel.crPersonalDocument = CrDocuments.IdDocument.document }
-        )
-        CustomRadioButton(
-            modifier = customRadioModifier.clickable {
-                viewModel.personalDocumentValue = ""
-                viewModel.crPersonalDocument = CrDocuments.Dimex.document
-            },
-            radioModifier = Modifier.padding(0.dp),
-            selected = viewModel.crPersonalDocument == CrDocuments.Dimex.document,
-            text = CrDocuments.Dimex.document,
-            onOptionSelected = { viewModel.crPersonalDocument = CrDocuments.Dimex.document }
+            labelText = stringResource(id = R.string.sign_up_personal_data_document_label),
+            value = viewModel.uiState.identificationValueType,
+            placeHolder = stringResource(id = R.string.sign_up_personal_data_document_hint)
         )
         CustomOutlinedTextField(
-            value = viewModel.personalDocumentValue,
-            placeHolder = stringResource(id = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) R.string.sign_up_personal_data_cr_id_hint else R.string.sign_up_personal_data_cr_dimex_hint),
-            onValueChange = { newString ->
-                viewModel.crFilterDocument(newString)
-                sharedViewModel.userData?.identification = viewModel.personalDocumentValue
-                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+            value = viewModel.uiState.personalDocumentValue,
+            placeHolder = stringResource(id = if (viewModel.uiState.identificationValueType == CrDocuments.IdDocument.document) R.string.sign_up_personal_data_cr_id_hint else R.string.sign_up_personal_data_cr_dimex_hint),
+            onValueChange = { document ->
+                viewModel.onUIEvent(OnIdentificationValueChange(document) {
+                    sharedViewModel.onUIEvent(
+                        OnSharedIdentificationValueChange(document)
+                    )
+                })
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -85,59 +82,226 @@ fun SignUpPersonalDataCrScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.sign_up_personal_data_document_cr),
+            labelText = stringResource(id = R.string.sign_up_personal_data_document_number_label),
             modifier = Modifier.padding(top = 44.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_required),
-            isError = viewModel.personalIdError.first,
-            errorMessage = stringResource(id = viewModel.personalIdError.second),
-            customTransformation = if (viewModel.crPersonalDocument == CrDocuments.IdDocument.document) formatId() else null,
+            isError = viewModel.uiState.personalIdError.first,
+            errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
+            customTransformation = if (viewModel.uiState.identificationValueType == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
-                viewModel.validateCrDocument(sharedViewModel.userData?.email ?: "")
-                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
+                viewModel.onUIEvent(
+                    OnValidateDocument(
+                        { viewModel.validateCrDocument(sharedViewModel.userData?.email ?: "") },
+                        {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnContinueEnable(
+                                    viewModel.validateFields()
+                                )
+                            )
+                        })
+                )
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields()))
             }
         )
 
-        if (viewModel.isLoading) {
-            sharedViewModel.userData?.fullName = null
-            Row(modifier = Modifier.padding(top = 12.dp)) {
-                CustomImage(
-                    drawableResource = R.drawable.ic_information,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Text(
-                    text = stringResource(id = R.string.sign_up_personal_data_cr_loading_data),
-                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textInformation),
+        if (viewModel.uiState.identificationValueType == CrDocuments.IdDocument.document) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 44.dp)
+            ) {
+                CustomOutlinedTextField(
+                    placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
+                    value = viewModel.uiState.firstNameValue,
+                    onValueChange = { firstName ->
+                        viewModel.onUIEvent(
+                            OnFirstNameChange(
+                                firstName = firstName,
+                                onSharedViewModelFirstNameChange = {
+                                    SignUpViewModel.UIEvent.OnFirstNameValueChange(
+                                        firstName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields())
+                                    )
+                                }
+                            )
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }),
+                    labelText = stringResource(id = R.string.sign_up_personal_data_names),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 9.dp)
+                        .weight(0.5f)
+                        .padding(end = 4.dp),
+                    isRequired = true,
+                    isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
+                    isError = viewModel.uiState.nameError.first,
                 )
-            }
-        }
 
-        if (viewModel.onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
-            viewModel.onSuccessDataInformationClient?.apply {
-                sharedViewModel.onUIEvent(OnContinueEnable(viewModel.validateFields()))
-                sharedViewModel.userData?.fullName = fullName
-            }
-            Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {
-                CustomImage(
-                    drawableResource = R.drawable.ic_check,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                CustomOutlinedTextField(
+                    placeHolder = stringResource(id = R.string.sign_up_personal_data_second_name_hint),
+                    value = viewModel.uiState.secondNameValue,
+                    onValueChange = { secondName ->
+                        viewModel.onUIEvent(
+                            OnSecondNameChange(
+                                secondName = secondName,
+                                onSharedViewModelSecondNameChange = {
+                                    SignUpViewModel.UIEvent.OnSecondNameValueChange(
+                                        secondName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
+                    },
+                    isRequired = false,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    labelText = stringResource(id = R.string.error_empty),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }),
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(start = 6.dp)
                 )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = R.string.sing_up_personal_data_cr_complete_name),
-                    style = Typography.body2.copy(
-                        color = MultimoneyTheme.colors.textSubhead
+            }
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 44.dp)
+            ) {
+                CustomOutlinedTextField(
+                    placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),
+                    value = viewModel.uiState.firstLastNameValue,
+                    onValueChange = { firstLastName ->
+                        viewModel.onUIEvent(
+                            OnFirstLastNameChange(
+                                firstLastName = firstLastName,
+                                onSharedViewModelFirstLastNameChange = {
+                                    SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
+                                        firstLastName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    labelText = stringResource(id = R.string.sign_up_personal_data_lastname),
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(top = 4.dp),
+                    isRequired = true,
+                    isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
+                    isError = viewModel.uiState.lastNameError.first,
+                )
+
+                CustomOutlinedTextField(
+                    placeHolder = stringResource(id = R.string.sign_up_personal_data_second_lastname_hint),
+                    value = viewModel.uiState.secondLastNameValue,
+                    isRequired = false,
+                    onValueChange = { secondLastName ->
+                        viewModel.onUIEvent(
+                            OnSecondLastNameChange(
+                                secondLastName = secondLastName,
+                                onSharedViewModelSecondLastNameChange = {
+                                    SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
+                                        secondLastName
+                                    )
+                                },
+                                onSharedViewModelValidateFields = {
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnContinueEnable(
+                                            viewModel.validateFields()
+                                        )
+                                    )
+                                })
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    labelText = stringResource(id = R.string.error_empty),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }),
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .padding(start = 6.dp)
+                )
+            }
+        } else {
+            if (viewModel.isLoading) {
+                sharedViewModel.userData?.fullName = null
+                Row(modifier = Modifier.padding(top = 12.dp)) {
+                    CustomImage(
+                        drawableResource = R.drawable.ic_information,
+                        modifier = Modifier.align(Alignment.CenterVertically)
                     )
+                    Text(
+                        text = stringResource(id = R.string.sign_up_personal_data_cr_loading_data),
+                        style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textInformation),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 9.dp)
+                    )
+                }
+            }
+
+            if (viewModel.onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
+                viewModel.onSuccessDataInformationClient?.apply {
+                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields()))
+                    sharedViewModel.userData?.fullName = fullName
+                }
+                Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {
+                    CustomImage(
+                        drawableResource = R.drawable.ic_check,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = stringResource(id = R.string.sing_up_personal_data_cr_complete_name),
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.textSubhead
+                        )
+                    )
+                }
+                Text(
+                    modifier = Modifier.padding(top = 8.dp, start = 4.dp),
+                    text = viewModel.onSuccessDataInformationClient?.fullName.toString(),
+                    style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
                 )
             }
-            Text(
-                modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-                text = viewModel.onSuccessDataInformationClient?.fullName.toString(),
-                style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
-            )
         }
     }
 

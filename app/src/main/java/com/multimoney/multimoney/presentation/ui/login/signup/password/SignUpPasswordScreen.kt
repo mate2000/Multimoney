@@ -101,7 +101,7 @@ fun SignUpPasswordScreen(
                     viewModel.onUIEvent(SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp(
                         email = userData?.email ?: "",
                         firstName = userData?.firstName ?: "",
-                        lastName = userData?.lastName ?: "",
+                        lastName = userData?.firstLastName ?: "",
                         phone = "${userData?.countryCode ?: ""}${userData?.phoneNumber ?: ""}",
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "",

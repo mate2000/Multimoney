@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
-import com.multimoney.data.util.catalog.SignUpStep.Two
+import com.multimoney.data.util.catalog.SignUpStep.Three
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -41,19 +41,23 @@ fun SignUpPersonalDataScreen(
 ) {
     LaunchedEffect(true) {
         sharedViewModel.apply {
-            SignUpViewModel.UIEvent.OnSetNavigation(
-                nextAction = {
-                    viewModel.onUIEvent(OnNextActionClick({
-                        onUIEvent(
-                            OnUseDataValueChange(userData?.copy(currentStep = Two.name))
-                        )
-                    }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
-                    sharedViewModel.onUIEvent(
-                        SignUpViewModel.UIEvent.OnNextStep
-                    )
-                },
-                nextStep = SignUpStep.Three.id,
-                previousStep = SignUpStep.One.id
+            onUIEvent(
+                SignUpViewModel.UIEvent.OnSetNavigation(
+                    nextAction = {
+                        viewModel.onUIEvent(OnNextActionClick({
+                            onUIEvent(
+                                OnUseDataValueChange(
+                                    userData?.copy(
+                                        currentStep = Three.name,
+                                        fullName = viewModel.getFullName()
+                                    )
+                                )
+                            )
+                        }, { onUIEvent(OnCallMutationUpdateUserRegisterUseCase) }))
+                    },
+                    nextStep = Three.id,
+                    previousStep = SignUpStep.One.id
+                )
             )
 
             viewModel.onUIEvent(

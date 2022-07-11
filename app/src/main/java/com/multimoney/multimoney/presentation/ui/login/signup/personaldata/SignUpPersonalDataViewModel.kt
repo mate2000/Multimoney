@@ -245,12 +245,14 @@ class SignUpPersonalDataViewModel @Inject constructor(
         onSharedViewModelsValidateFields.invoke()
     }
 
+    fun getFullName(): String =
+        "${uiState.firstNameValue} ${uiState.secondNameValue} ${uiState.firstLastNameValue} ${uiState.secondLastNameValue}"
+
+
     private fun onNextActionClick(
         onUserDataValueChange: () -> Unit,
         onCallMutationUpdateUserRegisterUseCase: () -> Unit
     ) {
-        uiState =
-            uiState.copy(fullNameValue = "${uiState.firstNameValue} ${uiState.secondNameValue} ${uiState.firstLastNameValue} ${uiState.secondLastNameValue}")
         onUserDataValueChange()
         onCallMutationUpdateUserRegisterUseCase()
     }

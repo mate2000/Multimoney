@@ -75,7 +75,7 @@ fun SignInWithPassword(
         if (!isBiometricError) {
             if (isBiometricActive) {
                 ClickableText(
-                    text = AnnotatedString(stringResource(id = R.string.sign_in_activate_fingerprint)),
+                    text = AnnotatedString(stringResource(id = R.string.sign_in_access_with_biometrics)),
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(top = 51.dp),

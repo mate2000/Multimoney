@@ -99,7 +99,8 @@ data class MultimoneyColors(
     val textSubhead: Color,
     val divider: Color,
     val circularProgressIndicator: Color,
-    val timerColor: Color
+    val timerColor: Color,
+    val iconColor: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -115,7 +116,8 @@ val DarkColorPalette = MultimoneyColors(
     textSubhead = GrayScale600,
     divider = GrayScale400,
     circularProgressIndicator = DefaultWhite,
-    timerColor = DefaultWhite
+    timerColor = DefaultWhite,
+    iconColor = WhiteTransparency90
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -131,7 +133,8 @@ val LightColorPalette = MultimoneyColors(
     textSubhead = GrayScale600,
     divider = GrayScale400,
     circularProgressIndicator = Primary500,
-    timerColor = DefaultBlack
+    timerColor = DefaultBlack,
+    iconColor = GrayScale800
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

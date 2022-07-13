@@ -243,7 +243,8 @@ ext {
     ]
 
     // Accompanist
-    accompanist_version = "0.24.10-beta"
+    accompanist_version = "0.24.13-rc"
+    accompanist_pagger_indicator = "0.24.11-rc"
 
     accompanist = [
             flowlayout     : "com.google.accompanist:accompanist-flowlayout:$accompanist_version",

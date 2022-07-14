@@ -42,6 +42,7 @@ class SignInViewModel @Inject constructor(
         private set
 
     // Stateless
+    private var isForcePassword = false
     private var biometricUserEmail = ""
     private var biometricPromptTitle = ""
     private var biometricPromptDescription = ""
@@ -68,12 +69,16 @@ class SignInViewModel @Inject constructor(
                     val session = authSessionSuccess as AWSCognitoAuthSession
                     when (session.identityId.type) {
                         AuthSessionResult.Type.SUCCESS -> {
-                            uiState = uiState.copy(isLoading = false)
-                            if (uiState.isFingerprintChecked) {
-                                uiState = uiState.copy(configureBiometric = true)
-                            } else {
-                                navigateToHome()
-                            }
+                            Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
+                                uiState = uiState.copy(isLoading = false)
+                                if (uiState.isFingerprintChecked) {
+                                    uiState = uiState.copy(configureBiometric = true)
+                                } else {
+                                    navigateToHome()
+                                }
+                            }, {
+                                cognitoError()
+                            })
                         }
                         AuthSessionResult.Type.FAILURE -> cognitoError()
                     }
@@ -106,7 +111,7 @@ class SignInViewModel @Inject constructor(
             } else {
                 Pair(false, R.string.error_empty)
             },
-            showBiometricSignIn = uiState.isBiometricActive && uiState.userEmail == biometricUserEmail
+            showBiometricSignIn = uiState.isBiometricActive && uiState.userEmail == biometricUserEmail && isForcePassword.not()
         )
     }
 
@@ -253,6 +258,17 @@ class SignInViewModel @Inject constructor(
         )
     }
 
+    private fun onShowBiometricSignInChanged(value: Boolean) {
+        uiState = uiState.copy(
+            showBiometricSignIn = value, userEmail = if (value) {
+                biometricUserEmail
+            } else {
+                uiState.userEmail
+            }
+        )
+        isForcePassword = value.not()
+    }
+
     data class UIState(
         // Fields
         val userEmail: String = "",
@@ -287,8 +303,7 @@ class SignInViewModel @Inject constructor(
             )
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(event.fragmentActivity)
             is OnShowBiometricPromptForDecryption -> onShowBiometricPromptForDecryption(event.fragmentActivity)
-            is OnShowBiometricSignInChanged -> uiState =
-                uiState.copy(showBiometricSignIn = event.value)
+            is OnShowBiometricSignInChanged -> onShowBiometricSignInChanged(event.value)
             is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 event.value,
                 event.showDialog

@@ -57,7 +57,7 @@ class SignUpViewModel @Inject constructor(
         private set
 
     // Stateless
-    var isOnFidoVerified = false
+    var isOnFidoVerified = true
     var isPhoneVerified = false
     var userData: UserData? = null
     var countryCode = ""
@@ -281,7 +281,7 @@ class SignUpViewModel @Inject constructor(
             UIEvent()
 
         data class OnSetNavigation(
-            val nextAction: () -> Unit,
+            val nextAction: () -> Unit = {},
             val nextStep: Int,
             val previousStep: Int
         ) : UIEvent()

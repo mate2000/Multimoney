@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Icon
@@ -43,22 +44,26 @@ fun BackCloseNavBar(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (isBackVisible) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_left),
-                    contentDescription = "",
-                    tint = tint
-                )
+        Column(Modifier.weight(0.9f)) {
+            if (isBackVisible) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_left),
+                        contentDescription = "",
+                        tint = tint
+                    )
+                }
             }
         }
-        if (isCloseVisible) {
-            IconButton(onClick = onCloseClick) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_close),
-                    contentDescription = "",
-                    tint = tint
-                )
+        Column(Modifier.weight(0.1f)) {
+            if (isCloseVisible) {
+                IconButton(onClick = onCloseClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_close),
+                        contentDescription = "",
+                        tint = tint
+                    )
+                }
             }
         }
     }

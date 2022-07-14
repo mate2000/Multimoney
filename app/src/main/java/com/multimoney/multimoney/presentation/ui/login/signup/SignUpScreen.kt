@@ -71,7 +71,7 @@ fun SignUpScreen(
     ) {
         Column {
             BackCloseNavBar(
-                isBackVisible = true,
+                isBackVisible = viewModel.uiState.currentStep != SignUpStep.Six.id,
                 isCloseVisible = viewModel.uiState.isCloseVisible,
                 onBackClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })

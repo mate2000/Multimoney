@@ -42,6 +42,7 @@ class SignInViewModel @Inject constructor(
         private set
 
     // Stateless
+    private var biometricUserEmail = ""
     private var biometricPromptTitle = ""
     private var biometricPromptDescription = ""
     private var biometricPromptNegative = ""
@@ -49,8 +50,9 @@ class SignInViewModel @Inject constructor(
     private fun onStart() {
         viewModelScope.launch {
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
+            biometricUserEmail = dataStorePreferences.getUserEmail().first()
             uiState = uiState.copy(
-                userEmail = dataStorePreferences.getUserEmail().first(),
+                userEmail = biometricUserEmail,
                 isBiometricActive = isBiometricActive,
                 showBiometricSignIn = isBiometricActive
             )
@@ -98,9 +100,14 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun isUserEmailValid() {
-        if (isEmailValid(uiState.userEmail).not()) {
-            uiState = uiState.copy(userEmailError = Pair(true, R.string.sign_in_email_not_valid))
-        }
+        uiState = uiState.copy(
+            userEmailError = if (isEmailValid(uiState.userEmail).not()) {
+                Pair(true, R.string.sign_in_email_not_valid)
+            } else {
+                Pair(false, R.string.error_empty)
+            },
+            showBiometricSignIn = uiState.isBiometricActive && uiState.userEmail == biometricUserEmail
+        )
     }
 
     private fun clearUserEmailError() {

@@ -114,7 +114,8 @@ class SignUpEmailViewModel @Inject constructor(
         onUseDataValueChange()
         if (userData?.userStatus == UserStatus.Incomplete.name) {
             isUserStatusIncomplete = true
-            if (SignUpStep.Search.getIdByName(userData.currentStep) == currentStep) {
+            val step = SignUpStep.Search.getIdByName(userData.currentStep)
+            if (step == currentStep || step < STEP_TO_SHOW_SPLASH) {
                 nextStepAction()
             } else {
                 openSignUpSplashComeBack()
@@ -208,5 +209,9 @@ class SignUpEmailViewModel @Inject constructor(
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+    }
+
+    companion object {
+        private const val STEP_TO_SHOW_SPLASH = 3
     }
 }

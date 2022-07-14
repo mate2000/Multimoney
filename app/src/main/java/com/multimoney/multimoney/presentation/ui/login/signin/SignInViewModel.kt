@@ -69,12 +69,16 @@ class SignInViewModel @Inject constructor(
                     val session = authSessionSuccess as AWSCognitoAuthSession
                     when (session.identityId.type) {
                         AuthSessionResult.Type.SUCCESS -> {
-                            uiState = uiState.copy(isLoading = false)
-                            if (uiState.isFingerprintChecked) {
-                                uiState = uiState.copy(configureBiometric = true)
-                            } else {
-                                navigateToHome()
-                            }
+                            Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
+                                uiState = uiState.copy(isLoading = false)
+                                if (uiState.isFingerprintChecked) {
+                                    uiState = uiState.copy(configureBiometric = true)
+                                } else {
+                                    navigateToHome()
+                                }
+                            }, {
+                                cognitoError()
+                            })
                         }
                         AuthSessionResult.Type.FAILURE -> cognitoError()
                     }

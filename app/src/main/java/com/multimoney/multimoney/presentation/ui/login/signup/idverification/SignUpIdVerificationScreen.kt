@@ -73,6 +73,12 @@ fun SignUpIdVerificationScreen(
     )
 
     LaunchedEffect(context) {
+        sharedViewModel.onUIEvent(
+            SignUpViewModel.UIEvent.OnSetNavigation(
+                nextStep = SignUpStep.Six.id,
+                previousStep = SignUpStep.Three.id
+            )
+        )
         viewModel.onFidoTokenEvent.collect { event ->
             event.onSuccess {
                 sharedViewModel.apply {

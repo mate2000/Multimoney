@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
+import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
@@ -33,7 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    val biometricHelper: BiometricHelper,
+    private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel() {
 
@@ -54,6 +55,7 @@ class SignInViewModel @Inject constructor(
             biometricUserEmail = dataStorePreferences.getUserEmail().first()
             uiState = uiState.copy(
                 userEmail = biometricUserEmail,
+                userName = dataStorePreferences.getUserName().first(),
                 isBiometricActive = isBiometricActive,
                 showBiometricSignIn = isBiometricActive
             )
@@ -63,18 +65,25 @@ class SignInViewModel @Inject constructor(
     private fun callCognitoSignIn() {
         uiState = uiState.copy(isLoading = true)
         clearUserEmailError()
-        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, {
-            if (it.isSignInComplete) {
+        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
+            if (authSignInResult.isSignInComplete) {
                 Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
                     val session = authSessionSuccess as AWSCognitoAuthSession
                     when (session.identityId.type) {
                         AuthSessionResult.Type.SUCCESS -> {
+                            // Get user attributes in order to save user name for welcome message
                             Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
-                                uiState = uiState.copy(isLoading = false)
-                                if (uiState.isFingerprintChecked) {
-                                    uiState = uiState.copy(configureBiometric = true)
-                                } else {
-                                    navigateToHome()
+                                viewModelScope.launch {
+                                    // If isBiometricActive false that means the userName has to be saved
+                                    if (uiState.isBiometricActive.not()) {
+                                        dataStorePreferences.setUserName("${authUserAttribute.first { it.key == AuthUserAttributeKey.name() }.value.orEmpty()} ${authUserAttribute.first { it.key == AuthUserAttributeKey.middleName() }.value.orEmpty()}")
+                                    }
+                                    uiState = uiState.copy(isLoading = false)
+                                    if (uiState.isFingerprintChecked) {
+                                        uiState = uiState.copy(configureBiometric = true)
+                                    } else {
+                                        navigateToHome()
+                                    }
                                 }
                             }, {
                                 cognitoError()
@@ -164,7 +173,7 @@ class SignInViewModel @Inject constructor(
     private fun biometricPromptError(errorCode: Int, errString: CharSequence) {
         if (errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
             uiState = uiState.copy(
-                biometricError = true,
+                isBiometricError = true,
                 biometricErrorDialog = Pair(mutableStateOf(true), errString.toString())
             )
         }
@@ -195,14 +204,18 @@ class SignInViewModel @Inject constructor(
 
     private fun biometricPromptForEncryptionSuccess(result: BiometricPrompt.AuthenticationResult) {
         result.cryptoObject?.cipher?.apply {
-            viewModelScope.launch {
+            Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
                 uiState = uiState.copy(configureBiometric = false)
-                dataStorePreferences.setUserEmail(uiState.userEmail)
-                dataStorePreferences.setUserName(uiState.userEmail)
-                dataStorePreferences.setUserPassword(uiState.userPassword, this@apply)
-                dataStorePreferences.isBiometricsEnabled(true)
-                navigateToHome()
-            }
+                viewModelScope.launch {
+                    dataStorePreferences.setUserEmail(uiState.userEmail)
+                    dataStorePreferences.setUserPassword(uiState.userPassword, this@apply)
+                    dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
+                    dataStorePreferences.isBiometricsEnabled(true)
+                    navigateToHome()
+                }
+            }, {
+                cognitoError()
+            })
         }
     }
 
@@ -269,13 +282,17 @@ class SignInViewModel @Inject constructor(
         isForcePassword = value.not()
     }
 
+    fun isAccessWithBiometrics() = uiState.isBiometricActive && uiState.userEmail == biometricUserEmail
+
+    fun isWelcomeWithName() = uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
+
     data class UIState(
         // Fields
         val userEmail: String = "",
         val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
         val userPassword: String = "",
         val userPasswordError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
-        val userName: String? = null,
+        val userName: String = "",
         val isFingerprintChecked: Boolean = false,
 
         // Interactions
@@ -285,7 +302,7 @@ class SignInViewModel @Inject constructor(
             ""
         ),
         val configureBiometric: Boolean = false,
-        val biometricError: Boolean = false,
+        val isBiometricError: Boolean = false,
         val openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
         val isBiometricActive: Boolean = false,
         val showBiometricSignIn: Boolean = false,

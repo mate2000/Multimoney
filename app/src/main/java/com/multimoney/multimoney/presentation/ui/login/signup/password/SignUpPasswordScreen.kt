@@ -115,6 +115,7 @@ fun SignUpPasswordScreen(
                                 SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption(
                                     fragmentActivity = fragmentActivity,
                                     userEmail = userData?.email ?: "",
+                                    userName = "${userData?.firstName ?: ""} ${userData?.firstLastName ?: ""}",
                                     onNextStep = { onUIEvent(SignUpViewModel.UIEvent.OnNextStep) }
                                 )
                             )

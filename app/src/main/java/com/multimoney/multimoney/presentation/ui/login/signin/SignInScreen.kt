@@ -97,19 +97,20 @@ fun SignInScreen(
         )
 
         Text(
-            text = viewModel.uiState.userName?.let {
+            text = if (viewModel.isWelcomeWithName()) {
                 buildAnnotatedString {
                     withStyle(
                         style = Typography.h5.toSpanStyle()
                             .copy(color = MultimoneyTheme.colors.text, fontWeight = FontWeight.SemiBold)
                     ) {
-                        append(stringResource(id = R.string.sign_in_title_name, it))
+                        append(stringResource(id = R.string.sign_in_title_name, viewModel.uiState.userName))
                     }
                     withStyle(style = Typography.subtitle1.toSpanStyle().copy(color = MultimoneyTheme.colors.text)) {
                         append(stringResource(id = R.string.sign_in_title_no_name))
                     }
                 }
-            } ?: run {
+
+            } else {
                 buildAnnotatedString {
                     withStyle(
                         style = Typography.h5.toSpanStyle()
@@ -170,8 +171,6 @@ fun SignInScreen(
             SignInWithPassword(
                 viewModel = viewModel,
                 focusManager = focusManager,
-                isBiometricActive = viewModel.uiState.isBiometricActive,
-                isBiometricError = viewModel.uiState.biometricError,
                 onSignInWithBiometricLink = { viewModel.onUIEvent(OnShowBiometricSignInChanged(true)) }
             )
         }

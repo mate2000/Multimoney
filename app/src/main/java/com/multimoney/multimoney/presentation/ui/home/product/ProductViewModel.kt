@@ -27,6 +27,14 @@ class ProductViewModel @Inject constructor() : BaseViewModel() {
                 "Solicitar",
                 "",
                 ""
+            ),
+            CreditOfferAndTip(
+                "1",
+                "Ahorra Smart",
+                "La mejor tasa del 3.5% anual",
+                "Solicitar",
+                "",
+                ""
             )
         )
     }

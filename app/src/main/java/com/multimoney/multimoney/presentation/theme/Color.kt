@@ -86,8 +86,13 @@ val BlackTransparency70 = Color(0xFF000000).copy(alpha = 0.7f)
 val BlackTransparency80 = Color(0xFF000000).copy(alpha = 0.8f)
 val BlackTransparency90 = Color(0xFF000000).copy(alpha = 0.9f)
 
-//Custom
-val Yellow = Color(0xFFFFF280).copy(alpha = 0.80f)
+//Gradient Colors
+val GradientYellow = Color(0xFFFFF280).copy(alpha = 0.80f)
+val GradientGrey1 = Color(0xFFAEAEAE).copy(alpha = 0.50f)
+val GradientGrey2 = Color(0xFF474747).copy(alpha = 0.50f)
+val GradientGrayLiner1 = Color(0xFF343434).copy(alpha = 0f)
+val GradientGrayLiner2 = Color(0xFF343434)
+
 
 @Immutable
 data class MultimoneyColors(

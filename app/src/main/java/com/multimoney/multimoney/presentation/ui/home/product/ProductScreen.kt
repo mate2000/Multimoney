@@ -24,8 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,8 +40,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.Yellow
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcessOnFidoOrAbandonProcess
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -63,7 +61,7 @@ fun ProductScreen(
             viewModel = viewModel
         )
         Products(
-            modifier = Modifier.padding(top = 25.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 25.dp),
             pages = 3,
             viewModel = viewModel
         )
@@ -141,18 +139,17 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun Products(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val context = LocalContext.current
     Column(modifier = modifier) {
         Text(
             text = stringResource(id = R.string.home_my_products),
+            modifier = Modifier.padding(horizontal = 24.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.onBoardingTitleText
         )
         HorizontalPager(count = pages, modifier = Modifier.padding(top = 8.dp)) { page ->
             Box(
                 modifier = Modifier
+                    .padding(horizontal = 24.dp)
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .clip(RoundedCornerShape(24.dp))
@@ -172,7 +169,8 @@ fun Products(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
                         .align(Alignment.TopCenter)
                 )
                 // here we have to identify the state and show the correct state
-                WithOutProductNotApproved()
+                //CardWithOutProduct()
+                CardWithCreditInProcessOnFidoOrAbandonProcess()
             }
         }
     }
@@ -234,39 +232,4 @@ fun TipBox(type: String, content: @Composable () -> Unit) {
     }
 }
 
-@Composable
-fun WithOutProductNotApproved() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.home_credit_not_approved_title),
-            modifier = Modifier.padding(top = 20.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.creditNotApprovedText
-        )
-        Text(
-            text = stringResource(id = R.string.home_credit_not_approved_description),
-            modifier = Modifier.padding(top = 4.dp),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
-        )
-        CustomImage(
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
-        )
-        Text(
-            text = stringResource(id = R.string.home_credit_not_approved_action),
-            modifier = Modifier
-                .padding(bottom = 12.dp)
-                .align(Alignment.CenterHorizontally),
-            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text,
-        )
-    }
-}
+

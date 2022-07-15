@@ -98,13 +98,14 @@ fun SignUpIdVerificationScreen(
                                     )
                                 }
                             )
-
                         )
                     }, nextStep = SignUpStep.Six.id, previousStep = SignUpStep.Three.id))
                 }
             }.onLoading {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(false))
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }.onFailure {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(false))
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,

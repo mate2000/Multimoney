@@ -202,4 +202,10 @@
     <string name="dialog_failure_biometric_title">¡Oh no!</string>
     <string name="dialog_failure_biometric_description">Por el momento no hemos podido configurar tu Face ID.</string>
     <string name="dialog_failure_biometric_positive_text">Activar más tarde</string>
+
+    <!-- Home -->
+    <string name="home_my_products">Mis Productos</string>
+    <string name="home_credit_not_approved_title">Gana ahorrando smart</string>
+    <string name="home_credit_not_approved_description">La mejor tasa del 3.5% anual sin restricciones</string>
+    <string name="home_credit_not_approved_action">Activar cuenta Smart</string>
 </resources>

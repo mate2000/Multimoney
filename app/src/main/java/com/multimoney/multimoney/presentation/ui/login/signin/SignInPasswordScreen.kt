@@ -34,7 +34,8 @@ fun SignInWithPassword(
     modifier: Modifier = Modifier,
     isBiometricError: Boolean,
     isBiometricActive: Boolean,
-    onSignInWithBiometricLink: () -> Unit
+    onSignInWithBiometricLink: () -> Unit,
+    onForgotPasswordClick: () -> Unit
 ) {
     Column(modifier) {
         CustomOutlinedTextField(
@@ -70,7 +71,7 @@ fun SignInWithPassword(
                 textDecoration = TextDecoration.Underline,
                 color = MultimoneyTheme.colors.textLink
             ),
-            onClick = {}
+            onClick = { onForgotPasswordClick() }
         )
         if (!isBiometricError) {
             if (isBiometricActive) {

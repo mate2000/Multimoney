@@ -7,8 +7,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor() : BaseViewModel() {
+
+    val hasCredit = true
+
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(
+            CreditOfferAndTip(
+                "1",
+                "Ahorra Smart",
+                "La mejor tasa del 3.5% anual",
+                "Solicitar",
+                "",
+                ""
+            ),
             CreditOfferAndTip(
                 "1",
                 "Ahorra Smart",

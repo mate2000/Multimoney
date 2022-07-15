@@ -60,6 +60,7 @@ val GrayScale700 = Color(0xFF393939)
 val GrayScale800 = Color(0xFF080808)
 
 // WhiteTransparency
+val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)
 val WhiteTransparency10 = Color(0xFFFFFFFF).copy(alpha = 0.1f)
 val WhiteTransparency12 = Color(0xFFFFFFFF).copy(alpha = 0.12f)
 val WhiteTransparency20 = Color(0xFFFFFFFF).copy(alpha = 0.2f)
@@ -85,6 +86,9 @@ val BlackTransparency70 = Color(0xFF000000).copy(alpha = 0.7f)
 val BlackTransparency80 = Color(0xFF000000).copy(alpha = 0.8f)
 val BlackTransparency90 = Color(0xFF000000).copy(alpha = 0.9f)
 
+//Custom
+val Yellow = Color(0xFFFFF280).copy(alpha = 0.80f)
+
 @Immutable
 data class MultimoneyColors(
     val primary: Color,
@@ -100,7 +104,9 @@ data class MultimoneyColors(
     val divider: Color,
     val circularProgressIndicator: Color,
     val timerColor: Color,
-    val iconColor: Color
+    val iconColor: Color,
+    val tipActionColor: Color,
+    val creditNotApprovedText: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -117,7 +123,9 @@ val DarkColorPalette = MultimoneyColors(
     divider = GrayScale400,
     circularProgressIndicator = DefaultWhite,
     timerColor = DefaultWhite,
-    iconColor = WhiteTransparency90
+    iconColor = WhiteTransparency90,
+    tipActionColor = Primary300,
+    creditNotApprovedText = WhiteTransparency80
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -134,7 +142,9 @@ val LightColorPalette = MultimoneyColors(
     divider = GrayScale400,
     circularProgressIndicator = Primary500,
     timerColor = DefaultBlack,
-    iconColor = GrayScale800
+    iconColor = GrayScale800,
+    tipActionColor = Primary300,
+    creditNotApprovedText = WhiteTransparency80
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

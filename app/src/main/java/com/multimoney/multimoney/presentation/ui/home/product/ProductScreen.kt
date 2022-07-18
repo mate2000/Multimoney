@@ -1,14 +1,12 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -29,8 +27,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,15 +39,13 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.presentation.theme.GradientGrayLiner1
-import com.multimoney.multimoney.presentation.theme.GradientGrayLiner2
-import com.multimoney.multimoney.presentation.theme.GradientGrey1
-import com.multimoney.multimoney.presentation.theme.GradientGrey2
 import com.multimoney.multimoney.presentation.theme.GradientYellow
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithOutProduct
+import com.multimoney.multimoney.presentation.uielement.BoxVisaType
+import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 
 @OptIn(ExperimentalPagerApi::class)
@@ -86,7 +80,7 @@ fun ProductScreen(
             state = productPagerState,
             viewModel = viewModel
         )
-        Extras(
+        ProductExtras(
             modifier = Modifier.padding(top = 32.dp),
             pages = 3,
             state = bottomPagerState,
@@ -199,12 +193,17 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Extras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
+fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
     Column(modifier = modifier) {
         HorizontalPager(count = pages, state = state) { page ->
-            CreditCardBox {
-                ActivateCreditCard()
-            }
+            CustomBoxVisaBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = { type ->
+                    // Add logic when the user click the button
+                },
+//                type = RequestCreditCard
+                type = BoxVisaType.CreditCard("Digital •••• 0000")
+            )
         }
     }
 }
@@ -256,62 +255,3 @@ fun TipBox(type: String, content: @Composable () -> Unit) {
         content()
     }
 }
-
-@Composable
-fun CreditCardBox(content: @Composable () -> Unit) {
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .clip(RoundedCornerShape(28.dp))
-            .border(
-                width = 1.dp,
-                brush = Brush.verticalGradient(
-                    colors = listOf(GradientGrey1, GradientGrey2)
-                ),
-                shape = RoundedCornerShape(28.dp)
-            )
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(GradientGrayLiner1, GradientGrayLiner2),
-                )
-            )
-    ) {
-        content()
-    }
-}
-
-@Composable
-fun CreditCard(viewModel: ProductViewModel, creditCardClick: () -> Unit = {}) {
-
-}
-
-@OptIn(ExperimentalTextApi::class)
-@Composable
-fun ActivateCreditCard(activateCreditCardClick: () -> Unit = {}) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 18.dp, bottom = 18.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(id = R.string.home_active_credit_card_label),
-            style = Typography.body2.copy(
-                fontWeight = FontWeight.SemiBold, platformStyle = PlatformTextStyle(
-                    includeFontPadding = false
-                )
-            ),
-            color = MultimoneyTheme.colors.onBoardingTitleText
-        )
-        CustomImage(
-            drawableResource = R.drawable.ic_visa_logo,
-            modifier = Modifier
-                .height(14.dp)
-                .padding(start = 8.dp)
-        )
-    }
-}
-

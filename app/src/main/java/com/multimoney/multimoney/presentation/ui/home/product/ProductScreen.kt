@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -20,10 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,15 +32,14 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.presentation.theme.GradientYellow
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithOutProduct
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -158,32 +151,15 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
     Column(modifier = modifier) {
         Text(
             text = stringResource(id = R.string.home_my_products),
-            modifier = Modifier.padding(horizontal = 24.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.onBoardingTitleText
         )
         HorizontalPager(count = pages, modifier = Modifier.padding(top = 8.dp), state = state) { page ->
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(Primary500, Primary500, GradientYellow),
-                            start = Offset(0f, Float.POSITIVE_INFINITY),
-                            end = Offset(Float.POSITIVE_INFINITY, 0f)
-                        )
-                    )
-                    .blur(0.24.dp)
-
+            CustomProductBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                type = Tertiary
             ) {
-                CustomImage(
-                    drawableResource = drawable.ic_swipe_indicator, modifier = Modifier
-                        .padding(top = 8.dp)
-                        .align(Alignment.TopCenter)
-                )
                 // here we have to identify the state and show the correct state of the product
                 CardWithOutProduct()
             }

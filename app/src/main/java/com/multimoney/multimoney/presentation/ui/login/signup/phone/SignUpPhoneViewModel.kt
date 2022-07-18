@@ -25,10 +25,10 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onStart(phoneCode: String, phoneNumber: String, signUpStartData: () -> Unit) {
+    private fun onStart(phoneCode: String, countryCode: String, phoneNumber: String, signUpStartData: () -> Unit) {
         uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
         signUpStartData.invoke()
-        isFormValid(uiState.phoneCode)
+        isFormValid(countryCode)
     }
 
     private fun isFormValid(countryCode: String) = emitBaseEvent(
@@ -40,26 +40,26 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
                     fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
                     countryCode = countryCode,
                     phoneNumberType = MOBILE
-                ) -> false
+                ).not() -> false
                 else -> true
             }
         )
     )
 
-    private fun onUserPhoneValueChanged(value: String, updateUserInfoPhone: () -> Unit) {
+    private fun onUserPhoneValueChanged(phoneNumber: String, countryCode: String, updateUserInfoPhone: () -> Unit) {
         uiState =
-            uiState.copy(phoneNumber = value, phoneNumberError = Pair(false, R.string.error_empty))
-        isFormValid(uiState.phoneCode)
+            uiState.copy(phoneNumber = phoneNumber, phoneNumberError = Pair(false, R.string.error_empty))
+        isFormValid(countryCode)
         updateUserInfoPhone.invoke()
     }
 
-    private fun onCountryCodeValueChanged(value: String, updateUserCountryCode: () -> Unit) {
+    private fun onCountryCodeValueChanged(phoneCode: String, countryCode: String, updateUserCountryCode: () -> Unit) {
         uiState = uiState.copy(
-            phoneCode = value,
+            phoneCode = phoneCode,
             phoneNumber = "",
             phoneNumberError = Pair(false, R.string.error_empty)
         )
-        isFormValid(uiState.phoneCode)
+        isFormValid(countryCode)
         updateUserCountryCode.invoke()
     }
 
@@ -105,9 +105,11 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
             is OnValidatePhone -> isPhoneValid(event.countryCode)
             is OnUserPhoneValueChanged -> onUserPhoneValueChanged(
                 event.phoneNumber,
+                event.countryCode,
                 event.updateUserInfoPhone
             )
             is OnCountryCodeValueChanged -> onCountryCodeValueChanged(
+                event.phoneCode,
                 event.countryCode,
                 event.updateUserCountryCode
             )
@@ -116,7 +118,7 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
                 event.onCallMutationUpdateUserRegisterUseCase
             )
             is OnClearPhoneError -> clearPhoneError()
-            is OnStart -> onStart(event.phoneCode, event.phoneNumber, event.signUpStartData)
+            is OnStart -> onStart(event.phoneCode, event.countryCode, event.phoneNumber, event.signUpStartData)
         }
     }
 
@@ -124,10 +126,12 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
         data class OnValidatePhone(val countryCode: String) : UIEvent()
         data class OnUserPhoneValueChanged(
             val phoneNumber: String,
+            val countryCode: String,
             val updateUserInfoPhone: () -> Unit
         ) : UIEvent()
 
         data class OnCountryCodeValueChanged(
+            val phoneCode: String,
             val countryCode: String,
             val updateUserCountryCode: () -> Unit
         ) : UIEvent()
@@ -139,6 +143,7 @@ class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
 
         data class OnStart(
             val phoneCode: String,
+            val countryCode: String,
             val phoneNumber: String,
             val signUpStartData: () -> Unit
         ) : UIEvent()

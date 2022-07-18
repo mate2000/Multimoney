@@ -164,8 +164,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
     ) {
         uiState = uiState.copy(
             nationalityValue = getCountry(nationality),
-            identificationValueType = identificationValue,
-            personalDocumentValue = identificationType,
+            identificationValueType = identificationType,
+            personalDocumentValue = identificationValue,
             firstNameValue = firstName,
             secondNameValue = secondName,
             firstLastNameValue = firstLastName,

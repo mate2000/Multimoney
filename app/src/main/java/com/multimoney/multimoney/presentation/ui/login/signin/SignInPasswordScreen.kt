@@ -32,10 +32,8 @@ fun SignInWithPassword(
     viewModel: SignInViewModel,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
-    isBiometricError: Boolean,
-    isBiometricActive: Boolean,
-    onSignInWithBiometricLink: () -> Unit,
-    onForgotPasswordClick: () -> Unit
+    onForgotPasswordClick: () -> Unit,
+    onSignInWithBiometricLink: () -> Unit
 ) {
     Column(modifier) {
         CustomOutlinedTextField(
@@ -73,10 +71,10 @@ fun SignInWithPassword(
             ),
             onClick = { onForgotPasswordClick() }
         )
-        if (!isBiometricError) {
-            if (isBiometricActive) {
+        if (!viewModel.uiState.isBiometricError) {
+            if (viewModel.isAccessWithBiometrics()) {
                 ClickableText(
-                    text = AnnotatedString(stringResource(id = R.string.sign_in_activate_fingerprint)),
+                    text = AnnotatedString(stringResource(id = R.string.sign_in_access_with_biometrics)),
                     modifier = Modifier
                         .align(Alignment.Start)
                         .padding(top = 51.dp),

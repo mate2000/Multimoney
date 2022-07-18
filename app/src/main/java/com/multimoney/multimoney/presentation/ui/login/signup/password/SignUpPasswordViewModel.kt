@@ -255,11 +255,13 @@ class SignUpPasswordViewModel @Inject constructor(
         result: BiometricPrompt.AuthenticationResult,
         userEmail: String,
         userPassword: String,
+        userName: String,
         onNextStep: () -> Unit
     ) {
         result.cryptoObject?.cipher?.apply {
             viewModelScope.launch {
                 dataStorePreferences.setUserEmail(userEmail)
+                dataStorePreferences.setUserName(userName)
                 dataStorePreferences.setUserPassword(userPassword, this@apply)
                 dataStorePreferences.isBiometricsEnabled(true)
                 showBiometricSuccess(onNextStep)
@@ -270,6 +272,7 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun onShowBiometricPromptForEncryption(
         fragmentActivity: FragmentActivity,
         userEmail: String,
+        userName: String,
         onNextStep: () -> Unit
     ) {
         if (isBiometricAvailable) {
@@ -283,6 +286,7 @@ class SignUpPasswordViewModel @Inject constructor(
                         result,
                         userEmail,
                         uiState.password,
+                        userName,
                         onNextStep
                     )
                 },
@@ -359,6 +363,7 @@ class SignUpPasswordViewModel @Inject constructor(
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
                 uiEvent.userEmail,
+                uiEvent.userName,
                 uiEvent.onNextStep
             )
             is OnIsBiometricAvailable -> isBiometricAvailable = uiEvent.value
@@ -414,6 +419,7 @@ class SignUpPasswordViewModel @Inject constructor(
         data class OnShowBiometricPromptForEncryption(
             val fragmentActivity: FragmentActivity,
             val userEmail: String,
+            val userName: String,
             val onNextStep: () -> Unit
         ) : UIEvent()
 

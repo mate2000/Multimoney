@@ -41,6 +41,18 @@ fun SignUpPersonalDataScreen(
 ) {
     LaunchedEffect(true) {
         sharedViewModel.apply {
+            viewModel.onUIEvent(
+                OnStart(
+                    nationality = userData?.nationality ?: "",
+                    identificationType = userData?.identificationValueType ?: "",
+                    identificationValue = userData?.identification ?: "",
+                    firstName = userData?.firstName ?: "",
+                    secondName = userData?.secondName ?: "",
+                    firstLastName = userData?.firstLastName ?: "",
+                    secondLastName = userData?.secondLastName ?: "",
+                    fullName = userData?.fullName ?: ""
+                )
+            )
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(
                     nextAction = {
@@ -51,6 +63,10 @@ fun SignUpPersonalDataScreen(
                                         OnUseDataValueChange(
                                             userData = userData?.copy(
                                                 currentStep = Three.name,
+                                                firstName = viewModel.uiState.firstNameValue,
+                                                secondName = viewModel.uiState.secondNameValue,
+                                                firstLastName = viewModel.uiState.firstLastNameValue,
+                                                secondLastName = viewModel.uiState.secondLastNameValue,
                                                 fullName = viewModel.getFullName()
                                             )
                                         )
@@ -63,19 +79,6 @@ fun SignUpPersonalDataScreen(
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id
-                )
-            )
-
-            viewModel.onUIEvent(
-                OnStart(
-                    nationality = userData?.nationality ?: "",
-                    identificationType = userData?.identificationValueType ?: "",
-                    identificationValue = userData?.identification ?: "",
-                    firstName = userData?.firstName ?: "",
-                    secondName = userData?.secondName ?: "",
-                    firstLastName = userData?.firstLastName ?: "",
-                    secondLastName = userData?.secondLastName ?: "",
-                    fullName = userData?.fullName ?: ""
                 )
             )
             viewModel.baseEvent.collect { event ->

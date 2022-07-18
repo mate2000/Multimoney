@@ -36,6 +36,7 @@
     <string name="sign_in_title_no_name">¡Que bueno tenerte por acá!</string>
     <string name="sign_in_label_password">Contraseña</string>
     <string name="sign_in_forgot_password">Olvidé mi contraseña</string>
+    <string name="sign_in_access_with_biometrics">Ingresar con biométricos</string>
     <string name="sign_in_activate_fingerprint">Activar huella digital</string>
     <string name="sign_in_create_account">No tengo cuenta</string>
     <string name="sign_in_email_required">El correo electrónico es requerido</string>

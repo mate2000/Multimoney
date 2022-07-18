@@ -35,7 +35,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithOutProduct
-import com.multimoney.multimoney.presentation.uielement.BoxVisaType
+import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
@@ -177,8 +177,7 @@ fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: 
                 onClick = { type ->
                     // Add logic when the user click the button
                 },
-//                type = RequestCreditCard
-                type = BoxVisaType.CreditCard("Digital •••• 0000")
+                type = RequestCreditCard
             )
         }
     }

@@ -5,14 +5,16 @@ import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.OnfidoToken
-import com.multimoney.domain.model.security.SendPinResponse
+import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.MultimoneyResult.Message
+import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SecurityRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import java.io.Serializable
+import javax.inject.Inject
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
@@ -25,7 +27,7 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
         apolloCall = securityApi.mutationUserValidation(email, currentStep, idBrand),
         apolloCallMapper = { data ->
-            data.mapToDomainModel()
+            Success(data.mapToDomainModel())
         }
     )
 
@@ -62,7 +64,7 @@ class SecurityRepositoryImpl @Inject constructor(
             idBrand
         ),
         apolloCallMapper = { data ->
-            data.mapToDomainModel()
+            Success(data.mapToDomainModel())
         }
     )
 
@@ -74,7 +76,11 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<ValidateSecurity?>> = fetchData(
         apolloCall = securityApi.queryValidationSecurity(pkIUser.toInt(), password, user, idBrand),
         apolloCallMapper = { data ->
-            data.mapToDomainModel()
+            if (data.validateSecurity?.message?.isEmpty() == true) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
         }
     )
 
@@ -85,7 +91,7 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<ClientInfoCr?>> = fetchData(
         apolloCall = securityApi.queryDataInformationClient(identification, idBrand, user),
         apolloCallMapper = { data ->
-            data.mapToDomainModel()
+            Success(data.mapToDomainModel())
         }
     )
 
@@ -98,7 +104,7 @@ class SecurityRepositoryImpl @Inject constructor(
         pkUser: String,
         idBrand: Int,
         user: String
-    ): Flow<MultimoneyResult<SendPinResponse?>> = fetchData(
+    ): Flow<MultimoneyResult<SendPinProcess?>> = fetchData(
         apolloCall = securityApi.mutationSendPinProcess(
             identification,
             firstName,
@@ -110,7 +116,11 @@ class SecurityRepositoryImpl @Inject constructor(
             user
         ),
         apolloCallMapper = { data ->
-            data.mapToDomainModel()
+            if (data.sendPinProccess?.message?.isEmpty() == true) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
         }
     )
 
@@ -131,7 +141,7 @@ class SecurityRepositoryImpl @Inject constructor(
             user
         ),
         apolloCallMapper = { data ->
-            data.mapToDomainModel()
+            Success(data.mapToDomainModel())
         }
     )
 }

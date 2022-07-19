@@ -5,6 +5,7 @@ import com.multimoney.data.mapper.balances.mapToDomainModel
 import com.multimoney.data.networking.BalanceApi
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.BalanceRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class BalanceRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<Balance?>> = fetchData(
         apolloCall = balanceApi.queryBalance(user, identification, idBrand, idClient, idLoanClient),
         apolloCallMapper = { data ->
-            data.mapToDomainModel()
+            Success(data.mapToDomainModel())
         }
     )
 }

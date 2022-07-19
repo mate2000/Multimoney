@@ -34,6 +34,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -157,6 +158,16 @@ fun SignUpOtpScreen(
                             SignUpViewModel.UIEvent.OnLoadingValueChange(false)
                         )
                     }
+                )
+            }.onMessage {
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it?.messageError?.message ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
                 )
             }.onFailure {
                 sharedViewModel.onUIEvent(

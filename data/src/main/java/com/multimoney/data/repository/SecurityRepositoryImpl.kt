@@ -76,11 +76,7 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<ValidateSecurity?>> = fetchData(
         apolloCall = securityApi.queryValidationSecurity(pkIUser.toInt(), password, user, idBrand),
         apolloCallMapper = { data ->
-            if (data.validateSecurity?.message?.isEmpty() == true) {
-                Success(data.mapToDomainModel())
-            } else {
-                Message(data.mapToDomainModel())
-            }
+            Success(data.mapToDomainModel())
         }
     )
 
@@ -116,7 +112,7 @@ class SecurityRepositoryImpl @Inject constructor(
             user
         ),
         apolloCallMapper = { data ->
-            if (data.sendPinProccess?.message?.isEmpty() == true) {
+            if (data.sendPinProccess?.message.isNullOrEmpty()) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())

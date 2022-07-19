@@ -1,7 +1,11 @@
 type SecurityQuery {
   dataInformationClient(dataInformationClientInput: DataInformationClient): dataInformationClient
 
+  validateUserStatus(userStatusInput: userStatusInput): validateUserStatus
+
   validateSecurity(validateSecurityInput: validateSecurityInput): validateSecurity
+
+  validateBankAccount(validateBankAccountInput: validateBankAccountInput): validateBankAccount
 }
 
 type dataInformationClient {
@@ -109,6 +113,203 @@ input DataInformationClient {
   traceIdentifier: String
 }
 
+type validateUserStatus {
+  """
+  validateUserStatus infoUser
+  """
+  infoUser: infoUser
+
+  """
+  validateUserStatus infoCredit
+  """
+  infoCredit: infoCredit
+
+  """
+  validateUserStatus infoVirtualCard
+  """
+  infoVirtualCard: infoVirtualCard
+
+  """
+  validateUserStatus infoBankAccount
+  """
+  infoBankAccount: infoBankAccount
+
+  """
+  validateUserStatus infoCrypto
+  """
+  infoCrypto: infoCrypto
+}
+
+type infoUser {
+  """
+  infoUser pkUser
+  """
+  pkUser: Long!
+
+  """
+  infoUser idBrand
+  """
+  idBrand: Short!
+
+  """
+  infoUser fullName
+  """
+  fullName: String!
+
+  """
+  infoUser firstName
+  """
+  firstName: String!
+
+  """
+  infoUser secondName
+  """
+  secondName: String!
+
+  """
+  infoUser lastName
+  """
+  lastName: String!
+
+  """
+  infoUser secondLastName
+  """
+  secondLastName: String!
+
+  """
+  infoUser userName
+  """
+  userName: String!
+
+  """
+  infoUser email
+  """
+  email: String!
+
+  """
+  infoUser phone
+  """
+  phone: String!
+
+  """
+  infoUser birthDate
+  """
+  birthDate: DateTime
+
+  """
+  infoUser idClient
+  """
+  idClient: Long!
+
+  """
+  infoUser VISADirect_ID
+  """
+  vISADirect_ID: String
+
+  """
+  infoUser VISADirect_Usuario
+  """
+  vISADirect_Usuario: String
+
+  """
+  infoUser fecha_ultimo_acceso
+  """
+  fecha_ultimo_acceso: DateTime
+}
+
+scalar Long
+
+scalar Short
+
+"""
+The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
+scalar DateTime
+
+type infoCredit {
+  """
+  infoCredit idClient
+  """
+  idClient: Long!
+
+  """
+  infoCredit idLoanClient
+  """
+  idLoanClient: Long!
+
+  """
+  infoCredit Status
+  """
+  status: Int!
+
+  """
+  infoCredit amountAvailable
+  """
+  amountAvailable: Decimal!
+
+  """
+  infoCredit idRequest
+  """
+  idRequest: Int!
+}
+
+scalar Decimal
+
+type infoVirtualCard {
+  """
+  infoVirtualCard Status
+  """
+  status: Int!
+}
+
+type infoBankAccount {
+  """
+  infoBankAccount StatusFirm
+  """
+  statusFirm: String
+
+  """
+  infoBankAccount StatusOnfido
+  """
+  statusOnfido: String
+
+  """
+  infoBankAccount IdRequestSysde
+  """
+  idRequestSysde: Long
+
+  """
+  infoBankAccount IdRequestGlobal
+  """
+  idRequestGlobal: Long
+
+  """
+  infoBankAccount Status
+  """
+  status: Int!
+}
+
+type infoCrypto {
+  """
+  infoCrypto Status
+  """
+  status: Int!
+}
+
+input userStatusInput {
+  pkUser: Int!
+
+  identification: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 type validateSecurity {
   """
   validateSecurity Status
@@ -140,6 +341,62 @@ input validateSecurityInput {
   traceIdentifier: String
 }
 
+type validateBankAccount {
+  """
+  validateBankAccount responseCode
+  """
+  responseCode: Int!
+
+  """
+  validateBankAccount responseMessage
+  """
+  responseMessage: String!
+
+  """
+  validateBankAccount name
+  """
+  name: String!
+
+  """
+  validateBankAccount currency
+  """
+  currency: String!
+
+  """
+  validateBankAccount sellPriceDollar
+  """
+  sellPriceDollar: String!
+
+  """
+  validateBankAccount buyPriceDollar
+  """
+  buyPriceDollar: String!
+
+  """
+  validateBankAccount bankId
+  """
+  bankId: Long
+
+  """
+  validateBankAccount bankName
+  """
+  bankName: String
+}
+
+input validateBankAccountInput {
+  account: String!
+
+  identification: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 type SecurityMutation {
   userValidation(userValidationInput: userValidationInput): userValidation
 
@@ -150,6 +407,8 @@ type SecurityMutation {
   onfidoInitialProcess(onfidoInitialProcessInput: OnfidoInitialProcessInput): onfidoInitialProcess
 
   onfidoCheckProcess(onfidoCheckProcessInputType: onfidoCheckProcessInputType): onfidoCheckProcess
+
+  saveLogTracking(saveLogTrackingInputType: saveLogTrackingInputType): saveLogTracking
 }
 
 type userValidation {
@@ -488,6 +747,39 @@ input onfidoCheckProcessInputType {
   idBrand: Int!
 
   user: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type saveLogTracking {
+  """
+  saveLogTracking Status
+  """
+  status: Int
+
+  """
+  saveLogTracking Message
+  """
+  message: String
+
+  """
+  saveLogTracking Detail
+  """
+  detail: String
+}
+
+input saveLogTrackingInputType {
+  identification: String!
+
+  pkUser: Int!
+
+  keySearch: String!
+
+  data: String!
+
+  idBrand: Int!
 
   tenantId: String
 

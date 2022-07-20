@@ -4,10 +4,12 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.exception.ApolloException
 import com.apollographql.apollo3.exception.ApolloParseException
-import com.multimoney.data.database.util.DbConstants
-import com.multimoney.domain.model.util.HttpError
+import com.multimoney.data.database.util.DbConstants.NoResults
 import com.multimoney.domain.model.util.MultimoneyResult
-import com.multimoney.domain.util.MultimoneyException
+import com.multimoney.domain.model.util.error.HttpError
+import com.multimoney.domain.util.MultimoneyException.APOLLO_ERROR
+import com.multimoney.domain.util.MultimoneyException.APOLLO_PARSE_EXCEPTION
+import com.multimoney.domain.util.MultimoneyException.UNKNOWN_ERROR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -22,13 +24,13 @@ abstract class BaseRepository {
      */
     protected suspend fun <T : Operation.Data, U : Any?> fetchData(
         apolloCall: ApolloCall<T>,
-        apolloCallMapper: suspend (T) -> U
+        apolloCallMapper: suspend (T) -> MultimoneyResult<U>
     ): Flow<MultimoneyResult<U>> {
         return flow {
             when (val apolloResponse = invokeDataProvider(apolloCall)) {
                 is MultimoneyResult.Success -> {
                     apolloResponse.data?.let {
-                        emit(MultimoneyResult.Success(apolloCallMapper(it)))
+                        emit(apolloCallMapper(it))
                     }
                 }
                 is MultimoneyResult.Failure -> {
@@ -45,7 +47,7 @@ abstract class BaseRepository {
      */
     protected suspend fun <T : Operation.Data, U : Any?, V : DomainMapper<U>> fetchData(
         apolloCall: ApolloCall<T>,
-        apolloCallMapper: suspend (T) -> U,
+        apolloCallMapper: suspend (T) -> MultimoneyResult<U>,
         dbSaveAction: suspend (T) -> Unit?,
         dbDataProvider: suspend () -> V?,
         forceLoadFromCache: Boolean = false
@@ -55,12 +57,12 @@ abstract class BaseRepository {
                 dbDataProvider()?.let {
                     emit(MultimoneyResult.Success(it.mapToDomainModel()))
                 }
-                    ?: emit(MultimoneyResult.Failure(HttpError(Throwable(DbConstants.NoResults.message))))
+                    ?: emit(MultimoneyResult.Failure(HttpError(Throwable(NoResults.message))))
             } else {
                 when (val apolloResponse = invokeDataProvider(apolloCall)) {
                     is MultimoneyResult.Success -> {
                         apolloResponse.data?.let {
-                            emit(MultimoneyResult.Success(apolloCallMapper(it)))
+                            emit(apolloCallMapper(it))
                             dbSaveAction(it)
                         }
                     }
@@ -91,7 +93,7 @@ abstract class BaseRepository {
             MultimoneyResult.Failure(
                 HttpError(
                     Throwable(
-                        MultimoneyException.APOLLO_ERROR.description
+                        APOLLO_ERROR.description
                     )
                 )
             )
@@ -99,7 +101,7 @@ abstract class BaseRepository {
             MultimoneyResult.Failure(
                 HttpError(
                     Throwable(
-                        MultimoneyException.APOLLO_PARSE_EXCEPTION.description
+                        APOLLO_PARSE_EXCEPTION.description
                     )
                 )
             )
@@ -107,7 +109,7 @@ abstract class BaseRepository {
             MultimoneyResult.Failure(
                 HttpError(
                     Throwable(
-                        MultimoneyException.UNKNOWN_ERROR.description
+                        UNKNOWN_ERROR.description
                     )
                 )
             )

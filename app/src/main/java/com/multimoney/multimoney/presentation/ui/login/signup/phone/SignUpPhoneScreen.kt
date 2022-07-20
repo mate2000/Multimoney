@@ -92,8 +92,9 @@ fun SignUpPhoneScreen(
 
         viewModel.onUIEvent(
             SignUpPhoneViewModel.UIEvent.OnStart(
-                phoneNumber = sharedViewModel.userData?.phoneNumber ?: "",
                 phoneCode = selectedCountry.countryPhoneCode.ifBlank { getDefaultPhoneCode },
+                countryCode = countryCodeValue,
+                phoneNumber = sharedViewModel.userData?.phoneNumber ?: "",
                 signUpStartData = {
                     sharedViewModel.onUIEvent(
                         SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
@@ -136,12 +137,19 @@ fun SignUpPhoneScreen(
         PhoneTextField(
             value = viewModel.uiState.phoneNumber,
             onValueChange = {
-                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged(
-                    it
-                ) { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnPhoneNumberValueChange(it)) })
+                viewModel.onUIEvent(
+                    SignUpPhoneViewModel.UIEvent.OnUserPhoneValueChanged(
+                        phoneNumber = it,
+                        countryCode = sharedViewModel.countryCode,
+                        updateUserInfoPhone = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnPhoneNumberValueChange(it)
+                            )
+                        })
+                )
             },
             onDebounceValidation = {
-                SignUpPhoneViewModel.UIEvent.OnValidatePhone(sharedViewModel.countryCode)
+                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnValidatePhone(sharedViewModel.countryCode))
             },
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
@@ -154,17 +162,20 @@ fun SignUpPhoneScreen(
             errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
             defaultCountry = selectedCountry,
             pickedCountry = {
-                viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged(
-                    it.countryCode
-                ) {
-                    sharedViewModel.onUIEvent(
-                        SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
-                            it.countryCode,
-                            it.countryPhoneCode,
-                            true
-                        )
-                    )
-                })
+                viewModel.onUIEvent(
+                    SignUpPhoneViewModel.UIEvent.OnCountryCodeValueChanged(
+                        phoneCode = it.countryPhoneCode,
+                        countryCode = it.countryCode,
+                        updateUserCountryCode = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnCountryCountryCodeValueChange(
+                                    it.countryCode,
+                                    it.countryPhoneCode,
+                                    true
+                                )
+                            )
+                        })
+                )
             }
         )
     }

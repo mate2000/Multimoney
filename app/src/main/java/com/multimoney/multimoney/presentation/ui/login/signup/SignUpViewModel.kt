@@ -82,7 +82,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun previousStep() {
-        if (previousStep > SignUpStep.One.id) {
+        if (previousStep > SignUpStep.One.id || uiState.currentStep == SignUpStep.Two.id) {
             uiState = uiState.copy(
                 currentStep = previousStep,
                 isCloseVisible = previousStep > SignUpStep.One.id
@@ -247,7 +247,8 @@ class SignUpViewModel @Inject constructor(
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
-            is OnSharedIdentificationValueChange -> userData = userData?.copy(identification = event.identificationValue)
+            is OnSharedIdentificationValueChange -> userData =
+                userData?.copy(identification = event.identificationValue)
             is OnNationalityValueChange -> onNationalityChange(event.nationality)
             is OnCountryCountryCodeValueChange -> onCountryCodeChange(
                 event.countryCode,
@@ -280,7 +281,7 @@ class SignUpViewModel @Inject constructor(
             UIEvent()
 
         data class OnSetNavigation(
-            val nextAction: () -> Unit,
+            val nextAction: () -> Unit = {},
             val nextStep: Int,
             val previousStep: Int
         ) : UIEvent()
@@ -296,6 +297,7 @@ class SignUpViewModel @Inject constructor(
             val countryPhoneCode: String,
             val isResetPhoneNumber: Boolean
         ) : UIEvent()
+
         data class OnFirstNameValueChange(val firstName: String) : UIEvent()
         data class OnSecondNameValueChange(val secondName: String) : UIEvent()
         data class OnFirstLastNameValueChange(val firstLastName: String) : UIEvent()

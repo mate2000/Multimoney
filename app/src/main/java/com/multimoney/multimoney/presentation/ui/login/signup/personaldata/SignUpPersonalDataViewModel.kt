@@ -14,6 +14,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
@@ -26,6 +27,11 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.Nationalities
+import com.multimoney.multimoney.presentation.util.Nationalities.CostaRicaDimex
+import com.multimoney.multimoney.presentation.util.Nationalities.CostaRicaId
+import com.multimoney.multimoney.presentation.util.Nationalities.ElSalvador
+import com.multimoney.multimoney.presentation.util.Nationalities.Guatemala
+import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -49,16 +55,18 @@ class SignUpPersonalDataViewModel @Inject constructor(
     // Stateless
     var documentLength = 0
 
-    fun validateFields(): Boolean {
-        return when (uiState.nationalityValue) {
-            Nationalities.ElSalvador.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.ElSalvador.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
-            Nationalities.Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
-            Nationalities.CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
-                    (uiState.personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || uiState.personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) &&
-                    !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && onSuccessDataInformationClient?.fullName != null
-            else -> false
-        }
-    }
+    private fun isFormValid() = emitBaseEvent(
+        OnFormValidateCompleted(
+            when (uiState.nationalityValue) {
+                ElSalvador.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == ElSalvador.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+                Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
+                CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
+                        (uiState.personalDocumentValue.length == CostaRicaId.documentSize || uiState.personalDocumentValue.length == CostaRicaDimex.documentSize) &&
+                        !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && onSuccessDataInformationClient?.fullName != null
+                else -> false
+            }
+        )
+    )
 
     private fun getNationality(country: String) = when (country) {
         Nationalities.ElSalvador.country -> Nationalities.ElSalvador.name
@@ -93,7 +101,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         }
     }
 
-    fun validateCrDocument(
+    private fun validateCrDocument(
         user: String,
     ): Pair<Boolean, Int> {
         val status = validId(
@@ -126,7 +134,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 result.onSuccess {
                     onSuccessDataInformationClient = it
                     isLoading = false
-                    validateFields()
+                    isFormValid()
                 }
                 result.onFailure {
                     isLoading = false
@@ -137,7 +145,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                             R.string.sign_up_personal_data_id_not_valid
                         )
                     )
-                    validateFields()
+                    isFormValid()
                 }
                 result.onLoading {
                     isLoading = true
@@ -167,8 +175,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
     ) {
         uiState = uiState.copy(
             nationalityValue = getCountry(nationality),
-            identificationValueType = identificationValue,
-            personalDocumentValue = identificationType,
+            identificationValueType = identificationType,
+            personalDocumentValue = identificationValue,
             firstNameValue = firstName,
             secondNameValue = secondName,
             firstLastNameValue = firstLastName,
@@ -176,6 +184,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             fullNameValue = fullName
         )
         onSuccessDataInformationClient?.fullName = fullName
+        isFormValid()
     }
 
     private fun cleanUI() {
@@ -210,42 +219,38 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun onFirstNameValueChange(
         firstName: String,
-        onSharedViewModelFirstNameChange: () -> Unit,
-        onSharedViewModelsValidateFields: () -> Unit
+        onSharedViewModelFirstNameChange: () -> Unit
     ) {
         uiState = uiState.copy(firstNameValue = firstName)
         onSharedViewModelFirstNameChange.invoke()
-        onSharedViewModelsValidateFields.invoke()
+        isFormValid()
     }
 
     private fun onSecondNameValueChange(
         secondName: String,
-        onSharedViewModelSecondNameChange: () -> Unit,
-        onSharedViewModelsValidateFields: () -> Unit
+        onSharedViewModelSecondNameChange: () -> Unit
     ) {
         uiState = uiState.copy(secondNameValue = secondName)
         onSharedViewModelSecondNameChange.invoke()
-        onSharedViewModelsValidateFields.invoke()
+        isFormValid()
     }
 
     private fun onFirstLastNameValueChange(
         firstLastName: String,
-        onSharedViewModelFirstLastNameChange: () -> Unit,
-        onSharedViewModelsValidateFields: () -> Unit
+        onSharedViewModelFirstLastNameChange: () -> Unit
     ) {
         uiState = uiState.copy(firstLastNameValue = firstLastName)
         onSharedViewModelFirstLastNameChange.invoke()
-        onSharedViewModelsValidateFields.invoke()
+        isFormValid()
     }
 
     private fun onSecondLastNameValueChange(
         secondLastName: String,
-        onSharedViewModelSecondLastNameChange: () -> Unit,
-        onSharedViewModelsValidateFields: () -> Unit
+        onSharedViewModelSecondLastNameChange: () -> Unit
     ) {
         uiState = uiState.copy(secondLastNameValue = secondLastName)
         onSharedViewModelSecondLastNameChange.invoke()
-        onSharedViewModelsValidateFields.invoke()
+        isFormValid()
     }
 
     fun getFullName(): String =
@@ -260,12 +265,19 @@ class SignUpPersonalDataViewModel @Inject constructor(
         onCallMutationUpdateUserRegisterUseCase()
     }
 
-    private fun validateDui(
-        documentValidation: () -> Pair<Boolean, Int>,
-        sharedDocumentValidation: () -> Unit
-    ) {
-        uiState = uiState.copy(personalIdError = documentValidation())
-        sharedDocumentValidation()
+    private fun validateDocument(email: String?) {
+        uiState = uiState.copy(
+            personalIdError = when (uiState.nationalityValue) {
+                CostaRicaId.country -> validateCrDocument(email ?: "")
+                ElSalvador.country -> validDui(uiState.personalDocumentValue)
+                else -> validId(
+                    Guatemala.documentSize,
+                    R.string.sign_up_personal_data_dpi_gt_not_valid,
+                    uiState.personalDocumentValue.length
+                )
+            }
+        )
+        isFormValid()
     }
 
     data class UIState(
@@ -305,23 +317,19 @@ class SignUpPersonalDataViewModel @Inject constructor(
             )
             is OnFirstNameChange -> onFirstNameValueChange(
                 event.firstName,
-                event.onSharedViewModelFirstNameChange,
-                event.onSharedViewModelValidateFields
+                event.onSharedViewModelFirstNameChange
             )
             is OnSecondNameChange -> onSecondNameValueChange(
                 event.secondName,
-                event.onSharedViewModelSecondNameChange,
-                event.onSharedViewModelValidateFields
+                event.onSharedViewModelSecondNameChange
             )
             is OnFirstLastNameChange -> onFirstLastNameValueChange(
                 event.firstLastName,
-                event.onSharedViewModelFirstLastNameChange,
-                event.onSharedViewModelValidateFields
+                event.onSharedViewModelFirstLastNameChange
             )
             is OnSecondLastNameChange -> onSecondLastNameValueChange(
                 event.secondLastName,
-                event.onSharedViewModelSecondLastNameChange,
-                event.onSharedViewModelValidateFields
+                event.onSharedViewModelSecondLastNameChange
             )
             is OnIdentificationTypeValueChange -> onIdentificationTypeValueChange(event.identificationType)
             is OnIdentificationValueChange -> onIdentificationValueChange(
@@ -332,10 +340,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.onUserDataValueChange,
                 event.onCallMutationUpdateUserRegisterUseCase
             )
-            is OnValidateDocument -> validateDui(
-                event.documentValidation,
-                event.sharedDocumentValidation
-            )
+            is OnValidateDocument -> validateDocument(event.email)
+            is UIEvent.OnValidateForm -> isFormValid()
         }
     }
 
@@ -359,26 +365,22 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
         data class OnFirstNameChange(
             val firstName: String,
-            val onSharedViewModelFirstNameChange: () -> Unit,
-            val onSharedViewModelValidateFields: () -> Unit
+            val onSharedViewModelFirstNameChange: () -> Unit
         ) : UIEvent()
 
         data class OnSecondNameChange(
             val secondName: String,
-            val onSharedViewModelSecondNameChange: () -> Unit,
-            val onSharedViewModelValidateFields: () -> Unit
+            val onSharedViewModelSecondNameChange: () -> Unit
         ) : UIEvent()
 
         data class OnFirstLastNameChange(
             val firstLastName: String,
-            val onSharedViewModelFirstLastNameChange: () -> Unit,
-            val onSharedViewModelValidateFields: () -> Unit
+            val onSharedViewModelFirstLastNameChange: () -> Unit
         ) : UIEvent()
 
         data class OnSecondLastNameChange(
             val secondLastName: String,
-            val onSharedViewModelSecondLastNameChange: () -> Unit,
-            val onSharedViewModelValidateFields: () -> Unit
+            val onSharedViewModelSecondLastNameChange: () -> Unit
         ) : UIEvent()
 
         data class OnIdentificationTypeValueChange(val identificationType: String) : UIEvent()
@@ -395,11 +397,10 @@ class SignUpPersonalDataViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnValidateDocument(
-            val documentValidation: () -> Pair<Boolean, Int>,
-            val sharedDocumentValidation: () -> Unit
+            val email: String? = null
         ) : UIEvent()
 
-        object OnPreviousStep : UIEvent()
+        object OnValidateForm : UIEvent()
     }
 
     sealed class BaseEvent {

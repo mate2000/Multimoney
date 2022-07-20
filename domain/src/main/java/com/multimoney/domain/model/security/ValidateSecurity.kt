@@ -1,6 +1,7 @@
 package com.multimoney.domain.model.security
 
+import com.multimoney.domain.model.util.error.MessageError
+
 data class ValidateSecurity(
-    val status:Int?,
-    val message:String?
+    val messageError: MessageError
 )

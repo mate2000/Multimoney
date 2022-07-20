@@ -28,15 +28,18 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
+import com.multimoney.multimoney.presentation.util.BackPressedHandler
 import com.multimoney.multimoney.presentation.util.DialogParameters
 
 @Composable
@@ -50,6 +53,7 @@ fun SignUpPasswordScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val fragmentActivity = LocalContext.current as FragmentActivity
+    BackPressedHandler(onBackPressed = { sharedViewModel.onUIEvent(OnCloseClick(focusManager)) })
 
     viewModel.onUIEvent(
         SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts(
@@ -112,17 +116,30 @@ fun SignUpPasswordScreen(
                                 SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption(
                                     fragmentActivity = fragmentActivity,
                                     userEmail = userData?.email ?: "",
+                                    userName = "${userData?.firstName ?: ""} ${userData?.firstLastName ?: ""}",
                                     onNextStep = { onUIEvent(SignUpViewModel.UIEvent.OnNextStep) }
                                 )
                             )
                         },
                         onFailureWithDialog = { dialog ->
-                            onUIEvent(SignUpViewModel.UIEvent.OnFailureWithDialog(false, dialog))
+                            onUIEvent(
+                                SignUpViewModel.UIEvent.OnFailureWithDialog(
+                                    false,
+                                    dialog
+                                )
+                            )
                         }
                     ))
                 }
-            }.onLoading {
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
+            }.onMessage {
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        false, DialogParameters(
+                            description = it?.messageError?.message ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                )
             }.onFailure {
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
@@ -132,6 +149,8 @@ fun SignUpPasswordScreen(
                         )
                     )
                 )
+            }.onLoading {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }
         }
     }
@@ -159,7 +178,11 @@ fun SignUpPasswordScreen(
                     SignUpPasswordViewModel.UIEvent.OnPasswordValueChange(
                         it,
                         onContinueEnable = { isEnable ->
-                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(isEnable))
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnContinueEnable(
+                                    isEnable
+                                )
+                            )
                         })
                 )
             },
@@ -190,7 +213,11 @@ fun SignUpPasswordScreen(
                     SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange(
                         it,
                         onContinueEnable = { isEnable ->
-                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(isEnable))
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnContinueEnable(
+                                    isEnable
+                                )
+                            )
                         })
                 )
             },

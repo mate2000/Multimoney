@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.Nationalities
 
@@ -40,7 +39,27 @@ fun SignUpPersonalDataScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
         sharedViewModel.apply {
+            viewModel.onUIEvent(
+                SignUpPersonalDataViewModel.UIEvent.OnStart(
+                    nationality = userData?.nationality ?: "",
+                    identificationType = userData?.identificationValueType ?: "",
+                    identificationValue = userData?.identification ?: "",
+                    firstName = userData?.firstName ?: "",
+                    secondName = userData?.secondName ?: "",
+                    firstLastName = userData?.firstLastName ?: "",
+                    secondLastName = userData?.secondLastName ?: "",
+                    fullName = userData?.fullName ?: ""
+                )
+            )
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(
                     nextAction = {
@@ -51,6 +70,10 @@ fun SignUpPersonalDataScreen(
                                         OnUseDataValueChange(
                                             userData = userData?.copy(
                                                 currentStep = Three.name,
+                                                firstName = viewModel.uiState.firstNameValue,
+                                                secondName = viewModel.uiState.secondNameValue,
+                                                firstLastName = viewModel.uiState.firstLastNameValue,
+                                                secondLastName = viewModel.uiState.secondLastNameValue,
                                                 fullName = viewModel.getFullName()
                                             )
                                         )
@@ -65,24 +88,6 @@ fun SignUpPersonalDataScreen(
                     previousStep = SignUpStep.One.id
                 )
             )
-
-            viewModel.onUIEvent(
-                OnStart(
-                    nationality = userData?.nationality ?: "",
-                    identificationType = userData?.identificationValueType ?: "",
-                    identificationValue = userData?.identification ?: "",
-                    firstName = userData?.firstName ?: "",
-                    secondName = userData?.secondName ?: "",
-                    firstLastName = userData?.firstLastName ?: "",
-                    secondLastName = userData?.secondLastName ?: "",
-                    fullName = userData?.fullName ?: ""
-                )
-            )
-            viewModel.baseEvent.collect { event ->
-                when (event) {
-                    is OnFormValidateCompleted -> onUIEvent(OnContinueEnable(event.isFormValid))
-                }
-            }
         }
     }
 

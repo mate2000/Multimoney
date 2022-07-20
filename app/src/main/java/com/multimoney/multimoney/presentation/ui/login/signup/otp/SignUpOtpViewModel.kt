@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
-import com.multimoney.domain.model.security.SendPinResponse
+import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -51,7 +51,7 @@ class SignUpOtpViewModel @Inject constructor(
     private var linkWhatsapp = ""
 
     // Events
-    val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinResponse?>>()
+    val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
 
     private fun onStart(linkWhatsapp: String) {
         this.linkWhatsapp = linkWhatsapp

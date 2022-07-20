@@ -25,17 +25,11 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.array
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.transformation.formatDui
-import com.multimoney.multimoney.presentation.util.validDui
 
 @Composable
 @Preview
@@ -76,17 +70,7 @@ fun SignUpPersonalDataSvScreen(
                 )
             },
             onDebounceValidation = {
-                viewModel.onUIEvent(
-                    OnValidateDocument(
-                        documentValidation = { validDui(viewModel.uiState.personalDocumentValue) },
-                        sharedDocumentValidation = {
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnContinueEnable(
-                                    viewModel.validateFields()
-                                )
-                            )
-                        })
-                )
+                viewModel.onUIEvent(SignUpPersonalDataViewModel.UIEvent.OnValidateDocument())
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -116,18 +100,13 @@ fun SignUpPersonalDataSvScreen(
                     value = viewModel.uiState.firstNameValue,
                     onValueChange = { firstName ->
                         viewModel.onUIEvent(
-                            OnFirstNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange(
                                 firstName = firstName,
                                 onSharedViewModelFirstNameChange = {
                                     sharedViewModel.onUIEvent(
                                         SignUpViewModel.UIEvent.OnFirstNameValueChange(
                                             firstName
                                         )
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields())
                                     )
                                 }
                             )
@@ -154,19 +133,12 @@ fun SignUpPersonalDataSvScreen(
                     value = viewModel.uiState.secondNameValue,
                     onValueChange = { secondName ->
                         viewModel.onUIEvent(
-                            OnSecondNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange(
                                 secondName = secondName,
                                 onSharedViewModelSecondNameChange = {
                                     sharedViewModel.onUIEvent(
                                         SignUpViewModel.UIEvent.OnSecondNameValueChange(
                                             secondName
-                                        )
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
                                         )
                                     )
                                 })
@@ -197,19 +169,12 @@ fun SignUpPersonalDataSvScreen(
                     value = viewModel.uiState.firstLastNameValue,
                     onValueChange = { firstLastName ->
                         viewModel.onUIEvent(
-                            OnFirstLastNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange(
                                 firstLastName = firstLastName,
                                 onSharedViewModelFirstLastNameChange = {
                                     sharedViewModel.onUIEvent(
                                         SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
                                             firstLastName
-                                        )
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
                                         )
                                     )
                                 })
@@ -237,19 +202,12 @@ fun SignUpPersonalDataSvScreen(
                     isRequired = false,
                     onValueChange = { secondLastName ->
                         viewModel.onUIEvent(
-                            OnSecondLastNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange(
                                 secondLastName = secondLastName,
                                 onSharedViewModelSecondLastNameChange = {
                                     sharedViewModel.onUIEvent(
                                         SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
                                             secondLastName
-                                        )
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
                                         )
                                     )
                                 })

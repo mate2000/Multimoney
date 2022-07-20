@@ -1,13 +1,14 @@
 query ValidationSecurity($pkUser:Int!, $password:String!, $user:String!,$idBrand:Int!){
-  validateSecurity(
-    validateSecurityInput: {
-        pkUser: $pkUser,
-        password: $password,
-        user: $user,
-        idBrand: $idBrand
+    validateSecurity(
+        validateSecurityInput: {
+            pkUser: $pkUser,
+            password: $password,
+            user: $user,
+            idBrand: $idBrand
+        }
+    ) {
+        status
+        message
+        detail
     }
-  ) {
-    status
-    message
-  }
 }

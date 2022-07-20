@@ -25,18 +25,11 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.array
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.Nationalities
 import com.multimoney.multimoney.presentation.util.transformation.formatDpi
-import com.multimoney.multimoney.presentation.util.validId
 
 @Composable
 @Preview
@@ -87,23 +80,7 @@ fun SignUpPersonalDataGtScreen(
             errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
             customTransformation = formatDpi(),
             onDebounceValidation = {
-                viewModel.onUIEvent(
-                    OnValidateDocument(
-                        documentValidation = {
-                            validId(
-                                Nationalities.Guatemala.documentSize,
-                                R.string.sign_up_personal_data_dpi_gt_not_valid,
-                                viewModel.uiState.personalDocumentValue.length
-                            )
-                        },
-                        sharedDocumentValidation = {
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnContinueEnable(
-                                    viewModel.validateFields()
-                                )
-                            )
-                        })
-                )
+                viewModel.onUIEvent(SignUpPersonalDataViewModel.UIEvent.OnValidateDocument())
             }
         )
         if (viewModel.uiState.identificationValueType.isNotBlank()) {
@@ -117,16 +94,11 @@ fun SignUpPersonalDataGtScreen(
                     value = viewModel.uiState.firstNameValue,
                     onValueChange = { firstName ->
                         viewModel.onUIEvent(
-                            OnFirstNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange(
                                 firstName = firstName,
                                 onSharedViewModelFirstNameChange = {
                                     SignUpViewModel.UIEvent.OnFirstNameValueChange(
                                         firstName
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields())
                                     )
                                 }
                             )
@@ -154,18 +126,11 @@ fun SignUpPersonalDataGtScreen(
                     isRequired = false,
                     onValueChange = { secondName ->
                         viewModel.onUIEvent(
-                            OnSecondNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange(
                                 secondName = secondName,
                                 onSharedViewModelSecondNameChange = {
                                     SignUpViewModel.UIEvent.OnSecondNameValueChange(
                                         secondName
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
-                                        )
                                     )
                                 })
                         )
@@ -194,18 +159,11 @@ fun SignUpPersonalDataGtScreen(
                     value = viewModel.uiState.firstLastNameValue,
                     onValueChange = { firstLastName ->
                         viewModel.onUIEvent(
-                            OnFirstLastNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange(
                                 firstLastName = firstLastName,
                                 onSharedViewModelFirstLastNameChange = {
                                     SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
                                         firstLastName
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
-                                        )
                                     )
                                 })
                         )
@@ -232,18 +190,11 @@ fun SignUpPersonalDataGtScreen(
                     isRequired = false,
                     onValueChange = { secondLastName ->
                         viewModel.onUIEvent(
-                            OnSecondLastNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange(
                                 secondLastName = secondLastName,
                                 onSharedViewModelSecondLastNameChange = {
                                     SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
                                         secondLastName
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
-                                        )
                                     )
                                 })
                         )

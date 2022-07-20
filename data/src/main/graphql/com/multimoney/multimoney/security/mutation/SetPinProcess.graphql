@@ -1,23 +1,26 @@
 mutation SendPinProcess($identification:String!, $firstName:String!, $email:String!, $cellphone:String!, $sendMethod:String!, $fk_Suv_Mtr_Usuario:Int!,$idBrand:Int!, $user:String!) {
-  sendPinProccess(
-    sendPinProccessInput: {
-      identification: $identification
-      firstName: $firstName
-      email: $email
-      cellphone: $cellphone
-      sendMethod: $sendMethod
-      fk_Suv_Mtr_Usuario: $fk_Suv_Mtr_Usuario
-      idBrand: $idBrand
-      user: $user
+    sendPinProccess(
+        sendPinProccessInput: {
+            identification: $identification
+            firstName: $firstName
+            email: $email
+            cellphone: $cellphone
+            sendMethod: $sendMethod
+            fk_Suv_Mtr_Usuario: $fk_Suv_Mtr_Usuario
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        pk_suv_mtr_usuario
+        correo_electronico
+        username
+        telefono
+        identificacion
+        cantidad_reenvios_pin
+        cantidad_reenvios_otp
+        valor_tiempo_exp_pin
+        status
+        message
+        detail
     }
-  ) {
-    pk_suv_mtr_usuario
-    correo_electronico
-    username
-    telefono
-    identificacion
-    cantidad_reenvios_pin
-    cantidad_reenvios_otp
-    valor_tiempo_exp_pin
-  }
 }

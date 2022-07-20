@@ -1,6 +1,6 @@
 package com.multimoney.domain.interaction.security
 
-import com.multimoney.domain.model.security.SendPinResponse
+import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SecurityRepository
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +15,7 @@ class MutationSendPinProcessUseCaseImpl(val securityRepository: SecurityReposito
         pkUser: String,
         idBrand: Int,
         user: String
-    ): Flow<MultimoneyResult<SendPinResponse?>> = securityRepository.mutationSendPinProcess(
+    ): Flow<MultimoneyResult<SendPinProcess?>> = securityRepository.mutationSendPinProcess(
         identification,
         firstName,
         email,

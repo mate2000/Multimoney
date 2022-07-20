@@ -1,4 +1,4 @@
-package com.multimoney.domain.model.util
+package com.multimoney.domain.model.util.error
 
 import com.multimoney.domain.util.MultimoneyException
 

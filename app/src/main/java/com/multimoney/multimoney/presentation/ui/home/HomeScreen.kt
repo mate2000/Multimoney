@@ -15,8 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.ProductScreen
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlin.random.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -34,12 +36,102 @@ fun HomeScreen(
         }
     }
 
-    LazyColumn {
-        viewModel.onSuccessBalance?.balanceCredit?.let { balanceCreditList ->
-            balanceCreditList.forEachIndexed { index, balanceCredit ->
+    if (getRandom() == ZERO) {
+        ProductScreen()
+    } else {
+        LazyColumn {
+            viewModel.onSuccessBalance?.balanceCredit?.let { balanceCreditList ->
+                balanceCreditList.forEachIndexed { index, balanceCredit ->
+                    item {
+                        Text(
+                            text = "Balance Credit $index",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 24.dp),
+                            style = Typography.subtitle1.copy(
+                                color = MultimoneyTheme.colors.primary,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+                    balanceCredit?.summary?.let { summaryList ->
+                        items(summaryList) { summary ->
+                            Text(
+                                text = "Linea de crédito: ${summary.availableBalanceLabel}",
+                                modifier = Modifier
+                                    .padding(top = 24.dp),
+                                style = Typography.subtitle1.copy(
+                                    color = MultimoneyTheme.colors.primary
+                                )
+                            )
+                            Text(
+                                text = "Saldo de crédito: ${summary.currentBalanceLabel}",
+                                modifier = Modifier
+                                    .padding(top = 24.dp),
+                                style = Typography.subtitle1.copy(
+                                    color = MultimoneyTheme.colors.primary
+                                )
+                            )
+                            Text(
+                                text = "Monto de cuota por pagar: ${summary.monthlyQuotaLabel}",
+                                modifier = Modifier
+                                    .padding(top = 24.dp),
+                                style = Typography.subtitle1.copy(
+                                    color = MultimoneyTheme.colors.primary
+                                )
+                            )
+                            Text(
+                                text = "Fecha de vencimiento: ${summary.paymentDateLabel}",
+                                modifier = Modifier
+                                    .padding(top = 24.dp),
+                                style = Typography.subtitle1.copy(
+                                    color = MultimoneyTheme.colors.primary
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+            viewModel.onSuccessBalance?.balanceCardInformation?.let { balanceCardInformation ->
                 item {
                     Text(
-                        text = "Balance Credit $index",
+                        text = "Balance Card Information",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 24.dp),
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.primary,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                    Text(
+                        text = "Ultimos 4 digitos tarjeta: ${
+                            balanceCardInformation.cardInformation?.cardNumber?.substring(
+                                12,
+                                16
+                            )
+                        }",
+                        modifier = Modifier
+                            .padding(top = 24.dp),
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.primary
+                        )
+                    )
+                    Text(
+                        text = "Saldo disponible:  N/A",
+                        modifier = Modifier
+                            .padding(top = 24.dp),
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.primary
+                        )
+                    )
+                }
+            }
+
+            viewModel.onSuccessBalance?.balanceAccountSmart?.let { balanceAccountSmart ->
+                item {
+                    Text(
+                        text = "Balance Account Smart",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 24.dp),
@@ -49,10 +141,11 @@ fun HomeScreen(
                         )
                     )
                 }
-                balanceCredit?.summary?.let { summaryList ->
-                    items(summaryList) { summary ->
+
+                balanceAccountSmart.account?.let { accountList ->
+                    items(accountList) { account ->
                         Text(
-                            text = "Linea de crédito: ${summary.availableBalanceLabel}",
+                            text = "Saldo Unimoneda: N/A",
                             modifier = Modifier
                                 .padding(top = 24.dp),
                             style = Typography.subtitle1.copy(
@@ -60,7 +153,7 @@ fun HomeScreen(
                             )
                         )
                         Text(
-                            text = "Saldo de crédito: ${summary.currentBalanceLabel}",
+                            text = "Saldo total: ${account.totalBalance}",
                             modifier = Modifier
                                 .padding(top = 24.dp),
                             style = Typography.subtitle1.copy(
@@ -68,15 +161,7 @@ fun HomeScreen(
                             )
                         )
                         Text(
-                            text = "Monto de cuota por pagar: ${summary.monthlyQuotaLabel}",
-                            modifier = Modifier
-                                .padding(top = 24.dp),
-                            style = Typography.subtitle1.copy(
-                                color = MultimoneyTheme.colors.primary
-                            )
-                        )
-                        Text(
-                            text = "Fecha de vencimiento: ${summary.paymentDateLabel}",
+                            text = "Ganancia del ultimo mes: ${account.gainedInterest}",
                             modifier = Modifier
                                 .padding(top = 24.dp),
                             style = Typography.subtitle1.copy(
@@ -86,61 +171,21 @@ fun HomeScreen(
                     }
                 }
             }
-        }
-        viewModel.onSuccessBalance?.balanceCardInformation?.let { balanceCardInformation ->
-            item {
-                Text(
-                    text = "Balance Card Information",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.primary,
-                        textAlign = TextAlign.Center
-                    )
-                )
-                Text(
-                    text = "Ultimos 4 digitos tarjeta: ${
-                        balanceCardInformation.cardInformation?.cardNumber?.substring(
-                            12,
-                            16
-                        )
-                    }",
-                    modifier = Modifier
-                        .padding(top = 24.dp),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.primary
-                    )
-                )
-                Text(
-                    text = "Saldo disponible:  N/A",
-                    modifier = Modifier
-                        .padding(top = 24.dp),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.primary
-                    )
-                )
-            }
-        }
 
-        viewModel.onSuccessBalance?.balanceAccountSmart?.let { balanceAccountSmart ->
-            item {
-                Text(
-                    text = "Balance Account Smart",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.primary,
-                        textAlign = TextAlign.Center
-                    )
-                )
-            }
-
-            balanceAccountSmart.account?.let { accountList ->
-                items(accountList) { account ->
+            viewModel.onSuccessBalance?.balanceCryptoAccount?.let { balanceCryptoAccount ->
+                item {
                     Text(
-                        text = "Saldo Unimoneda: N/A",
+                        text = "Balance Crypto Account",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 24.dp),
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.primary,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                    Text(
+                        text = "Saldo Total: ${balanceCryptoAccount.globalBalance}",
                         modifier = Modifier
                             .padding(top = 24.dp),
                         style = Typography.subtitle1.copy(
@@ -148,7 +193,7 @@ fun HomeScreen(
                         )
                     )
                     Text(
-                        text = "Saldo total: ${account.totalBalance}",
+                        text = "Ganancias y/o perdida del dia: N/A",
                         modifier = Modifier
                             .padding(top = 24.dp),
                         style = Typography.subtitle1.copy(
@@ -156,7 +201,7 @@ fun HomeScreen(
                         )
                     )
                     Text(
-                        text = "Ganancia del ultimo mes: ${account.gainedInterest}",
+                        text = "Grafica de fluctuacion de saldos del ultimo mes: N/A",
                         modifier = Modifier
                             .padding(top = 24.dp),
                         style = Typography.subtitle1.copy(
@@ -166,45 +211,12 @@ fun HomeScreen(
                 }
             }
         }
-
-        viewModel.onSuccessBalance?.balanceCryptoAccount?.let { balanceCryptoAccount ->
-            item {
-                Text(
-                    text = "Balance Crypto Account",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.primary,
-                        textAlign = TextAlign.Center
-                    )
-                )
-                Text(
-                    text = "Saldo Total: ${balanceCryptoAccount.globalBalance}",
-                    modifier = Modifier
-                        .padding(top = 24.dp),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.primary
-                    )
-                )
-                Text(
-                    text = "Ganancias y/o perdida del dia: N/A",
-                    modifier = Modifier
-                        .padding(top = 24.dp),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.primary
-                    )
-                )
-                Text(
-                    text = "Grafica de fluctuacion de saldos del ultimo mes: N/A",
-                    modifier = Modifier
-                        .padding(top = 24.dp),
-                    style = Typography.subtitle1.copy(
-                        color = MultimoneyTheme.colors.primary
-                    )
-                )
-            }
-        }
     }
     LoadingIndicator(viewModel.isLoading)
 }
+
+fun getRandom(): Int {
+    return Random.nextInt(2)
+}
+
+const val ZERO = 0

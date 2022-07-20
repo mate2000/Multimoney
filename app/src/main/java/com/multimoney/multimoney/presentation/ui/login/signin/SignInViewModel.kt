@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
@@ -271,6 +272,10 @@ class SignInViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToForgotPassword() {
+       // navigate to forgot screen
+    }
+
     private fun onShowBiometricSignInChanged(value: Boolean) {
         uiState = uiState.copy(
             showBiometricSignIn = value, userEmail = if (value) {
@@ -329,6 +334,7 @@ class SignInViewModel @Inject constructor(
             is OnStart -> onStart()
             is OnValidateUserEmail -> isUserEmailValid()
             is OnCallCognitoSignIn -> callCognitoSignIn()
+            is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
         }
     }
 
@@ -358,5 +364,6 @@ class SignInViewModel @Inject constructor(
         object OnStart : UIEvent()
         object OnValidateUserEmail : UIEvent()
         object OnCallCognitoSignIn : UIEvent()
+        object OnNavigateToForgotPassword : UIEvent()
     }
 }

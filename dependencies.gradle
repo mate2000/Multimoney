@@ -12,6 +12,8 @@ ext {
     core_ktx_version = "1.7.0"
     serialization_json_version = "1.0.1"
 
+    kotlin_version = "7.1.0"
+
     common = [
             core_ktlx         : "androidx.core:core-ktx:$core_ktx_version",
             serialization_json: "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_json_version"
@@ -51,7 +53,8 @@ ext {
     ]
 
     // Compose
-    compose_version = "1.2.0-beta01"
+    compose_version = "1.3.0-alpha01"
+    compose_compiler_version = "1.2.0-rc02"
 
     compose = [
             ui        : "androidx.compose.ui:ui:$compose_version",
@@ -243,7 +246,8 @@ ext {
     ]
 
     // Accompanist
-    accompanist_version = "0.24.10-beta"
+    accompanist_version = "0.24.13-rc"
+    accompanist_pagger_indicator = "0.24.11-rc"
 
     accompanist = [
             flowlayout     : "com.google.accompanist:accompanist-flowlayout:$accompanist_version",

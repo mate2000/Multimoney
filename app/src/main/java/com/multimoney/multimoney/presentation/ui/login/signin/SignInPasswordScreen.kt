@@ -32,6 +32,7 @@ fun SignInWithPassword(
     viewModel: SignInViewModel,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
+    onForgotPasswordClick: () -> Unit,
     onSignInWithBiometricLink: () -> Unit
 ) {
     Column(modifier) {
@@ -68,7 +69,7 @@ fun SignInWithPassword(
                 textDecoration = TextDecoration.Underline,
                 color = MultimoneyTheme.colors.textLink
             ),
-            onClick = {}
+            onClick = { onForgotPasswordClick() }
         )
         if (!viewModel.uiState.isBiometricError) {
             if (viewModel.isAccessWithBiometrics()) {

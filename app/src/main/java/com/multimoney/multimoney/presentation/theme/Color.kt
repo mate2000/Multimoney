@@ -23,6 +23,34 @@ val Secondary600 = Color(0xFF168F5D)
 val Secondary700 = Color(0xFF0E593A)
 val Secondary800 = Color(0xFF053A25)
 
+// Tertiary
+val Tertiary200 = Color(0XFFD7F8F6)
+val Tertiary300 = Color(0XFFA4E7E4)
+val Tertiary400 = Color(0XFF69CECB)
+val Tertiary500 = Color(0XFF1EB9B5)
+val Tertiary600 = Color(0XFF098F8C)
+val Tertiary700 = Color(0XFF08615E)
+val Tertiary800 = Color(0XFF023331)
+
+// ComplementaryOne
+val ComplementaryOne200 = Color(0XFFD7EBF5)
+val ComplementaryOne300 = Color(0XFFA9D8F0)
+val ComplementaryOne400 = Color(0XFF6EBDE4)
+val ComplementaryOne500 = Color(0XFF1B98D7)
+val ComplementaryOne600 = Color(0XFF0E6F9F)
+val ComplementaryOne700 = Color(0XFF084563)
+val ComplementaryOne800 = Color(0XFF012131)
+
+//ComplementaryTwo
+val ComplementaryTwo200 = Color(0XFFE6EDFB)
+val ComplementaryTwo300 = Color(0XFFA3C2FD)
+val ComplementaryTwo400 = Color(0XFF4E86EF)
+val ComplementaryTwo500 = Color(0XFF1C63E8)
+val ComplementaryTwo600 = Color(0XFF0D48B7)
+val ComplementaryTwo700 = Color(0XFF062867)
+val ComplementaryTwo800 = Color(0XFF001438)
+
+
 // Semantic Informative
 val SemanticInformative200 = Color(0xFFE5F0FF)
 val SemanticInformative300 = Color(0xFFB3D1FF)
@@ -60,6 +88,7 @@ val GrayScale700 = Color(0xFF393939)
 val GrayScale800 = Color(0xFF080808)
 
 // WhiteTransparency
+val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)
 val WhiteTransparency10 = Color(0xFFFFFFFF).copy(alpha = 0.1f)
 val WhiteTransparency12 = Color(0xFFFFFFFF).copy(alpha = 0.12f)
 val WhiteTransparency20 = Color(0xFFFFFFFF).copy(alpha = 0.2f)
@@ -85,6 +114,18 @@ val BlackTransparency70 = Color(0xFF000000).copy(alpha = 0.7f)
 val BlackTransparency80 = Color(0xFF000000).copy(alpha = 0.8f)
 val BlackTransparency90 = Color(0xFF000000).copy(alpha = 0.9f)
 
+//Gradient Colors
+val GradientPrimary = Color(0xFFFFF280).copy(alpha = 0.70f)
+val GradientSecondary = Color(0xFFC7FF80).copy(alpha = 0.80f)
+val GradientTertiary = Color(0xFF8DEA8D).copy(alpha = 0.80f)
+val GradientComplementaryOne = Color(0xFF61E2AD)
+val GradientComplementaryTwo = Color(0xFF24C281)
+val GradientGrey1 = Color(0xFFAEAEAE).copy(alpha = 0.50f)
+val GradientGrey2 = Color(0xFF474747).copy(alpha = 0.50f)
+val GradientGrayLiner1 = Color(0xFF343434).copy(alpha = 0f)
+val GradientGrayLiner2 = Color(0xFF343434)
+
+
 @Immutable
 data class MultimoneyColors(
     val primary: Color,
@@ -99,7 +140,11 @@ data class MultimoneyColors(
     val textSubhead: Color,
     val divider: Color,
     val circularProgressIndicator: Color,
-    val timerColor: Color
+    val timerColor: Color,
+    val iconColor: Color,
+    val tipActionColor: Color,
+    val creditNotApprovedText: Color,
+    val labelText: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -115,7 +160,11 @@ val DarkColorPalette = MultimoneyColors(
     textSubhead = GrayScale600,
     divider = GrayScale400,
     circularProgressIndicator = DefaultWhite,
-    timerColor = DefaultWhite
+    timerColor = DefaultWhite,
+    iconColor = WhiteTransparency90,
+    tipActionColor = Primary300,
+    creditNotApprovedText = WhiteTransparency80,
+    labelText = WhiteTransparency90,
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -131,7 +180,11 @@ val LightColorPalette = MultimoneyColors(
     textSubhead = GrayScale600,
     divider = GrayScale400,
     circularProgressIndicator = Primary500,
-    timerColor = DefaultBlack
+    timerColor = DefaultBlack,
+    iconColor = GrayScale800,
+    tipActionColor = Primary300,
+    creditNotApprovedText = WhiteTransparency80,
+    labelText = WhiteTransparency90,
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

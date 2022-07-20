@@ -14,4 +14,7 @@
     <color name="onfidoTextColorSecondary">@color/gray_600</color>
     <color name="onfidoPrimaryButtonColor">@color/blue_500</color>
     <color name="onfidoPrimaryButtonTextColor">@color/white</color>
+
+    <color name="whiteTransparent05">#0DFFFFFF</color>
+    <color name="tipInnerShadow">#26626262</color>
 </resources>

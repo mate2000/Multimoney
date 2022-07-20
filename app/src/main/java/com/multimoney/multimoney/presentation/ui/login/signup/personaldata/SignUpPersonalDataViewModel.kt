@@ -8,7 +8,6 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.security.ClientInfoCr
-import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -40,8 +39,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
-    private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase,
-    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase
+    private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase
 ) : BaseViewModel() {
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -69,31 +67,31 @@ class SignUpPersonalDataViewModel @Inject constructor(
     )
 
     private fun getNationality(country: String) = when (country) {
-        Nationalities.ElSalvador.country -> Nationalities.ElSalvador.name
-        Nationalities.Guatemala.country -> Nationalities.Guatemala.name
-        else -> Nationalities.CostaRicaId.name
+        ElSalvador.country -> ElSalvador.name
+        Guatemala.country -> Guatemala.name
+        else -> CostaRicaId.name
     }
 
     private fun getCountry(nationality: String) = when (nationality) {
-        Nationalities.ElSalvador.name -> Nationalities.ElSalvador.country
-        Nationalities.Guatemala.name -> Nationalities.Guatemala.country
-        Nationalities.CostaRicaId.name -> Nationalities.CostaRicaId.country
+        ElSalvador.name -> ElSalvador.country
+        Guatemala.name -> Guatemala.country
+        CostaRicaId.name -> CostaRicaId.country
         else -> ""
     }
 
     private fun getDocumentLength(documentType: String) {
         documentLength = when (documentType) {
-            Nationalities.ElSalvador.documentType -> {
-                Nationalities.ElSalvador.documentSize
+            ElSalvador.documentType -> {
+                ElSalvador.documentSize
             }
-            Nationalities.Guatemala.documentType -> {
-                Nationalities.Guatemala.documentSize
+            Guatemala.documentType -> {
+                Guatemala.documentSize
             }
-            Nationalities.CostaRicaDimex.documentType -> {
-                Nationalities.CostaRicaDimex.documentSize
+            CostaRicaDimex.documentType -> {
+                CostaRicaDimex.documentSize
             }
-            Nationalities.CostaRicaId.documentType -> {
-                Nationalities.CostaRicaId.documentSize
+            CostaRicaId.documentType -> {
+                CostaRicaId.documentSize
             }
             else -> {
                 0
@@ -105,7 +103,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         user: String,
     ): Pair<Boolean, Int> {
         val status = validId(
-            if (uiState.identificationValueType == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
+            if (uiState.identificationValueType == CrDocuments.IdDocument.document) CostaRicaId.documentSize else CostaRicaDimex.documentSize,
             R.string.sign_up_personal_data_id_not_valid,
             uiState.personalDocumentValue.length
         )

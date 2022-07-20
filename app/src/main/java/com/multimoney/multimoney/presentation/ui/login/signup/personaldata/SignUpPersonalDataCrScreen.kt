@@ -27,13 +27,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -91,17 +86,10 @@ fun SignUpPersonalDataCrScreen(
             customTransformation = if (viewModel.uiState.identificationValueType == CrDocuments.IdDocument.document) formatId() else null,
             onDebounceValidation = {
                 viewModel.onUIEvent(
-                    OnValidateDocument(
-                        { viewModel.validateCrDocument(sharedViewModel.userData?.email ?: "") },
-                        {
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnContinueEnable(
-                                    viewModel.validateFields()
-                                )
-                            )
-                        })
+                    SignUpPersonalDataViewModel.UIEvent.OnValidateDocument(
+                        email = sharedViewModel.userData?.email
+                    )
                 )
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields()))
             }
         )
 
@@ -116,16 +104,11 @@ fun SignUpPersonalDataCrScreen(
                     value = viewModel.uiState.firstNameValue,
                     onValueChange = { firstName ->
                         viewModel.onUIEvent(
-                            OnFirstNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange(
                                 firstName = firstName,
                                 onSharedViewModelFirstNameChange = {
                                     SignUpViewModel.UIEvent.OnFirstNameValueChange(
                                         firstName
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields())
                                     )
                                 }
                             )
@@ -152,18 +135,11 @@ fun SignUpPersonalDataCrScreen(
                     value = viewModel.uiState.secondNameValue,
                     onValueChange = { secondName ->
                         viewModel.onUIEvent(
-                            OnSecondNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange(
                                 secondName = secondName,
                                 onSharedViewModelSecondNameChange = {
                                     SignUpViewModel.UIEvent.OnSecondNameValueChange(
                                         secondName
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
-                                        )
                                     )
                                 })
                         )
@@ -193,18 +169,11 @@ fun SignUpPersonalDataCrScreen(
                     value = viewModel.uiState.firstLastNameValue,
                     onValueChange = { firstLastName ->
                         viewModel.onUIEvent(
-                            OnFirstLastNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange(
                                 firstLastName = firstLastName,
                                 onSharedViewModelFirstLastNameChange = {
                                     SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
                                         firstLastName
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
-                                        )
                                     )
                                 })
                         )
@@ -231,18 +200,11 @@ fun SignUpPersonalDataCrScreen(
                     isRequired = false,
                     onValueChange = { secondLastName ->
                         viewModel.onUIEvent(
-                            OnSecondLastNameChange(
+                            SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange(
                                 secondLastName = secondLastName,
                                 onSharedViewModelSecondLastNameChange = {
                                     SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
                                         secondLastName
-                                    )
-                                },
-                                onSharedViewModelValidateFields = {
-                                    sharedViewModel.onUIEvent(
-                                        SignUpViewModel.UIEvent.OnContinueEnable(
-                                            viewModel.validateFields()
-                                        )
                                     )
                                 })
                         )
@@ -280,7 +242,7 @@ fun SignUpPersonalDataCrScreen(
 
             if (viewModel.onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
                 viewModel.onSuccessDataInformationClient?.apply {
-                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(viewModel.validateFields()))
+                    viewModel.onUIEvent(SignUpPersonalDataViewModel.UIEvent.OnValidateForm)
                     sharedViewModel.userData?.fullName = fullName
                 }
                 Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {

@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.Nationalities
 
@@ -40,9 +39,17 @@ fun SignUpPersonalDataScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
         sharedViewModel.apply {
             viewModel.onUIEvent(
-                OnStart(
+                SignUpPersonalDataViewModel.UIEvent.OnStart(
                     nationality = userData?.nationality ?: "",
                     identificationType = userData?.identificationValueType ?: "",
                     identificationValue = userData?.identification ?: "",
@@ -81,11 +88,6 @@ fun SignUpPersonalDataScreen(
                     previousStep = SignUpStep.One.id
                 )
             )
-            viewModel.baseEvent.collect { event ->
-                when (event) {
-                    is OnFormValidateCompleted -> onUIEvent(OnContinueEnable(event.isFormValid))
-                }
-            }
         }
     }
 

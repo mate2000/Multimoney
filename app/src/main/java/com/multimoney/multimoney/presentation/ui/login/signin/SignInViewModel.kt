@@ -77,7 +77,7 @@ class SignInViewModel @Inject constructor(
                                 viewModelScope.launch {
                                     // If isBiometricActive false that means the userName has to be saved
                                     if (uiState.isBiometricActive.not()) {
-                                        dataStorePreferences.setUserName("${authUserAttribute.first { it.key == AuthUserAttributeKey.name() }.value.orEmpty()} ${authUserAttribute.first { it.key == AuthUserAttributeKey.middleName() }.value.orEmpty()}")
+                                        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
                                     }
                                     uiState = uiState.copy(isLoading = false)
                                     if (uiState.isFingerprintChecked) {

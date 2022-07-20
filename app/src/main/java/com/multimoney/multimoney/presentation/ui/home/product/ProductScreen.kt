@@ -56,7 +56,7 @@ fun ProductScreen(
         bottomPagerState.animateScrollToPage(productPagerState.currentPage)
     }
 
-    // we have to send the pages to the view pager when the back return
+    // todo we have to send the pages to the view pager when the back return
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,18 +64,18 @@ fun ProductScreen(
     ) {
         TipsAndOffer(
             modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-            pages = 3,
+            pages = NUMBER_PAGES,
             viewModel = viewModel
         )
         Products(
             modifier = Modifier.padding(top = 25.dp),
-            pages = 3,
+            pages = NUMBER_PAGES,
             state = productPagerState,
             viewModel = viewModel
         )
         ProductExtras(
             modifier = Modifier.padding(top = 32.dp),
-            pages = 3,
+            pages = NUMBER_PAGES,
             state = bottomPagerState,
             viewModel = viewModel
         )
@@ -94,7 +94,7 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
                 Text(
                     text = "Buen día",
                     style = Typography.h6.copy(letterSpacing = 0.38.sp),
-                    color = MultimoneyTheme.colors.onBoardingTitleText
+                    color = MultimoneyTheme.colors.labelText
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
@@ -104,13 +104,13 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
                         letterSpacing = 0.4.sp,
                         fontWeight = FontWeight.SemiBold
                     ),
-                    color = MultimoneyTheme.colors.onBoardingSubText
+                    color = MultimoneyTheme.colors.labelText
                 )
             }
             Row {
                 IconButton(
                     onClick = {
-                        //action
+                        // todo action
                     }
                 ) {
                     Icon(
@@ -121,7 +121,7 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
                 }
                 IconButton(
                     onClick = {
-                        //action
+                        // todo action
                     },
                     modifier = Modifier.padding(end = 2.dp)
                 ) {
@@ -153,14 +153,14 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
             text = stringResource(id = R.string.home_my_products),
             modifier = Modifier.padding(horizontal = 16.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.onBoardingTitleText
+            color = MultimoneyTheme.colors.labelText
         )
         HorizontalPager(count = pages, modifier = Modifier.padding(top = 8.dp), state = state) { page ->
             CustomProductBackground(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 type = Tertiary
             ) {
-                // here we have to identify the state and show the correct state of the product
+                // Todo here we have to identify the state and show the correct state of the product
                 CardWithOutProduct()
             }
         }
@@ -175,7 +175,7 @@ fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: 
             CustomBoxVisaBackground(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 onClick = { type ->
-                    // Add logic when the user click the button
+                    // todo Add logic when the user click the button
                 },
                 type = RequestCreditCard
             )
@@ -198,13 +198,13 @@ fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip) {
                     text = "Ahorra Smart",
                     modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
                     style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.onBoardingTitleText
+                    color = MultimoneyTheme.colors.labelText
                 )
                 Text(
                     text = "La mejor tasa del 3.5% anual",
                     modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
                     style = Typography.caption,
-                    color = MultimoneyTheme.colors.onBoardingTitleText,
+                    color = MultimoneyTheme.colors.labelText,
                     maxLines = 2
                 )
                 Text(
@@ -230,3 +230,5 @@ fun TipBox(type: String, content: @Composable () -> Unit) {
         content()
     }
 }
+
+private const val NUMBER_PAGES = 3

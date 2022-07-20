@@ -88,8 +88,5 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.ProductScreenTest.route) {
-            ProductScreen()
-        }
     }
 }

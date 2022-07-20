@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
+import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -32,7 +34,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
-    private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase
+    private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase,
+    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase
 ) : BaseViewModel() {
     // UIState
     var uiState by mutableStateOf(UIState())

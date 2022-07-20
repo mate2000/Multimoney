@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
+import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -18,7 +19,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(private val queryBalanceUseCase: QueryBalanceUseCase) :
+class HomeViewModel @Inject constructor(
+    private val queryBalanceUseCase: QueryBalanceUseCase,
+    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase
+) :
     BaseViewModel() {
 
     var onSuccessBalance by mutableStateOf<Balance?>(null)
@@ -42,6 +46,33 @@ class HomeViewModel @Inject constructor(private val queryBalanceUseCase: QueryBa
                         description = it.getError() ?: "",
                         isActive = mutableStateOf(true)
                     )
+                }
+                result.onLoading {
+                    isLoading = true
+                }
+            }
+        }
+    }
+
+
+    fun callQueryValidateUserStatus(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        idBrand: Int
+    ) {
+        viewModelScope.launch {
+            queryValidateUserStatusUseCase.invoke(
+                pkUser,
+                identification,
+                email,
+                idBrand
+            ).collectLatest { result ->
+                result.onSuccess {
+                    isLoading = false
+                }
+                result.onFailure {
+                    isLoading = false
                 }
                 result.onLoading {
                     isLoading = true

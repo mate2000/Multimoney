@@ -1,9 +1,9 @@
-query ValidateUserStatus($pkUser: Int!, $identification: String!, $email: String!, $idBrand: Int!){
+query ValidateUserStatus($pkUser: Int!, $identification: String!, $user: String!, $idBrand: Int!){
     validateUserStatus(
-        validateUserStatus: {
+        userStatusInput: {
             pkUser: $pkUser
             identification: $identification
-            email: $email
+            user: $user
             idBrand: $idBrand
         }
     ) {

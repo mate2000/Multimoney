@@ -6,6 +6,10 @@ type SecurityQuery {
   validateSecurity(validateSecurityInput: validateSecurityInput): validateSecurity
 
   validateBankAccount(validateBankAccountInput: validateBankAccountInput): validateBankAccount
+
+  validatePin(validatePinInput: validatePinInput): validatePin
+
+  getConfigurationVersion(getConfigurationVersionInput: getConfigurationVersionInput): getConfigurationVersion
 }
 
 type dataInformationClient {
@@ -387,6 +391,167 @@ input validateBankAccountInput {
   account: String!
 
   identification: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type validatePin {
+  """
+  validatePin pk_suv_mtr_usuario
+  """
+  pk_suv_mtr_usuario: String
+
+  """
+  validatePin indicador_bloqueo
+  """
+  indicador_bloqueo: String
+
+  """
+  validatePin Status
+  """
+  status: Int
+
+  """
+  validatePin Message
+  """
+  message: String
+
+  """
+  validatePin Detail
+  """
+  detail: String
+}
+
+input validatePinInput {
+  idBrand: Int!
+
+  appSource: Int
+
+  pk_User: Int!
+
+  ip: String
+
+  pinSecurity: String!
+
+  telephone: String
+
+  sendValidatePin: String
+
+  flowOrigination: String
+
+  userCreate: String
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type getConfigurationVersion {
+  """
+  validateSecurity PK_SUV_PAR_VERSION
+  """
+  pK_SUV_PAR_VERSION: Int
+
+  """
+  validateSecurity FK_SUV_CAT_MARCA
+  """
+  fK_SUV_CAT_MARCA: Short
+
+  """
+  SendPinProccess USUARIO_CREACION
+  """
+  uSUARIO_CREACION: String
+
+  """
+  validateSecurity FECHA_CREACION
+  """
+  fECHA_CREACION: DateTime
+
+  """
+  validateSecurity USUARIO_MODIFICACION
+  """
+  uSUARIO_MODIFICACION: String
+
+  """
+  SendPinProccess FECHA_MODIFICACION
+  """
+  fECHA_MODIFICACION: DateTime
+
+  """
+  validateSecurity PLATFORM
+  """
+  pLATFORM: String
+
+  """
+  validateSecurity APPVERSION
+  """
+  aPPVERSION: String
+
+  """
+  SendPinProccess LLAVE_API_INTERNA
+  """
+  lLAVE_API_INTERNA: String
+
+  """
+  validateSecurity URL_API
+  """
+  uRL_API: String
+
+  """
+  validateSecurity ACTIVA
+  """
+  aCTIVA: Boolean
+
+  """
+  validateSecurity configuracionVersion
+  """
+  configuracionVersion: configurationVersionObject
+
+  """
+  validateSecurity LLAVE_ENCRIPTA
+  """
+  lLAVE_ENCRIPTA: String
+
+  """
+  validateSecurity APP_CONFIG_JSON
+  """
+  aPP_CONFIG_JSON: String
+}
+
+type configurationVersionObject {
+  """
+  configurationVersionObject EnableAddToAppleWallet
+  """
+  enableAddToAppleWallet: String
+
+  """
+  configurationVersionObject OrigenCrypto
+  """
+  origenCrypto: String
+
+  """
+  configurationVersionObject EnableTransferCrypto
+  """
+  enableTransferCrypto: String
+
+  """
+  configurationVersionObject TimeSesion
+  """
+  timeSesion: String
+}
+
+input getConfigurationVersionInput {
+  platform: String!
+
+  appVersion: String!
+
+  llave_Api_Interna: String!
 
   user: String!
 

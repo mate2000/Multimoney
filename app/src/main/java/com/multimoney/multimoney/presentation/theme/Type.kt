@@ -1,6 +1,8 @@
 package com.multimoney.multimoney.presentation.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -13,6 +15,7 @@ val PoppinsFontFamily = FontFamily(
 )
 
 // Set of Material typography styles
+@OptIn(ExperimentalTextApi::class)
 val Typography = Typography(
     h1 = TextStyle(
         fontFamily = PoppinsFontFamily,
@@ -84,6 +87,9 @@ val Typography = Typography(
         fontFamily = PoppinsFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 12.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        ),
         letterSpacing = 0.4.sp
     ),
     overline = TextStyle(

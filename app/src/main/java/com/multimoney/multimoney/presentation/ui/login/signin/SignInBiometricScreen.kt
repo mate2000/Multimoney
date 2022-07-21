@@ -29,7 +29,7 @@ fun SignInWithBiometric(
         Text(
             text = stringResource(id = R.string.sign_in_biometric_title),
             style = Typography.body2,
-            color = MultimoneyTheme.colors.onBoardingTitleText
+            color = MultimoneyTheme.colors.labelText
         )
         CustomBiometricIconButton(
             modifier = Modifier.padding(top = 32.dp),

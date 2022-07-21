@@ -23,7 +23,7 @@
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title">Invertí de forma Smart</string>
-    <string name="onboarding_step_one_sub_title">Ganá hasta 7% de interés anual con tu cuenta Multimoney Smart.</string>
+    <string name="onboarding_step_one_sub_title">Ganá hasta 7\%; de interés anual con tu cuenta Multimoney Smart.</string>
     <string name="onboarding_step_two_title">Tu crédito sin papeleos</string>
     <string name="onboarding_step_two_sub_title">Con sólo tu identificación consigue hasta [moneda] [monto máx] en minutos.</string>
     <string name="onboarding_step_three_title">Hacé tu inversión en cripto</string>
@@ -203,4 +203,19 @@
     <string name="dialog_failure_biometric_title">¡Oh no!</string>
     <string name="dialog_failure_biometric_description">Por el momento no hemos podido configurar tu Face ID.</string>
     <string name="dialog_failure_biometric_positive_text">Activar más tarde</string>
+
+    <!-- Home -->
+    <!-- Credit -->
+    <string name="home_my_products">Mis Productos</string>
+    <string name="home_credit_not_approved_title">Gana ahorrando smart</string>
+    <string name="home_credit_not_approved_description">La mejor tasa del 3.5\%; anual sin restricciones</string>
+    <string name="home_credit_not_approved_action">Activar cuenta Smart</string>
+    <string name="home_credit_process_credit_label">Crédito</string>
+    <string name="home_credit_process_title">Parece que hubo un error</string>
+    <string name="home_credit_process_description">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
+    <string name="home_credit_process_action">Validar identificación</string>
+    <string name="home_credit_process_accept_contract_title">Ya casi tenés tu crédito</string>
+    <string name="home_credit_process_accept_contract_description">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
+    <string name="home_active_credit_card_label">Activa tu tarjeta digital</string>
+
 </resources>

@@ -1,0 +1,234 @@
+package com.multimoney.multimoney.presentation.ui.home.product
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import com.multimoney.domain.model.credit.CreditOfferAndTip
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithOutProduct
+import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
+import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
+import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+@Preview
+fun ProductScreen(
+    viewModel: ProductViewModel = hiltViewModel()
+) {
+
+    // Pager
+    val productPagerState = rememberPagerState()
+    val bottomPagerState = rememberPagerState()
+
+    LaunchedEffect(key1 = productPagerState.currentPage) {
+        bottomPagerState.animateScrollToPage(productPagerState.currentPage)
+    }
+
+    // todo we have to send the pages to the view pager when the back return
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background)
+    ) {
+        TipsAndOffer(
+            modifier = Modifier.padding(start = 16.dp, top = 20.dp),
+            pages = NUMBER_PAGES,
+            viewModel = viewModel
+        )
+        Products(
+            modifier = Modifier.padding(top = 25.dp),
+            pages = NUMBER_PAGES,
+            state = productPagerState,
+            viewModel = viewModel
+        )
+        ProductExtras(
+            modifier = Modifier.padding(top = 32.dp),
+            pages = NUMBER_PAGES,
+            state = bottomPagerState,
+            viewModel = viewModel
+        )
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "Buen día",
+                    style = Typography.h6.copy(letterSpacing = 0.38.sp),
+                    color = MultimoneyTheme.colors.labelText
+                )
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = "User Name",
+                    style = Typography.h5.copy(
+                        fontSize = 28.sp,
+                        letterSpacing = 0.4.sp,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = MultimoneyTheme.colors.labelText
+                )
+            }
+            Row {
+                IconButton(
+                    onClick = {
+                        // todo action
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_notification),
+                        contentDescription = "",
+                        tint = MultimoneyTheme.colors.iconColor
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        // todo action
+                    },
+                    modifier = Modifier.padding(end = 2.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_notification),
+                        contentDescription = "",
+                        tint = MultimoneyTheme.colors.iconColor
+                    )
+                }
+            }
+        }
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            items(items = viewModel.getCreditOfferAndTips(), itemContent = { item ->
+                TipAndOfferItem(item)
+            })
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(id = R.string.home_my_products),
+            modifier = Modifier.padding(horizontal = 16.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.labelText
+        )
+        HorizontalPager(count = pages, modifier = Modifier.padding(top = 8.dp), state = state) { page ->
+            CustomProductBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                type = Tertiary
+            ) {
+                // Todo here we have to identify the state and show the correct state of the product
+                CardWithOutProduct()
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
+    Column(modifier = modifier) {
+        HorizontalPager(count = pages, state = state) { page ->
+            CustomBoxVisaBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = { type ->
+                    // todo Add logic when the user click the button
+                },
+                type = RequestCreditCard
+            )
+        }
+    }
+}
+
+@Composable
+fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip) {
+    TipBox(type = tipOrOffer.type) {
+        Box(Modifier.fillMaxSize()) {
+            CustomImage(
+                drawableResource = R.drawable.ic_logo_multimoney,
+                modifier = Modifier
+                    .size(54.dp, 54.dp)
+                    .align(Alignment.BottomEnd)
+            )
+            Column {
+                Text(
+                    text = "Ahorra Smart",
+                    modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                    style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.labelText
+                )
+                Text(
+                    text = "La mejor tasa del 3.5% anual",
+                    modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
+                    style = Typography.caption,
+                    color = MultimoneyTheme.colors.labelText,
+                    maxLines = 2
+                )
+                Text(
+                    text = "Solicitar", modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
+                    style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.tipActionColor
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TipBox(type: String, content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(152.dp, 140.dp)
+            .padding(
+                end = 13.dp
+            )
+    ) {
+        CustomImage(drawableResource = R.drawable.ic_tip_background, contentScale = ContentScale.FillBounds)
+        content()
+    }
+}
+
+private const val NUMBER_PAGES = 3

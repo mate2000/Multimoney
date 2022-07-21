@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,12 +12,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBalanceSuccess
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHttpError
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
 fun HomeScreen(
@@ -30,64 +33,95 @@ fun HomeScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-            callQueryBalanceUseCase()
+            onSuccessBalance.collect { event ->
+                event.onSuccess { balance ->
+                    balance?.let {
+                        viewModel.onUIEvent(OnBalanceSuccess(balance))
+                    }
+                    isLoading = false
+                }
+                event.onFailure {
+                    isLoading = false
+                    viewModel.onUIEvent(OnHttpError(it))
+                }
+                event.onLoading {
+                    isLoading = true
+                }
+            }
+        }
+    }
+    LaunchedEffect(true) {
+        viewModel.apply {
+            onSuccessBalance.collect { event ->
+                event.onSuccess { balance ->
+                    balance?.let {
+                        viewModel.onUIEvent(OnBalanceSuccess(balance))
+                    }
+                    isLoading = false
+                }
+                event.onFailure {
+                    isLoading = false
+                    viewModel.onUIEvent(OnHttpError(it))
+                }
+                event.onLoading {
+                    isLoading = true
+                }
+            }
         }
     }
 
     LazyColumn {
-        viewModel.onSuccessBalance?.balanceCredit?.let { balanceCreditList ->
-            balanceCreditList.forEachIndexed { index, balanceCredit ->
-                item {
+        viewModel.uiState.balanceCredit?.balanceCredit?.forEachIndexed { index, balanceCredit ->
+            item {
+                Text(
+                    text = "Balance Credit $index",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    style = Typography.subtitle1.copy(
+                        color = MultimoneyTheme.colors.primary,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            }
+            balanceCredit?.summary?.let { summaryList ->
+                items(summaryList) { summary ->
                     Text(
-                        text = "Balance Credit $index",
+                        text = "Linea de crédito: ${summary.availableBalanceLabel}",
                         modifier = Modifier
-                            .fillMaxWidth()
                             .padding(top = 24.dp),
                         style = Typography.subtitle1.copy(
-                            color = MultimoneyTheme.colors.primary,
-                            textAlign = TextAlign.Center
+                            color = MultimoneyTheme.colors.primary
+                        )
+                    )
+                    Text(
+                        text = "Saldo de crédito: ${summary.currentBalanceLabel}",
+                        modifier = Modifier
+                            .padding(top = 24.dp),
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.primary
+                        )
+                    )
+                    Text(
+                        text = "Monto de cuota por pagar: ${summary.monthlyQuotaLabel}",
+                        modifier = Modifier
+                            .padding(top = 24.dp),
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.primary
+                        )
+                    )
+                    Text(
+                        text = "Fecha de vencimiento: ${summary.paymentDateLabel}",
+                        modifier = Modifier
+                            .padding(top = 24.dp),
+                        style = Typography.subtitle1.copy(
+                            color = MultimoneyTheme.colors.primary
                         )
                     )
                 }
-                balanceCredit?.summary?.let { summaryList ->
-                    items(summaryList) { summary ->
-                        Text(
-                            text = "Linea de crédito: ${summary.availableBalanceLabel}",
-                            modifier = Modifier
-                                .padding(top = 24.dp),
-                            style = Typography.subtitle1.copy(
-                                color = MultimoneyTheme.colors.primary
-                            )
-                        )
-                        Text(
-                            text = "Saldo de crédito: ${summary.currentBalanceLabel}",
-                            modifier = Modifier
-                                .padding(top = 24.dp),
-                            style = Typography.subtitle1.copy(
-                                color = MultimoneyTheme.colors.primary
-                            )
-                        )
-                        Text(
-                            text = "Monto de cuota por pagar: ${summary.monthlyQuotaLabel}",
-                            modifier = Modifier
-                                .padding(top = 24.dp),
-                            style = Typography.subtitle1.copy(
-                                color = MultimoneyTheme.colors.primary
-                            )
-                        )
-                        Text(
-                            text = "Fecha de vencimiento: ${summary.paymentDateLabel}",
-                            modifier = Modifier
-                                .padding(top = 24.dp),
-                            style = Typography.subtitle1.copy(
-                                color = MultimoneyTheme.colors.primary
-                            )
-                        )
-                    }
-                }
             }
         }
-        viewModel.onSuccessBalance?.balanceCardInformation?.let { balanceCardInformation ->
+        viewModel.uiState.balanceCredit?.balanceCardInformation?.let { balanceCardInformation ->
             item {
                 Text(
                     text = "Balance Card Information",
@@ -123,7 +157,7 @@ fun HomeScreen(
             }
         }
 
-        viewModel.onSuccessBalance?.balanceAccountSmart?.let { balanceAccountSmart ->
+        viewModel.uiState.balanceCredit?.balanceAccountSmart?.let { balanceAccountSmart ->
             item {
                 Text(
                     text = "Balance Account Smart",
@@ -167,7 +201,7 @@ fun HomeScreen(
             }
         }
 
-        viewModel.onSuccessBalance?.balanceCryptoAccount?.let { balanceCryptoAccount ->
+        viewModel.uiState.balanceCredit?.balanceCryptoAccount?.let { balanceCryptoAccount ->
             item {
                 Text(
                     text = "Balance Crypto Account",

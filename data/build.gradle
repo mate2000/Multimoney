@@ -66,6 +66,11 @@ apollo {
         packageName.set("com.multimoney.data.networking.balances.apollomodel")
         generateOptionalOperationVariables.set(false)
     }
+    service("credit") {
+        sourceFolder.set("com/multimoney/multimoney/credit")
+        packageName.set("com.multimoney.data.networking.credit.apollomodel")
+        generateOptionalOperationVariables.set(false)
+    }
 }
 
 dependencies {

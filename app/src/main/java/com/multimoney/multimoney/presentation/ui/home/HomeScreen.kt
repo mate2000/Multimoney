@@ -12,13 +12,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBalanceSuccess
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHttpError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductScreen
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -35,40 +30,6 @@ fun HomeScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-            onSuccessBalance.collect { event ->
-                event.onSuccess { balance ->
-                    balance?.let {
-                        viewModel.onUIEvent(OnBalanceSuccess(balance))
-                    }
-                    isLoading = false
-                }
-                event.onFailure {
-                    isLoading = false
-                    viewModel.onUIEvent(OnHttpError(it))
-                }
-                event.onLoading {
-                    isLoading = true
-                }
-            }
-        }
-    }
-    LaunchedEffect(true) {
-        viewModel.apply {
-            onSuccessBalance.collect { event ->
-                event.onSuccess { balance ->
-                    balance?.let {
-                        viewModel.onUIEvent(OnBalanceSuccess(balance))
-                    }
-                    isLoading = false
-                }
-                event.onFailure {
-                    isLoading = false
-                    viewModel.onUIEvent(OnHttpError(it))
-                }
-                event.onLoading {
-                    isLoading = true
-                }
-            }
         }
     }
 
@@ -246,7 +207,7 @@ fun HomeScreen(
             }
         }
     }
-    LoadingIndicator(viewModel.isLoading)
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 fun getRandom(): Int {

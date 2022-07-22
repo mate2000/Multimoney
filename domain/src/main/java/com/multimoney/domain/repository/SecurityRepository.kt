@@ -5,6 +5,7 @@ import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateSecurity
+import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -45,6 +46,13 @@ interface SecurityRepository {
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<ClientInfoCr?>>
+
+    suspend fun queryValidateUserStatus(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ValidateUserStatus?>>
 
     suspend fun mutationSendPinProcess(
         identification: String,

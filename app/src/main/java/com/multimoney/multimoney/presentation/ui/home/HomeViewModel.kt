@@ -52,7 +52,7 @@ class HomeViewModel @Inject constructor(
                 result.onSuccess { balance ->
                     uiState = uiState.copy(isLoading = false)
                     balance?.let {
-                        uiState.balanceCredit = balance
+                        uiState = uiState.copy(balanceCredit = balance)
                     }
                 }
                 result.onFailure {

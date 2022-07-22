@@ -28,8 +28,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     // Navigation
-    viewModel.onUIEvent(OnCallValidateUserStatus())
     LaunchedEffect(true) {
+        viewModel.onUIEvent(OnCallValidateUserStatus())
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
         }

@@ -151,9 +151,9 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int,
         appSource: Int,
         pkUser: String,
-        ip: String,
+        ip: String?,
         pinSecurity: String,
-        telephone: String,
+        telephone: String?,
         sendValidatePin: String,
         flowOrigination: String,
         userCreate: String
@@ -162,9 +162,9 @@ class SecurityRepositoryImpl @Inject constructor(
             idBrand,
             appSource,
             pkUser,
-            ip,
+            ip ?: "",
             pinSecurity,
-            telephone,
+            telephone ?: "",
             sendValidatePin,
             flowOrigination,
             userCreate

@@ -71,9 +71,9 @@ interface SecurityRepository {
         idBrand: Int,
         appSource: Int,
         pkUser: String,
-        ip: String,
+        ip: String?,
         pinSecurity: String,
-        telephone: String,
+        telephone: String?,
         sendValidatePin: String,
         flowOrigination: String,
         userCreate: String

@@ -6,13 +6,14 @@ import com.multimoney.domain.repository.SecurityRepository
 import kotlinx.coroutines.flow.Flow
 
 class QueryValidatePinUseCaseImpl(val repository: SecurityRepository) : QueryValidatePinUseCase {
+
     override suspend fun invoke(
         idBrand: Int,
         appSource: Int,
         pkUser: String,
-        ip: String,
+        ip: String?,
         pinSecurity: String,
-        telephone: String,
+        telephone: String?,
         sendValidatePin: String,
         flowOrigination: String,
         userCreate: String

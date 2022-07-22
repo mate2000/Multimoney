@@ -9,11 +9,11 @@ interface QueryValidatePinUseCase {
         idBrand: Int,
         appSource: Int,
         pkUser: String,
-        ip: String,
+        ip: String? = "",
         pinSecurity: String,
-        telephone: String,
-        sendValidatePin: String,
-        flowOrigination: String,
+        telephone: String?,
+        sendValidatePin: String = "false",
+        flowOrigination: String = "false",
         userCreate: String
     ): Flow<MultimoneyResult<ValidatePin?>>
 }

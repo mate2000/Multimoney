@@ -4,8 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
+import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R
@@ -40,7 +42,8 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class SignUpOtpViewModel @Inject constructor(
-    private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase
+    private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
+    private val queryValidatePinUseCase: QueryValidatePinUseCase
 ) : BaseViewModel() {
 
     // UIState
@@ -164,13 +167,28 @@ class SignUpOtpViewModel @Inject constructor(
     }
 
     private fun onNextActionClick(
+        pkUser: String?,
+        phone: String?,
+        name: String?,
         onUseDataValueChange: () -> Unit,
         onCallMutationUpdateUserRegisterUseCase: () -> Unit,
-        onPhoneVerifiedChanged: () -> Unit
+        onPhoneVerifiedChanged: () -> Unit,
     ) {
-        onUseDataValueChange.invoke()
-        onPhoneVerifiedChanged.invoke()
-        onCallMutationUpdateUserRegisterUseCase.invoke()
+        executeUseCase {
+            queryValidatePinUseCase.invoke(
+                idBrand = Brand.Revamp.id,
+                appSource = APP_SOURCE,
+                pkUser = pkUser ?: "",
+                pinSecurity = uiState.otp,
+                telephone = phone,
+                userCreate = name ?: ""
+            ).collectLatest {
+
+            }
+            onUseDataValueChange.invoke()
+            onPhoneVerifiedChanged.invoke()
+            onCallMutationUpdateUserRegisterUseCase.invoke()
+        }
     }
 
     private fun onCallMutationSendPinProcessSuccess(onLoadingValueChange: () -> Unit) {
@@ -221,9 +239,12 @@ class SignUpOtpViewModel @Inject constructor(
         when (event) {
             is OnStart -> onStart(event.linkWhatsapp)
             is OnNextActionClick -> onNextActionClick(
+                event.pkUser,
+                event.phone,
+                event.name,
                 event.onUseDataValueChange,
                 event.onCallMutationUpdateUserRegisterUseCase,
-                event.onPhoneVerifiedChanged
+                event.onPhoneVerifiedChanged,
             )
             is OnGetOtpFromMessage -> getOtpFromMessage(event.message)
             is OnCallMutationSendPinProcess -> callMutationSendPinProcess(
@@ -250,9 +271,12 @@ class SignUpOtpViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnNextActionClick(
+            val pkUser: String?,
+            val phone: String?,
+            val name: String?,
             val onUseDataValueChange: () -> Unit,
             val onCallMutationUpdateUserRegisterUseCase: () -> Unit,
-            val onPhoneVerifiedChanged: () -> Unit
+            val onPhoneVerifiedChanged: () -> Unit,
         ) : UIEvent()
 
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
@@ -297,5 +321,7 @@ class SignUpOtpViewModel @Inject constructor(
         const val TIMER_DELAY = 1L
 
         const val SEND_METHOD_PHONE = "PHONE"
+
+        const val APP_SOURCE = 2
     }
 }

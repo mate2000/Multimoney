@@ -125,6 +125,9 @@ fun SignUpOtpScreen(
                     nextAction = {
                         viewModel.onUIEvent(
                             SignUpOtpViewModel.UIEvent.OnNextActionClick(
+                                pkUser = userData?.pkUser,
+                                phone = userData?.phoneNumber,
+                                name = userData?.firstName,
                                 onUseDataValueChange = {
                                     onUIEvent(
                                         SignUpViewModel.UIEvent.OnUseDataValueChange(

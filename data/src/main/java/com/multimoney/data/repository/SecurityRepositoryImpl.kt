@@ -170,7 +170,7 @@ class SecurityRepositoryImpl @Inject constructor(
             userCreate
         ),
         apolloCallMapper = { data ->
-            if (data.validatePin?.status == null && data.validatePin?.status == 0) {
+            if (data.validatePin?.status == null || data.validatePin.status == 0) {
                 Success(data.toDomainModel())
             } else {
                 Message(data.toDomainModel())

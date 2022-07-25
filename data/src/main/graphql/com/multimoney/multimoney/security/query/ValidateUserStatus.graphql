@@ -1,0 +1,20 @@
+query ValidateUserStatus($pkUser: Int!, $identification: String!, $user: String!, $idBrand: Int!){
+    validateUserStatus(
+        userStatusInput: {
+            pkUser: $pkUser
+            identification: $identification
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        infoUser {
+            idBrand
+            userName
+            idClient
+        }
+        infoCredit {
+            idClient
+            idLoanClient
+        }
+    }
+}

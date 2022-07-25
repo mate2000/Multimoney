@@ -74,7 +74,8 @@ fun SignUpPersonalDataScreen(
                                                 secondName = viewModel.uiState.secondNameValue,
                                                 firstLastName = viewModel.uiState.firstLastNameValue,
                                                 secondLastName = viewModel.uiState.secondLastNameValue,
-                                                fullName = viewModel.getFullName()
+                                                fullName = viewModel.getFullName(),
+                                                identificationValueType = viewModel.uiState.identificationValueType
                                             )
                                         )
                                     )

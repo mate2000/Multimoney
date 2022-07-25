@@ -57,7 +57,7 @@ class SignUpViewModel @Inject constructor(
         private set
 
     // Stateless
-    var isOnFidoVerified = false
+    var isOnFidoVerified = true
     var isPhoneVerified = false
     var userData: UserData? = null
     var countryCode = ""
@@ -136,6 +136,7 @@ class SignUpViewModel @Inject constructor(
 
     private fun onNationalityChange(nationality: String) {
         userData?.nationality = nationality
+        userData?.identificationValueType = ""
         userData?.identification = ""
         userData?.firstName = ""
         userData?.secondName = ""
@@ -309,9 +310,6 @@ class SignUpViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
-        sealed class BaseEvent {
-            data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
-        }
 
         object OnCallMutationUpdateUserRegisterUseCase : UIEvent()
     }

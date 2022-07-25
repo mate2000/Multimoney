@@ -10,6 +10,7 @@ import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutatio
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.security.apollomodel.ValidatePinQuery
+import com.multimoney.data.networking.security.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.security.apollomodel.ValidationSecurityQuery
 import javax.inject.Inject
 
@@ -71,6 +72,17 @@ class SecurityApi @Inject constructor(
         apolloClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand)).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
+
+    fun queryValidateUserStatus(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        idBrand: Int
+    ): ApolloCall<ValidateUserStatusQuery.Data> =
+        apolloClient.query(ValidateUserStatusQuery(pkUser, identification, email, idBrand))
+            .fetchPolicy(
+                FetchPolicy.NetworkOnly
+            )
 
     fun queryDataInformationClient(
         identification: String,

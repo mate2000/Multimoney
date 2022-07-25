@@ -10,6 +10,7 @@ import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
+import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -96,6 +97,25 @@ class SecurityRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
+    override suspend fun queryValidateUserStatus(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ValidateUserStatus?>> =
+        fetchData(
+            apolloCall = securityApi.queryValidateUserStatus(
+                pkUser,
+                identification,
+                email,
+                idBrand
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
 
     override suspend fun mutationSendPinProcess(
         identification: String,

@@ -10,7 +10,7 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.domain.model.balance.Summary
 
-fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
+private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     summary = resumen?.map {
         Summary(
             currentBalanceLabel = it?.saldo_Actual_Label,
@@ -21,7 +21,7 @@ fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     }
 )
 
-fun BalanceQuery.BalanceAccountSmart.mapToDomainModel() =
+private fun BalanceQuery.BalanceAccountSmart.mapToDomainModel() =
     BalanceAccountSmart(account = accounts?.map {
         Account(
             totalBalance = it?.totalBalance.toString().toDouble(),
@@ -29,10 +29,10 @@ fun BalanceQuery.BalanceAccountSmart.mapToDomainModel() =
         )
     })
 
-fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
+private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(globalBalance = globalBalance.toString().toDouble())
 
-fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
+private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
     BalanceCardInformation(cardInformation = CardInformation(cardInfo?.cardNumber))
 
 fun BalanceQuery.Data.mapToDomainModel() =

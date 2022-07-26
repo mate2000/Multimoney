@@ -2,7 +2,7 @@ package com.multimoney.domain.interaction.balance
 
 import com.multimoney.domain.repository.BalanceRepository
 
-class QueryBalanceUseCaseImpl(val balanceRepository: BalanceRepository) :
+class QueryBalanceUseCaseImpl(private val balanceRepository: BalanceRepository) :
     QueryBalanceUseCase {
     override suspend fun invoke(
         user: String,

@@ -8,6 +8,7 @@ import com.apollographql.apollo3.network.okHttpClient
 import com.multimoney.data.BuildConfig
 import com.multimoney.data.R
 import com.multimoney.data.networking.BalanceApi
+import com.multimoney.data.networking.CreditApi
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.data.util.CertificateUtil
 import dagger.Module
@@ -76,11 +77,17 @@ class NetworkingModule {
     fun balanceApi(@ApplicationContext context: Context, certificateUtil: CertificateUtil): BalanceApi =
         BalanceApi(apolloClient(context, SCHEMA_BALANCES, certificateUtil))
 
+    @Singleton
+    @Provides
+    fun creditApi(@ApplicationContext context: Context, certificateUtil: CertificateUtil): CreditApi =
+        CreditApi(apolloClient(context, SCHEMA_CREDIT, certificateUtil))
+
     companion object {
         const val TIMEOUT = 30L
         const val APOLLO_PREFIX_DB = "multimoney_apollo_"
         const val APOLLO_SUFFIX_DB = "_db"
         const val SCHEMA_SECURITY = "security"
         const val SCHEMA_BALANCES = "balances"
+        const val SCHEMA_CREDIT = "credit"
     }
 }

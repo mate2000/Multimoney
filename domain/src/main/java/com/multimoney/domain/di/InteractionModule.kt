@@ -2,6 +2,10 @@ package com.multimoney.domain.di
 
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
+import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
+import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
@@ -19,6 +23,7 @@ import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
+import com.multimoney.domain.repository.CreditRepository
 import com.multimoney.domain.repository.SecurityRepository
 import dagger.Module
 import dagger.Provides
@@ -73,8 +78,21 @@ class InteractionModule {
         QueryValidatePinUseCaseImpl(securityRepository)
 
     // Balance
+
     @Provides
     @Singleton
     fun provideQueryBalanceUseCase(balanceRepository: BalanceRepository): QueryBalanceUseCase =
         QueryBalanceUseCaseImpl(balanceRepository)
+
+    // Credit
+
+    @Provides
+    @Singleton
+    fun provideQueryCreditOfferUseCase(creditRepository: CreditRepository): QueryCreditOfferUseCase =
+        QueryCreditOfferUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryPaymentAmountUseCase(creditRepository: CreditRepository): QueryPaymentAmountUseCase =
+        QueryPaymentAmountUseCaseImpl(creditRepository)
 }

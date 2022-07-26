@@ -1,8 +1,10 @@
 package com.multimoney.data.di
 
 import com.multimoney.data.networking.BalanceApi
+import com.multimoney.data.networking.CreditApi
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.data.repository.BalanceRepositoryImpl
+import com.multimoney.data.repository.CreditRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -22,4 +24,9 @@ class RepositoryModule {
     @Singleton
     fun provideBalanceRepository(balanceApi: BalanceApi) =
         BalanceRepositoryImpl(balanceApi)
+
+    @Provides
+    @Singleton
+    fun provideCreditRepository(creditApi: CreditApi) =
+        CreditRepositoryImpl(creditApi)
 }

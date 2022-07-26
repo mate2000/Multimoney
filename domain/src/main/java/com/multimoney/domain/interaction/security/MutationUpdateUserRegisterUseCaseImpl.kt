@@ -1,9 +1,8 @@
 package com.multimoney.domain.interaction.security
 
 import com.multimoney.domain.repository.SecurityRepository
-import javax.inject.Inject
 
-class MutationUpdateUserRegisterUseCaseImpl @Inject constructor(private val securityRepository: SecurityRepository) :
+class MutationUpdateUserRegisterUseCaseImpl(private val securityRepository: SecurityRepository) :
     MutationUpdateUserRegisterUseCase {
     override suspend fun invoke(
         pkUser: String,

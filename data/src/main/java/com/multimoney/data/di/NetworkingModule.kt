@@ -88,6 +88,6 @@ class NetworkingModule {
         const val APOLLO_SUFFIX_DB = "_db"
         const val SCHEMA_SECURITY = "security"
         const val SCHEMA_BALANCES = "balances"
-        const val SCHEMA_CREDIT = "balances"
+        const val SCHEMA_CREDIT = "credit"
     }
 }

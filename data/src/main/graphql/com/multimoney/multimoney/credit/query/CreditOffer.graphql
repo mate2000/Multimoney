@@ -10,14 +10,12 @@ query CreditOffer($pkUser: Int!,$idBrand: Int!){
             tASA_INTERES_NORMAL
             sTR_TASA_INTERES_NORMAL
             cUOTA
-            cUOTA_AUTORIZA
             cOMISION_DESEMBOLSO
             sTR_COMISION_DESEMBOLSO
             fECHA_PAGO
             nOMBRE_MONEDA
             sTR_MINIMO_DESEMBOLSO
             sTR_MAXIMO_DESEMBOLSO
-            cUOTA_ORIGINAL
             mensaje_Condiciones
             nombre_Usuario
             cuota_Real

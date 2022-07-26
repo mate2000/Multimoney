@@ -34,6 +34,7 @@ class HomeViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
+    // TODO: Remove hardcoded parameters
     private fun callQueryBalanceUseCase(
         user: String = "ecruzGrapqhql",
         identification: String = "303190775",
@@ -97,6 +98,7 @@ class HomeViewModel @Inject constructor(
 
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
         uiState = uiState.copy(userStatus = userStatus)
+        // TODO: Send parameters to balance from userStatus
         callQueryBalanceUseCase()
     }
 
@@ -131,6 +133,8 @@ class HomeViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
+
+        // TODO: Remove hardcoded parameters
         data class OnCallValidateUserStatus(
             val pkUser: Int = 229913,
             val identification: String = "207100330",

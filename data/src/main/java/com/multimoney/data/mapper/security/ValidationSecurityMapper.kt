@@ -4,13 +4,13 @@ import com.multimoney.data.networking.security.apollomodel.ValidationSecurityQue
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.error.MessageError
 
-fun ValidationSecurityQuery.ValidateSecurity.mapMessageToDomainModel() = MessageError(
+private fun ValidationSecurityQuery.ValidateSecurity.mapMessageToDomainModel() = MessageError(
     status = status,
     message = message,
     detail = detail
 )
 
-fun ValidationSecurityQuery.ValidateSecurity.mapToDomainModel() = ValidateSecurity(
+private fun ValidationSecurityQuery.ValidateSecurity.mapToDomainModel() = ValidateSecurity(
     messageError = mapMessageToDomainModel()
 )
 

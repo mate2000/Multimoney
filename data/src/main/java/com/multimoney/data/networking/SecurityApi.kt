@@ -9,6 +9,7 @@ import com.multimoney.data.networking.security.apollomodel.OnfidoIntialProcessMu
 import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
+import com.multimoney.data.networking.security.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.security.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.security.apollomodel.ValidationSecurityQuery
 import javax.inject.Inject
@@ -132,6 +133,30 @@ class SecurityApi @Inject constructor(
             applicationId,
             idBrand,
             user
+        )
+    )
+
+    fun queryValidationPin(
+        idBrand: Int,
+        appSource: Int,
+        pkUser: String,
+        ip: String,
+        pinSecurity: String,
+        telephone: String,
+        sendValidatePin: String,
+        flowOrigination: String,
+        userCreate: String
+    ): ApolloCall<ValidatePinQuery.Data> = apolloClient.query(
+        ValidatePinQuery(
+            idBrand,
+            appSource,
+            pkUser.toInt(),
+            ip,
+            pinSecurity,
+            telephone,
+            sendValidatePin,
+            flowOrigination,
+            userCreate
         )
     )
 }

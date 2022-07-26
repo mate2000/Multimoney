@@ -12,6 +12,8 @@ import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
+import com.multimoney.domain.interaction.security.QueryValidatePinUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
@@ -64,6 +66,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationOnFidoInitialProcess(securityRepository: SecurityRepository): MutationOnFidoInitialProcessUseCase =
         MutationOnFidoInitialProcessUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryValidatePin(securityRepository: SecurityRepository): QueryValidatePinUseCase =
+        QueryValidatePinUseCaseImpl(securityRepository)
 
     // Balance
     @Provides

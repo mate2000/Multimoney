@@ -125,6 +125,9 @@ fun SignUpOtpScreen(
                     nextAction = {
                         viewModel.onUIEvent(
                             SignUpOtpViewModel.UIEvent.OnNextActionClick(
+                                pkUser = userData?.pkUser,
+                                phone = userData?.phoneNumber,
+                                name = userData?.firstName,
                                 onUseDataValueChange = {
                                     onUIEvent(
                                         SignUpViewModel.UIEvent.OnUseDataValueChange(
@@ -139,7 +142,14 @@ fun SignUpOtpScreen(
                                 onCallMutationUpdateUserRegisterUseCase = {
                                     onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
                                 },
-                                onPhoneVerifiedChanged = { onUIEvent(SignUpViewModel.UIEvent.OnPhoneVerifiedChanged(true)) })
+                                onPhoneVerifiedChanged = { onUIEvent(SignUpViewModel.UIEvent.OnPhoneVerifiedChanged(true)) },
+                                onLoadingValueChange = { isLoading ->
+                                    onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                                },
+                                onFailureWithDialog = { isLoading, dialogParameter ->
+                                    onUIEvent(SignUpViewModel.UIEvent.OnFailureWithDialog(isLoading, dialogParameter))
+                                }
+                            )
                         )
                     },
                     nextStep = viewModel.getNextStep(isOnFidoVerified).id,

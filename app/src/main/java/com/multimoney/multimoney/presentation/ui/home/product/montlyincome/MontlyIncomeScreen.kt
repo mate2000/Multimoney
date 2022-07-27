@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product.montlyincome
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
@@ -30,18 +33,22 @@ import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.Month
 import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
 fun MonthlyIncome(viewModel: MonthlyIncomeViewModel = hiltViewModel()) {
 
     // Properties
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnValidForm)
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormCompleted -> {
                     // enable or disable continue button
+                    Toast.makeText(context, event.isFormCompleted.toString(), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -81,13 +88,18 @@ fun MonthlyIncome(viewModel: MonthlyIncomeViewModel = hiltViewModel()) {
                 focusManager.clearFocus()
             }),
             isRequiredMessage = stringResource(id = R.string.home_credit_origination_monthly_income_required_income),
-            onValueChange = { viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange(it)) },
-            onDebounceValidation = { viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnValidForm) },
-            isError = viewModel.uiState.incomeError.first,
-            errorMessage = stringResource(id = viewModel.uiState.incomeError.second)
+            onValueChange = {
+                viewModel.onUIEvent(
+                    MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange(
+                        it
+                    )
+                )
+            },
+            customTransformation = formatMoney()
         )
         CustomDropdown(
             modifier = Modifier
+                .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
             items = stringArrayResource(id = R.array.home_credit_origination_monthly_income_professions).toList(),

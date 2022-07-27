@@ -16,6 +16,7 @@
     <string name="alert">Advertencia</string>
     <string name="placeholder_error">Error de proceso</string>
     <string name="whatsapp_deep_link">https://api.whatsapp.com/send/?phone=%1$s&amp;text&amp;app_absent=0</string>
+    <string name="select">Seleccionar</string>
 
     <!-- Errors -->
     <string name="error_empty"></string>
@@ -218,4 +219,21 @@
     <string name="home_credit_process_accept_contract_description">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
     <string name="home_active_credit_card_label">Activa tu tarjeta digital</string>
 
+    <!-- Credit Origination -->
+    <string name="home_credit_origination_monthly_income_title">¿Cuál es tu ingreso mensual?</string>
+    <string name="home_credit_origination_monthly_income_income_label">Ingreso mensual</string>
+    <string name="home_credit_origination_monthly_income_income_el_salvador_hint">$ 000,000</string>
+    <string name="home_credit_origination_monthly_income_income_guatemala_hint">Q 000,000</string>
+    <string name="home_credit_origination_monthly_income_income_costa_rica_hint">₡ 000,000,000</string>
+    <string name="home_credit_origination_monthly_income_required_income">Ingresos requerido</string>
+    <string name="home_credit_origination_monthly_income_greater_than_zero_error">Ingresa una cantidad mayor a cero</string>
+    <string name="home_credit_origination_monthly_income_profession_label">Selecciona tu profesión</string>
+    <string name="home_credit_origination_monthly_income_profession_hint">Selecciona tu profesión</string>
+
+    <string-array name="home_credit_origination_monthly_income_professions">
+        <item>Administración</item>
+        <item>Construcción</item>
+        <item>Seguridad</item>
+        <item>Informatica</item>
+    </string-array>
 </resources>

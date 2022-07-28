@@ -4,13 +4,13 @@ import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutatio
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.util.error.MessageError
 
-fun SendPinProcessMutation.SendPinProccess.mapMessageToDomainModel() = MessageError(
+private fun SendPinProcessMutation.SendPinProccess.mapMessageToDomainModel() = MessageError(
     status = status,
     message = message,
     detail = detail
 )
 
-fun SendPinProcessMutation.SendPinProccess.mapToDomainModel() = SendPinProcess(
+private fun SendPinProcessMutation.SendPinProccess.mapToDomainModel() = SendPinProcess(
     pkUser = pk_suv_mtr_usuario,
     email = correo_electronico,
     userName = username,

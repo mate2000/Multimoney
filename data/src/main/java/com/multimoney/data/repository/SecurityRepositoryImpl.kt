@@ -2,11 +2,13 @@ package com.multimoney.data.repository
 
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
+import com.multimoney.data.mapper.security.toDomainModel
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -162,6 +164,37 @@ class SecurityRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryValidatePin(
+        idBrand: Int,
+        appSource: Int,
+        pkUser: String,
+        ip: String?,
+        pinSecurity: String,
+        telephone: String?,
+        sendValidatePin: String,
+        flowOrigination: String,
+        userCreate: String
+    ): Flow<MultimoneyResult<ValidatePin?>> = fetchData(
+        apolloCall = securityApi.queryValidationPin(
+            idBrand,
+            appSource,
+            pkUser,
+            ip ?: "",
+            pinSecurity,
+            telephone ?: "",
+            sendValidatePin,
+            flowOrigination,
+            userCreate
+        ),
+        apolloCallMapper = { data ->
+            if (data.validatePin?.status == null || data.validatePin.status == 0) {
+                Success(data.toDomainModel())
+            } else {
+                Message(data.toDomainModel())
+            }
         }
     )
 }

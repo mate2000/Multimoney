@@ -41,14 +41,12 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    val biometricHelper: BiometricHelper,
     private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
 ) : BaseViewModel() {
 
@@ -57,8 +55,8 @@ class SignUpViewModel @Inject constructor(
         private set
 
     // Stateless
-    var isOnFidoVerified = true
-    var isPhoneVerified = true
+    var isOnFidoVerified = false
+    var isPhoneVerified = false
     var userData: UserData? = null
     var countryCode = ""
     var nextAction: () -> Unit = {}
@@ -114,7 +112,7 @@ class SignUpViewModel @Inject constructor(
     )
 
     private fun onPhoneNumberChange(phoneNumber: String) {
-       // isPhoneVerified = phoneNumber == userData?.phoneNumber
+        isPhoneVerified = phoneNumber == userData?.phoneNumber
         userData?.phoneNumber = phoneNumber
     }
 
@@ -136,6 +134,7 @@ class SignUpViewModel @Inject constructor(
 
     private fun onNationalityChange(nationality: String) {
         userData?.nationality = nationality
+        userData?.identificationValueType = ""
         userData?.identification = ""
         userData?.firstName = ""
         userData?.secondName = ""
@@ -309,9 +308,6 @@ class SignUpViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
-        sealed class BaseEvent {
-            data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
-        }
 
         object OnCallMutationUpdateUserRegisterUseCase : UIEvent()
     }

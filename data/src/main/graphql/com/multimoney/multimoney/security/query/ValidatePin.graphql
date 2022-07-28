@@ -1,0 +1,13 @@
+query ValidatePin(
+  $idBrand:Int!, $appSource:Int, $pkUser:Int!, $ip:String, $pinSecurity:String!, $telephone:String, $sendValidatePin:String, $flowOrigination: String, $userCreate: String
+){
+  validatePin(
+    validatePinInput: { idBrand: $idBrand, appSource: $appSource, pk_User: $pkUser, ip:$ip, pinSecurity: $pinSecurity, telephone: $telephone, sendValidatePin:$sendValidatePin, flowOrigination: $flowOrigination, userCreate:$userCreate }
+  ) {
+    pk_suv_mtr_usuario
+    indicador_bloqueo
+    status
+    message
+    detail
+  }
+}

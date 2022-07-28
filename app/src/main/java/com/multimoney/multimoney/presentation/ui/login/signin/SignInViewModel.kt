@@ -274,7 +274,7 @@ class SignInViewModel @Inject constructor(
 
     private fun onNavigateToForgotPassword() {
         // navigate to forgot screen
-        navigateTo(Screen.MonthlyIncomeScreenTest.route)
+        navigateTo(Screen.CreditOriginationScreen.route)
     }
 
     private fun onShowBiometricSignInChanged(value: Boolean) {

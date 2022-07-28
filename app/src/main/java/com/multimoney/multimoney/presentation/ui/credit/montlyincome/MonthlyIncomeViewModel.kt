@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.home.product.montlyincome
+package com.multimoney.multimoney.presentation.ui.credit.montlyincome
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,11 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
-import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange
-import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
-import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,13 +20,24 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
     var uiState by mutableStateOf(UIState())
         private set
 
-    val country = 1
-
+    val country = ZERO
 
     private fun onIncomeValueChange(income: String) {
-        if (income.isNotEmpty() && income.isDigitsOnly() && income.toLong() > 0) {
+        if (income.isDigitsOnly()) {
+            val incomeError = if (income.isNotEmpty() && income == ZERO.toString()) {
+                Pair(
+                    true,
+                    R.string.home_credit_origination_monthly_income_greater_than_zero_error
+                )
+            } else {
+                Pair(
+                    false,
+                    R.string.home_credit_origination_monthly_income_greater_than_zero_error
+                )
+            }
             uiState = uiState.copy(
-                income = income
+                income = income,
+                incomeError = incomeError
             )
             onValidForm()
         }
@@ -51,7 +62,11 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
 
     data class UIState(
         val income: String = "",
-        val profession: String = ""
+        val profession: String = "",
+        val incomeError: Pair<Boolean, Int> = Pair(
+            false,
+            R.string.home_credit_origination_monthly_income_greater_than_zero_error
+        )
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -76,3 +91,5 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
 }
 
 const val ZERO = 0
+const val ONE = 1
+const val TWO = 2

@@ -57,8 +57,8 @@ class SignUpViewModel @Inject constructor(
         private set
 
     // Stateless
-    var isOnFidoVerified = false
-    var isPhoneVerified = false
+    var isOnFidoVerified = true
+    var isPhoneVerified = true
     var userData: UserData? = null
     var countryCode = ""
     var nextAction: () -> Unit = {}
@@ -114,7 +114,7 @@ class SignUpViewModel @Inject constructor(
     )
 
     private fun onPhoneNumberChange(phoneNumber: String) {
-        isPhoneVerified = phoneNumber == userData?.phoneNumber
+       // isPhoneVerified = phoneNumber == userData?.phoneNumber
         userData?.phoneNumber = phoneNumber
     }
 

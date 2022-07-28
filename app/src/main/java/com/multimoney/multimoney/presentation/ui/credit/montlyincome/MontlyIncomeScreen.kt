@@ -1,6 +1,5 @@
-package com.multimoney.multimoney.presentation.ui.home.product.montlyincome
+package com.multimoney.multimoney.presentation.ui.credit.montlyincome
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -23,23 +21,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
-import com.multimoney.multimoney.presentation.ui.home.product.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
-fun MonthlyIncome(viewModel: MonthlyIncomeViewModel = hiltViewModel()) {
+fun MonthlyIncomeScreen(
+    sharedViewModel: CreditViewModel,
+    viewModel: MonthlyIncomeViewModel = hiltViewModel()
+) {
 
-    // Properties
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
@@ -47,8 +46,7 @@ fun MonthlyIncome(viewModel: MonthlyIncomeViewModel = hiltViewModel()) {
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormCompleted -> {
-                    // enable or disable continue button
-                    Toast.makeText(context, event.isFormCompleted.toString(), Toast.LENGTH_SHORT).show()
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(event.isFormCompleted))
                 }
             }
         }
@@ -68,9 +66,9 @@ fun MonthlyIncome(viewModel: MonthlyIncomeViewModel = hiltViewModel()) {
         )
 
         val placeHolder = when (viewModel.country) {
-            1 -> stringResource(id = R.string.home_credit_origination_monthly_income_income_el_salvador_hint)
-            2 -> stringResource(id = R.string.home_credit_origination_monthly_income_income_guatemala_hint)
-            3 -> stringResource(id = R.string.home_credit_origination_monthly_income_income_costa_rica_hint)
+            ZERO -> stringResource(id = R.string.home_credit_origination_monthly_income_income_el_salvador_hint)
+            ONE -> stringResource(id = R.string.home_credit_origination_monthly_income_income_guatemala_hint)
+            TWO -> stringResource(id = R.string.home_credit_origination_monthly_income_income_costa_rica_hint)
             else -> {
                 stringResource(id = R.string.home_credit_origination_monthly_income_income_el_salvador_hint)
             }
@@ -95,6 +93,8 @@ fun MonthlyIncome(viewModel: MonthlyIncomeViewModel = hiltViewModel()) {
                     )
                 )
             },
+            isError = viewModel.uiState.incomeError.first,
+            errorMessage = stringResource(id = viewModel.uiState.incomeError.second),
             customTransformation = formatMoney()
         )
         CustomDropdown(

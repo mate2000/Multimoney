@@ -53,7 +53,6 @@ fun SignUpPasswordScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val fragmentActivity = LocalContext.current as FragmentActivity
-    //BackPressedHandler(onBackPressed = { sharedViewModel.onUIEvent(OnCloseClick(focusManager)) })
 
     BackHandler {
         sharedViewModel.onUIEvent(OnCloseClick(focusManager))

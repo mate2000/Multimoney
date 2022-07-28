@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.password
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
-import com.multimoney.multimoney.presentation.util.BackPressedHandler
 import com.multimoney.multimoney.presentation.util.DialogParameters
 
 @Composable
@@ -53,7 +53,10 @@ fun SignUpPasswordScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val fragmentActivity = LocalContext.current as FragmentActivity
-    BackPressedHandler(onBackPressed = { sharedViewModel.onUIEvent(OnCloseClick(focusManager)) })
+
+    BackHandler {
+        sharedViewModel.onUIEvent(OnCloseClick(focusManager))
+    }
 
     viewModel.onUIEvent(
         SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts(

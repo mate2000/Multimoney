@@ -4,6 +4,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import java.text.NumberFormat
+import java.util.*
 
 fun formatId(): VisualTransformation =
     object : VisualTransformation {
@@ -88,3 +90,29 @@ fun formatDpi(): VisualTransformation =
             return TransformedText(AnnotatedString(formattedText), offset)
         }
     }
+
+fun formatMoney(): VisualTransformation =
+    object : VisualTransformation {
+        override fun filter(text: AnnotatedString): TransformedText {
+            return TransformedText(
+                text = AnnotatedString(text.text.toLongOrNull().formatWithComma()),
+                object : OffsetMapping {
+                    override fun originalToTransformed(offset: Int): Int {
+                        return text.text.toLongOrNull().formatWithComma().length
+                    }
+
+                    override fun transformedToOriginal(offset: Int): Int {
+                        return text.length
+                    }
+                }
+            )
+        }
+    }
+
+fun Long?.formatWithComma(): String {
+    return if (this != null) {
+        NumberFormat.getNumberInstance(Locale.US).format(this)
+    } else {
+        ""
+    }
+}

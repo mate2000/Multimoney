@@ -16,6 +16,7 @@
     <string name="alert">Advertencia</string>
     <string name="placeholder_error">Error de proceso</string>
     <string name="whatsapp_deep_link">https://api.whatsapp.com/send/?phone=%1$s&amp;text&amp;app_absent=0</string>
+    <string name="select">Seleccionar</string>
 
     <!-- Errors -->
     <string name="error_empty"></string>
@@ -205,17 +206,40 @@
     <string name="dialog_failure_biometric_positive_text">Activar más tarde</string>
 
     <!-- Home -->
-    <!-- Credit -->
+    <!-- Product -->
     <string name="home_my_products">Mis Productos</string>
-    <string name="home_credit_not_approved_title">Gana ahorrando smart</string>
-    <string name="home_credit_not_approved_description">La mejor tasa del 3.5\%; anual sin restricciones</string>
-    <string name="home_credit_not_approved_action">Activar cuenta Smart</string>
-    <string name="home_credit_process_credit_label">Crédito</string>
-    <string name="home_credit_process_title">Parece que hubo un error</string>
-    <string name="home_credit_process_description">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
-    <string name="home_credit_process_action">Validar identificación</string>
-    <string name="home_credit_process_accept_contract_title">Ya casi tenés tu crédito</string>
-    <string name="home_credit_process_accept_contract_description">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
+    <string name="home_product_not_approved_title">Gana ahorrando smart</string>
+    <string name="home_product_not_approved_description">La mejor tasa del 3.5\%; anual sin restricciones</string>
+    <string name="home_product_not_approved_action">Activar cuenta Smart</string>
+    <string name="home_product_process_credit_label">Crédito</string>
+    <string name="home_product_process_title">Parece que hubo un error</string>
+    <string name="home_product_process_description">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
+    <string name="home_product_process_action">Validar identificación</string>
+    <string name="home_product_process_accept_contract_title">Ya casi tenés tu crédito</string>
+    <string name="home_product_process_accept_contract_description">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
     <string name="home_active_credit_card_label">Activa tu tarjeta digital</string>
+
+    <!-- Credit -->
+    <string name="credit_close_dialog_title">¿Estás seguro que quieres salir?</string>
+    <string name="credit_close_dialog_description">Podrás retomar el registro cuando quieras</string>
+    <string name="credit_close_dialog_positive_button_text">Salir</string>
+    <string name="credit_close_dialog_negative_button_text">Cancelar</string>
+
+    <string name="credit_monthly_income_title">¿Cuál es tu ingreso mensual?</string>
+    <string name="credit_monthly_income_income_label">Ingreso mensual</string>
+    <string name="credit_monthly_income_income_el_salvador_hint">$ 000,000</string>
+    <string name="credit_monthly_income_income_guatemala_hint">Q 000,000</string>
+    <string name="credit_monthly_income_income_costa_rica_hint">₡ 000,000,000</string>
+    <string name="credit_monthly_income_required_income">Ingresos requerido</string>
+    <string name="credit_monthly_income_greater_than_zero_error">Ingresa una cantidad mayor a cero</string>
+    <string name="credit_monthly_income_profession_label">Selecciona tu profesión</string>
+    <string name="credit_monthly_income_profession_hint">Selecciona tu profesión</string>
+
+    <string-array name="credit_monthly_income_professions">
+        <item>Administración</item>
+        <item>Construcción</item>
+        <item>Seguridad</item>
+        <item>Informatica</item>
+    </string-array>
 
 </resources>

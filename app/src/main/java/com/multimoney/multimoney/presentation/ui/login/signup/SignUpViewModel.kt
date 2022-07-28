@@ -55,7 +55,7 @@ class SignUpViewModel @Inject constructor(
         private set
 
     // Stateless
-    var isOnFidoVerified = true
+    var isOnFidoVerified = false
     var isPhoneVerified = false
     var userData: UserData? = null
     var countryCode = ""

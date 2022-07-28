@@ -76,6 +76,18 @@ fun SignUpPasswordScreen(
                 )
             )
         }
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is SignUpPasswordViewModel.BaseEvent.OnOpenBiometricDialog -> viewModel.onUIEvent(
+                    SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption(
+                        fragmentActivity = fragmentActivity,
+                        userEmail = sharedViewModel.userData?.email ?: "",
+                        userName = "${sharedViewModel.userData?.firstName ?: ""} ${sharedViewModel.userData?.firstLastName ?: ""}",
+                        onNextStep = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) }
+                    )
+                )
+            }
+        }
     }
 
     LaunchedEffect(true) {
@@ -112,14 +124,6 @@ fun SignUpPasswordScreen(
                         status = userData?.userStatus ?: "",
                         onSuccess = {
                             onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
-                            viewModel.onUIEvent(
-                                SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption(
-                                    fragmentActivity = fragmentActivity,
-                                    userEmail = userData?.email ?: "",
-                                    userName = "${userData?.firstName ?: ""} ${userData?.firstLastName ?: ""}",
-                                    onNextStep = { onUIEvent(SignUpViewModel.UIEvent.OnNextStep) }
-                                )
-                            )
                         },
                         onFailureWithDialog = { dialog ->
                             onUIEvent(

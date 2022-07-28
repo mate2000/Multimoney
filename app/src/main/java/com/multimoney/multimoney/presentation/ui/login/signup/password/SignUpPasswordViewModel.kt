@@ -200,6 +200,7 @@ class SignUpPasswordViewModel @Inject constructor(
             .build()
         Amplify.Auth.signUp(email, uiState.password, options, {
             onSuccess()
+            emitBaseEvent(BaseEvent.OnOpenBiometricDialog)
         }, {
             onFailureWithDialog(
                 DialogParameters(
@@ -275,7 +276,7 @@ class SignUpPasswordViewModel @Inject constructor(
         userName: String,
         onNextStep: () -> Unit
     ) {
-        if (isBiometricAvailable) {
+        if (isBiometricAvailable && uiState.isFingerprintChecked) {
             biometricHelper.showBiometricPrompt(
                 title = biometricPromptTitle,
                 description = biometricPromptDescription,
@@ -424,6 +425,10 @@ class SignUpPasswordViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnIsBiometricAvailable(val value: Boolean) : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object OnOpenBiometricDialog : BaseEvent()
     }
 
     companion object {

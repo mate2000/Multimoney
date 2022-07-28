@@ -38,13 +38,13 @@ fun CardWithOutProduct(action: () -> Unit = {}) {
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.home_credit_not_approved_title),
+            text = stringResource(id = R.string.home_product_not_approved_title),
             modifier = Modifier.padding(top = 20.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.creditNotApprovedText
         )
         Text(
-            text = stringResource(id = R.string.home_credit_not_approved_description),
+            text = stringResource(id = R.string.home_product_not_approved_description),
             modifier = Modifier.padding(top = 4.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
@@ -56,7 +56,7 @@ fun CardWithOutProduct(action: () -> Unit = {}) {
             drawableResource = R.drawable.ic_chevron_up
         )
         Text(
-            text = stringResource(id = R.string.home_credit_not_approved_action),
+            text = stringResource(id = R.string.home_product_not_approved_action),
             modifier = Modifier
                 .padding(bottom = 12.dp)
                 .align(Alignment.CenterHorizontally),
@@ -79,7 +79,7 @@ fun CardWithCreditInProcessAcceptContract(
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
     ) {
         CustomInformativeChip(
-            text = stringResource(id = R.string.home_credit_process_credit_label),
+            text = stringResource(id = R.string.home_product_process_credit_label),
             textStyle = Typography.body2.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
@@ -90,13 +90,13 @@ fun CardWithCreditInProcessAcceptContract(
             startIcon = R.drawable.ic_warning
         )
         Text(
-            text = stringResource(id = R.string.home_credit_process_accept_contract_title),
+            text = stringResource(id = R.string.home_product_process_accept_contract_title),
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
         Text(
-            text = stringResource(id = R.string.home_credit_process_accept_contract_description),
+            text = stringResource(id = R.string.home_product_process_accept_contract_description),
             modifier = Modifier.padding(top = 8.dp, bottom = 42.dp),
             style = Typography.caption,
             color = MultimoneyTheme.colors.text
@@ -110,49 +110,49 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
     type: CreditProcessType = CREDIT_ACCEPT_CONTRACT_REFUSE_FIRST_TIME,
     action: (type: String) -> Unit = {}
 ) {
-    val chipText = R.string.home_credit_process_credit_label
+    val chipText = R.string.home_product_process_credit_label
     val title: Int
     val description: Int
     val actionText: Int
     when (type) {
         CREDIT_ACCEPT_CONTRACT_REFUSE_FIRST_TIME -> {
-            title = R.string.home_credit_process_title
-            description = R.string.home_credit_process_description
-            actionText = R.string.home_credit_process_action
+            title = R.string.home_product_process_title
+            description = R.string.home_product_process_description
+            actionText = R.string.home_product_process_action
         }
         CREDIT_START_PROCESS_INCOMPLETE -> {
-            title = R.string.home_credit_process_title
-            description = R.string.home_credit_process_description
-            actionText = R.string.home_credit_process_action
+            title = R.string.home_product_process_title
+            description = R.string.home_product_process_description
+            actionText = R.string.home_product_process_action
         }
         CREDIT_ACCEPT_CONTRACT_REFUSE_SECOND_TIME -> {
-            title = R.string.home_credit_process_title
-            description = R.string.home_credit_process_description
-            actionText = R.string.home_credit_process_action
+            title = R.string.home_product_process_title
+            description = R.string.home_product_process_description
+            actionText = R.string.home_product_process_action
 
         }
         CREDIT_PROCESS_MISSING_SIGNATURE -> {
-            title = R.string.home_credit_process_title
-            description = R.string.home_credit_process_description
-            actionText = R.string.home_credit_process_action
+            title = R.string.home_product_process_title
+            description = R.string.home_product_process_description
+            actionText = R.string.home_product_process_action
 
         }
         CREDIT_PROCESS_SIGNATURE_REFUSE_FIRST_TIME -> {
-            title = R.string.home_credit_process_title
-            description = R.string.home_credit_process_description
-            actionText = R.string.home_credit_process_action
+            title = R.string.home_product_process_title
+            description = R.string.home_product_process_description
+            actionText = R.string.home_product_process_action
 
         }
         CREDIT_PROCESS_SIGNATURE_REFUSE_SECOND_TIME -> {
-            title = R.string.home_credit_process_title
-            description = R.string.home_credit_process_description
-            actionText = R.string.home_credit_process_action
+            title = R.string.home_product_process_title
+            description = R.string.home_product_process_description
+            actionText = R.string.home_product_process_action
 
         }
         CREDIT_PROCESS_CREATE_ACCOUNT_FAILURE -> {
-            title = R.string.home_credit_process_title
-            description = R.string.home_credit_process_description
-            actionText = R.string.home_credit_process_action
+            title = R.string.home_product_process_title
+            description = R.string.home_product_process_description
+            actionText = R.string.home_product_process_action
 
         }
     }

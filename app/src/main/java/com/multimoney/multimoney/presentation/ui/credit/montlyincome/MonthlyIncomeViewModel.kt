@@ -27,12 +27,12 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
             val incomeError = if (income.isNotEmpty() && income == ZERO.toString()) {
                 Pair(
                     true,
-                    R.string.home_credit_origination_monthly_income_greater_than_zero_error
+                    R.string.credit_monthly_income_greater_than_zero_error
                 )
             } else {
                 Pair(
                     false,
-                    R.string.home_credit_origination_monthly_income_greater_than_zero_error
+                    R.string.credit_monthly_income_greater_than_zero_error
                 )
             }
             uiState = uiState.copy(
@@ -65,7 +65,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
         val profession: String = "",
         val incomeError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.home_credit_origination_monthly_income_greater_than_zero_error
+            R.string.credit_monthly_income_greater_than_zero_error
         )
     )
 

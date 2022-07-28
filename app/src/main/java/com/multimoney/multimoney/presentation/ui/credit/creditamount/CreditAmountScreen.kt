@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 
@@ -29,7 +28,7 @@ fun CreditAmountScreen(
                     CreditViewModel.UIEvent.OnNextStep
                 )
             })
-        }, nextStep = CreditStep.Two.id, previousStep = SignUpStep.One.id))
+        }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id))
     }
 
     Column(

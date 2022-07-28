@@ -31,5 +31,5 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen")
-    object CreditOriginationScreen : Screen("monthly_income_screen_test")
+    object CreditScreen : Screen("credit_screen")
 }

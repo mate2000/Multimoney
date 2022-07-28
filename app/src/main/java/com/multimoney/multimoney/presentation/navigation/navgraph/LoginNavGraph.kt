@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.CreditOriginationScreen
+import com.multimoney.multimoney.presentation.ui.credit.CreditScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
@@ -88,8 +88,8 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.CreditOriginationScreen.route) {
-            CreditOriginationScreen()
+        composable(route = Screen.CreditScreen.route) {
+            CreditScreen()
         }
     }
 }

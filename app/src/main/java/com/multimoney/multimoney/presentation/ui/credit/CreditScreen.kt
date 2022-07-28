@@ -20,7 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueClick
@@ -36,7 +36,7 @@ import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-fun CreditOriginationScreen(
+fun CreditScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: CreditViewModel = hiltViewModel()
@@ -49,7 +49,7 @@ fun CreditOriginationScreen(
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
     }
 
-    viewModel.onUIEvent(OnInitializeText(stringResource(id = string.sign_up_close_dialog_description)))
+    viewModel.onUIEvent(OnInitializeText(stringResource(id = string.credit_close_dialog_description)))
 
     Column(
         modifier = Modifier
@@ -62,7 +62,7 @@ fun CreditOriginationScreen(
                 onBackClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
             StepProgressBar(
-                steps = SIGN_UP_INDICATOR_TOTAL_STEPS,
+                steps = CREDIT_INDICATOR_TOTAL_STEPS,
                 currentStep = viewModel.uiState.currentStep,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
             )

@@ -59,24 +59,24 @@ fun MonthlyIncomeScreen(
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.home_credit_origination_monthly_income_title),
+            text = stringResource(id = R.string.credit_monthly_income_title),
             modifier = Modifier.padding(top = 32.dp),
             style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
             color = MultimoneyTheme.colors.labelText
         )
 
         val placeHolder = when (viewModel.country) {
-            ZERO -> stringResource(id = R.string.home_credit_origination_monthly_income_income_el_salvador_hint)
-            ONE -> stringResource(id = R.string.home_credit_origination_monthly_income_income_guatemala_hint)
-            TWO -> stringResource(id = R.string.home_credit_origination_monthly_income_income_costa_rica_hint)
+            ZERO -> stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
+            ONE -> stringResource(id = R.string.credit_monthly_income_income_guatemala_hint)
+            TWO -> stringResource(id = R.string.credit_monthly_income_income_costa_rica_hint)
             else -> {
-                stringResource(id = R.string.home_credit_origination_monthly_income_income_el_salvador_hint)
+                stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
             }
         }
 
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 32.dp),
-            labelText = stringResource(id = R.string.home_credit_origination_monthly_income_income_label),
+            labelText = stringResource(id = R.string.credit_monthly_income_income_label),
             value = viewModel.uiState.income,
             leadingIcon = R.drawable.ic_money,
             placeHolder = placeHolder,
@@ -85,7 +85,7 @@ fun MonthlyIncomeScreen(
             ), keyboardActions = KeyboardActions(onNext = {
                 focusManager.clearFocus()
             }),
-            isRequiredMessage = stringResource(id = R.string.home_credit_origination_monthly_income_required_income),
+            isRequiredMessage = stringResource(id = R.string.credit_monthly_income_required_income),
             onValueChange = {
                 viewModel.onUIEvent(
                     MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange(
@@ -102,10 +102,10 @@ fun MonthlyIncomeScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = stringArrayResource(id = R.array.home_credit_origination_monthly_income_professions).toList(),
+            items = stringArrayResource(id = R.array.credit_monthly_income_professions).toList(),
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUIEvent(OnProfessionValueChange(it)) },
-            labelText = stringResource(id = string.home_credit_origination_monthly_income_profession_label),
+            labelText = stringResource(id = string.credit_monthly_income_profession_label),
             placeHolder = stringResource(id = string.select)
         )
     }

@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -35,8 +34,8 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
     // Stateless
     var closeDialogDescription: String = ""
     var nextAction: () -> Unit = {}
-    private var nextStep: Int = SignUpStep.One.id
-    private var previousStep: Int = SignUpStep.One.id
+    private var nextStep: Int = CreditStep.One.id
+    private var previousStep: Int = CreditStep.One.id
 
     private fun onInitializeTexts(description: String) {
         closeDialogDescription = description
@@ -51,14 +50,14 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                title = R.string.sign_up_close_dialog_title,
+                title = R.string.credit_close_dialog_title,
                 description = closeDialogDescription,
-                positiveText = R.string.sign_up_close_dialog_positive_button_text,
-                negativeText = R.string.sign_up_close_dialog_negative_button_text,
+                positiveText = R.string.credit_close_dialog_positive_button_text,
+                negativeText = R.string.credit_close_dialog_negative_button_text,
                 positiveAction = {
                     popAndNavigateTo(
                         route = Screen.SignInScreen.route,
-                        popTo = Screen.SignUpScreen.route
+                        popTo = Screen.CreditScreen.route
                     )
                 },
                 isActive = mutableStateOf(true)
@@ -72,19 +71,19 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
     }
 
     private fun moveToStep(step: Int) {
-        if (step <= SIGN_UP_TOTAL_STEPS) {
+        if (step <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
-                isCloseVisible = step > SignUpStep.One.id
+                isCloseVisible = step > CreditStep.One.id
             )
         }
     }
 
     private fun nextStep() {
-        if (nextStep <= SIGN_UP_TOTAL_STEPS) {
+        if (nextStep <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep > SignUpStep.One.id
+                isCloseVisible = nextStep > CreditStep.One.id
             )
         } else {
             completedProcessAction()
@@ -92,10 +91,10 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
     }
 
     private fun previousStep() {
-        if (previousStep > SignUpStep.One.id || uiState.currentStep == SignUpStep.Two.id) {
+        if (previousStep > CreditStep.One.id || uiState.currentStep == CreditStep.Two.id) {
             uiState = uiState.copy(
                 currentStep = previousStep,
-                isCloseVisible = previousStep > SignUpStep.One.id
+                isCloseVisible = previousStep > CreditStep.One.id
             )
         } else {
             // todo move to home
@@ -162,7 +161,7 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
     }
 
     companion object {
-        const val SIGN_UP_TOTAL_STEPS = 6
-        const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
+        const val CREDIT_TOTAL_STEPS = 3
+        const val CREDIT_INDICATOR_TOTAL_STEPS = 2
     }
 }

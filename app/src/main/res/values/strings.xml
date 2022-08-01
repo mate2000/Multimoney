@@ -225,6 +225,15 @@
     <string name="credit_close_dialog_positive_button_text">Salir</string>
     <string name="credit_close_dialog_negative_button_text">Cancelar</string>
 
+    <string name="credit_amount_condition_of_credit_info">Condiciones del crédito</string>
+    <string name="credit_amount_condition_of_credit_modal_description">La cuota e interés pueden variar según su evaluación crediticia.</string>
+    <string name="credit_amount_monthly_fee">Cuota mensual:\u00A0</string>
+    <string name="credit_amount_interest">Interés:\u00A0</string>
+    <string name="credit_amount_term">Plazo:\u00A0</string>
+    <string name="credit_amount_commission_for_disbursement">Comisión por desembolso:\u00A0</string>
+    <string name="credit_amount_term_and_conditions_first">Acepto los</string>
+    <string name="credit_amount_term_and_conditions_second">Términos y Condiciones</string>
+
     <string name="credit_monthly_income_title">¿Cuál es tu ingreso mensual?</string>
     <string name="credit_monthly_income_income_label">Ingreso mensual</string>
     <string name="credit_monthly_income_income_el_salvador_hint">$ 000,000</string>
@@ -241,5 +250,6 @@
         <item>Seguridad</item>
         <item>Informatica</item>
     </string-array>
+
 
 </resources>

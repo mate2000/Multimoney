@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
+import com.multimoney.multimoney.presentation.uielement.Size.Large
+import com.multimoney.multimoney.presentation.uielement.Size.Small
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
@@ -27,24 +30,46 @@ fun CustomInformativeChip(
     text: String,
     textStyle: TextStyle,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     shape: Shape = RectangleShape,
     background: Color = Color.Transparent,
     startIcon: Int = 0,
     startIconTint: Color = DefaultWhite,
     endIcon: Int = 0,
-    endIconTint: Color = DefaultWhite
+    endIconTint: Color = DefaultWhite,
+    size: Size = Small
 ) {
 
     val startPadding: Dp = calculatePadding(startIcon)
     val endPadding: Dp = calculatePadding(endIcon)
+    var topPadding: Dp = 0.dp
+    var buttonPadding: Dp = 0.dp
+
+    when (size) {
+        is Small -> {
+            topPadding = 3.dp
+            buttonPadding = 3.dp
+        }
+        is Large -> {
+            topPadding = 8.dp
+            buttonPadding = 8.dp
+        }
+    }
 
     Box(
         modifier = modifier
             .clip(shape)
-            .background(background),
+            .background(background)
+            .clickable { onClick() },
     ) {
         Row(
-            modifier = Modifier.padding(start = startPadding, end = endPadding, top = 3.dp, bottom = 3.dp),
+            modifier = Modifier
+                .padding(
+                    start = startPadding,
+                    end = endPadding,
+                    top = topPadding,
+                    bottom = buttonPadding
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (startIcon != 0) {
@@ -72,6 +97,11 @@ fun CustomInformativeChip(
             }
         }
     }
+}
+
+sealed class Size {
+    object Small : Size()
+    object Large : Size()
 }
 
 fun calculatePadding(icon: Int): Dp {

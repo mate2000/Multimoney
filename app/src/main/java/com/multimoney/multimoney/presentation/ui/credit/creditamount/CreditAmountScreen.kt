@@ -106,12 +106,20 @@ fun CreditAmountScreen(
             size = Large
         )
         CreditInfo(iconId = R.drawable.ic_money_gray, textId = R.string.credit_amount_monthly_fee, value = "1000")
-        CreditInfo(iconId = R.drawable.ic_percentage, textId = R.string.credit_amount_interest, value = "2.8%")
-        CreditInfo(iconId = R.drawable.ic_calendar, textId = R.string.credit_amount_term, value = "60 Meses")
+        CreditInfo(
+            iconId = R.drawable.ic_percentage,
+            textId = R.string.credit_amount_interest,
+            value = viewModel.uiState.interest
+        )
+        CreditInfo(
+            iconId = R.drawable.ic_calendar,
+            textId = R.string.credit_amount_term,
+            value = stringResource(id = R.string.credit_amount_term_value, viewModel.uiState.term)
+        )
         CreditInfo(
             iconId = R.drawable.ic_percentage,
             textId = R.string.credit_amount_commission_for_disbursement,
-            value = "5%"
+            value = viewModel.uiState.commission
         )
         Divider(
             modifier = Modifier

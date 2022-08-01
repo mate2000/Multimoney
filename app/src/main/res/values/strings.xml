@@ -230,6 +230,7 @@
     <string name="credit_amount_monthly_fee">Cuota mensual:\u00A0</string>
     <string name="credit_amount_interest">Interés:\u00A0</string>
     <string name="credit_amount_term">Plazo:\u00A0</string>
+    <string name="credit_amount_term_value">%1$s meses</string>
     <string name="credit_amount_commission_for_disbursement">Comisión por desembolso:\u00A0</string>
     <string name="credit_amount_term_and_conditions_first">Acepto los</string>
     <string name="credit_amount_term_and_conditions_second">Términos y Condiciones</string>

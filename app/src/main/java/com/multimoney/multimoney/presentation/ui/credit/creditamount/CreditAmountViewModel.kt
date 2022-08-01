@@ -38,8 +38,8 @@ class CreditAmountViewModel @Inject constructor(
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
         queryCreditOfferUseCase.invoke(pkUser = pkUser, idBrand = idBrand).collectLatest { result ->
-            result.onSuccess {
-                // TODO: Set fields
+            result.onSuccess { creditOffer ->
+
             }.onFailure {
                 onFailureWithDialog(
                     false,
@@ -117,6 +117,10 @@ class CreditAmountViewModel @Inject constructor(
     }
 
     data class UIState(
+        val paymentAmount: String = "",
+        val term: String = "",
+        val interest: String = "",
+        val commission: String = "",
         val isTermAndConditionChecked: Boolean = false,
         val isTermAndConditionDialogActive: MutableState<Boolean> = mutableStateOf(false)
     )

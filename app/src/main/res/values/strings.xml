@@ -225,6 +225,7 @@
     <string name="credit_close_dialog_positive_button_text">Salir</string>
     <string name="credit_close_dialog_negative_button_text">Cancelar</string>
 
+    <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title">¿Cuál es tu ingreso mensual?</string>
     <string name="credit_monthly_income_income_label">Ingreso mensual</string>
     <string name="credit_monthly_income_income_el_salvador_hint">$ 000,000</string>
@@ -234,12 +235,17 @@
     <string name="credit_monthly_income_greater_than_zero_error">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label">Selecciona tu profesión</string>
     <string name="credit_monthly_income_profession_hint">Selecciona tu profesión</string>
-
     <string-array name="credit_monthly_income_professions">
         <item>Administración</item>
         <item>Construcción</item>
         <item>Seguridad</item>
         <item>Informatica</item>
     </string-array>
+
+    <!-- Credit Amount-->
+    <string name="credit_amount_title">¿Cuánto \ndinero necesitás?</string>
+    <string name="credit_amount_disbursement_placeholder">%s000,000</string>
+    <string name="credit_amount_disbursement_minimum_error_message">El monto ingresado es menor al permitido</string>
+    <string name="credit_amount_disbursement_maximum_error_message">El monto ingresado es mayor al permitido</string>
 
 </resources>

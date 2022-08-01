@@ -112,7 +112,7 @@ class CreditAmountViewModel @Inject constructor(
     }
 
     private fun onOpenTermAndCondition() {
-
+        // TODO open terms and condition screen
     }
 
     data class UIState(

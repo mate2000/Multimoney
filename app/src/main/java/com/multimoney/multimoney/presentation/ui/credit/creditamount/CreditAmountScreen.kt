@@ -56,6 +56,18 @@ fun CreditAmountScreen(
             })
         }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id))
 
+        viewModel.onUIEvent(
+            // TODO: Send appropriate data for this call because now we don't have this data
+            CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase(
+                onLoadingValueChange = { isLoading ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                },
+                onFailureWithDialog = { isLoading, dialogParameter ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnFailureWithDialog(isLoading, dialogParameter))
+                }
+            )
+        )
+
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnOpenConditionOfCreditDialog -> sharedViewModel.onUIEvent(

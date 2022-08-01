@@ -1,11 +1,13 @@
 package com.multimoney.multimoney.presentation.util
 
+import java.text.DecimalFormat
 import kotlin.math.abs
 import kotlin.time.Duration
 
 private const val TIME_FORMAT = "%02d:%02d"
+private const val INTEGER_FORMAT = "#,##,###"
 
-//convert time to milli seconds
+// Convert time to milli seconds
 fun Duration.format(): String {
     val seconds = abs(inWholeSeconds)
     val value = String.format(
@@ -15,3 +17,6 @@ fun Duration.format(): String {
     )
     return value
 }
+
+// Format String to Integer decimal format
+fun String.stringToIntegerFormat() = DecimalFormat(INTEGER_FORMAT).format(toDouble())

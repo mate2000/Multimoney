@@ -83,7 +83,7 @@ class NetworkingModule {
         CreditApi(apolloClient(context, SCHEMA_CREDIT, certificateUtil))
 
     companion object {
-        const val TIMEOUT = 30L
+        const val TIMEOUT = 120L
         const val APOLLO_PREFIX_DB = "multimoney_apollo_"
         const val APOLLO_SUFFIX_DB = "_db"
         const val SCHEMA_SECURITY = "security"

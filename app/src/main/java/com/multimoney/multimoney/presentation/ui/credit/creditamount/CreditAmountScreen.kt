@@ -1,18 +1,44 @@
 package com.multimoney.multimoney.presentation.ui.credit.creditamount
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
+import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
+import com.multimoney.multimoney.presentation.uielement.Size.Large
 
 @Composable
 fun CreditAmountScreen(
@@ -29,15 +55,110 @@ fun CreditAmountScreen(
                 )
             })
         }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id))
+
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnOpenConditionOfCreditDialog -> sharedViewModel.onUIEvent(
+                    CreditViewModel.UIEvent.OnOpenDialogValueChange(
+                        event.dialogParameters
+                    )
+                )
+            }
+        }
     }
+
+    viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnInitializeText(stringResource(id = R.string.credit_amount_condition_of_credit_modal_description)))
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .padding(horizontal = 16.dp)
     ) {
-        Text(text = "Credit Amount", color = MultimoneyTheme.colors.labelText)
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp),
+            color = MultimoneyTheme.colors.divider
+        )
+        CustomInformativeChip(
+            text = stringResource(id = R.string.credit_amount_condition_of_credit_info),
+            textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
+            modifier = Modifier.padding(top = 16.dp),
+            onClick = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog) },
+            shape = RoundedCornerShape(24.dp),
+            background = WhiteTransparency10,
+            startIcon = R.drawable.ic_information,
+            startIconTint = MultimoneyTheme.colors.textInformation,
+            size = Large
+        )
+        CreditInfo(iconId = R.drawable.ic_money_gray, textId = R.string.credit_amount_monthly_fee, value = "1000")
+        CreditInfo(iconId = R.drawable.ic_percentage, textId = R.string.credit_amount_interest, value = "2.8%")
+        CreditInfo(iconId = R.drawable.ic_calendar, textId = R.string.credit_amount_term, value = "60 Meses")
+        CreditInfo(
+            iconId = R.drawable.ic_percentage,
+            textId = R.string.credit_amount_commission_for_disbursement,
+            value = "5%"
+        )
+        Divider(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth()
+                .height(1.dp),
+            color = MultimoneyTheme.colors.divider
+        )
+        Row(modifier = Modifier.padding(top = 24.dp), verticalAlignment = CenterVertically) {
+            CustomCheckBox(
+                checked = viewModel.uiState.isTermAndConditionChecked,
+                onCheckedChange = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(it)) },
+                text = stringResource(id = string.credit_amount_term_and_conditions_first),
+            )
+            ClickableText(
+                text = AnnotatedString(stringResource(id = string.credit_amount_term_and_conditions_second)),
+                style = TextStyle(
+                    fontFamily = PoppinsFontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.textLink,
+                    fontSize = 15.sp,
+                    textDecoration = TextDecoration.Underline
+                ),
+                modifier = Modifier
+                    .wrapContentSize()
+                    .padding(start = 4.dp),
+                onClick = {
+                    viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnOpenTermAndCondition)
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalTextApi::class)
+@Composable
+fun CreditInfo(iconId: Int, textId: Int, value: String) {
+    Row(modifier = Modifier.padding(top = 12.dp), verticalAlignment = CenterVertically) {
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = "",
+            modifier = Modifier.size(16.dp, 16.dp),
+            tint = MultimoneyTheme.colors.iconColor
+        )
+        Text(
+            text = stringResource(id = textId),
+            modifier = Modifier.padding(start = 9.dp),
+            style = Typography.subtitle1.copy(
+                platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+            color = MultimoneyTheme.colors.labelText
+        )
+        Text(
+            text = value,
+            style = Typography.subtitle1.copy(
+                fontWeight = FontWeight.SemiBold, platformStyle = PlatformTextStyle(
+                    includeFontPadding = false
+                )
+            ),
+            color = MultimoneyTheme.colors.labelText
+        )
     }
 }

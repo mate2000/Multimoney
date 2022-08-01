@@ -9,16 +9,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -26,13 +27,12 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
@@ -42,16 +42,16 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.termandcondition.CreditTermAndCondition
-import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
-import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
-import com.multimoney.multimoney.presentation.uielement.Size.Large
-import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.termandcondition.CreditTermAndCondition
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
+import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomToggleButton
+import com.multimoney.multimoney.presentation.uielement.Size.Large
+import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
 
 @Composable
@@ -164,6 +164,7 @@ fun CreditAmountScreen(
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 16.dp)
                 .height(1.dp),
             color = MultimoneyTheme.colors.divider
         )
@@ -178,7 +179,11 @@ fun CreditAmountScreen(
             startIconTint = MultimoneyTheme.colors.textInformation,
             size = Large
         )
-        CreditInfo(iconId = R.drawable.ic_money_gray, textId = R.string.credit_amount_monthly_fee, value = "1000")
+        CreditInfo(
+            iconId = R.drawable.ic_money_gray,
+            textId = R.string.credit_amount_monthly_fee,
+            value = viewModel.uiState.feeLabel
+        )
         CreditInfo(
             iconId = R.drawable.ic_percentage,
             textId = R.string.credit_amount_interest,

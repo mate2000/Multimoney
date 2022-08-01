@@ -16,14 +16,14 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCallQueryPaymentAmountUseCase
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnInitializeErrorMessages
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnOpenTermAndCondition
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnInitializeErrorMessages
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnValidateDisbursement
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.stringToIntegerFormat
@@ -132,23 +132,6 @@ class CreditAmountViewModel @Inject constructor(
         uiState = uiState.copy(isTermAndConditionDialogActive = mutableStateOf(true))
     }
 
-    data class UIState(
-        // Fields
-        val currencyIndex: Int = 0,
-        val currencyItems: List<String> = listOf("", ""),
-        val feeLabel: String = "",
-        val disbursement: String = "",
-        val disbursementError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
-        val minimumDisbursementLabel: String = "",
-        val maximumDisbursementLabel: String = "",
-        val paymentAmount: String = "",
-        val term: String = "",
-        val interest: String = "",
-        val commission: String = "",
-        val isTermAndConditionChecked: Boolean = false,
-        val isTermAndConditionDialogActive: MutableState<Boolean> = mutableStateOf(false)
-    )
-
     private fun setCreditOffer(productIndex: Int) {
         // Set initial conditions
         products?.get(productIndex)?.apply {
@@ -160,7 +143,10 @@ class CreditAmountViewModel @Inject constructor(
                 feeLabel = feeLabel,
                 disbursement = maximumDisbursement.stringToIntegerFormat(),
                 minimumDisbursementLabel = minimumDisbursementLabel,
-                maximumDisbursementLabel = maximumDisbursementLabel
+                maximumDisbursementLabel = maximumDisbursementLabel,
+                interest = regularInterestRateLabel,
+                term = termLabel,
+                commission = commissionDisbursementLabel
             )
         }
     }
@@ -180,6 +166,22 @@ class CreditAmountViewModel @Inject constructor(
         this.minimumDisbursementErrorMessage = minimumDisbursementErrorMessage
         this.maximumDisbursementErrorMessage = maximumDisbursementErrorMessage
     }
+
+    data class UIState(
+        // Fields
+        val currencyIndex: Int = 0,
+        val currencyItems: List<String> = listOf("", ""),
+        val feeLabel: String = "",
+        val disbursement: String = "",
+        val disbursementError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
+        val minimumDisbursementLabel: String = "",
+        val maximumDisbursementLabel: String = "",
+        val term: String = "",
+        val interest: String = "",
+        val commission: String = "",
+        val isTermAndConditionChecked: Boolean = false,
+        val isTermAndConditionDialogActive: MutableState<Boolean> = mutableStateOf(false)
+    )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {

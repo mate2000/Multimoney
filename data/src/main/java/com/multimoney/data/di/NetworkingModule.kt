@@ -39,10 +39,10 @@ class NetworkingModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(logging)
-            .sslSocketFactory(
-                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-                certificateUtil.getX509TrustManager()
-            )
+//            .sslSocketFactory(
+//                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+//                certificateUtil.getX509TrustManager()
+//            )
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)

@@ -75,6 +75,7 @@ fun CreditScreen(
         ) {
             GetStepContent(
                 step = viewModel.uiState.currentStep,
+                onNavigate = onNavigate,
                 viewModel = viewModel
             )
             CustomButton(
@@ -111,10 +112,11 @@ fun CreditScreen(
 @Composable
 fun GetStepContent(
     step: Int,
+    onNavigate: (NavEvent.Navigate) -> Unit,
     viewModel: CreditViewModel
 ) {
     when (step) {
-        CreditStep.One.id -> CreditAmountScreen(sharedViewModel = viewModel)
+        CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
         else -> MonthlyIncomeScreen(sharedViewModel = viewModel)
     }
 }

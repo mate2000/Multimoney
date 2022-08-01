@@ -1,24 +1,25 @@
 package com.multimoney.multimoney.presentation.ui.credit.creditamount
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnInitializeText
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnOpenTermAndCondition
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCallQueryPaymentAmountUseCase
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnOpenTermAndCondition
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -92,7 +93,7 @@ class CreditAmountViewModel @Inject constructor(
         private set
 
     // stateless
-    var conditionModalDescription: String = ""
+    private var conditionModalDescription: String = ""
 
     private fun onNextActionClick(nextStepAction: () -> Unit) {
         nextStepAction.invoke()
@@ -112,11 +113,12 @@ class CreditAmountViewModel @Inject constructor(
     }
 
     private fun onOpenTermAndCondition() {
-        // TODO open terms and condition screen
+        uiState = uiState.copy(isTermAndConditionDialogActive = mutableStateOf(true))
     }
 
     data class UIState(
         val isTermAndConditionChecked: Boolean = false,
+        val isTermAndConditionDialogActive: MutableState<Boolean> = mutableStateOf(false)
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

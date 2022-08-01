@@ -29,24 +29,27 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.termandcondition.CreditTermAndCondition
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.Size.Large
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun CreditAmountScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     sharedViewModel: CreditViewModel,
     viewModel: CreditAmountViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(key1 = true) {
+        viewModel.executeNavigation(onNavigate = onNavigate)
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(true))
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
             viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnNextActionClick {
@@ -121,10 +124,10 @@ fun CreditAmountScreen(
             CustomCheckBox(
                 checked = viewModel.uiState.isTermAndConditionChecked,
                 onCheckedChange = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(it)) },
-                text = stringResource(id = string.credit_amount_term_and_conditions_first),
+                text = stringResource(id = R.string.credit_amount_term_and_conditions_first),
             )
             ClickableText(
-                text = AnnotatedString(stringResource(id = string.credit_amount_term_and_conditions_second)),
+                text = AnnotatedString(stringResource(id = R.string.credit_amount_term_and_conditions_second)),
                 style = TextStyle(
                     fontFamily = PoppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
@@ -140,6 +143,19 @@ fun CreditAmountScreen(
                 }
             )
         }
+    }
+
+    if (viewModel.uiState.isTermAndConditionDialogActive.value) {
+        CreditTermAndCondition(
+            onAcceptTermsAndCondition = {
+                viewModel.onUIEvent(
+                    CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(
+                        true
+                    )
+                )
+            },
+            isActive = viewModel.uiState.isTermAndConditionDialogActive
+        )
     }
 }
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -102,6 +103,7 @@ fun CustomOutlinedTextField(
     errorMessage: String? = null,
     enabled: Boolean = true,
     isPassword: Boolean = false,
+    isTextArea: Boolean = false,
     onValueChange: (newText: String) -> Unit = {},
     customTransformation: VisualTransformation? = null,
     onDebounceValidation: (newText: String) -> Unit = {}
@@ -205,11 +207,18 @@ fun CustomOutlinedTextField(
                 style = Typography.body2
             )
         }
+
+        val innerModifier = Modifier
+            .padding(top = 8.dp)
+            .fillMaxWidth()
+
+        if (isTextArea) {
+            modifier.height(84.dp)
+        }
+
         // Display textField
         OutlinedTextField(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth()
+            modifier = innerModifier
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onFocusChanged {
                     if (it.isFocused) {

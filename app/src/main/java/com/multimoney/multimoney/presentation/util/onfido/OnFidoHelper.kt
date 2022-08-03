@@ -6,6 +6,8 @@ import com.onfido.android.sdk.capture.DocumentType
 import com.onfido.android.sdk.capture.OnfidoConfig
 import com.onfido.android.sdk.capture.OnfidoFactory
 import com.onfido.android.sdk.capture.ui.options.FlowStep
+import com.onfido.android.sdk.capture.ui.options.stepbuilder.DocumentCaptureStepBuilder
+import com.onfido.android.sdk.capture.utils.CountryCode
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -13,14 +15,15 @@ class OnFidoHelper @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
+    // todo we have to pass the CountryCode and the document to create the customFlow
+    private val nationalityIdentifyCard =
+        DocumentCaptureStepBuilder.forNationalIdentity().withCountry(CountryCode.SV).build()
+
     private val flowStepsWithOptions: Array<FlowStep> = arrayOf(
-        FlowStep.CAPTURE_DOCUMENT,
+        nationalityIdentifyCard,
         FlowStep.CAPTURE_FACE,
         FlowStep.FINAL
     )
-
-    private val onFidoDocuments: ArrayList<DocumentType> =
-        arrayListOf(DocumentType.NATIONAL_IDENTITY_CARD)
 
     var onRefreshToken: (injectNewToken: (String?) -> Unit) -> Unit = {}
 
@@ -29,7 +32,7 @@ class OnFidoHelper @Inject constructor(
     ) = OnfidoConfig.builder(context).withSDKToken(
         onFidoSDKToken,
         OnFidoExpirationHandler(onRefresh = onRefresh())
-    ).withCustomFlow(flowStepsWithOptions).withAllowedDocumentTypes(onFidoDocuments).build()
+    ).withCustomFlow(flowStepsWithOptions).build()
 
     fun getOnFidoClient() = OnfidoFactory.create(context).client
 

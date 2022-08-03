@@ -225,15 +225,24 @@
     <string name="credit_close_dialog_positive_button_text">Salir</string>
     <string name="credit_close_dialog_negative_button_text">Cancelar</string>
 
+    <!-- Credit Amount-->
+    <string name="credit_amount_title">¿Cuánto \ndinero necesitás?</string>
+    <string name="credit_amount_disbursement_placeholder">%s000,000</string>
+    <string name="credit_amount_disbursement_minimum_error_message">El monto ingresado es menor al permitido</string>
+    <string name="credit_amount_disbursement_maximum_error_message">El monto ingresado es mayor al permitido</string>
     <string name="credit_amount_condition_of_credit_info">Condiciones del crédito</string>
     <string name="credit_amount_condition_of_credit_modal_description">La cuota e interés pueden variar según su evaluación crediticia.</string>
     <string name="credit_amount_monthly_fee">Cuota mensual:\u00A0</string>
     <string name="credit_amount_interest">Interés:\u00A0</string>
     <string name="credit_amount_term">Plazo:\u00A0</string>
+    <string name="credit_amount_term_value">%1$s meses</string>
     <string name="credit_amount_commission_for_disbursement">Comisión por desembolso:\u00A0</string>
     <string name="credit_amount_term_and_conditions_first">Acepto los</string>
     <string name="credit_amount_term_and_conditions_second">Términos y Condiciones</string>
+    <string name="credit_terms_and_condition_title">Términos y\nCondiciones</string>
+    <string name="credit_terms_and_condition_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
 
+    <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title">¿Cuál es tu ingreso mensual?</string>
     <string name="credit_monthly_income_income_label">Ingreso mensual</string>
     <string name="credit_monthly_income_income_el_salvador_hint">$ 000,000</string>
@@ -243,13 +252,11 @@
     <string name="credit_monthly_income_greater_than_zero_error">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label">Selecciona tu profesión</string>
     <string name="credit_monthly_income_profession_hint">Selecciona tu profesión</string>
-
     <string-array name="credit_monthly_income_professions">
         <item>Administración</item>
         <item>Construcción</item>
         <item>Seguridad</item>
         <item>Informatica</item>
     </string-array>
-
 
 </resources>

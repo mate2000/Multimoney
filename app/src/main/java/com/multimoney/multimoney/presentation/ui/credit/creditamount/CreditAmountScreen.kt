@@ -31,8 +31,10 @@ import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmoun
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
+import com.multimoney.multimoney.presentation.uielement.CustomSlider
 import com.multimoney.multimoney.presentation.uielement.CustomToggleButton
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
+import com.onfido.api.client.Utils.Log
 
 @Composable
 @Preview
@@ -90,14 +92,17 @@ fun CreditAmountScreen(
                 fontWeight = FontWeight.SemiBold
             )
         )
-        CustomToggleButton(
-            modifier = Modifier
-                .wrapContentSize()
-                .align(Alignment.CenterHorizontally),
-            selectedIndex = viewModel.uiState.currencyIndex,
-            items = viewModel.uiState.currencyItems,
-            onIndexChanged = { index -> viewModel.onUIEvent(OnCurrencyIndexChanged(index)) }
-        )
+        if (viewModel.uiState.isMultipleCurrency) {
+            CustomToggleButton(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .wrapContentSize()
+                    .align(Alignment.CenterHorizontally),
+                selectedIndex = viewModel.uiState.currencyIndex,
+                items = viewModel.uiState.currencyItems,
+                onIndexChanged = { index -> viewModel.onUIEvent(OnCurrencyIndexChanged(index)) }
+            )
+        }
         CurrencyAmountInput(
             value = viewModel.uiState.disbursement,
             placeHolder = stringResource(
@@ -114,7 +119,7 @@ fun CreditAmountScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_amount_disbursement_minimum_error_message),
             isError = viewModel.uiState.disbursementError.first,
@@ -129,5 +134,17 @@ fun CreditAmountScreen(
                 )
             }
         )
+        CustomSlider(
+            modifier = Modifier.padding(16.dp),
+            value = viewModel.uiState.sliderValue,
+            minimumLabel = viewModel.uiState.minimumDisbursementLabel,
+            maximumLabel = viewModel.uiState.maximumDisbursementLabel,
+            onValueChange = {
+                Log.d("PROGRESS_VALUE: ", it.toString())
+                viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnSliderValueChange(it))
+            },
+            onValueChangeFinished = {
+                viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished(it))
+            })
     }
 }

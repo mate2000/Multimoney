@@ -18,6 +18,8 @@ import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmoun
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnInitializeErrorMessages
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnSliderValueChange
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnValidateDisbursement
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.stringToIntegerFormat
@@ -38,9 +40,9 @@ class CreditAmountViewModel @Inject constructor(
     // Stateless
     private var products: List<Product?>? = listOf()
     private var currencyItems: List<String>? = listOf()
-    private var minimumDisbursement: String = ""
+    private var minimumDisbursement: String = "200000.00"
     private var minimumDisbursementErrorMessage = 0
-    private var maximumDisbursement: String = ""
+    private var maximumDisbursement: String = "200000000000.00"
     private var maximumDisbursementErrorMessage = 0
 
     private fun callQueryCreditOfferUseCase(
@@ -113,23 +115,25 @@ class CreditAmountViewModel @Inject constructor(
             this@CreditAmountViewModel.minimumDisbursement = minimumDisbursement
             this@CreditAmountViewModel.maximumDisbursement = maximumDisbursement
             uiState = uiState.copy(
+                isMultipleCurrency = (products?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
                 currencyIndex = productIndex,
                 currencyItems = currencyItems ?: listOf(),
                 feeLabel = feeLabel,
-                disbursement = maximumDisbursement.stringToIntegerFormat(),
+                disbursement = maximumDisbursement.stringToIntegerFormat(CURRENCY_SEPARATOR.toString()),
                 minimumDisbursementLabel = minimumDisbursementLabel,
                 maximumDisbursementLabel = maximumDisbursementLabel
             )
         }
     }
 
-    private fun onValidateDisbursement(value: Double) = if (value < minimumDisbursement.toDouble()) {
-        Pair(true, minimumDisbursementErrorMessage)
-    } else if (value > maximumDisbursement.toDouble()) {
-        Pair(true, maximumDisbursementErrorMessage)
-    } else {
-        uiState.disbursementError
-    }
+    private fun onValidateDisbursement(value: String) =
+        if (value.isNotEmpty() && value.toDouble() < minimumDisbursement.toDouble()) {
+            Pair(true, minimumDisbursementErrorMessage)
+        } else if (value.isNotEmpty() && value.toDouble() > maximumDisbursement.toDouble()) {
+            Pair(true, maximumDisbursementErrorMessage)
+        } else {
+            uiState.disbursementError
+        }
 
     private fun onInitializeErrorMessages(
         minimumDisbursementErrorMessage: Int,
@@ -139,15 +143,25 @@ class CreditAmountViewModel @Inject constructor(
         this.maximumDisbursementErrorMessage = maximumDisbursementErrorMessage
     }
 
+    private fun onSliderValueChange(value: Float) {
+        uiState = uiState.copy(sliderValue = value)
+    }
+
+    private fun onSliderValueChangeFinished(value: Float) {
+        uiState = uiState.copy(sliderValue = value)
+    }
+
     data class UIState(
         // Fields
+        val isMultipleCurrency: Boolean = false,
         val currencyIndex: Int = 0,
         val currencyItems: List<String> = listOf("", ""),
         val feeLabel: String = "",
         val disbursement: String = "",
         val disbursementError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
         val minimumDisbursementLabel: String = "",
-        val maximumDisbursementLabel: String = ""
+        val maximumDisbursementLabel: String = "",
+        val sliderValue: Float = 100F,
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -171,11 +185,13 @@ class CreditAmountViewModel @Inject constructor(
             is OnNextActionClick -> onNextActionClick(uiEvent.nextStepAction)
             is OnCurrencyIndexChanged -> setCreditOffer(uiEvent.index)
             is OnDisbursementValueChange -> uiState = uiState.copy(disbursement = uiEvent.value)
-            is OnValidateDisbursement -> onValidateDisbursement(uiEvent.value.toDouble())
+            is OnValidateDisbursement -> onValidateDisbursement(uiEvent.value)
             is OnInitializeErrorMessages -> onInitializeErrorMessages(
                 minimumDisbursementErrorMessage = uiEvent.minimumDisbursementErrorMessage,
                 maximumDisbursementErrorMessage = uiEvent.maximumDisbursementErrorMessage
             )
+            is OnSliderValueChange -> onSliderValueChange(uiEvent.value)
+            is OnSliderValueChangeFinished -> onSliderValueChangeFinished(uiEvent.value)
         }
     }
 
@@ -207,6 +223,9 @@ class CreditAmountViewModel @Inject constructor(
             val minimumDisbursementErrorMessage: Int,
             val maximumDisbursementErrorMessage: Int
         ) : UIEvent()
+
+        data class OnSliderValueChange(val value: Float) : UIEvent()
+        data class OnSliderValueChangeFinished(val value: Float) : UIEvent()
     }
 
     companion object {

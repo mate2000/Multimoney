@@ -1,512 +1,506 @@
 type CreditQuery {
-    creditOffer(creditOfferInput: creditOfferInput): creditOffer
+  creditOffer(creditOfferInput: creditOfferInput): creditOffer
 
-    paymentAmount(paymentAmountInput: balanceCreditInput): paymentAmount
+  paymentAmount(paymentAmountInput: balanceCreditInput): paymentAmount
 
-    screenConfigText(screenConfigInput: screenConfigInput): [screenConfigText]
+  screenConfigText(screenConfigInput: screenConfigInput): [screenConfigText]
 
-    employmentSituation(employmentSituationInput: screenConfigInput): [screenConfigText]
+  employmentSituation(employmentSituationInput: screenConfigInput): [screenConfigText]
 
-    ocupation(ocupationInput: screenConfigInput): [screenConfigText]
+  ocupation(ocupationInput: screenConfigInput): [screenConfigText]
 
-    homeProvince(homeProvinceInput: screenConfigInput): [screenConfigText]
+  homeProvince(homeProvinceInput: screenConfigInput): [screenConfigText]
 
-    homeCanton(homeCantonInput: screenConfigInput): [screenConfigText]
+  homeCanton(homeCantonInput: screenConfigInput): [screenConfigText]
 
-    homeDistrict(homeDistrictInput: screenConfigInput): [screenConfigText]
+  homeDistrict(homeDistrictInput: screenConfigInput): [screenConfigText]
 
-    companyProvince(companyProvinceInput: screenConfigInput): [screenConfigText]
+  companyProvince(companyProvinceInput: screenConfigInput): [screenConfigText]
 
-    companyCanton(companyCantonInput: screenConfigInput): [screenConfigText]
+  companyCanton(companyCantonInput: screenConfigInput): [screenConfigText]
 
-    companyDistrict(companyDistrictInput: screenConfigInput): [screenConfigText]
+  companyDistrict(companyDistrictInput: screenConfigInput): [screenConfigText]
 
-    regularExpression(regularExpressionInput: regularExpressionInput): [regularExpression]
+  regularExpression(regularExpressionInput: regularExpressionInput): [regularExpression]
 
-    banks(banksInput: screenConfigInput): [screenConfigText]
+  banks(banksInput: screenConfigInput): [screenConfigText]
 }
 
 type creditOffer {
-    """
-    creditOffer products
-    """
-    products: [products]
+  """
+  creditOffer idUserRequest
+  """
+  idUserRequest: Long
+
+  """
+  creditOffer products
+  """
+  products: [products]
 }
 
+scalar Long
+
 type products {
-    """
-    products ID_PRODUCTO
-    """
-    iD_PRODUCTO: String!
+  """
+  products ID_PRODUCTO
+  """
+  iD_PRODUCTO: String!
 
-    """
-    products LIMITE_CREDITO
-    """
-    lIMITE_CREDITO: String!
+  """
+  products LIMITE_CREDITO
+  """
+  lIMITE_CREDITO: String!
 
-    """
-    products TRACTO
-    """
-    tRACTO: String!
+  """
+  products TRACTO
+  """
+  tRACTO: String!
 
-    """
-    products MINIMO_DESEMBOLSO
-    """
-    mINIMO_DESEMBOLSO: String!
+  """
+  products MINIMO_DESEMBOLSO
+  """
+  mINIMO_DESEMBOLSO: String!
 
-    """
-    products MAXIMO_DESEMBOLSO
-    """
-    mAXIMO_DESEMBOLSO: String!
+  """
+  products MAXIMO_DESEMBOLSO
+  """
+  mAXIMO_DESEMBOLSO: String!
 
-    """
-    products PK_PSE_CAT_PROMOCION
-    """
-    pK_PSE_CAT_PROMOCION: String!
+  """
+  products DESCRIPCION_PROMOCION
+  """
+  dESCRIPCION_PROMOCION: String!
 
-    """
-    products DESCRIPCION_PROMOCION
-    """
-    dESCRIPCION_PROMOCION: String!
+  """
+  products PK_PSE_CAT_PROMOCION_PLAZO
+  """
+  pK_PSE_CAT_PROMOCION_PLAZO: String!
 
-    """
-    products PK_PSE_CAT_PROMOCION_PLAZO
-    """
-    pK_PSE_CAT_PROMOCION_PLAZO: String!
+  """
+  products PLAZO
+  """
+  pLAZO: String!
 
-    """
-    products PLAZO
-    """
-    pLAZO: String!
+  """
+  products MONEDA
+  """
+  mONEDA: String!
 
-    """
-    products DESCRIPCION_PROMOCION_PLAZO
-    """
-    dESCRIPCION_PROMOCION_PLAZO: String!
+  """
+  products ES_PROMOCIONAL
+  """
+  eS_PROMOCIONAL: String!
 
-    """
-    products DESCRIPCION_PROMOCION_PLAZO_COMPLETA
-    """
-    dESCRIPCION_PROMOCION_PLAZO_COMPLETA: String!
+  """
+  products CICLO
+  """
+  cICLO: String!
 
-    """
-    products MONEDA
-    """
-    mONEDA: String!
+  """
+  products TASA_INTERES_NORMAL
+  """
+  tASA_INTERES_NORMAL: String!
 
-    """
-    products ES_PROMOCIONAL
-    """
-    eS_PROMOCIONAL: String!
+  """
+  products STR_TASA_INTERES_NORMAL
+  """
+  sTR_TASA_INTERES_NORMAL: String!
 
-    """
-    products CICLO
-    """
-    cICLO: String!
+  """
+  products CUOTA
+  """
+  cUOTA: String!
 
-    """
-    products TASA_INTERES_NORMAL
-    """
-    tASA_INTERES_NORMAL: String!
+  """
+  products CUOTA_AUTORIZA
+  """
+  cUOTA_AUTORIZA: String!
 
-    """
-    products STR_TASA_INTERES_NORMAL
-    """
-    sTR_TASA_INTERES_NORMAL: String!
+  """
+  products COMISION_DESEMBOLSO
+  """
+  cOMISION_DESEMBOLSO: String!
 
-    """
-    products CUOTA
-    """
-    cUOTA: String!
+  """
+  products STR_COMISION_DESEMBOLSO
+  """
+  sTR_COMISION_DESEMBOLSO: String!
 
-    """
-    products CUOTA_AUTORIZA
-    """
-    cUOTA_AUTORIZA: String!
+  """
+  products FECHA_PAGO
+  """
+  fECHA_PAGO: String!
 
-    """
-    products COMISION_DESEMBOLSO
-    """
-    cOMISION_DESEMBOLSO: String!
+  """
+  products NOMBRE_MONEDA
+  """
+  nOMBRE_MONEDA: String!
 
-    """
-    products STR_COMISION_DESEMBOLSO
-    """
-    sTR_COMISION_DESEMBOLSO: String!
+  """
+  products STR_MINIMO_DESEMBOLSO
+  """
+  sTR_MINIMO_DESEMBOLSO: String!
 
-    """
-    products FECHA_PAGO
-    """
-    fECHA_PAGO: String!
+  """
+  products STR_MAXIMO_DESEMBOLSO
+  """
+  sTR_MAXIMO_DESEMBOLSO: String!
 
-    """
-    products NOMBRE_MONEDA
-    """
-    nOMBRE_MONEDA: String!
+  """
+  products CUOTA_ORIGINAL
+  """
+  cUOTA_ORIGINAL: String!
 
-    """
-    products STR_MINIMO_DESEMBOLSO
-    """
-    sTR_MINIMO_DESEMBOLSO: String!
+  """
+  products Mensaje_Plazo
+  """
+  mensaje_Plazo: String!
 
-    """
-    products STR_MAXIMO_DESEMBOLSO
-    """
-    sTR_MAXIMO_DESEMBOLSO: String!
+  """
+  products Mensaje_Condiciones
+  """
+  mensaje_Condiciones: String!
 
-    """
-    products CUOTA_ORIGINAL
-    """
-    cUOTA_ORIGINAL: String!
+  """
+  products Nombre_Usuario
+  """
+  nombre_Usuario: String!
 
-    """
-    products Mensaje_Plazo
-    """
-    mensaje_Plazo: String!
+  """
+  products Cuota_Real
+  """
+  cuota_Real: Decimal!
 
-    """
-    products Mensaje_Condiciones
-    """
-    mensaje_Condiciones: String!
+  """
+  products PLAZO_NUMERICO
+  """
+  pLAZO_NUMERICO: Int!
 
-    """
-    products Nombre_Usuario
-    """
-    nombre_Usuario: String!
-
-    """
-    products Cuota_Real
-    """
-    cuota_Real: Decimal!
-
-    """
-    products PLAZO_NUMERICO
-    """
-    pLAZO_NUMERICO: Int!
-
-    """
-    products BIT_REQUIERE_FORMALIZACION
-    """
-    bIT_REQUIERE_FORMALIZACION: String
+  """
+  products BIT_REQUIERE_FORMALIZACION
+  """
+  bIT_REQUIERE_FORMALIZACION: String
 }
 
 scalar Decimal
 
 input creditOfferInput {
-    pkUser: Int!
+  pkUser: Int!
 
-    idBrand: Int!
+  idBrand: Int!
 
-    tenantId: String
+  tenantId: String
 
-    traceIdentifier: String
+  traceIdentifier: String
 }
 
 type paymentAmount {
-    """
-    paymentAmount paymentAmount
-    """
-    paymentAmount: Decimal!
+  """
+  paymentAmount paymentAmount
+  """
+  paymentAmount: Decimal!
 
-    """
-    paymentAmount paymentAmountLabel
-    """
-    paymentAmountLabel: String!
+  """
+  paymentAmount paymentAmountLabel
+  """
+  paymentAmountLabel: String!
 }
 
 input balanceCreditInput {
-    amount: Decimal!
+  amount: Decimal!
 
-    months: String!
+  months: String!
 
-    idProduct: String!
+  idProduct: String!
 
-    currencySymbol: String!
+  currencySymbol: String!
 
-    user: String!
+  user: String!
 
-    idBrand: Int!
+  idBrand: Int!
 
-    tenantId: String
+  tenantId: String
 
-    traceIdentifier: String
+  traceIdentifier: String
 }
 
 type screenConfigText {
-    """
-    screenConfigText Pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
-    """
-    pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito: Int!
+  """
+  screenConfigText Pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
+  """
+  pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito: Int!
 
-    """
-    screenConfigText Fk_Suv_Cat_Pregunta_Solicitud_Credito
-    """
-    fk_Suv_Cat_Pregunta_Solicitud_Credito: Int!
+  """
+  screenConfigText Fk_Suv_Cat_Pregunta_Solicitud_Credito
+  """
+  fk_Suv_Cat_Pregunta_Solicitud_Credito: Int!
 
-    """
-    screenConfigText Fk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
-    """
-    fk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito: Int
+  """
+  screenConfigText Fk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
+  """
+  fk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito: Int
 
-    """
-    screenConfigText Tipo_Control
-    """
-    tipo_Control: String!
+  """
+  screenConfigText Tipo_Control
+  """
+  tipo_Control: String!
 
-    """
-    screenConfigText Descripcion
-    """
-    descripcion: String!
+  """
+  screenConfigText Descripcion
+  """
+  descripcion: String!
 
-    """
-    screenConfigText Es_Catalogo_Core
-    """
-    es_Catalogo_Core: Boolean!
+  """
+  screenConfigText Es_Catalogo_Core
+  """
+  es_Catalogo_Core: Boolean!
 
-    """
-    screenConfigText Pk_Identificador_Catalogo
-    """
-    pk_Identificador_Catalogo: String
+  """
+  screenConfigText Pk_Identificador_Catalogo
+  """
+  pk_Identificador_Catalogo: String
 
-    """
-    screenConfigText Es_Catalogo_Sucursal
-    """
-    es_Catalogo_Sucursal: Boolean!
+  """
+  screenConfigText Es_Catalogo_Sucursal
+  """
+  es_Catalogo_Sucursal: Boolean!
 
-    """
-    screenConfigText Utiliza_Valor
-    """
-    utiliza_Valor: Boolean!
+  """
+  screenConfigText Utiliza_Valor
+  """
+  utiliza_Valor: Boolean!
 
-    """
-    screenConfigText Valor_Catalogo
-    """
-    valor_Catalogo: String
+  """
+  screenConfigText Valor_Catalogo
+  """
+  valor_Catalogo: String
 
-    """
-    screenConfigText Llave_Formulario
-    """
-    llave_Formulario: String!
+  """
+  screenConfigText Llave_Formulario
+  """
+  llave_Formulario: String!
 
-    """
-    screenConfigText Monto_Maximo
-    """
-    monto_Maximo: String
+  """
+  screenConfigText Monto_Maximo
+  """
+  monto_Maximo: String
 
-    """
-    screenConfigText SubOpciones
-    """
-    subOpciones: [screenConfigSubText]
+  """
+  screenConfigText SubOpciones
+  """
+  subOpciones: [screenConfigSubText]
 
-    """
-    screenConfigText fk_Identificador_Catalogo
-    """
-    fk_Identificador_Catalogo: Int!
+  """
+  screenConfigText fk_Identificador_Catalogo
+  """
+  fk_Identificador_Catalogo: Int!
 
-    """
-    screenConfigText grupo
-    """
-    grupo: String!
+  """
+  screenConfigText grupo
+  """
+  grupo: String!
 
-    """
-    screenConfigText evento
-    """
-    evento: String!
+  """
+  screenConfigText evento
+  """
+  evento: String!
 
-    """
-    screenConfigText Interno
-    """
-    interno: String
+  """
+  screenConfigText Interno
+  """
+  interno: String
 
-    """
-    screenConfigText Valor
-    """
-    valor: String
+  """
+  screenConfigText Valor
+  """
+  valor: String
 }
 
 type screenConfigSubText {
-    """
-    screenConfigText Pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
-    """
-    pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito: Int!
+  """
+  screenConfigText Pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
+  """
+  pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito: Int!
 
-    """
-    screenConfigText Tipo_Control
-    """
-    tipo_Control: String!
+  """
+  screenConfigText Tipo_Control
+  """
+  tipo_Control: String!
 
-    """
-    screenConfigText Descripcion
-    """
-    descripcion: String!
+  """
+  screenConfigText Descripcion
+  """
+  descripcion: String!
 
-    """
-    screenConfigText Pk_Identificador_Catalogo
-    """
-    pk_Identificador_Catalogo: String
+  """
+  screenConfigText Pk_Identificador_Catalogo
+  """
+  pk_Identificador_Catalogo: String
 
-    """
-    screenConfigText Utiliza_Valor
-    """
-    utiliza_Valor: Boolean!
+  """
+  screenConfigText Utiliza_Valor
+  """
+  utiliza_Valor: Boolean!
 
-    """
-    screenConfigText Valor_Catalogo
-    """
-    valor_Catalogo: String
+  """
+  screenConfigText Valor_Catalogo
+  """
+  valor_Catalogo: String
 
-    """
-    screenConfigText fk_Identificador_Catalogo
-    """
-    fk_Identificador_Catalogo: Int!
+  """
+  screenConfigText fk_Identificador_Catalogo
+  """
+  fk_Identificador_Catalogo: Int!
 
-    """
-    screenConfigText Interno
-    """
-    interno: String
+  """
+  screenConfigText Interno
+  """
+  interno: String
 
-    """
-    screenConfigText Valor
-    """
-    valor: String
+  """
+  screenConfigText Valor
+  """
+  valor: String
 }
 
 input screenConfigInput {
-    pkUser: Int!
+  pkUser: Int!
 
-    group: String
+  group: String
 
-    keyForm: String
+  keyForm: String
 
-    origin: Boolean
+  origin: Boolean
 
-    user: String!
+  user: String!
 
-    idBrand: Int!
+  idBrand: Int!
 
-    tenantId: String
+  tenantId: String
 
-    traceIdentifier: String
+  traceIdentifier: String
 
-    idUserRequest: String
+  idUserRequest: String
 }
 
 type regularExpression {
-    """
-    regularExpression INT_PK_VEN_CAT_EXPRESION_REGULAR
-    """
-    iNT_PK_VEN_CAT_EXPRESION_REGULAR: Int!
+  """
+  regularExpression INT_PK_VEN_CAT_EXPRESION_REGULAR
+  """
+  iNT_PK_VEN_CAT_EXPRESION_REGULAR: Int!
 
-    """
-    regularExpression STR_LLAVE_04
-    """
-    sTR_LLAVE_04: String!
+  """
+  regularExpression STR_LLAVE_04
+  """
+  sTR_LLAVE_04: String!
 
-    """
-    regularExpression STR_DESCRIPCION
-    """
-    sTR_DESCRIPCION: String!
+  """
+  regularExpression STR_DESCRIPCION
+  """
+  sTR_DESCRIPCION: String!
 
-    """
-    regularExpression STR_PATRON_EXPRESION
-    """
-    sTR_PATRON_EXPRESION: String!
+  """
+  regularExpression STR_PATRON_EXPRESION
+  """
+  sTR_PATRON_EXPRESION: String!
 
-    """
-    regularExpression INT_FK_LLAVE_FORANEA
-    """
-    iNT_FK_LLAVE_FORANEA: Int!
+  """
+  regularExpression INT_FK_LLAVE_FORANEA
+  """
+  iNT_FK_LLAVE_FORANEA: Int!
 
-    """
-    regularExpression INT_ID_TIPO_CUENTA_DESEMBOLSO
-    """
-    iNT_ID_TIPO_CUENTA_DESEMBOLSO: Int!
+  """
+  regularExpression INT_ID_TIPO_CUENTA_DESEMBOLSO
+  """
+  iNT_ID_TIPO_CUENTA_DESEMBOLSO: Int!
 }
 
 input regularExpressionInput {
-    user: String!
+  user: String!
 
-    idBrand: Int!
+  idBrand: Int!
 
-    tenantId: String
+  tenantId: String
 
-    traceIdentifier: String
+  traceIdentifier: String
 }
 
 type CreditMutation {
-    saveCreditFlowStep(saveCreditFlowStepInput: saveCreditFlowStepInput): saveCreditFlowStep
+  saveCreditFlowStep(saveCreditFlowStepInput: saveCreditFlowStepInput): saveCreditFlowStep
+
+  saveCreditApplication(creditApplicationInputType: CreditApplicationInputType): saveCreditApplication
 }
 
 type saveCreditFlowStep {
-    """
-    saveCreditFlowStep MessageInfo
-    """
-    messageInfo: String!
+  """
+  saveCreditFlowStep MessageInfo
+  """
+  messageInfo: String!
 
-    """
-    saveCreditFlowStep Status
-    """
-    status: Int!
+  """
+  saveCreditFlowStep Status
+  """
+  status: Int!
 
-    """
-    saveCreditFlowStep Result
-    """
-    result: String!
+  """
+  saveCreditFlowStep Result
+  """
+  result: String!
 }
 
 input saveCreditFlowStepInput {
-    user: String!
+  user: String!
 
-    idBrand: Int!
+  idBrand: Int!
 
-    tenantId: String
+  tenantId: String
 
-    traceidentifier: String
+  traceidentifier: String
 
-    """
-    saveCreditFlowStepInput infoQuestion
-    """
-    infoQuestion: [questionsDataList]
+  """
+  saveCreditFlowStepInput infoQuestion
+  """
+  infoQuestion: [questionsDataList]
 }
 
 input questionsDataList {
-    idQuestionRequestCredit: Int
+  idQuestionRequestCredit: Int
 
-    idOptionQuestionRequestCredit: Int
+  idOptionQuestionRequestCredit: Int
 
-    idLogUserRequest: Int
+  idLogUserRequest: Int
 
-    idUser: Int
+  idUser: Int
 
-    createUser: String
+  createUser: String
 
-    updateUser: String
+  updateUser: String
 
-    createDate: Date
+  createDate: Date
 
-    updateDate: Date
+  updateDate: Date
 
-    identificator: String
+  identificator: String
 
-    value: String
+  value: String
 
-    active: Boolean
+  active: Boolean
 
-    controlType: String
+  controlType: String
 
-    isCoreCatalogue: Boolean
+  isCoreCatalogue: Boolean
 
-    isBranchOfficeCatalogue: Boolean
+  isBranchOfficeCatalogue: Boolean
 
-    useValue: Boolean
+  useValue: Boolean
 
-    maximumAmount: String
+  maximumAmount: String
 
-    description: String
+  description: String
 
-    valueCatalogue: String
+  valueCatalogue: String
 
-    idIdentificatorCatalogue: String
+  idIdentificatorCatalogue: String
 }
 
 """
@@ -514,7 +508,161 @@ The `Date` scalar type represents a year, month and day in accordance with the [
 """
 scalar Date
 
+type saveCreditApplication {
+  """
+  saveCreditApplication Pk_Suv_Log_Solicitud_Usuario
+  """
+  pk_Suv_Log_Solicitud_Usuario: Int!
+
+  """
+  saveCreditApplication Fk_Suv_Mtr_Usuario
+  """
+  fk_Suv_Mtr_Usuario: Int!
+
+  """
+  saveCreditApplication Usuario_Modificacion
+  """
+  usuario_Modificacion: String!
+
+  """
+  saveCreditApplication Fecha_Modificacion
+  """
+  fecha_Modificacion: DateTime!
+
+  """
+  saveCreditApplication Moneda_Prestamo
+  """
+  moneda_Prestamo: String!
+
+  """
+  saveCreditApplication Moneda_Escenario
+  """
+  moneda_Escenario: String!
+
+  """
+  saveCreditApplication Monto_Solicitado
+  """
+  monto_Solicitado: Decimal!
+
+  """
+  saveCreditApplication Pk_Pse_Cat_Promocion
+  """
+  pk_Pse_Cat_Promocion: Int!
+
+  """
+  saveCreditApplication Id_Producto
+  """
+  id_Producto: Int!
+
+  """
+  saveCreditApplication Plazo
+  """
+  plazo: String!
+
+  """
+  saveCreditApplication Descripcion_Promocion_Plazo
+  """
+  descripcion_Promocion_Plazo: String!
+
+  """
+  saveCreditApplication Tasa
+  """
+  tasa: String!
+
+  """
+  saveCreditApplication Cuota_Total
+  """
+  cuota_Total: String!
+
+  """
+  saveCreditApplication Comision_Desembolso
+  """
+  comision_Desembolso: String!
+
+  """
+  saveCreditApplication Tracto
+  """
+  tracto: Decimal!
+
+  """
+  saveCreditApplication Monto_Disponible
+  """
+  monto_Disponible: Decimal!
+
+  """
+  saveCreditApplication Monto_Minimo_Credito
+  """
+  monto_Minimo_Credito: Decimal!
+
+  """
+  saveCreditApplication Fecha_Pago
+  """
+  fecha_Pago: String!
+
+  """
+  saveCreditApplication Status
+  """
+  status: Int
+
+  """
+  saveCreditApplication Message
+  """
+  message: String
+
+  """
+  saveCreditApplication Detail
+  """
+  detail: String
+}
+
+"""
+The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
+scalar DateTime
+
+input CreditApplicationInputType {
+  idUserRequest: Int!
+
+  pkUser: Int!
+
+  descPromotion: String!
+
+  interestRate: String!
+
+  symbolCurrency: String!
+
+  descCurrency: String!
+
+  selectedAmount: Decimal!
+
+  idProduct: Int!
+
+  idPromotion: Int!
+
+  months: String!
+
+  commisionPercentage: String!
+
+  tractAmount: Decimal!
+
+  minimunAmount: Decimal!
+
+  paymentDate: String!
+
+  paymentAmount: String!
+
+  creditLimit: Decimal!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 schema {
-    query: CreditQuery
-    mutation: CreditMutation
+  query: CreditQuery
+  mutation: CreditMutation
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -197,7 +198,7 @@ fun CustomOutlinedTextField(
         }
     }
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.wrapContentHeight()) {
 
         // Display label is it isn't null
         labelText?.let {
@@ -208,12 +209,13 @@ fun CustomOutlinedTextField(
             )
         }
 
-        val innerModifier = Modifier
+        var innerModifier = Modifier
             .padding(top = 8.dp)
             .fillMaxWidth()
 
+
         if (isTextArea) {
-            modifier.height(84.dp)
+            innerModifier = innerModifier.height(80.dp)
         }
 
         // Display textField
@@ -230,7 +232,7 @@ fun CustomOutlinedTextField(
                     }
                 },
             value = value ?: "",
-            shape = RoundedCornerShape(50),
+            shape = RoundedCornerShape(if (isTextArea) 25 else 50),
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
@@ -300,7 +302,8 @@ fun CustomOutlinedTextField(
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None
                 } else PasswordVisualTransformation(),
-            textStyle = Typography.body2
+            textStyle = Typography.body2,
+            maxLines = if (isTextArea) 2 else 1
         )
 
         // This is required to execute the debounce

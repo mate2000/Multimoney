@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.ONE
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.TWO
 import com.multimoney.multimoney.presentation.ui.home.ZERO
@@ -25,7 +26,10 @@ import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
-fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
+fun CompanyAddressScreen(
+    sharedViewModel: CreditViewModel,
+    viewModel: CompanyAddressViewModel = hiltViewModel()
+) {
 
     val focusManager = LocalFocusManager.current
 
@@ -50,9 +54,10 @@ fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
         }
     }
 
-    Column {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             text = stringResource(id = R.string.credit_company_address_title),
+            modifier = Modifier.padding(top = 16.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
         )
@@ -62,7 +67,7 @@ fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
                 .padding(top = 32.dp),
             items = listOf(),
             value = viewModel.uiState.divisionOne,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneChange(it)) },
+            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
             labelText = divisionOneText,
             placeHolder = stringResource(id = R.string.select)
         )
@@ -72,7 +77,7 @@ fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
                 .padding(top = 16.dp),
             items = listOf(),
             value = viewModel.uiState.divisionTwo,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneChange(it)) },
+            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
             labelText = divisionTwoText,
             placeHolder = stringResource(id = R.string.select)
         )
@@ -82,13 +87,15 @@ fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
                 .padding(top = 16.dp),
             items = listOf(),
             value = viewModel.uiState.divisionThree,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneChange(it)) },
+            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
             labelText = divisionThreeText,
             placeHolder = stringResource(id = R.string.select)
         )
         CustomOutlinedTextField(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(top = 16.dp),
             labelText = stringResource(id = R.string.credit_company_address_accurate_address),
+            value = viewModel.uiState.address,
+            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnAddressValueChange(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done

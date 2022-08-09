@@ -116,6 +116,7 @@ fun GetStepContent(
 ) {
     when (step) {
         CreditStep.One.id -> CreditAmountScreen(sharedViewModel = viewModel)
+        CreditStep.Two.id ->  MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
         else -> MonthlyIncomeScreen(sharedViewModel = viewModel)
     }

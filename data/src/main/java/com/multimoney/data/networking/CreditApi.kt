@@ -4,6 +4,8 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.multimoney.data.networking.credit.apollomodel.CompanyCantonQuery
+import com.multimoney.data.networking.credit.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyProvinceQuery
 import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.credit.apollomodel.PaymentAmountQuery
@@ -32,5 +34,15 @@ class CreditApi @Inject constructor(
     fun queryCompanyProvince(pkUser: String, user: String, idBrand: Int): ApolloCall<CompanyProvinceQuery.Data> =
         apolloClient.query(
             CompanyProvinceQuery(pkUser.toInt(), user, idBrand)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCompanyCanton(pkUser: String, user: String, idBrand: Int): ApolloCall<CompanyCantonQuery.Data> =
+        apolloClient.query(
+            CompanyCantonQuery(pkUser.toInt(), user, idBrand)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCompanyDistrict(pkUser: String, user: String, idBrand: Int): ApolloCall<CompanyDistrictQuery.Data> =
+        apolloClient.query(
+            CompanyDistrictQuery(pkUser.toInt(), user, idBrand)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

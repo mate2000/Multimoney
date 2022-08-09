@@ -1,5 +1,7 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.credit.CompanyCanton
+import com.multimoney.domain.model.credit.CompanyDistrict
 import com.multimoney.domain.model.credit.CompanyProvince
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.PaymentAmount
@@ -26,4 +28,16 @@ interface CreditRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<List<CompanyProvince?>?>>
+
+    suspend fun queryCompanyCanton(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<List<CompanyCanton?>?>>
+
+    suspend fun queryCompanyDistrict(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<List<CompanyDistrict?>?>>
 }

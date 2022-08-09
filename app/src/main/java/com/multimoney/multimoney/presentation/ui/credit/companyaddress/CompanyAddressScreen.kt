@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -54,6 +56,22 @@ fun CompanyAddressScreen(
         }
     }
 
+    LaunchedEffect(true) {
+        viewModel.onUiEvent(
+            CompanyAddressViewModel.UIEvent.OnCallCompanyProvince(
+                "229913",
+                "Diego",
+                Brand.Revamp.id,
+                onLoadingValueChange = { isLoading ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                },
+                onFailureWithDialog = { isLoading, dialogParameters ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnFailureWithDialog(isLoading, dialogParameters))
+                }
+            )
+        )
+    }
+
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             text = stringResource(id = R.string.credit_company_address_title),
@@ -65,8 +83,8 @@ fun CompanyAddressScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp),
-            items = listOf(),
-            value = viewModel.uiState.divisionOne,
+            items = viewModel.uiState.divisionOneList,
+            value = viewModel.uiState.divisionOneSelected,
             onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
             labelText = divisionOneText,
             placeHolder = stringResource(id = R.string.select)
@@ -75,8 +93,8 @@ fun CompanyAddressScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            items = listOf(),
-            value = viewModel.uiState.divisionTwo,
+            items = viewModel.uiState.divisionTwoList,
+            value = viewModel.uiState.divisionTwoSelected,
             onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
             labelText = divisionTwoText,
             placeHolder = stringResource(id = R.string.select)
@@ -86,7 +104,7 @@ fun CompanyAddressScreen(
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             items = listOf(),
-            value = viewModel.uiState.divisionThree,
+            value = viewModel.uiState.divisionThreeSelected,
             onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
             labelText = divisionThreeText,
             placeHolder = stringResource(id = R.string.select)

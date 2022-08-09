@@ -67,7 +67,7 @@ fun JobPlaceScreen(
         }
     }
 
-    LaunchedEffect(true){
+    LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidForm)
     }
 
@@ -85,6 +85,7 @@ fun JobPlaceScreen(
         )
 
         CustomOutlinedTextField(
+            leadingIcon = R.drawable.ic_phone,
             modifier = Modifier.padding(top = 32.dp),
             placeHolder = stringResource(id = R.string.credit_job_workplace_label),
             value = viewModel.uiState.companyName,
@@ -102,6 +103,7 @@ fun JobPlaceScreen(
         )
 
         CustomOutlinedTextField(
+            leadingIcon = R.drawable.ic_calendar,
             modifier = Modifier
                 .padding(top = 32.dp),
             labelText = stringResource(id = R.string.credit_job_joined_date),

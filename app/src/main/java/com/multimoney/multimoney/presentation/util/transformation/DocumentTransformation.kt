@@ -5,7 +5,7 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import java.text.NumberFormat
-import java.util.*
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 fun formatId(): VisualTransformation =

@@ -57,7 +57,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
     }
 
     private fun onNextActionClick(onNextStepAction: () -> Unit) {
-
+        onNextStepAction()
     }
 
     data class UIState(

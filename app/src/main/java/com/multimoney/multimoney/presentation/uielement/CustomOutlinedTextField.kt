@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -79,8 +80,11 @@ import kotlinx.coroutines.launch
  * @param errorMessage: Error message to be displayed.
  * @param enabled: Enable or Disable field.
  * @param isPassword: Enable password behavior.
+ * @param isTextArea: Boolean to enable or disable a textField with a double height with 2 lines to write
  * @param onValueChange: Function to handle input changes.
  * @param onDebounceValidation: Function to handle validations with a debounce of 0.5 seg.
+ * @param onClick: Function to handle onClick events
+ * @param isClickable: Boolean to enable or disable click events
  * **/
 
 @OptIn(
@@ -106,7 +110,9 @@ fun CustomOutlinedTextField(
     isTextArea: Boolean = false,
     onValueChange: (newText: String) -> Unit = {},
     customTransformation: VisualTransformation? = null,
-    onDebounceValidation: (newText: String) -> Unit = {}
+    onDebounceValidation: (newText: String) -> Unit = {},
+    onClick: () -> Unit = {},
+    isClickable: Boolean = false
 ) {
     var emptyError by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -211,6 +217,9 @@ fun CustomOutlinedTextField(
         val innerModifier = Modifier
             .padding(top = 8.dp)
             .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
 
         if (isTextArea) {
             modifier.height(84.dp)
@@ -295,7 +304,7 @@ fun CustomOutlinedTextField(
                 textColor = textColor,
                 cursorColor = textColor
             ),
-            enabled = enabled,
+            enabled = !isClickable && enabled,
             visualTransformation = customTransformation
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None

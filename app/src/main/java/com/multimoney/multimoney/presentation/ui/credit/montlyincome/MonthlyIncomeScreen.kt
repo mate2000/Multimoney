@@ -22,11 +22,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.Companion.ONE
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.Companion.TWO
@@ -45,6 +47,13 @@ fun MonthlyIncomeScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
+            viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnNextActionClick {
+                sharedViewModel.onUIEvent(
+                    CreditViewModel.UIEvent.OnNextStep
+                )
+            })
+        }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id))
         viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnValidForm)
         viewModel.baseEvent.collect { event ->
             when (event) {

@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -59,7 +60,18 @@ fun CompanyAddressScreen(
     }
 
     LaunchedEffect(true) {
-        viewModel.onUiEvent(
+        sharedViewModel.onUIEvent(
+            CreditViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnNextActionClick {
+                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
+                    })
+                },
+                nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id
+            )
+        )
+        viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnFormValid)
+        viewModel.onUIEvent(
             CompanyAddressViewModel.UIEvent.OnCallInitialCatalog(
                 "229913",
                 "Diego",
@@ -92,7 +104,7 @@ fun CompanyAddressScreen(
                 .padding(top = 32.dp),
             items = viewModel.uiState.divisionOneList,
             value = viewModel.uiState.divisionOneSelected,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
+            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
             labelText = divisionOneText,
             placeHolder = stringResource(id = R.string.select)
         )
@@ -102,25 +114,27 @@ fun CompanyAddressScreen(
                 .padding(top = 16.dp),
             items = viewModel.uiState.divisionTwoList,
             value = viewModel.uiState.divisionTwoSelected,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange(it)) },
+            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange(it)) },
             labelText = divisionTwoText,
             placeHolder = stringResource(id = R.string.select)
         )
-        CustomDropdown(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            items = viewModel.uiState.divisionThreeList,
-            value = viewModel.uiState.divisionThreeSelected,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange(it)) },
-            labelText = divisionThreeText,
-            placeHolder = stringResource(id = R.string.select)
-        )
+        if (viewModel.country != TWO) {
+            CustomDropdown(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                items = viewModel.uiState.divisionThreeList,
+                value = viewModel.uiState.divisionThreeSelected,
+                onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange(it)) },
+                labelText = divisionThreeText,
+                placeHolder = stringResource(id = R.string.select)
+            )
+        }
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 16.dp),
             labelText = stringResource(id = R.string.credit_company_address_accurate_address),
             value = viewModel.uiState.address,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnAddressValueChange(it)) },
+            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnAddressValueChange(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done

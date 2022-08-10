@@ -20,6 +20,8 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange
+import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnFormValid
+import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -56,7 +58,7 @@ class CompanyAddressViewModel @Inject constructor(
                 it?.fkCatalog.toString() == uiState.divisionOneSelected?.pkCatalog
             })
         }
-        validateScreen()
+        onValidateScreen()
     }
 
     private fun onDivisionTwoValueChange(divisionTwo: CatalogSubOptions?) {
@@ -68,20 +70,20 @@ class CompanyAddressViewModel @Inject constructor(
                 it?.fkCatalog.toString() == uiState.divisionTwoSelected?.pkCatalog
             })
         }
-        validateScreen()
+        onValidateScreen()
     }
 
     private fun onDivisionThreeValueChange(divisionThree: CatalogSubOptions?) {
         uiState = uiState.copy(divisionThreeSelected = divisionThree)
-        validateScreen()
+        onValidateScreen()
     }
 
     private fun onAddressValueChange(address: String) {
         uiState = uiState.copy(address = address)
-        validateScreen()
+        onValidateScreen()
     }
 
-    private fun validateScreen() {
+    private fun onValidateScreen() {
         emitBaseEvent(
             IsFormCompleted(
                 when (country) {
@@ -205,6 +207,10 @@ class CompanyAddressViewModel @Inject constructor(
         }
     }
 
+    private fun onNextActionClick(nextStepAction: () -> Unit) {
+        nextStepAction()
+    }
+
     data class UIState(
         val divisionOneList: List<CatalogSubOptions?>? = listOf(),
         val divisionTwoList: List<CatalogSubOptions?>? = listOf(),
@@ -216,8 +222,9 @@ class CompanyAddressViewModel @Inject constructor(
         val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error)
     )
 
-    fun onUiEvent(uiEvent: UIEvent) {
+    fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnNextActionClick -> onNextActionClick(uiEvent.nextStepAction)
             is OnDivisionOneValueChange -> onDivisionOneValueChange(uiEvent.divisionOne)
             is OnDivisionTwoValueChange -> onDivisionTwoValueChange(uiEvent.divisionTwo)
             is OnDivisionThreeValueChange -> onDivisionThreeValueChange(uiEvent.divisionThree)
@@ -229,10 +236,12 @@ class CompanyAddressViewModel @Inject constructor(
                 uiEvent.onLoadingValueChange,
                 uiEvent.onFailureWithDialog
             )
+            is OnFormValid -> onValidateScreen()
         }
     }
 
     sealed class UIEvent {
+        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnDivisionOneValueChange(val divisionOne: CatalogSubOptions?) : UIEvent()
         data class OnDivisionTwoValueChange(val divisionTwo: CatalogSubOptions?) : UIEvent()
         data class OnDivisionThreeValueChange(val divisionThree: CatalogSubOptions?) : UIEvent()
@@ -244,6 +253,8 @@ class CompanyAddressViewModel @Inject constructor(
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
+
+        object OnFormValid : UIEvent()
     }
 
     sealed class BaseEvent {

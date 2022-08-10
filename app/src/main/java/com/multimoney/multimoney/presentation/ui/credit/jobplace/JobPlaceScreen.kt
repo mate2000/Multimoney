@@ -57,7 +57,7 @@ fun JobPlaceScreen(
                     CreditViewModel.UIEvent.OnNextStep
                 )
             })
-        }, nextStep = CreditStep.Three.id, previousStep = CreditStep.Two.id))
+        }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Three.id))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormCompleted -> {

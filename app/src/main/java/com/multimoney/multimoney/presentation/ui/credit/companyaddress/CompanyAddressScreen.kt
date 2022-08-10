@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -15,17 +16,25 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.BaseEvent.IsFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.ONE
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.TWO
 import com.multimoney.multimoney.presentation.ui.home.ZERO
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
+fun CompanyAddressScreen(
+    sharedViewModel: CreditViewModel,
+    viewModel: CompanyAddressViewModel = hiltViewModel()
+) {
 
     val focusManager = LocalFocusManager.current
 
@@ -50,9 +59,42 @@ fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
         }
     }
 
-    Column {
+    LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(
+            CreditViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnNextActionClick {
+                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
+                    })
+                },
+                nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id
+            )
+        )
+        viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnFormValid)
+        viewModel.onUIEvent(
+            CompanyAddressViewModel.UIEvent.OnCallInitialCatalog(
+                "229913",
+                "Diego",
+                Brand.Revamp.id,
+                onLoadingValueChange = { isLoading ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                },
+                onFailureWithDialog = { isLoading, dialogParameters ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnFailureWithDialog(isLoading, dialogParameters))
+                }
+            )
+        )
+        viewModel.baseEvent.collectLatest { event ->
+            when (event) {
+                is IsFormCompleted -> sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(event.isCompleted))
+            }
+        }
+    }
+
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
             text = stringResource(id = R.string.credit_company_address_title),
+            modifier = Modifier.padding(top = 16.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
         )
@@ -60,9 +102,9 @@ fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp),
-            items = listOf(),
-            value = viewModel.uiState.divisionOne,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneChange(it)) },
+            items = viewModel.uiState.divisionOneList,
+            value = viewModel.uiState.divisionOneSelected,
+            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
             labelText = divisionOneText,
             placeHolder = stringResource(id = R.string.select)
         )
@@ -70,25 +112,29 @@ fun CompanyAddressScreen(viewModel: CompanyAddressViewModel = hiltViewModel()) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            items = listOf(),
-            value = viewModel.uiState.divisionTwo,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneChange(it)) },
+            items = viewModel.uiState.divisionTwoList,
+            value = viewModel.uiState.divisionTwoSelected,
+            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange(it)) },
             labelText = divisionTwoText,
             placeHolder = stringResource(id = R.string.select)
         )
-        CustomDropdown(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            items = listOf(),
-            value = viewModel.uiState.divisionThree,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneChange(it)) },
-            labelText = divisionThreeText,
-            placeHolder = stringResource(id = R.string.select)
-        )
+        if (viewModel.country != TWO) {
+            CustomDropdown(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                items = viewModel.uiState.divisionThreeList,
+                value = viewModel.uiState.divisionThreeSelected,
+                onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange(it)) },
+                labelText = divisionThreeText,
+                placeHolder = stringResource(id = R.string.select)
+            )
+        }
         CustomOutlinedTextField(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(top = 16.dp),
             labelText = stringResource(id = R.string.credit_company_address_accurate_address),
+            value = viewModel.uiState.address,
+            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnAddressValueChange(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done

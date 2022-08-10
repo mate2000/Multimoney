@@ -2,6 +2,12 @@ package com.multimoney.domain.di
 
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
@@ -95,4 +101,19 @@ class InteractionModule {
     @Singleton
     fun provideQueryPaymentAmountUseCase(creditRepository: CreditRepository): QueryPaymentAmountUseCase =
         QueryPaymentAmountUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryCompanyProvinceUseCase(creditRepository: CreditRepository): QueryCompanyProvinceUseCase =
+        QueryCompanyProvinceUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryCompanyCantonUseCase(creditRepository: CreditRepository): QueryCompanyCantonUseCase =
+        QueryCompanyCantonUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryCompanyDistrictUseCase(creditRepository: CreditRepository): QueryCompanyDistrictUseCase =
+        QueryCompanyDistrictUseCaseImpl(creditRepository)
 }

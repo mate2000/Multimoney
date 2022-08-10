@@ -26,6 +26,10 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.Companion.DATE_FORMAT
+import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.Companion.JOB_DATE_MIN_DAY
+import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.Companion.JOB_DATE_MIN_MONTH
+import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.Companion.JOB_DATE_MIN_YEAR
 import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnCompanyNameValueChange
 import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnDateValueChange
 import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnPhoneNumberValueChange
@@ -45,10 +49,6 @@ fun JobPlaceScreen(
 
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    val dateFormat = "dd-MM-yyyy"
-    val jobDateMinYear = 1972
-    val jobDateMinMonth = 0
-    val jobDateMinDay = 1
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
@@ -85,7 +85,6 @@ fun JobPlaceScreen(
         )
 
         CustomOutlinedTextField(
-            leadingIcon = R.drawable.ic_phone,
             modifier = Modifier.padding(top = 32.dp),
             placeHolder = stringResource(id = R.string.credit_job_workplace_label),
             value = viewModel.uiState.companyName,
@@ -126,7 +125,7 @@ fun JobPlaceScreen(
                                     year,
                                     month,
                                     day,
-                                    dateFormat
+                                    DATE_FORMAT
                                 )
                             )
                         )
@@ -135,7 +134,7 @@ fun JobPlaceScreen(
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
-                calendar.set(jobDateMinYear, jobDateMinMonth, jobDateMinDay)
+                calendar.set(JOB_DATE_MIN_YEAR, JOB_DATE_MIN_MONTH, JOB_DATE_MIN_DAY)
                 datePicker.datePicker.minDate = calendar.timeInMillis
                 datePicker.datePicker.maxDate = Date().time
                 datePicker.show()
@@ -144,12 +143,11 @@ fun JobPlaceScreen(
         )
 
         CustomOutlinedTextField(
+            leadingIcon = R.drawable.ic_phone,
             value = viewModel.uiState.phoneNumber,
             placeHolder = stringResource(id = R.string.credit_job_phone_placeholder),
             onValueChange = { phoneNumber ->
-                if (phoneNumber.length <= 12) {
-                    viewModel.onUIEvent(OnPhoneNumberValueChange(phoneNumber))
-                }
+                viewModel.onUIEvent(OnPhoneNumberValueChange(phoneNumber))
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,

@@ -21,11 +21,13 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.BaseEvent.IsFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.ONE
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.TWO
 import com.multimoney.multimoney.presentation.ui.home.ZERO
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CompanyAddressScreen(
@@ -58,7 +60,7 @@ fun CompanyAddressScreen(
 
     LaunchedEffect(true) {
         viewModel.onUiEvent(
-            CompanyAddressViewModel.UIEvent.OnCallCompanyProvince(
+            CompanyAddressViewModel.UIEvent.OnCallInitialCatalog(
                 "229913",
                 "Diego",
                 Brand.Revamp.id,
@@ -70,6 +72,11 @@ fun CompanyAddressScreen(
                 }
             )
         )
+        viewModel.baseEvent.collectLatest { event ->
+            when (event) {
+                is IsFormCompleted -> sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(event.isCompleted))
+            }
+        }
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -95,7 +102,7 @@ fun CompanyAddressScreen(
                 .padding(top = 16.dp),
             items = viewModel.uiState.divisionTwoList,
             value = viewModel.uiState.divisionTwoSelected,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
+            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange(it)) },
             labelText = divisionTwoText,
             placeHolder = stringResource(id = R.string.select)
         )
@@ -103,9 +110,9 @@ fun CompanyAddressScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            items = listOf(),
+            items = viewModel.uiState.divisionThreeList,
             value = viewModel.uiState.divisionThreeSelected,
-            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
+            onValueChange = { viewModel.onUiEvent(CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange(it)) },
             labelText = divisionThreeText,
             placeHolder = stringResource(id = R.string.select)
         )

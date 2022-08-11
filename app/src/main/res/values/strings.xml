@@ -253,6 +253,17 @@
     <string name="credit_monthly_income_greater_than_zero_error">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label">Selecciona tu profesión</string>
     <string name="credit_monthly_income_profession_hint">Selecciona tu profesión</string>
+
+    <string name="credit_job_title">Contanos de la empresa en la que trabajás</string>
+    <string name="credit_job_workplace_label">Nombre de la empresa</string>
+    <string name="credit_job_workplace_required">Nombre de la empresa requerido</string>
+    <string name="credit_job_date_placeholder">00 | 00 | 0000</string>
+    <string name="credit_job_date_required">Fecha de ingreso requerida</string>
+    <string name="credit_job_joined_date">Fecha en la que ingresaste</string>
+    <string name="credit_job_phone_number">Número de teléfono</string>
+    <string name="credit_job_phone_placeholder">0000 0000</string>
+    <string name="credit_job_phone_required">Número de teléfono requerido</string>
+
     <string-array name="credit_monthly_income_professions">
         <item>Administración</item>
         <item>Construcción</item>

@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -80,6 +81,8 @@ import kotlinx.coroutines.launch
  * @param isPassword: Enable password behavior.
  * @param onValueChange: Function to handle input changes.
  * @param onDebounceValidation: Function to handle validations with a debounce of 0.5 seg.
+ * @param onClick: Function to handle onClick events
+ * @param isClickable: Boolean to enable or disable click events
  * **/
 
 @OptIn(
@@ -104,7 +107,9 @@ fun CustomOutlinedTextField(
     isPassword: Boolean = false,
     onValueChange: (newText: String) -> Unit = {},
     customTransformation: VisualTransformation? = null,
-    onDebounceValidation: (newText: String) -> Unit = {}
+    onDebounceValidation: (newText: String) -> Unit = {},
+    onClick: () -> Unit = {},
+    isClickable: Boolean = false
 ) {
     var emptyError by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -209,7 +214,9 @@ fun CustomOutlinedTextField(
         OutlinedTextField(
             modifier = Modifier
                 .padding(top = 8.dp)
-                .fillMaxWidth()
+                .fillMaxWidth().clickable {
+                    onClick()
+                }
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onFocusChanged {
                     if (it.isFocused) {
@@ -286,7 +293,7 @@ fun CustomOutlinedTextField(
                 textColor = textColor,
                 cursorColor = textColor
             ),
-            enabled = enabled,
+            enabled = !isClickable && enabled,
             visualTransformation = customTransformation
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None

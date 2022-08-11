@@ -6,6 +6,7 @@ import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.credit.apollomodel.PaymentAmountQuery
+import com.multimoney.data.networking.credit.apollomodel.SaveCreditApplicationMutation
 import javax.inject.Inject
 
 class CreditApi @Inject constructor(
@@ -27,4 +28,47 @@ class CreditApi @Inject constructor(
     ): ApolloCall<PaymentAmountQuery.Data> =
         apolloClient.query(PaymentAmountQuery(amount, months, idProduct, currencySymbol, user, idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveCreditApplication(
+        idUserRequest: Int,
+        pkUser: Int,
+        descPromotion: String,
+        interestRate: String,
+        symbolCurrency: String,
+        descCurrency: String,
+        idProduct: Int,
+        idPromotion: Int,
+        months: String,
+        commissionPercentage: String,
+        paymentDate: String,
+        paymentAmount: String,
+        user: String,
+        idBrand: Int,
+        selectedAmount: Double,
+        minimumAmount: Double,
+        creditLimit: Double,
+        tractAmount: Double
+    ): ApolloCall<SaveCreditApplicationMutation.Data> =
+        apolloClient.mutation(
+            SaveCreditApplicationMutation(
+                idUserRequest,
+                pkUser,
+                descPromotion,
+                interestRate,
+                symbolCurrency,
+                descCurrency,
+                idProduct,
+                idPromotion,
+                months,
+                commissionPercentage,
+                paymentDate,
+                paymentAmount,
+                user,
+                idBrand,
+                selectedAmount,
+                minimumAmount,
+                creditLimit,
+                tractAmount
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

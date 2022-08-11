@@ -1,0 +1,28 @@
+mutation SaveCreditApplication($idUserRequest: Int!,$pkUser: Int!,$descPromotion: String!,$interestRate: String!,$symbolCurrency: String!,$descCurrency: String!,$idProduct: Int!,$idPromotion: Int!,$months: String!,$commissionPercentage: String!,$paymentDate: String!, $paymentAmount: String!,$user: String!,$idBrand: Int!,$selectedAmount: Decimal!,$minimumAmount: Decimal!,$creditLimit: Decimal!,$tractAmount: Decimal!){
+    saveCreditApplication(
+        creditApplicationInputType: {
+            idUserRequest: $idUserRequest
+            pkUser: $pkUser
+            descPromotion: $descPromotion
+            interestRate: $interestRate
+            symbolCurrency: $symbolCurrency
+            descCurrency: $descCurrency
+            idProduct: $idProduct
+            idPromotion: $idPromotion
+            months: $months
+            commisionPercentage: $commissionPercentage
+            paymentDate: $paymentDate
+            paymentAmount: $paymentAmount
+            user: $user
+            idBrand: $idBrand
+            selectedAmount: $selectedAmount
+            minimunAmount: $minimumAmount
+            creditLimit: $creditLimit
+            tractAmount: $tractAmount
+        }
+    ) {
+        status
+        message
+        detail
+    }
+}

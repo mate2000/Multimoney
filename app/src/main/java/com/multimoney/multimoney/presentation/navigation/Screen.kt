@@ -4,6 +4,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 
 const val LOGIN_ROUTE = "log_in_route"
 const val HOME_ROUTE = "home_route"
+const val CREDIT_ROUTE = "credit_route"
 const val TEST_ROUTE = "test_route"
 
 /**
@@ -28,8 +29,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // HomeNavGraph Screens
     object HomeScreen : Screen("home_screen")
 
+    // CreditNavGraph Screens
+    object CreditScreen : Screen("credit_screen")
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen")
-    object CreditScreen : Screen("credit_screen")
 }

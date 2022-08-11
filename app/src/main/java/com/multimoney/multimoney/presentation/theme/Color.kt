@@ -91,6 +91,7 @@ val GrayScale800 = Color(0xFF080808)
 val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)
 val WhiteTransparency10 = Color(0xFFFFFFFF).copy(alpha = 0.1f)
 val WhiteTransparency12 = Color(0xFFFFFFFF).copy(alpha = 0.12f)
+val WhiteTransparency16 = Color(0xFFFFFFFF).copy(alpha = 0.16f)
 val WhiteTransparency20 = Color(0xFFFFFFFF).copy(alpha = 0.2f)
 val WhiteTransparency30 = Color(0xFFFFFFFF).copy(alpha = 0.3f)
 val WhiteTransparency40 = Color(0xFFFFFFFF).copy(alpha = 0.4f)
@@ -158,7 +159,7 @@ val DarkColorPalette = MultimoneyColors(
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
-    divider = GrayScale400,
+    divider = WhiteTransparency16,
     circularProgressIndicator = DefaultWhite,
     timerColor = DefaultWhite,
     iconColor = WhiteTransparency90,

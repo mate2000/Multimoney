@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.BlackTransparency10
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
+import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Secondary500
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -32,16 +36,12 @@ import com.smarttoolfactory.slider.SliderBrushColor
  * Parameters:
  * @param modifier: Apply style.
  * @param value: Variable to store the input value.
- * @param placeHolder: Hint for the textField.
- * @param keyboardOptions: Settings for textField input.
- * @param keyboardActions: Actions to take when ime button is click.
- * @param isRequired: Field is required.
- * @param isRequiredMessage: Message to be displayed for required text field
- * @param isError: Display error.
- * @param errorMessage: Error message to be displayed.
- * @param enabled: Enable or Disable field.
- * @param onValueChange: Function to handle input changes.
- * @param onDebounceValidation: Function to handle validations with a debounce of 0.5 seg.
+ * @param valueRangeInitial: Initial value to start slider.
+ * @param valueRangeFinal: Final value to end slider.
+ * @param minimumLabel: Label to be displayed down start.
+ * @param maximumLabel: Label to be displayed down end.
+ * @param onValueChange: Execute on value change.
+ * @param onValueChangeFinished: Execute on value change finished.
  * **/
 
 @OptIn(
@@ -52,23 +52,38 @@ import com.smarttoolfactory.slider.SliderBrushColor
 @Preview
 fun CustomSlider(
     modifier: Modifier = Modifier,
-    value: Float = 0F,
-    valueRange: Float = 100F,
-    minimumLabel: String? = "2,000,000",//null,
-    maximumLabel: String? = "10,000,000",//null,
+    value: Float = 100F,
+    valueRangeInitial: Float = 1f,
+    valueRangeFinal: Float = 1f,
+    minimumLabel: String? = null,
+    maximumLabel: String? = null,
     onValueChange: (value: Float) -> Unit = {},
-    onValueChangeFinished: (value: Float) -> Unit = {}
+    onValueChangeFinished: () -> Unit = {}
 ) {
+
+    // Set colors depending on system theme
+    val textColor: Color
+    val inactiveTrackColor: Color
+
+    if (isSystemInDarkTheme()) {
+        textColor = DefaultWhite
+        inactiveTrackColor = WhiteTransparency10
+    } else {
+        textColor = GrayScale700
+        inactiveTrackColor = BlackTransparency10
+    }
+
     Column(modifier = modifier) {
         ColorfulIconSlider(
             value = value,
             onValueChange = { progressValue, offset ->
                 onValueChange(progressValue)
             },
-            onValueChangeFinished = {},
+            onValueChangeFinished = { onValueChangeFinished() },
+            valueRange = valueRangeInitial..valueRangeFinal,
             trackHeight = 10.dp,
             colors = MaterialSliderDefaults.materialColors(
-                inactiveTrackColor = SliderBrushColor(color = WhiteTransparency10),
+                inactiveTrackColor = SliderBrushColor(color = inactiveTrackColor),
                 activeTrackColor = SliderBrushColor(
                     brush = Brush.linearGradient(
                         colors = listOf(Secondary500, Primary400),
@@ -91,10 +106,10 @@ fun CustomSlider(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             minimumLabel?.let {
-                Text(text = it, color = Color.White, style = Typography.subtitle2)
+                Text(text = it, color = textColor, style = Typography.subtitle2)
             }
             maximumLabel?.let {
-                Text(text = it, color = Color.White, style = Typography.subtitle2)
+                Text(text = it, color = textColor, style = Typography.subtitle2)
             }
         }
     }

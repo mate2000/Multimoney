@@ -2,7 +2,6 @@ package com.multimoney.data.repository
 
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
-import com.multimoney.data.mapper.security.toDomainModel
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.OnfidoToken
@@ -191,9 +190,9 @@ class SecurityRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             if (data.validatePin?.status == null || data.validatePin.status == 0) {
-                Success(data.toDomainModel())
+                Success(data.mapToDomainModel())
             } else {
-                Message(data.toDomainModel())
+                Message(data.mapToDomainModel())
             }
         }
     )

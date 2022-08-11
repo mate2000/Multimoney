@@ -227,7 +227,7 @@ fun SignUpPersonalDataCrScreen(
                 sharedViewModel.userData?.fullName = null
                 Row(modifier = Modifier.padding(top = 12.dp)) {
                     CustomImage(
-                        drawableResource = R.drawable.ic_information,
+                        drawableResource = R.drawable.ic_time,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
                     Text(

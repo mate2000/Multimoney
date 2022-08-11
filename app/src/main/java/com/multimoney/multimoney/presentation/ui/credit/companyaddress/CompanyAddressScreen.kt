@@ -72,7 +72,7 @@ fun CompanyAddressScreen(
         )
         viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnFormValid)
         viewModel.onUIEvent(
-            CompanyAddressViewModel.UIEvent.OnCallInitialCatalog(
+            CompanyAddressViewModel.UIEvent.OnCallCatalogs(
                 PK_USER,
                 USER,
                 Brand.Revamp.id,

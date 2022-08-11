@@ -3,9 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.CreditApi
-import com.multimoney.domain.model.credit.CompanyCanton
-import com.multimoney.domain.model.credit.CompanyDistrict
-import com.multimoney.domain.model.credit.CompanyProvince
+import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -38,37 +36,24 @@ class CreditRepositoryImpl @Inject constructor(
         }
     )
 
-    override suspend fun queryCompanyProvince(
+    override suspend fun queryCompanyAddress(
         pkUser: String,
         user: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<List<CompanyProvince?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyProvince(pkUser, user, idBrand),
+    ): Flow<MultimoneyResult<CompanyAddress?>> = fetchData(
+        apolloCall = creditApi.queryCompanyAddress(pkUser, user, idBrand),
         apolloCallMapper = { data ->
             MultimoneyResult.Success(data.mapToDomainModel())
         }
     )
 
-    override suspend fun queryCompanyCanton(
+    override suspend fun queryCompanyAddressSV(
         pkUser: String,
         user: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<List<CompanyCanton?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyCanton(pkUser, user, idBrand),
-        apolloCallMapper =
-        { data ->
-            MultimoneyResult.Success(data.mapToDomainModel())
-        }
-    )
-
-    override suspend fun queryCompanyDistrict(
-        pkUser: String,
-        user: String,
-        idBrand: Int
-    ): Flow<MultimoneyResult<List<CompanyDistrict?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyDistrict(pkUser, user, idBrand),
-        apolloCallMapper =
-        { data ->
+    ): Flow<MultimoneyResult<CompanyAddress?>> = fetchData(
+        apolloCall = creditApi.queryCompanyAddressSV(pkUser, user, idBrand),
+        apolloCallMapper = { data ->
             MultimoneyResult.Success(data.mapToDomainModel())
         }
     )

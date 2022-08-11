@@ -73,8 +73,8 @@ fun CompanyAddressScreen(
         viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnFormValid)
         viewModel.onUIEvent(
             CompanyAddressViewModel.UIEvent.OnCallInitialCatalog(
-                "229913",
-                "Diego",
+                PK_USER,
+                USER,
                 Brand.Revamp.id,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
@@ -149,3 +149,6 @@ fun CompanyAddressScreen(
         )
     }
 }
+
+const val PK_USER = "229913"
+const val USER = "Diego"

@@ -1,27 +1,11 @@
-package com.multimoney.domain.repository
+package com.multimoney.domain.interaction.credit
 
 import com.multimoney.domain.model.credit.CreditApplication
-import com.multimoney.domain.model.credit.CreditOffer
-import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
-interface CreditRepository {
-    suspend fun queryCreditOffer(
-        pkUser: Int,
-        idBrand: Int
-    ): Flow<MultimoneyResult<CreditOffer?>>
-
-    suspend fun queryPaymentAmount(
-        amount: Int,
-        months: String,
-        idProduct: String,
-        currencySymbol: String,
-        user: String,
-        idBrand: Int
-    ): Flow<MultimoneyResult<PaymentAmount?>>
-
-    suspend fun mutationSaveCreditApplication(
+interface MutationSaveCreditApplicationUseCase {
+    suspend operator fun invoke(
         idUserRequest: Int,
         pkUser: Int,
         descPromotion: String,
@@ -41,5 +25,4 @@ interface CreditRepository {
         creditLimit: Double,
         tractAmount: Double
     ): Flow<MultimoneyResult<CreditApplication?>>
-
 }

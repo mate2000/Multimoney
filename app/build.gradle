@@ -173,7 +173,11 @@ dependencies {
     // Constraint Layout
     implementation constraint_layout.compose
 
+    // Shimmer
     implementation shimmer.shimmer
+
+    // Slider
+    implementation slider.slider
 
     // Common Test
     testImplementation common_test.junit
@@ -191,11 +195,11 @@ dexguard {
     license = "../dexguard-license.txt"
 
     configurations {
-        debug {
-            defaultConfiguration 'dexguard-debug.pro'
-            configuration 'dexguard-project.txt'
-            configuration 'proguard-project.txt'
-        }
+//        debug {
+//            defaultConfiguration 'dexguard-debug.pro'
+//            configuration 'dexguard-project.txt'
+//            configuration 'proguard-project.txt'
+//        }
         staging {
             defaultConfiguration 'dexguard-debug.pro'
             configuration 'dexguard-project.txt'

@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -43,12 +44,14 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.Companion.SLIDER_TOTAL
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.termandcondition.CreditTermAndCondition
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
+import com.multimoney.multimoney.presentation.uielement.CustomSlider
 import com.multimoney.multimoney.presentation.uielement.CustomToggleButton
 import com.multimoney.multimoney.presentation.uielement.Size.Large
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -67,6 +70,7 @@ fun CreditAmountScreen(
 
     viewModel.onUIEvent(
         CreditAmountViewModel.UIEvent.OnInitializeErrorMessages(
+            disbursementProgressFactorErrorMessage = R.string.credit_amount_disbursement_progress_factor_error_message,
             minimumDisbursementErrorMessage = R.string.credit_amount_disbursement_minimum_error_message,
             maximumDisbursementErrorMessage = R.string.credit_amount_disbursement_maximum_error_message
         )
@@ -76,16 +80,38 @@ fun CreditAmountScreen(
         viewModel.executeNavigation(onNavigate = onNavigate)
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(true))
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnNextActionClick {
-                sharedViewModel.onUIEvent(
-                    CreditViewModel.UIEvent.OnNextStep
-                )
-            })
+            // TODO: Send appropriate data for this call because now we don't have this data
+            viewModel.onUIEvent(
+                CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase(
+                    pkUser = 229913,
+                    descPromotion = "",
+                    idPromotion = 1,
+                    user = "ECRURZ",
+                    idBrand = Brand.Revamp.id,
+                    onSuccess = {
+                        sharedViewModel.onUIEvent(
+                            CreditViewModel.UIEvent.OnNextStep
+                        )
+                    },
+                    onLoadingValueChange = { isLoading ->
+                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                    },
+                    onFailureWithDialog = { isLoading, dialogParameter ->
+                        sharedViewModel.onUIEvent(
+                            CreditViewModel.UIEvent.OnFailureWithDialog(
+                                isLoading,
+                                dialogParameter
+                            )
+                        )
+                    })
+            )
         }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id))
 
         viewModel.onUIEvent(
             // TODO: Send appropriate data for this call because now we don't have this data
             CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase(
+                pkUser = 229913,
+                idBrand = Brand.Revamp.id,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                 },
@@ -97,6 +123,11 @@ fun CreditAmountScreen(
 
         viewModel.baseEvent.collect { event ->
             when (event) {
+                is CreditAmountViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    CreditViewModel.UIEvent.OnContinueEnable(
+                        event.isFormValid
+                    )
+                )
                 is OnOpenConditionOfCreditDialog -> sharedViewModel.onUIEvent(
                     CreditViewModel.UIEvent.OnOpenDialogValueChange(
                         event.dialogParameters
@@ -104,6 +135,10 @@ fun CreditAmountScreen(
                 )
             }
         }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnValidateForm)
     }
 
     viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnInitializeText(stringResource(id = R.string.credit_amount_condition_of_credit_modal_description)))
@@ -122,14 +157,17 @@ fun CreditAmountScreen(
                 fontWeight = FontWeight.SemiBold
             )
         )
-        CustomToggleButton(
-            modifier = Modifier
-                .wrapContentSize()
-                .align(Alignment.CenterHorizontally),
-            selectedIndex = viewModel.uiState.currencyIndex,
-            items = viewModel.uiState.currencyItems,
-            onIndexChanged = { index -> viewModel.onUIEvent(OnCurrencyIndexChanged(index)) }
-        )
+        if (viewModel.uiState.isMultipleCurrency) {
+            CustomToggleButton(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .wrapContentSize()
+                    .align(Alignment.CenterHorizontally),
+                selectedIndex = viewModel.uiState.currencyIndex,
+                items = viewModel.uiState.currencyItems,
+                onIndexChanged = { index -> viewModel.onUIEvent(OnCurrencyIndexChanged(index)) }
+            )
+        }
         CurrencyAmountInput(
             value = viewModel.uiState.disbursement,
             placeHolder = stringResource(
@@ -146,21 +184,68 @@ fun CreditAmountScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_amount_disbursement_minimum_error_message),
             isError = viewModel.uiState.disbursementError.first,
-            errorMessage = stringResource(id = viewModel.uiState.disbursementError.second),
+            errorMessage = stringResource(
+                id = viewModel.uiState.disbursementError.second,
+                viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
+                viewModel.uiState.progressFactor
+            ),
             customTransformation = CurrencyIntegerTransformation(
                 viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
                 CURRENCY_SEPARATOR
             ),
             onDebounceValidation = {
                 viewModel.onUIEvent(
-                    CreditAmountViewModel.UIEvent.OnValidateDisbursement(it)
+                    CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished(value = it, user = "ecruzGRAPHQL",
+                        idBrand = Brand.Revamp.id,
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameter ->
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading,
+                                    dialogParameter
+                                )
+                            )
+                        })
                 )
             }
         )
+
+        CustomSlider(
+            modifier = Modifier.padding(16.dp),
+            value = viewModel.uiState.sliderValue,
+            valueRangeInitial = viewModel.uiState.sliderValueRangeInitial,
+            valueRangeFinal = SLIDER_TOTAL.toFloat(),
+            minimumLabel = viewModel.uiState.minimumDisbursementLabel,
+            maximumLabel = viewModel.uiState.maximumDisbursementLabel,
+            onValueChange = {
+                viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnSliderValueChange(it))
+            },
+            onValueChangeFinished = {
+                // TODO: Send appropriate data for this call because now we don't have this data
+                viewModel.onUIEvent(
+                    CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished(
+                        user = "ecruzGRAPHQL",
+                        idBrand = Brand.Revamp.id,
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameter ->
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading,
+                                    dialogParameter
+                                )
+                            )
+                        })
+                )
+            })
+
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
@@ -187,17 +272,17 @@ fun CreditAmountScreen(
         CreditInfo(
             iconId = R.drawable.ic_percentage,
             textId = R.string.credit_amount_interest,
-            value = viewModel.uiState.interest
+            value = viewModel.uiState.regularInterestRateLabel
         )
         CreditInfo(
             iconId = R.drawable.ic_calendar,
             textId = R.string.credit_amount_term,
-            value = stringResource(id = R.string.credit_amount_term_value, viewModel.uiState.term)
+            value = stringResource(id = R.string.credit_amount_term_value, viewModel.uiState.termLabel)
         )
         CreditInfo(
             iconId = R.drawable.ic_percentage,
             textId = R.string.credit_amount_commission_for_disbursement,
-            value = viewModel.uiState.commission
+            value = viewModel.uiState.commissionDisbursementLabel
         )
         Divider(
             modifier = Modifier

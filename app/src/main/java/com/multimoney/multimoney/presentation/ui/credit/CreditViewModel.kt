@@ -162,6 +162,6 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
 
     companion object {
         const val CREDIT_TOTAL_STEPS = 3
-        const val CREDIT_INDICATOR_TOTAL_STEPS = 2
+        const val CREDIT_INDICATOR_TOTAL_STEPS = 3
     }
 }

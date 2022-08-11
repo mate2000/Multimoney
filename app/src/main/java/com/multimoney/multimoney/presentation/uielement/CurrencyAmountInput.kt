@@ -31,11 +31,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
@@ -51,6 +48,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.util.isValidAmountLength
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -82,14 +80,11 @@ import kotlinx.coroutines.launch
     kotlinx.coroutines.ExperimentalCoroutinesApi::class
 )
 @Composable
-@Preview
 fun CurrencyAmountInput(
     modifier: Modifier = Modifier,
     value: String? = null,
     placeHolder: String = "",
-    keyboardOptions: KeyboardOptions = KeyboardOptions(
-        keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
-    ),
+    keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions = KeyboardActions(onNext = {
     }),
     isRequired: Boolean = true,
@@ -189,9 +184,11 @@ fun CurrencyAmountInput(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             onValueChange = {
-                onValueChange(it)
-                textDebounce.value = it
-                if (isRequired) emptyError = it.isEmpty()
+                if (it.isValidAmountLength()) {
+                    onValueChange(it)
+                    textDebounce.value = it
+                    if (isRequired) emptyError = it.isEmpty()
+                }
             },
             placeholder = {
                 Text(

@@ -28,10 +28,17 @@ type CreditQuery {
 
 type creditOffer {
     """
+    creditOffer idUserRequest
+    """
+    idUserRequest: Long
+
+    """
     creditOffer products
     """
     products: [products]
 }
+
+scalar Long
 
 type products {
     """
@@ -60,11 +67,6 @@ type products {
     mAXIMO_DESEMBOLSO: String!
 
     """
-    products PK_PSE_CAT_PROMOCION
-    """
-    pK_PSE_CAT_PROMOCION: String!
-
-    """
     products DESCRIPCION_PROMOCION
     """
     dESCRIPCION_PROMOCION: String!
@@ -78,16 +80,6 @@ type products {
     products PLAZO
     """
     pLAZO: String!
-
-    """
-    products DESCRIPCION_PROMOCION_PLAZO
-    """
-    dESCRIPCION_PROMOCION_PLAZO: String!
-
-    """
-    products DESCRIPCION_PROMOCION_PLAZO_COMPLETA
-    """
-    dESCRIPCION_PROMOCION_PLAZO_COMPLETA: String!
 
     """
     products MONEDA
@@ -435,6 +427,8 @@ input regularExpressionInput {
 
 type CreditMutation {
     saveCreditFlowStep(saveCreditFlowStepInput: saveCreditFlowStepInput): saveCreditFlowStep
+
+    saveCreditApplication(creditApplicationInputType: CreditApplicationInputType): saveCreditApplication
 }
 
 type saveCreditFlowStep {
@@ -513,6 +507,160 @@ input questionsDataList {
 The `Date` scalar type represents a year, month and day in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
 """
 scalar Date
+
+type saveCreditApplication {
+    """
+    saveCreditApplication Pk_Suv_Log_Solicitud_Usuario
+    """
+    pk_Suv_Log_Solicitud_Usuario: Int!
+
+    """
+    saveCreditApplication Fk_Suv_Mtr_Usuario
+    """
+    fk_Suv_Mtr_Usuario: Int!
+
+    """
+    saveCreditApplication Usuario_Modificacion
+    """
+    usuario_Modificacion: String!
+
+    """
+    saveCreditApplication Fecha_Modificacion
+    """
+    fecha_Modificacion: DateTime!
+
+    """
+    saveCreditApplication Moneda_Prestamo
+    """
+    moneda_Prestamo: String!
+
+    """
+    saveCreditApplication Moneda_Escenario
+    """
+    moneda_Escenario: String!
+
+    """
+    saveCreditApplication Monto_Solicitado
+    """
+    monto_Solicitado: Decimal!
+
+    """
+    saveCreditApplication Pk_Pse_Cat_Promocion
+    """
+    pk_Pse_Cat_Promocion: Int!
+
+    """
+    saveCreditApplication Id_Producto
+    """
+    id_Producto: Int!
+
+    """
+    saveCreditApplication Plazo
+    """
+    plazo: String!
+
+    """
+    saveCreditApplication Descripcion_Promocion_Plazo
+    """
+    descripcion_Promocion_Plazo: String!
+
+    """
+    saveCreditApplication Tasa
+    """
+    tasa: String!
+
+    """
+    saveCreditApplication Cuota_Total
+    """
+    cuota_Total: String!
+
+    """
+    saveCreditApplication Comision_Desembolso
+    """
+    comision_Desembolso: String!
+
+    """
+    saveCreditApplication Tracto
+    """
+    tracto: Decimal!
+
+    """
+    saveCreditApplication Monto_Disponible
+    """
+    monto_Disponible: Decimal!
+
+    """
+    saveCreditApplication Monto_Minimo_Credito
+    """
+    monto_Minimo_Credito: Decimal!
+
+    """
+    saveCreditApplication Fecha_Pago
+    """
+    fecha_Pago: String!
+
+    """
+    saveCreditApplication Status
+    """
+    status: Int
+
+    """
+    saveCreditApplication Message
+    """
+    message: String
+
+    """
+    saveCreditApplication Detail
+    """
+    detail: String
+}
+
+"""
+The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
+scalar DateTime
+
+input CreditApplicationInputType {
+    idUserRequest: Int!
+
+    pkUser: Int!
+
+    descPromotion: String!
+
+    interestRate: String!
+
+    symbolCurrency: String!
+
+    descCurrency: String!
+
+    selectedAmount: Decimal!
+
+    idProduct: Int!
+
+    idPromotion: Int!
+
+    months: String!
+
+    commisionPercentage: String!
+
+    tractAmount: Decimal!
+
+    minimunAmount: Decimal!
+
+    paymentDate: String!
+
+    paymentAmount: String!
+
+    creditLimit: Decimal!
+
+    user: String!
+
+    idBrand: Int!
+
+    tenantId: String
+
+    traceIdentifier: String
+}
 
 schema {
     query: CreditQuery

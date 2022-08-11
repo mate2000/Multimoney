@@ -2,7 +2,6 @@ package com.multimoney.multimoney.presentation.util.onfido
 
 import android.content.Context
 import android.content.Intent
-import com.onfido.android.sdk.capture.DocumentType
 import com.onfido.android.sdk.capture.OnfidoConfig
 import com.onfido.android.sdk.capture.OnfidoFactory
 import com.onfido.android.sdk.capture.ui.options.FlowStep

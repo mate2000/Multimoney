@@ -88,8 +88,11 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
     sealed class BaseEvent {
         data class OnFormCompleted(val isFormCompleted: Boolean) : BaseEvent()
     }
+
+    companion object {
+        const val ZERO = 0
+        const val ONE = 1
+        const val TWO = 2
+    }
 }
 
-const val ZERO = 0
-const val ONE = 1
-const val TWO = 2

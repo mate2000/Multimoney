@@ -4,6 +4,8 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.multimoney.data.networking.credit.apollomodel.CompanyAddressQuery
+import com.multimoney.data.networking.credit.apollomodel.CompanyAddressSVQuery
 import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.credit.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.credit.apollomodel.SaveCreditApplicationMutation
@@ -70,5 +72,15 @@ class CreditApi @Inject constructor(
                 creditLimit,
                 tractAmount
             )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCompanyAddress(pkUser: String, user: String, idBrand: Int): ApolloCall<CompanyAddressQuery.Data> =
+        apolloClient.query(
+            CompanyAddressQuery(pkUser.toInt(), user, idBrand)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCompanyAddressSV(pkUser: String, user: String, idBrand: Int): ApolloCall<CompanyAddressSVQuery.Data> =
+        apolloClient.query(
+            CompanyAddressSVQuery(pkUser.toInt(), user, idBrand)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

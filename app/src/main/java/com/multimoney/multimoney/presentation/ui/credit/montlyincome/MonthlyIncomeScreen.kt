@@ -30,6 +30,9 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.Companion.ONE
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.Companion.TWO
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.Companion.ZERO
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField

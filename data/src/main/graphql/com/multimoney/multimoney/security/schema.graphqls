@@ -10,6 +10,10 @@ type SecurityQuery {
   validatePin(validatePinInput: validatePinInput): validatePin
 
   getConfigurationVersion(getConfigurationVersionInput: getConfigurationVersionInput): getConfigurationVersion
+
+  getCountry(getCountryInput: getCountryInput): [getCountry]
+
+  catalogTypeIndentification(catalogTypeIndentificationInput: catalogInput): [catalog]
 }
 
 type dataInformationClient {
@@ -454,72 +458,72 @@ input validatePinInput {
 
 type getConfigurationVersion {
   """
-  validateSecurity PK_SUV_PAR_VERSION
+  getConfigurationVersion PK_SUV_PAR_VERSION
   """
   pK_SUV_PAR_VERSION: Int
 
   """
-  validateSecurity FK_SUV_CAT_MARCA
+  getConfigurationVersion FK_SUV_CAT_MARCA
   """
   fK_SUV_CAT_MARCA: Short
 
   """
-  SendPinProccess USUARIO_CREACION
+  getConfigurationVersion USUARIO_CREACION
   """
   uSUARIO_CREACION: String
 
   """
-  validateSecurity FECHA_CREACION
+  getConfigurationVersion FECHA_CREACION
   """
   fECHA_CREACION: DateTime
 
   """
-  validateSecurity USUARIO_MODIFICACION
+  getConfigurationVersion USUARIO_MODIFICACION
   """
   uSUARIO_MODIFICACION: String
 
   """
-  SendPinProccess FECHA_MODIFICACION
+  getConfigurationVersion FECHA_MODIFICACION
   """
   fECHA_MODIFICACION: DateTime
 
   """
-  validateSecurity PLATFORM
+  getConfigurationVersion PLATFORM
   """
   pLATFORM: String
 
   """
-  validateSecurity APPVERSION
+  getConfigurationVersion APPVERSION
   """
   aPPVERSION: String
 
   """
-  SendPinProccess LLAVE_API_INTERNA
+  getConfigurationVersion LLAVE_API_INTERNA
   """
   lLAVE_API_INTERNA: String
 
   """
-  validateSecurity URL_API
+  getConfigurationVersion URL_API
   """
   uRL_API: String
 
   """
-  validateSecurity ACTIVA
+  getConfigurationVersion ACTIVA
   """
   aCTIVA: Boolean
 
   """
-  validateSecurity configuracionVersion
+  getConfigurationVersion configuracionVersion
   """
   configuracionVersion: configurationVersionObject
 
   """
-  validateSecurity LLAVE_ENCRIPTA
+  getConfigurationVersion LLAVE_ENCRIPTA
   """
   lLAVE_ENCRIPTA: String
 
   """
-  validateSecurity APP_CONFIG_JSON
+  getConfigurationVersion APP_CONFIG_JSON
   """
   aPP_CONFIG_JSON: String
 }
@@ -560,6 +564,130 @@ input getConfigurationVersionInput {
   tenantId: String
 
   traceIdentifier: String
+}
+
+type getCountry {
+  """
+  getCountry idBrand
+  """
+  idBrand: Short
+
+  """
+  getCountry usuarioCreacion
+  """
+  usuarioCreacion: String
+
+  """
+  getCountry fechaCreacion
+  """
+  fechaCreacion: DateTime
+
+  """
+  getCountry usuarioModificacion
+  """
+  usuarioModificacion: String
+
+  """
+  getCountry fechaModificacion
+  """
+  fechaModificacion: DateTime
+
+  """
+  getCountry nombre
+  """
+  nombre: String
+
+  """
+  getCountry prefijoPais
+  """
+  prefijoPais: String
+
+  """
+  getCountry identificacionTiempoZona
+  """
+  identificacionTiempoZona: String
+
+  """
+  getCountry localizacion
+  """
+  localizacion: String
+
+  """
+  getCountry descripcionPais
+  """
+  descripcionPais: String
+}
+
+input getCountryInput {
+  user: String!
+}
+
+type catalog {
+  """
+  catalog Pk_Suv_Cat_Catalogo
+  """
+  pk_Suv_Cat_Catalogo: Short
+
+  """
+  catalog Usuario_Creacion
+  """
+  usuario_Creacion: String
+
+  """
+  catalog Fecha_Creacion
+  """
+  fecha_Creacion: DateTime
+
+  """
+  catalog Usuario_Modificacion
+  """
+  usuario_Modificacion: String
+
+  """
+  catalog Fecha_Modificacion
+  """
+  fecha_Modificacion: DateTime
+
+  """
+  catalog Valor
+  """
+  valor: String
+
+  """
+  catalog Descripcion
+  """
+  descripcion: String
+
+  """
+  catalog Formato
+  """
+  formato: String
+
+  """
+  catalog Requiere_Mantenimiento
+  """
+  requiere_Mantenimiento: Boolean
+
+  """
+  catalog Activo
+  """
+  activo: Boolean
+}
+
+input catalogInput {
+  idBrand: Int!
+
+  user: String!
+
+  llave_Busqueda: String
+
+  tenantId: String
+
+  traceIdentifier: String
+
+  requiere_Mantenimiento: Boolean
+
+  activo: Boolean
 }
 
 type SecurityMutation {
@@ -822,6 +950,16 @@ type SendPinProccess {
   SendPinProccess valor_tiempo_exp_pin
   """
   valor_tiempo_exp_pin: String
+
+  """
+  SendPinProccess tipo_envio
+  """
+  tipo_envio: String
+
+  """
+  SendPinProccess tipo_envio_sig
+  """
+  tipo_envio_sig: String
 
   """
   SendPinProccess Status

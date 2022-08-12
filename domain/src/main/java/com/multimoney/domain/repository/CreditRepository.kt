@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.PaymentAmount
@@ -42,4 +43,15 @@ interface CreditRepository {
         tractAmount: Double
     ): Flow<MultimoneyResult<CreditApplication?>>
 
+    suspend fun queryCompanyAddress(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CompanyAddress?>>
+
+    suspend fun queryCompanyAddressSV(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CompanyAddress?>>
 }

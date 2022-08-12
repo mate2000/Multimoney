@@ -3,6 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.CreditApi
+import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.PaymentAmount
@@ -84,6 +85,27 @@ class CreditRepositoryImpl @Inject constructor(
             } else {
                 Message(data.mapToDomainModel())
             }
+        })
+
+    override suspend fun queryCompanyAddress(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CompanyAddress?>> = fetchData(
+        apolloCall = creditApi.queryCompanyAddress(pkUser, user, idBrand),
+        apolloCallMapper = { data ->
+            MultimoneyResult.Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryCompanyAddressSV(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CompanyAddress?>> = fetchData(
+        apolloCall = creditApi.queryCompanyAddressSV(pkUser, user, idBrand),
+        apolloCallMapper = { data ->
+            MultimoneyResult.Success(data.mapToDomainModel())
         }
     )
 }

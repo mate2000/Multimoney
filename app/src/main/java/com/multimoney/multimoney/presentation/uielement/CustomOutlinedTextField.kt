@@ -6,8 +6,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -79,6 +81,7 @@ import kotlinx.coroutines.launch
  * @param errorMessage: Error message to be displayed.
  * @param enabled: Enable or Disable field.
  * @param isPassword: Enable password behavior.
+ * @param isTextArea: Boolean to enable or disable a textField with a double height with 2 lines to write
  * @param onValueChange: Function to handle input changes.
  * @param onDebounceValidation: Function to handle validations with a debounce of 0.5 seg.
  * @param onClick: Function to handle onClick events
@@ -105,6 +108,7 @@ fun CustomOutlinedTextField(
     errorMessage: String? = null,
     enabled: Boolean = true,
     isPassword: Boolean = false,
+    isTextArea: Boolean = false,
     onValueChange: (newText: String) -> Unit = {},
     customTransformation: VisualTransformation? = null,
     onDebounceValidation: (newText: String) -> Unit = {},
@@ -200,7 +204,7 @@ fun CustomOutlinedTextField(
         }
     }
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.wrapContentHeight()) {
 
         // Display label is it isn't null
         labelText?.let {
@@ -210,13 +214,22 @@ fun CustomOutlinedTextField(
                 style = Typography.body2
             )
         }
+
+        var innerModifier = Modifier
+            .padding(top = 8.dp)
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
+
+
+        if (isTextArea) {
+            innerModifier = innerModifier.height(80.dp)
+        }
+
         // Display textField
         OutlinedTextField(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth().clickable {
-                    onClick()
-                }
+            modifier = innerModifier
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onFocusChanged {
                     if (it.isFocused) {
@@ -228,7 +241,7 @@ fun CustomOutlinedTextField(
                     }
                 },
             value = value ?: "",
-            shape = RoundedCornerShape(50),
+            shape = RoundedCornerShape(if (isTextArea) 25 else 50),
             leadingIcon = leadingIcon?.let {
                 {
                     Icon(
@@ -298,7 +311,8 @@ fun CustomOutlinedTextField(
                 ?: if (passwordVisible || !isPassword) {
                     VisualTransformation.None
                 } else PasswordVisualTransformation(),
-            textStyle = Typography.body2
+            textStyle = Typography.body2,
+            maxLines = if (isTextArea) 2 else 1
         )
 
         // This is required to execute the debounce

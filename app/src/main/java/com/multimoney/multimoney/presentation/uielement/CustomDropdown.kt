@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.multimoney.domain.model.credit.CatalogSubOptions
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
@@ -152,7 +153,8 @@ fun CustomDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .width(with(LocalDensity.current) { textFieldSize.width.toDp() }).background(backgroundColor)
+                .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                .background(backgroundColor)
         ) {
             items.forEach { label ->
                 DropdownMenuItem(onClick = {
@@ -169,4 +171,29 @@ fun CustomDropdown(
             }
         }
     }
+}
+
+@Composable
+fun CustomDropdown(
+    modifier: Modifier,
+    items: List<CatalogSubOptions?>?,
+    value: CatalogSubOptions?,
+    onValueChange: (newText: CatalogSubOptions?) -> Unit = {},
+    labelText: String,
+    placeHolder: String?,
+    isError: Boolean = false,
+    enabled: Boolean = true,
+) {
+    CustomDropdown(
+        modifier = modifier,
+        items = items?.map { it?.description ?: "" } ?: listOf(),
+        value = value?.description ?: "",
+        onValueChange = { valueSelected ->
+            onValueChange(items?.findLast { it?.description == valueSelected })
+        },
+        labelText = labelText,
+        placeHolder = placeHolder,
+        isError = isError,
+        enabled = enabled
+    )
 }

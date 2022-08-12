@@ -1,0 +1,11 @@
+query CatalogTypeIndentification($user:String!, $idBrand:Int!){
+    catalogTypeIndentification(
+        catalogTypeIndentificationInput: {
+            user: $user,
+            idBrand: $idBrand
+        }
+    ) {
+        descripcion,
+        formato
+    }
+}

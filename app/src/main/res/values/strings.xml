@@ -92,6 +92,7 @@
     <string name="sign_up_otp_code_placeholder">0</string>
     <string name="sign_up_otp_code_required">Código de verificación requerido</string>
     <string name="sign_up_otp_code_not_valid">Código de verificación incorrecto</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_dui_sv_not_valid">Número de DUI incorrecto</string>

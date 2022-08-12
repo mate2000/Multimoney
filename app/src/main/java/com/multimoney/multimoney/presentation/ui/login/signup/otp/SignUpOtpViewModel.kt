@@ -57,12 +57,14 @@ class SignUpOtpViewModel @Inject constructor(
 
     // Stateless
     private var linkWhatsapp = ""
+    var userBlockedForMaxAttend = ""
 
     // Events
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
 
-    private fun onStart(linkWhatsapp: String) {
+    private fun onStart(linkWhatsapp: String, userBlockedForMaxAttend: String) {
         this.linkWhatsapp = linkWhatsapp
+        this.userBlockedForMaxAttend = userBlockedForMaxAttend
     }
 
     private fun getOtpFromMessage(message: String) {
@@ -261,7 +263,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnStart -> onStart(event.linkWhatsapp)
+            is OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends)
             is OnNextActionClick -> onNextActionClick(
                 event.pkUser,
                 event.phone,
@@ -293,7 +295,8 @@ class SignUpOtpViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnStart(
-            val linkWhatsapp: String
+            val linkWhatsapp: String,
+            val userBlockedForMaxAttends: String
         ) : UIEvent()
 
         data class OnNextActionClick(

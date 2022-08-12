@@ -86,7 +86,8 @@ fun SignUpOtpScreen(
             stringResource(
                 id = R.string.whatsapp_deep_link,
                 PHONE_HARDCODED
-            )
+            ),
+            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend)
         )
     )
 
@@ -174,8 +175,13 @@ fun SignUpOtpScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            description = it?.messageError?.message ?: "",
-                            isActive = mutableStateOf(true)
+                            description = viewModel.userBlockedForMaxAttend,
+                            isActive = mutableStateOf(true),
+                            positiveText = R.string.contact,
+                            negativeText = R.string.cancel,
+                            negativeAction = {
+                                viewModel.onUIEvent(SignUpOtpViewModel.UIEvent.OnNavigateToSignIn)
+                            }
                         )
                     )
                 )
@@ -184,13 +190,8 @@ fun SignUpOtpScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            description = it.getError().toString(),
-                            isActive = mutableStateOf(true),
-                            positiveText = R.string.contact,
-                            negativeText = R.string.cancel,
-                            negativeAction = {
-                                viewModel.onUIEvent(SignUpOtpViewModel.UIEvent.OnNavigateToSignIn)
-                            }
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
                         )
                     )
                 )

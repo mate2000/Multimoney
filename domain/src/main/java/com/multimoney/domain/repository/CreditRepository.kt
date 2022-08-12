@@ -1,6 +1,7 @@
 package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.credit.CompanyAddress
+import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -20,6 +21,27 @@ interface CreditRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<PaymentAmount?>>
+
+    suspend fun mutationSaveCreditApplication(
+        idUserRequest: Int,
+        pkUser: Int,
+        descPromotion: String,
+        interestRate: String,
+        symbolCurrency: String,
+        descCurrency: String,
+        idProduct: Int,
+        idPromotion: Int,
+        months: String,
+        commissionPercentage: String,
+        paymentDate: String,
+        paymentAmount: String,
+        user: String,
+        idBrand: Int,
+        selectedAmount: Double,
+        minimumAmount: Double,
+        creditLimit: Double,
+        tractAmount: Double
+    ): Flow<MultimoneyResult<CreditApplication?>>
 
     suspend fun queryCompanyAddress(
         pkUser: String,

@@ -1,8 +1,10 @@
 query CreditOffer($pkUser: Int!,$idBrand: Int!){
     creditOffer(creditOfferInput: { pkUser: $pkUser, idBrand: $idBrand }) {
+        idUserRequest
         products {
             iD_PRODUCTO
             lIMITE_CREDITO
+            tRACTO
             mINIMO_DESEMBOLSO
             mAXIMO_DESEMBOLSO
             pLAZO

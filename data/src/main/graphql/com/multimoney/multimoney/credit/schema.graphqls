@@ -27,159 +27,159 @@ type CreditQuery {
 }
 
 type creditOffer {
-  """
-  creditOffer idUserRequest
-  """
-  idUserRequest: Long
+    """
+    creditOffer idUserRequest
+    """
+    idUserRequest: Long
 
-  """
-  creditOffer products
-  """
-  products: [products]
+    """
+    creditOffer products
+    """
+    products: [products]
 }
 
 scalar Long
 
 type products {
-  """
-  products ID_PRODUCTO
-  """
-  iD_PRODUCTO: String!
+    """
+    products ID_PRODUCTO
+    """
+    iD_PRODUCTO: String!
 
-  """
-  products LIMITE_CREDITO
-  """
-  lIMITE_CREDITO: String!
+    """
+    products LIMITE_CREDITO
+    """
+    lIMITE_CREDITO: String!
 
-  """
-  products TRACTO
-  """
-  tRACTO: String!
+    """
+    products TRACTO
+    """
+    tRACTO: String!
 
-  """
-  products MINIMO_DESEMBOLSO
-  """
-  mINIMO_DESEMBOLSO: String!
+    """
+    products MINIMO_DESEMBOLSO
+    """
+    mINIMO_DESEMBOLSO: String!
 
-  """
-  products MAXIMO_DESEMBOLSO
-  """
-  mAXIMO_DESEMBOLSO: String!
+    """
+    products MAXIMO_DESEMBOLSO
+    """
+    mAXIMO_DESEMBOLSO: String!
 
-  """
-  products DESCRIPCION_PROMOCION
-  """
-  dESCRIPCION_PROMOCION: String!
+    """
+    products DESCRIPCION_PROMOCION
+    """
+    dESCRIPCION_PROMOCION: String!
 
-  """
-  products PK_PSE_CAT_PROMOCION_PLAZO
-  """
-  pK_PSE_CAT_PROMOCION_PLAZO: String!
+    """
+    products PK_PSE_CAT_PROMOCION_PLAZO
+    """
+    pK_PSE_CAT_PROMOCION_PLAZO: String!
 
-  """
-  products PLAZO
-  """
-  pLAZO: String!
+    """
+    products PLAZO
+    """
+    pLAZO: String!
 
-  """
-  products MONEDA
-  """
-  mONEDA: String!
+    """
+    products MONEDA
+    """
+    mONEDA: String!
 
-  """
-  products ES_PROMOCIONAL
-  """
-  eS_PROMOCIONAL: String!
+    """
+    products ES_PROMOCIONAL
+    """
+    eS_PROMOCIONAL: String!
 
-  """
-  products CICLO
-  """
-  cICLO: String!
+    """
+    products CICLO
+    """
+    cICLO: String!
 
-  """
-  products TASA_INTERES_NORMAL
-  """
-  tASA_INTERES_NORMAL: String!
+    """
+    products TASA_INTERES_NORMAL
+    """
+    tASA_INTERES_NORMAL: String!
 
-  """
-  products STR_TASA_INTERES_NORMAL
-  """
-  sTR_TASA_INTERES_NORMAL: String!
+    """
+    products STR_TASA_INTERES_NORMAL
+    """
+    sTR_TASA_INTERES_NORMAL: String!
 
-  """
-  products CUOTA
-  """
-  cUOTA: String!
+    """
+    products CUOTA
+    """
+    cUOTA: String!
 
-  """
-  products CUOTA_AUTORIZA
-  """
-  cUOTA_AUTORIZA: String!
+    """
+    products CUOTA_AUTORIZA
+    """
+    cUOTA_AUTORIZA: String!
 
-  """
-  products COMISION_DESEMBOLSO
-  """
-  cOMISION_DESEMBOLSO: String!
+    """
+    products COMISION_DESEMBOLSO
+    """
+    cOMISION_DESEMBOLSO: String!
 
-  """
-  products STR_COMISION_DESEMBOLSO
-  """
-  sTR_COMISION_DESEMBOLSO: String!
+    """
+    products STR_COMISION_DESEMBOLSO
+    """
+    sTR_COMISION_DESEMBOLSO: String!
 
-  """
-  products FECHA_PAGO
-  """
-  fECHA_PAGO: String!
+    """
+    products FECHA_PAGO
+    """
+    fECHA_PAGO: String!
 
-  """
-  products NOMBRE_MONEDA
-  """
-  nOMBRE_MONEDA: String!
+    """
+    products NOMBRE_MONEDA
+    """
+    nOMBRE_MONEDA: String!
 
-  """
-  products STR_MINIMO_DESEMBOLSO
-  """
-  sTR_MINIMO_DESEMBOLSO: String!
+    """
+    products STR_MINIMO_DESEMBOLSO
+    """
+    sTR_MINIMO_DESEMBOLSO: String!
 
-  """
-  products STR_MAXIMO_DESEMBOLSO
-  """
-  sTR_MAXIMO_DESEMBOLSO: String!
+    """
+    products STR_MAXIMO_DESEMBOLSO
+    """
+    sTR_MAXIMO_DESEMBOLSO: String!
 
-  """
-  products CUOTA_ORIGINAL
-  """
-  cUOTA_ORIGINAL: String!
+    """
+    products CUOTA_ORIGINAL
+    """
+    cUOTA_ORIGINAL: String!
 
-  """
-  products Mensaje_Plazo
-  """
-  mensaje_Plazo: String!
+    """
+    products Mensaje_Plazo
+    """
+    mensaje_Plazo: String!
 
-  """
-  products Mensaje_Condiciones
-  """
-  mensaje_Condiciones: String!
+    """
+    products Mensaje_Condiciones
+    """
+    mensaje_Condiciones: String!
 
-  """
-  products Nombre_Usuario
-  """
-  nombre_Usuario: String!
+    """
+    products Nombre_Usuario
+    """
+    nombre_Usuario: String!
 
-  """
-  products Cuota_Real
-  """
-  cuota_Real: Decimal!
+    """
+    products Cuota_Real
+    """
+    cuota_Real: Decimal!
 
-  """
-  products PLAZO_NUMERICO
-  """
-  pLAZO_NUMERICO: Int!
+    """
+    products PLAZO_NUMERICO
+    """
+    pLAZO_NUMERICO: Int!
 
-  """
-  products BIT_REQUIERE_FORMALIZACION
-  """
-  bIT_REQUIERE_FORMALIZACION: String
+    """
+    products BIT_REQUIERE_FORMALIZACION
+    """
+    bIT_REQUIERE_FORMALIZACION: String
 }
 
 scalar Decimal
@@ -426,9 +426,9 @@ input regularExpressionInput {
 }
 
 type CreditMutation {
-  saveCreditFlowStep(saveCreditFlowStepInput: saveCreditFlowStepInput): saveCreditFlowStep
+    saveCreditFlowStep(saveCreditFlowStepInput: saveCreditFlowStepInput): saveCreditFlowStep
 
-  saveCreditApplication(creditApplicationInputType: CreditApplicationInputType): saveCreditApplication
+    saveCreditApplication(creditApplicationInputType: CreditApplicationInputType): saveCreditApplication
 }
 
 type saveCreditFlowStep {
@@ -509,110 +509,111 @@ The `Date` scalar type represents a year, month and day in accordance with the [
 scalar Date
 
 type saveCreditApplication {
-  """
-  saveCreditApplication Pk_Suv_Log_Solicitud_Usuario
-  """
-  pk_Suv_Log_Solicitud_Usuario: Int!
+    """
+    saveCreditApplication Pk_Suv_Log_Solicitud_Usuario
+    """
+    pk_Suv_Log_Solicitud_Usuario: Int!
 
-  """
-  saveCreditApplication Fk_Suv_Mtr_Usuario
-  """
-  fk_Suv_Mtr_Usuario: Int!
+    """
+    saveCreditApplication Fk_Suv_Mtr_Usuario
+    """
+    fk_Suv_Mtr_Usuario: Int!
 
-  """
-  saveCreditApplication Usuario_Modificacion
-  """
-  usuario_Modificacion: String!
+    """
+    saveCreditApplication Usuario_Modificacion
+    """
+    usuario_Modificacion: String!
 
-  """
-  saveCreditApplication Fecha_Modificacion
-  """
-  fecha_Modificacion: DateTime!
+    """
+    saveCreditApplication Fecha_Modificacion
+    """
+    fecha_Modificacion: DateTime!
 
-  """
-  saveCreditApplication Moneda_Prestamo
-  """
-  moneda_Prestamo: String!
+    """
+    saveCreditApplication Moneda_Prestamo
+    """
+    moneda_Prestamo: String!
 
-  """
-  saveCreditApplication Moneda_Escenario
-  """
-  moneda_Escenario: String!
+    """
+    saveCreditApplication Moneda_Escenario
+    """
+    moneda_Escenario: String!
 
-  """
-  saveCreditApplication Monto_Solicitado
-  """
-  monto_Solicitado: Decimal!
+    """
+    saveCreditApplication Monto_Solicitado
+    """
+    monto_Solicitado: Decimal!
 
-  """
-  saveCreditApplication Pk_Pse_Cat_Promocion
-  """
-  pk_Pse_Cat_Promocion: Int!
+    """
+    saveCreditApplication Pk_Pse_Cat_Promocion
+    """
+    pk_Pse_Cat_Promocion: Int!
 
-  """
-  saveCreditApplication Id_Producto
-  """
-  id_Producto: Int!
+    """
+    saveCreditApplication Id_Producto
+    """
+    id_Producto: Int!
 
-  """
-  saveCreditApplication Plazo
-  """
-  plazo: String!
+    """
+    saveCreditApplication Plazo
+    """
+    plazo: String!
 
-  """
-  saveCreditApplication Descripcion_Promocion_Plazo
-  """
-  descripcion_Promocion_Plazo: String!
+    """
+    saveCreditApplication Descripcion_Promocion_Plazo
+    """
+    descripcion_Promocion_Plazo: String!
 
-  """
-  saveCreditApplication Tasa
-  """
-  tasa: String!
+    """
+    saveCreditApplication Tasa
+    """
+    tasa: String!
 
-  """
-  saveCreditApplication Cuota_Total
-  """
-  cuota_Total: String!
+    """
+    saveCreditApplication Cuota_Total
+    """
+    cuota_Total: String!
 
-  """
-  saveCreditApplication Comision_Desembolso
-  """
-  comision_Desembolso: String!
+    """
+    saveCreditApplication Comision_Desembolso
+    """
+    comision_Desembolso: String!
 
-  """
-  saveCreditApplication Tracto
-  """
-  tracto: Decimal!
+    """
+    saveCreditApplication Tracto
+    """
+    tracto: Decimal!
 
-  """
-  saveCreditApplication Monto_Disponible
-  """
-  monto_Disponible: Decimal!
+    """
+    saveCreditApplication Monto_Disponible
+    """
+    monto_Disponible: Decimal!
 
-  """
-  saveCreditApplication Monto_Minimo_Credito
-  """
-  monto_Minimo_Credito: Decimal!
+    """
+    saveCreditApplication Monto_Minimo_Credito
+    """
+    monto_Minimo_Credito: Decimal!
 
-  """
-  saveCreditApplication Fecha_Pago
-  """
-  fecha_Pago: String!
+    """
+    saveCreditApplication Fecha_Pago
+    """
+    fecha_Pago: String!
 
-  """
-  saveCreditApplication Status
-  """
-  status: Int
+    """
+    saveCreditApplication Status
+    """
+    status: Int
 
-  """
-  saveCreditApplication Message
-  """
-  message: String
+    """
+    saveCreditApplication Message
+    """
+    message: String
 
-  """
-  saveCreditApplication Detail
-  """
-  detail: String
+    """
+    saveCreditApplication Detail
+    """
+    detail: String
+
 }
 
 """
@@ -621,45 +622,45 @@ The `DateTime` scalar type represents a date and time. `DateTime` expects timest
 scalar DateTime
 
 input CreditApplicationInputType {
-  idUserRequest: Int!
+    idUserRequest: Int!
 
-  pkUser: Int!
+    pkUser: Int!
 
-  descPromotion: String!
+    descPromotion: String!
 
-  interestRate: String!
+    interestRate: String!
 
-  symbolCurrency: String!
+    symbolCurrency: String!
 
-  descCurrency: String!
+    descCurrency: String!
 
-  selectedAmount: Decimal!
+    selectedAmount: Decimal!
 
-  idProduct: Int!
+    idProduct: Int!
 
-  idPromotion: Int!
+    idPromotion: Int!
 
-  months: String!
+    months: String!
 
-  commisionPercentage: String!
+    commisionPercentage: String!
 
-  tractAmount: Decimal!
+    tractAmount: Decimal!
 
-  minimunAmount: Decimal!
+    minimunAmount: Decimal!
 
-  paymentDate: String!
+    paymentDate: String!
 
-  paymentAmount: String!
+    paymentAmount: String!
 
-  creditLimit: Decimal!
+    creditLimit: Decimal!
 
-  user: String!
+    user: String!
 
-  idBrand: Int!
+    idBrand: Int!
 
-  tenantId: String
+    tenantId: String
 
-  traceIdentifier: String
+    traceIdentifier: String
 }
 
 schema {

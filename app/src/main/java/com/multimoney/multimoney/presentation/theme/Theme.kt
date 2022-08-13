@@ -11,7 +11,6 @@ fun MultimoneyTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
 
     val systemUIController = rememberSystemUiController()
 
-
     val colors = if (darkTheme) {
         systemUIController.setStatusBarColor(GrayScale800, false)
         DarkColorPalette

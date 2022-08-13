@@ -174,7 +174,11 @@ dependencies {
     // Constraint Layout
     implementation constraint_layout.compose
 
+    // Shimmer
     implementation shimmer.shimmer
+
+    // Slider
+    implementation slider.slider
 
     // Common Test
     testImplementation common_test.junit

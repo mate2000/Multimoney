@@ -39,10 +39,10 @@ class NetworkingModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(logging)
-            .sslSocketFactory(
-                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-                certificateUtil.getX509TrustManager()
-            )
+//            .sslSocketFactory(
+//                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+//                certificateUtil.getX509TrustManager()
+//            )
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -83,7 +83,7 @@ class NetworkingModule {
         CreditApi(apolloClient(context, SCHEMA_CREDIT, certificateUtil))
 
     companion object {
-        const val TIMEOUT = 30L
+        const val TIMEOUT = 120L
         const val APOLLO_PREFIX_DB = "multimoney_apollo_"
         const val APOLLO_SUFFIX_DB = "_db"
         const val SCHEMA_SECURITY = "security"

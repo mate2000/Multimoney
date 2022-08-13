@@ -172,7 +172,8 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
             modifier = Modifier.padding(top = 12.dp),
             shape = RoundedCornerShape(12.dp),
             background = BlackTransparency20,
-            startIcon = R.drawable.ic_warning
+            startIcon = R.drawable.ic_time,
+            startIconTint = MultimoneyTheme.colors.iconColor
         )
         Text(
             text = stringResource(id = title),

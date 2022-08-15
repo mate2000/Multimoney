@@ -207,8 +207,13 @@
     <string name="dialog_failure_biometric_positive_text">Activar más tarde</string>
 
     <!-- Home -->
-    <!-- Product -->
     <string name="home_my_products">Mis Productos</string>
+    <string name="home_active_credit_card_label">Activa tu tarjeta digital</string>
+    <string name="home_on_fido_pending_title">Necesitamos validar tu identidad</string>
+    <string name="home_on_fido_pending_description">Sigue el proceso de validación de tu identidad para obtener tu crédito.</string>
+    <string name="home_on_fido_pending_action_text">Validar identidad</string>
+
+    <!-- Home Product -->
     <string name="home_product_not_approved_title">Gana ahorrando smart</string>
     <string name="home_product_not_approved_description">La mejor tasa del 3.5\%; anual sin restricciones</string>
     <string name="home_product_not_approved_action">Activar cuenta Smart</string>
@@ -218,9 +223,8 @@
     <string name="home_product_process_action">Validar identificación</string>
     <string name="home_product_process_accept_contract_title">Ya casi tenés tu crédito</string>
     <string name="home_product_process_accept_contract_description">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
-    <string name="home_active_credit_card_label">Activa tu tarjeta digital</string>
 
-    <!-- Credit -->
+    <!-- Credit Close Dialog-->
     <string name="credit_close_dialog_title">¿Estás seguro que quieres salir?</string>
     <string name="credit_close_dialog_description">Podrás retomar el registro cuando quieras</string>
     <string name="credit_close_dialog_positive_button_text">Salir</string>
@@ -254,7 +258,14 @@
     <string name="credit_monthly_income_greater_than_zero_error">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label">Selecciona tu profesión</string>
     <string name="credit_monthly_income_profession_hint">Selecciona tu profesión</string>
+    <string-array name="credit_monthly_income_professions">
+        <item>Administración</item>
+        <item>Construcción</item>
+        <item>Seguridad</item>
+        <item>Informatica</item>
+    </string-array>
 
+    <!-- Credit Job-->
     <string name="credit_job_title">Contanos de la empresa en la que trabajás</string>
     <string name="credit_job_workplace_label">Nombre de la empresa</string>
     <string name="credit_job_workplace_required">Nombre de la empresa requerido</string>
@@ -265,6 +276,7 @@
     <string name="credit_job_phone_placeholder">0000 0000</string>
     <string name="credit_job_phone_required">Número de teléfono requerido</string>
 
+    <!-- Credit Company-->
     <string name="credit_company_address_title">¿Dónde se encuentra la empresa?</string>
     <string name="credit_company_address_province">Provincia</string>
     <string name="credit_company_address_canton">Cantón</string>
@@ -274,12 +286,5 @@
     <string name="credit_company_address_zone">Zona</string>
     <string name="credit_company_address_accurate_address">Dirección exacta</string>
     <string name="credit_company_address_accurate_address_error">Dirección exacta requerida</string>
-
-    <string-array name="credit_monthly_income_professions">
-        <item>Administración</item>
-        <item>Construcción</item>
-        <item>Seguridad</item>
-        <item>Informatica</item>
-    </string-array>
 
 </resources>

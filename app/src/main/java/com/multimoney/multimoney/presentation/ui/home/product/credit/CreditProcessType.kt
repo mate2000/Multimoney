@@ -8,4 +8,5 @@ enum class CreditProcessType(val type: String) {
     CREDIT_PROCESS_SIGNATURE_REFUSE_FIRST_TIME("credit_process_signature_refuse_first_time"),
     CREDIT_PROCESS_SIGNATURE_REFUSE_SECOND_TIME("credit_accept_contract_refuse_second_time"),
     CREDIT_PROCESS_CREATE_ACCOUNT_FAILURE("credit_process_create_account_failure"),
+    CREDIT_PROCESS_ON_FIDO_INCOMPLETE("credit_process_on_fido_incomplete"),
 }

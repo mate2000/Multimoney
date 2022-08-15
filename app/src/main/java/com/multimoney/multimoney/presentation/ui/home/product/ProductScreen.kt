@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -125,29 +124,24 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
                 )
             }
             Row {
-                IconButton(
-                    onClick = {
-                        // todo action
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification),
-                        contentDescription = "",
-                        tint = MultimoneyTheme.colors.iconColor
-                    )
-                }
-                IconButton(
-                    onClick = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_notification),
+                    modifier = Modifier.clickable {
                         // todo action
                     },
-                    modifier = Modifier.padding(end = 2.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification),
-                        contentDescription = "",
-                        tint = MultimoneyTheme.colors.iconColor
-                    )
-                }
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.iconColor
+                )
+                Icon(
+                    painter = painterResource(R.drawable.ic_profile),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 2.dp)
+                        .clickable {
+                            // todo action
+                        },
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.iconColor
+                )
             }
         }
         LazyRow(

@@ -282,4 +282,9 @@
         <item>Informatica</item>
     </string-array>
 
+    <!-- Generate Document -->
+    <string name="generate_document_title">Estamos generando tus documentos</string>
+    <string name="generate_document_subtitle">Al firmar tu solicitud podrás utilizar tu crédito</string>
+    <string name="generate_document_info">Generando documentos…</string>
+
 </resources>

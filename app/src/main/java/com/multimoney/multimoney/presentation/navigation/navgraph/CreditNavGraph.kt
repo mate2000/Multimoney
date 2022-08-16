@@ -7,6 +7,10 @@ import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.CreditScreen
+import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DocumentGenerationScreen
+import com.multimoney.multimoney.presentation.ui.credit.signdocuement.SignDocumentScreen
+
+const val SIGN_DOCUMENT_LINK = "sign_document_link"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -18,6 +22,25 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 onNavigate = {
                     navController.navigate(it.route)
                 },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(route = Screen.DocumentGenerationScreen.route) {
+            DocumentGenerationScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(route = Screen.SignDocumentScreen.route) { navBackStackEntry ->
+            SignDocumentScreen(
+                navBackStackEntry = navBackStackEntry,
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

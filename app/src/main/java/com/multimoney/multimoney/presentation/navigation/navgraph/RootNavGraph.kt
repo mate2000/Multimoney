@@ -14,6 +14,7 @@ fun Navigation() {
     ) {
         loginNavGraph(navController = navController)
         homeNavGraph(navController = navController)
+        creditNavGraph(navController = navController)
         testNavGraph(navController = navController)
     }
 }

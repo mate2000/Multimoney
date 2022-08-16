@@ -169,11 +169,16 @@ dependencies {
     implementation accompanist.flowlayout
     implementation accompanist.pager
     implementation accompanist.pager_indicator
+    implementation accompanist.system_ui_controller
 
     // Constraint Layout
     implementation constraint_layout.compose
 
+    // Shimmer
     implementation shimmer.shimmer
+
+    // Slider
+    implementation slider.slider
 
     // Common Test
     testImplementation common_test.junit

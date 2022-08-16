@@ -246,13 +246,13 @@ ext {
     ]
 
     // Accompanist
-    accompanist_version = "0.24.13-rc"
-    accompanist_pagger_indicator = "0.24.11-rc"
+    accompanist_version = "0.25.1"
 
     accompanist = [
             flowlayout     : "com.google.accompanist:accompanist-flowlayout:$accompanist_version",
             pager          : "com.google.accompanist:accompanist-pager:$accompanist_version",
-            pager_indicator: "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
+            pager_indicator: "com.google.accompanist:accompanist-pager-indicators:$accompanist_version",
+            system_ui_controller : "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     ]
 
     // DexGuard
@@ -267,6 +267,12 @@ ext {
     shimmer_version = "1.0.3"
     shimmer = [
             shimmer: "com.valentinilk.shimmer:compose-shimmer:$shimmer_version"
+    ]
+
+    // Slider
+    slider_version = "1.0.2"
+    slider = [
+            slider: "com.github.SmartToolFactory:Compose-Colorful-Sliders:$slider_version"
     ]
 
     // Common Test

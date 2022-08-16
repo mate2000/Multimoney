@@ -106,8 +106,7 @@ fun CustomCheckBox(
                 ClickableText(
                     text = AnnotatedString(text),
                     modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 11.dp),
+                        .align(Alignment.CenterVertically),
                     style = Typography.subtitle2.copy(
                         color = textColor
                     ),

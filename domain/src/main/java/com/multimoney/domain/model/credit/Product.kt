@@ -3,6 +3,7 @@ package com.multimoney.domain.model.credit
 data class Product(
     val id: String,
     val creditLimit: String,
+    val progressFactor: Double,
     val minimumDisbursement: String,
     val minimumDisbursementLabel: String,
     val maximumDisbursement: String,

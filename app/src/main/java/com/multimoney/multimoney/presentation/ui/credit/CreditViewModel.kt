@@ -97,7 +97,10 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
                 isCloseVisible = previousStep > CreditStep.One.id
             )
         } else {
-            // todo move to home
+            popAndNavigateTo(
+                route = Screen.HomeScreen.route,
+                popTo = Screen.CreditScreen.route
+            )
         }
     }
 

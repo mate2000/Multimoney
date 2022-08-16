@@ -38,7 +38,7 @@ class HomeViewModel @Inject constructor(
     private fun callQueryBalanceUseCase(
         user: String = "ecruzGrapqhql",
         identification: String = "303190775",
-        idBrand: Int = Brand.Revamp.id,
+        idBrand: Int,
         idClient: String = "192656",
         idLoanClient: Int = 223034
     ) {
@@ -99,7 +99,7 @@ class HomeViewModel @Inject constructor(
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
         uiState = uiState.copy(userStatus = userStatus)
         // TODO: Send parameters to balance from userStatus
-        callQueryBalanceUseCase()
+        callQueryBalanceUseCase(idBrand = userStatus.infoUser?.idBrand ?: 0)
     }
 
     private fun onFailure(error: HttpError) {

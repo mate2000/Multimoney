@@ -117,7 +117,7 @@ fun SignUpOtpScreen(
                     userData?.phoneNumber ?: "",
                     SEND_METHOD_PHONE,
                     userData?.pkUser ?: "",
-                    Brand.Revamp.id,
+                    userData?.idBrand ?: 0,
                     userData?.email ?: ""
                 )
             )
@@ -127,6 +127,7 @@ fun SignUpOtpScreen(
                         viewModel.onUIEvent(
                             SignUpOtpViewModel.UIEvent.OnNextActionClick(
                                 pkUser = userData?.pkUser,
+                                idBrand = userData?.idBrand,
                                 phone = userData?.phoneNumber,
                                 name = userData?.firstName,
                                 onUseDataValueChange = {
@@ -143,12 +144,23 @@ fun SignUpOtpScreen(
                                 onCallMutationUpdateUserRegisterUseCase = {
                                     onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
                                 },
-                                onPhoneVerifiedChanged = { onUIEvent(SignUpViewModel.UIEvent.OnPhoneVerifiedChanged(true)) },
+                                onPhoneVerifiedChanged = {
+                                    onUIEvent(
+                                        SignUpViewModel.UIEvent.OnPhoneVerifiedChanged(
+                                            true
+                                        )
+                                    )
+                                },
                                 onLoadingValueChange = { isLoading ->
                                     onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
                                 },
                                 onFailureWithDialog = { isLoading, dialogParameter ->
-                                    onUIEvent(SignUpViewModel.UIEvent.OnFailureWithDialog(isLoading, dialogParameter))
+                                    onUIEvent(
+                                        SignUpViewModel.UIEvent.OnFailureWithDialog(
+                                            isLoading,
+                                            dialogParameter
+                                        )
+                                    )
                                 }
                             )
                         )
@@ -314,7 +326,7 @@ fun SignUpOtpScreen(
                                 userData?.phoneNumber ?: "",
                                 SEND_METHOD_PHONE,
                                 userData?.pkUser ?: "",
-                                Brand.Revamp.id,
+                                userData?.idBrand ?: 0,
                                 userData?.email ?: ""
                             )
                         )

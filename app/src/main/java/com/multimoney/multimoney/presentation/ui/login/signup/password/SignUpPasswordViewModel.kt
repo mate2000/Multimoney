@@ -182,6 +182,7 @@ class SignUpPasswordViewModel @Inject constructor(
         identification: String,
         pkUser: String,
         status: String,
+        idBrand: Int,
         onSuccess: () -> Unit,
         onFailureWithDialog: (DialogParameters) -> Unit
     ) {
@@ -193,7 +194,7 @@ class SignUpPasswordViewModel @Inject constructor(
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_IDENTIFICATION) to identification,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_PK_USER) to pkUser,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_STATUS) to status,
-            AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to Brand.Revamp.id.toString()
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to idBrand.toString()
         )
         val options = AuthSignUpOptions.builder()
             .userAttributes(attrs.map { AuthUserAttribute(it.key, it.value) })
@@ -355,6 +356,7 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.identification,
                 uiEvent.pkUser,
                 uiEvent.status,
+                uiEvent.idBrand,
                 uiEvent.onSuccess,
                 uiEvent.onFailureWithDialog
             )
@@ -391,6 +393,7 @@ class SignUpPasswordViewModel @Inject constructor(
             val identification: String,
             val pkUser: String,
             val status: String,
+            val idBrand: Int,
             val onSuccess: () -> Unit,
             val onFailureWithDialog: (DialogParameters) -> Unit
         ) : UIEvent()

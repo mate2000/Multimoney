@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.credit.creditamount
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -127,6 +126,7 @@ class CreditAmountViewModel @Inject constructor(
     ) = executeUseCase {
         queryCreditOfferUseCase.invoke(pkUser = pkUser, idBrand = idBrand).collectLatest { result ->
             result.onSuccess { creditOffer ->
+                idUserRequest = creditOffer?.idUserRequest ?: 0
                 products = creditOffer?.products
                 currencyItems = products?.map { it?.currency ?: "" }
                 onExecuteTimer()
@@ -259,7 +259,6 @@ class CreditAmountViewModel @Inject constructor(
             this@CreditAmountViewModel.minimumDisbursement = minimumDisbursement.toFloat()
             this@CreditAmountViewModel.maximumDisbursement = maximumDisbursement.toFloat()
             this@CreditAmountViewModel.fee = fee
-            this@CreditAmountViewModel.idUserRequest = idUserRequest
             sliderFactor = getSliderFactor(progressFactor)
             uiState = uiState.copy(
                 isMultipleCurrency = (products?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
@@ -521,8 +520,8 @@ class CreditAmountViewModel @Inject constructor(
         const val CURRENCY_SEPARATOR = ','
         const val SLIDER_TOTAL = 1
         const val SLIDER_INITIAL_VALUE = 0.0F
-        const val SLIDER_ANIMATION_VALUE = 0.1F
-        const val TIMER_DURATION = 100L
-        const val TIMER_DELAY = 10L
+        const val SLIDER_ANIMATION_VALUE = 0.05F
+        const val TIMER_DURATION = 20L
+        const val TIMER_DELAY = 1L
     }
 }

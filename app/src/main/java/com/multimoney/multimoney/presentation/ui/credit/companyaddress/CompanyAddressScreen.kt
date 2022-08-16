@@ -25,7 +25,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.BaseEvent.IsFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.ONE
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.TWO
-import com.multimoney.multimoney.presentation.ui.home.ZERO
+import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.ZERO
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import kotlinx.coroutines.flow.collectLatest

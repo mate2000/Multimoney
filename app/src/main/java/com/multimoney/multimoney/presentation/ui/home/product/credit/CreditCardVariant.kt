@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product.credit
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_ACCEPT_CONTRACT_REFUSE_SECOND_TIME
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_PROCESS_CREATE_ACCOUNT_FAILURE
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_PROCESS_MISSING_SIGNATURE
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_PROCESS_ON_FIDO_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_PROCESS_SIGNATURE_REFUSE_FIRST_TIME
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_PROCESS_SIGNATURE_REFUSE_SECOND_TIME
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_START_PROCESS_INCOMPLETE
@@ -36,6 +38,7 @@ fun CardWithOutProduct(action: () -> Unit = {}) {
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .clickable { action.invoke() }
     ) {
         Text(
             text = stringResource(id = R.string.home_product_not_approved_title),
@@ -69,9 +72,7 @@ fun CardWithOutProduct(action: () -> Unit = {}) {
 // Credit In Process
 @Composable
 @Preview
-fun CardWithCreditInProcessAcceptContract(
-    action: (type: String) -> Unit = {}
-) {
+fun CardWithCreditInProcessAcceptContract() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,8 +108,7 @@ fun CardWithCreditInProcessAcceptContract(
 @Composable
 @Preview
 fun CardWithCreditInProcessOnFidoOrAbandonProcess(
-    type: CreditProcessType = CREDIT_ACCEPT_CONTRACT_REFUSE_FIRST_TIME,
-    action: (type: String) -> Unit = {}
+    type: CreditProcessType = CREDIT_ACCEPT_CONTRACT_REFUSE_FIRST_TIME
 ) {
     val chipText = R.string.home_product_process_credit_label
     val title: Int
@@ -155,13 +155,19 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
             actionText = R.string.home_product_process_action
 
         }
+        CREDIT_PROCESS_ON_FIDO_INCOMPLETE -> {
+            title = R.string.home_on_fido_pending_title
+            description = R.string.home_on_fido_pending_description
+            actionText = R.string.home_on_fido_pending_action_text
+
+        }
     }
 
     Column(
         modifier = Modifier
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
     ) {
         CustomInformativeChip(
             text = stringResource(id = chipText),

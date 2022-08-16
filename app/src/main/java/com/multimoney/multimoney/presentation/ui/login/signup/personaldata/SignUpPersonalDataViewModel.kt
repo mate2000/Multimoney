@@ -385,8 +385,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
             val identificationShareViewModelChange: () -> Unit
         ) : UIEvent()
 
-        data class OnContinueEnable(val enable: Boolean) : UIEvent()
-
         data class OnNextActionClick(
             val onUserDataValueChange: () -> Unit,
             val onCallMutationUpdateUserRegisterUseCase: () -> Unit

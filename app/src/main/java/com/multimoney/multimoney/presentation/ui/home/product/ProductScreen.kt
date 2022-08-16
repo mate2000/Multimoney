@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -108,40 +109,35 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
                 )
             }
             Row {
-                IconButton(
-                    onClick = {
-                        // todo action
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification),
-                        contentDescription = "",
-                        tint = MultimoneyTheme.colors.iconColor
-                    )
-                }
-                IconButton(
-                    onClick = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_notification),
+                    modifier = Modifier.clickable {
                         // todo action
                     },
-                    modifier = Modifier.padding(end = 2.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification),
-                        contentDescription = "",
-                        tint = MultimoneyTheme.colors.iconColor
-                    )
-                }
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.iconColor
+                )
+                Icon(
+                    painter = painterResource(R.drawable.ic_profile),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 2.dp)
+                        .clickable {
+                            // todo action
+                        },
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.iconColor
+                )
             }
         }
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            items(items = viewModel.getCreditOfferAndTips(), itemContent = { item ->
-                TipAndOfferItem(item)
-            })
-        }
+    }
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+    ) {
+        items(items = viewModel.getCreditOfferAndTips(), itemContent = { item ->
+            TipAndOfferItem(item)
+        })
     }
 }
 

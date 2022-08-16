@@ -86,7 +86,7 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
                 isCloseVisible = nextStep > CreditStep.One.id
             )
         } else {
-            completedProcessAction()
+            documentGenerationProcess()
         }
     }
 
@@ -101,8 +101,11 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
         }
     }
 
-    private fun completedProcessAction() {
-        // todo navigate to complete screen
+    private fun documentGenerationProcess() {
+        popAndNavigateTo(
+            Screen.DocumentGenerationScreen.route,
+            Screen.CreditScreen.route
+        )
     }
 
     private fun onSetNavigation(nextAction: () -> Unit, nextStep: Int, previousStep: Int) {

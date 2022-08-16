@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.signdocuement
+package com.multimoney.multimoney.presentation.ui.credit.signdocument
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel

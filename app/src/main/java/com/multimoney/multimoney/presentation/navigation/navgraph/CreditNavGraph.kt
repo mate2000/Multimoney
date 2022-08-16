@@ -8,7 +8,7 @@ import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DocumentGenerationScreen
-import com.multimoney.multimoney.presentation.ui.credit.signdocuement.SignDocumentScreen
+import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentScreen
 
 const val SIGN_DOCUMENT_LINK = "sign_document_link"
 

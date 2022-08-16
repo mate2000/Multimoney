@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.documentgeneration
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -106,9 +107,12 @@ fun DocumentGenerationScreen(
         }
     }
 
+    // this is require to block the onBack event
+    BackHandler(onBack = {})
+
     // this is required to execute the debounce
     val openStepFlowValue by openStepFlow.collectAsState(false)
 }
 
 const val DUMMY_URL = "www.google.com"
-const val TIME_TO_WAIT_IN_MILLI_SECOND = 3000L
+const val TIME_TO_WAIT_IN_MILLI_SECOND = 30000L

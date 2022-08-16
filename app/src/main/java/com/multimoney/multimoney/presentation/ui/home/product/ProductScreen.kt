@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,23 +30,37 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCallValidateUserStatus
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcessOnFidoOrAbandonProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithOutProduct
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_PROCESS_ON_FIDO_INCOMPLETE
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 @Preview
 fun ProductScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnCallValidateUserStatus())
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate)
+        }
+    }
 
     // Pager
     val productPagerState = rememberPagerState()
@@ -81,6 +94,8 @@ fun ProductScreen(
             viewModel = viewModel
         )
     }
+
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -129,15 +144,15 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
                 )
             }
         }
-    }
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-    ) {
-        items(items = viewModel.getCreditOfferAndTips(), itemContent = { item ->
-            TipAndOfferItem(item)
-        })
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            items(items = viewModel.getCreditOfferAndTips(), itemContent = { item ->
+                TipAndOfferItem(item, viewModel)
+            })
+        }
     }
 }
 
@@ -153,11 +168,18 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
         )
         HorizontalPager(count = pages, modifier = Modifier.padding(top = 8.dp), state = state) { page ->
             CustomProductBackground(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                type = Tertiary
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                onClick = { viewModel.onUIEvent(OnProductClick) },
+                type = viewModel.uiState.productType
             ) {
                 // Todo here we have to identify the state and show the correct state of the product
-                CardWithOutProduct()
+                when {
+                    viewModel.uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
+                        type = CREDIT_PROCESS_ON_FIDO_INCOMPLETE
+                    )
+                    else -> CardWithOutProduct()
+                }
             }
         }
     }
@@ -180,9 +202,15 @@ fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: 
 }
 
 @Composable
-fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip) {
+fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip, viewModel: ProductViewModel) {
     TipBox(type = tipOrOffer.type) {
-        Box(Modifier.fillMaxSize()) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .clickable {
+                    // TODO: Call appropriate screen when all flows are available
+                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                }) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,
                 modifier = Modifier

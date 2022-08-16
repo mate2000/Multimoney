@@ -1,24 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.home
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallValidateUserStatus
 import com.multimoney.multimoney.presentation.ui.home.product.ProductScreen
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
-import kotlin.random.Random
 
 @Composable
 @Preview
@@ -27,15 +13,17 @@ fun HomeScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // Navigation
-    LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallValidateUserStatus())
-        viewModel.apply {
-            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-        }
-    }
+    // TODO: Remove commented code when not needed. Now It isn't deleted because is used as reference to get data
+//    // Navigation
+//    LaunchedEffect(true) {
+//        viewModel.onUIEvent(OnCallValidateUserStatus())
+//        viewModel.apply {
+//            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+//        }
+//    }
 
-    if (getRandom() == ZERO) {
+    ProductScreen(onNavigate = onNavigate)
+    /*if (getRandom() == ZERO) {
         ProductScreen()
     } else {
         LazyColumn {
@@ -208,12 +196,11 @@ fun HomeScreen(
                 }
             }
         }
-    }
-    LoadingIndicator(viewModel.uiState.isLoading)
+    }*/
 }
 
-fun getRandom(): Int {
-    return Random.nextInt(2)
-}
-
-const val ZERO = 0
+//fun getRandom(): Int {
+//    return Random.nextInt(2)
+//}
+//
+//const val ZERO = 0

@@ -45,7 +45,7 @@ class ProductViewModel @Inject constructor(
     private fun callQueryBalanceUseCase(
         user: String = "ecruzGrapqhql",
         identification: String = "303190775",
-        idBrand: Int = Brand.Revamp.id,
+        idBrand: Int = Brand.CostaRica.id,
         idClient: String = "192656",
         idLoanClient: Int = 223034
     ) {

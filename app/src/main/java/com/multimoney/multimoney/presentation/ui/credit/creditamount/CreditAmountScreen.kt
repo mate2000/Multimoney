@@ -87,7 +87,7 @@ fun CreditAmountScreen(
                     descPromotion = "",
                     idPromotion = 1,
                     user = "ECRURZ",
-                    idBrand = Brand.Revamp.id,
+                    idBrand = Brand.CostaRica.id,
                     onSuccess = {
                         sharedViewModel.onUIEvent(
                             CreditViewModel.UIEvent.OnNextStep
@@ -111,7 +111,7 @@ fun CreditAmountScreen(
             // TODO: Send appropriate data for this call because now we don't have this data
             CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase(
                 pkUser = 229913,
-                idBrand = Brand.Revamp.id,
+                idBrand = Brand.CostaRica.id,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                 },
@@ -200,7 +200,7 @@ fun CreditAmountScreen(
             onDebounceValidation = {
                 viewModel.onUIEvent(
                     CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished(value = it, user = "ecruzGRAPHQL",
-                        idBrand = Brand.Revamp.id,
+                        idBrand = Brand.CostaRica.id,
                         onLoadingValueChange = { isLoading ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                         },
@@ -231,7 +231,7 @@ fun CreditAmountScreen(
                 viewModel.onUIEvent(
                     CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished(
                         user = "ecruzGRAPHQL",
-                        idBrand = Brand.Revamp.id,
+                        idBrand = Brand.CostaRica.id,
                         onLoadingValueChange = { isLoading ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                         },

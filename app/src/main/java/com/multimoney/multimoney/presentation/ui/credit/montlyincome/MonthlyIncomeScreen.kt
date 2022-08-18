@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
@@ -47,6 +48,7 @@ fun MonthlyIncomeScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        viewModel
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
             viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnNextActionClick {
                 sharedViewModel.onUIEvent(
@@ -77,12 +79,15 @@ fun MonthlyIncomeScreen(
             color = MultimoneyTheme.colors.labelText
         )
 
-        val placeHolder = when (viewModel.country) {
-            ZERO -> stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
-            ONE -> stringResource(id = R.string.credit_monthly_income_income_guatemala_hint)
-            TWO -> stringResource(id = R.string.credit_monthly_income_income_costa_rica_hint)
-            else -> {
-                stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
+        var placeHolder = ""
+        if (viewModel.uiState.idBrand.isNotEmpty()) {
+            placeHolder = when (viewModel.uiState.idBrand.toInt()) {
+                Brand.ElSalvador.id -> stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
+                Brand.Guatemala.id -> stringResource(id = R.string.credit_monthly_income_income_guatemala_hint)
+                Brand.CostaRica.id -> stringResource(id = R.string.credit_monthly_income_income_costa_rica_hint)
+                else -> {
+                    stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
+                }
             }
         }
 

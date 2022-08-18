@@ -187,6 +187,7 @@ fun SignUpOtpScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
+                            title = R.string.sign_up_email_blocked_dialog_title,
                             description = viewModel.userBlockedForMaxAttend,
                             isActive = mutableStateOf(true),
                             positiveText = R.string.contact,

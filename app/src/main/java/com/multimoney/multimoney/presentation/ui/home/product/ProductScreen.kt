@@ -31,6 +31,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
+import com.multimoney.data.util.catalog.CreditStatus
+import com.multimoney.data.util.catalog.CreditStatusView.CREDIT_STATUS_APPROVED
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -40,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcessOnFidoOrAbandonProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithOutProduct
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_PROCESS_ON_FIDO_INCOMPLETE
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
@@ -98,7 +101,6 @@ fun ProductScreen(
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -173,8 +175,16 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
                 onClick = { viewModel.onUIEvent(OnProductClick) },
                 type = viewModel.uiState.productType
             ) {
-                // Todo here we have to identify the state and show the correct state of the product
                 when {
+                    viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.UNAPPROVED_CREDIT.status -> {
+                        // todo show the initial card when the user does not have any product and offers
+                    }
+                    viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> {
+                        CreditApprovedOrStarted(
+                            creditStatusView = CREDIT_STATUS_APPROVED,
+                            viewModel.uiState.userStatus?.infoCredit?.amountAvailable
+                        )
+                    }
                     viewModel.uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
                         type = CREDIT_PROCESS_ON_FIDO_INCOMPLETE
                     )

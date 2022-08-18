@@ -217,6 +217,12 @@
     <string name="home_product_not_approved_title">Gana ahorrando smart</string>
     <string name="home_product_not_approved_description">La mejor tasa del 3.5\%; anual sin restricciones</string>
     <string name="home_product_not_approved_action">Activar cuenta Smart</string>
+    <string name="home_product_credit_approved_card_title">Crédito pre aprobado</string>
+    <string name="home_product_credit_approved_card_description">¡Podes solicitar\n%1$s hoy mismo!</string>
+    <string name="home_product_credit_approved_card_action">Solicitar</string>
+    <string name="home_product_credit_approved_process_started_card_title">Crédito pre aprobado</string>
+    <string name="home_product_credit_approved_process_started_card_description">Tu solicitud de crédito está en proceso. ¡No pierdas la oportunidad!</string>
+    <string name="home_product_credit_approved_process_started_card_action">Continuar con proceso</string>
     <string name="home_product_process_credit_label">Crédito</string>
     <string name="home_product_process_title">Parece que hubo un error</string>
     <string name="home_product_process_description">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>

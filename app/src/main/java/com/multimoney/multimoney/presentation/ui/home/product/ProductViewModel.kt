@@ -173,8 +173,6 @@ class ProductViewModel @Inject constructor(
         object OnProductClick : UIEvent()
     }
 
-    val hasCredit = true
-
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(
             CreditOfferAndTip(

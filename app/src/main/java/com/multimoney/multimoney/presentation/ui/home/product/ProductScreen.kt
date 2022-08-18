@@ -175,20 +175,22 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
                 onClick = { viewModel.onUIEvent(OnProductClick) },
                 type = viewModel.uiState.productType
             ) {
-                when {
-                    viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.UNAPPROVED_CREDIT.status -> {
-                        // todo show the initial card when the user does not have any product and offers
-                    }
-                    viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> {
-                        CreditApprovedOrStarted(
-                            creditStatusView = CREDIT_STATUS_APPROVED,
-                            viewModel.uiState.userStatus?.infoCredit?.amountAvailable
+                viewModel.uiState.userStatus?.apply {
+                    when {
+                        infoCredit?.status == CreditStatus.UNAPPROVED_CREDIT.status -> {
+                            // todo show the initial card when the user does not have any product and offers
+                        }
+                        infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> {
+                            CreditApprovedOrStarted(
+                                creditStatusView = CREDIT_STATUS_APPROVED,
+                                viewModel.uiState.userStatus?.infoCredit?.amountAvailable
+                            )
+                        }
+                        infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
+                            type = CREDIT_PROCESS_ON_FIDO_INCOMPLETE
                         )
+                        else -> CardWithOutProduct()
                     }
-                    viewModel.uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
-                        type = CREDIT_PROCESS_ON_FIDO_INCOMPLETE
-                    )
-                    else -> CardWithOutProduct()
                 }
             }
         }

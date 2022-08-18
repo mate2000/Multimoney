@@ -20,8 +20,12 @@ import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseC
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
+import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
+import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
@@ -82,6 +86,16 @@ class InteractionModule {
     @Singleton
     fun provideQueryValidatePin(securityRepository: SecurityRepository): QueryValidatePinUseCase =
         QueryValidatePinUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryCatalogDocumentTypeUseCase(securityRepository: SecurityRepository): QueryCatalogDocumentTypeUseCase =
+        QueryCatalogDocumentTypeUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCountry(securityRepository: SecurityRepository): QueryGetCountryUseCase =
+        QueryGetCountryUseCaseImpl(securityRepository)
 
     // Balance
 

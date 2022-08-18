@@ -4,15 +4,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
+import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
+import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
@@ -37,7 +41,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
-    private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase
+    private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase,
+    private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
+    private val queryGetCountryUseCase: QueryGetCountryUseCase
 ) : BaseViewModel() {
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -47,6 +53,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     // Interactions
     var onSuccessDataInformationClient by mutableStateOf<ClientInfoCr?>(null)
+    var onSuccessCatalogDocumentType by mutableStateOf<CatalogType?>(null)
+    var onSuccessCountry by mutableStateOf<CountryList?>(null)
 
     // Stateless
     var documentLength = 0
@@ -64,35 +72,21 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     )
 
-    private fun getNationality(country: String) = when (country) {
-        ElSalvador.country -> ElSalvador.name
-        Guatemala.country -> Guatemala.name
-        else -> CostaRicaId.name
-    }
-
-    private fun getCountry(nationality: String) = when (nationality) {
-        ElSalvador.name -> ElSalvador.country
-        Guatemala.name -> Guatemala.country
-        CostaRicaId.name -> CostaRicaId.country
-        else -> ""
+    private fun getCountry(nationality: String): String? {
+        onSuccessCountry?.countryList?.forEach {
+            if (it.countryPrefix == nationality) {
+                return it.countryPrefix
+            }
+        }
+        return ""
     }
 
     private fun getDocumentLength(documentType: String) {
-        documentLength = when (documentType) {
-            ElSalvador.documentType -> {
-                ElSalvador.documentSize
-            }
-            Guatemala.documentType -> {
-                Guatemala.documentSize
-            }
-            CostaRicaDimex.documentType -> {
-                CostaRicaDimex.documentSize
-            }
-            CostaRicaId.documentType -> {
-                CostaRicaId.documentSize
-            }
-            else -> {
-                0
+        onSuccessCatalogDocumentType?.catalogDocument?.forEach { documentCatalog ->
+            if (documentCatalog.description == documentType) {
+                uiState = uiState.copy(documentFormat = documentCatalog.format)
+                documentLength =
+                    documentCatalog.format.count { documentCatalog.format.last() == it }
             }
         }
     }
@@ -107,7 +101,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
         if (status.first.not()) {
             closeKeyboard = true
-            callQueryDataInformationClient(uiState.personalDocumentValue, Brand.Revamp.id, user)
+            callQueryDataInformationClient(
+                uiState.personalDocumentValue,
+                onSuccessCountry?.countryList?.get(uiState.countryList.indexOf(uiState.nationalityValue))?.idBrand
+                    ?: 0,
+                user
+            )
         } else {
             if (onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
                 onSuccessDataInformationClient = null
@@ -118,13 +117,13 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun callQueryDataInformationClient(
         identification: String,
-        idBrant: Int,
+        idBrand: Int,
         user: String,
     ) {
         viewModelScope.launch {
             queryDataInformationClientUseCase.invoke(
                 identification,
-                idBrant,
+                idBrand,
                 user
             ).collectLatest { result ->
                 result.onSuccess {
@@ -150,13 +149,73 @@ class SignUpPersonalDataViewModel @Inject constructor(
         }
     }
 
+    private fun callQueryCatalogDocumentType(idBrand: Int, user: String) {
+        viewModelScope.launch {
+            queryCatalogDocumentTypeUseCase.invoke(
+                idBrand,
+                user
+            ).collectLatest { result ->
+                result.onSuccess {
+                    onSuccessCatalogDocumentType = it
+                    val documentList: ArrayList<String> = arrayListOf()
+                    it?.catalogDocument?.forEach { document ->
+                        documentList.add(document.description)
+                    }
+                    uiState = uiState.copy(documentList = documentList)
+                    isLoading = false
+                }
+                result.onFailure {
+                    isLoading = false
+                    onSuccessCatalogDocumentType = null
+                }
+                result.onLoading {
+                    isLoading = true
+                }
+            }
+        }
+    }
+
+    private fun callQueryGetCountryUseCase(user: String) {
+        viewModelScope.launch {
+            queryGetCountryUseCase.invoke(user).collectLatest { result ->
+                result.onSuccess {
+                    onSuccessCountry = it
+                    val countryList: ArrayList<String> = arrayListOf()
+                    it?.countryList?.forEach { country ->
+                        countryList.add(country.countryDescription ?: "")
+                    }
+                    uiState = uiState.copy(countryList = countryList)
+                    isLoading = false
+                }
+                result.onFailure {
+                    isLoading = false
+                    onSuccessCountry = null
+                }
+                result.onLoading {
+                    isLoading = true
+                }
+            }
+        }
+    }
+
     private fun onNationalityChange(
-        nationality: String,
-        updateNationality: (nationality: String) -> Unit
+        nationality: Int,
+        updateNationality: (nationality: String, idBrand: Int) -> Unit
     ) {
-        uiState = uiState.copy(nationalityValue = nationality, personalDocumentValue = "")
+        uiState = uiState.copy(
+            nationalityValue = onSuccessCountry?.countryList?.get(nationality)?.countryDescription
+                ?: "",
+            personalDocumentValue = ""
+        )
+        callQueryCatalogDocumentType(
+            onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0,
+            ""
+        )
         cleanUI()
-        updateNationality.invoke(getNationality(nationality))
+        updateNationality.invoke(
+            onSuccessCountry?.countryList?.get(nationality)?.countryPrefix ?: "",
+            onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0
+        )
     }
 
     private fun onStart(
@@ -170,7 +229,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         fullName: String
     ) {
         uiState = uiState.copy(
-            nationalityValue = getCountry(nationality),
+            nationalityValue = getCountry(nationality) ?: "",
             identificationValueType = identificationType,
             personalDocumentValue = identificationValue,
             firstNameValue = firstName,
@@ -277,6 +336,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     data class UIState(
+        val documentFormat: String = "",
+        val countryList: ArrayList<String> = arrayListOf(),
+        val documentList: ArrayList<String> = arrayListOf(),
         val nationalityValue: String = "",
         val personalDocumentValue: String = "",
         val identificationValueType: String = "",
@@ -337,6 +399,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.onCallMutationUpdateUserRegisterUseCase
             )
             is OnValidateDocument -> validateDocument(event.email)
+            is OnCallQueryGetCountry -> callQueryGetCountryUseCase(event.user)
             is UIEvent.OnValidateForm -> isFormValid()
         }
     }
@@ -354,8 +417,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnNationalityChange(
-            val nationality: String,
-            val updateNationality: (nationality: String) -> Unit
+            val nationality: Int,
+            val updateNationality: (nationality: String, idBrand: Int) -> Unit
         ) :
             UIEvent()
 
@@ -394,6 +457,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
             val email: String? = null
         ) : UIEvent()
 
+        data class OnCallQueryGetCountry(val user: String) : UIEvent()
+
         object OnValidateForm : UIEvent()
     }
 
@@ -403,5 +468,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     companion object {
         const val DUI_VERIFICATION_MODULE = 10
+        const val FORMAT_VALUE = '0'
     }
 }

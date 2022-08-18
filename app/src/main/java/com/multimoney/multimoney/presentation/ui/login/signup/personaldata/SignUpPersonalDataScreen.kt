@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +26,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
@@ -39,6 +39,7 @@ fun SignUpPersonalDataScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
+        viewModel.onUIEvent(OnCallQueryGetCountry(""))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
@@ -111,13 +112,16 @@ fun SignUpPersonalDataScreen(
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
                 .padding(top = 16.dp),
-            items = stringArrayResource(id = R.array.sign_up_personal_data_nationalities).sorted(),
+            items = viewModel.uiState.countryList,
             onValueChange = { value ->
-                viewModel.onUIEvent(OnNationalityChange(value) {
+                viewModel.onUIEvent(OnNationalityChange(
+                    viewModel.uiState.countryList.indexOf(value)
+                ) { nationality, idBrand ->
                     sharedViewModel.onUIEvent(
-                        OnNationalityValueChange(it)
+                        OnNationalityValueChange(nationality, idBrand)
                     )
-                })
+                }
+                )
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_nationality),
             value = viewModel.uiState.nationalityValue,

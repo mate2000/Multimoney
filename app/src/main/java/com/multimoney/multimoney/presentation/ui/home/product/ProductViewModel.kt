@@ -4,8 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
+import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
@@ -28,14 +30,22 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Te
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
-    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase
+    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel() {
+
+    init {
+        viewModelScope.launch {
+            uiState = uiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
+        }
+    }
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -122,6 +132,9 @@ class ProductViewModel @Inject constructor(
 
     private fun onProductClick() {
         when {
+            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
+                Screen.CreditScreen.route
+            )
             uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
                 Screen.CreditScreen.route
             )
@@ -136,6 +149,7 @@ class ProductViewModel @Inject constructor(
 
     data class UIState(
         //Fields
+        var idBrand: String = "",
         var balanceCredit: Balance? = null,
         var userStatus: ValidateUserStatus? = null,
         var productType: ProductBackGroundType = Tertiary,

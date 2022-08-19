@@ -296,4 +296,9 @@
     <string name="credit_company_address_accurate_address">Dirección exacta</string>
     <string name="credit_company_address_accurate_address_error">Dirección exacta requerida</string>
 
+    <!-- Generate Document -->
+    <string name="document_generation_title">Estamos generando tus documentos</string>
+    <string name="document_generation_subtitle">Al firmar tu solicitud podrás utilizar tu crédito</string>
+    <string name="document_generation_info">Generando documentos…</string>
+
 </resources>

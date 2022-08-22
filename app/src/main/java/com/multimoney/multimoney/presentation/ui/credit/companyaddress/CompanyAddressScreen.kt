@@ -75,7 +75,7 @@ fun CompanyAddressScreen(
             CompanyAddressViewModel.UIEvent.OnCallCatalogs(
                 PK_USER,
                 USER,
-                Brand.Revamp.id,
+                Brand.CostaRica.id,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                 },

@@ -41,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcessOnFidoOrAbandonProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
@@ -205,7 +206,14 @@ fun CreditProduct(viewModel: ProductViewModel) {
         } else if (infoCredit?.status == CreditStatus.UNAPPROVED_CREDIT.status) {
             when (viewModel.uiState.idBrand) {
                 Brand.Guatemala.id.toString() -> {
-                    // todo show gt card without credit
+                    CustomProductBackground(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp),
+                        onClick = { viewModel.onUIEvent(OnProductClick) },
+                        type = Primary
+                    ) {
+                        CardGTWithoutCredit()
+                    }
                 }
                 else -> {
                     // no show card

@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
@@ -30,7 +29,7 @@ class MonthlyIncomeViewModel @Inject constructor(
 
     val country = ZERO
 
-    private fun onGetBrandId() {
+    private fun onGetIdBrand() {
         viewModelScope.launch {
             uiState = uiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
         }
@@ -89,7 +88,7 @@ class MonthlyIncomeViewModel @Inject constructor(
             is OnNextActionClick -> onNextActionClick(uiEvent.nextStepAction)
             is OnIncomeValueChange -> onIncomeValueChange(uiEvent.income)
             is OnProfessionValueChange -> onProfessionValueChange(uiEvent.profession)
-            is OnGetBrandId -> onGetBrandId()
+            is OnGetBrandId -> onGetIdBrand()
             is OnValidForm -> onValidForm()
         }
     }
@@ -109,8 +108,6 @@ class MonthlyIncomeViewModel @Inject constructor(
 
     companion object {
         const val ZERO = 0
-        const val ONE = 1
-        const val TWO = 2
     }
 }
 

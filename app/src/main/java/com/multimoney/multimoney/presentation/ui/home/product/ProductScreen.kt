@@ -38,6 +38,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCallValidateUserStatus
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcessOnFidoOrAbandonProcess
@@ -61,6 +62,7 @@ fun ProductScreen(
     viewModel: ProductViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
+        viewModel.onUIEvent(OnGetIdBrand)
         viewModel.onUIEvent(OnCallValidateUserStatus())
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate)
@@ -203,7 +205,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
         } else if (infoCredit?.status == CreditStatus.UNAPPROVED_CREDIT.status) {
             when (viewModel.uiState.idBrand) {
                 Brand.Guatemala.id.toString() -> {
-
+                    // todo show gt card without credit
                 }
                 else -> {
                     // no show card

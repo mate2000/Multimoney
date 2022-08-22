@@ -19,6 +19,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCallValidateUserStatus
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
@@ -41,15 +42,15 @@ class ProductViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel() {
 
-    init {
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    private fun onGetIdBrand() {
         viewModelScope.launch {
             uiState = uiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
         }
     }
-
-    // UIState
-    var uiState by mutableStateOf(UIState())
-        private set
 
     // TODO: Remove hardcoded parameters
     private fun callQueryBalanceUseCase(
@@ -168,6 +169,7 @@ class ProductViewModel @Inject constructor(
             )
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
             is OnProductClick -> onProductClick()
+            is OnGetIdBrand -> onGetIdBrand()
         }
     }
 
@@ -185,6 +187,7 @@ class ProductViewModel @Inject constructor(
 
         object OnNavigateToCreditScreen : UIEvent()
         object OnProductClick : UIEvent()
+        object OnGetIdBrand : UIEvent()
     }
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {

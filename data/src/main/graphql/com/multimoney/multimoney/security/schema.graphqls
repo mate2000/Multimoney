@@ -555,10 +555,6 @@ input getConfigurationVersionInput {
 
   appVersion: String!
 
-  llave_Api_Interna: String!
-
-  user: String!
-
   idBrand: Int!
 
   tenantId: String
@@ -619,7 +615,7 @@ type getCountry {
 }
 
 input getCountryInput {
-  user: String!
+  user: String
 }
 
 type catalog {
@@ -677,7 +673,7 @@ type catalog {
 input catalogInput {
   idBrand: Int!
 
-  user: String!
+  user: String
 
   llave_Busqueda: String
 

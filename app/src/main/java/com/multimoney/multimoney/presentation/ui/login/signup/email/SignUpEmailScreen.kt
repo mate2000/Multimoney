@@ -48,11 +48,11 @@ fun SignUpEmailScreen(
     LaunchedEffect(true) {
 
         sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnNextActionClick {
+            viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnNextActionClick({
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnNextStep
                 )
-            })
+            }, sharedViewModel.userData?.idBrand ?: 5))
         }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id))
 
         viewModel.baseEvent.collect { event ->
@@ -158,7 +158,13 @@ fun SignUpEmailScreen(
         // Fields
         CustomOutlinedTextField(
             value = viewModel.uiState.userEmail,
-            onValueChange = { value -> viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnUserEmailValueChange(value)) },
+            onValueChange = { value ->
+                viewModel.onUIEvent(
+                    SignUpEmailViewModel.UIEvent.OnUserEmailValueChange(
+                        value
+                    )
+                )
+            },
             onDebounceValidation = { viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateUserEmail) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,

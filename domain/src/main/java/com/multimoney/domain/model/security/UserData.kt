@@ -15,5 +15,6 @@ data class UserData(
     var identification: String? = null,
     var countryCode: String? = null,
     var currentStep: String? = null,
-    var userStatus: String? = null
+    var userStatus: String? = null,
+    var idBrand: Int? = 5
 )

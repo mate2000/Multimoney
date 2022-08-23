@@ -3,7 +3,9 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.SecurityApi
+import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
@@ -196,4 +198,22 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         }
     )
+
+    override suspend fun queryCatalog(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<CatalogType?>> = fetchData(
+        apolloCall = securityApi.queryCatalogIdentification(idBrand, user),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetCountry(user: String): Flow<MultimoneyResult<CountryList?>> =
+        fetchData(
+            apolloCall = securityApi.queryGetCountry(user),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
 }

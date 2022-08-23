@@ -175,6 +175,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     private fun onNextActionClick(
         pkUser: String?,
+        idBrand: Int?,
         phone: String?,
         name: String?,
         onUseDataValueChange: () -> Unit,
@@ -185,7 +186,7 @@ class SignUpOtpViewModel @Inject constructor(
     ) {
         executeUseCase {
             queryValidatePinUseCase.invoke(
-                idBrand = Brand.Revamp.id,
+                idBrand = idBrand ?: 0,
                 appSource = APP_SOURCE,
                 pkUser = pkUser ?: "",
                 pinSecurity = uiState.otp,
@@ -266,6 +267,7 @@ class SignUpOtpViewModel @Inject constructor(
             is OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends)
             is OnNextActionClick -> onNextActionClick(
                 event.pkUser,
+                event.idBrand,
                 event.phone,
                 event.name,
                 event.onUseDataValueChange,
@@ -301,6 +303,7 @@ class SignUpOtpViewModel @Inject constructor(
 
         data class OnNextActionClick(
             val pkUser: String?,
+            val idBrand: Int?,
             val phone: String?,
             val name: String?,
             val onUseDataValueChange: () -> Unit,

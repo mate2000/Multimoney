@@ -4,8 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
+import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
@@ -17,6 +19,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCallValidateUserStatus
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
@@ -28,24 +31,32 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Te
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
-    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase
+    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel() {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
+    private fun onGetIdBrand() {
+        viewModelScope.launch {
+            uiState = uiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
+        }
+    }
+
     // TODO: Remove hardcoded parameters
     private fun callQueryBalanceUseCase(
         user: String = "ecruzGrapqhql",
         identification: String = "303190775",
-        idBrand: Int = Brand.Revamp.id,
+        idBrand: Int = Brand.CostaRica.id,
         idClient: String = "192656",
         idLoanClient: Int = 223034
     ) {
@@ -122,6 +133,9 @@ class ProductViewModel @Inject constructor(
 
     private fun onProductClick() {
         when {
+            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
+                Screen.CreditScreen.route
+            )
             uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
                 Screen.CreditScreen.route
             )
@@ -136,6 +150,7 @@ class ProductViewModel @Inject constructor(
 
     data class UIState(
         //Fields
+        var idBrand: String = "",
         var balanceCredit: Balance? = null,
         var userStatus: ValidateUserStatus? = null,
         var productType: ProductBackGroundType = Tertiary,
@@ -154,6 +169,7 @@ class ProductViewModel @Inject constructor(
             )
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
             is OnProductClick -> onProductClick()
+            is OnGetIdBrand -> onGetIdBrand()
         }
     }
 
@@ -171,9 +187,8 @@ class ProductViewModel @Inject constructor(
 
         object OnNavigateToCreditScreen : UIEvent()
         object OnProductClick : UIEvent()
+        object OnGetIdBrand : UIEvent()
     }
-
-    val hasCredit = true
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(

@@ -57,7 +57,7 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
                 negativeText = R.string.credit_close_dialog_negative_button_text,
                 positiveAction = {
                     popAndNavigateTo(
-                        route = Screen.SignInScreen.route,
+                        route = Screen.HomeScreen.route,
                         popTo = Screen.CreditScreen.route
                     )
                 },
@@ -75,7 +75,7 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
         if (step <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
-                isCloseVisible = step > CreditStep.One.id
+                isCloseVisible = step >= CreditStep.One.id
             )
         }
     }
@@ -84,10 +84,10 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
         if (nextStep <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep > CreditStep.One.id
+                isCloseVisible = nextStep >= CreditStep.One.id
             )
         } else {
-            completedProcessAction()
+            documentGenerationProcess()
         }
     }
 
@@ -95,7 +95,7 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
         if (previousStep > CreditStep.One.id || uiState.currentStep == CreditStep.Two.id) {
             uiState = uiState.copy(
                 currentStep = previousStep,
-                isCloseVisible = previousStep > CreditStep.One.id
+                isCloseVisible = previousStep >= CreditStep.One.id
             )
         } else {
             popAndNavigateTo(
@@ -105,8 +105,11 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
         }
     }
 
-    private fun completedProcessAction() {
-        // todo navigate to complete screen
+    private fun documentGenerationProcess() {
+        popAndNavigateTo(
+            Screen.DocumentGenerationScreen.route,
+            Screen.CreditScreen.route
+        )
     }
 
     private fun onSetNavigation(nextAction: () -> Unit, nextStep: Int, previousStep: Int) {
@@ -118,7 +121,7 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
     data class UIState(
         // Interactions
         val currentStep: Int = CreditStep.One.id,
-        val isCloseVisible: Boolean = false,
+        val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val isCurrentLocationButtonVisible: Boolean = false,
@@ -169,7 +172,7 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
     }
 
     companion object {
-        const val CREDIT_TOTAL_STEPS = 4
-        const val CREDIT_INDICATOR_TOTAL_STEPS = 4
+        const val CREDIT_TOTAL_STEPS = 3
+        const val CREDIT_INDICATOR_TOTAL_STEPS = 3
     }
 }

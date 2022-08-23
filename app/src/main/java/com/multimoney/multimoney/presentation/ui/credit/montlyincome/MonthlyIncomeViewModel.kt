@@ -4,23 +4,36 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnGetBrandId
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
+class MonthlyIncomeViewModel @Inject constructor(
+    private val dataStorePreferences: DataStorePreferences
+) : BaseViewModel() {
 
     var uiState by mutableStateOf(UIState())
         private set
 
     val country = ZERO
+
+    private fun onGetIdBrand() {
+        viewModelScope.launch {
+            uiState = uiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
+        }
+    }
 
     private fun onIncomeValueChange(income: String) {
         if (income.isDigitsOnly()) {
@@ -61,6 +74,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
     }
 
     data class UIState(
+        val idBrand: String = "",
         val income: String = "",
         val profession: String = "",
         val incomeError: Pair<Boolean, Int> = Pair(
@@ -74,14 +88,17 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
             is OnNextActionClick -> onNextActionClick(uiEvent.nextStepAction)
             is OnIncomeValueChange -> onIncomeValueChange(uiEvent.income)
             is OnProfessionValueChange -> onProfessionValueChange(uiEvent.profession)
+            is OnGetBrandId -> onGetIdBrand()
             is OnValidForm -> onValidForm()
         }
     }
 
     sealed class UIEvent {
+
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnIncomeValueChange(val income: String) : UIEvent()
         data class OnProfessionValueChange(val profession: String) : UIEvent()
+        object OnGetBrandId : UIEvent()
         object OnValidForm : UIEvent()
     }
 
@@ -91,8 +108,6 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
 
     companion object {
         const val ZERO = 0
-        const val ONE = 1
-        const val TWO = 2
     }
 }
 

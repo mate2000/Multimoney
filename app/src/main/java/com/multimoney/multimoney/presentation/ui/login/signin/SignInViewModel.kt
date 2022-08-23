@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.util.CognitoJWTParser
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
@@ -26,6 +27,8 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.Companion.COGNITO_CUSTOM_ID_BRAND
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.Companion.COGNITO_CUSTOM_PK_USER
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -79,6 +82,9 @@ class SignInViewModel @Inject constructor(
                                     if (uiState.isBiometricActive.not()) {
                                         dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
                                     }
+                                    val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
+                                    dataStorePreferences.setIdBrand(payload.getString(COGNITO_CUSTOM_ID_BRAND))
+                                    dataStorePreferences.setPkUser(payload.getString(COGNITO_CUSTOM_PK_USER))
                                     uiState = uiState.copy(isLoading = false)
                                     if (uiState.isFingerprintChecked) {
                                         uiState = uiState.copy(configureBiometric = true)
@@ -274,7 +280,6 @@ class SignInViewModel @Inject constructor(
 
     private fun onNavigateToForgotPassword() {
         // navigate to forgot screen
-        navigateTo(Screen.CreditScreen.route)
     }
 
     private fun onShowBiometricSignInChanged(value: Boolean) {

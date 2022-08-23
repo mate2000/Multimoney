@@ -1,6 +1,8 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
@@ -86,4 +88,11 @@ interface SecurityRepository {
         flowOrigination: String,
         userCreate: String
     ): Flow<MultimoneyResult<ValidatePin?>>
+
+    suspend fun queryCatalog(
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<CatalogType?>>
+
+    suspend fun queryGetCountry(user: String): Flow<MultimoneyResult<CountryList?>>
 }

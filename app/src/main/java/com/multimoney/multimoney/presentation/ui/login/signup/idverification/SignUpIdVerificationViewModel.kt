@@ -43,6 +43,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
         lastNames: String,
         identification: String,
         applicationId: String,
+        idBrand: Int,
         user: String
     ) {
         viewModelScope.launch {
@@ -51,7 +52,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 lastNames,
                 identification,
                 applicationId,
-                Brand.Revamp.id,
+                idBrand,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
@@ -65,11 +66,12 @@ class SignUpIdVerificationViewModel @Inject constructor(
         identification: String,
         applicationId: String,
         user: String,
+        brand: Int,
         injectNewToken: (String?) -> Unit
     ) {
         viewModelScope.launch {
             mutationOnFidoInitialProcessUseCase.invoke(
-                names, lastNames, identification, applicationId, Brand.Revamp.id, user
+                names, lastNames, identification, applicationId, brand, user
             ).collectLatest { result ->
                 result.onSuccess {
                     injectNewToken(it?.sdkToken ?: "")
@@ -122,6 +124,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 "${event.userData?.firstLastName} ${event.userData?.secondLastName}",
                 event.userData?.identification ?: "",
                 event.applicationId,
+                event.userData?.idBrand ?: 0,
                 event.userData?.email ?: "",
             )
             is OnInitValues -> onInitValues(onFidoError)
@@ -137,6 +140,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 event.userData?.identification ?: "",
                 event.applicationId,
                 event.userData?.email ?: "",
+                event.userData?.idBrand ?: 0,
                 event.injectNewToken
             )
         }

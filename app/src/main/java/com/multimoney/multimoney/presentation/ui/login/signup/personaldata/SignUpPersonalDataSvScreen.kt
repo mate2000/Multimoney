@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,14 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.array
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.Companion.FORMAT_VALUE
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationTypeValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnIdentificationValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.transformation.formatDui
+import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
 @Preview
@@ -47,7 +46,7 @@ fun SignUpPersonalDataSvScreen(
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
                 .padding(top = 16.dp),
-            items = stringArrayResource(id = array.sign_up_personal_sv_documents).sorted(),
+            items = viewModel.uiState.documentList,
             onValueChange = {
                 viewModel.onUIEvent(OnIdentificationTypeValueChange(it))
             },
@@ -57,7 +56,10 @@ fun SignUpPersonalDataSvScreen(
         )
         CustomOutlinedTextField(
             value = viewModel.uiState.personalDocumentValue,
-            placeHolder = stringResource(id = R.string.sign_up_personal_data_sv_id_hint),
+            placeHolder = if (viewModel.uiState.documentFormat != "") viewModel.uiState.documentFormat.replace(
+                viewModel.uiState.documentFormat.last(),
+                FORMAT_VALUE, false
+            ) else "",
             onValueChange = { document ->
                 viewModel.onUIEvent(
                     OnIdentificationValueChange(
@@ -86,7 +88,10 @@ fun SignUpPersonalDataSvScreen(
             isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_sv_required),
             isError = viewModel.uiState.personalIdError.first,
             errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
-            customTransformation = formatDui()
+            customTransformation = if (viewModel.uiState.documentFormat != "") MaskVisualTransformation(
+                viewModel.uiState.documentFormat,
+                viewModel.uiState.documentFormat.last()
+            ) else null
         )
 
         if (viewModel.uiState.identificationValueType.isNotBlank()) {

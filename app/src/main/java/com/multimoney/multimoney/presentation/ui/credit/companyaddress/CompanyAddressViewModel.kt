@@ -101,14 +101,14 @@ class CompanyAddressViewModel @Inject constructor(
             queryCompanyAddressUseCase.invoke(pkUser, user, idBrand)
                 .collectLatest { result ->
                     result.onSuccess {
-                        companyCantonList = it?.companyCanton?.first()?.subOptions?.filter { filter ->
+                        companyCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
-                        companyDistrictList = it?.companyDistrict?.first()?.subOptions?.filter { filter ->
+                        companyDistrictList = it?.district?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
                         uiState = uiState.copy(
-                            divisionOneList = it?.companyProvince?.first()?.subOptions?.filter { filter ->
+                            divisionOneList = it?.province?.first()?.subOptions?.filter { filter ->
                                 filter?.description != MIDDLE_DASH
                             }
                         )
@@ -141,11 +141,11 @@ class CompanyAddressViewModel @Inject constructor(
             queryCompanyAddressSVUseCase.invoke(pkUser, user, idBrand)
                 .collectLatest { result ->
                     result.onSuccess {
-                        companyCantonList = it?.companyCanton?.first()?.subOptions?.filter { filter ->
+                        companyCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
                         uiState = uiState.copy(
-                            divisionOneList = it?.companyProvince?.first()?.subOptions?.filter { filter ->
+                            divisionOneList = it?.province?.first()?.subOptions?.filter { filter ->
                                 filter?.description != MIDDLE_DASH
                             }
                         )

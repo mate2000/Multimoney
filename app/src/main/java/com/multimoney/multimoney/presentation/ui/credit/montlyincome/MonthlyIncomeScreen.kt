@@ -90,7 +90,6 @@ fun MonthlyIncomeScreen(
 
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 32.dp),
-            labelText = stringResource(id = R.string.credit_monthly_income_income_label),
             value = viewModel.uiState.income,
             leadingIcon = R.drawable.ic_money,
             placeHolder = placeHolder,

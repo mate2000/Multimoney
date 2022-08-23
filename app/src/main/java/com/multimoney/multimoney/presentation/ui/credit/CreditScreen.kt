@@ -18,7 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnBackClick
@@ -27,11 +29,13 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
@@ -80,16 +84,32 @@ fun CreditScreen(
                 onNavigate = onNavigate,
                 viewModel = viewModel
             )
-            CustomButton(
-                onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-                text = stringResource(id = string.button_continue),
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                    .fillMaxWidth()
-                    .height(48.dp),
-                buttonType = PrimaryPrimary,
-                enable = viewModel.uiState.isContinueEnabled
-            )
+
+            Column {
+                CustomButton(
+                    onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
+                    text = stringResource(id = string.button_continue),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    buttonType = PrimaryPrimary,
+                    enable = viewModel.uiState.isContinueEnabled
+                )
+                if (viewModel.uiState.isCurrentLocationButtonVisible) {
+                    CustomButton(
+                        text = stringResource(id = R.string.credit_home_address_select_current_location),
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        onClick = {
+                            // active the location to select de current location
+                        },
+                        buttonType = PrimaryTertiaryUnderLined
+                    )
+                }
+            }
         }
     }
 
@@ -121,6 +141,7 @@ fun GetStepContent(
         CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
         CreditStep.Two.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
-        else -> CompanyAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Four.id -> CompanyAddressScreen(sharedViewModel = viewModel)
+        else -> HomeAddressScreen(sharedViewModel = viewModel)
     }
 }

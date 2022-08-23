@@ -44,18 +44,18 @@ fun CompanyAddressScreen(
 
     when (viewModel.country) {
         ZERO -> {
-            divisionOneText = stringResource(id = R.string.credit_company_address_province)
-            divisionTwoText = stringResource(id = R.string.credit_company_address_canton)
-            divisionThreeText = stringResource(id = R.string.credit_company_address_district)
+            divisionOneText = stringResource(id = R.string.credit_address_province)
+            divisionTwoText = stringResource(id = R.string.credit_address_canton)
+            divisionThreeText = stringResource(id = R.string.credit_address_district)
         }
         ONE -> {
-            divisionOneText = stringResource(id = R.string.credit_company_address_state)
-            divisionTwoText = stringResource(id = R.string.credit_company_address_municipality)
-            divisionThreeText = stringResource(id = R.string.credit_company_address_zone)
+            divisionOneText = stringResource(id = R.string.credit_address_state)
+            divisionTwoText = stringResource(id = R.string.credit_address_municipality)
+            divisionThreeText = stringResource(id = R.string.credit_address_zone)
         }
         TWO -> {
-            divisionOneText = stringResource(id = R.string.credit_company_address_state)
-            divisionTwoText = stringResource(id = R.string.credit_company_address_municipality)
+            divisionOneText = stringResource(id = R.string.credit_address_state)
+            divisionTwoText = stringResource(id = R.string.credit_address_municipality)
         }
     }
 
@@ -132,7 +132,7 @@ fun CompanyAddressScreen(
         }
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 16.dp),
-            labelText = stringResource(id = R.string.credit_company_address_accurate_address),
+            labelText = stringResource(id = R.string.credit_address_accurate_address),
             value = viewModel.uiState.address,
             onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnAddressValueChange(it)) },
             keyboardOptions = KeyboardOptions(

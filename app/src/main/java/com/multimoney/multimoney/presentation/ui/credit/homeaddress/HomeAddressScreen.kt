@@ -16,9 +16,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand.Revamp
-import com.multimoney.data.util.catalog.CreditStep.Five
-import com.multimoney.data.util.catalog.CreditStep.Three
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditStep.Four
+import com.multimoney.data.util.catalog.CreditStep.Six
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -26,7 +26,6 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.PK_USER
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.USER
@@ -64,20 +63,20 @@ fun HomeAddressScreen(
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(
-            OnSetNavigation(
+            CreditViewModel.UIEvent.OnSetNavigation(
                 nextAction = {
                     viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnNextActionClick {
                         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
                     })
                 },
-                nextStep = Five.id, previousStep = Three.id
+                nextStep = Six.id, previousStep = Four.id
             )
         )
         viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnFormValid)
         viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnCallCatalogs(
             PK_USER,
             USER,
-            Revamp.id,
+            Brand.CostaRica.id,
             onLoadingValueChange = { isLoading ->
                 sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
             },
@@ -95,7 +94,7 @@ fun HomeAddressScreen(
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
-            text = stringResource(id = string.credit_company_address_title),
+            text = stringResource(id = string.credit_home_address_title),
             modifier = Modifier.padding(top = 16.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText

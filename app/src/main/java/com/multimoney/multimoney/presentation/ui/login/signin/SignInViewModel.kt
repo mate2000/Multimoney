@@ -27,13 +27,13 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.Companion.COGNITO_CUSTOM_ID_BRAND
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.Companion.COGNITO_CUSTOM_PK_USER
+import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -83,8 +83,7 @@ class SignInViewModel @Inject constructor(
                                         dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
                                     }
                                     val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
-                                    dataStorePreferences.setIdBrand(payload.getString(COGNITO_CUSTOM_ID_BRAND))
-                                    dataStorePreferences.setPkUser(payload.getString(COGNITO_CUSTOM_PK_USER))
+                                    saveUserData(payload)
                                     uiState = uiState.copy(isLoading = false)
                                     if (uiState.isFingerprintChecked) {
                                         uiState = uiState.copy(configureBiometric = true)
@@ -107,6 +106,12 @@ class SignInViewModel @Inject constructor(
         }, {
             cognitoError()
         })
+    }
+
+    private suspend fun saveUserData(payload: JSONObject) {
+        dataStorePreferences.setIdBrand(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND))
+        dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
+        dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))
     }
 
     private fun isFormValid() {
@@ -280,6 +285,7 @@ class SignInViewModel @Inject constructor(
 
     private fun onNavigateToForgotPassword() {
         // navigate to forgot screen
+        navigateTo(Screen.CreditScreen.route)
     }
 
     private fun onShowBiometricSignInChanged(value: Boolean) {

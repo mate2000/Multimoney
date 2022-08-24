@@ -11,7 +11,6 @@ fun MmWebView(url: String, context: Context) {
     AndroidView(factory = {
         WebView(context).apply {
             webViewClient = WebViewClient()
-
             loadUrl(url)
         }
     })

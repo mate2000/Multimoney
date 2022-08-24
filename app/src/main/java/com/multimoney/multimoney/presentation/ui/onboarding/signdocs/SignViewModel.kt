@@ -40,6 +40,6 @@ class SignViewModel :BaseViewModel() {
 
     data class UIState(
         // Interactions
-        val openDialog: DialogParameters = DialogParameters()
+        val dialogParameters: DialogParameters = DialogParameters()
     )
 }

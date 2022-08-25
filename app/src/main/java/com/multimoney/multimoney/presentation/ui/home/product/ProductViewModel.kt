@@ -136,7 +136,7 @@ class ProductViewModel @Inject constructor(
             uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
                 Screen.CreditScreen.route
             )
-            uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
+            uiState.userStatus?.infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
                 Screen.CreditScreen.route
             )
             else -> navigateTo(Screen.CreditScreen.route)
@@ -144,7 +144,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getProductBackgroundType(userStatus: ValidateUserStatus) = when {
-        userStatus.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> Primary
+        userStatus.infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> Primary
         else -> Tertiary
     }
 

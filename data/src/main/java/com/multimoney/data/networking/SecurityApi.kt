@@ -24,7 +24,7 @@ class SecurityApi @Inject constructor(
         currentStep: String,
         idBrand: Int
     ): ApolloCall<UserValidationMutation.Data> =
-        apolloClient.mutation(UserValidationMutation(email, currentStep, idBrand)).fetchPolicy(
+        apolloClient.mutation(UserValidationMutation(email, currentStep, idBrand, 0, "", "", "")).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
 

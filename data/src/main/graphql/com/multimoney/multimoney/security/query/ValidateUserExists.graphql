@@ -1,0 +1,28 @@
+query ValidateUserExists($email:String!, $currentStep:String!, $idBrand:Int!){
+  validateUserExists(
+    validateUserExistsInput: {
+      email: $email
+      currentStep: $currentStep
+      idBrand: $idBrand
+    }
+  ) {
+    status
+    message
+    detail
+    pkUser
+    userName
+    email
+    phoneNumber
+    fullName
+    firstName
+    secondName
+    lastName
+    secondLastName
+    contactMeans
+    nationality
+    identification
+    countryCode
+    currentStep
+    userStatus
+  }
+}

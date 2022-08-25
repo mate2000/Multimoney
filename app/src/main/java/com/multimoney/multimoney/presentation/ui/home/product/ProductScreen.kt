@@ -197,7 +197,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             viewModel.uiState.userStatus?.infoCredit?.amountAvailable
                         )
                     }
-                    infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
+                    infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
                         type = CreditProcessOnFidoIncomplete
                     )
                     else -> CardSmartProduct()

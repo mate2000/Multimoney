@@ -14,6 +14,8 @@ type SecurityQuery {
   getCountry(getCountryInput: getCountryInput): [getCountry]
 
   catalogTypeIndentification(catalogTypeIndentificationInput: catalogInput): [catalog]
+
+  validateUserExists(validateUserExistsInput: validateUserExistsInput): validateUserExists
 }
 
 type dataInformationClient {
@@ -220,6 +222,11 @@ type infoUser {
   vISADirect_Usuario: String
 
   """
+  infoUser statusOnfido
+  """
+  statusOnfido: String
+
+  """
   infoUser fecha_ultimo_acceso
   """
   fecha_ultimo_acceso: DateTime
@@ -259,6 +266,11 @@ type infoCredit {
   infoCredit idRequest
   """
   idRequest: Int!
+
+  """
+  infoCredit statusFirm
+  """
+  statusFirm: String
 }
 
 scalar Decimal
@@ -275,11 +287,6 @@ type infoBankAccount {
   infoBankAccount StatusFirm
   """
   statusFirm: String
-
-  """
-  infoBankAccount StatusOnfido
-  """
-  statusOnfido: String
 
   """
   infoBankAccount IdRequestSysde
@@ -686,6 +693,110 @@ input catalogInput {
   activo: Boolean
 }
 
+type validateUserExists {
+  """
+  userValidation status
+  """
+  status: Int
+
+  """
+  userValidation message
+  """
+  message: String
+
+  """
+  userValidation detail
+  """
+  detail: String
+
+  """
+  userValidation pkUser
+  """
+  pkUser: String
+
+  """
+  userValidation userName
+  """
+  userName: String
+
+  """
+  userValidation email
+  """
+  email: String
+
+  """
+  userValidation phoneNumber
+  """
+  phoneNumber: String
+
+  """
+  userValidation fullName
+  """
+  fullName: String
+
+  """
+  userValidation firstName
+  """
+  firstName: String
+
+  """
+  userValidation secondName
+  """
+  secondName: String
+
+  """
+  userValidation lastName
+  """
+  lastName: String
+
+  """
+  userValidation secondLastName
+  """
+  secondLastName: String
+
+  """
+  userValidation contactMeans
+  """
+  contactMeans: String
+
+  """
+  userValidation nationality
+  """
+  nationality: String
+
+  """
+  userValidation identification
+  """
+  identification: String
+
+  """
+  userValidation countryCode
+  """
+  countryCode: String
+
+  """
+  userValidation currentStep
+  """
+  currentStep: String
+
+  """
+  userValidation userStatus
+  """
+  userStatus: String
+}
+
+input validateUserExistsInput {
+  email: String!
+
+  currentStep: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 type SecurityMutation {
   userValidation(userValidationInput: userValidationInput): userValidation
 
@@ -783,6 +894,18 @@ input userValidationInput {
   currentStep: String!
 
   idBrand: Int!
+
+  idDocument: Int!
+
+  identification: String!
+
+  firtName: String!
+
+  secondName: String
+
+  firtSurname: String!
+
+  secondSurname: String
 
   tenantId: String
 
@@ -1050,6 +1173,8 @@ input onfidoCheckProcessInputType {
   tenantId: String
 
   traceIdentifier: String
+
+  userRequestId: Int!
 }
 
 type saveLogTracking {

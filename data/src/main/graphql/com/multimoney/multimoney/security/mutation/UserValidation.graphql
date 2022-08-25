@@ -1,20 +1,29 @@
-mutation UserValidation($email: String!, $currentStep: String!,$idBrand: Int!){
-    userValidation(
-        userValidationInput: { email: $email, currentStep: $currentStep, idBrand: $idBrand}
-    ) {
-        pkUser
-        userName
-        email
-        phoneNumber
-        fullName
-        firstName
-        secondName
-        lastName
-        secondLastName
-        nationality
-        identification
-        countryCode
-        currentStep
-        userStatus
+mutation UserValidation($email:String!, $currentStep:String!, $idBrand:Int!, $idDocument:Int!, $identification:String!, $firtName:String!, $firtSurname:String!){
+  userValidation(
+    userValidationInput: {
+      email: $email
+      currentStep: $currentStep
+      idBrand: $idBrand
+      idDocument: $idDocument
+      identification: $identification
+      firtName: $firtName
+      firtSurname: $firtSurname
     }
+  ) {
+    pkUser
+    userName
+    email
+    phoneNumber
+    fullName
+    firstName
+    secondName
+    lastName
+    secondLastName
+    contactMeans
+    nationality
+    identification
+    countryCode
+    currentStep
+    userStatus
+  }
 }

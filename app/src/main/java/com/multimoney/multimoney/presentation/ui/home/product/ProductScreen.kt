@@ -227,7 +227,6 @@ fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean
     // todo it is missing add the condition when the step was 0
     return validateUserStatus?.infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
             && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
-            && (validateUserStatus.infoCredit?.amountAvailable ?: 0.0) > 0.0
 }
 
 @OptIn(ExperimentalPagerApi::class)

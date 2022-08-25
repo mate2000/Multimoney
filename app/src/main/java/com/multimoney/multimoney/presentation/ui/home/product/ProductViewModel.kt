@@ -53,11 +53,17 @@ class ProductViewModel @Inject constructor(
                 identification = dataStorePreferences.getIdentification().first(),
                 email = dataStorePreferences.getUserEmail().first()
             )
+//            callQueryValidateUserStatus(
+//                uiState.pkUser.toInt(),
+//                uiState.identification,
+//                uiState.email,
+//                uiState.idBrand.toInt()
+//            )
             callQueryValidateUserStatus(
-                uiState.pkUser.toInt(),
-                uiState.identification,
-                uiState.email,
-                uiState.idBrand.toInt()
+                230177,
+                "123456787",
+                "mail@mail.com",
+                5
             )
         }
     }

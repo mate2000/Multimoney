@@ -83,6 +83,7 @@ class SignInViewModel @Inject constructor(
                                         dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
                                     }
                                     val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
+                                    dataStorePreferences.setAuthToken(session.userPoolTokens.value?.accessToken ?: "")
                                     dataStorePreferences.setIdBrand(payload.getString(COGNITO_CUSTOM_ID_BRAND))
                                     dataStorePreferences.setPkUser(payload.getString(COGNITO_CUSTOM_PK_USER))
                                     uiState = uiState.copy(isLoading = false)

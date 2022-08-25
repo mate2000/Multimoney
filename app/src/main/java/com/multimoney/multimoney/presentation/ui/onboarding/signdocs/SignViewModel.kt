@@ -19,7 +19,7 @@ class SignViewModel :BaseViewModel() {
 
     fun createDialog(){
         uiState = uiState.copy(
-            openDialog = DialogParameters(
+            dialogParameters = DialogParameters(
                 title = R.string.sign_credit_dialog_title,
                 description = dialogDescription,
                 positiveText = R.string.sign_credit_dialog_continue,

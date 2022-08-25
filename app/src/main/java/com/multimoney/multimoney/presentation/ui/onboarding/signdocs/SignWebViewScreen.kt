@@ -29,14 +29,14 @@ fun SignDocumentsScreen(
         siteUrl,
         LocalContext.current
     )
-    if (viewModel.uiState.openDialog.isActive.value) {
+    if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.title),
-            message = viewModel.uiState.openDialog.description,
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveText),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeText),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            title = stringResource(id = viewModel.uiState.dialogParameters.title),
+            message = viewModel.uiState.dialogParameters.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveText),
+            negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeText),
+            openDialogCustom = viewModel.uiState.dialogParameters.isActive,
+            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
         )
     }
 }

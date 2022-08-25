@@ -53,6 +53,7 @@ class ProductViewModel @Inject constructor(
                 identification = dataStorePreferences.getIdentification().first(),
                 email = dataStorePreferences.getUserEmail().first()
             )
+            // todo uncomment this when the backend implement the correct process in the ValidationUserStatus
 //            callQueryValidateUserStatus(
 //                uiState.pkUser.toInt(),
 //                uiState.identification,

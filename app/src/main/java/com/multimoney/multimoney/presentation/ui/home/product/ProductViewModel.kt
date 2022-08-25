@@ -45,7 +45,7 @@ class ProductViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onGetIdBrand() {
+    private fun onGetUserData() {
         viewModelScope.launch {
             uiState = uiState.copy(
                 idBrand = dataStorePreferences.getIdBrand().first(),
@@ -53,12 +53,11 @@ class ProductViewModel @Inject constructor(
                 identification = dataStorePreferences.getIdentification().first(),
                 email = dataStorePreferences.getUserEmail().first()
             )
-            // TODO: Remove hardcoded parameters
             callQueryValidateUserStatus(
-                229913,
-                "207100330",
-                "popics93@gmail.com",
-                5
+                uiState.pkUser.toInt(),
+                uiState.identification,
+                uiState.email,
+                uiState.idBrand.toInt()
             )
         }
     }
@@ -139,7 +138,9 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCreditScreen() {
-        navigateTo(Screen.CreditScreen.route)
+        navigateTo(
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.identification}/${uiState.email}"
+        )
     }
 
     private fun onProductClick() {
@@ -177,7 +178,7 @@ class ProductViewModel @Inject constructor(
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
             is OnProductClick -> onProductClick()
-            is OnGetIdBrand -> onGetIdBrand()
+            is OnGetIdBrand -> onGetUserData()
         }
     }
 

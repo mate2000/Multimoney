@@ -49,7 +49,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class CreditAmountViewModel @Inject constructor(
     private val queryCreditOfferUseCase: QueryCreditOfferUseCase,
     private val queryPaymentAmountUseCase: QueryPaymentAmountUseCase,
-    private val mutationSaveCreditApplicationUseCase: MutationSaveCreditApplicationUseCase
+    private val mutationSaveCreditApplicationUseCase: MutationSaveCreditApplicationUseCase,
 ) : BaseViewModel() {
 
     // UIState

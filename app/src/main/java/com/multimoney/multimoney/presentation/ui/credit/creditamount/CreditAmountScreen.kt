@@ -227,11 +227,10 @@ fun CreditAmountScreen(
                 viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnSliderValueChange(it))
             },
             onValueChangeFinished = {
-                // TODO: Send appropriate data for this call because now we don't have this data
                 viewModel.onUIEvent(
                     CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished(
-                        user = "ecruzGRAPHQL",
-                        idBrand = Brand.CostaRica.id,
+                        user = sharedViewModel.email,
+                        idBrand = sharedViewModel.idBrand.toInt(),
                         onLoadingValueChange = { isLoading ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                         },

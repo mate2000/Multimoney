@@ -17,16 +17,21 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
@@ -43,6 +48,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun CreditScreen(
+    navBackStackEntry: NavBackStackEntry,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: CreditViewModel = hiltViewModel()
@@ -53,6 +59,14 @@ fun CreditScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.onUIEvent(
+            OnUpdateUserData(
+                navBackStackEntry.arguments?.getString(ID_BRAND, "") ?: "",
+                navBackStackEntry.arguments?.getString(PK_USER, "") ?: "",
+                navBackStackEntry.arguments?.getString(IDENTIFICATION, "") ?: "",
+                navBackStackEntry.arguments?.getString(EMAIL, "") ?: "",
+            )
+        )
     }
 
     viewModel.onUIEvent(OnInitializeText(stringResource(id = string.credit_close_dialog_description)))

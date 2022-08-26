@@ -21,7 +21,6 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCallValidateUserStatus
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
@@ -46,9 +45,27 @@ class ProductViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onGetIdBrand() {
+    private fun onGetUserData() {
         viewModelScope.launch {
-            uiState = uiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
+            uiState = uiState.copy(
+                idBrand = dataStorePreferences.getIdBrand().first(),
+                pkUser = dataStorePreferences.getPkUser().first(),
+                identification = dataStorePreferences.getIdentification().first(),
+                email = dataStorePreferences.getUserEmail().first()
+            )
+            // todo uncomment this when the backend implement the correct process in the ValidationUserStatus
+//            callQueryValidateUserStatus(
+//                uiState.pkUser.toInt(),
+//                uiState.identification,
+//                uiState.email,
+//                uiState.idBrand.toInt()
+//            )
+            callQueryValidateUserStatus(
+                230177,
+                "123456787",
+                "mail@mail.com",
+                5
+            )
         }
     }
 
@@ -128,7 +145,9 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCreditScreen() {
-        navigateTo(Screen.CreditScreen.route)
+        navigateTo(
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.identification}/${uiState.email}"
+        )
     }
 
     private fun onProductClick() {
@@ -136,7 +155,7 @@ class ProductViewModel @Inject constructor(
             uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
                 Screen.CreditScreen.route
             )
-            uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
+            uiState.userStatus?.infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
                 Screen.CreditScreen.route
             )
             else -> navigateTo(Screen.CreditScreen.route)
@@ -144,13 +163,16 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getProductBackgroundType(userStatus: ValidateUserStatus) = when {
-        userStatus.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> Primary
+        userStatus.infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> Primary
         else -> Tertiary
     }
 
     data class UIState(
         //Fields
         var idBrand: String = "",
+        var pkUser: String = "",
+        var identification: String = "",
+        var email: String = "",
         var balanceCredit: Balance? = null,
         var userStatus: ValidateUserStatus? = null,
         var productType: ProductBackGroundType = Tertiary,
@@ -161,30 +183,15 @@ class ProductViewModel @Inject constructor(
         when (uiEvent) {
             is OnBalanceSuccess -> uiState.balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
-            is OnCallValidateUserStatus -> callQueryValidateUserStatus(
-                uiEvent.pkUser,
-                uiEvent.identification,
-                uiEvent.email,
-                uiEvent.idBrand
-            )
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
             is OnProductClick -> onProductClick()
-            is OnGetIdBrand -> onGetIdBrand()
+            is OnGetIdBrand -> onGetUserData()
         }
     }
 
     sealed class UIEvent {
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
-
-        // TODO: Remove hardcoded parameters
-        data class OnCallValidateUserStatus(
-            val pkUser: Int = 229913,
-            val identification: String = "207100330",
-            val email: String = "popics93@gmail.com",
-            val idBrand: Int = 5
-        ) : UIEvent()
-
         object OnNavigateToCreditScreen : UIEvent()
         object OnProductClick : UIEvent()
         object OnGetIdBrand : UIEvent()

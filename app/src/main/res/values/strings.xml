@@ -285,16 +285,20 @@
     <string name="credit_job_phone_placeholder">0000 0000</string>
     <string name="credit_job_phone_required">Número de teléfono requerido</string>
 
-    <!-- Credit Company-->
+    <!-- Credit Company Address-->
     <string name="credit_company_address_title">¿Dónde se encuentra la empresa?</string>
-    <string name="credit_company_address_province">Provincia</string>
-    <string name="credit_company_address_canton">Cantón</string>
-    <string name="credit_company_address_district">Distrito</string>
-    <string name="credit_company_address_state">Departamento</string>
-    <string name="credit_company_address_municipality">Municipio</string>
-    <string name="credit_company_address_zone">Zona</string>
-    <string name="credit_company_address_accurate_address">Dirección exacta</string>
+    <string name="credit_address_province">Provincia</string>
+    <string name="credit_address_canton">Cantón</string>
+    <string name="credit_address_district">Distrito</string>
+    <string name="credit_address_state">Departamento</string>
+    <string name="credit_address_municipality">Municipio</string>
+    <string name="credit_address_zone">Zona</string>
+    <string name="credit_address_accurate_address">Dirección exacta</string>
     <string name="credit_company_address_accurate_address_error">Dirección exacta requerida</string>
+    <string name="credit_home_address_select_current_location">Seleccionar mi ubicación actual</string>
+
+    <!--Credit Home address -->
+    <string name="credit_home_address_title">¿Dónde vivís?</string>
 
     <!-- Generate Document -->
     <string name="document_generation_title">Estamos generando tus documentos</string>

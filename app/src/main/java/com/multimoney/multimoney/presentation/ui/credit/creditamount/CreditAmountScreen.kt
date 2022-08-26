@@ -83,10 +83,10 @@ fun CreditAmountScreen(
             // TODO: Send appropriate data for this call because now we don't have this data
             viewModel.onUIEvent(
                 CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase(
-                    pkUser = 229913,
+                    pkUser = 230361,
                     descPromotion = "",
                     idPromotion = 1,
-                    user = "ECRURZ",
+                    user = "diegomm6@yopmail.com",
                     idBrand = Brand.CostaRica.id,
                     onSuccess = {
                         sharedViewModel.onUIEvent(
@@ -110,7 +110,7 @@ fun CreditAmountScreen(
         viewModel.onUIEvent(
             // TODO: Send appropriate data for this call because now we don't have this data
             CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase(
-                pkUser = 229913,
+                pkUser = 230361,
                 idBrand = Brand.CostaRica.id,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
@@ -229,8 +229,8 @@ fun CreditAmountScreen(
             onValueChangeFinished = {
                 viewModel.onUIEvent(
                     CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished(
-                        user = sharedViewModel.email,
-                        idBrand = sharedViewModel.idBrand.toInt(),
+                        user = "diegomm6@yopmail.com",
+                        idBrand = Brand.CostaRica.id,
                         onLoadingValueChange = { isLoading ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                         },

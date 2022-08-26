@@ -61,9 +61,9 @@ class ProductViewModel @Inject constructor(
 //                uiState.idBrand.toInt()
 //            )
             callQueryValidateUserStatus(
-                230177,
-                "123456787",
-                "mail@mail.com",
+                230361,
+                "0000100000007",
+                "diegomm6@yopmail.com",
                 5
             )
         }

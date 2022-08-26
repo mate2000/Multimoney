@@ -112,6 +112,7 @@ class SignInViewModel @Inject constructor(
         dataStorePreferences.setIdBrand(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND))
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
         dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))
+        dataStorePreferences.setUserEmail(uiState.userEmail)
     }
 
     private fun isFormValid() {

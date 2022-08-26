@@ -76,7 +76,7 @@ fun MonthlyIncomeScreen(
 
         var placeHolder = ""
         if (sharedViewModel.idBrand.isNotEmpty()) {
-            placeHolder = when (viewModel.uiState.idBrand.toInt()) {
+            placeHolder = when (sharedViewModel.idBrand.toInt()) {
                 Brand.ElSalvador.id -> stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
                 Brand.Guatemala.id -> stringResource(id = R.string.credit_monthly_income_income_guatemala_hint)
                 Brand.CostaRica.id -> stringResource(id = R.string.credit_monthly_income_income_costa_rica_hint)

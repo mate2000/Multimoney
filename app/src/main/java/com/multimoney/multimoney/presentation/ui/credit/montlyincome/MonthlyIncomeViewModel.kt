@@ -61,7 +61,6 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
     }
 
     data class UIState(
-        val idBrand: String = "",
         val income: String = "",
         val profession: String = "",
         val incomeError: Pair<Boolean, Int> = Pair(

@@ -19,6 +19,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseFirstTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseSecondTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessCreateAccountFailure
@@ -27,8 +29,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessSignatureRefuseFirstTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessSignatureRefuseSecondTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 
@@ -125,7 +125,10 @@ fun CardGTWithoutCredit() {
  *
  */
 @Composable
-fun CreditApprovedOrStarted(creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus, amount: Double? = 0.0) {
+fun CreditApprovedOrStarted(
+    creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
+    amount: Double? = 0.0
+) {
     val title: Int
     var description = ""
     val actionText: Int
@@ -133,12 +136,16 @@ fun CreditApprovedOrStarted(creditApprovedOrStartedStatus: CreditApprovedOrStart
     when (creditApprovedOrStartedStatus) {
         CreditStatusApproved -> {
             title = R.string.home_product_credit_approved_card_title
-            description = stringResource(id = R.string.home_product_credit_approved_card_description, amount ?: 0.0)
+            description = stringResource(
+                id = R.string.home_product_credit_approved_card_description,
+                amount ?: 0.0
+            )
             actionText = R.string.home_product_credit_approved_card_action
         }
         CreditStatusProcessStarted -> {
             title = R.string.home_product_credit_approved_process_started_card_title
-            description = stringResource(id = R.string.home_product_credit_approved_process_started_card_description)
+            description =
+                stringResource(id = R.string.home_product_credit_approved_process_started_card_description)
             actionText = R.string.home_product_credit_approved_process_started_card_action
         }
     }
@@ -260,6 +267,7 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
     val title: Int
     val description: Int
     val actionText: Int
+    var startIcon = R.drawable.ic_time
     when (type) {
         CreditAcceptContractRefuseFirstTime -> {
             title = R.string.home_product_process_title
@@ -267,9 +275,10 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
             actionText = R.string.home_product_process_action
         }
         CreditStartProcessIncomplete -> {
-            title = R.string.home_product_process_title
-            description = R.string.home_product_process_description
-            actionText = R.string.home_product_process_action
+            title = R.string.home_product_credit_not_completed_title
+            description = R.string.home_product_credit_not_completed_description
+            actionText = R.string.home_product_credit_not_completed_action
+            startIcon = R.drawable.ic_warning
         }
         CreditAcceptContractRefuseSecondTime -> {
             title = R.string.home_product_process_title
@@ -278,9 +287,9 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
 
         }
         CreditProcessMissingSignature -> {
-            title = R.string.home_product_process_title
-            description = R.string.home_product_process_description
-            actionText = R.string.home_product_process_action
+            title = R.string.home_product_credit_signature_missing_title
+            description = R.string.home_product_credit_signature_missing_description
+            actionText = R.string.home_product_credit_signature_missing_action
 
         }
         CreditProcessSignatureRefuseFirstTime -> {
@@ -324,7 +333,7 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
             modifier = Modifier.padding(top = 12.dp),
             shape = RoundedCornerShape(12.dp),
             background = BlackTransparency20,
-            startIcon = R.drawable.ic_time,
+            startIcon = startIcon,
             startIconTint = MultimoneyTheme.colors.iconColor
         )
         Text(

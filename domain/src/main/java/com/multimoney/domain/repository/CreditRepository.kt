@@ -3,6 +3,7 @@ package com.multimoney.domain.repository
 import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditOffer
+import com.multimoney.domain.model.credit.HomeAddress
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
@@ -54,4 +55,16 @@ interface CreditRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<CompanyAddress?>>
+
+    suspend fun queryHomeAddress(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<HomeAddress?>>
+
+    suspend fun queryHomeAddressSV(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<HomeAddress?>>
 }

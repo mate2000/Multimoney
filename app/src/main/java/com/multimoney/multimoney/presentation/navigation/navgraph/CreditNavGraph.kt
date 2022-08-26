@@ -11,14 +11,19 @@ import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.Docum
 import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentScreen
 
 const val SIGN_DOCUMENT_LINK = "sign_document_link"
+const val ID_BRAND = "id_brand"
+const val PK_USER = "pk_user"
+const val IDENTIFICATION = "identification"
+const val EMAIL = "email"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
         startDestination = Screen.CreditScreen.route,
         route = CREDIT_ROUTE
     ) {
-        composable(route = Screen.CreditScreen.route) {
+        composable(route = Screen.CreditScreen.route) { navBackStackEntry ->
             CreditScreen(
+                navBackStackEntry = navBackStackEntry,
                 onNavigate = {
                     navController.navigate(it.route)
                 },

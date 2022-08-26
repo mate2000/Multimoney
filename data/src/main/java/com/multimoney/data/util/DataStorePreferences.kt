@@ -1,5 +1,6 @@
 package com.multimoney.data.util
 
+import android.net.ipsec.ike.IkeIdentification
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -31,6 +32,12 @@ class DataStorePreferences @Inject constructor(
     }
 
     fun getPkUser(): Flow<String> = getSecuredData(PK_USER, "")
+
+    suspend fun setIdentification(identification: String) {
+        setSecuredData(IDENTIFICATION, identification)
+    }
+
+    fun getIdentification(): Flow<String> = getSecuredData(IDENTIFICATION, "")
 
     suspend fun setUserEmail(userEmail: String) =
         setSecuredData(USER_EMAIL_KEY, userEmail)
@@ -64,6 +71,7 @@ class DataStorePreferences @Inject constructor(
     companion object {
         private val ID_BRAND = stringPreferencesKey("id_brand")
         private val PK_USER = stringPreferencesKey("pk_user")
+        private val IDENTIFICATION = stringPreferencesKey("identification")
         private val USER_EMAIL_KEY = stringPreferencesKey("user_email_key")
         private val USER_NAME_KEY = stringPreferencesKey("user_name_key")
         private val USER_PASSWORD_KEY = stringPreferencesKey("user_password_key")

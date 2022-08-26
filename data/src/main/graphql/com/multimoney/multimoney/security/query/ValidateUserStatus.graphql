@@ -11,6 +11,7 @@ query ValidateUserStatus($pkUser: Int!, $identification: String!, $user: String!
             idBrand
             userName
             idClient
+            statusOnfido
         }
         infoCredit {
             idClient
@@ -18,10 +19,10 @@ query ValidateUserStatus($pkUser: Int!, $identification: String!, $user: String!
             status
             amountAvailable
             idRequest
+            statusFirm
         }
         infoBankAccount {
             statusFirm
-            statusOnfido
         }
     }
 }

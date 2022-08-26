@@ -1,47 +1,46 @@
-package com.multimoney.multimoney.presentation.ui.credit.companyaddress
+package com.multimoney.multimoney.presentation.ui.credit.homeaddress
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.domain.interaction.credit.QueryCompanyAddressSVUseCase
-import com.multimoney.domain.interaction.credit.QueryCompanyAddressUseCase
+import com.multimoney.domain.interaction.credit.QueryHomeAddressSVUseCase
+import com.multimoney.domain.interaction.credit.QueryHomeAddressUseCase
 import com.multimoney.domain.model.credit.CatalogSubOptions
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.BaseEvent.IsFormCompleted
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnAddressValueChange
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnCallCatalogs
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnFormValid
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.BaseEvent.IsFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnAddressValueChange
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnCallCatalogs
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnDivisionOneValueChange
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnDivisionThreeValueChange
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnDivisionTwoValueChange
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnFormValid
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class CompanyAddressViewModel @Inject constructor(
-    private val queryCompanyAddressUseCase: QueryCompanyAddressUseCase,
-    private val queryCompanyAddressSVUseCase: QueryCompanyAddressSVUseCase
+class HomeAddressViewModel @Inject constructor(
+    val queryHomeAddressUseCase: QueryHomeAddressUseCase,
+    val queryHomeAddressSVUseCase: QueryHomeAddressSVUseCase
 ) : BaseViewModel() {
-
     // uiState
     var uiState by mutableStateOf(UIState())
         private set
 
     //stateless
     val country = ZERO
-    private var companyCantonList: List<CatalogSubOptions?>? = listOf()
-    private var companyDistrictList: List<CatalogSubOptions?>? = listOf()
+    private var homeCantonList: List<CatalogSubOptions?>? = listOf()
+    private var homeDistrictList: List<CatalogSubOptions?>? = listOf()
 
     private fun onDivisionOneValueChange(divisionOne: CatalogSubOptions?) {
         uiState = uiState.copy(divisionOneSelected = divisionOne)
-        uiState = uiState.copy(divisionTwoList = companyCantonList?.filter {
+        uiState = uiState.copy(divisionTwoList = homeCantonList?.filter {
             it?.fkCatalog.toString() == uiState.divisionOneSelected?.pkCatalog
         })
         onValidateScreen()
@@ -49,7 +48,7 @@ class CompanyAddressViewModel @Inject constructor(
 
     private fun onDivisionTwoValueChange(divisionTwo: CatalogSubOptions?) {
         uiState = uiState.copy(divisionTwoSelected = divisionTwo)
-        uiState = uiState.copy(divisionThreeList = companyDistrictList?.filter {
+        uiState = uiState.copy(divisionThreeList = homeDistrictList?.filter {
             it?.fkCatalog.toString() == uiState.divisionTwoSelected?.pkCatalog
         })
         onValidateScreen()
@@ -98,13 +97,13 @@ class CompanyAddressViewModel @Inject constructor(
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
         executeUseCase {
-            queryCompanyAddressUseCase.invoke(pkUser, user, idBrand)
+            queryHomeAddressUseCase.invoke(pkUser, user, idBrand)
                 .collectLatest { result ->
                     result.onSuccess {
-                        companyCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
+                        homeCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
-                        companyDistrictList = it?.district?.first()?.subOptions?.filter { filter ->
+                        homeDistrictList = it?.district?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
                         uiState = uiState.copy(
@@ -138,10 +137,10 @@ class CompanyAddressViewModel @Inject constructor(
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
         executeUseCase {
-            queryCompanyAddressSVUseCase.invoke(pkUser, user, idBrand)
+            queryHomeAddressSVUseCase.invoke(pkUser, user, idBrand)
                 .collectLatest { result ->
                     result.onSuccess {
-                        companyCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
+                        homeCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
                         uiState = uiState.copy(

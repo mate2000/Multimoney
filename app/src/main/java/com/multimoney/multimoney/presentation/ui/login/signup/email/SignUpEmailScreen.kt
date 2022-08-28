@@ -26,6 +26,7 @@ import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -69,11 +70,10 @@ fun SignUpEmailScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateForm)
 
-        viewModel.onUserDataValidationEvent.collect { event ->
+        viewModel.onValidateUserExistsEvent.collect { event ->
             event.onSuccess { userData ->
                 viewModel.onUIEvent(
                     SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess(
-                        context = context,
                         currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
                         onUseDataValueChange = {
@@ -93,6 +93,20 @@ fun SignUpEmailScreen(
                                 )
                             )
                         },
+                        onLoadingValueChange = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                    false
+                                )
+                            )
+                        }
+                    )
+                )
+            }.onMessage {
+                viewModel.onUIEvent(
+                    SignUpEmailViewModel.UIEvent.OnHandleUserStatus(
+                        context = context,
+                        userData = it,
                         previousStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnPreviousStep) },
                         onLoadingValueChange = {
                             sharedViewModel.onUIEvent(

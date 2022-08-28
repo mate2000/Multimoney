@@ -6,13 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.UserStatus
-import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
+import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnHandleUserStatus
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess
@@ -23,13 +24,14 @@ import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpEmailViewModel @Inject constructor(
-    private val mutationUserValidationUseCase: MutationUserValidationUseCase
+    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase,
+    // private val mutationUserValidationUseCase: MutationUserValidationUseCase
 ) : BaseViewModel() {
 
     // UIState
@@ -44,7 +46,8 @@ class SignUpEmailViewModel @Inject constructor(
     private var blockedMessage = ""
 
     // Events
-    val onUserDataValidationEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
+    // val onUserDataValidationEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
+    val onValidateUserExistsEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
 
     private fun onStart(userCompletedDialogDescription: String, linkWhatsapp: String, blockedMessage: String) {
         this.userCompletedDialogDescription = userCompletedDialogDescription
@@ -74,20 +77,31 @@ class SignUpEmailViewModel @Inject constructor(
 
     private fun isDataChanged() = previousUserEmail != uiState.userEmail
 
-    private fun callMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
+//    private fun callMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
+//        executeUseCase {
+//            mutationUserValidationUseCase(
+//                email = email,
+//                currentStep = nextStep,
+//                idBrand = idBrand
+//            ).collectLatest { result ->
+//                onUserDataValidationEvent.emit(result)
+//            }
+//        }
+
+    private fun callQueryValidationUserExistsUseCase(email: String, nextStep: String, idBrand: Int) =
         executeUseCase {
-            mutationUserValidationUseCase(
+            queryValidateUserExistsUseCase(
                 email = email,
                 currentStep = nextStep,
                 idBrand = idBrand
             ).collectLatest { result ->
-                onUserDataValidationEvent.emit(result)
+                onValidateUserExistsEvent.emit(result)
             }
         }
 
     private fun onNextActionClick(nextStepAction: () -> Unit, idBrand: Int) {
         if (isDataChanged() || isUserStatusIncomplete.not()) {
-            callMutationUserValidationUseCase(
+            callQueryValidationUserExistsUseCase(
                 uiState.userEmail,
                 SignUpStep.Two.name,
                 idBrand
@@ -97,21 +111,18 @@ class SignUpEmailViewModel @Inject constructor(
         }
     }
 
-    private fun onUserDataValidationSuccess(
-        context: Context,
+    private fun onValidationUserExistsSuccess(
         currentStep: Int,
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
         nextStepAction: () -> Unit,
         openSignUpSplashComeBack: () -> Unit,
-        previousStepAction: () -> Unit,
         onLoadingValueChange: () -> Unit,
-        onOpenDialog: (DialogParameters) -> Unit
     ) {
         previousUserEmail = userData?.email ?: ""
         onLoadingValueChange()
         onUseDataValueChange()
-        if (userData?.userStatus == UserStatus.Incomplete.name) {
+        if (userData?.status == UserStatus.Incomplete.status) {
             isUserStatusIncomplete = true
             val step = SignUpStep.Search.getIdByName(userData.currentStep)
             if (step == currentStep || step < STEP_TO_SHOW_SPLASH) {
@@ -119,7 +130,18 @@ class SignUpEmailViewModel @Inject constructor(
             } else {
                 openSignUpSplashComeBack()
             }
-        } else if (userData?.userStatus == UserStatus.Active.name) {
+        }
+    }
+
+    private fun onHandleUserState(
+        context: Context,
+        userData: UserData?,
+        previousStepAction: () -> Unit,
+        onLoadingValueChange: () -> Unit,
+        onOpenDialog: (DialogParameters) -> Unit,
+    ) {
+        onLoadingValueChange()
+        if (userData?.status == UserStatus.Active.status) {
             isUserStatusIncomplete = false
             onOpenDialog(
                 DialogParameters(
@@ -130,7 +152,7 @@ class SignUpEmailViewModel @Inject constructor(
                     isActive = mutableStateOf(true)
                 )
             )
-        } else if (userData?.userStatus == UserStatus.Blocked.name) {
+        } else {
             isUserStatusIncomplete = false
             onOpenDialog(
                 DialogParameters(
@@ -164,13 +186,17 @@ class SignUpEmailViewModel @Inject constructor(
             is OnStart -> onStart(event.userCompletedDialogDescription, event.linkWhatsapp, event.blockedMessage)
             is OnValidateForm -> isFormValid()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction, event.idBrand)
-            is OnUserDataValidationSuccess -> onUserDataValidationSuccess(
-                event.context,
+            is OnUserDataValidationSuccess -> onValidationUserExistsSuccess(
                 event.currentStep,
                 event.userData,
                 event.onUseDataValueChange,
                 event.nextStepAction,
                 event.openSignUpSplashComeBack,
+                event.onLoadingValueChange
+            )
+            is OnHandleUserStatus -> onHandleUserState(
+                event.context,
+                event.userData,
                 event.previousStepAction,
                 event.onLoadingValueChange,
                 event.onOpenDialog
@@ -189,12 +215,17 @@ class SignUpEmailViewModel @Inject constructor(
 
         data class OnNextActionClick(val nextStepAction: () -> Unit, val idBrand: Int) : UIEvent()
         data class OnUserDataValidationSuccess(
-            val context: Context,
             val currentStep: Int,
             val userData: UserData?,
             val onUseDataValueChange: () -> Unit,
             val nextStepAction: () -> Unit,
             val openSignUpSplashComeBack: () -> Unit,
+            val onLoadingValueChange: () -> Unit,
+        ) : UIEvent()
+
+        data class OnHandleUserStatus(
+            val context: Context,
+            val userData: UserData?,
             val previousStepAction: () -> Unit,
             val onLoadingValueChange: () -> Unit,
             val onOpenDialog: (DialogParameters) -> Unit

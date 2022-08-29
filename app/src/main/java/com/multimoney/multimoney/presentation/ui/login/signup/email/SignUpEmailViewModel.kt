@@ -16,7 +16,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailV
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnHandleUserStatus
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidationUserExistsSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateUserEmail
@@ -99,11 +99,9 @@ class SignUpEmailViewModel @Inject constructor(
     }
 
     private fun onValidationUserExistsSuccess(
-        currentStep: Int,
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
         nextStepAction: () -> Unit,
-        openSignUpSplashComeBack: () -> Unit,
         onLoadingValueChange: () -> Unit,
     ) {
         previousUserEmail = userData?.email ?: ""
@@ -111,12 +109,7 @@ class SignUpEmailViewModel @Inject constructor(
         onUseDataValueChange()
         if (userData?.status == UserStatus.Incomplete.status) {
             isUserStatusIncomplete = true
-//            val step = SignUpStep.Search.getIdByName(userData.currentStep)
-//            if (step == currentStep || step < STEP_TO_SHOW_SPLASH) {
-                nextStepAction()
-//            } else {
-//                openSignUpSplashComeBack()
-//            }
+            nextStepAction()
         }
     }
 
@@ -173,12 +166,10 @@ class SignUpEmailViewModel @Inject constructor(
             is OnStart -> onStart(event.userCompletedDialogDescription, event.linkWhatsapp, event.blockedMessage)
             is OnValidateForm -> isFormValid()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction, event.idBrand)
-            is OnUserDataValidationSuccess -> onValidationUserExistsSuccess(
-                event.currentStep,
+            is OnValidationUserExistsSuccess -> onValidationUserExistsSuccess(
                 event.userData,
                 event.onUseDataValueChange,
                 event.nextStepAction,
-                event.openSignUpSplashComeBack,
                 event.onLoadingValueChange
             )
             is OnHandleUserStatus -> onHandleUserState(
@@ -201,12 +192,11 @@ class SignUpEmailViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnNextActionClick(val nextStepAction: () -> Unit, val idBrand: Int) : UIEvent()
-        data class OnUserDataValidationSuccess(
+        data class OnValidationUserExistsSuccess(
             val currentStep: Int,
             val userData: UserData?,
             val onUseDataValueChange: () -> Unit,
             val nextStepAction: () -> Unit,
-            val openSignUpSplashComeBack: () -> Unit,
             val onLoadingValueChange: () -> Unit,
         ) : UIEvent()
 
@@ -226,9 +216,5 @@ class SignUpEmailViewModel @Inject constructor(
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
-    }
-
-    companion object {
-        private const val STEP_TO_SHOW_SPLASH = 3
     }
 }

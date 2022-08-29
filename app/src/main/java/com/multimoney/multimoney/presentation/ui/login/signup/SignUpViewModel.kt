@@ -131,8 +131,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {
-        // todo when the process to create the user is decided use the parameter idBrand
-        userData?.idBrand = 5
+        userData?.idBrand = idBrand
         userData?.nationality = nationality
         userData?.identificationValueType = ""
         userData?.identification = ""

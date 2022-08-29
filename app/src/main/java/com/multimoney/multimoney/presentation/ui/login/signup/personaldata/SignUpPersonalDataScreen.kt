@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,20 +17,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.data.util.catalog.SignUpStep.Three
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.Nationalities
 
 @Composable
@@ -66,30 +71,57 @@ fun SignUpPersonalDataScreen(
                     nextAction = {
                         viewModel.onUIEvent(
                             OnNextActionClick(
-                                onUserDataValueChange = {
-                                    onUIEvent(
-                                        OnUseDataValueChange(
-                                            userData = userData?.copy(
-                                                currentStep = Three.name,
-                                                firstName = viewModel.uiState.firstNameValue,
-                                                secondName = viewModel.uiState.secondNameValue,
-                                                firstLastName = viewModel.uiState.firstLastNameValue,
-                                                secondLastName = viewModel.uiState.secondLastNameValue,
-                                                fullName = viewModel.getFullName(),
-                                                identificationValueType = viewModel.uiState.identificationValueType
-                                            )
-                                        )
-                                    )
-                                },
-                                onCallMutationUpdateUserRegisterUseCase = {
-                                    onUIEvent(OnCallMutationUpdateUserRegisterUseCase)
-                                })
+                                email = userData?.email ?: "",
+                                nextStep = Three.name,
+                                idBrand = userData?.idBrand ?: 0
+                            )
                         )
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id
                 )
             )
+        }
+        viewModel.onUserDataValidationEvent.collect { result ->
+            result.onSuccess { userData ->
+                viewModel.onUIEvent(
+                    SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess(
+                        currentStep = sharedViewModel.uiState.currentStep,
+                        userData = userData,
+                        onUseDataValueChange = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnUseDataValueChange(
+                                    userData?.copy(fullName = viewModel.getFullName())
+                                )
+                            )
+                        },
+                        nextStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) },
+                        onCallMutationUpdateUserRegisterUseCase = {
+                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
+                        },
+                        onLoadingValueChange = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                    false
+                                )
+                            )
+                        }
+                    )
+                )
+            }.onLoading {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
+            }.onFailure {
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            title = string.error_empty,
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                )
+            }
         }
     }
 

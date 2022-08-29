@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
@@ -19,7 +20,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallMutationUserValidation
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.Nationalities.CostaRicaDimex
@@ -231,7 +232,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     }
 
-    private fun callMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
+    private fun onCallMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
         executeUseCase {
             mutationUserValidationUseCase(
                 email = email,
@@ -342,11 +343,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
 
     private fun onNextActionClick(
-        onUserDataValueChange: () -> Unit,
-        onCallMutationUpdateUserRegisterUseCase: () -> Unit
+        email: String, nextStep: String, idBrand: Int
     ) {
-        onUserDataValueChange()
-        onCallMutationUpdateUserRegisterUseCase()
+        onCallMutationUserValidationUseCase(email, nextStep, idBrand)
     }
 
     private fun validateDocument(email: String?) {
@@ -362,6 +361,23 @@ class SignUpPersonalDataViewModel @Inject constructor(
             }
         )
         isFormValid()
+    }
+
+    private fun onUserDataValidationSuccess(
+        currentStep: Int,
+        userData: UserData?,
+        onUseDataValueChange: () -> Unit,
+        nextStepAction: () -> Unit,
+        onLoadingValueChange: () -> Unit,
+    ) {
+        onLoadingValueChange()
+        onUseDataValueChange()
+        val step = SignUpStep.Search.getIdByName(userData?.currentStep)
+        if (step == currentStep || step < STEP_TO_SHOW_SPLASH) {
+            nextStepAction()
+        } else {
+            // move to step
+        }
     }
 
     data class UIState(
@@ -424,13 +440,16 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.identification,
                 event.identificationShareViewModelChange
             )
-            is OnNextActionClick -> onNextActionClick(
-                event.onUserDataValueChange,
-                event.onCallMutationUpdateUserRegisterUseCase
+            is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand)
+            is OnUserDataValidationSuccess -> onUserDataValidationSuccess(
+                event.currentStep,
+                event.userData,
+                event.onUseDataValueChange,
+                event.nextStepAction,
+                event.onLoadingValueChange
             )
             is OnValidateDocument -> validateDocument(event.email)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(event.user)
-            is OnCallMutationUserValidation -> callMutationUserValidationUseCase(event.email, event.nextStep, event.idBrand)
             is UIEvent.OnValidateForm -> isFormValid()
         }
     }
@@ -480,8 +499,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnNextActionClick(
-            val onUserDataValueChange: () -> Unit,
-            val onCallMutationUpdateUserRegisterUseCase: () -> Unit
+            val email: String,
+            val nextStep: String,
+            val idBrand: Int
         ) : UIEvent()
 
         data class OnValidateDocument(
@@ -490,7 +510,14 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
         data class OnCallQueryGetCountry(val user: String) : UIEvent()
 
-        data class OnCallMutationUserValidation(val email: String, val nextStep: String, val idBrand: Int) : UIEvent()
+        data class OnUserDataValidationSuccess(
+            val currentStep: Int,
+            val userData: UserData?,
+            val onUseDataValueChange: () -> Unit,
+            val nextStepAction: () -> Unit,
+            val onCallMutationUpdateUserRegisterUseCase: () -> Unit,
+            val onLoadingValueChange: () -> Unit,
+        ) : UIEvent()
 
         object OnValidateForm : UIEvent()
     }
@@ -501,6 +528,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     companion object {
         const val DUI_VERIFICATION_MODULE = 10
+        private const val STEP_TO_SHOW_SPLASH = 4L
         const val FORMAT_VALUE = '0'
     }
 }

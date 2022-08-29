@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -73,26 +74,17 @@ fun SignUpEmailScreen(
         viewModel.onValidateUserExistsEvent.collect { event ->
             event.onSuccess { userData ->
                 viewModel.onUIEvent(
-                    SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess(
+                    SignUpEmailViewModel.UIEvent.OnValidationUserExistsSuccess(
                         currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
                         onUseDataValueChange = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    userData
+                                    UserData(email = viewModel.uiState.userEmail)
                                 )
                             )
                         },
                         nextStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) },
-                        openSignUpSplashComeBack = {
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnOpenSplashComeBack(
-                                    Search.getIdByName(
-                                        userData?.currentStep
-                                    )
-                                )
-                            )
-                        },
                         onLoadingValueChange = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnLoadingValueChange(

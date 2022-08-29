@@ -106,11 +106,7 @@ class OnBoardingViewModel @Inject constructor(
         viewModelScope.launch {
             dataStorePreferences.isOnBoardingEnabled(false)
             popAndNavigateTo(
-                route = if (screen == Screen.SignUpScreen.baseRoute) {
-                    "$screen/".plus(0)
-                } else {
-                    screen
-                },
+                route = screen,
                 popTo = Screen.OnBoardingScreen.route
             )
         }

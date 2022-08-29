@@ -17,7 +17,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SplashScreen : Screen("splash_screen")
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen : Screen("sign_in_screen")
-    object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
+    object SignUpScreen : Screen("sign_up_screen")
 
     object SignUpSplashComeBackScreen :
         Screen(

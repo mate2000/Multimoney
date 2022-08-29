@@ -185,7 +185,7 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .height(48.dp),
             onClick = {
-                viewModel.navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+                viewModel.navigateTo(route = Screen.SignUpScreen.route)
             },
             buttonType = PrimaryTertiaryUnderLined
         )

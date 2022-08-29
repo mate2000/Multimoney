@@ -18,9 +18,6 @@ class TestViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     var data by mutableStateOf<UserData?>(null)
-    fun mutationUserValidationUseCase() = executeUseCase {
-        isLoading = true
-    }
 
     fun navigateToChart() {
         navigateTo(Screen.ChartScreen.route)

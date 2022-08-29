@@ -109,7 +109,7 @@ fun OnBoardingScreen(
                 buttonType = CustomButtonType.PrimaryPrimary,
                 text = stringResource(id = R.string.registration),
                 onClick = {
-                    viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute))
+                    viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignUpScreen.route))
                 }
             )
             Row(

@@ -44,7 +44,9 @@ fun SignUpPersonalDataScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallQueryGetCountry(""))
+        viewModel.onUIEvent(OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
+            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+        }))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
@@ -95,9 +97,11 @@ fun SignUpPersonalDataScreen(
                                 )
                             )
                         },
-                        nextStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) },
                         onCallMutationUpdateUserRegisterUseCase = {
                             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
+                        },
+                        onMoveToStep = { step ->
+                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnMoveToStep(step))
                         },
                         onLoadingValueChange = {
                             sharedViewModel.onUIEvent(
@@ -146,13 +150,18 @@ fun SignUpPersonalDataScreen(
                 .padding(top = 16.dp),
             items = viewModel.uiState.countryList,
             onValueChange = { value ->
-                viewModel.onUIEvent(OnNationalityChange(
-                    viewModel.uiState.countryList.indexOf(value)
-                ) { nationality, idBrand ->
-                    sharedViewModel.onUIEvent(
-                        OnNationalityValueChange(nationality, idBrand)
+                viewModel.onUIEvent(
+                    OnNationalityChange(
+                        viewModel.uiState.countryList.indexOf(value),
+                        updateNationality = { nationality, idBrand ->
+                            sharedViewModel.onUIEvent(
+                                OnNationalityValueChange(nationality, idBrand)
+                            )
+                        },
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                        }
                     )
-                }
                 )
             },
             labelText = stringResource(id = R.string.sign_up_personal_data_nationality),

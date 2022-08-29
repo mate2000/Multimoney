@@ -54,7 +54,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             SignUpScreen(
                 // Workaround to solve compose issue when launchSingleTop is combine with arguments
                 // (Use: navController.currentBackStackEntry ?: navBackStackEntry)
-                navBackStackEntry = navController.currentBackStackEntry ?: navBackStackEntry,
+                // navBackStackEntry = navController.currentBackStackEntry ?: navBackStackEntry,
                 onNavigate = {
                     navController.navigate(it.route)
                 },

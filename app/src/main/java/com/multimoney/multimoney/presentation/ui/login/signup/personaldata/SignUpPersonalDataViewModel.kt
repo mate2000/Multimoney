@@ -4,18 +4,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.CountryList
+import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallMutationUserValidation
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
@@ -35,15 +39,17 @@ import com.multimoney.multimoney.presentation.util.Nationalities.Guatemala
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
     private val queryDataInformationClientUseCase: QueryDataInformationClientUseCase,
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
-    private val queryGetCountryUseCase: QueryGetCountryUseCase
+    private val queryGetCountryUseCase: QueryGetCountryUseCase,
+    private val mutationUserValidationUseCase: MutationUserValidationUseCase
 ) : BaseViewModel() {
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -53,11 +59,14 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     // Interactions
     var onSuccessDataInformationClient by mutableStateOf<ClientInfoCr?>(null)
-    var onSuccessCatalogDocumentType by mutableStateOf<CatalogType?>(null)
-    var onSuccessCountry by mutableStateOf<CountryList?>(null)
+    private var onSuccessCatalogDocumentType: CatalogType? = null
+    private var onSuccessCountry: CountryList? = null
 
     // Stateless
     var documentLength = 0
+
+    //Event
+    val onUserDataValidationEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
 
     private fun isFormValid() = emitBaseEvent(
         OnFormValidateCompleted(
@@ -84,7 +93,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun getDocumentLength(documentType: String) {
         onSuccessCatalogDocumentType?.catalogDocument?.forEach { documentCatalog ->
             if (documentCatalog.description == documentType) {
-                uiState = uiState.copy(documentFormat = documentCatalog.format)
+                uiState = uiState.copy(
+                    identificationIdSelected = documentCatalog.idDocument,
+                    documentFormat = documentCatalog.format,
+                    identificationValueType = documentType
+                )
                 documentLength =
                     documentCatalog.format.count { documentCatalog.format.last() == it }
             }
@@ -218,6 +231,23 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     }
 
+    private fun callMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
+        executeUseCase {
+            mutationUserValidationUseCase(
+                email = email,
+                currentStep = nextStep,
+                idBrand = idBrand,
+                idDocument = uiState.identificationIdSelected,
+                identification = uiState.personalDocumentValue,
+                firstName = uiState.firstNameValue,
+                secondName = uiState.secondNameValue,
+                firstSurname = uiState.firstLastNameValue,
+                secondSurname = uiState.secondLastNameValue
+            ).collectLatest { result ->
+                onUserDataValidationEvent.emit(result)
+            }
+        }
+
     private fun onStart(
         nationality: String,
         identificationValue: String,
@@ -259,7 +289,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun onIdentificationTypeValueChange(documentType: String) {
         getDocumentLength(documentType)
-        uiState = uiState.copy(identificationValueType = documentType)
     }
 
     private fun onIdentificationValueChange(
@@ -340,6 +369,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val countryList: ArrayList<String> = arrayListOf(),
         val documentList: ArrayList<String> = arrayListOf(),
         val nationalityValue: String = "",
+        val identificationIdSelected: Int = 0,
         val personalDocumentValue: String = "",
         val identificationValueType: String = "",
         val firstNameValue: String = "",
@@ -400,6 +430,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             )
             is OnValidateDocument -> validateDocument(event.email)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(event.user)
+            is OnCallMutationUserValidation -> callMutationUserValidationUseCase(event.email, event.nextStep, event.idBrand)
             is UIEvent.OnValidateForm -> isFormValid()
         }
     }
@@ -458,6 +489,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnCallQueryGetCountry(val user: String) : UIEvent()
+
+        data class OnCallMutationUserValidation(val email: String, val nextStep: String, val idBrand: Int) : UIEvent()
 
         object OnValidateForm : UIEvent()
     }

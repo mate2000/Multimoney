@@ -42,9 +42,25 @@ class SecurityRepositoryImpl @Inject constructor(
     override suspend fun mutationUserValidation(
         email: String,
         currentStep: String,
-        idBrand: Int
+        idBrand: Int,
+        idDocument: Int,
+        identification: String,
+        firstName: String,
+        secondName: String,
+        firstSurname: String,
+        secondSurname:String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
-        apolloCall = securityApi.mutationUserValidation(email, currentStep, idBrand),
+        apolloCall = securityApi.mutationUserValidation(
+            email,
+            currentStep,
+            idBrand,
+            idDocument,
+            identification,
+            firstName,
+            secondName,
+            firstSurname,
+            secondSurname
+        ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }

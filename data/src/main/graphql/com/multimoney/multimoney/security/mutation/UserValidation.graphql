@@ -1,4 +1,4 @@
-mutation UserValidation($email:String!, $currentStep:String!, $idBrand:Int!, $idDocument:Int!, $identification:String!, $firtName:String!, $firtSurname:String!){
+mutation UserValidation($email:String!, $currentStep:String!, $idBrand:Int!, $idDocument:Int!, $identification:String!, $firtName:String!,$secondName:String, $firtSurname:String! $secondSurname:String){
   userValidation(
     userValidationInput: {
       email: $email
@@ -7,7 +7,9 @@ mutation UserValidation($email:String!, $currentStep:String!, $idBrand:Int!, $id
       idDocument: $idDocument
       identification: $identification
       firtName: $firtName
+      secondName:$secondName
       firtSurname: $firtSurname
+      secondSurname: $secondSurname
     }
   ) {
     pkUser

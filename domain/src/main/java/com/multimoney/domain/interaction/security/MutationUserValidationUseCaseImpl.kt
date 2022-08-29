@@ -7,6 +7,22 @@ class MutationUserValidationUseCaseImpl(private val securityRepository: Security
     override suspend fun invoke(
         email: String,
         currentStep: String,
-        idBrand: Int
-    ) = securityRepository.mutationUserValidation(email, currentStep, idBrand)
+        idBrand: Int,
+        idDocument: Int,
+        identification: String,
+        firstName: String,
+        secondName:String,
+        firstSurname: String,
+        secondSurname:String
+    ) = securityRepository.mutationUserValidation(
+        email,
+        currentStep,
+        idBrand,
+        idDocument,
+        identification,
+        firstName,
+        secondName,
+        firstSurname,
+        secondSurname
+    )
 }

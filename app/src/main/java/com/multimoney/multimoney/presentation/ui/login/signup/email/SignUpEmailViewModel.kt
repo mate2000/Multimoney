@@ -30,8 +30,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignUpEmailViewModel @Inject constructor(
-    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase,
-    // private val mutationUserValidationUseCase: MutationUserValidationUseCase
+    private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase
 ) : BaseViewModel() {
 
     // UIState
@@ -46,7 +45,6 @@ class SignUpEmailViewModel @Inject constructor(
     private var blockedMessage = ""
 
     // Events
-    // val onUserDataValidationEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
     val onValidateUserExistsEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
 
     private fun onStart(userCompletedDialogDescription: String, linkWhatsapp: String, blockedMessage: String) {
@@ -76,17 +74,6 @@ class SignUpEmailViewModel @Inject constructor(
     }
 
     private fun isDataChanged() = previousUserEmail != uiState.userEmail
-
-//    private fun callMutationUserValidationUseCase(email: String, nextStep: String, idBrand: Int) =
-//        executeUseCase {
-//            mutationUserValidationUseCase(
-//                email = email,
-//                currentStep = nextStep,
-//                idBrand = idBrand
-//            ).collectLatest { result ->
-//                onUserDataValidationEvent.emit(result)
-//            }
-//        }
 
     private fun callQueryValidationUserExistsUseCase(email: String, nextStep: String, idBrand: Int) =
         executeUseCase {
@@ -124,12 +111,12 @@ class SignUpEmailViewModel @Inject constructor(
         onUseDataValueChange()
         if (userData?.status == UserStatus.Incomplete.status) {
             isUserStatusIncomplete = true
-            val step = SignUpStep.Search.getIdByName(userData.currentStep)
-            if (step == currentStep || step < STEP_TO_SHOW_SPLASH) {
+//            val step = SignUpStep.Search.getIdByName(userData.currentStep)
+//            if (step == currentStep || step < STEP_TO_SHOW_SPLASH) {
                 nextStepAction()
-            } else {
-                openSignUpSplashComeBack()
-            }
+//            } else {
+//                openSignUpSplashComeBack()
+//            }
         }
     }
 

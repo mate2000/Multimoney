@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
@@ -19,8 +19,8 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
@@ -131,7 +131,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
-        uiState = uiState.copy(userStatus = userStatus, productType = getProductBackgroundType(userStatus))
+        uiState = uiState.copy(
+            userStatus = userStatus,
+            productType = getProductBackgroundType(userStatus)
+        )
         // TODO: Send parameters to balance from userStatus
         callQueryBalanceUseCase()
     }
@@ -155,7 +158,7 @@ class ProductViewModel @Inject constructor(
             uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
                 Screen.CreditScreen.route
             )
-            uiState.userStatus?.infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
+            uiState.userStatus?.infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> navigateTo(
                 Screen.CreditScreen.route
             )
             else -> navigateTo(Screen.CreditScreen.route)
@@ -163,7 +166,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getProductBackgroundType(userStatus: ValidateUserStatus) = when {
-        userStatus.infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> Primary
+        userStatus.infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> Primary
         else -> Tertiary
     }
 

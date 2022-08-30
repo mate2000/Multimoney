@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
@@ -149,12 +150,13 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToCreditScreen() {
         navigateTo(
-            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.identification}/${uiState.email}"
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.identification}/${uiState.lastStep}"
         )
     }
 
     private fun onProductClick() {
         when {
+            uiState.userStatus?.infoCredit?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
             uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
                 Screen.CreditScreen.route
             )
@@ -176,6 +178,7 @@ class ProductViewModel @Inject constructor(
         var pkUser: String = "",
         var identification: String = "",
         var email: String = "",
+        var lastStep: Int = 1,
         var balanceCredit: Balance? = null,
         var userStatus: ValidateUserStatus? = null,
         var productType: ProductBackGroundType = Tertiary,
@@ -189,12 +192,14 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
             is OnProductClick -> onProductClick()
             is OnGetIdBrand -> onGetUserData()
+            is OnLastStepChange -> uiState = uiState.copy(lastStep = uiEvent.lastStep)
         }
     }
 
     sealed class UIEvent {
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
+        data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
         object OnProductClick : UIEvent()
         object OnGetIdBrand : UIEvent()

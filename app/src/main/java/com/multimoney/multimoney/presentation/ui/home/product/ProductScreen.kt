@@ -33,12 +33,14 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
@@ -195,9 +197,12 @@ fun CreditProduct(viewModel: ProductViewModel) {
                 type = Primary
             ) {
                 when {
-                    infoCredit?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
-                        type = CreditProcessMissingSignature
-                    )
+                    infoCredit?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> {
+                        viewModel.onUIEvent(OnLastStepChange(CreditStep.Six.id))
+                        CardWithCreditInProcessOnFidoOrAbandonProcess(
+                            type = CreditProcessMissingSignature
+                        )
+                    }
                     hasToShowCreditInitialCard(this) -> {
                         CreditApprovedOrStarted(
                             creditApprovedOrStartedStatus = CreditStatusApproved,

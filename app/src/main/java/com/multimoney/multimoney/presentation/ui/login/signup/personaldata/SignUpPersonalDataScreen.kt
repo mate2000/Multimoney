@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
-import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.data.util.catalog.SignUpStep.Three
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -93,7 +92,10 @@ fun SignUpPersonalDataScreen(
                         onUseDataValueChange = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    userData?.copy(fullName = viewModel.getFullName())
+                                    sharedViewModel.userData?.copy(
+                                        fullName = viewModel.getFullName(),
+                                        userName = userData?.email
+                                    )
                                 )
                             )
                         },

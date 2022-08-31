@@ -22,7 +22,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailV
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateUserEmail
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
-import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -114,7 +113,6 @@ class SignUpEmailViewModel @Inject constructor(
     }
 
     private fun onHandleUserState(
-        context: Context,
         userData: UserData?,
         previousStepAction: () -> Unit,
         onLoadingValueChange: () -> Unit,
@@ -130,20 +128,6 @@ class SignUpEmailViewModel @Inject constructor(
                     positiveText = string.sign_up_email_user_completed_dialog_positive,
                     positiveAction = { previousStepAction() },
                     isActive = mutableStateOf(true)
-                )
-            )
-        } else {
-            isUserStatusIncomplete = false
-            onOpenDialog(
-                DialogParameters(
-                    title = string.sign_up_email_blocked_dialog_title,
-                    description = blockedMessage,
-                    isActive = mutableStateOf(true),
-                    positiveText = string.contact,
-                    negativeText = string.cancel,
-                    positiveAction = {
-                        context.openWhatsAppDeepLink(linkWhatsapp)
-                    }
                 )
             )
         }
@@ -173,7 +157,6 @@ class SignUpEmailViewModel @Inject constructor(
                 event.onLoadingValueChange
             )
             is OnHandleUserStatus -> onHandleUserState(
-                event.context,
                 event.userData,
                 event.previousStepAction,
                 event.onLoadingValueChange,

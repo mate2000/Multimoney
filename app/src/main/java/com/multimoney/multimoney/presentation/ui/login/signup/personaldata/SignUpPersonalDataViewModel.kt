@@ -40,10 +40,10 @@ import com.multimoney.multimoney.presentation.util.Nationalities.Guatemala
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
@@ -379,6 +379,19 @@ class SignUpPersonalDataViewModel @Inject constructor(
             onLoadingValueChange()
             onMoveToStep(step)
         }
+    }
+
+    fun showErrorWhenUserWasBlocked() {
+//            DialogParameters(
+//                title = string.sign_up_email_blocked_dialog_title,
+//                description = blockedMessage,
+//                isActive = mutableStateOf(true),
+//                positiveText = string.contact,
+//                negativeText = string.cancel,
+//                positiveAction = {
+//                    context.openWhatsAppDeepLink(linkWhatsapp)
+//                }
+//            )
     }
 
     data class UIState(

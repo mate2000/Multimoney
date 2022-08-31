@@ -54,7 +54,7 @@ fun SignUpEmailScreen(
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnNextStep
                 )
-            }, sharedViewModel.userData?.idBrand ?: 5))
+            }, sharedViewModel.userData?.idBrand ?: 0))
         }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id))
 
         viewModel.baseEvent.collect { event ->

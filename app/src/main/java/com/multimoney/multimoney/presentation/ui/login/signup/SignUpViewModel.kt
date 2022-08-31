@@ -131,15 +131,18 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {
-        userData?.idBrand = idBrand
-        userData?.nationality = nationality
-        userData?.identificationValueType = ""
-        userData?.identification = ""
-        userData?.firstName = ""
-        userData?.secondName = ""
-        userData?.firstLastName = ""
-        userData?.secondLastName = ""
-        userData?.fullName = ""
+        userData = userData?.copy(
+            idBrand = idBrand,
+            nationality = nationality,
+            identificationValueType = "",
+            identification = "",
+            firstName = "",
+            secondName = "",
+            firstLastName = "",
+            secondLastName = "",
+            fullName = ""
+        )
+
     }
 
     private fun callMutationUpdateUserRegisterUseCase() = executeUseCase {

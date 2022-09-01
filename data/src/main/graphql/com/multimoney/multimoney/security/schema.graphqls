@@ -790,7 +790,7 @@ input validateUserExistsInput {
 
   currentStep: String!
 
-  idBrand: Int!
+  idBrand: Int
 
   tenantId: String
 
@@ -886,6 +886,16 @@ type userValidation {
   userValidation userStatus
   """
   userStatus: String
+
+  """
+  userValidation status
+  """
+  status: Int
+
+  """
+  userValidation message
+  """
+  message: String
 }
 
 input userValidationInput {

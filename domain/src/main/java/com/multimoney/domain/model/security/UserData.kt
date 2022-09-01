@@ -17,6 +17,7 @@ data class UserData(
     var currentStep: String? = null,
     var userStatus: String? = null,
     var idBrand: Int? = null,
+    var user:String? = null,
     var message: String? = null,
     var status: Int? = null,
     var detail: String? = null

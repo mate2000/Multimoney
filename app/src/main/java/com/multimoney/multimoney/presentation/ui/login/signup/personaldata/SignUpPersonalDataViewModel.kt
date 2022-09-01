@@ -373,7 +373,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     ) {
         onUseDataValueChange()
         val step = SignUpStep.Search.getIdByName(userData?.currentStep)
-        if (step == currentStep || step < STEP_TO_SHOW_SPLASH) {
+        if (step < STEP_TO_MOVE) {
             onCallMutationUpdateUserRegisterUseCase()
         } else {
             onLoadingValueChange()
@@ -547,7 +547,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     companion object {
         const val DUI_VERIFICATION_MODULE = 10
-        private const val STEP_TO_SHOW_SPLASH = 4L
         const val FORMAT_VALUE = '0'
+
+        const val STEP_TO_MOVE = 4
     }
 }

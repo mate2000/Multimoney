@@ -16,8 +16,7 @@ interface SecurityRepository {
 
     suspend fun queryValidateUserExists(
         email: String,
-        currentStep: String,
-        idBrand: Int
+        currentStep: String
     ):Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUserValidation(

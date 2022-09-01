@@ -74,23 +74,21 @@ class SignUpEmailViewModel @Inject constructor(
 
     private fun isDataChanged() = previousUserEmail != uiState.userEmail
 
-    private fun callQueryValidationUserExistsUseCase(email: String, nextStep: String, idBrand: Int) =
+    private fun callQueryValidationUserExistsUseCase(email: String, nextStep: String) =
         executeUseCase {
             queryValidateUserExistsUseCase(
                 email = email,
-                currentStep = nextStep,
-                idBrand = idBrand
+                currentStep = nextStep
             ).collectLatest { result ->
                 onValidateUserExistsEvent.emit(result)
             }
         }
 
-    private fun onNextActionClick(nextStepAction: () -> Unit, idBrand: Int) {
+    private fun onNextActionClick(nextStepAction: () -> Unit) {
         if (isDataChanged() || isUserStatusIncomplete.not()) {
             callQueryValidationUserExistsUseCase(
                 uiState.userEmail,
-                SignUpStep.Two.name,
-                idBrand
+                SignUpStep.Two.name
             )
         } else {
             nextStepAction.invoke()
@@ -149,7 +147,7 @@ class SignUpEmailViewModel @Inject constructor(
         when (event) {
             is OnStart -> onStart(event.userCompletedDialogDescription, event.linkWhatsapp, event.blockedMessage)
             is OnValidateForm -> isFormValid()
-            is OnNextActionClick -> onNextActionClick(event.nextStepAction, event.idBrand)
+            is OnNextActionClick -> onNextActionClick(event.nextStepAction)
             is OnValidationUserExistsSuccess -> onValidationUserExistsSuccess(
                 event.userData,
                 event.onUseDataValueChange,
@@ -174,7 +172,7 @@ class SignUpEmailViewModel @Inject constructor(
             val blockedMessage: String
         ) : UIEvent()
 
-        data class OnNextActionClick(val nextStepAction: () -> Unit, val idBrand: Int) : UIEvent()
+        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnValidationUserExistsSuccess(
             val currentStep: Int,
             val userData: UserData?,

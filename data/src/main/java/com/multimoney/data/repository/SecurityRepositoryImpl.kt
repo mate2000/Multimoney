@@ -26,10 +26,9 @@ class SecurityRepositoryImpl @Inject constructor(
 
     override suspend fun queryValidateUserExists(
         email: String,
-        currentStep: String,
-        idBrand: Int
+        currentStep: String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
-        apolloCall = securityApi.queryValidateUserExists(email, currentStep, idBrand),
+        apolloCall = securityApi.queryValidateUserExists(email, currentStep),
         apolloCallMapper = { data ->
             if (data.validateUserExists?.status == null || data.validateUserExists.status == 0) {
                 Success(data.mapToDomainModel())

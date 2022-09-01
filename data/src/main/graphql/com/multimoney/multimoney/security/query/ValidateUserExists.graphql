@@ -1,9 +1,8 @@
-query ValidateUserExists($email:String!, $currentStep:String!, $idBrand:Int!){
+query ValidateUserExists($email:String!, $currentStep:String!){
   validateUserExists(
     validateUserExistsInput: {
       email: $email
       currentStep: $currentStep
-      idBrand: $idBrand
     }
   ) {
     status

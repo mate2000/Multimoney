@@ -41,8 +41,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -134,6 +134,7 @@ class SignUpViewModel @Inject constructor(
         userData = userData?.copy(
             idBrand = idBrand,
             nationality = nationality,
+            user = userData?.email,
             identificationValueType = "",
             identification = "",
             firstName = "",
@@ -148,7 +149,7 @@ class SignUpViewModel @Inject constructor(
     private fun callMutationUpdateUserRegisterUseCase() = executeUseCase {
         mutationUpdateUserRegisterUseCase.invoke(
             pkUser = userData?.pkUser ?: "",
-            user = userData?.userName ?: "",
+            user = userData?.user ?: "",
             email = userData?.email ?: "",
             phoneNumber = userData?.phoneNumber,
             fullName = userData?.fullName,
@@ -248,7 +249,9 @@ class SignUpViewModel @Inject constructor(
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
-            is OnUseDataValueChange -> userData = event.userData
+            is OnUseDataValueChange -> {
+                userData = event.userData?.copy(idBrand = userData?.idBrand, user = userData?.user)
+            }
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)

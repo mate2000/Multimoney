@@ -93,8 +93,13 @@ fun SignUpPersonalDataScreen(
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnUseDataValueChange(
                                     sharedViewModel.userData?.copy(
+                                        pkUser = userData?.pkUser,
                                         fullName = viewModel.getFullName(),
-                                        userName = userData?.email
+                                        firstName = userData?.firstName,
+                                        secondName = userData?.secondName,
+                                        firstLastName = userData?.firstLastName,
+                                        secondLastName = userData?.secondLastName,
+                                        currentStep = userData?.currentStep
                                     )
                                 )
                             )

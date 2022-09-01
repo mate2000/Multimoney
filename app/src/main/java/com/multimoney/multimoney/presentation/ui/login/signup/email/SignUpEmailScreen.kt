@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
-import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -50,11 +49,14 @@ fun SignUpEmailScreen(
     LaunchedEffect(true) {
 
         sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnNextActionClick({
-                sharedViewModel.onUIEvent(
-                    SignUpViewModel.UIEvent.OnNextStep
-                )
-            }, sharedViewModel.userData?.idBrand ?: 0))
+            viewModel.onUIEvent(
+                SignUpEmailViewModel.UIEvent.OnNextActionClick(
+                    nextStepAction = {
+                        sharedViewModel.onUIEvent(
+                            SignUpViewModel.UIEvent.OnNextStep
+                        )
+                    })
+            )
         }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id))
 
         viewModel.baseEvent.collect { event ->

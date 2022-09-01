@@ -357,6 +357,41 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
     }
 }
 
+@Composable
+@Preview
+fun CardCreditMaxAttempts() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+    ) {
+        CustomInformativeChip(
+            text = stringResource(id = R.string.home_product_process_credit_label),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 42.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = BlackTransparency20,
+            startIcon = R.drawable.ic_warning
+        )
+        Text(
+            text = stringResource(id = R.string.sign_credit_max_attempts_title),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = stringResource(id = R.string.sign_credit_max_attempts_message),
+            modifier = Modifier.padding(top = 8.dp, bottom = 42.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+    }
+}
+
 sealed class CreditProcessStarted {
     object CreditAcceptContractRefuseFirstTime : CreditProcessStarted()
     object CreditStartProcessIncomplete : CreditProcessStarted()

@@ -310,4 +310,8 @@
     <string name="sign_credit_dialog_description">Por favor, realizala según las indicaciones.</string>
     <string name="sign_credit_dialog_continue">Continuar</string>
 
+    <!-- Sign Documents limit reached -->
+    <string name="sign_credit_max_attempts_title">!Te vamos a extrañar!</string>
+    <string name="sign_credit_max_attempts_message">Comunícate con nosotros para activar tu crédito</string>
+
 </resources>

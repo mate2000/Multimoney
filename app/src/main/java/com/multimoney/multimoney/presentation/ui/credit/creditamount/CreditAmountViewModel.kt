@@ -49,7 +49,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class CreditAmountViewModel @Inject constructor(
     private val queryCreditOfferUseCase: QueryCreditOfferUseCase,
     private val queryPaymentAmountUseCase: QueryPaymentAmountUseCase,
-    private val mutationSaveCreditApplicationUseCase: MutationSaveCreditApplicationUseCase
+    private val mutationSaveCreditApplicationUseCase: MutationSaveCreditApplicationUseCase,
 ) : BaseViewModel() {
 
     // UIState
@@ -255,31 +255,33 @@ class CreditAmountViewModel @Inject constructor(
 
     private fun setCreditOffer(productIndex: Int) {
         // Set initial conditions
-        products?.get(productIndex)?.apply {
-            this@CreditAmountViewModel.minimumDisbursement = minimumDisbursement.toFloat()
-            this@CreditAmountViewModel.maximumDisbursement = maximumDisbursement.toFloat()
-            this@CreditAmountViewModel.fee = fee
-            sliderFactor = getSliderFactor(progressFactor)
-            uiState = uiState.copy(
-                isMultipleCurrency = (products?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
-                currencyIndex = productIndex,
-                sliderValueRangeInitial = getSliderValue(minimumDisbursement.toFloat(), progressFactor),
-                sliderValue = if (isTimerRunning.not()) {
-                    getSliderValue(maximumDisbursement.toFloat(), progressFactor)
-                } else {
-                    uiState.sliderValue
-                },
-                progressFactor = progressFactor,
-                currencyItems = currencyItems ?: listOf(),
-                feeLabel = feeLabel,
-                disbursement = maximumDisbursement.toDouble().toInt().toString(),
-                minimumDisbursementLabel = minimumDisbursementLabel,
-                maximumDisbursementLabel = maximumDisbursementLabel,
-                regularInterestRateLabel = regularInterestRateLabel,
-                termLabel = termLabel,
-                commissionDisbursementLabel = commissionDisbursementLabel
-            )
-            isFormValid()
+        if (products.isNullOrEmpty().not()) {
+            products?.get(productIndex)?.apply {
+                this@CreditAmountViewModel.minimumDisbursement = minimumDisbursement.toFloat()
+                this@CreditAmountViewModel.maximumDisbursement = maximumDisbursement.toFloat()
+                this@CreditAmountViewModel.fee = fee
+                sliderFactor = getSliderFactor(progressFactor)
+                uiState = uiState.copy(
+                    isMultipleCurrency = (products?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
+                    currencyIndex = productIndex,
+                    sliderValueRangeInitial = getSliderValue(minimumDisbursement.toFloat(), progressFactor),
+                    sliderValue = if (isTimerRunning.not()) {
+                        getSliderValue(maximumDisbursement.toFloat(), progressFactor)
+                    } else {
+                        uiState.sliderValue
+                    },
+                    progressFactor = progressFactor,
+                    currencyItems = currencyItems ?: listOf(),
+                    feeLabel = feeLabel,
+                    disbursement = maximumDisbursement.toDouble().toInt().toString(),
+                    minimumDisbursementLabel = minimumDisbursementLabel,
+                    maximumDisbursementLabel = maximumDisbursementLabel,
+                    regularInterestRateLabel = regularInterestRateLabel,
+                    termLabel = termLabel,
+                    commissionDisbursementLabel = commissionDisbursementLabel
+                )
+                isFormValid()
+            }
         }
     }
 

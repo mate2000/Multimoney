@@ -220,6 +220,11 @@ type infoUser {
   vISADirect_Usuario: String
 
   """
+  infoUser statusOnfido
+  """
+  statusOnfido: String
+
+  """
   infoUser fecha_ultimo_acceso
   """
   fecha_ultimo_acceso: DateTime
@@ -259,6 +264,11 @@ type infoCredit {
   infoCredit idRequest
   """
   idRequest: Int!
+
+  """
+  infoCredit statusFirm
+  """
+  statusFirm: String
 }
 
 scalar Decimal
@@ -275,11 +285,6 @@ type infoBankAccount {
   infoBankAccount StatusFirm
   """
   statusFirm: String
-
-  """
-  infoBankAccount StatusOnfido
-  """
-  statusOnfido: String
 
   """
   infoBankAccount IdRequestSysde
@@ -1050,6 +1055,8 @@ input onfidoCheckProcessInputType {
   tenantId: String
 
   traceIdentifier: String
+
+  userRequestId: Int!
 }
 
 type saveLogTracking {

@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -12,6 +13,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCurrentLocationButtonValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnLoadingValueChange
@@ -20,12 +22,15 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class CreditViewModel @Inject constructor() : BaseViewModel() {
+class CreditViewModel @Inject constructor(
+    val dataStorePreferences: DataStorePreferences
+) : BaseViewModel() {
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -36,6 +41,18 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
     var nextAction: () -> Unit = {}
     private var nextStep: Int = CreditStep.One.id
     private var previousStep: Int = CreditStep.One.id
+
+    var idBrand: String = ""
+    var pkUser: String = ""
+    var identification: String = ""
+    var email: String = ""
+
+    private fun onUpdateUserData(idBrand: String, pkUser: String, identification: String, email: String) {
+        this.idBrand = idBrand
+        this.pkUser = pkUser
+        this.identification = identification
+        this.email = email
+    }
 
     private fun onInitializeTexts(description: String) {
         closeDialogDescription = description
@@ -123,6 +140,7 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
         val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
+        val isCurrentLocationButtonVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )
 
@@ -140,9 +158,12 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnCurrentLocationButtonValueChange -> uiState =
+                uiState.copy(isCurrentLocationButtonVisible = event.isVisible)
             is OnNextStep -> nextStep()
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
+            is OnUpdateUserData -> onUpdateUserData(event.idBrand, event.pkUser, event.identification, event.email)
         }
     }
 
@@ -161,13 +182,20 @@ class CreditViewModel @Inject constructor() : BaseViewModel() {
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
+        data class OnCurrentLocationButtonValueChange(val isVisible: Boolean) : UIEvent()
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
         data class OnMoveToStep(val step: Int) : UIEvent()
+        data class OnUpdateUserData(
+            val idBrand: String,
+            val pkUser: String,
+            val identification: String,
+            val email: String
+        ) : UIEvent()
     }
 
     companion object {
-        const val CREDIT_TOTAL_STEPS = 3
-        const val CREDIT_INDICATOR_TOTAL_STEPS = 3
+        const val CREDIT_TOTAL_STEPS = 5
+        const val CREDIT_INDICATOR_TOTAL_STEPS = 4
     }
 }

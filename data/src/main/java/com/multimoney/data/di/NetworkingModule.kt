@@ -6,6 +6,7 @@ import com.apollographql.apollo3.cache.normalized.normalizedCache
 import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import com.multimoney.data.BuildConfig
+import com.multimoney.data.R
 import com.multimoney.data.networking.BalanceApi
 import com.multimoney.data.networking.CreditApi
 import com.multimoney.data.networking.SecurityApi
@@ -17,20 +18,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkingModule @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences
-) {
-
-    private val okHttpClient: OkHttpClient by lazy { okHttpClientProvider() }
-
-    private val authOkHttpClient: OkHttpClient by lazy { authOkHttpClientProvider() }
+class NetworkingModule {
 
     private val loggingInterceptor: HttpLoggingInterceptor by lazy { loggingInterceptorProvider() }
 
@@ -45,19 +39,28 @@ class NetworkingModule @Inject constructor(
         return logging
     }
 
-    private fun okHttpClientProvider() = OkHttpClient.Builder()
+    private fun okHttpClientProvider(
+        certificateUtil: CertificateUtil
+    ) = OkHttpClient.Builder()
         .addNetworkInterceptor { chain ->
             val request = chain.request().newBuilder()
                 .build()
             chain.proceed(request)
         }
         .addInterceptor(loggingInterceptor)
+        .sslSocketFactory(
+            certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+            certificateUtil.getX509TrustManager()
+        )
         .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
         .readTimeout(TIMEOUT, TimeUnit.SECONDS)
         .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
         .build()
 
-    private fun authOkHttpClientProvider() = OkHttpClient.Builder()
+    private fun authOkHttpClientProvider(
+        certificateUtil: CertificateUtil,
+        dataStorePreferences: DataStorePreferences
+    ) = OkHttpClient.Builder()
         .addNetworkInterceptor { chain ->
             val request = chain.request().newBuilder()
                 .addHeader(AUTHORIZATION_HEADER, "Bearer ${dataStorePreferences.getAuthToken()}")
@@ -65,6 +68,10 @@ class NetworkingModule @Inject constructor(
             chain.proceed(request)
         }
         .addInterceptor(loggingInterceptor)
+        .sslSocketFactory(
+            certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+            certificateUtil.getX509TrustManager()
+        )
         .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
         .readTimeout(TIMEOUT, TimeUnit.SECONDS)
         .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -113,7 +120,8 @@ class NetworkingModule @Inject constructor(
 
     private fun apolloBasicClientProvider(
         @ApplicationContext context: Context,
-        schema: String
+        schema: String,
+        certificateUtil: CertificateUtil
     ): ApolloClient {
 
         val sqlNormalizedCacheFactory =
@@ -122,14 +130,18 @@ class NetworkingModule @Inject constructor(
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL + schema)
             .normalizedCache(sqlNormalizedCacheFactory)
-            .okHttpClient(okHttpClient)
+            .okHttpClient(okHttpClientProvider(
+                certificateUtil
+            ))
             .build()
     }
 
 
     private fun apolloAuthorizedClientProvider(
         @ApplicationContext context: Context,
-        schema: String
+        schema: String,
+        certificateUtil: CertificateUtil,
+        dataStorePreferences: DataStorePreferences
     ): ApolloClient {
         val sqlNormalizedCacheFactory =
             SqlNormalizedCacheFactory(context, APOLLO_PREFIX_DB + schema + APOLLO_SUFFIX_DB)
@@ -137,39 +149,53 @@ class NetworkingModule @Inject constructor(
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL + schema)
             .normalizedCache(sqlNormalizedCacheFactory)
-            .okHttpClient(authOkHttpClient)
+            .okHttpClient(
+                authOkHttpClientProvider(
+                    certificateUtil,
+                    dataStorePreferences = dataStorePreferences
+                )
+            )
             .build()
     }
 
     @Singleton
     @Provides
     fun securityApi(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        util: CertificateUtil,
+        preferences: DataStorePreferences
     ): SecurityApi =
         SecurityApi(
             apolloBasicClient = apolloBasicClientProvider(
                 context,
-                SCHEMA_SECURITY
+                SCHEMA_SECURITY,
+                util
             ),
             apolloAuthorizedClient = apolloAuthorizedClientProvider(
                 context,
-                SCHEMA_SECURITY
+                SCHEMA_SECURITY,
+                util,
+                preferences
             )
         )
 
     @Singleton
     @Provides
     fun balanceApi(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        util: CertificateUtil,
+        preferences: DataStorePreferences
     ): BalanceApi =
-        BalanceApi(apolloAuthorizedClientProvider(context, SCHEMA_BALANCES))
+        BalanceApi(apolloAuthorizedClientProvider(context, SCHEMA_BALANCES, util, preferences))
 
     @Singleton
     @Provides
     fun creditApi(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        util: CertificateUtil,
+        preferences: DataStorePreferences
     ): CreditApi =
-        CreditApi(apolloAuthorizedClientProvider(context, SCHEMA_CREDIT))
+        CreditApi(apolloAuthorizedClientProvider(context, SCHEMA_CREDIT, util, preferences))
 
     companion object {
         const val AUTHORIZATION_HEADER = "Authorization"

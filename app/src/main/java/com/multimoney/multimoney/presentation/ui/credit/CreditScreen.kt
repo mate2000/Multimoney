@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
+import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
@@ -121,6 +122,7 @@ fun GetStepContent(
         CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
         CreditStep.Two.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
+        CreditStep.Four.id -> CreditDocumentScreen(sharedViewModel = viewModel)
         else -> CompanyAddressScreen(sharedViewModel = viewModel)
     }
 }

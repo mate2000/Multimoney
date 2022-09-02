@@ -142,7 +142,7 @@ fun SignUpIdVerificationScreen(
             modifier = Modifier.padding(top = 16.dp),
             text = stringResource(id = R.string.sign_up_id_validation_subtitle),
             style = Typography.body2.copy(
-                color = MultimoneyTheme.colors.textSubhead,
+                color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.SemiBold
             )
         )
@@ -160,7 +160,7 @@ fun SignUpIdVerificationScreen(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(id = R.string.sign_up_id_validation_one),
                 style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.textSubhead,
+                    color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -178,7 +178,7 @@ fun SignUpIdVerificationScreen(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(id = R.string.sign_up_id_validation_two),
                 style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.textSubhead,
+                    color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
                 )
             )
@@ -196,7 +196,7 @@ fun SignUpIdVerificationScreen(
                 modifier = Modifier.padding(start = 8.dp),
                 text = stringResource(id = R.string.sign_up_id_validation_three),
                 style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.textSubhead,
+                    color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
                 )
             )

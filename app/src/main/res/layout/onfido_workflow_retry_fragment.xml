@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/onfido_activity_horizontal_margin"
+    android:layout_width="match_parent"
+    android:background="@color/gray_800"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/OnfidoTextStyle.Title.Large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:gravity="start"
+        android:layout_marginTop="@dimen/onfido_welcome_title_top_margin"
+        tools:text="Your document has expired" />
+
+    <TextView
+        android:id="@+id/description"
+        android:textColor="@color/white"
+        style="@style/OnfidoTextStyle.Body.Regular"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingVertical="@dimen/onfido_spacing_1x"
+        tools:text="Please try again with a valid photo ID and make sure your information is clearly visible" />
+
+    <com.onfido.android.sdk.capture.ui.widget.Button
+        android:id="@+id/retryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <include layout="@layout/onfido_watermark_layout" />
+
+</LinearLayout>

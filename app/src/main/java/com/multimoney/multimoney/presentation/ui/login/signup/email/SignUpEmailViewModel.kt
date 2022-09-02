@@ -24,9 +24,9 @@ import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpEmailViewModel @Inject constructor(
@@ -107,7 +107,7 @@ class SignUpEmailViewModel @Inject constructor(
         previousUserEmail = userData?.email ?: ""
         onUseDataValueChange()
         onLoadingValueChange()
-        if (userData?.userStatus == UserStatus.Incomplete.status) {
+        if (userData?.status == VALID_EMAIL) {
             val step = SignUpStep.Search.getIdByName(userData.currentStep)
             if (step == currentStep && step < STEP_TO_SHOW_SPLASH) {
                 isUserStatusIncomplete = true
@@ -224,6 +224,7 @@ class SignUpEmailViewModel @Inject constructor(
     }
 
     companion object {
+        private const val VALID_EMAIL = 0
         private const val STEP_TO_SHOW_SPLASH = 3
     }
 }

@@ -4,6 +4,5 @@ data class InfoCredit(
     val idClient: Int?,
     val idLoanClient: Int?,
     val status: Int?,
-    val amountAvailable: Double,
-    val idRequest: Int
+    val amountAvailable: Double
 )

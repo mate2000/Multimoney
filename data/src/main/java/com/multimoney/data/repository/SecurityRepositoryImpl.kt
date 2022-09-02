@@ -16,19 +16,18 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SecurityRepository
+import kotlinx.coroutines.flow.Flow
 import java.io.Serializable
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
 ) : BaseRepository(), SecurityRepository, Serializable {
 
     override suspend fun queryValidateUserExists(
-        email: String,
-        currentStep: String
+        email: String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
-        apolloCall = securityApi.queryValidateUserExists(email, currentStep),
+        apolloCall = securityApi.queryValidateUserExists(email),
         apolloCallMapper = { data ->
             if (data.validateUserExists?.status == null || data.validateUserExists.status == 0) {
                 Success(data.mapToDomainModel())
@@ -47,7 +46,7 @@ class SecurityRepositoryImpl @Inject constructor(
         firstName: String,
         secondName: String,
         firstSurname: String,
-        secondSurname:String
+        secondSurname: String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
         apolloCall = securityApi.mutationUserValidation(
             email,

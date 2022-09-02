@@ -23,9 +23,9 @@ import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailV
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpEmailViewModel @Inject constructor(
@@ -74,11 +74,10 @@ class SignUpEmailViewModel @Inject constructor(
 
     private fun isDataChanged() = previousUserEmail != uiState.userEmail
 
-    private fun callQueryValidationUserExistsUseCase(email: String, nextStep: String) =
+    private fun callQueryValidationUserExistsUseCase(email: String) =
         executeUseCase {
             queryValidateUserExistsUseCase(
-                email = email,
-                currentStep = nextStep
+                email = email
             ).collectLatest { result ->
                 onValidateUserExistsEvent.emit(result)
             }
@@ -87,8 +86,7 @@ class SignUpEmailViewModel @Inject constructor(
     private fun onNextActionClick(nextStepAction: () -> Unit) {
         if (isDataChanged() || isUserStatusIncomplete.not()) {
             callQueryValidationUserExistsUseCase(
-                uiState.userEmail,
-                SignUpStep.Two.name
+                uiState.userEmail
             )
         } else {
             nextStepAction.invoke()
@@ -96,6 +94,7 @@ class SignUpEmailViewModel @Inject constructor(
     }
 
     private fun onValidationUserExistsSuccess(
+        currentStep: Int,
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
         nextStepAction: () -> Unit,
@@ -103,16 +102,14 @@ class SignUpEmailViewModel @Inject constructor(
         onLoadingValueChange: () -> Unit,
     ) {
         previousUserEmail = userData?.email ?: ""
-        onLoadingValueChange()
         onUseDataValueChange()
+        onLoadingValueChange()
         if (userData?.status == UserStatus.Incomplete.status) {
             val step = SignUpStep.Search.getIdByName(userData.currentStep)
-            if (step < STEP_TO_SHOW_SPLASH) {
+            if (step == currentStep && step < STEP_TO_SHOW_SPLASH) {
                 isUserStatusIncomplete = true
                 nextStepAction()
-
             } else {
-                onLoadingValueChange()
                 openSignUpSplashComeBack()
             }
         }
@@ -157,6 +154,7 @@ class SignUpEmailViewModel @Inject constructor(
             is OnValidateForm -> isFormValid()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction)
             is OnValidationUserExistsSuccess -> onValidationUserExistsSuccess(
+                event.currentStep,
                 event.userData,
                 event.onUseDataValueChange,
                 event.nextStepAction,

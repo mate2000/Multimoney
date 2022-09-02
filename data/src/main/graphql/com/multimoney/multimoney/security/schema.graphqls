@@ -258,19 +258,58 @@ type infoCredit {
   status: Int!
 
   """
-  infoCredit amountAvailable
+  infoCredit infoPreApprove
   """
-  amountAvailable: Decimal!
+  infoPreApprove: infoCreditPreAprrove
+}
+
+type infoCreditPreAprrove {
+  """
+  infoCreditPreAprrove idUserRequest
+  """
+  idUserRequest: Long!
 
   """
-  infoCredit idRequest
+  infoCreditPreAprrove status
   """
-  idRequest: Int!
+  status: String!
 
   """
-  infoCredit statusFirm
+  infoCreditPreAprrove infoProducts
+  """
+  infoProducts: [productoPreApprove]
+
+  """
+  infoCreditPreAprrove selectedAmount
+  """
+  selectedAmount: Decimal
+
+  """
+  infoCreditPreAprrove statusFirm
   """
   statusFirm: String
+
+  """
+  infoCreditPreAprrove currentStep
+  """
+  currentStep: String
+}
+
+type productoPreApprove {
+  """
+  productoPreApprove idProduct
+  """
+  idProduct: Int!
+
+  """
+  productoPreApprove amountAvailable
+  """
+  amountAvailable: String!
+
+  """
+  productoPreApprove symbolCurrency
+  """
+  symbolCurrency: String!
 }
 
 scalar Decimal
@@ -788,8 +827,6 @@ type validateUserExists {
 input validateUserExistsInput {
   email: String!
 
-  currentStep: String!
-
   idBrand: Int
 
   tenantId: String
@@ -997,6 +1034,16 @@ type updateUserRegister {
   updateUserRegister userStatus
   """
   userStatus: String
+
+  """
+  userValidation status
+  """
+  status: Int
+
+  """
+  userValidation message
+  """
+  message: String
 }
 
 input UpdateUserRegister {

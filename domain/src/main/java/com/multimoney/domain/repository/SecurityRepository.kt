@@ -15,8 +15,7 @@ import kotlinx.coroutines.flow.Flow
 interface SecurityRepository {
 
     suspend fun queryValidateUserExists(
-        email: String,
-        currentStep: String
+        email: String
     ):Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUserValidation(

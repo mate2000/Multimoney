@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
@@ -33,10 +32,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.CrDocuments
-import com.multimoney.multimoney.presentation.util.Nationalities.CostaRicaDimex
-import com.multimoney.multimoney.presentation.util.Nationalities.CostaRicaId
-import com.multimoney.multimoney.presentation.util.Nationalities.ElSalvador
-import com.multimoney.multimoney.presentation.util.Nationalities.Guatemala
+import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
+import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
+import com.multimoney.data.util.catalog.Nationalities.ElSalvador
+import com.multimoney.data.util.catalog.Nationalities.Guatemala
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -364,20 +363,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     private fun onUserDataValidationSuccess(
-        currentStep: Int,
-        userData: UserData?,
         onUseDataValueChange: () -> Unit,
         onCallMutationUpdateUserRegisterUseCase: () -> Unit,
-        onLoadingValueChange: () -> Unit,
     ) {
         onUseDataValueChange()
-        val step = SignUpStep.Search.getIdByName(userData?.currentStep)
-        if (step < STEP_TO_MOVE) {
-            onCallMutationUpdateUserRegisterUseCase()
-        } else {
-            onLoadingValueChange()
-            onMoveToStep(step)
-        }
+        onCallMutationUpdateUserRegisterUseCase()
     }
 
     fun showErrorWhenUserWasBlocked() {
@@ -457,12 +447,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
             )
             is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand)
             is OnUserDataValidationSuccess -> onUserDataValidationSuccess(
-                event.currentStep,
-                event.userData,
                 event.onUseDataValueChange,
                 event.onCallMutationUpdateUserRegisterUseCase,
-                event.onMoveToStep,
-                event.onLoadingValueChange
             )
             is OnValidateDocument -> validateDocument(event.email)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(event.user, event.onLoadingValueChange)

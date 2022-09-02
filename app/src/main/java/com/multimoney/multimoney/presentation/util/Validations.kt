@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.util
 import android.util.Patterns
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.Phonenumber
+import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel
 

@@ -17,8 +17,6 @@ query ValidateUserStatus($pkUser: Int!, $identification: String!, $user: String!
             idClient
             idLoanClient
             status
-            amountAvailable
-            idRequest
         }
         infoBankAccount {
             statusFirm

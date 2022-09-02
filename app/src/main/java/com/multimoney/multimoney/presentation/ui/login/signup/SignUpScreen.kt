@@ -45,6 +45,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SignUpScreen(
+    navBackStackEntry: NavBackStackEntry,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
@@ -54,6 +55,11 @@ fun SignUpScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        navBackStackEntry.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP)?.let { step ->
+            if (step != DEFAULT_STEP) {
+                viewModel.onUIEvent(OnMoveToStep(step.toInt()))
+            }
+        }
     }
 
     viewModel.onUIEvent(OnInitializeText(stringResource(id = R.string.sign_up_close_dialog_description)))

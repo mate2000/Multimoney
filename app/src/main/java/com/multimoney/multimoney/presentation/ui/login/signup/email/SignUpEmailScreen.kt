@@ -22,9 +22,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
-import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -73,7 +73,6 @@ fun SignUpEmailScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateForm)
-
         viewModel.onValidateUserExistsEvent.collect { event ->
             event.onSuccess { userData ->
                 viewModel.onUIEvent(
@@ -81,9 +80,10 @@ fun SignUpEmailScreen(
                         currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
                         onUseDataValueChange = {
+                            val idBrand = Brand.Search.getIdBrandByNationality(userData?.nationality)
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    UserData(email = viewModel.uiState.userEmail)
+                                    userData?.copy(email = viewModel.uiState.userEmail, idBrand = idBrand)
                                 )
                             )
                         },

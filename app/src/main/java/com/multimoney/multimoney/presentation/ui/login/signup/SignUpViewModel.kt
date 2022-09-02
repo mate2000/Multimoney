@@ -249,9 +249,7 @@ class SignUpViewModel @Inject constructor(
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
-            is OnUseDataValueChange -> {
-                userData = event.userData?.copy(idBrand = userData?.idBrand, user = userData?.user)
-            }
+            is OnUseDataValueChange -> userData = event.userData
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)

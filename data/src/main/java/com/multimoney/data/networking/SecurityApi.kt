@@ -21,10 +21,9 @@ class SecurityApi @Inject constructor(
     private val apolloClient: ApolloClient
 ) {
     fun queryValidateUserExists(
-        email: String,
-        currentStep: String
+        email: String
     ): ApolloCall<ValidateUserExistsQuery.Data> =
-        apolloClient.query(ValidateUserExistsQuery(email, currentStep)).fetchPolicy(
+        apolloClient.query(ValidateUserExistsQuery(email)).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
 

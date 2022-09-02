@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -87,6 +88,15 @@ fun SignUpEmailScreen(
                             )
                         },
                         nextStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) },
+                        openSignUpSplashComeBack = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnOpenSplashComeBack(
+                                    Search.getIdByName(
+                                        userData?.currentStep
+                                    )
+                                )
+                            )
+                        },
                         onLoadingValueChange = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnLoadingValueChange(

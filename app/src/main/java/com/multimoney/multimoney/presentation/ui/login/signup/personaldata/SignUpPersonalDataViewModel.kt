@@ -368,7 +368,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
         onCallMutationUpdateUserRegisterUseCase: () -> Unit,
-        onMoveToStep: (step: Int) -> Unit,
         onLoadingValueChange: () -> Unit,
     ) {
         onUseDataValueChange()

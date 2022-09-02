@@ -16,10 +16,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailV
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnHandleUserStatus
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidationUserExistsSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidationUserExistsSuccess
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -99,14 +99,22 @@ class SignUpEmailViewModel @Inject constructor(
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
         nextStepAction: () -> Unit,
+        openSignUpSplashComeBack: () -> Unit,
         onLoadingValueChange: () -> Unit,
     ) {
         previousUserEmail = userData?.email ?: ""
         onLoadingValueChange()
         onUseDataValueChange()
         if (userData?.status == UserStatus.Incomplete.status) {
-            isUserStatusIncomplete = true
-            nextStepAction()
+            val step = SignUpStep.Search.getIdByName(userData.currentStep)
+            if (step < STEP_TO_SHOW_SPLASH) {
+                isUserStatusIncomplete = true
+                nextStepAction()
+
+            } else {
+                onLoadingValueChange()
+                openSignUpSplashComeBack()
+            }
         }
     }
 
@@ -152,6 +160,7 @@ class SignUpEmailViewModel @Inject constructor(
                 event.userData,
                 event.onUseDataValueChange,
                 event.nextStepAction,
+                event.openSignUpSplashComeBack,
                 event.onLoadingValueChange
             )
             is OnHandleUserStatus -> onHandleUserState(
@@ -178,6 +187,7 @@ class SignUpEmailViewModel @Inject constructor(
             val userData: UserData?,
             val onUseDataValueChange: () -> Unit,
             val nextStepAction: () -> Unit,
+            val openSignUpSplashComeBack: () -> Unit,
             val onLoadingValueChange: () -> Unit,
         ) : UIEvent()
 
@@ -197,5 +207,9 @@ class SignUpEmailViewModel @Inject constructor(
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+    }
+
+    companion object {
+        private const val STEP_TO_SHOW_SPLASH = 3
     }
 }

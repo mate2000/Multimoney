@@ -143,7 +143,6 @@ class SignUpViewModel @Inject constructor(
             secondLastName = "",
             fullName = ""
         )
-
     }
 
     private fun callMutationUpdateUserRegisterUseCase() = executeUseCase {

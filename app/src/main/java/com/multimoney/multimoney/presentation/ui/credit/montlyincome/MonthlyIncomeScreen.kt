@@ -30,7 +30,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
-import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnGetBrandId
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -45,7 +44,6 @@ fun MonthlyIncomeScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnGetBrandId)
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
             viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnNextActionClick {
                 sharedViewModel.onUIEvent(
@@ -77,8 +75,8 @@ fun MonthlyIncomeScreen(
         )
 
         var placeHolder = ""
-        if (viewModel.uiState.idBrand.isNotEmpty()) {
-            placeHolder = when (viewModel.uiState.idBrand.toInt()) {
+        if (sharedViewModel.idBrand.isNotEmpty()) {
+            placeHolder = when (sharedViewModel.idBrand.toInt()) {
                 Brand.ElSalvador.id -> stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
                 Brand.Guatemala.id -> stringResource(id = R.string.credit_monthly_income_income_guatemala_hint)
                 Brand.CostaRica.id -> stringResource(id = R.string.credit_monthly_income_income_costa_rica_hint)

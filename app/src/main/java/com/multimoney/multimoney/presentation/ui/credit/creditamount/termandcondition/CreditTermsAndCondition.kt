@@ -57,13 +57,13 @@ fun CreditTermAndCondition(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = stringResource(id = R.string.credit_terms_and_condition_title),
+                    text = stringResource(id = R.string.credit_amount_terms_and_condition_title),
                     modifier = Modifier.padding(top = 8.dp),
                     style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
                 )
                 Text(
-                    text = stringResource(id = R.string.credit_terms_and_condition_description),
+                    text = stringResource(id = R.string.credit_amount_terms_and_condition_description),
                     modifier = Modifier.padding(top = 16.dp),
                     style = Typography.body2,
                     color = MultimoneyTheme.colors.text

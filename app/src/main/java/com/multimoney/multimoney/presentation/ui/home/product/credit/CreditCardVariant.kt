@@ -19,6 +19,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseFirstTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseSecondTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessCreateAccountFailure
@@ -27,8 +29,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessSignatureRefuseFirstTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessSignatureRefuseSecondTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 
@@ -253,7 +253,7 @@ fun CardCreditOnFidoRequired() {
 
 @Composable
 @Preview
-fun CardWithCreditInProcessOnFidoOrAbandonProcess(
+fun CardWithCreditInProcess(
     type: CreditProcessStarted = CreditAcceptContractRefuseFirstTime
 ) {
     val chipText = R.string.home_product_process_credit_label
@@ -262,20 +262,20 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
     val actionText: Int
     when (type) {
         CreditAcceptContractRefuseFirstTime -> {
-            title = R.string.home_product_process_title
-            description = R.string.home_product_process_description
-            actionText = R.string.home_product_process_action
-        }
-        CreditStartProcessIncomplete -> {
-            title = R.string.home_product_process_title
-            description = R.string.home_product_process_description
-            actionText = R.string.home_product_process_action
+            title = R.string.home_credit_sign_document_reject_title
+            description = R.string.home_credit_sign_document_reject_description
+            actionText = R.string.home_credit_sign_document_reject_action_text
         }
         CreditAcceptContractRefuseSecondTime -> {
             title = R.string.home_product_process_title
             description = R.string.home_product_process_description
             actionText = R.string.home_product_process_action
 
+        }
+        CreditStartProcessIncomplete -> {
+            title = R.string.home_product_process_title
+            description = R.string.home_product_process_description
+            actionText = R.string.home_product_process_action
         }
         CreditProcessMissingSignature -> {
             title = R.string.home_product_process_title

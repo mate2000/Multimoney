@@ -14,8 +14,6 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
-import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentViewModel.UIEvent.OnInitValues
 import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
@@ -57,7 +55,7 @@ class CreditDocumentViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             mutationOnFidoInitialProcessUseCase.invoke(
-                names, lastNames, identification, applicationId, Brand.Revamp.id, user
+                names, lastNames, identification, applicationId, Brand.CostaRica.id, user
             ).collectLatest { result ->
                 result.onSuccess {
                     injectNewToken(it?.sdkToken ?: "")
@@ -82,7 +80,7 @@ class CreditDocumentViewModel @Inject constructor(
                 lastNames,
                 identification,
                 applicationId,
-                Brand.Revamp.id,
+                Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
@@ -156,8 +154,6 @@ class CreditDocumentViewModel @Inject constructor(
             val applicationId: String
         ) : UIEvent()
 
-        data class OnContinueEnable(val enable: Boolean) : UIEvent()
-        data class OnInitValues(val isFirstLaunch: Boolean, val onFidoError: String) : UIEvent()
         data class OnOpenOnFidoSdk(
             val result: ActivityResult,
             val onOnFidoCompleted: () -> Unit,

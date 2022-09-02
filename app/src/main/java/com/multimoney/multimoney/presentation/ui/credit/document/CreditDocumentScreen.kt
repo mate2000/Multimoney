@@ -68,13 +68,6 @@ fun CreditDocumentScreen(
             )
         }
 
-    viewModel.onUIEvent(
-        CreditDocumentViewModel.UIEvent.OnInitValues(
-            false,
-            stringResource(id = string.placeholder_error)
-        )
-    )
-
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
             event.onSuccess {
@@ -105,7 +98,7 @@ fun CreditDocumentScreen(
                                 }
                             )
                         )
-                    }, nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id))
+                    }, nextStep = CreditStep.Six.id, previousStep = CreditStep.Four.id))
                 }
             }.onLoading {
                 sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(false))

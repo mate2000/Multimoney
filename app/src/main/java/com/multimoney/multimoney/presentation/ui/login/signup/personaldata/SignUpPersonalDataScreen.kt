@@ -74,7 +74,7 @@ fun SignUpPersonalDataScreen(
                             OnNextActionClick(
                                 email = userData?.email ?: "",
                                 nextStep = Three.name,
-                                idBrand = userData?.idBrand ?: 0
+                                idBrand = idBrand ?: 0
                             )
                         )
                     },

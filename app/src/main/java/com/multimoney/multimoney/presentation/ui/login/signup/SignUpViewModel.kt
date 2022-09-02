@@ -57,6 +57,7 @@ class SignUpViewModel @Inject constructor(
     var isOnFidoVerified = true
     var isPhoneVerified = false
     var userData: UserData? = null
+    var idBrand: Int? = null
     var countryCode = ""
     var nextAction: () -> Unit = {}
     var closeDialogDescription: String = ""
@@ -131,10 +132,9 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {
+        this.idBrand = idBrand
         userData = userData?.copy(
-            idBrand = idBrand,
             nationality = nationality,
-            user = userData?.email,
             identificationValueType = "",
             identification = "",
             firstName = "",
@@ -149,7 +149,7 @@ class SignUpViewModel @Inject constructor(
     private fun callMutationUpdateUserRegisterUseCase() = executeUseCase {
         mutationUpdateUserRegisterUseCase.invoke(
             pkUser = userData?.pkUser ?: "",
-            user = userData?.user ?: "",
+            user = userData?.email ?: "",
             email = userData?.email ?: "",
             phoneNumber = userData?.phoneNumber,
             fullName = userData?.fullName,
@@ -161,7 +161,7 @@ class SignUpViewModel @Inject constructor(
             identification = userData?.identification,
             countryCode = userData?.countryCode,
             currentStep = userData?.currentStep ?: "",
-            idBrand = userData?.idBrand ?: 0
+            idBrand = idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
                 nextStep = Search.getIdByName(it?.currentStep)
@@ -249,7 +249,12 @@ class SignUpViewModel @Inject constructor(
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
-            is OnUseDataValueChange -> userData = event.userData
+            is OnUseDataValueChange -> {
+                if (event.idBrand != null) {
+                    idBrand = event.idBrand
+                }
+                userData = event.userData
+            }
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
@@ -292,7 +297,7 @@ class SignUpViewModel @Inject constructor(
             val previousStep: Int
         ) : UIEvent()
 
-        data class OnUseDataValueChange(val userData: UserData?) : UIEvent()
+        data class OnUseDataValueChange(val userData: UserData?, val idBrand: Int? = null) : UIEvent()
 
         data class OnMoveToStep(val step: Int) : UIEvent()
         data class OnSharedIdentificationValueChange(val identificationValue: String) : UIEvent()

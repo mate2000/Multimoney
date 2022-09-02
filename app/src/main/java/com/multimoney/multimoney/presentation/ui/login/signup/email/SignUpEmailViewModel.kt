@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailV
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidationUserExistsSuccess
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.isEmailValid
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -94,17 +95,19 @@ class SignUpEmailViewModel @Inject constructor(
     }
 
     private fun onValidationUserExistsSuccess(
+        context: Context,
         currentStep: Int,
         userData: UserData?,
         onUseDataValueChange: () -> Unit,
         nextStepAction: () -> Unit,
         openSignUpSplashComeBack: () -> Unit,
         onLoadingValueChange: () -> Unit,
+        onOpenDialog: (DialogParameters) -> Unit
     ) {
         previousUserEmail = userData?.email ?: ""
         onUseDataValueChange()
         onLoadingValueChange()
-        if (userData?.status == UserStatus.Incomplete.status) {
+        if (userData?.userStatus == UserStatus.Incomplete.status) {
             val step = SignUpStep.Search.getIdByName(userData.currentStep)
             if (step == currentStep && step < STEP_TO_SHOW_SPLASH) {
                 isUserStatusIncomplete = true
@@ -112,28 +115,38 @@ class SignUpEmailViewModel @Inject constructor(
             } else {
                 openSignUpSplashComeBack()
             }
+        } else if (userData?.userStatus == UserStatus.Blocked.status) {
+            onOpenDialog(
+                DialogParameters(
+                    title = string.sign_up_email_blocked_dialog_title,
+                    description = blockedMessage,
+                    isActive = mutableStateOf(true),
+                    positiveText = string.contact,
+                    negativeText = string.cancel,
+                    positiveAction = {
+                        context.openWhatsAppDeepLink(linkWhatsapp)
+                    }
+                )
+            )
         }
     }
 
     private fun onHandleUserState(
-        userData: UserData?,
         previousStepAction: () -> Unit,
         onLoadingValueChange: () -> Unit,
         onOpenDialog: (DialogParameters) -> Unit,
     ) {
         onLoadingValueChange()
-        if (userData?.status == UserStatus.Active.status) {
-            isUserStatusIncomplete = false
-            onOpenDialog(
-                DialogParameters(
-                    title = string.sign_up_email_user_completed_dialog_title,
-                    description = userCompletedDialogDescription,
-                    positiveText = string.sign_up_email_user_completed_dialog_positive,
-                    positiveAction = { previousStepAction() },
-                    isActive = mutableStateOf(true)
-                )
+        isUserStatusIncomplete = false
+        onOpenDialog(
+            DialogParameters(
+                title = string.sign_up_email_user_completed_dialog_title,
+                description = userCompletedDialogDescription,
+                positiveText = string.sign_up_email_user_completed_dialog_positive,
+                positiveAction = { previousStepAction() },
+                isActive = mutableStateOf(true)
             )
-        }
+        )
     }
 
     private fun onUserEmailValueChange(value: String) {
@@ -154,15 +167,16 @@ class SignUpEmailViewModel @Inject constructor(
             is OnValidateForm -> isFormValid()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction)
             is OnValidationUserExistsSuccess -> onValidationUserExistsSuccess(
+                event.context,
                 event.currentStep,
                 event.userData,
                 event.onUseDataValueChange,
                 event.nextStepAction,
                 event.openSignUpSplashComeBack,
-                event.onLoadingValueChange
+                event.onLoadingValueChange,
+                event.onOpenDialog
             )
             is OnHandleUserStatus -> onHandleUserState(
-                event.userData,
                 event.previousStepAction,
                 event.onLoadingValueChange,
                 event.onOpenDialog
@@ -181,12 +195,14 @@ class SignUpEmailViewModel @Inject constructor(
 
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnValidationUserExistsSuccess(
+            val context: Context,
             val currentStep: Int,
             val userData: UserData?,
             val onUseDataValueChange: () -> Unit,
             val nextStepAction: () -> Unit,
             val openSignUpSplashComeBack: () -> Unit,
             val onLoadingValueChange: () -> Unit,
+            val onOpenDialog: (DialogParameters) -> Unit
         ) : UIEvent()
 
         data class OnHandleUserStatus(

@@ -370,19 +370,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         onCallMutationUpdateUserRegisterUseCase()
     }
 
-    fun showErrorWhenUserWasBlocked() {
-//            DialogParameters(
-//                title = string.sign_up_email_blocked_dialog_title,
-//                description = blockedMessage,
-//                isActive = mutableStateOf(true),
-//                positiveText = string.contact,
-//                negativeText = string.cancel,
-//                positiveAction = {
-//                    context.openWhatsAppDeepLink(linkWhatsapp)
-//                }
-//            )
-    }
-
     data class UIState(
         val documentFormat: String = "",
         val countryList: ArrayList<String> = arrayListOf(),

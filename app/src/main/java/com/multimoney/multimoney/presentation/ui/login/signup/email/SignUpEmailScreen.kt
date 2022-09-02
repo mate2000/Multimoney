@@ -33,6 +33,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
 
@@ -77,13 +78,15 @@ fun SignUpEmailScreen(
             event.onSuccess { userData ->
                 viewModel.onUIEvent(
                     SignUpEmailViewModel.UIEvent.OnValidationUserExistsSuccess(
+                        context,
                         currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
                         onUseDataValueChange = {
                             val idBrand = Brand.Search.getIdBrandByNationality(userData?.nationality)
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    userData?.copy(email = viewModel.uiState.userEmail, idBrand = idBrand)
+                                    userData?.copy(email = viewModel.uiState.userEmail),
+                                    idBrand
                                 )
                             )
                         },
@@ -103,6 +106,9 @@ fun SignUpEmailScreen(
                                     false
                                 )
                             )
+                        },
+                        onOpenDialog = {
+                            sharedViewModel.onUIEvent(OnOpenDialogValueChange(it))
                         }
                     )
                 )

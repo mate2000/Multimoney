@@ -4,7 +4,9 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.multimoney.data.networking.security.apollomodel.CatalogTypeIndentificationQuery
 import com.multimoney.data.networking.security.apollomodel.DataInformationClientQuery
+import com.multimoney.data.networking.security.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.security.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
@@ -159,4 +161,13 @@ class SecurityApi @Inject constructor(
             userCreate
         )
     )
+
+    fun queryCatalogIdentification(
+        idBrand: Int,
+        user: String
+    ): ApolloCall<CatalogTypeIndentificationQuery.Data> =
+        apolloClient.query(CatalogTypeIndentificationQuery(user, idBrand))
+
+    fun queryGetCountry(user: String): ApolloCall<GetCountryQuery.Data> =
+        apolloClient.query(GetCountryQuery(user))
 }

@@ -15,17 +15,21 @@ private fun ValidateUserStatusQuery.ValidateUserStatus.mapToDomainModel() = Vali
 private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
     idBrand = idBrand.toString().toInt(),
     userName = userName,
-    idClient = idClient.toString().toInt()
+    idClient = idClient.toString().toInt(),
+    statusOnfido = statusOnfido
 )
 
 private fun ValidateUserStatusQuery.InfoCredit.mapToDomainModel() = InfoCredit(
     idClient = idClient.toString().toInt(),
-    idLoanClient = idLoanClient.toString().toInt()
+    idLoanClient = idLoanClient.toString().toInt(),
+    status = status,
+    amountAvailable = amountAvailable.toString().toDouble(),
+    idRequest = idRequest,
+    statusFirm = statusFirm
 )
 
 private fun ValidateUserStatusQuery.InfoBankAccount.mapToDomainModel() = InfoBankAccount(
-    statusFirm = statusFirm,
-    statusOnfido = statusOnfido
+    statusFirm = statusFirm
 )
 
 fun ValidateUserStatusQuery.Data.mapToDomainModel() = validateUserStatus?.mapToDomainModel()

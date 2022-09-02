@@ -4,8 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
+import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
@@ -17,8 +19,8 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCallValidateUserStatus
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
@@ -28,24 +30,50 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Te
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
-    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase
+    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel() {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
+    private fun onGetUserData() {
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                idBrand = dataStorePreferences.getIdBrand().first(),
+                pkUser = dataStorePreferences.getPkUser().first(),
+                identification = dataStorePreferences.getIdentification().first(),
+                email = dataStorePreferences.getUserEmail().first()
+            )
+            // todo uncomment this when the backend implement the correct process in the ValidationUserStatus
+//            callQueryValidateUserStatus(
+//                uiState.pkUser.toInt(),
+//                uiState.identification,
+//                uiState.email,
+//                uiState.idBrand.toInt()
+//            )
+            callQueryValidateUserStatus(
+                230361,
+                "0000100000007",
+                "diegomm6@yopmail.com",
+                5
+            )
+        }
+    }
+
     // TODO: Remove hardcoded parameters
     private fun callQueryBalanceUseCase(
         user: String = "ecruzGrapqhql",
         identification: String = "303190775",
-        idBrand: Int = Brand.Revamp.id,
+        idBrand: Int = Brand.CostaRica.id,
         idClient: String = "192656",
         idLoanClient: Int = 223034
     ) {
@@ -117,12 +145,17 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCreditScreen() {
-        navigateTo(Screen.CreditScreen.route)
+        navigateTo(
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.identification}/${uiState.email}"
+        )
     }
 
     private fun onProductClick() {
         when {
-            uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
+            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
+                Screen.CreditScreen.route
+            )
+            uiState.userStatus?.infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> navigateTo(
                 Screen.CreditScreen.route
             )
             else -> navigateTo(Screen.CreditScreen.route)
@@ -130,12 +163,16 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getProductBackgroundType(userStatus: ValidateUserStatus) = when {
-        userStatus.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> Primary
+        userStatus.infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> Primary
         else -> Tertiary
     }
 
     data class UIState(
         //Fields
+        var idBrand: String = "",
+        var pkUser: String = "",
+        var identification: String = "",
+        var email: String = "",
         var balanceCredit: Balance? = null,
         var userStatus: ValidateUserStatus? = null,
         var productType: ProductBackGroundType = Tertiary,
@@ -146,34 +183,19 @@ class ProductViewModel @Inject constructor(
         when (uiEvent) {
             is OnBalanceSuccess -> uiState.balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
-            is OnCallValidateUserStatus -> callQueryValidateUserStatus(
-                uiEvent.pkUser,
-                uiEvent.identification,
-                uiEvent.email,
-                uiEvent.idBrand
-            )
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
             is OnProductClick -> onProductClick()
+            is OnGetIdBrand -> onGetUserData()
         }
     }
 
     sealed class UIEvent {
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
-
-        // TODO: Remove hardcoded parameters
-        data class OnCallValidateUserStatus(
-            val pkUser: Int = 229913,
-            val identification: String = "207100330",
-            val email: String = "popics93@gmail.com",
-            val idBrand: Int = 5
-        ) : UIEvent()
-
         object OnNavigateToCreditScreen : UIEvent()
         object OnProductClick : UIEvent()
+        object OnGetIdBrand : UIEvent()
     }
-
-    val hasCredit = true
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(

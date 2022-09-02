@@ -30,22 +30,30 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
+import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.domain.model.credit.CreditOfferAndTip
+import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCallValidateUserStatus
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcessOnFidoOrAbandonProcess
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithOutProduct
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessType.CREDIT_PROCESS_ON_FIDO_INCOMPLETE
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartProduct
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @OptIn(ExperimentalPagerApi::class)
@@ -56,7 +64,7 @@ fun ProductScreen(
     viewModel: ProductViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallValidateUserStatus())
+        viewModel.onUIEvent(OnGetIdBrand)
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate)
         }
@@ -98,7 +106,6 @@ fun ProductScreen(
     LoadingIndicator(viewModel.uiState.isLoading)
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -167,22 +174,59 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
             color = MultimoneyTheme.colors.labelText
         )
         HorizontalPager(count = pages, modifier = Modifier.padding(top = 8.dp), state = state) { page ->
+            // todo add the logic for the others pages
+            CreditProduct(viewModel = viewModel)
+        }
+    }
+}
+
+@Composable
+fun CreditProduct(viewModel: ProductViewModel) {
+    viewModel.uiState.userStatus?.apply {
+        if (infoCredit?.status == CreditStatus.APPROVED_CREDIT.status) {
             CustomProductBackground(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
                 onClick = { viewModel.onUIEvent(OnProductClick) },
-                type = viewModel.uiState.productType
+                type = Primary
             ) {
-                // Todo here we have to identify the state and show the correct state of the product
                 when {
-                    viewModel.uiState.userStatus?.infoBankAccount?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
-                        type = CREDIT_PROCESS_ON_FIDO_INCOMPLETE
+                    hasToShowCreditInitialCard(this) -> {
+                        CreditApprovedOrStarted(
+                            creditApprovedOrStartedStatus = CreditStatusApproved,
+                            viewModel.uiState.userStatus?.infoCredit?.amountAvailable
+                        )
+                    }
+                    infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
+                        type = CreditProcessOnFidoIncomplete
                     )
-                    else -> CardWithOutProduct()
+                    else -> CardSmartProduct()
+                }
+            }
+        } else if (infoCredit?.status == CreditStatus.UNAPPROVED_CREDIT.status) {
+            when (viewModel.uiState.idBrand) {
+                Brand.Guatemala.id.toString() -> {
+                    CustomProductBackground(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp),
+                        onClick = { viewModel.onUIEvent(OnProductClick) },
+                        type = Primary
+                    ) {
+                        CardGTWithoutCredit()
+                    }
+                }
+                else -> {
+                    // no show card
                 }
             }
         }
     }
+}
+
+fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean {
+    // todo it is missing add the condition when the step was 0
+    return validateUserStatus?.infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
+            && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -190,13 +234,15 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
 fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
     Column(modifier = modifier) {
         HorizontalPager(count = pages, state = state) { page ->
-            CustomBoxVisaBackground(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                onClick = { type ->
-                    // todo Add logic when the user click the button
-                },
-                type = RequestCreditCard
-            )
+            if (viewModel.uiState.userStatus?.infoCredit?.status != CreditStatus.UNAPPROVED_CREDIT.status) {
+                CustomBoxVisaBackground(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    onClick = { type ->
+                        // todo Add logic when the user click the button
+                    },
+                    type = RequestCreditCard
+                )
+            }
         }
     }
 }
@@ -255,4 +301,4 @@ fun TipBox(type: String, content: @Composable () -> Unit) {
     }
 }
 
-private const val NUMBER_PAGES = 3
+private const val NUMBER_PAGES = 1

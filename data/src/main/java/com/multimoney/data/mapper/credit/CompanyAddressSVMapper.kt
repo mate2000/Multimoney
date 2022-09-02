@@ -3,10 +3,10 @@ package com.multimoney.data.mapper.credit
 import com.multimoney.data.networking.credit.apollomodel.CompanyAddressSVQuery
 import com.multimoney.domain.model.credit.CatalogSubOptions
 import com.multimoney.domain.model.credit.CompanyAddress
-import com.multimoney.domain.model.credit.CompanyCanton
-import com.multimoney.domain.model.credit.CompanyProvince
+import com.multimoney.domain.model.credit.Canton
+import com.multimoney.domain.model.credit.Province
 
-private fun CompanyAddressSVQuery.CompanyProvince.mapToDomainModel() = CompanyProvince(
+private fun CompanyAddressSVQuery.CompanyProvince.mapToDomainModel() = Province(
     id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
     description = descripcion,
     subOptions = subOpciones?.map { it?.mapToDomainModel() } ?: listOf()
@@ -21,7 +21,7 @@ private fun CompanyAddressSVQuery.SubOpcione.mapToDomainModel() = CatalogSubOpti
     intern = interno
 )
 
-private fun CompanyAddressSVQuery.CompanyCanton.mapToDomainModel() = CompanyCanton(
+private fun CompanyAddressSVQuery.CompanyCanton.mapToDomainModel() = Canton(
     id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
     description = descripcion,
     subOptions = subOpciones?.map { it?.mapToDomainModel() } ?: listOf()

@@ -22,17 +22,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
-import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.Companion.ONE
-import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.Companion.TWO
-import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.Companion.ZERO
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -77,18 +74,20 @@ fun MonthlyIncomeScreen(
             color = MultimoneyTheme.colors.labelText
         )
 
-        val placeHolder = when (viewModel.country) {
-            ZERO -> stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
-            ONE -> stringResource(id = R.string.credit_monthly_income_income_guatemala_hint)
-            TWO -> stringResource(id = R.string.credit_monthly_income_income_costa_rica_hint)
-            else -> {
-                stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
+        var placeHolder = ""
+        if (sharedViewModel.idBrand.isNotEmpty()) {
+            placeHolder = when (sharedViewModel.idBrand.toInt()) {
+                Brand.ElSalvador.id -> stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
+                Brand.Guatemala.id -> stringResource(id = R.string.credit_monthly_income_income_guatemala_hint)
+                Brand.CostaRica.id -> stringResource(id = R.string.credit_monthly_income_income_costa_rica_hint)
+                else -> {
+                    stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
+                }
             }
         }
 
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 32.dp),
-            labelText = stringResource(id = R.string.credit_monthly_income_income_label),
             value = viewModel.uiState.income,
             leadingIcon = R.drawable.ic_money,
             placeHolder = placeHolder,

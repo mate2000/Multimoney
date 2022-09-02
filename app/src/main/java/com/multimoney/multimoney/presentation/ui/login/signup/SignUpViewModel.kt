@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -55,7 +54,7 @@ class SignUpViewModel @Inject constructor(
         private set
 
     // Stateless
-    var isOnFidoVerified = false
+    var isOnFidoVerified = true
     var isPhoneVerified = false
     var userData: UserData? = null
     var countryCode = ""
@@ -112,7 +111,6 @@ class SignUpViewModel @Inject constructor(
     )
 
     private fun onPhoneNumberChange(phoneNumber: String) {
-        isPhoneVerified = phoneNumber == userData?.phoneNumber
         userData?.phoneNumber = phoneNumber
     }
 
@@ -132,7 +130,9 @@ class SignUpViewModel @Inject constructor(
         this.countryCode = countryCode
     }
 
-    private fun onNationalityChange(nationality: String) {
+    private fun onNationalityChange(nationality: String, idBrand: Int) {
+        // todo when the process to create the user is decided use the parameter idBrand
+        userData?.idBrand = 7
         userData?.nationality = nationality
         userData?.identificationValueType = ""
         userData?.identification = ""
@@ -158,7 +158,7 @@ class SignUpViewModel @Inject constructor(
             identification = userData?.identification,
             countryCode = userData?.countryCode,
             currentStep = userData?.currentStep ?: "",
-            idBrand = Brand.Revamp.id
+            idBrand = userData?.idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
                 nextStep = Search.getIdByName(it?.currentStep)
@@ -232,7 +232,11 @@ class SignUpViewModel @Inject constructor(
             is OnInitializeText -> onInitializeTexts(
                 event.description,
             )
-            is OnSetNavigation -> onSetNavigation(event.nextAction, event.nextStep, event.previousStep)
+            is OnSetNavigation -> onSetNavigation(
+                event.nextAction,
+                event.nextStep,
+                event.previousStep
+            )
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
@@ -248,7 +252,7 @@ class SignUpViewModel @Inject constructor(
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
             is OnSharedIdentificationValueChange -> userData =
                 userData?.copy(identification = event.identificationValue)
-            is OnNationalityValueChange -> onNationalityChange(event.nationality)
+            is OnNationalityValueChange -> onNationalityChange(event.nationality, event.idBrand)
             is OnCountryCountryCodeValueChange -> onCountryCodeChange(
                 event.countryCode,
                 event.countryPhoneCode,
@@ -290,7 +294,7 @@ class SignUpViewModel @Inject constructor(
         data class OnMoveToStep(val step: Int) : UIEvent()
         data class OnSharedIdentificationValueChange(val identificationValue: String) : UIEvent()
         data class OnPhoneNumberValueChange(val phoneNumber: String) : UIEvent()
-        data class OnNationalityValueChange(val nationality: String) : UIEvent()
+        data class OnNationalityValueChange(val nationality: String, val idBrand: Int) : UIEvent()
         data class OnCountryCountryCodeValueChange(
             val countryCode: String,
             val countryPhoneCode: String,

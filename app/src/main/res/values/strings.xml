@@ -217,12 +217,21 @@
     <string name="home_product_not_approved_title">Gana ahorrando smart</string>
     <string name="home_product_not_approved_description">La mejor tasa del 3.5\%; anual sin restricciones</string>
     <string name="home_product_not_approved_action">Activar cuenta Smart</string>
+    <string name="home_product_credit_approved_card_title">Crédito pre aprobado</string>
+    <string name="home_product_credit_approved_card_description">¡Podes solicitar\n%1$s hoy mismo!</string>
+    <string name="home_product_credit_approved_card_action">Solicitar</string>
+    <string name="home_product_credit_approved_process_started_card_title">Crédito pre aprobado</string>
+    <string name="home_product_credit_approved_process_started_card_description">Tu solicitud de crédito está en proceso. ¡No pierdas la oportunidad!</string>
+    <string name="home_product_credit_approved_process_started_card_action">Continuar con proceso</string>
     <string name="home_product_process_credit_label">Crédito</string>
     <string name="home_product_process_title">Parece que hubo un error</string>
     <string name="home_product_process_description">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
     <string name="home_product_process_action">Validar identificación</string>
     <string name="home_product_process_accept_contract_title">Ya casi tenés tu crédito</string>
     <string name="home_product_process_accept_contract_description">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
+    <string name="home_product_gt_with_out_credit_title">Conoce nuestras opciones\nde crédito</string>
+    <string name="home_product_gt_with_out_credit_description">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
+    <string name="home_product_gt_with_out_credit_action">Contactar a un asesor</string>
 
     <!-- Credit Close Dialog-->
     <string name="credit_close_dialog_title">¿Estás seguro que quieres salir?</string>
@@ -276,15 +285,29 @@
     <string name="credit_job_phone_placeholder">0000 0000</string>
     <string name="credit_job_phone_required">Número de teléfono requerido</string>
 
-    <!-- Credit Company-->
+    <!-- Credit Company Address-->
     <string name="credit_company_address_title">¿Dónde se encuentra la empresa?</string>
-    <string name="credit_company_address_province">Provincia</string>
-    <string name="credit_company_address_canton">Cantón</string>
-    <string name="credit_company_address_district">Distrito</string>
-    <string name="credit_company_address_state">Departamento</string>
-    <string name="credit_company_address_municipality">Municipio</string>
-    <string name="credit_company_address_zone">Zona</string>
-    <string name="credit_company_address_accurate_address">Dirección exacta</string>
+    <string name="credit_address_province">Provincia</string>
+    <string name="credit_address_canton">Cantón</string>
+    <string name="credit_address_district">Distrito</string>
+    <string name="credit_address_state">Departamento</string>
+    <string name="credit_address_municipality">Municipio</string>
+    <string name="credit_address_zone">Zona</string>
+    <string name="credit_address_accurate_address">Dirección exacta</string>
     <string name="credit_company_address_accurate_address_error">Dirección exacta requerida</string>
+    <string name="credit_home_address_select_current_location">Seleccionar mi ubicación actual</string>
+
+    <!--Credit Home address -->
+    <string name="credit_home_address_title">¿Dónde vivís?</string>
+
+    <!-- Generate Document -->
+    <string name="document_generation_title">Estamos generando tus documentos</string>
+    <string name="document_generation_subtitle">Al firmar tu solicitud podrás utilizar tu crédito</string>
+    <string name="document_generation_info">Generando documentos…</string>
+
+    <!-- Sign Credit Web View -->
+    <string name="sign_credit_dialog_title">Necesitamos tu firma en la siguiente pantalla</string>
+    <string name="sign_credit_dialog_description">Por favor, realizala según las indicaciones.</string>
+    <string name="sign_credit_dialog_continue">Continuar</string>
 
 </resources>

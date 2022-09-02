@@ -44,18 +44,18 @@ fun CompanyAddressScreen(
 
     when (viewModel.country) {
         ZERO -> {
-            divisionOneText = stringResource(id = R.string.credit_company_address_province)
-            divisionTwoText = stringResource(id = R.string.credit_company_address_canton)
-            divisionThreeText = stringResource(id = R.string.credit_company_address_district)
+            divisionOneText = stringResource(id = R.string.credit_address_province)
+            divisionTwoText = stringResource(id = R.string.credit_address_canton)
+            divisionThreeText = stringResource(id = R.string.credit_address_district)
         }
         ONE -> {
-            divisionOneText = stringResource(id = R.string.credit_company_address_state)
-            divisionTwoText = stringResource(id = R.string.credit_company_address_municipality)
-            divisionThreeText = stringResource(id = R.string.credit_company_address_zone)
+            divisionOneText = stringResource(id = R.string.credit_address_state)
+            divisionTwoText = stringResource(id = R.string.credit_address_municipality)
+            divisionThreeText = stringResource(id = R.string.credit_address_zone)
         }
         TWO -> {
-            divisionOneText = stringResource(id = R.string.credit_company_address_state)
-            divisionTwoText = stringResource(id = R.string.credit_company_address_municipality)
+            divisionOneText = stringResource(id = R.string.credit_address_state)
+            divisionTwoText = stringResource(id = R.string.credit_address_municipality)
         }
     }
 
@@ -75,18 +75,27 @@ fun CompanyAddressScreen(
             CompanyAddressViewModel.UIEvent.OnCallCatalogs(
                 PK_USER,
                 USER,
-                Brand.Revamp.id,
+                Brand.CostaRica.id,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                 },
                 onFailureWithDialog = { isLoading, dialogParameters ->
-                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnFailureWithDialog(isLoading, dialogParameters))
+                    sharedViewModel.onUIEvent(
+                        CreditViewModel.UIEvent.OnFailureWithDialog(
+                            isLoading,
+                            dialogParameters
+                        )
+                    )
                 }
             )
         )
         viewModel.baseEvent.collectLatest { event ->
             when (event) {
-                is IsFormCompleted -> sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(event.isCompleted))
+                is IsFormCompleted -> sharedViewModel.onUIEvent(
+                    CreditViewModel.UIEvent.OnContinueEnable(
+                        event.isCompleted
+                    )
+                )
             }
         }
     }
@@ -104,7 +113,13 @@ fun CompanyAddressScreen(
                 .padding(top = 32.dp),
             items = viewModel.uiState.divisionOneList,
             value = viewModel.uiState.divisionOneSelected,
-            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
+            onValueChange = {
+                viewModel.onUIEvent(
+                    CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(
+                        it
+                    )
+                )
+            },
             labelText = divisionOneText,
             placeHolder = stringResource(id = R.string.select)
         )
@@ -114,7 +129,13 @@ fun CompanyAddressScreen(
                 .padding(top = 16.dp),
             items = viewModel.uiState.divisionTwoList,
             value = viewModel.uiState.divisionTwoSelected,
-            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange(it)) },
+            onValueChange = {
+                viewModel.onUIEvent(
+                    CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange(
+                        it
+                    )
+                )
+            },
             labelText = divisionTwoText,
             placeHolder = stringResource(id = R.string.select)
         )
@@ -125,16 +146,28 @@ fun CompanyAddressScreen(
                     .padding(top = 16.dp),
                 items = viewModel.uiState.divisionThreeList,
                 value = viewModel.uiState.divisionThreeSelected,
-                onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange(it)) },
+                onValueChange = {
+                    viewModel.onUIEvent(
+                        CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange(
+                            it
+                        )
+                    )
+                },
                 labelText = divisionThreeText,
                 placeHolder = stringResource(id = R.string.select)
             )
         }
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 16.dp),
-            labelText = stringResource(id = R.string.credit_company_address_accurate_address),
+            labelText = stringResource(id = R.string.credit_address_accurate_address),
             value = viewModel.uiState.address,
-            onValueChange = { viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnAddressValueChange(it)) },
+            onValueChange = {
+                viewModel.onUIEvent(
+                    CompanyAddressViewModel.UIEvent.OnAddressValueChange(
+                        it
+                    )
+                )
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done

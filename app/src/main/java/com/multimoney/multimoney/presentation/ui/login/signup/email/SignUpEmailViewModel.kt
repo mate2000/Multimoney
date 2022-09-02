@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.UserStatus
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
@@ -86,12 +85,12 @@ class SignUpEmailViewModel @Inject constructor(
             }
         }
 
-    private fun onNextActionClick(nextStepAction: () -> Unit) {
+    private fun onNextActionClick(nextStepAction: () -> Unit, idBrand: Int) {
         if (isDataChanged() || isUserStatusIncomplete.not()) {
             callMutationUserValidationUseCase(
                 uiState.userEmail,
                 SignUpStep.Two.name,
-                Brand.Revamp.id
+                idBrand
             )
         } else {
             nextStepAction.invoke()
@@ -164,7 +163,7 @@ class SignUpEmailViewModel @Inject constructor(
         when (event) {
             is OnStart -> onStart(event.userCompletedDialogDescription, event.linkWhatsapp, event.blockedMessage)
             is OnValidateForm -> isFormValid()
-            is OnNextActionClick -> onNextActionClick(event.nextStepAction)
+            is OnNextActionClick -> onNextActionClick(event.nextStepAction, event.idBrand)
             is OnUserDataValidationSuccess -> onUserDataValidationSuccess(
                 event.context,
                 event.currentStep,
@@ -188,7 +187,7 @@ class SignUpEmailViewModel @Inject constructor(
             val blockedMessage: String
         ) : UIEvent()
 
-        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
+        data class OnNextActionClick(val nextStepAction: () -> Unit, val idBrand: Int) : UIEvent()
         data class OnUserDataValidationSuccess(
             val context: Context,
             val currentStep: Int,

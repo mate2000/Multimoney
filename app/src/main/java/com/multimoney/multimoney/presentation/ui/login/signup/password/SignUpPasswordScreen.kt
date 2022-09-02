@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -105,7 +104,7 @@ fun SignUpPasswordScreen(
                     SignUpPasswordViewModel.UIEvent.OnCallPasswordSave(
                         pkUser = userData?.pkUser ?: "0",
                         user = userData?.email ?: "",
-                        Brand.Revamp.id
+                        idBrant = userData?.idBrand ?: 0
                     )
                 )
             }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id))
@@ -125,6 +124,7 @@ fun SignUpPasswordScreen(
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "",
                         status = userData?.userStatus ?: "",
+                        idBrand = userData?.idBrand ?: 0,
                         onSuccess = {
                             onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
                         },

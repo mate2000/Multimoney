@@ -6,13 +6,14 @@ import com.multimoney.data.networking.CreditApi
 import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditOffer
+import com.multimoney.domain.model.credit.HomeAddress
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CreditRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class CreditRepositoryImpl @Inject constructor(
     private val creditApi: CreditApi
@@ -21,7 +22,7 @@ class CreditRepositoryImpl @Inject constructor(
     override suspend fun queryCreditOffer(pkUser: Int, idBrand: Int): Flow<MultimoneyResult<CreditOffer?>> = fetchData(
         apolloCall = creditApi.queryCreditOffer(pkUser, idBrand),
         apolloCallMapper = { data ->
-            MultimoneyResult.Success(data.mapToDomainModel())
+            Success(data.mapToDomainModel())
         }
     )
 
@@ -35,7 +36,7 @@ class CreditRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<PaymentAmount?>> = fetchData(
         apolloCall = creditApi.queryPaymentAmount(amount, months, idProduct, currencySymbol, user, idBrand),
         apolloCallMapper = { data ->
-            MultimoneyResult.Success(data.mapToDomainModel())
+            Success(data.mapToDomainModel())
         }
     )
 
@@ -94,7 +95,7 @@ class CreditRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<CompanyAddress?>> = fetchData(
         apolloCall = creditApi.queryCompanyAddress(pkUser, user, idBrand),
         apolloCallMapper = { data ->
-            MultimoneyResult.Success(data.mapToDomainModel())
+            Success(data.mapToDomainModel())
         }
     )
 
@@ -105,7 +106,29 @@ class CreditRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<CompanyAddress?>> = fetchData(
         apolloCall = creditApi.queryCompanyAddressSV(pkUser, user, idBrand),
         apolloCallMapper = { data ->
-            MultimoneyResult.Success(data.mapToDomainModel())
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryHomeAddress(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<HomeAddress?>> = fetchData(
+        apolloCall = creditApi.queryHomeAddress(pkUser, user, idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryHomeAddressSV(
+        pkUser: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<HomeAddress?>> = fetchData(
+        apolloCall = creditApi.queryHomeAddressSV(pkUser, user, idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
         }
     )
 }

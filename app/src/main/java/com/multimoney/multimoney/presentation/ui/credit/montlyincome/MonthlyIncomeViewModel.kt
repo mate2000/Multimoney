@@ -79,6 +79,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
     }
 
     sealed class UIEvent {
+
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnIncomeValueChange(val income: String) : UIEvent()
         data class OnProfessionValueChange(val profession: String) : UIEvent()
@@ -91,8 +92,6 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
 
     companion object {
         const val ZERO = 0
-        const val ONE = 1
-        const val TWO = 2
     }
 }
 

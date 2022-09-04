@@ -27,7 +27,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -42,6 +41,17 @@ fun MonthlyIncomeScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is MonthlyIncomeViewModel.BaseEvent.OnFormCompleted -> {
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(event.isFormCompleted))
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnValidForm)
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
             viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnNextActionClick {
                 sharedViewModel.onUIEvent(
@@ -49,14 +59,6 @@ fun MonthlyIncomeScreen(
                 )
             })
         }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id))
-        viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnValidForm)
-        viewModel.baseEvent.collect { event ->
-            when (event) {
-                is OnFormCompleted -> {
-                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(event.isFormCompleted))
-                }
-            }
-        }
     }
 
     Column(

@@ -28,6 +28,10 @@ type CreditQuery {
   getClientBankAccount(getClientBankAccountInput: getClientBankAccountInput): [getClientBankAccount]
 
   getClientAutomaticDebit(getClientAutomaticDebitInput: getClientAutomaticDebitInput): [getClientAutomaticDebit]
+
+  terminsAndConditions(terminsAndConditionsInput: terminsAndConditionsInput): terminsAndConditions
+
+  listBanks(listBanksInput: listBanksInput): [listBanks]
 }
 
 type creditOffer {
@@ -374,6 +378,8 @@ input screenConfigInput {
 
   keyForm: String
 
+  fkCatalogIdentifier: String
+
   origin: Boolean
 
   user: String!
@@ -573,10 +579,105 @@ input getClientAutomaticDebitInput {
   proceso: String!
 }
 
+type terminsAndConditions {
+  """
+  terminsAndConditions terminsAndConditionsHtml
+  """
+  terminsAndConditionsHtml: String!
+}
+
+input terminsAndConditionsInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  styleDark: Boolean!
+}
+
+type listBanks {
+  """
+  listBanks id
+  """
+  id: Long
+
+  """
+  listBanks banco
+  """
+  banco: String
+
+  """
+  listBanks bit_SINPE
+  """
+  bit_SINPE: Short
+
+  """
+  listBanks p_Int_Sub_Origen
+  """
+  p_Int_Sub_Origen: Short
+
+  """
+  listBanks bit_Interno
+  """
+  bit_Interno: Short
+
+  """
+  listBanks tin_Length_SINPE
+  """
+  tin_Length_SINPE: Short
+
+  """
+  listBanks str_Mask_Interno
+  """
+  str_Mask_Interno: String
+
+  """
+  listBanks bit_Estado
+  """
+  bit_Estado: Boolean
+
+  """
+  listBanks fk_Suv_Mtr_Usuario
+  """
+  fk_Suv_Mtr_Usuario: Int
+
+  """
+  listBanks fk_Suv_Cat_Marca
+  """
+  fk_Suv_Cat_Marca: Short
+
+  """
+  listBanks subOrigen
+  """
+  subOrigen: Short
+
+  """
+  listBanks cODIGO_ACH
+  """
+  cODIGO_ACH: String
+}
+
+scalar Short
+
+input listBanksInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 type CreditMutation {
   saveCreditFlowStep(saveCreditFlowStepInput: saveCreditFlowStepInput): saveCreditFlowStep
 
   saveCreditApplication(creditApplicationInputType: CreditApplicationInputType): saveCreditApplication
+
+  saveCreditOperation(saveCreditOperationInput: saveCreditOperationInput): saveCreditOperation
 
   proccessPaymentList(proccessPaymentListInput: proccessPaymentListInput): proccessPaymentList
 }
@@ -749,6 +850,11 @@ type saveCreditApplication {
   fecha_Pago: String!
 
   """
+  saveCreditApplication currentStep
+  """
+  currentStep: String!
+
+  """
   saveCreditApplication Status
   """
   status: Int
@@ -802,6 +908,39 @@ input CreditApplicationInputType {
 
   creditLimit: Decimal!
 
+  currentStep: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type saveCreditOperation {
+  """
+  saveCreditOperation idPrint
+  """
+  idPrint: Long
+
+  """
+  saveCreditOperation showFinalScreen
+  """
+  showFinalScreen: Boolean!
+
+  """
+  saveCreditOperation showOutSchedule
+  """
+  showOutSchedule: Boolean!
+}
+
+input saveCreditOperationInput {
+  idUserRequest: Int!
+
+  pkUser: Int!
+
   user: String!
 
   idBrand: Int!
@@ -847,8 +986,6 @@ type proccessPaymentList {
   """
   nUM_REF_SINPE: String!
 }
-
-scalar Short
 
 input proccessPaymentListInput {
   user: String!

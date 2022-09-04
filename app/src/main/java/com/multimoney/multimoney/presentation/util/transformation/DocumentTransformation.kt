@@ -92,14 +92,14 @@ fun formatDpi(): VisualTransformation =
         }
     }
 
-fun formatMoney(): VisualTransformation =
+fun formatMoney(currencySymbol: String): VisualTransformation =
     object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
             return TransformedText(
-                text = AnnotatedString(text.text.toLongOrNull().formatWithComma()),
+                text = AnnotatedString(getMoneyText(currencySymbol, text)),
                 object : OffsetMapping {
                     override fun originalToTransformed(offset: Int): Int {
-                        return text.text.toLongOrNull().formatWithComma().length
+                        return getMoneyText(currencySymbol, text).length
                     }
 
                     override fun transformedToOriginal(offset: Int): Int {
@@ -109,6 +109,14 @@ fun formatMoney(): VisualTransformation =
             )
         }
     }
+
+fun getMoneyText(currency: String, text: AnnotatedString): String {
+    return if (text.text.toLongOrNull().formatWithComma().isNotEmpty()) {
+        "$currency ${text.text.toLongOrNull().formatWithComma()}"
+    } else {
+        ""
+    }
+}
 
 fun Long?.formatWithComma(): String {
     return if (this != null) {

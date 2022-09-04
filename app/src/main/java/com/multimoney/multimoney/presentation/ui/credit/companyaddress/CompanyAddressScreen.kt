@@ -22,13 +22,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.BaseEvent.IsFormCompleted
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.ONE
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.TWO
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.Companion.ZERO
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CompanyAddressScreen(
@@ -42,20 +37,32 @@ fun CompanyAddressScreen(
     var divisionTwoText = ""
     var divisionThreeText = ""
 
-    when (viewModel.country) {
-        ZERO -> {
+    when (sharedViewModel.idBrand.toInt()) {
+        Brand.CostaRica.id -> {
             divisionOneText = stringResource(id = R.string.credit_address_province)
             divisionTwoText = stringResource(id = R.string.credit_address_canton)
             divisionThreeText = stringResource(id = R.string.credit_address_district)
         }
-        ONE -> {
+        Brand.Guatemala.id -> {
             divisionOneText = stringResource(id = R.string.credit_address_state)
             divisionTwoText = stringResource(id = R.string.credit_address_municipality)
             divisionThreeText = stringResource(id = R.string.credit_address_zone)
         }
-        TWO -> {
+        Brand.ElSalvador.id -> {
             divisionOneText = stringResource(id = R.string.credit_address_state)
             divisionTwoText = stringResource(id = R.string.credit_address_municipality)
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is CompanyAddressViewModel.BaseEvent.IsFormCompleted -> sharedViewModel.onUIEvent(
+                    CreditViewModel.UIEvent.OnContinueEnable(
+                        event.isCompleted
+                    )
+                )
+            }
         }
     }
 
@@ -75,7 +82,7 @@ fun CompanyAddressScreen(
             CompanyAddressViewModel.UIEvent.OnCallCatalogs(
                 PK_USER,
                 USER,
-                Brand.CostaRica.id,
+                sharedViewModel.idBrand.toInt(),
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                 },
@@ -89,15 +96,6 @@ fun CompanyAddressScreen(
                 }
             )
         )
-        viewModel.baseEvent.collectLatest { event ->
-            when (event) {
-                is IsFormCompleted -> sharedViewModel.onUIEvent(
-                    CreditViewModel.UIEvent.OnContinueEnable(
-                        event.isCompleted
-                    )
-                )
-            }
-        }
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -139,7 +137,7 @@ fun CompanyAddressScreen(
             labelText = divisionTwoText,
             placeHolder = stringResource(id = R.string.select)
         )
-        if (viewModel.country != TWO) {
+        if (sharedViewModel.idBrand.toInt() != Brand.ElSalvador.id) {
             CustomDropdown(
                 modifier = Modifier
                     .fillMaxWidth()

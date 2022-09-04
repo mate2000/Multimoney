@@ -58,7 +58,8 @@ class CreditRepositoryImpl @Inject constructor(
         selectedAmount: Double,
         minimumAmount: Double,
         creditLimit: Double,
-        tractAmount: Double
+        tractAmount: Double,
+        currentStep:String
     ): Flow<MultimoneyResult<CreditApplication?>> = fetchData(
         apolloCall = creditApi.mutationSaveCreditApplication(
             idUserRequest,
@@ -78,7 +79,8 @@ class CreditRepositoryImpl @Inject constructor(
             selectedAmount,
             minimumAmount,
             creditLimit,
-            tractAmount
+            tractAmount,
+            currentStep
         ),
         apolloCallMapper = { data ->
             if (data.saveCreditApplication?.status == null || data.saveCreditApplication.status == 0) {

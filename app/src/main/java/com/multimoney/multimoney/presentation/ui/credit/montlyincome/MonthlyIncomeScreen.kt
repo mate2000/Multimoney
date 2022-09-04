@@ -22,10 +22,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
@@ -74,23 +72,14 @@ fun MonthlyIncomeScreen(
             color = MultimoneyTheme.colors.labelText
         )
 
-        var placeHolder = ""
-        if (sharedViewModel.idBrand.isNotEmpty()) {
-            placeHolder = when (sharedViewModel.idBrand.toInt()) {
-                Brand.ElSalvador.id -> stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
-                Brand.Guatemala.id -> stringResource(id = R.string.credit_monthly_income_income_guatemala_hint)
-                Brand.CostaRica.id -> stringResource(id = R.string.credit_monthly_income_income_costa_rica_hint)
-                else -> {
-                    stringResource(id = R.string.credit_monthly_income_income_el_salvador_hint)
-                }
-            }
-        }
-
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 32.dp),
             value = viewModel.uiState.income,
             leadingIcon = R.drawable.ic_money,
-            placeHolder = placeHolder,
+            placeHolder = stringResource(
+                id = R.string.credit_monthly_income_income_hint,
+                sharedViewModel.currencySymbol
+            ),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
             ), keyboardActions = KeyboardActions(onNext = {
@@ -106,7 +95,7 @@ fun MonthlyIncomeScreen(
             },
             isError = viewModel.uiState.incomeError.first,
             errorMessage = stringResource(id = viewModel.uiState.incomeError.second),
-            customTransformation = formatMoney()
+            customTransformation = formatMoney(sharedViewModel.currencySymbol)
         )
         CustomDropdown(
             modifier = Modifier
@@ -116,8 +105,8 @@ fun MonthlyIncomeScreen(
             items = stringArrayResource(id = R.array.credit_monthly_income_professions).toList(),
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUIEvent(OnProfessionValueChange(it)) },
-            labelText = stringResource(id = string.credit_monthly_income_profession_label),
-            placeHolder = stringResource(id = string.select)
+            labelText = stringResource(id = R.string.credit_monthly_income_profession_label),
+            placeHolder = stringResource(id = R.string.select)
         )
     }
 }

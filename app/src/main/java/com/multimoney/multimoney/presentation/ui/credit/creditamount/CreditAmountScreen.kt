@@ -103,7 +103,11 @@ fun CreditAmountScreen(
                                 dialogParameter
                             )
                         )
-                    })
+                    },
+                    onCurrencySymbolValueChange = { currencySymbol ->
+                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnCurrencySymbolValueChange(currencySymbol))
+                    }
+                )
             )
         }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id))
 
@@ -143,6 +147,14 @@ fun CreditAmountScreen(
 
     viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnInitializeText(stringResource(id = R.string.credit_amount_condition_of_credit_modal_description)))
 
+    var title = R.string.empty
+    if (sharedViewModel.idBrand.isNotEmpty()) {
+        title = when (sharedViewModel.idBrand.toInt()) {
+            Brand.Guatemala.id -> R.string.credit_amount_title_gt
+            else -> R.string.credit_amount_title
+        }
+    }
+
     Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -151,7 +163,7 @@ fun CreditAmountScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, top = 36.dp, bottom = 40.dp),
-            text = stringResource(id = R.string.credit_amount_title),
+            text = stringResource(id = title),
             style = Typography.h5.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.SemiBold

@@ -16,9 +16,9 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SecurityRepository
-import kotlinx.coroutines.flow.Flow
 import java.io.Serializable
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
@@ -60,7 +60,11 @@ class SecurityRepositoryImpl @Inject constructor(
             secondSurname
         ),
         apolloCallMapper = { data ->
-            Success(data.mapToDomainModel())
+            if (data.userValidation?.status == null || data.userValidation.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
         }
     )
 

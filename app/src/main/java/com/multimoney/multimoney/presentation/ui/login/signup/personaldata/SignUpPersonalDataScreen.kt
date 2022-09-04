@@ -16,10 +16,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Nationalities
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Three
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
@@ -34,7 +36,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.data.util.catalog.Nationalities
 
 @Composable
 @Preview
@@ -121,6 +122,15 @@ fun SignUpPersonalDataScreen(
                 )
             }.onLoading {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
+            }.onMessage {
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnOpenDialogValueChange(
+                        DialogParameters(
+                            description = it?.message ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                )
             }.onFailure {
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(

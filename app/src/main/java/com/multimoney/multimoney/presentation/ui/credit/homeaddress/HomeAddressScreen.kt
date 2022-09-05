@@ -144,7 +144,10 @@ fun HomeAddressScreen(
             labelText = stringResource(id = R.string.credit_address_accurate_address),
             value = viewModel.uiState.address,
             onValueChange = { viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnAddressValueChange(it)) },
-            keyboardOptions = KeyboardOptions(
+            keyboardOptions = if (sharedViewModel.idBrand.toInt() != Brand.CostaRica.id) KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ) else KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),

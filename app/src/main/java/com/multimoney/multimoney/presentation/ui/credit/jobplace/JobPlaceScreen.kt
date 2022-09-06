@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -71,6 +72,11 @@ fun JobPlaceScreen(
         viewModel.onUIEvent(OnValidForm)
     }
 
+    val title = when (sharedViewModel.idBrand.toInt()) {
+        Brand.Guatemala.id -> R.string.credit_job_title_gt
+        else -> R.string.credit_job_title
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +84,7 @@ fun JobPlaceScreen(
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.credit_job_title),
+            text = stringResource(id = title),
             modifier = Modifier.padding(top = 32.dp),
             style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
             color = MultimoneyTheme.colors.labelText
@@ -116,6 +122,7 @@ fun JobPlaceScreen(
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_job_date_required),
             onClick = {
+                focusManager.clearFocus()
                 val calendar = Calendar.getInstance()
                 val datePicker = DatePickerDialog(
                     context, { _, year, month, day ->
@@ -142,10 +149,17 @@ fun JobPlaceScreen(
             isClickable = true
         )
 
+        val phonePlaceHolder = when (sharedViewModel.idBrand.toInt()) {
+            Brand.ElSalvador.id -> R.string.credit_job_phone_placeholder_sv
+            Brand.CostaRica.id -> R.string.credit_job_phone_placeholder_cr
+            Brand.Guatemala.id -> R.string.credit_job_phone_placeholder_gt
+            else -> R.string.empty
+        }
+
         CustomOutlinedTextField(
             leadingIcon = R.drawable.ic_phone,
             value = viewModel.uiState.phoneNumber,
-            placeHolder = stringResource(id = R.string.credit_job_phone_placeholder),
+            placeHolder = stringResource(id = phonePlaceHolder),
             onValueChange = { phoneNumber ->
                 viewModel.onUIEvent(OnPhoneNumberValueChange(phoneNumber))
             },

@@ -51,7 +51,8 @@ class CreditApi @Inject constructor(
         selectedAmount: Double,
         minimumAmount: Double,
         creditLimit: Double,
-        tractAmount: Double
+        tractAmount: Double,
+        currentStep:String
     ): ApolloCall<SaveCreditApplicationMutation.Data> =
         apolloClient.mutation(
             SaveCreditApplicationMutation(
@@ -72,7 +73,8 @@ class CreditApi @Inject constructor(
                 selectedAmount,
                 minimumAmount,
                 creditLimit,
-                tractAmount
+                tractAmount,
+                currentStep
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

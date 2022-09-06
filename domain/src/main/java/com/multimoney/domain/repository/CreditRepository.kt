@@ -41,7 +41,8 @@ interface CreditRepository {
         selectedAmount: Double,
         minimumAmount: Double,
         creditLimit: Double,
-        tractAmount: Double
+        tractAmount: Double,
+        currentStep:String
     ): Flow<MultimoneyResult<CreditApplication?>>
 
     suspend fun queryCompanyAddress(

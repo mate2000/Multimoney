@@ -17,7 +17,9 @@
     <string name="placeholder_error">Error de proceso</string>
     <string name="whatsapp_deep_link">https://api.whatsapp.com/send/?phone=%1$s&amp;text&amp;app_absent=0</string>
     <string name="select">Seleccionar</string>
+    <string name="empty"></string>
     <string name="understood">Entendido</string>
+
 
     <!-- Errors -->
     <string name="error_empty"></string>
@@ -245,12 +247,13 @@
 
     <!-- Credit Close Dialog-->
     <string name="credit_close_dialog_title">¿Estás seguro que quieres salir?</string>
-    <string name="credit_close_dialog_description">Podrás retomar el registro cuando quieras</string>
+    <string name="credit_close_dialog_description">Podrás retomar el proceso de credito cuando quieras</string>
     <string name="credit_close_dialog_positive_button_text">Salir</string>
     <string name="credit_close_dialog_negative_button_text">Cancelar</string>
 
     <!-- Credit Amount-->
     <string name="credit_amount_title">¿Cuánto \ndinero necesitás?</string>
+    <string name="credit_amount_title_gt">¿Cuánto \ndinero necesitas?</string>
     <string name="credit_amount_disbursement_placeholder">%s000,000</string>
     <string name="credit_amount_disbursement_progress_factor_error_message">El monto debe ser múltiplo de %s%s</string>
     <string name="credit_amount_disbursement_minimum_error_message">El monto ingresado es menor al permitido</string>
@@ -270,9 +273,7 @@
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title">¿Cuál es tu ingreso mensual?</string>
     <string name="credit_monthly_income_income_label">Ingreso mensual</string>
-    <string name="credit_monthly_income_income_el_salvador_hint">$ 000,000</string>
-    <string name="credit_monthly_income_income_guatemala_hint">Q 000,000</string>
-    <string name="credit_monthly_income_income_costa_rica_hint">₡ 000,000,000</string>
+    <string name="credit_monthly_income_income_hint">%s 000,000</string>
     <string name="credit_monthly_income_required_income">Ingresos requerido</string>
     <string name="credit_monthly_income_greater_than_zero_error">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label">Selecciona tu profesión</string>
@@ -286,13 +287,16 @@
 
     <!-- Credit Job-->
     <string name="credit_job_title">Contanos de la empresa en la que trabajás</string>
+    <string name="credit_job_title_gt">Cuéntanos de la empresa en la que trabajas</string>
     <string name="credit_job_workplace_label">Nombre de la empresa</string>
     <string name="credit_job_workplace_required">Nombre de la empresa requerido</string>
     <string name="credit_job_date_placeholder">00 | 00 | 0000</string>
     <string name="credit_job_date_required">Fecha de ingreso requerida</string>
     <string name="credit_job_joined_date">Fecha en la que ingresaste</string>
     <string name="credit_job_phone_number">Número de teléfono</string>
-    <string name="credit_job_phone_placeholder">0000 0000</string>
+    <string name="credit_job_phone_placeholder_sv">+503 0000 0000</string>
+    <string name="credit_job_phone_placeholder_cr">+506 0000 0000</string>
+    <string name="credit_job_phone_placeholder_gt">+502 0000 0000</string>
     <string name="credit_job_phone_required">Número de teléfono requerido</string>
 
     <!-- Credit Company Address-->
@@ -309,6 +313,7 @@
 
     <!--Credit Home address -->
     <string name="credit_home_address_title">¿Dónde vivís?</string>
+    <string name="credit_home_address_title_gt">¿Dónde vives?</string>
 
     <!-- Generate Document -->
     <string name="document_generation_title">Estamos generando tus documentos</string>

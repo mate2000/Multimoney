@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCurrencySymbolValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCurrentLocationButtonValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnInitializeText
@@ -42,6 +43,7 @@ class CreditViewModel @Inject constructor(
     var nextAction: () -> Unit = {}
     private var nextStep: Int = CreditStep.One.id
     private var previousStep: Int = CreditStep.One.id
+    var currencySymbol = ""
 
     var idBrand: String = ""
     var pkUser: String = ""
@@ -182,6 +184,7 @@ class CreditViewModel @Inject constructor(
             is OnNextStep -> nextStep()
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
+            is OnCurrencySymbolValueChange -> currencySymbol = event.currencySymbol
             is OnUpdateUserData -> onUpdateUserData(
                 event.idBrand,
                 event.pkUser,
@@ -220,6 +223,8 @@ class CreditViewModel @Inject constructor(
             val email: String,
             val step: Int
         ) : UIEvent()
+
+        data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
     }
 
     companion object {

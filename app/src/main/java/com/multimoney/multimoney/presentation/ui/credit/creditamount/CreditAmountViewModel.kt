@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
@@ -189,8 +190,10 @@ class CreditAmountViewModel @Inject constructor(
         idBrand: Int,
         onSuccess: () -> Unit,
         onLoadingValueChange: (status: Boolean) -> Unit,
-        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onCurrencySymbolValueChange: (currencySymbol: String) -> Unit
     ) = executeUseCase {
+        onCurrencySymbolValueChange(uiState.currencyItems[uiState.currencyIndex])
         mutationSaveCreditApplicationUseCase.invoke(
             idUserRequest = idUserRequest,
             pkUser = pkUser,
@@ -209,7 +212,8 @@ class CreditAmountViewModel @Inject constructor(
             selectedAmount = uiState.disbursement.toDouble(),
             minimumAmount = minimumDisbursement.toDouble(),
             creditLimit = maximumDisbursement.toDouble(),
-            tractAmount = uiState.progressFactor
+            tractAmount = uiState.progressFactor,
+            currentStep = CreditStep.Two.name
         ).collectLatest { result ->
             result.onSuccess {
                 onLoadingValueChange(false)
@@ -433,7 +437,8 @@ class CreditAmountViewModel @Inject constructor(
                 uiEvent.idBrand,
                 uiEvent.onSuccess,
                 uiEvent.onLoadingValueChange,
-                uiEvent.onFailureWithDialog
+                uiEvent.onFailureWithDialog,
+                uiEvent.onCurrencySymbolValueChange
             )
             is OnTermAndConditionCheckedChange -> onTermAndConditionCheckedChange(uiEvent.isChecked)
             is OnOpenConditionCreditDialog -> onOpenConditionCreditDialog()
@@ -479,7 +484,8 @@ class CreditAmountViewModel @Inject constructor(
             val idBrand: Int,
             val onSuccess: () -> Unit,
             val onLoadingValueChange: (status: Boolean) -> Unit,
-            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
+            val onCurrencySymbolValueChange: (currencySymbol: String) -> Unit
         ) : UIEvent()
 
         data class OnTermAndConditionCheckedChange(val isChecked: Boolean) : UIEvent()

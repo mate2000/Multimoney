@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.credit.companyaddress
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryCompanyAddressSVUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyAddressUseCase
 import com.multimoney.domain.model.credit.CatalogSubOptions
@@ -35,7 +36,7 @@ class CompanyAddressViewModel @Inject constructor(
         private set
 
     //stateless
-    val country = ZERO
+    var idBrand = Brand.ElSalvador.id
     private var companyCantonList: List<CatalogSubOptions?>? = listOf()
     private var companyDistrictList: List<CatalogSubOptions?>? = listOf()
 
@@ -68,8 +69,8 @@ class CompanyAddressViewModel @Inject constructor(
     private fun onValidateScreen() {
         emitBaseEvent(
             IsFormCompleted(
-                when (country) {
-                    TWO -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank()
+                when (idBrand) {
+                    Brand.ElSalvador.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank()
                     else -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank()
                 }
             )
@@ -83,7 +84,8 @@ class CompanyAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
-        if (country == TWO) {
+        this.idBrand = idBrand
+        if (idBrand == Brand.ElSalvador.id) {
             onCallQueryCompanyAddressSV(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
         } else {
             onCallQueryCompanyAddress(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
@@ -222,9 +224,6 @@ class CompanyAddressViewModel @Inject constructor(
     }
 
     companion object {
-        const val ZERO = 0
-        const val ONE = 1
-        const val TWO = 2
         const val MIDDLE_DASH = "-"
     }
 }

@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
+import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DUMMY_URL
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -48,12 +49,21 @@ class CreditViewModel @Inject constructor(
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
+    var currentStep: Int = 1
 
-    private fun onUpdateUserData(idBrand: String, pkUser: String, identification: String, email: String) {
+    private fun onUpdateUserData(
+        idBrand: String,
+        pkUser: String,
+        identification: String,
+        email: String,
+        currentStep: Int
+    ) {
         this.idBrand = idBrand
         this.pkUser = pkUser
         this.identification = identification
         this.email = email
+        this.currentStep = currentStep
+        moveToStep(currentStep)
     }
 
     private fun onInitializeTexts(description: String) {
@@ -94,6 +104,11 @@ class CreditViewModel @Inject constructor(
             uiState = uiState.copy(
                 currentStep = step,
                 isCloseVisible = step >= CreditStep.One.id
+            )
+        } else {
+            popAndNavigateTo(
+                route = "${Screen.SignDocumentScreen.baseRoute}/".plus(DUMMY_URL),
+                popTo = Screen.DocumentGenerationScreen.route
             )
         }
     }
@@ -151,7 +166,11 @@ class CreditViewModel @Inject constructor(
             is OnInitializeText -> onInitializeTexts(
                 event.description,
             )
-            is OnSetNavigation -> onSetNavigation(event.nextAction, event.nextStep, event.previousStep)
+            is OnSetNavigation -> onSetNavigation(
+                event.nextAction,
+                event.nextStep,
+                event.previousStep
+            )
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
@@ -165,8 +184,14 @@ class CreditViewModel @Inject constructor(
             is OnNextStep -> nextStep()
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
-            is OnUpdateUserData -> onUpdateUserData(event.idBrand, event.pkUser, event.identification, event.email)
             is OnCurrencySymbolValueChange -> currencySymbol = event.currencySymbol
+            is OnUpdateUserData -> onUpdateUserData(
+                event.idBrand,
+                event.pkUser,
+                event.identification,
+                event.email,
+                event.step
+            )
         }
     }
 
@@ -184,7 +209,9 @@ class CreditViewModel @Inject constructor(
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
-        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
+        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
+            UIEvent()
+
         data class OnCurrentLocationButtonValueChange(val isVisible: Boolean) : UIEvent()
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
@@ -193,7 +220,8 @@ class CreditViewModel @Inject constructor(
             val idBrand: String,
             val pkUser: String,
             val identification: String,
-            val email: String
+            val email: String,
+            val step: Int
         ) : UIEvent()
 
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()

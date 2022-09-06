@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
@@ -35,9 +36,14 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object HomeScreen : Screen("home_screen")
 
     // CreditNavGraph Screens
-    object CreditScreen : Screen("credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}", "credit_screen")
+    object CreditScreen : Screen(
+        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}",
+        "credit_screen"
+    )
+
     object DocumentGenerationScreen : Screen("document_generation_screen")
-    object SignDocumentScreen : Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
+    object SignDocumentScreen :
+        Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

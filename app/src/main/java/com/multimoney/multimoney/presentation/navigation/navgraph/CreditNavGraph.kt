@@ -15,6 +15,7 @@ const val ID_BRAND = "id_brand"
 const val PK_USER = "pk_user"
 const val IDENTIFICATION = "identification"
 const val EMAIL = "email"
+const val CREDIT_STEP = "credit_step"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(

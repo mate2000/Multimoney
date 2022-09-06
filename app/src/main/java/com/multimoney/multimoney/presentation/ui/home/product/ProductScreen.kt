@@ -32,22 +32,24 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
-import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
 import com.multimoney.data.util.catalog.CreditStatus
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcessOnFidoOrAbandonProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartProduct
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcessOnFidoOrAbandonProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessMissingSignature
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -173,7 +175,11 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
         )
-        HorizontalPager(count = pages, modifier = Modifier.padding(top = 8.dp), state = state) { page ->
+        HorizontalPager(
+            count = pages,
+            modifier = Modifier.padding(top = 8.dp),
+            state = state
+        ) { page ->
             // todo add the logic for the others pages
             CreditProduct(viewModel = viewModel)
         }
@@ -183,7 +189,7 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
 @Composable
 fun CreditProduct(viewModel: ProductViewModel) {
     viewModel.uiState.userStatus?.apply {
-        if (infoCredit?.status == CreditStatus.APPROVED_CREDIT.status) {
+        if (infoCredit?.status != CreditStatus.APPROVED_CREDIT.status) {
             CustomProductBackground(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
@@ -191,13 +197,19 @@ fun CreditProduct(viewModel: ProductViewModel) {
                 type = Primary
             ) {
                 when {
+                    infoCredit?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> {
+                        viewModel.onUIEvent(OnLastStepChange(CreditStep.Six.id))
+                        CardWithCreditInProcessOnFidoOrAbandonProcess(
+                            type = CreditProcessMissingSignature
+                        )
+                    }
                     hasToShowCreditInitialCard(this) -> {
                         CreditApprovedOrStarted(
                             creditApprovedOrStartedStatus = CreditStatusApproved,
                             viewModel.uiState.userStatus?.infoCredit?.amountAvailable
                         )
                     }
-                    infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
+                    infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> CardWithCreditInProcessOnFidoOrAbandonProcess(
                         type = CreditProcessOnFidoIncomplete
                     )
                     else -> CardSmartProduct()
@@ -278,7 +290,8 @@ fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip, viewModel: ProductViewModel) 
                     maxLines = 2
                 )
                 Text(
-                    text = "Solicitar", modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
+                    text = "Solicitar",
+                    modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
                     style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.tipActionColor
                 )
@@ -296,7 +309,10 @@ fun TipBox(type: String, content: @Composable () -> Unit) {
                 end = 13.dp
             )
     ) {
-        CustomImage(drawableResource = R.drawable.ic_tip_background, contentScale = ContentScale.FillBounds)
+        CustomImage(
+            drawableResource = R.drawable.ic_tip_background,
+            contentScale = ContentScale.FillBounds
+        )
         content()
     }
 }

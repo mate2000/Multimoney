@@ -19,6 +19,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseFirstTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseSecondTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessCreateAccountFailure
@@ -27,8 +29,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessSignatureRefuseFirstTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessSignatureRefuseSecondTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 
@@ -359,7 +359,9 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
 
 @Composable
 @Preview
-fun CardCreditMaxAttempts() {
+fun CardCreditMaxAttempts(
+    action: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -372,7 +374,7 @@ fun CardCreditMaxAttempts() {
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
             ),
-            modifier = Modifier.padding(top = 42.dp),
+            modifier = Modifier.padding(top = 12.dp),
             shape = RoundedCornerShape(12.dp),
             background = BlackTransparency20,
             startIcon = R.drawable.ic_warning
@@ -385,9 +387,24 @@ fun CardCreditMaxAttempts() {
         )
         Text(
             text = stringResource(id = R.string.sign_credit_max_attempts_message),
-            modifier = Modifier.padding(top = 8.dp, bottom = 42.dp),
+            modifier = Modifier.padding(top = 8.dp),
             style = Typography.caption,
             color = MultimoneyTheme.colors.text
+        )
+        CustomImage(
+            modifier = Modifier
+                .padding(top = 21.dp)
+                .align(Alignment.CenterHorizontally),
+            drawableResource = R.drawable.ic_chevron_up
+        )
+        Text(
+            text = stringResource(id = R.string.sign_credit_max_attempts_contact),
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .align(Alignment.CenterHorizontally),
+            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text,
+            textAlign = TextAlign.Center
         )
     }
 }

@@ -14,6 +14,8 @@ type SecurityQuery {
   getCountry(getCountryInput: getCountryInput): [getCountry]
 
   catalogTypeIndentification(catalogTypeIndentificationInput: catalogInput): [catalog]
+
+  validateUserExists(validateUserExistsInput: validateUserExistsInput): validateUserExists
 }
 
 type dataInformationClient {
@@ -256,19 +258,58 @@ type infoCredit {
   status: Int!
 
   """
-  infoCredit amountAvailable
+  infoCredit infoPreApprove
   """
-  amountAvailable: Decimal!
+  infoPreApprove: infoCreditPreAprrove
+}
+
+type infoCreditPreAprrove {
+  """
+  infoCreditPreAprrove idUserRequest
+  """
+  idUserRequest: Long!
 
   """
-  infoCredit idRequest
+  infoCreditPreAprrove status
   """
-  idRequest: Int!
+  status: String!
 
   """
-  infoCredit statusFirm
+  infoCreditPreAprrove infoProducts
+  """
+  infoProducts: [productoPreApprove]
+
+  """
+  infoCreditPreAprrove selectedAmount
+  """
+  selectedAmount: Decimal
+
+  """
+  infoCreditPreAprrove statusFirm
   """
   statusFirm: String
+
+  """
+  infoCreditPreAprrove currentStep
+  """
+  currentStep: String
+}
+
+type productoPreApprove {
+  """
+  productoPreApprove idProduct
+  """
+  idProduct: Int!
+
+  """
+  productoPreApprove amountAvailable
+  """
+  amountAvailable: String!
+
+  """
+  productoPreApprove symbolCurrency
+  """
+  symbolCurrency: String!
 }
 
 scalar Decimal
@@ -691,6 +732,108 @@ input catalogInput {
   activo: Boolean
 }
 
+type validateUserExists {
+  """
+  userValidation status
+  """
+  status: Int
+
+  """
+  userValidation message
+  """
+  message: String
+
+  """
+  userValidation detail
+  """
+  detail: String
+
+  """
+  userValidation pkUser
+  """
+  pkUser: String
+
+  """
+  userValidation userName
+  """
+  userName: String
+
+  """
+  userValidation email
+  """
+  email: String
+
+  """
+  userValidation phoneNumber
+  """
+  phoneNumber: String
+
+  """
+  userValidation fullName
+  """
+  fullName: String
+
+  """
+  userValidation firstName
+  """
+  firstName: String
+
+  """
+  userValidation secondName
+  """
+  secondName: String
+
+  """
+  userValidation lastName
+  """
+  lastName: String
+
+  """
+  userValidation secondLastName
+  """
+  secondLastName: String
+
+  """
+  userValidation contactMeans
+  """
+  contactMeans: String
+
+  """
+  userValidation nationality
+  """
+  nationality: String
+
+  """
+  userValidation identification
+  """
+  identification: String
+
+  """
+  userValidation countryCode
+  """
+  countryCode: String
+
+  """
+  userValidation currentStep
+  """
+  currentStep: String
+
+  """
+  userValidation userStatus
+  """
+  userStatus: String
+}
+
+input validateUserExistsInput {
+  email: String!
+
+  idBrand: Int
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 type SecurityMutation {
   userValidation(userValidationInput: userValidationInput): userValidation
 
@@ -780,6 +923,16 @@ type userValidation {
   userValidation userStatus
   """
   userStatus: String
+
+  """
+  userValidation status
+  """
+  status: Int
+
+  """
+  userValidation message
+  """
+  message: String
 }
 
 input userValidationInput {
@@ -788,6 +941,18 @@ input userValidationInput {
   currentStep: String!
 
   idBrand: Int!
+
+  idDocument: Int!
+
+  identification: String!
+
+  firtName: String!
+
+  secondName: String
+
+  firtSurname: String!
+
+  secondSurname: String
 
   tenantId: String
 
@@ -869,6 +1034,16 @@ type updateUserRegister {
   updateUserRegister userStatus
   """
   userStatus: String
+
+  """
+  userValidation status
+  """
+  status: Int
+
+  """
+  userValidation message
+  """
+  message: String
 }
 
 input UpdateUserRegister {

@@ -104,7 +104,7 @@ fun SignUpPasswordScreen(
                     SignUpPasswordViewModel.UIEvent.OnCallPasswordSave(
                         pkUser = userData?.pkUser ?: "0",
                         user = userData?.email ?: "",
-                        idBrant = userData?.idBrand ?: 0
+                        idBrant = idBrand ?: 0
                     )
                 )
             }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id))
@@ -124,7 +124,7 @@ fun SignUpPasswordScreen(
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "",
                         status = userData?.userStatus ?: "",
-                        idBrand = userData?.idBrand ?: 0,
+                        idBrand = idBrand ?: 0,
                         onSuccess = {
                             onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
                         },

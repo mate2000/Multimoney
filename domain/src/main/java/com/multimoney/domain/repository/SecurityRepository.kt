@@ -14,10 +14,20 @@ import kotlinx.coroutines.flow.Flow
 
 interface SecurityRepository {
 
+    suspend fun queryValidateUserExists(
+        email: String
+    ):Flow<MultimoneyResult<UserData?>>
+
     suspend fun mutationUserValidation(
         email: String,
         currentStep: String,
-        idBrand: Int
+        idBrand: Int,
+        idDocument:Int,
+        identification:String,
+        firstName: String,
+        secondName:String,
+        firstSurname:String,
+        secondSurname:String
     ): Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUpdateUserRegister(

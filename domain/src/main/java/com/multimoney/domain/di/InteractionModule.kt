@@ -32,6 +32,8 @@ import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
+import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
@@ -50,6 +52,11 @@ import javax.inject.Singleton
 class InteractionModule {
 
     // Security
+
+    @Provides
+    @Singleton
+    fun provideQueryValidationUserExistsUseCase(securityRepository: SecurityRepository): QueryValidateUserExistsUseCase =
+        QueryValidateUserExistsUseCaseImpl(securityRepository)
 
     @Provides
     @Singleton

@@ -41,8 +41,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -57,6 +57,7 @@ class SignUpViewModel @Inject constructor(
     var isOnFidoVerified = true
     var isPhoneVerified = false
     var userData: UserData? = null
+    var idBrand: Int? = null
     var countryCode = ""
     var nextAction: () -> Unit = {}
     var closeDialogDescription: String = ""
@@ -131,22 +132,23 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {
-        // todo when the process to create the user is decided use the parameter idBrand
-        userData?.idBrand = 7
-        userData?.nationality = nationality
-        userData?.identificationValueType = ""
-        userData?.identification = ""
-        userData?.firstName = ""
-        userData?.secondName = ""
-        userData?.firstLastName = ""
-        userData?.secondLastName = ""
-        userData?.fullName = ""
+        this.idBrand = idBrand
+        userData = userData?.copy(
+            nationality = nationality,
+            identificationValueType = "",
+            identification = "",
+            firstName = "",
+            secondName = "",
+            firstLastName = "",
+            secondLastName = "",
+            fullName = ""
+        )
     }
 
     private fun callMutationUpdateUserRegisterUseCase() = executeUseCase {
         mutationUpdateUserRegisterUseCase.invoke(
             pkUser = userData?.pkUser ?: "",
-            user = userData?.userName ?: "",
+            user = userData?.email ?: "",
             email = userData?.email ?: "",
             phoneNumber = userData?.phoneNumber,
             fullName = userData?.fullName,
@@ -158,7 +160,7 @@ class SignUpViewModel @Inject constructor(
             identification = userData?.identification,
             countryCode = userData?.countryCode,
             currentStep = userData?.currentStep ?: "",
-            idBrand = userData?.idBrand ?: 0
+            idBrand = idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
                 nextStep = Search.getIdByName(it?.currentStep)
@@ -246,7 +248,12 @@ class SignUpViewModel @Inject constructor(
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
-            is OnUseDataValueChange -> userData = event.userData
+            is OnUseDataValueChange -> {
+                if (event.idBrand != null) {
+                    idBrand = event.idBrand
+                }
+                userData = event.userData
+            }
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
@@ -289,7 +296,7 @@ class SignUpViewModel @Inject constructor(
             val previousStep: Int
         ) : UIEvent()
 
-        data class OnUseDataValueChange(val userData: UserData?) : UIEvent()
+        data class OnUseDataValueChange(val userData: UserData?, val idBrand: Int? = null) : UIEvent()
 
         data class OnMoveToStep(val step: Int) : UIEvent()
         data class OnSharedIdentificationValueChange(val identificationValue: String) : UIEvent()

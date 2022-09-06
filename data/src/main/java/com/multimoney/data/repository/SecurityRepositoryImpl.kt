@@ -16,22 +16,55 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SecurityRepository
-import kotlinx.coroutines.flow.Flow
 import java.io.Serializable
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
 ) : BaseRepository(), SecurityRepository, Serializable {
 
+    override suspend fun queryValidateUserExists(
+        email: String
+    ): Flow<MultimoneyResult<UserData?>> = fetchData(
+        apolloCall = securityApi.queryValidateUserExists(email),
+        apolloCallMapper = { data ->
+            if (data.validateUserExists?.status == null || data.validateUserExists.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
     override suspend fun mutationUserValidation(
         email: String,
         currentStep: String,
-        idBrand: Int
+        idBrand: Int,
+        idDocument: Int,
+        identification: String,
+        firstName: String,
+        secondName: String,
+        firstSurname: String,
+        secondSurname: String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
-        apolloCall = securityApi.mutationUserValidation(email, currentStep, idBrand),
+        apolloCall = securityApi.mutationUserValidation(
+            email,
+            currentStep,
+            idBrand,
+            idDocument,
+            identification,
+            firstName,
+            secondName,
+            firstSurname,
+            secondSurname
+        ),
         apolloCallMapper = { data ->
-            Success(data.mapToDomainModel())
+            if (data.userValidation?.status == null || data.userValidation.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
         }
     )
 

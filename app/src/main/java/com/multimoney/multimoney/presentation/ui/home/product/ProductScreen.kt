@@ -32,7 +32,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
-import com.multimoney.data.util.catalog.CreditProcessStatusOnFido
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -176,7 +175,11 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
         )
-        HorizontalPager(count = pages, modifier = Modifier.padding(top = 8.dp), state = state) { page ->
+        HorizontalPager(
+            count = pages,
+            modifier = Modifier.padding(top = 8.dp),
+            state = state
+        ) { page ->
             // todo add the logic for the others pages
             CreditProduct(viewModel = viewModel)
         }
@@ -201,7 +204,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 viewModel.uiState.userStatus?.infoCredit?.amountAvailable
                             )
                         }
-                        infoUser?.statusOnfido != CreditProcessStatusOnFido.Approved.status -> CardWithCreditInProcess(
+                        infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> CardWithCreditInProcess(
                             type = CreditProcessOnFidoIncomplete
                         )
                         infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
@@ -292,7 +295,8 @@ fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip, viewModel: ProductViewModel) 
                     maxLines = 2
                 )
                 Text(
-                    text = "Solicitar", modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
+                    text = "Solicitar",
+                    modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
                     style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.tipActionColor
                 )
@@ -310,7 +314,10 @@ fun TipBox(type: String, content: @Composable () -> Unit) {
                 end = 13.dp
             )
     ) {
-        CustomImage(drawableResource = R.drawable.ic_tip_background, contentScale = ContentScale.FillBounds)
+        CustomImage(
+            drawableResource = R.drawable.ic_tip_background,
+            contentScale = ContentScale.FillBounds
+        )
         content()
     }
 }

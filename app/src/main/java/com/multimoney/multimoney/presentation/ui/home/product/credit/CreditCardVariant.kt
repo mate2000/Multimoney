@@ -125,7 +125,10 @@ fun CardGTWithoutCredit() {
  *
  */
 @Composable
-fun CreditApprovedOrStarted(creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus, amount: Double? = 0.0) {
+fun CreditApprovedOrStarted(
+    creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
+    amount: Double? = 0.0
+) {
     val title: Int
     var description = ""
     val actionText: Int
@@ -133,12 +136,16 @@ fun CreditApprovedOrStarted(creditApprovedOrStartedStatus: CreditApprovedOrStart
     when (creditApprovedOrStartedStatus) {
         CreditStatusApproved -> {
             title = R.string.home_product_credit_approved_card_title
-            description = stringResource(id = R.string.home_product_credit_approved_card_description, amount ?: 0.0)
+            description = stringResource(
+                id = R.string.home_product_credit_approved_card_description,
+                amount ?: 0.0
+            )
             actionText = R.string.home_product_credit_approved_card_action
         }
         CreditStatusProcessStarted -> {
             title = R.string.home_product_credit_approved_process_started_card_title
-            description = stringResource(id = R.string.home_product_credit_approved_process_started_card_description)
+            description =
+                stringResource(id = R.string.home_product_credit_approved_process_started_card_description)
             actionText = R.string.home_product_credit_approved_process_started_card_action
         }
     }
@@ -260,6 +267,7 @@ fun CardWithCreditInProcess(
     val title: Int
     val description: Int
     val actionText: Int
+    var startIcon = R.drawable.ic_time
     when (type) {
         CreditAcceptContractRefuseFirstTime -> {
             title = R.string.home_credit_sign_document_reject_title
@@ -270,7 +278,12 @@ fun CardWithCreditInProcess(
             title = R.string.home_product_process_title
             description = R.string.home_product_process_description
             actionText = R.string.home_product_process_action
-
+        }
+        CreditStartProcessIncomplete -> {
+            title = R.string.home_product_credit_not_completed_title
+            description = R.string.home_product_credit_not_completed_description
+            actionText = R.string.home_product_credit_not_completed_action
+            startIcon = R.drawable.ic_warning
         }
         CreditStartProcessIncomplete -> {
             title = R.string.home_product_process_title
@@ -278,9 +291,9 @@ fun CardWithCreditInProcess(
             actionText = R.string.home_product_process_action
         }
         CreditProcessMissingSignature -> {
-            title = R.string.home_product_process_title
-            description = R.string.home_product_process_description
-            actionText = R.string.home_product_process_action
+            title = R.string.home_product_credit_signature_missing_title
+            description = R.string.home_product_credit_signature_missing_description
+            actionText = R.string.home_product_credit_signature_missing_action
 
         }
         CreditProcessSignatureRefuseFirstTime -> {
@@ -324,7 +337,7 @@ fun CardWithCreditInProcess(
             modifier = Modifier.padding(top = 12.dp),
             shape = RoundedCornerShape(12.dp),
             background = BlackTransparency20,
-            startIcon = R.drawable.ic_time,
+            startIcon = startIcon,
             startIconTint = MultimoneyTheme.colors.iconColor
         )
         Text(

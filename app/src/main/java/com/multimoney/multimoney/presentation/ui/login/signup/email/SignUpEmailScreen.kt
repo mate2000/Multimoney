@@ -22,15 +22,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
 
@@ -48,11 +51,14 @@ fun SignUpEmailScreen(
     LaunchedEffect(true) {
 
         sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnNextActionClick({
-                sharedViewModel.onUIEvent(
-                    SignUpViewModel.UIEvent.OnNextStep
-                )
-            }, sharedViewModel.userData?.idBrand ?: 5))
+            viewModel.onUIEvent(
+                SignUpEmailViewModel.UIEvent.OnNextActionClick(
+                    nextStepAction = {
+                        sharedViewModel.onUIEvent(
+                            SignUpViewModel.UIEvent.OnNextStep
+                        )
+                    })
+            )
         }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id))
 
         viewModel.baseEvent.collect { event ->
@@ -68,18 +74,19 @@ fun SignUpEmailScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateForm)
-
-        viewModel.onUserDataValidationEvent.collect { event ->
+        viewModel.onValidateUserExistsEvent.collect { event ->
             event.onSuccess { userData ->
                 viewModel.onUIEvent(
-                    SignUpEmailViewModel.UIEvent.OnUserDataValidationSuccess(
-                        context = context,
+                    SignUpEmailViewModel.UIEvent.OnValidationUserExistsSuccess(
+                        context,
                         currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
                         onUseDataValueChange = {
+                            val idBrand = Brand.Search.getIdBrandByNationality(userData?.nationality)
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    userData
+                                    userData?.copy(email = viewModel.uiState.userEmail),
+                                    idBrand
                                 )
                             )
                         },
@@ -93,6 +100,23 @@ fun SignUpEmailScreen(
                                 )
                             )
                         },
+                        onLoadingValueChange = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                    false
+                                )
+                            )
+                        },
+                        onOpenDialog = {
+                            sharedViewModel.onUIEvent(OnOpenDialogValueChange(it))
+                        }
+                    )
+                )
+            }.onMessage {
+                viewModel.onUIEvent(
+                    SignUpEmailViewModel.UIEvent.OnHandleUserStatus(
+                        context = context,
+                        userData = it,
                         previousStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnPreviousStep) },
                         onLoadingValueChange = {
                             sharedViewModel.onUIEvent(

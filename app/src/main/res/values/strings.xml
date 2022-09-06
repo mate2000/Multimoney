@@ -236,6 +236,12 @@
     <string name="home_product_gt_with_out_credit_title">Conoce nuestras opciones\nde crédito</string>
     <string name="home_product_gt_with_out_credit_description">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action">Contactar a un asesor</string>
+    <string name="home_product_credit_not_completed_title">Tu solicitud está en proceso</string>
+    <string name="home_product_credit_not_completed_description">¡No pierdas la oportunidad!</string>
+    <string name="home_product_credit_not_completed_action">Continuar con solicitud</string>
+    <string name="home_product_credit_signature_missing_title">¡Solo falta tu firma!</string>
+    <string name="home_product_credit_signature_missing_description">Firmá el contrato para que podás empezar a disfrutar de tu crédito.</string>
+    <string name="home_product_credit_signature_missing_action">Firmar</string>
 
     <!-- Credit Close Dialog-->
     <string name="credit_close_dialog_title">¿Estás seguro que quieres salir?</string>

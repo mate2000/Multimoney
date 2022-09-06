@@ -2,7 +2,7 @@ package com.multimoney.data.mapper.credit
 
 import com.multimoney.data.networking.credit.apollomodel.HomeAddressQuery
 import com.multimoney.domain.model.credit.Canton
-import com.multimoney.domain.model.credit.CatalogSubOptions
+import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.credit.District
 import com.multimoney.domain.model.credit.HomeAddress
 import com.multimoney.domain.model.credit.Province
@@ -13,13 +13,9 @@ private fun HomeAddressQuery.HomeProvince.mapToDomainModel() = Province(
     subOptions = subOpciones?.map { it?.mapToDomainModel() } ?: listOf()
 )
 
-private fun HomeAddressQuery.SubOpcione.mapToDomainModel() = CatalogSubOptions(
+private fun HomeAddressQuery.SubOpcione.mapToDomainModel() = CreditCatalogOption(
     id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
-    controlType = tipo_Control,
-    description = descripcion,
-    pkCatalog = pk_Identificador_Catalogo,
-    fkCatalog = fk_Identificador_Catalogo,
-    intern = interno
+    description = descripcion
 )
 
 private fun HomeAddressQuery.HomeCanton.mapToDomainModel() = Canton(
@@ -28,13 +24,9 @@ private fun HomeAddressQuery.HomeCanton.mapToDomainModel() = Canton(
     subOptions = subOpciones?.map { it?.mapToDomainModel() } ?: listOf()
 )
 
-private fun HomeAddressQuery.SubOpcione1.mapToDomainModel() = CatalogSubOptions(
+private fun HomeAddressQuery.SubOpcione1.mapToDomainModel() = CreditCatalogOption(
     id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
-    controlType = tipo_Control,
-    description = descripcion,
-    pkCatalog = pk_Identificador_Catalogo,
-    fkCatalog = fk_Identificador_Catalogo,
-    intern = interno
+    description = descripcion
 )
 
 private fun HomeAddressQuery.HomeDistrict.mapToDomainModel() = District(
@@ -43,13 +35,9 @@ private fun HomeAddressQuery.HomeDistrict.mapToDomainModel() = District(
     subOptions = subOpciones?.map { it?.mapToDomainModel() } ?: listOf()
 )
 
-private fun HomeAddressQuery.SubOpcione2.mapToDomainModel() = CatalogSubOptions(
+private fun HomeAddressQuery.SubOpcione2.mapToDomainModel() = CreditCatalogOption(
     id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
-    controlType = tipo_Control,
-    description = descripcion,
-    pkCatalog = pk_Identificador_Catalogo,
-    fkCatalog = fk_Identificador_Catalogo,
-    intern = interno
+    description = descripcion
 )
 
 fun HomeAddressQuery.Data.mapToDomainModel() =

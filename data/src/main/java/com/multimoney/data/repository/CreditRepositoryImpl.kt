@@ -5,6 +5,8 @@ import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.CreditApi
 import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditApplication
+import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.HomeAddress
 import com.multimoney.domain.model.credit.PaymentAmount
@@ -59,7 +61,7 @@ class CreditRepositoryImpl @Inject constructor(
         minimumAmount: Double,
         creditLimit: Double,
         tractAmount: Double,
-        currentStep:String
+        currentStep: String
     ): Flow<MultimoneyResult<CreditApplication?>> = fetchData(
         apolloCall = creditApi.mutationSaveCreditApplication(
             idUserRequest,
@@ -89,6 +91,18 @@ class CreditRepositoryImpl @Inject constructor(
                 Message(data.mapToDomainModel())
             }
         })
+
+    override suspend fun queryScreenConfig(
+        pkUser: String,
+        user: String,
+        idBrand: Int,
+        idUserRequest: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
+        apolloCall = creditApi.queryScreenConfig(pkUser.toInt(), user, idBrand, idUserRequest),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 
     override suspend fun queryCompanyAddress(
         pkUser: String,

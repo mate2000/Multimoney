@@ -1,3 +1,3 @@
 package com.multimoney.domain.model.credit
 
-data class District(val id: Int, val description: String, val subOptions: List<CatalogSubOptions?>)
+data class District(val id: Int, val description: String, val subOptions: List<CreditCatalogOption?>)

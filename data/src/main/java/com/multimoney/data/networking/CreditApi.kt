@@ -11,6 +11,7 @@ import com.multimoney.data.networking.credit.apollomodel.HomeAddressQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeAddressSVQuery
 import com.multimoney.data.networking.credit.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.credit.apollomodel.SaveCreditApplicationMutation
+import com.multimoney.data.networking.credit.apollomodel.ScreenConfigQuery
 import javax.inject.Inject
 
 class CreditApi @Inject constructor(
@@ -52,7 +53,7 @@ class CreditApi @Inject constructor(
         minimumAmount: Double,
         creditLimit: Double,
         tractAmount: Double,
-        currentStep:String
+        currentStep: String
     ): ApolloCall<SaveCreditApplicationMutation.Data> =
         apolloClient.mutation(
             SaveCreditApplicationMutation(
@@ -76,6 +77,16 @@ class CreditApi @Inject constructor(
                 tractAmount,
                 currentStep
             )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryScreenConfig(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: String
+    ): ApolloCall<ScreenConfigQuery.Data> =
+        apolloClient.query(
+            ScreenConfigQuery(pkUser, user, idBrand, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCompanyAddress(pkUser: String, user: String, idBrand: Int): ApolloCall<CompanyAddressQuery.Data> =

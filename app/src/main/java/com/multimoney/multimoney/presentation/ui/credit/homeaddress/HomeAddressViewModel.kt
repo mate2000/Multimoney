@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryHomeAddressSVUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeAddressUseCase
-import com.multimoney.domain.model.credit.CatalogSubOptions
+import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -37,26 +37,20 @@ class HomeAddressViewModel @Inject constructor(
 
     //stateless
     var idBrand = Brand.ElSalvador.id
-    private var homeCantonList: List<CatalogSubOptions?>? = listOf()
-    private var homeDistrictList: List<CatalogSubOptions?>? = listOf()
+    private var homeCantonList: List<CreditCatalogOption?>? = listOf()
+    private var homeDistrictList: List<CreditCatalogOption?>? = listOf()
 
-    private fun onDivisionOneValueChange(divisionOne: CatalogSubOptions?) {
+    private fun onDivisionOneValueChange(divisionOne: CreditCatalogOption?) {
         uiState = uiState.copy(divisionOneSelected = divisionOne)
-        uiState = uiState.copy(divisionTwoList = homeCantonList?.filter {
-            it?.fkCatalog.toString() == uiState.divisionOneSelected?.pkCatalog
-        })
         onValidateScreen()
     }
 
-    private fun onDivisionTwoValueChange(divisionTwo: CatalogSubOptions?) {
+    private fun onDivisionTwoValueChange(divisionTwo: CreditCatalogOption?) {
         uiState = uiState.copy(divisionTwoSelected = divisionTwo)
-        uiState = uiState.copy(divisionThreeList = homeDistrictList?.filter {
-            it?.fkCatalog.toString() == uiState.divisionTwoSelected?.pkCatalog
-        })
         onValidateScreen()
     }
 
-    private fun onDivisionThreeValueChange(divisionThree: CatalogSubOptions?) {
+    private fun onDivisionThreeValueChange(divisionThree: CreditCatalogOption?) {
         uiState = uiState.copy(divisionThreeSelected = divisionThree)
         onValidateScreen()
     }
@@ -180,12 +174,12 @@ class HomeAddressViewModel @Inject constructor(
     }
 
     data class UIState(
-        val divisionOneList: List<CatalogSubOptions?>? = listOf(),
-        val divisionTwoList: List<CatalogSubOptions?>? = listOf(),
-        val divisionThreeList: List<CatalogSubOptions?>? = listOf(),
-        val divisionOneSelected: CatalogSubOptions? = null,
-        val divisionTwoSelected: CatalogSubOptions? = null,
-        val divisionThreeSelected: CatalogSubOptions? = null,
+        val divisionOneList: List<CreditCatalogOption?>? = listOf(),
+        val divisionTwoList: List<CreditCatalogOption?>? = listOf(),
+        val divisionThreeList: List<CreditCatalogOption?>? = listOf(),
+        val divisionOneSelected: CreditCatalogOption? = null,
+        val divisionTwoSelected: CreditCatalogOption? = null,
+        val divisionThreeSelected: CreditCatalogOption? = null,
         val address: String = "",
         val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error),
         val phone: String = ""
@@ -212,9 +206,9 @@ class HomeAddressViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
-        data class OnDivisionOneValueChange(val divisionOne: CatalogSubOptions?) : UIEvent()
-        data class OnDivisionTwoValueChange(val divisionTwo: CatalogSubOptions?) : UIEvent()
-        data class OnDivisionThreeValueChange(val divisionThree: CatalogSubOptions?) : UIEvent()
+        data class OnDivisionOneValueChange(val divisionOne: CreditCatalogOption?) : UIEvent()
+        data class OnDivisionTwoValueChange(val divisionTwo: CreditCatalogOption?) : UIEvent()
+        data class OnDivisionThreeValueChange(val divisionThree: CreditCatalogOption?) : UIEvent()
         data class OnAddressValueChange(val address: String) : UIEvent()
         data class OnPhoneNumberValueChange(val phone: String) : UIEvent()
         data class OnCallCatalogs(

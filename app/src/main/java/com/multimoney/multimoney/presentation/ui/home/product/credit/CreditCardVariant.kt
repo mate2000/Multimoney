@@ -260,7 +260,7 @@ fun CardCreditOnFidoRequired() {
 
 @Composable
 @Preview
-fun CardWithCreditInProcessOnFidoOrAbandonProcess(
+fun CardWithCreditInProcess(
     type: CreditProcessStarted = CreditAcceptContractRefuseFirstTime
 ) {
     val chipText = R.string.home_product_process_credit_label
@@ -270,6 +270,11 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
     var startIcon = R.drawable.ic_time
     when (type) {
         CreditAcceptContractRefuseFirstTime -> {
+            title = R.string.home_credit_sign_document_reject_title
+            description = R.string.home_credit_sign_document_reject_description
+            actionText = R.string.home_credit_sign_document_reject_action_text
+        }
+        CreditAcceptContractRefuseSecondTime -> {
             title = R.string.home_product_process_title
             description = R.string.home_product_process_description
             actionText = R.string.home_product_process_action
@@ -280,11 +285,10 @@ fun CardWithCreditInProcessOnFidoOrAbandonProcess(
             actionText = R.string.home_product_credit_not_completed_action
             startIcon = R.drawable.ic_warning
         }
-        CreditAcceptContractRefuseSecondTime -> {
+        CreditStartProcessIncomplete -> {
             title = R.string.home_product_process_title
             description = R.string.home_product_process_description
             actionText = R.string.home_product_process_action
-
         }
         CreditProcessMissingSignature -> {
             title = R.string.home_product_credit_signature_missing_title

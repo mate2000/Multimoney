@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.login.signup.idverification
+package com.multimoney.multimoney.presentation.ui.credit.document
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -18,81 +18,79 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.DialogParameters
 
 @Composable
 @Preview
-fun SignUpIdVerificationScreen(
-    sharedViewModel: SignUpViewModel = hiltViewModel(),
-    viewModel: SignUpIdVerificationViewModel = hiltViewModel()
+fun CreditDocumentScreen(
+    viewModel: CreditDocumentViewModel = hiltViewModel(),
+    sharedViewModel: CreditViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
     val launchOnFidoActivityResult =
         rememberLauncherForActivityResult(StartActivityForResult()) { result ->
             viewModel.onUIEvent(
-                SignUpIdVerificationViewModel.UIEvent.OnOpenOnFidoSdk(
+                CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk(
                     result,
                     onOnFidoCompleted = {
-                        sharedViewModel.apply {
-                            onUIEvent(
-                                SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    userData = userData?.copy(
-                                        currentStep = SignUpStep.Six.name
-                                    )
-                                )
-                            )
-                            onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
-                            onUIEvent(SignUpViewModel.UIEvent.OnOnFidoVerifiedChanged(true))
-                        }
+                        sharedViewModel.onUIEvent(
+                            CreditViewModel.UIEvent.OnNextStep
+                        )
                     },
                     onOnFidoError = {
-                        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnOpenDialogValueChange(it))
+                        sharedViewModel.onUIEvent(
+                            CreditViewModel.UIEvent.OnOpenDialogValueChange(
+                                it
+                            )
+                        )
                     },
                     onContinueEnable = {
-                        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(it))
+                        sharedViewModel.onUIEvent(
+                            CreditViewModel.UIEvent.OnContinueEnable(
+                                it
+                            )
+                        )
                     }
                 )
             )
         }
 
-    viewModel.onUIEvent(
-        SignUpIdVerificationViewModel.UIEvent.OnInitValues(
-            false,
-            stringResource(id = R.string.placeholder_error)
-        )
-    )
-
     LaunchedEffect(context) {
-        sharedViewModel.onUIEvent(
-            SignUpViewModel.UIEvent.OnSetNavigation(
-                nextStep = SignUpStep.Six.id,
-                previousStep = SignUpStep.Three.id
-            )
-        )
         viewModel.onFidoTokenEvent.collect { event ->
             event.onSuccess {
                 sharedViewModel.apply {
-                    onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
-                    onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(true))
-                    onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
+                    onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(false))
+                    onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(true))
+                    onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
                         launchOnFidoActivityResult.launch(
                             viewModel.onFidoHelper.getOnFidoIntent(
                                 it?.sdkToken ?: "",
                                 onRefreshToke = { refreshToken ->
                                     viewModel.onUIEvent(
-                                        SignUpIdVerificationViewModel.UIEvent.RefreshOnFidoToken(
-                                            sharedViewModel.idBrand,
-                                            sharedViewModel.userData,
+                                        CreditDocumentViewModel.UIEvent.RefreshOnFidoToken(
+                                            // TODO Change when userDataImplemented
+                                            UserData(
+                                                pkUser = "229913",
+                                                identification = "192656",
+                                                userName = "ECRURZ",
+                                                firstName = "Elmer",
+                                                firstLastName = "Cruz",
+                                                secondLastName = "Suárez",
+                                                email = "popics93@gmail.com"
+                                            ),
                                             context.packageName,
                                             refreshToken
                                         )
@@ -100,15 +98,15 @@ fun SignUpIdVerificationScreen(
                                 }
                             )
                         )
-                    }, nextStep = SignUpStep.Six.id, previousStep = SignUpStep.Three.id))
+                    }, nextStep = CreditStep.Six.id, previousStep = CreditStep.Four.id))
                 }
             }.onLoading {
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(false))
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
+                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(false))
+                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(true))
             }.onFailure {
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(false))
+                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(false))
                 sharedViewModel.onUIEvent(
-                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                    CreditViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
@@ -122,9 +120,17 @@ fun SignUpIdVerificationScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(
-            SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken(
-                sharedViewModel.idBrand,
-                sharedViewModel.userData,
+            OnCallInFidoToken(
+                // TODO Change when userDataImplemented
+                UserData(
+                    pkUser = "229913",
+                    identification = "192656",
+                    userName = "ECRURZ",
+                    firstName = "Elmer",
+                    firstLastName = "Cruz",
+                    secondLastName = "Suárez",
+                    email = "popics93@gmail.com"
+                ),
                 context.packageName
             )
         )
@@ -134,7 +140,7 @@ fun SignUpIdVerificationScreen(
         Modifier.padding(end = 16.dp, start = 16.dp, top = 28.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.sign_up_id_validation_title),
+            text = stringResource(id = string.sign_up_id_validation_title),
             style = Typography.h5.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.SemiBold
@@ -142,7 +148,7 @@ fun SignUpIdVerificationScreen(
         )
         Text(
             modifier = Modifier.padding(top = 16.dp),
-            text = stringResource(id = R.string.sign_up_id_validation_subtitle),
+            text = stringResource(id = string.sign_up_id_validation_subtitle),
             style = Typography.body2.copy(
                 color = MultimoneyTheme.colors.text,
                 fontWeight = FontWeight.SemiBold
@@ -155,12 +161,12 @@ fun SignUpIdVerificationScreen(
                 .fillMaxWidth()
         ) {
             CustomImage(
-                drawableResource = R.drawable.ic_validation,
+                drawableResource = drawable.ic_validation,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = R.string.sign_up_id_validation_one),
+                text = stringResource(id = string.sign_up_id_validation_one),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
@@ -173,12 +179,12 @@ fun SignUpIdVerificationScreen(
                 .fillMaxWidth()
         ) {
             CustomImage(
-                drawableResource = R.drawable.ic_validation,
+                drawableResource = drawable.ic_validation,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = R.string.sign_up_id_validation_two),
+                text = stringResource(id = string.sign_up_id_validation_two),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
@@ -191,12 +197,12 @@ fun SignUpIdVerificationScreen(
                 .fillMaxWidth()
         ) {
             CustomImage(
-                drawableResource = R.drawable.ic_validation,
+                drawableResource = drawable.ic_validation,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = R.string.sign_up_id_validation_three),
+                text = stringResource(id = string.sign_up_id_validation_three),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold

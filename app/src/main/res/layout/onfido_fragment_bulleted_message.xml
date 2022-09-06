@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_800">
+
+    <com.onfido.android.sdk.capture.ui.widget.ShadowedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/next"
+        android:layout_alignParentTop="true"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/descriptionContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/onfido_activity_horizontal_margin"
+            android:layout_marginRight="@dimen/onfido_activity_horizontal_margin"
+            android:background="@color/gray_800"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/OnfidoTextStyle.Title.Large"
+                android:layout_marginTop="@dimen/onfido_welcome_title_top_margin"
+                android:accessibilityHeading="true"
+                android:text="@string/onfido_welcome_title"
+                android:textColor="@color/white" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/subtitle"
+                    style="@style/OnfidoTextStyle.Body.Compact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/onfido_welcome_subtitle"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/stepsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/onfido_welcome_scroll_view_margin_top"
+                android:layout_marginBottom="@dimen/onfido_welcome_scroll_view_margin_bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/listHeader"
+                    style="@style/OnfidoTextStyle.Body.Regular"
+                    android:ellipsize="end"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/white"
+                    tools:text="Use your device to photograph:" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/docLivenessInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/onfido_ss_xsmall"
+                android:layout_marginBottom="@dimen/onfido_ss_xsmall"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/videoFlashIcon"
+                        android:layout_width="@dimen/onfido_intro_screen_subtitle_icon_size"
+                        android:layout_height="@dimen/onfido_intro_screen_subtitle_icon_size"
+                        android:layout_marginRight="@dimen/onfido_activity_horizontal_margin"
+                        app:srcCompat="@drawable/onfido_ic_bolt" />
+
+                    <TextView
+                        android:id="@+id/videoFlashText"
+                        style="@style/OnfidoTextStyle.Body.Compact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="0dp"
+                        android:padding="0dp"
+                        android:text="@string/onfido_welcome_list_item_doc_video_flash"
+                        android:textColor="@color/onfido_dark_300" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/videoIcon"
+                        android:layout_width="@dimen/onfido_intro_screen_subtitle_icon_size"
+                        android:layout_height="@dimen/onfido_intro_screen_subtitle_icon_size"
+                        android:layout_marginRight="@dimen/onfido_activity_horizontal_margin"
+                        app:srcCompat="@drawable/onfido_ic_timer" />
+
+                    <TextView
+                        android:id="@+id/timeInfo"
+                        style="@style/OnfidoTextStyle.Body.Compact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="0dp"
+                        android:padding="0dp"
+                        android:textColor="@color/onfido_dark_300"
+                        tools:text="@string/onfido_welcome_list_item_doc_video_flash" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.onfido.android.sdk.capture.ui.widget.ShadowedScrollView>
+
+    <include layout="@layout/onfido_watermark_layout" />
+
+    <com.onfido.android.sdk.capture.ui.widget.Button
+        android:id="@+id/next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/watermarkLayout"
+        android:layout_marginHorizontal="@dimen/onfido_button_horizontal_margin"
+        app:onfidoButtonText="@string/onfido_continue" />
+</RelativeLayout>

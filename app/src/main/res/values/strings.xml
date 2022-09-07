@@ -18,6 +18,7 @@
     <string name="whatsapp_deep_link" translatable="false">https://api.whatsapp.com/send/?phone=%1$s&amp;text&amp;app_absent=0</string>
     <string name="select" translatable="false">Seleccionar</string>
     <string name="empty" translatable="false"></string>
+    <string name="understood" translatable="false">Entendido</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>

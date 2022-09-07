@@ -19,6 +19,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
@@ -35,6 +37,7 @@ class NetworkingModule {
         } else {
             (HttpLoggingInterceptor.Level.BASIC)
         }
+        logging.level = HttpLoggingInterceptor.Level.HEADERS
 
         return logging
     }
@@ -60,22 +63,30 @@ class NetworkingModule {
     private fun authOkHttpClientProvider(
         certificateUtil: CertificateUtil,
         dataStorePreferences: DataStorePreferences
-    ) = OkHttpClient.Builder()
-        .addNetworkInterceptor { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader(AUTHORIZATION_HEADER, "Bearer ${dataStorePreferences.getAuthToken()}")
-                .build()
-            chain.proceed(request)
-        }
-        .addInterceptor(loggingInterceptor)
-        .sslSocketFactory(
-            certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-            certificateUtil.getX509TrustManager()
-        )
-        .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .build()
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addNetworkInterceptor { chain ->
+                val token = runBlocking {
+                    dataStorePreferences.getAuthToken().first()
+                }
+                val request = chain.request().newBuilder()
+                    .addHeader(
+                        AUTHORIZATION_HEADER,
+                        "Bearer $token"
+                    )
+                    .build()
+                chain.proceed(request)
+            }
+            .addInterceptor(loggingInterceptor)
+            .sslSocketFactory(
+                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+                certificateUtil.getX509TrustManager()
+            )
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .build()
+    }
 
    /* @Singleton
     @Provides

@@ -1,9 +1,9 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
+import com.multimoney.data.networking.security.apollomodel.ValidateUserExistsQuery
 import com.multimoney.domain.model.security.UserData
 
-private fun UserValidationMutation.UserValidation.mapToDomainModel() = UserData(
+private fun ValidateUserExistsQuery.ValidateUserExists.mapToDomainModel() = UserData(
     pkUser = pkUser ?: "",
     userName = userName ?: "",
     email = email ?: "",
@@ -18,8 +18,9 @@ private fun UserValidationMutation.UserValidation.mapToDomainModel() = UserData(
     countryCode = countryCode,
     currentStep = currentStep ?: "",
     userStatus = userStatus,
+    message = message,
     status = status,
-    message = message
+    detail = detail
 )
 
-fun UserValidationMutation.Data.mapToDomainModel() = userValidation?.mapToDomainModel()
+fun ValidateUserExistsQuery.Data.mapToDomainModel() = validateUserExists?.mapToDomainModel()

@@ -5,6 +5,7 @@ query CatalogTypeIndentification($user:String!, $idBrand:Int!){
             idBrand: $idBrand
         }
     ) {
+        pk_Suv_Cat_Catalogo,
         descripcion,
         formato
     }

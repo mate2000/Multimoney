@@ -91,6 +91,7 @@ fun SignUpIdVerificationScreen(
                                 onRefreshToke = { refreshToken ->
                                     viewModel.onUIEvent(
                                         SignUpIdVerificationViewModel.UIEvent.RefreshOnFidoToken(
+                                            sharedViewModel.idBrand,
                                             sharedViewModel.userData,
                                             context.packageName,
                                             refreshToken
@@ -122,6 +123,7 @@ fun SignUpIdVerificationScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(
             SignUpIdVerificationViewModel.UIEvent.OnCallInFidoToken(
+                sharedViewModel.idBrand,
                 sharedViewModel.userData,
                 context.packageName
             )

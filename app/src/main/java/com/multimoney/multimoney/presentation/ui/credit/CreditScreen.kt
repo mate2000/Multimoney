@@ -21,6 +21,7 @@ import androidx.navigation.NavBackStackEntry
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
@@ -66,6 +67,10 @@ fun CreditScreen(
                 navBackStackEntry.arguments?.getString(PK_USER, "") ?: "",
                 navBackStackEntry.arguments?.getString(IDENTIFICATION, "") ?: "",
                 navBackStackEntry.arguments?.getString(EMAIL, "") ?: "",
+                (navBackStackEntry.arguments?.getString(
+                    CREDIT_STEP,
+                    CreditStep.One.id.toString()
+                ))?.toInt() ?: 1
             )
         )
     }

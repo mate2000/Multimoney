@@ -23,9 +23,8 @@ private fun ValidateUserStatusQuery.InfoCredit.mapToDomainModel() = InfoCredit(
     idClient = idClient.toString().toInt(),
     idLoanClient = idLoanClient.toString().toInt(),
     status = status,
-    amountAvailable = amountAvailable.toString().toDouble(),
-    idRequest = idRequest,
-    statusFirm = statusFirm
+    amountAvailable = 0.0,
+    statusFirm = ""
 )
 
 private fun ValidateUserStatusQuery.InfoBankAccount.mapToDomainModel() = InfoBankAccount(

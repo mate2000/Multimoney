@@ -8,6 +8,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
+import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentViewModel.UIEvent.OnRejectClick
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MmWebView
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -32,6 +35,14 @@ fun SignDocumentScreen(
         navBackStackEntry.arguments?.getString(SIGN_DOCUMENT_LINK) ?: "",
         LocalContext.current
     )
+
+    // TODO: Remove this button when all functionalities are implemented
+    CustomButton(
+        onClick = { viewModel.onUIEvent(OnRejectClick) },
+        text = stringResource(id = string.cancel),
+        buttonType = PrimaryPrimary
+    )
+
     if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.dialogParameters.title),

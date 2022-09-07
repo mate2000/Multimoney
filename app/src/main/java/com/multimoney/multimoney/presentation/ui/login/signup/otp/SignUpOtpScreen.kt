@@ -117,7 +117,7 @@ fun SignUpOtpScreen(
                     userData?.phoneNumber ?: "",
                     SEND_METHOD_PHONE,
                     userData?.pkUser ?: "",
-                    userData?.idBrand ?: 0,
+                    idBrand ?: 0,
                     userData?.email ?: ""
                 )
             )
@@ -127,7 +127,7 @@ fun SignUpOtpScreen(
                         viewModel.onUIEvent(
                             SignUpOtpViewModel.UIEvent.OnNextActionClick(
                                 pkUser = userData?.pkUser,
-                                idBrand = userData?.idBrand,
+                                idBrand = idBrand,
                                 phone = userData?.phoneNumber,
                                 name = userData?.firstName,
                                 onUseDataValueChange = {
@@ -327,7 +327,7 @@ fun SignUpOtpScreen(
                                 userData?.phoneNumber ?: "",
                                 SEND_METHOD_PHONE,
                                 userData?.pkUser ?: "",
-                                userData?.idBrand ?: 0,
+                                idBrand ?: 0,
                                 userData?.email ?: ""
                             )
                         )

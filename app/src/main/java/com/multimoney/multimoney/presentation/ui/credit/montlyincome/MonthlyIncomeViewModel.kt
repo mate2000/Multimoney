@@ -15,12 +15,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
+class MonthlyIncomeViewModel @Inject constructor() :
+    BaseViewModel() {
 
     var uiState by mutableStateOf(UIState())
         private set
-
-    val country = ZERO
 
     private fun onIncomeValueChange(income: String) {
         if (income.isDigitsOnly()) {
@@ -79,7 +78,6 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel() {
     }
 
     sealed class UIEvent {
-
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnIncomeValueChange(val income: String) : UIEvent()
         data class OnProfessionValueChange(val profession: String) : UIEvent()

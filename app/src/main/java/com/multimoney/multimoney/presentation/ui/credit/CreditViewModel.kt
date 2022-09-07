@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -23,6 +24,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DUMMY_URL
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -49,20 +51,24 @@ class CreditViewModel @Inject constructor(
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
+    var idUserRequest: String = ""
     var currentStep: Int = 1
+    var screenConfig: List<CreditCatalog?>? = listOf()
 
     private fun onUpdateUserData(
         idBrand: String,
         pkUser: String,
         identification: String,
         email: String,
-        currentStep: Int
+        currentStep: Int,
+        idUserRequest: String
     ) {
         this.idBrand = idBrand
         this.pkUser = pkUser
         this.identification = identification
         this.email = email
         this.currentStep = currentStep
+        this.idUserRequest = idUserRequest
         moveToStep(currentStep)
     }
 
@@ -190,8 +196,10 @@ class CreditViewModel @Inject constructor(
                 event.pkUser,
                 event.identification,
                 event.email,
-                event.step
+                event.step,
+                event.idUserRequest
             )
+            is OnUpdateScreenConfigData -> screenConfig = event.screenConfigData
         }
     }
 
@@ -221,10 +229,12 @@ class CreditViewModel @Inject constructor(
             val pkUser: String,
             val identification: String,
             val email: String,
-            val step: Int
+            val step: Int,
+            val idUserRequest: String
         ) : UIEvent()
 
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
+        data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
     }
 
     companion object {

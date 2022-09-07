@@ -70,7 +70,8 @@ fun CreditScreen(
                 (navBackStackEntry.arguments?.getString(
                     CREDIT_STEP,
                     CreditStep.One.id.toString()
-                ))?.toInt() ?: 1
+                ))?.toInt() ?: 0,
+                "148076"
             )
         )
     }

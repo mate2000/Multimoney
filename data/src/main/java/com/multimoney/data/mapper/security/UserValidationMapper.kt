@@ -17,7 +17,9 @@ private fun UserValidationMutation.UserValidation.mapToDomainModel() = UserData(
     identification = identification,
     countryCode = countryCode,
     currentStep = currentStep ?: "",
-    userStatus = userStatus
+    userStatus = userStatus,
+    status = status,
+    message = message
 )
 
 fun UserValidationMutation.Data.mapToDomainModel() = userValidation?.mapToDomainModel()

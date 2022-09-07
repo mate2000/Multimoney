@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_800">
+
+    <com.onfido.android.sdk.capture.ui.widget.ShadowedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/enable"
+        android:layout_alignParentTop="true"
+        android:paddingBottom="@dimen/onfido_shadowed_scroll_view_margin_bottom">
+
+        <LinearLayout
+            android:id="@+id/descriptionContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/onfido_activity_horizontal_margin"
+            android:layout_marginRight="@dimen/onfido_activity_horizontal_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/OnfidoTextStyle.Title.Large"
+                android:layout_marginTop="@dimen/onfido_permissions_request_title_margin_top"
+                android:layout_marginBottom="@dimen/onfido_permissions_request_title_margin_bottom"
+                android:accessibilityHeading="true"
+                android:textColor="@color/white"
+                tools:text="@string/onfido_permission_title_mic" />
+
+            <TextView
+                android:id="@+id/requestSubtitle"
+                style="@style/OnfidoTextStyle.Subtitle.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/onfido_permissions_request_subtitle_margin_bottom"
+                android:textColor="@color/white"
+                tools:text="@string/onfido_permission_subtitle_mic" />
+
+            <ImageView
+                android:id="@+id/permissionRequestIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/onfido_permissions_request_icon_margin"
+                tools:src="@drawable/onfido_permission_mic" />
+
+            <TextView
+                android:id="@+id/requestDenyExplanation"
+                style="@style/OnfidoTextStyle.Body.Regular"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="16dp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/white"
+                tools:text="@string/onfido_permission_body_mic" />
+
+        </LinearLayout>
+    </com.onfido.android.sdk.capture.ui.widget.ShadowedScrollView>
+
+    <include layout="@layout/onfido_watermark_layout" />
+
+    <com.onfido.android.sdk.capture.ui.widget.Button
+        android:id="@+id/enable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/watermarkLayout"
+        android:layout_marginHorizontal="@dimen/onfido_button_horizontal_margin" />
+
+</RelativeLayout>

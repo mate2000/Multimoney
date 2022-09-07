@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.credit.homeaddress
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryHomeAddressSVUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeAddressUseCase
 import com.multimoney.domain.model.credit.CatalogSubOptions
@@ -19,6 +20,7 @@ import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressV
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnFormValid
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -26,15 +28,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeAddressViewModel @Inject constructor(
-    val queryHomeAddressUseCase: QueryHomeAddressUseCase,
-    val queryHomeAddressSVUseCase: QueryHomeAddressSVUseCase
+    private val queryHomeAddressUseCase: QueryHomeAddressUseCase,
+    private val queryHomeAddressSVUseCase: QueryHomeAddressSVUseCase
 ) : BaseViewModel() {
     // uiState
     var uiState by mutableStateOf(UIState())
         private set
 
     //stateless
-    val country = ZERO
+    var idBrand = Brand.ElSalvador.id
     private var homeCantonList: List<CatalogSubOptions?>? = listOf()
     private var homeDistrictList: List<CatalogSubOptions?>? = listOf()
 
@@ -64,11 +66,17 @@ class HomeAddressViewModel @Inject constructor(
         onValidateScreen()
     }
 
+    private fun onPhoneValueChange(phone: String) {
+        uiState = uiState.copy(phone = phone)
+        onValidateScreen()
+    }
+
     private fun onValidateScreen() {
         emitBaseEvent(
             IsFormCompleted(
-                when (country) {
-                    TWO -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank()
+                when (idBrand) {
+                    Brand.ElSalvador.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank()
+                    Brand.Guatemala.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank()
                     else -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank()
                 }
             )
@@ -82,7 +90,8 @@ class HomeAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
-        if (country == TWO) {
+        this.idBrand = idBrand
+        if (idBrand == Brand.ElSalvador.id) {
             onCallQueryCompanyAddressSV(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
         } else {
             onCallQueryCompanyAddress(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
@@ -178,7 +187,8 @@ class HomeAddressViewModel @Inject constructor(
         val divisionTwoSelected: CatalogSubOptions? = null,
         val divisionThreeSelected: CatalogSubOptions? = null,
         val address: String = "",
-        val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error)
+        val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error),
+        val phone: String = ""
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -188,6 +198,7 @@ class HomeAddressViewModel @Inject constructor(
             is OnDivisionTwoValueChange -> onDivisionTwoValueChange(uiEvent.divisionTwo)
             is OnDivisionThreeValueChange -> onDivisionThreeValueChange(uiEvent.divisionThree)
             is OnAddressValueChange -> onAddressValueChange(uiEvent.address)
+            is OnPhoneNumberValueChange -> onPhoneValueChange(uiEvent.phone)
             is OnCallCatalogs -> onCallCatalogs(
                 uiEvent.pkUser,
                 uiEvent.user,
@@ -205,6 +216,7 @@ class HomeAddressViewModel @Inject constructor(
         data class OnDivisionTwoValueChange(val divisionTwo: CatalogSubOptions?) : UIEvent()
         data class OnDivisionThreeValueChange(val divisionThree: CatalogSubOptions?) : UIEvent()
         data class OnAddressValueChange(val address: String) : UIEvent()
+        data class OnPhoneNumberValueChange(val phone: String) : UIEvent()
         data class OnCallCatalogs(
             val pkUser: String,
             val user: String,
@@ -221,9 +233,6 @@ class HomeAddressViewModel @Inject constructor(
     }
 
     companion object {
-        const val ZERO = 0
-        const val ONE = 1
-        const val TWO = 2
         const val MIDDLE_DASH = "-"
     }
 }

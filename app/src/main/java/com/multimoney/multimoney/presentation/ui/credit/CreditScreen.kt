@@ -21,6 +21,7 @@ import androidx.navigation.NavBackStackEntry
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
@@ -34,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
+import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
@@ -65,6 +67,10 @@ fun CreditScreen(
                 navBackStackEntry.arguments?.getString(PK_USER, "") ?: "",
                 navBackStackEntry.arguments?.getString(IDENTIFICATION, "") ?: "",
                 navBackStackEntry.arguments?.getString(EMAIL, "") ?: "",
+                (navBackStackEntry.arguments?.getString(
+                    CREDIT_STEP,
+                    CreditStep.One.id.toString()
+                ))?.toInt() ?: 1
             )
         )
     }
@@ -155,10 +161,14 @@ fun GetStepContent(
     viewModel: CreditViewModel
 ) {
     when (step) {
-        CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
+        CreditStep.One.id -> CreditAmountScreen(
+            onNavigate = onNavigate,
+            sharedViewModel = viewModel
+        )
         CreditStep.Two.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> CompanyAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Five.id -> CreditDocumentScreen(sharedViewModel = viewModel)
         else -> HomeAddressScreen(sharedViewModel = viewModel)
     }
 }

@@ -4,4 +4,15 @@ sealed class Brand(val id: Int) {
     object CostaRica : Brand(5)
     object ElSalvador : Brand(7)
     object Guatemala : Brand(10)
+
+    object Search{
+        fun getIdBrandByNationality(nationality: String?): Int {
+            return when (nationality) {
+                Nationalities.ElSalvador.country.lowercase() -> ElSalvador.id
+                Nationalities.Guatemala.country.lowercase() -> Guatemala.id
+                Nationalities.CostaRicaId.country.lowercase() -> CostaRica.id
+                else -> 0
+            }
+        }
+    }
 }

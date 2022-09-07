@@ -124,7 +124,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 "${event.userData?.firstLastName} ${event.userData?.secondLastName}",
                 event.userData?.identification ?: "",
                 event.applicationId,
-                event.userData?.idBrand ?: 0,
+                event.idBrand ?: 0,
                 event.userData?.email ?: "",
             )
             is OnInitValues -> onInitValues(onFidoError)
@@ -140,7 +140,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 event.userData?.identification ?: "",
                 event.applicationId,
                 event.userData?.email ?: "",
-                event.userData?.idBrand ?: 0,
+                event.idBrand ?: 0,
                 event.injectNewToken
             )
         }
@@ -148,6 +148,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnCallInFidoToken(
+            val idBrand: Int?,
             val userData: UserData?,
             val applicationId: String
         ) : UIEvent()
@@ -161,6 +162,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
         ) : UIEvent()
 
         data class RefreshOnFidoToken(
+            val idBrand: Int?,
             val userData: UserData?,
             val applicationId: String,
             val injectNewToken: (String?) -> Unit

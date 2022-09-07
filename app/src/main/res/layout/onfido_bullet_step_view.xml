@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="false"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/topSeparator"
+        android:layout_width="2dp"
+        android:layout_height="@dimen/onfido_welcome_step_view_bullet_separator_min_height"
+        android:layout_marginLeft="11dp"
+        />
+
+    <RelativeLayout
+        android:id="@+id/stepNumberContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topSeparator"
+        android:background="@drawable/onfido_circle">
+
+        <TextView
+            android:id="@+id/stepNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/onfido_welcome_step_view_bullet_number_margin_horizontal"
+            android:layout_marginRight="@dimen/onfido_welcome_step_view_bullet_number_margin_horizontal"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:textColor="@color/onfidoPrimaryButtonTextColor"
+            android:textSize="@dimen/onfido_fs_small"
+            tools:text="1" />
+
+        <ImageView
+            android:id="@+id/stepIcon"
+            android:layout_width="@dimen/onfido_welcome_icon_dimen"
+            android:layout_height="@dimen/onfido_welcome_icon_dimen"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/onfido_welcome_icon_margin"
+            tools:src="@drawable/onfido_arrow_forward_white"
+            tools:visibility="gone" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/bottomSeparator"
+        android:layout_width="2dp"
+        android:layout_height="0dp"
+        android:layout_below="@+id/stepNumberContainer"
+        android:layout_alignBottom="@+id/stepTitle"
+        android:layout_marginLeft="11dp"
+         />
+
+    <TextView
+        android:id="@+id/stepTitle"
+        style="@style/OnfidoTextStyle.Body.Regular"
+        android:layout_below="@+id/topSeparator"
+        android:textColor="@color/white"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/stepNumberContainer"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        tools:text="Take a picture of a document Take a picture of a document Take a picture of a document Take a picture of a document Take a picture of a document Take a picture of a document" />
+</RelativeLayout>

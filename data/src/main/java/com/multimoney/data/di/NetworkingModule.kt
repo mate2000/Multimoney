@@ -87,47 +87,6 @@ class NetworkingModule {
             .build()
     }
 
-   /* @Singleton
-    @Provides
-    fun okHttpClient(certificateUtil: CertificateUtil): OkHttpClient {
-        val logging = HttpLoggingInterceptor()
-
-        logging.level = if (BuildConfig.DEBUG) {
-            (HttpLoggingInterceptor.Level.BODY)
-        } else {
-            (HttpLoggingInterceptor.Level.BASIC)
-        }
-
-        return OkHttpClient.Builder()
-            .addInterceptor(logging)
-//            .sslSocketFactory(
-//                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-//                certificateUtil.getX509TrustManager()
-//            )
-            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .build()
-    }*/
-
-    /* @Singleton
-     @Provides
-     fun apolloClient(
-         @ApplicationContext context: Context,
-         schema: String,
-         certificateUtil: CertificateUtil
-     ): ApolloClient {
-
-         val sqlNormalizedCacheFactory =
-             SqlNormalizedCacheFactory(context, APOLLO_PREFIX_DB + schema + APOLLO_SUFFIX_DB)
-
-         return ApolloClient.Builder()
-             .serverUrl(BuildConfig.API_URL + schema)
-             .normalizedCache(sqlNormalizedCacheFactory)
-             .okHttpClient(okHttpClient(certificateUtil))
-             .build()
-     }*/
-
     private fun apolloBasicClientProvider(
         @ApplicationContext context: Context,
         schema: String,

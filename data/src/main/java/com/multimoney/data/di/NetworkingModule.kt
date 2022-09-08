@@ -43,21 +43,27 @@ class NetworkingModule {
 
     private fun okHttpClientProvider(
         certificateUtil: CertificateUtil
-    ) = OkHttpClient.Builder()
-        .addNetworkInterceptor { chain ->
-            val request = chain.request().newBuilder()
-                .build()
-            chain.proceed(request)
+    ): OkHttpClient {
+        val provider = OkHttpClient.Builder()
+        provider
+            .addNetworkInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .build()
+                chain.proceed(request)
+            }
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+
+        if (BuildConfig.BUILD_TYPE != DEBUG) {
+            provider.sslSocketFactory(
+                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+                certificateUtil.getX509TrustManager()
+            )
         }
-        .addInterceptor(loggingInterceptor)
-        .sslSocketFactory(
-            certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-            certificateUtil.getX509TrustManager()
-        )
-        .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-        .build()
+        return provider.build()
+    }
 
     private fun authOkHttpClientProvider(
         certificateUtil: CertificateUtil,
@@ -167,6 +173,7 @@ class NetworkingModule {
         CreditApi(apolloAuthorizedClientProvider(context, SCHEMA_CREDIT, util, preferences))
 
     companion object {
+        const val DEBUG = "debug"
         const val AUTHORIZATION_HEADER = "Authorization"
         const val TIMEOUT = 120L
         const val APOLLO_PREFIX_DB = "multimoney_apollo_"

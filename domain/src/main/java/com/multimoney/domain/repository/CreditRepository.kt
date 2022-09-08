@@ -1,9 +1,8 @@
 package com.multimoney.domain.repository
 
-import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditApplication
+import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditOffer
-import com.multimoney.domain.model.credit.HomeAddress
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
@@ -42,30 +41,46 @@ interface CreditRepository {
         minimumAmount: Double,
         creditLimit: Double,
         tractAmount: Double,
-        currentStep:String
+        currentStep: String
     ): Flow<MultimoneyResult<CreditApplication?>>
 
-    suspend fun queryCompanyAddress(
-        pkUser: String,
+    suspend fun queryHomeProvince(
+        pkUser: Int,
         user: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<CompanyAddress?>>
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
-    suspend fun queryCompanyAddressSV(
-        pkUser: String,
+    suspend fun queryHomeCanton(
+        pkUser: Int,
         user: String,
-        idBrand: Int
-    ): Flow<MultimoneyResult<CompanyAddress?>>
+        idBrand: Int,
+        fkCatalogIdentifier: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
-    suspend fun queryHomeAddress(
-        pkUser: String,
+    suspend fun queryHomeDistrict(
+        pkUser: Int,
         user: String,
-        idBrand: Int
-    ): Flow<MultimoneyResult<HomeAddress?>>
+        idBrand: Int,
+        fkCatalogIdentifier: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
-    suspend fun queryHomeAddressSV(
-        pkUser: String,
+    suspend fun queryCompanyProvince(
+        pkUser: Int,
         user: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<HomeAddress?>>
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
+    suspend fun queryCompanyCanton(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
+    suspend fun queryCompanyDistrict(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 }

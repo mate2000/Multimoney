@@ -241,7 +241,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
 fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean {
     // todo it is missing add the condition when the step was 0
     return validateUserStatus?.infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
-            && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
+            && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status && (CreditStep.Search.getIdByName(
+        validateUserStatus.infoCredit?.infoPreApprove?.currentStep
+    ) >= CreditStep.One.id)
 }
 
 @OptIn(ExperimentalPagerApi::class)

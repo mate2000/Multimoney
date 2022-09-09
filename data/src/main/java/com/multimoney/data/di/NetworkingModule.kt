@@ -37,39 +37,15 @@ class NetworkingModule {
         } else {
             (HttpLoggingInterceptor.Level.BASIC)
         }
-
         return logging
-    }
-
-    private fun okHttpClientProvider(
-        certificateUtil: CertificateUtil
-    ): OkHttpClient {
-        val provider = OkHttpClient.Builder()
-        provider
-            .addNetworkInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .build()
-                chain.proceed(request)
-            }
-            .addInterceptor(loggingInterceptor)
-            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-
-        if (BuildConfig.BUILD_TYPE != DEBUG) {
-            provider.sslSocketFactory(
-                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-                certificateUtil.getX509TrustManager()
-            )
-        }
-        return provider.build()
     }
 
     private fun authOkHttpClientProvider(
         certificateUtil: CertificateUtil,
         dataStorePreferences: DataStorePreferences
     ): OkHttpClient {
-        return OkHttpClient.Builder()
+        val provider = OkHttpClient.Builder()
+        provider
             .addNetworkInterceptor { chain ->
                 val token = runBlocking {
                     dataStorePreferences.getAuthToken().first()
@@ -83,34 +59,17 @@ class NetworkingModule {
                 chain.proceed(request)
             }
             .addInterceptor(loggingInterceptor)
-            .sslSocketFactory(
-                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-                certificateUtil.getX509TrustManager()
-            )
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .build()
+        if (BuildConfig.BUILD_TYPE != DEBUG) {
+            provider.sslSocketFactory(
+                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+                certificateUtil.getX509TrustManager()
+            )
+        }
+        return provider.build()
     }
-
-    private fun apolloBasicClientProvider(
-        @ApplicationContext context: Context,
-        schema: String,
-        certificateUtil: CertificateUtil
-    ): ApolloClient {
-
-        val sqlNormalizedCacheFactory =
-            SqlNormalizedCacheFactory(context, APOLLO_PREFIX_DB + schema + APOLLO_SUFFIX_DB)
-
-        return ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL + schema)
-            .normalizedCache(sqlNormalizedCacheFactory)
-            .okHttpClient(okHttpClientProvider(
-                certificateUtil
-            ))
-            .build()
-    }
-
 
     private fun apolloAuthorizedClientProvider(
         @ApplicationContext context: Context,
@@ -141,11 +100,6 @@ class NetworkingModule {
         preferences: DataStorePreferences
     ): SecurityApi =
         SecurityApi(
-            apolloBasicClient = apolloBasicClientProvider(
-                context,
-                SCHEMA_SECURITY,
-                util
-            ),
             apolloAuthorizedClient = apolloAuthorizedClientProvider(
                 context,
                 SCHEMA_SECURITY,

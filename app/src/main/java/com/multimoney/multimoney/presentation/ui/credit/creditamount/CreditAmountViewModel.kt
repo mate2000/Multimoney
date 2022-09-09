@@ -427,7 +427,10 @@ class CreditAmountViewModel @Inject constructor(
             }.onLoading {
                 onLoadingValueChange(true)
             }.onFailure {
-                onFailureWithDialog(false, DialogParameters(description = it.getError() ?: ""))
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(description = it.getError() ?: "")
+                )
             }
         }
     }

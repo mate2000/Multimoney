@@ -13,5 +13,5 @@ interface MutationSaveCreditFlowStepUseCase {
         idLogUserRequest: Int,
         idUser: Int,
         currentStep: String
-    ): Flow<MultimoneyResult<SaveCreditFlowStep?>?>
+    ): Flow<MultimoneyResult<SaveCreditFlowStep?>>
 }

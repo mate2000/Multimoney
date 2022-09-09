@@ -1,17 +1,14 @@
 package com.multimoney.multimoney.presentation.ui.credit.util
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.credit.CreditInfoQuestion
-import java.lang.reflect.Type
 import javax.inject.Inject
 
 class SaveCreditStepsHelper @Inject constructor() {
 
     private var inputTextInfoList: List<CreditCatalog?>? = listOf<CreditCatalog>()
-    private var creditFlowData: MutableList<CreditInfoQuestion> = mutableListOf()
+    var creditFlowData: MutableList<CreditInfoQuestion> = mutableListOf()
 
     fun start(screenConfig: List<CreditCatalog?>?) {
         inputTextInfoList = screenConfig
@@ -182,12 +179,6 @@ class SaveCreditStepsHelper @Inject constructor() {
             valueCatalogue = selectionQuestionData?.valueCatalog,
             idIdentificatorCatalogue = selectionQuestionOption?.id
         )
-    }
-
-    fun getInfoQuestion(): String {
-        val gson = Gson()
-        val listType: Type = object : TypeToken<List<CreditInfoQuestion?>?>() {}.type
-        return gson.toJson(creditFlowData, listType)
     }
 
     companion object {

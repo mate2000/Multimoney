@@ -6,12 +6,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.CreditStep.Search
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueEnable
@@ -32,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelp
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -161,6 +167,34 @@ class CreditViewModel @Inject constructor(
         this.previousStep = previousStep
     }
 
+    private fun onCallMutationSaveCreditFlowStep() {
+        executeUseCase {
+            mutationSaveCreditFlowStepUseCase.invoke(
+                user = email,
+                idBrand = idBrand.toInt(),
+                infoQuestion = saveCreditStepsHelper.creditFlowData,
+                idLogUserRequest = idUserRequest.toInt(),
+                idUser = pkUser.toInt(),
+                currentStep = Search.getNameById(nextStep)
+            ).collectLatest { result ->
+                result.onSuccess {
+                    uiState = uiState.copy(isLoading = false)
+                    nextStep()
+                }.onFailure {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = CreditStep.One.id,
@@ -207,6 +241,7 @@ class CreditViewModel @Inject constructor(
                 screenConfig = event.screenConfigData
                 saveCreditStepsHelper.start(screenConfig)
             }
+            is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
         }
     }
 
@@ -242,6 +277,7 @@ class CreditViewModel @Inject constructor(
 
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
+        object OnCallMutationSaveCreditFlowStep : UIEvent()
     }
 
     companion object {

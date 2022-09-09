@@ -14,6 +14,6 @@ class MutationSaveCreditFlowStepUseCaseImpl(val creditRepository: CreditReposito
         idLogUserRequest: Int,
         idUser: Int,
         currentStep: String
-    ): Flow<MultimoneyResult<SaveCreditFlowStep?>?> =
+    ): Flow<MultimoneyResult<SaveCreditFlowStep?>> =
         creditRepository.mutationSaveCreditFlowStep(user, idBrand, infoQuestion, idLogUserRequest, idUser, currentStep)
 }

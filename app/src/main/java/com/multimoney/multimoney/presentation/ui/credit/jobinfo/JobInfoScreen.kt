@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.jobplace
+package com.multimoney.multimoney.presentation.ui.credit.jobinfo
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.background
@@ -26,15 +26,15 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.BaseEvent.OnFormCompleted
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.Companion.DATE_FORMAT
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.Companion.JOB_DATE_MIN_DAY
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.Companion.JOB_DATE_MIN_MONTH
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.Companion.JOB_DATE_MIN_YEAR
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnCompanyNameValueChange
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnDateValueChange
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnPhoneNumberValueChange
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.Companion.DATE_FORMAT
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.Companion.JOB_DATE_MIN_DAY
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.Companion.JOB_DATE_MIN_MONTH
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.Companion.JOB_DATE_MIN_YEAR
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnCompanyNameValueChange
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnPhoneNumberValueChange
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
@@ -45,7 +45,7 @@ import java.util.Date
 @Composable
 fun JobPlaceScreen(
     sharedViewModel: CreditViewModel,
-    viewModel: JobPlaceViewModel = hiltViewModel()
+    viewModel: JobInfoViewModel = hiltViewModel()
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -53,7 +53,7 @@ fun JobPlaceScreen(
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(JobPlaceViewModel.UIEvent.OnNextActionClick {
+            viewModel.onUIEvent(JobInfoViewModel.UIEvent.OnNextActionClick {
                 sharedViewModel.onUIEvent(
                     CreditViewModel.UIEvent.OnNextStep
                 )

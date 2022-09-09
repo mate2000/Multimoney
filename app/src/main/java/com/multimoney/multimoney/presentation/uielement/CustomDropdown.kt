@@ -28,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import com.multimoney.domain.model.credit.CatalogSubOptions
+import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
@@ -176,9 +176,9 @@ fun CustomDropdown(
 @Composable
 fun CustomDropdown(
     modifier: Modifier,
-    items: List<CatalogSubOptions?>?,
-    value: CatalogSubOptions?,
-    onValueChange: (newText: CatalogSubOptions?) -> Unit = {},
+    items: List<CreditCatalogOption?>?,
+    value: CreditCatalogOption?,
+    onValueChange: (newText: CreditCatalogOption?) -> Unit = {},
     labelText: String,
     placeHolder: String?,
     isError: Boolean = false,

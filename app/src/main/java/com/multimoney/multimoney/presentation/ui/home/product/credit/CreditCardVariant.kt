@@ -390,7 +390,7 @@ fun CardCreditMaxAttempts(
             ),
             modifier = Modifier.padding(top = 12.dp),
             shape = RoundedCornerShape(12.dp),
-            background = BlackTransparency20,
+            background = MultimoneyTheme.colors.chipBackground,
             startIcon = R.drawable.ic_warning
         )
         Text(

@@ -14,7 +14,7 @@ private fun CompanyAddressQuery.CompanyProvince.mapToDomainModel() = Province(
 )
 
 private fun CompanyAddressQuery.SubOpcione.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
+    id = pk_Identificador_Catalogo,
     description = descripcion
 )
 
@@ -25,7 +25,7 @@ private fun CompanyAddressQuery.CompanyCanton.mapToDomainModel() = Canton(
 )
 
 private fun CompanyAddressQuery.SubOpcione1.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
+    id = pk_Identificador_Catalogo,
     description = descripcion,
 )
 
@@ -36,7 +36,7 @@ private fun CompanyAddressQuery.CompanyDistrict.mapToDomainModel() = District(
 )
 
 private fun CompanyAddressQuery.SubOpcione2.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
+    id = pk_Identificador_Catalogo,
     description = descripcion,
 )
 

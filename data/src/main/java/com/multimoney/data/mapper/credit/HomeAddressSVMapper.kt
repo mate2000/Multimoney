@@ -13,7 +13,7 @@ private fun HomeAddressSVQuery.HomeProvince.mapToDomainModel() = Province(
 )
 
 private fun HomeAddressSVQuery.SubOpcione.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
+    id = pk_Identificador_Catalogo,
     description = descripcion
 )
 
@@ -24,7 +24,7 @@ private fun HomeAddressSVQuery.HomeCanton.mapToDomainModel() = Canton(
 )
 
 private fun HomeAddressSVQuery.SubOpcione1.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
+    id = pk_Identificador_Catalogo,
     description = descripcion
 )
 

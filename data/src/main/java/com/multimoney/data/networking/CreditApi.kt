@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.multimoney.data.mapper.credit.mapToApolloModel
 import com.multimoney.data.networking.credit.apollomodel.CompanyAddressQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyAddressSVQuery
 import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
@@ -11,7 +12,9 @@ import com.multimoney.data.networking.credit.apollomodel.HomeAddressQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeAddressSVQuery
 import com.multimoney.data.networking.credit.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.credit.apollomodel.SaveCreditApplicationMutation
+import com.multimoney.data.networking.credit.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.credit.apollomodel.ScreenConfigQuery
+import com.multimoney.domain.model.credit.CreditInfoQuestion
 import javax.inject.Inject
 
 class CreditApi @Inject constructor(
@@ -107,5 +110,24 @@ class CreditApi @Inject constructor(
     fun queryHomeAddressSV(pkUser: String, user: String, idBrand: Int): ApolloCall<HomeAddressSVQuery.Data> =
         apolloClient.query(
             HomeAddressSVQuery(pkUser.toInt(), user, idBrand)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveCreditFlowStep(
+        user: String,
+        idBrand: Int,
+        infoQuestion: List<CreditInfoQuestion?>,
+        idLogUserRequest: Int,
+        idUser: Int,
+        currentStep: String,
+    ): ApolloCall<SaveCreditFlowInputMutation.Data> =
+        apolloClient.mutation(
+            SaveCreditFlowInputMutation(
+                user,
+                idBrand,
+                infoQuestion.map { it?.mapToApolloModel() },
+                idLogUserRequest,
+                idUser,
+                currentStep
+            )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

@@ -10,6 +10,7 @@ import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUse
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
+import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.Product
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -21,7 +22,6 @@ import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmoun
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCallQueryScreenConfig
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished
@@ -36,17 +36,17 @@ import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmoun
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import javax.inject.Inject
+import kotlin.math.roundToInt
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
-import java.time.LocalDateTime
-import javax.inject.Inject
-import kotlin.math.roundToInt
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class CreditAmountViewModel @Inject constructor(
@@ -191,7 +191,7 @@ class CreditAmountViewModel @Inject constructor(
         idPromotion: Int,
         user: String,
         idBrand: Int,
-        onSuccess: () -> Unit,
+        onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
         onCurrencySymbolValueChange: (currencySymbol: String) -> Unit
@@ -414,7 +414,7 @@ class CreditAmountViewModel @Inject constructor(
         user: String,
         idBrand: Int,
         idUserRequest: String,
-        onSuccess: () -> Unit,
+        onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
@@ -422,8 +422,8 @@ class CreditAmountViewModel @Inject constructor(
             pkUser, user, idBrand, idUserRequest
         ).collectLatest { result ->
             result.onSuccess {
-                onLoadingValueChange(true)
-                onSuccess()
+                onLoadingValueChange(false)
+                onSuccess(it)
             }.onLoading {
                 onLoadingValueChange(true)
             }.onFailure {
@@ -497,15 +497,6 @@ class CreditAmountViewModel @Inject constructor(
                 uiEvent.onLoadingValueChange,
                 uiEvent.onFailureWithDialog
             )
-            is OnCallQueryScreenConfig -> onCallQueryScreenConfig(
-                uiEvent.pkUser,
-                uiEvent.user,
-                uiEvent.idBrand,
-                uiEvent.idUserRequest,
-                uiEvent.onSuccess,
-                uiEvent.onLoadingValueChange,
-                uiEvent.onFailureWithDialog
-            )
         }
     }
 
@@ -524,7 +515,7 @@ class CreditAmountViewModel @Inject constructor(
             val idPromotion: Int,
             val user: String,
             val idBrand: Int,
-            val onSuccess: () -> Unit,
+            val onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
             val onCurrencySymbolValueChange: (currencySymbol: String) -> Unit
@@ -558,15 +549,6 @@ class CreditAmountViewModel @Inject constructor(
         object OnValidateForm : UIEvent()
         object OnOpenConditionCreditDialog : UIEvent()
         object OnOpenTermAndCondition : UIEvent()
-        data class OnCallQueryScreenConfig(
-            val pkUser: String,
-            val user: String,
-            val idBrand: Int,
-            val idUserRequest: String,
-            val onSuccess: () -> Unit,
-            val onLoadingValueChange: (status: Boolean) -> Unit,
-            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
-        ) : UIEvent()
     }
 
     sealed class BaseEvent {

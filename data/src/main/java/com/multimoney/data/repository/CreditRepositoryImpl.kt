@@ -6,10 +6,11 @@ import com.multimoney.data.networking.CreditApi
 import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
-import com.multimoney.domain.model.credit.CreditCatalogOption
+import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.HomeAddress
 import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -143,6 +144,27 @@ class CreditRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<HomeAddress?>> = fetchData(
         apolloCall = creditApi.queryHomeAddressSV(pkUser, user, idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationSaveCreditFlowStep(
+        user: String,
+        idBrand: Int,
+        infoQuestion: List<CreditInfoQuestion?>,
+        idLogUserRequest: Int,
+        idUser: Int,
+        currentStep: String
+    ): Flow<MultimoneyResult<SaveCreditFlowStep?>> = fetchData(
+        apolloCall = creditApi.mutationSaveCreditFlowStep(
+            user,
+            idBrand,
+            infoQuestion,
+            idLogUserRequest,
+            idUser,
+            currentStep
+        ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }

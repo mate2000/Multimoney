@@ -88,7 +88,8 @@ fun CreditAmountScreen(
                     idPromotion = 1,
                     user = "diegomm6@yopmail.com",
                     idBrand = Brand.CostaRica.id,
-                    onSuccess = {
+                    onSuccess = { screenConfigData ->
+                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnUpdateScreenConfigData(screenConfigData))
                         sharedViewModel.onUIEvent(
                             CreditViewModel.UIEvent.OnNextStep
                         )

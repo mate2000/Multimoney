@@ -3,10 +3,11 @@ package com.multimoney.domain.repository
 import com.multimoney.domain.model.credit.CompanyAddress
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
-import com.multimoney.domain.model.credit.CreditCatalogOption
+import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.HomeAddress
 import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -77,4 +78,13 @@ interface CreditRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<HomeAddress?>>
+
+    suspend fun mutationSaveCreditFlowStep(
+        user: String,
+        idBrand: Int,
+        infoQuestion: List<CreditInfoQuestion?>,
+        idLogUserRequest: Int,
+        idUser: Int,
+        currentStep: String
+    ): Flow<MultimoneyResult<SaveCreditFlowStep?>>
 }

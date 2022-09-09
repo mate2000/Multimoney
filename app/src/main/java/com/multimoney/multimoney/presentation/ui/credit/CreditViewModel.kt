@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -27,13 +28,16 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DUMMY_URL
+import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
-    val dataStorePreferences: DataStorePreferences
+    val dataStorePreferences: DataStorePreferences,
+    val saveCreditStepsHelper: SaveCreditStepsHelper,
+    val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase
 ) : BaseViewModel() {
 
     // UIState
@@ -199,7 +203,10 @@ class CreditViewModel @Inject constructor(
                 event.step,
                 event.idUserRequest
             )
-            is OnUpdateScreenConfigData -> screenConfig = event.screenConfigData
+            is OnUpdateScreenConfigData -> {
+                screenConfig = event.screenConfigData
+                saveCreditStepsHelper.start(screenConfig)
+            }
         }
     }
 

@@ -14,7 +14,7 @@ private fun HomeAddressQuery.HomeProvince.mapToDomainModel() = Province(
 )
 
 private fun HomeAddressQuery.SubOpcione.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
+    id = pk_Identificador_Catalogo,
     description = descripcion
 )
 
@@ -25,7 +25,7 @@ private fun HomeAddressQuery.HomeCanton.mapToDomainModel() = Canton(
 )
 
 private fun HomeAddressQuery.SubOpcione1.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
+    id = pk_Identificador_Catalogo,
     description = descripcion
 )
 
@@ -36,7 +36,7 @@ private fun HomeAddressQuery.HomeDistrict.mapToDomainModel() = District(
 )
 
 private fun HomeAddressQuery.SubOpcione2.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
+    id = pk_Identificador_Catalogo,
     description = descripcion
 )
 

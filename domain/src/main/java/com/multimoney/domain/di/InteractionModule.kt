@@ -4,6 +4,8 @@ import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyAddressSVUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyAddressSVUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyAddressUseCase
@@ -158,4 +160,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryHomeAddressSVUseCase(creditRepository: CreditRepository): QueryHomeAddressSVUseCase =
         QueryHomeAddressSVUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveCreditFlowStepUseCase(creditRepository: CreditRepository): MutationSaveCreditFlowStepUseCase =
+        MutationSaveCreditFlowStepUseCaseImpl(creditRepository)
 }

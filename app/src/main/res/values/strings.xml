@@ -331,6 +331,11 @@
     <string name="sign_credit_dialog_description" translatable="false">Por favor, realizala según las indicaciones.</string>
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
+    <!-- Sign Documents limit reached -->
+    <string name="sign_credit_max_attempts_title">!Te vamos a extrañar!</string>
+    <string name="sign_credit_max_attempts_message">Comunícate con nosotros para activar tu crédito</string>
+    <string name="sign_credit_max_attempts_contact">Contactar</string>
+
     <!-- Sign Document Reject -->
     <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
     <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>

@@ -151,8 +151,8 @@ class SaveCreditStepsHelper @Inject constructor() {
             isCoreCatalogue = textQuestionData?.isCoreCatalog,
             isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
             useValue = textQuestionData?.useValue,
-            maximumAmount = textQuestionData?.maximumAmount,
-            description = "",
+            maximumAmount = textQuestionData?.maximumAmount?:"",
+            description = textQuestionData?.description,
             valueCatalogue = "",
             idIdentificatorCatalogue = ""
         )
@@ -175,8 +175,8 @@ class SaveCreditStepsHelper @Inject constructor() {
             isBranchOfficeCatalogue = selectionQuestionData?.isCatalogBrandOffice,
             useValue = selectionQuestionData?.useValue,
             maximumAmount = selectionQuestionData?.maximumAmount,
-            description = selectionQuestionOption?.description,
-            valueCatalogue = selectionQuestionData?.valueCatalog,
+            description = selectionQuestionOption?.description ?: "",
+            valueCatalogue = selectionQuestionData?.valueCatalog ?: "",
             idIdentificatorCatalogue = selectionQuestionOption?.id
         )
     }

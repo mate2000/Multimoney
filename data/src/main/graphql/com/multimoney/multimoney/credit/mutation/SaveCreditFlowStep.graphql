@@ -1,11 +1,11 @@
-mutation SaveCreditFlowInput($user:String!, $idBrand:Int!, $infoQuestion:[questionsDataListInput]!, $idLogUserRequest:Int!, $idUSer:Int!, $currentStep:String! ){
+mutation SaveCreditFlowInput($user:String!, $idBrand:Int!, $infoQuestion:[questionsDataListInput]!, $idLogUserRequest:Int!, $idUser:Int!, $currentStep:String!){
   saveCreditFlowStep(
     saveCreditFlowStepInput: {
       user: $user
       idBrand: $idBrand
       infoQuestion: $infoQuestion
       idLogUserRequest: $idLogUserRequest
-      idUser: $idUSer
+      idUser: $idUser
       currentStep: $currentStep
     }
   ) {

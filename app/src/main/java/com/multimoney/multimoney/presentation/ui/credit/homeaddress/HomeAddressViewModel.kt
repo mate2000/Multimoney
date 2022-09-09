@@ -3,14 +3,17 @@ package com.multimoney.multimoney.presentation.ui.credit.homeaddress
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.domain.interaction.credit.QueryHomeAddressSVUseCase
-import com.multimoney.domain.interaction.credit.QueryHomeAddressUseCase
-import com.multimoney.domain.model.credit.CatalogSubOptions
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCase
+import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCase
+import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCase
+import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.BaseEvent.IsFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnAddressValueChange
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnCallCatalogs
@@ -19,6 +22,7 @@ import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressV
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnFormValid
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -26,35 +30,68 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeAddressViewModel @Inject constructor(
-    val queryHomeAddressUseCase: QueryHomeAddressUseCase,
-    val queryHomeAddressSVUseCase: QueryHomeAddressSVUseCase
+    private val queryHomeProvinceUseCase: QueryHomeProvinceUseCase,
+    private val queryHomeCantonUseCase: QueryHomeCantonUseCase,
+    private val queryHomeDistrictUseCase: QueryHomeDistrictUseCase
 ) : BaseViewModel() {
     // uiState
     var uiState by mutableStateOf(UIState())
         private set
 
     //stateless
-    val country = ZERO
-    private var homeCantonList: List<CatalogSubOptions?>? = listOf()
-    private var homeDistrictList: List<CatalogSubOptions?>? = listOf()
+    var pkUser = ""
+    var user = ""
+    var idBrand = Brand.ElSalvador.id
+    private var homeProvinceList: List<CreditCatalogOption?>? = listOf()
+    private var homeCantonList: List<CreditCatalogOption?>? = listOf()
+    private var homeDistrictList: List<CreditCatalogOption?>? = listOf()
 
-    private fun onDivisionOneValueChange(divisionOne: CatalogSubOptions?) {
-        uiState = uiState.copy(divisionOneSelected = divisionOne)
-        uiState = uiState.copy(divisionTwoList = homeCantonList?.filter {
-            it?.fkCatalog.toString() == uiState.divisionOneSelected?.pkCatalog
-        })
+    private fun onDivisionOneValueChange(
+        divisionOne: CreditCatalogOption?,
+        onLoadingValueChange: (status: Boolean) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) {
+        uiState = uiState.copy(
+            divisionOneSelected = divisionOne,
+            divisionTwoSelected = null,
+            divisionTwoList = listOf(),
+            divisionThreeSelected = null,
+            divisionThreeList = listOf()
+        )
+        divisionOne?.fkCatalog?.let {
+            onCallQueryHomeCanton(
+                pkUser,
+                user,
+                idBrand,
+                it.toString(),
+                onLoadingValueChange,
+                onFailureWithDialog
+            )
+        }
         onValidateScreen()
     }
 
-    private fun onDivisionTwoValueChange(divisionTwo: CatalogSubOptions?) {
-        uiState = uiState.copy(divisionTwoSelected = divisionTwo)
-        uiState = uiState.copy(divisionThreeList = homeDistrictList?.filter {
-            it?.fkCatalog.toString() == uiState.divisionTwoSelected?.pkCatalog
-        })
+    private fun onDivisionTwoValueChange(
+        divisionTwo: CreditCatalogOption?,
+        onLoadingValueChange: (status: Boolean) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) {
+        uiState =
+            uiState.copy(divisionTwoSelected = divisionTwo, divisionThreeSelected = null, divisionThreeList = listOf())
+        divisionTwo?.fkCatalog?.let {
+            onCallQueryHomeDistrict(
+                pkUser,
+                user,
+                idBrand,
+                it.toString(),
+                onLoadingValueChange,
+                onFailureWithDialog
+            )
+        }
         onValidateScreen()
     }
 
-    private fun onDivisionThreeValueChange(divisionThree: CatalogSubOptions?) {
+    private fun onDivisionThreeValueChange(divisionThree: CreditCatalogOption?) {
         uiState = uiState.copy(divisionThreeSelected = divisionThree)
         onValidateScreen()
     }
@@ -64,11 +101,17 @@ class HomeAddressViewModel @Inject constructor(
         onValidateScreen()
     }
 
+    private fun onPhoneValueChange(phone: String) {
+        uiState = uiState.copy(phone = phone)
+        onValidateScreen()
+    }
+
     private fun onValidateScreen() {
         emitBaseEvent(
             IsFormCompleted(
-                when (country) {
-                    TWO -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank()
+                when (idBrand) {
+                    Brand.ElSalvador.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank()
+                    Brand.Guatemala.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank()
                     else -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank()
                 }
             )
@@ -82,88 +125,117 @@ class HomeAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
-        if (country == TWO) {
-            onCallQueryCompanyAddressSV(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
-        } else {
-            onCallQueryCompanyAddress(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
-        }
+        this.pkUser = pkUser
+        this.user = user
+        this.idBrand = idBrand
+        onCallQueryHomeProvince(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
     }
 
-    private fun onCallQueryCompanyAddress(
+    private fun onCallQueryHomeProvince(
         pkUser: String,
         user: String,
         idBrand: Int,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
-    ) {
-        executeUseCase {
-            queryHomeAddressUseCase.invoke(pkUser, user, idBrand)
-                .collectLatest { result ->
-                    result.onSuccess {
-                        homeCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
+    ) = executeUseCase {
+        queryHomeProvinceUseCase.invoke(pkUser.toInt(), user, idBrand)
+            .collectLatest { result ->
+                result.onSuccess {
+                    homeProvinceList = it?.first()?.subOptions?.filter { filter ->
+                        filter?.description != CompanyAddressViewModel.MIDDLE_DASH
+                    }
+                    uiState = uiState.copy(
+                        divisionOneList = it?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
-                        homeDistrictList = it?.district?.first()?.subOptions?.filter { filter ->
-                            filter?.description != MIDDLE_DASH
-                        }
-                        uiState = uiState.copy(
-                            divisionOneList = it?.province?.first()?.subOptions?.filter { filter ->
-                                filter?.description != MIDDLE_DASH
-                            }
-                        )
-                        onLoadingValueChange(false)
-                    }
-                    result.onLoading {
-                        onLoadingValueChange(true)
-                    }
-                    result.onFailure {
-                        onFailureWithDialog(
-                            false,
-                            DialogParameters(
-                                description = it.getError() ?: "",
-                                isActive = mutableStateOf(true)
-                            )
-                        )
-                    }
+                    )
+                    onLoadingValueChange(false)
                 }
-        }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
+                result.onFailure {
+                    onFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
     }
 
-    private fun onCallQueryCompanyAddressSV(
+    private fun onCallQueryHomeCanton(
         pkUser: String,
         user: String,
         idBrand: Int,
+        fkCatalogIdentifier: String,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
-    ) {
-        executeUseCase {
-            queryHomeAddressSVUseCase.invoke(pkUser, user, idBrand)
-                .collectLatest { result ->
-                    result.onSuccess {
-                        homeCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
+    ) = executeUseCase {
+        queryHomeCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
+            .collectLatest { result ->
+                result.onSuccess {
+                    homeCantonList = it?.first()?.subOptions?.filter { filter ->
+                        filter?.description != CompanyAddressViewModel.MIDDLE_DASH
+                    }
+                    uiState = uiState.copy(
+                        divisionTwoList = it?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
-                        uiState = uiState.copy(
-                            divisionOneList = it?.province?.first()?.subOptions?.filter { filter ->
-                                filter?.description != MIDDLE_DASH
-                            }
-                        )
-                        onLoadingValueChange(false)
-                    }
-                    result.onLoading {
-                        onLoadingValueChange(true)
-                    }
-                    result.onFailure {
-                        onFailureWithDialog(
-                            false,
-                            DialogParameters(
-                                description = it.getError() ?: "",
-                                isActive = mutableStateOf(true)
-                            )
-                        )
-                    }
+                    )
+                    onLoadingValueChange(false)
                 }
-        }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
+                result.onFailure {
+                    onFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
+    }
+
+    private fun onCallQueryHomeDistrict(
+        pkUser: String,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String,
+        onLoadingValueChange: (status: Boolean) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) = executeUseCase {
+        queryHomeDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
+            .collectLatest { result ->
+                result.onSuccess {
+                    homeDistrictList = it?.first()?.subOptions?.filter { filter ->
+                        filter?.description != CompanyAddressViewModel.MIDDLE_DASH
+                    }
+                    uiState = uiState.copy(
+                        divisionThreeList = it?.first()?.subOptions?.filter { filter ->
+                            filter?.description != MIDDLE_DASH
+                        }
+                    )
+                    onLoadingValueChange(false)
+                }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
+                result.onFailure {
+                    onFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
     }
 
     private fun onNextActionClick(nextStepAction: () -> Unit) {
@@ -171,23 +243,33 @@ class HomeAddressViewModel @Inject constructor(
     }
 
     data class UIState(
-        val divisionOneList: List<CatalogSubOptions?>? = listOf(),
-        val divisionTwoList: List<CatalogSubOptions?>? = listOf(),
-        val divisionThreeList: List<CatalogSubOptions?>? = listOf(),
-        val divisionOneSelected: CatalogSubOptions? = null,
-        val divisionTwoSelected: CatalogSubOptions? = null,
-        val divisionThreeSelected: CatalogSubOptions? = null,
+        val divisionOneList: List<CreditCatalogOption?>? = listOf(),
+        val divisionTwoList: List<CreditCatalogOption?>? = listOf(),
+        val divisionThreeList: List<CreditCatalogOption?>? = listOf(),
+        val divisionOneSelected: CreditCatalogOption? = null,
+        val divisionTwoSelected: CreditCatalogOption? = null,
+        val divisionThreeSelected: CreditCatalogOption? = null,
         val address: String = "",
-        val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error)
+        val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error),
+        val phone: String = ""
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNextActionClick -> onNextActionClick(uiEvent.nextStepAction)
-            is OnDivisionOneValueChange -> onDivisionOneValueChange(uiEvent.divisionOne)
-            is OnDivisionTwoValueChange -> onDivisionTwoValueChange(uiEvent.divisionTwo)
+            is OnDivisionOneValueChange -> onDivisionOneValueChange(
+                uiEvent.divisionOne,
+                uiEvent.onLoadingValueChange,
+                uiEvent.onFailureWithDialog
+            )
+            is OnDivisionTwoValueChange -> onDivisionTwoValueChange(
+                uiEvent.divisionTwo,
+                uiEvent.onLoadingValueChange,
+                uiEvent.onFailureWithDialog
+            )
             is OnDivisionThreeValueChange -> onDivisionThreeValueChange(uiEvent.divisionThree)
             is OnAddressValueChange -> onAddressValueChange(uiEvent.address)
+            is OnPhoneNumberValueChange -> onPhoneValueChange(uiEvent.phone)
             is OnCallCatalogs -> onCallCatalogs(
                 uiEvent.pkUser,
                 uiEvent.user,
@@ -201,10 +283,21 @@ class HomeAddressViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
-        data class OnDivisionOneValueChange(val divisionOne: CatalogSubOptions?) : UIEvent()
-        data class OnDivisionTwoValueChange(val divisionTwo: CatalogSubOptions?) : UIEvent()
-        data class OnDivisionThreeValueChange(val divisionThree: CatalogSubOptions?) : UIEvent()
+        data class OnDivisionOneValueChange(
+            val divisionOne: CreditCatalogOption?,
+            val onLoadingValueChange: (status: Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+
+        data class OnDivisionTwoValueChange(
+            val divisionTwo: CreditCatalogOption?,
+            val onLoadingValueChange: (status: Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+
+        data class OnDivisionThreeValueChange(val divisionThree: CreditCatalogOption?) : UIEvent()
         data class OnAddressValueChange(val address: String) : UIEvent()
+        data class OnPhoneNumberValueChange(val phone: String) : UIEvent()
         data class OnCallCatalogs(
             val pkUser: String,
             val user: String,
@@ -221,9 +314,6 @@ class HomeAddressViewModel @Inject constructor(
     }
 
     companion object {
-        const val ZERO = 0
-        const val ONE = 1
-        const val TWO = 2
         const val MIDDLE_DASH = "-"
     }
 }

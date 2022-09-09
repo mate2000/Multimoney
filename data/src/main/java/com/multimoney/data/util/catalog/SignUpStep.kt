@@ -16,7 +16,8 @@ sealed class SignUpStep(val id: Int, val name: String) {
             Three.name -> Three.id
             Four.name -> Four.id
             Five.name -> Five.id
-            else -> Six.id
+            Six.name -> Six.id
+            else -> One.id
         }
     }
 }

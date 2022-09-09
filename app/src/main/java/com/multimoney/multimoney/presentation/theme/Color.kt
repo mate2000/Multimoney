@@ -145,7 +145,8 @@ data class MultimoneyColors(
     val iconColor: Color,
     val tipActionColor: Color,
     val creditNotApprovedText: Color,
-    val labelText: Color
+    val labelText: Color,
+    val chipBackground: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -166,6 +167,7 @@ val DarkColorPalette = MultimoneyColors(
     tipActionColor = Primary300,
     creditNotApprovedText = WhiteTransparency80,
     labelText = WhiteTransparency90,
+    chipBackground = BlackTransparency20
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -186,6 +188,7 @@ val LightColorPalette = MultimoneyColors(
     tipActionColor = Primary300,
     creditNotApprovedText = WhiteTransparency80,
     labelText = WhiteTransparency90,
+    chipBackground = BlackTransparency20
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

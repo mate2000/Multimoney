@@ -1,6 +1,6 @@
 package com.multimoney.data.util.catalog
 
-sealed class UserStatus(val name: String) {
+sealed class UserStatus(val status: String) {
     object Active : UserStatus("Activo")
     object Inactive : UserStatus("Inactivo")
     object Blocked : UserStatus("Bloqueado")

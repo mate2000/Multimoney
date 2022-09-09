@@ -22,7 +22,8 @@ class MutationSaveCreditApplicationUseCaseImpl(private val creditRepository: Cre
         selectedAmount: Double,
         minimumAmount: Double,
         creditLimit: Double,
-        tractAmount: Double
+        tractAmount: Double,
+        currentStep: String
     ) = creditRepository.mutationSaveCreditApplication(
         idUserRequest,
         pkUser,
@@ -41,6 +42,7 @@ class MutationSaveCreditApplicationUseCaseImpl(private val creditRepository: Cre
         selectedAmount,
         minimumAmount,
         creditLimit,
-        tractAmount
+        tractAmount,
+        currentStep
     )
 }

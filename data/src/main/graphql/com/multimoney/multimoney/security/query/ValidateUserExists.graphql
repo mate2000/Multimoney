@@ -1,0 +1,26 @@
+query ValidateUserExists($email:String!){
+  validateUserExists(
+    validateUserExistsInput: {
+      email: $email
+    }
+  ) {
+    status
+    message
+    detail
+    pkUser
+    userName
+    email
+    phoneNumber
+    fullName
+    firstName
+    secondName
+    lastName
+    secondLastName
+    contactMeans
+    nationality
+    identification
+    countryCode
+    currentStep
+    userStatus
+  }
+}

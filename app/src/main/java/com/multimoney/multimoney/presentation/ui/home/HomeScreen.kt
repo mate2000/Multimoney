@@ -22,7 +22,7 @@ fun HomeScreen(
 //        }
 //    }
 
-    ProductScreen(onNavigate = onNavigate)
+    ProductScreen(onNavigate = onNavigate, onPopAndNavigate)
     /*if (getRandom() == ZERO) {
         ProductScreen()
     } else {

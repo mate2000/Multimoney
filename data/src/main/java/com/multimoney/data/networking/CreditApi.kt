@@ -4,11 +4,13 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
-import com.multimoney.data.networking.credit.apollomodel.CompanyAddressQuery
-import com.multimoney.data.networking.credit.apollomodel.CompanyAddressSVQuery
+import com.multimoney.data.networking.credit.apollomodel.CompanyCantonQuery
+import com.multimoney.data.networking.credit.apollomodel.CompanyDistrictQuery
+import com.multimoney.data.networking.credit.apollomodel.CompanyProvinceQuery
 import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
-import com.multimoney.data.networking.credit.apollomodel.HomeAddressQuery
-import com.multimoney.data.networking.credit.apollomodel.HomeAddressSVQuery
+import com.multimoney.data.networking.credit.apollomodel.HomeCantonQuery
+import com.multimoney.data.networking.credit.apollomodel.HomeDistrictQuery
+import com.multimoney.data.networking.credit.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.credit.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.credit.apollomodel.SaveCreditApplicationMutation
 import javax.inject.Inject
@@ -51,7 +53,8 @@ class CreditApi @Inject constructor(
         selectedAmount: Double,
         minimumAmount: Double,
         creditLimit: Double,
-        tractAmount: Double
+        tractAmount: Double,
+        currentStep: String
     ): ApolloCall<SaveCreditApplicationMutation.Data> =
         apolloClient.mutation(
             SaveCreditApplicationMutation(
@@ -72,27 +75,59 @@ class CreditApi @Inject constructor(
                 selectedAmount,
                 minimumAmount,
                 creditLimit,
-                tractAmount
+                tractAmount,
+                currentStep
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryCompanyAddress(pkUser: String, user: String, idBrand: Int): ApolloCall<CompanyAddressQuery.Data> =
+    fun queryHomeProvince(pkUser: Int, user: String, idBrand: Int): ApolloCall<HomeProvinceQuery.Data> =
         apolloClient.query(
-            CompanyAddressQuery(pkUser.toInt(), user, idBrand)
+            HomeProvinceQuery(pkUser, user, idBrand)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryCompanyAddressSV(pkUser: String, user: String, idBrand: Int): ApolloCall<CompanyAddressSVQuery.Data> =
+    fun queryHomeCanton(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String
+    ): ApolloCall<HomeCantonQuery.Data> =
         apolloClient.query(
-            CompanyAddressSVQuery(pkUser.toInt(), user, idBrand)
+            HomeCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryHomeAddress(pkUser: String, user: String, idBrand: Int): ApolloCall<HomeAddressQuery.Data> =
+    fun queryHomeDistrict(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String
+    ): ApolloCall<HomeDistrictQuery.Data> =
         apolloClient.query(
-            HomeAddressQuery(pkUser.toInt(), user, idBrand)
+            HomeDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryHomeAddressSV(pkUser: String, user: String, idBrand: Int): ApolloCall<HomeAddressSVQuery.Data> =
+    fun queryCompanyProvince(pkUser: Int, user: String, idBrand: Int): ApolloCall<CompanyProvinceQuery.Data> =
         apolloClient.query(
-            HomeAddressSVQuery(pkUser.toInt(), user, idBrand)
+            CompanyProvinceQuery(pkUser, user, idBrand)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCompanyCanton(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String
+    ): ApolloCall<CompanyCantonQuery.Data> =
+        apolloClient.query(
+            CompanyCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCompanyDistrict(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String
+    ): ApolloCall<CompanyDistrictQuery.Data> =
+        apolloClient.query(
+            CompanyDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
 }

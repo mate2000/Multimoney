@@ -12,6 +12,7 @@ import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutatio
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.security.apollomodel.ValidatePinQuery
+import com.multimoney.data.networking.security.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.security.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.security.apollomodel.ValidationSecurityQuery
 import javax.inject.Inject
@@ -19,12 +20,37 @@ import javax.inject.Inject
 class SecurityApi @Inject constructor(
     private val apolloAuthorizedClient: ApolloClient
 ) {
+    fun queryValidateUserExists(
+        email: String
+    ): ApolloCall<ValidateUserExistsQuery.Data> =
+        apolloAuthorizedClient.query(ValidateUserExistsQuery(email)).fetchPolicy(
+            FetchPolicy.NetworkOnly
+        )
+
     fun mutationUserValidation(
         email: String,
         currentStep: String,
-        idBrand: Int
+        idBrand: Int,
+        idDocument: Int,
+        identification: String,
+        firstName: String,
+        secondName: String,
+        firstSurname: String,
+        secondSurname: String
     ): ApolloCall<UserValidationMutation.Data> =
-        apolloAuthorizedClient.mutation(UserValidationMutation(email, currentStep, idBrand)).fetchPolicy(
+        apolloAuthorizedClient.mutation(
+            UserValidationMutation(
+                email,
+                currentStep,
+                idBrand,
+                idDocument,
+                identification,
+                firstName,
+                secondName,
+                firstSurname,
+                secondSurname
+            )
+        ).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
 

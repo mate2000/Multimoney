@@ -19,19 +19,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep.Four
 import com.multimoney.data.util.catalog.CreditStep.Six
-import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.PK_USER
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.USER
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import kotlinx.coroutines.flow.collectLatest
+import com.multimoney.multimoney.presentation.util.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
+import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
 fun HomeAddressScreen(
@@ -43,21 +43,33 @@ fun HomeAddressScreen(
     var divisionOneText = ""
     var divisionTwoText = ""
     var divisionThreeText = ""
+    var title = R.string.credit_home_address_title
 
-    when (viewModel.country) {
-        CompanyAddressViewModel.ZERO -> {
-            divisionOneText = stringResource(id = string.credit_address_province)
-            divisionTwoText = stringResource(id = string.credit_address_canton)
-            divisionThreeText = stringResource(id = string.credit_address_district)
+    when (sharedViewModel.idBrand.toInt()) {
+        Brand.CostaRica.id -> {
+            divisionOneText = stringResource(id = R.string.credit_address_province)
+            divisionTwoText = stringResource(id = R.string.credit_address_canton)
+            divisionThreeText = stringResource(id = R.string.credit_address_district)
+            title = R.string.credit_home_address_title
         }
-        CompanyAddressViewModel.ONE -> {
-            divisionOneText = stringResource(id = string.credit_address_state)
-            divisionTwoText = stringResource(id = string.credit_address_municipality)
-            divisionThreeText = stringResource(id = string.credit_address_zone)
+        Brand.Guatemala.id -> {
+            divisionOneText = stringResource(id = R.string.credit_address_state)
+            divisionTwoText = stringResource(id = R.string.credit_address_municipality)
+            divisionThreeText = stringResource(id = R.string.credit_address_zone)
+            title = R.string.credit_home_address_title_gt
         }
-        CompanyAddressViewModel.TWO -> {
-            divisionOneText = stringResource(id = string.credit_address_state)
-            divisionTwoText = stringResource(id = string.credit_address_municipality)
+        Brand.ElSalvador.id -> {
+            divisionOneText = stringResource(id = R.string.credit_address_state)
+            divisionTwoText = stringResource(id = R.string.credit_address_municipality)
+            title = R.string.credit_home_address_title
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is HomeAddressViewModel.BaseEvent.IsFormCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isCompleted))
+            }
         }
     }
 
@@ -73,28 +85,24 @@ fun HomeAddressScreen(
             )
         )
         viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnFormValid)
-        viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnCallCatalogs(
-            PK_USER,
-            USER,
-            Brand.CostaRica.id,
-            onLoadingValueChange = { isLoading ->
-                sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
-            },
-            onFailureWithDialog = { isLoading, dialogParameters ->
-                sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
-            }
+        viewModel.onUIEvent(
+            HomeAddressViewModel.UIEvent.OnCallCatalogs(
+                PK_USER,
+                USER,
+                sharedViewModel.idBrand.toInt(),
+                onLoadingValueChange = { isLoading ->
+                    sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
+                },
+                onFailureWithDialog = { isLoading, dialogParameters ->
+                    sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                }
+            )
         )
-        )
-        viewModel.baseEvent.collectLatest { event ->
-            when (event) {
-                is HomeAddressViewModel.BaseEvent.IsFormCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isCompleted))
-            }
-        }
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
         Text(
-            text = stringResource(id = string.credit_home_address_title),
+            text = stringResource(id = title),
             modifier = Modifier.padding(top = 16.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
@@ -105,9 +113,20 @@ fun HomeAddressScreen(
                 .padding(top = 32.dp),
             items = viewModel.uiState.divisionOneList,
             value = viewModel.uiState.divisionOneSelected,
-            onValueChange = { viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
+            onValueChange = {
+                viewModel.onUIEvent(
+                    HomeAddressViewModel.UIEvent.OnDivisionOneValueChange(
+                        divisionOne = it,
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                        })
+                )
+            },
             labelText = divisionOneText,
-            placeHolder = stringResource(id = string.select)
+            placeHolder = stringResource(id = R.string.select)
         )
         CustomDropdown(
             modifier = Modifier
@@ -115,11 +134,22 @@ fun HomeAddressScreen(
                 .padding(top = 16.dp),
             items = viewModel.uiState.divisionTwoList,
             value = viewModel.uiState.divisionTwoSelected,
-            onValueChange = { viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnDivisionTwoValueChange(it)) },
+            onValueChange = {
+                viewModel.onUIEvent(
+                    HomeAddressViewModel.UIEvent.OnDivisionTwoValueChange(
+                        divisionTwo = it,
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                        })
+                )
+            },
             labelText = divisionTwoText,
-            placeHolder = stringResource(id = string.select)
+            placeHolder = stringResource(id = R.string.select)
         )
-        if (viewModel.country != CompanyAddressViewModel.TWO) {
+        if (sharedViewModel.idBrand.toInt() != Brand.ElSalvador.id) {
             CustomDropdown(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -128,15 +158,18 @@ fun HomeAddressScreen(
                 value = viewModel.uiState.divisionThreeSelected,
                 onValueChange = { viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnDivisionThreeValueChange(it)) },
                 labelText = divisionThreeText,
-                placeHolder = stringResource(id = string.select)
+                placeHolder = stringResource(id = R.string.select)
             )
         }
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 16.dp),
-            labelText = stringResource(id = string.credit_address_accurate_address),
+            labelText = stringResource(id = R.string.credit_address_accurate_address),
             value = viewModel.uiState.address,
             onValueChange = { viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnAddressValueChange(it)) },
-            keyboardOptions = KeyboardOptions(
+            keyboardOptions = if (sharedViewModel.idBrand.toInt() != Brand.CostaRica.id) KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ) else KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
@@ -148,5 +181,38 @@ fun HomeAddressScreen(
             isRequiredMessage = stringResource(id = viewModel.uiState.addressError.second),
             isTextArea = true
         )
+
+        val phonePlaceHolder = when (sharedViewModel.idBrand.toInt()) {
+            Brand.ElSalvador.id -> R.string.credit_job_phone_placeholder_sv
+            Brand.CostaRica.id -> R.string.credit_job_phone_placeholder_cr
+            Brand.Guatemala.id -> R.string.credit_job_phone_placeholder_gt
+            else -> R.string.empty
+        }
+
+        if (sharedViewModel.idBrand.toInt() != Brand.CostaRica.id) {
+            CustomOutlinedTextField(
+                leadingIcon = R.drawable.ic_phone,
+                value = viewModel.uiState.phone,
+                placeHolder = stringResource(id = phonePlaceHolder),
+                onValueChange = { phoneNumber ->
+                    viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnPhoneNumberValueChange(phoneNumber))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                }),
+                labelText = stringResource(id = R.string.credit_job_phone_number),
+                modifier = Modifier.padding(top = 16.dp),
+                isRequired = true,
+                isRequiredMessage = stringResource(id = R.string.credit_job_phone_required),
+                customTransformation = MaskVisualTransformation(
+                    PHONE_TRANSFORMATION_MASK.mask,
+                    PHONE_TRANSFORMATION_MASK.maskChar
+                )
+            )
+        }
     }
 }

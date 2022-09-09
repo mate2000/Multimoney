@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:fitsSystemWindows="true"
+    android:importantForAccessibility="no">
+
+    <FrameLayout
+        android:id="@+id/contentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="noHideDescendants">
+
+        <com.onfido.android.sdk.capture.ui.camera.view.CameraSourcePreview
+            android:id="@+id/cameraView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/onfido_dark_500" />
+
+        <com.onfido.android.sdk.capture.ui.ZoomImageView
+            android:id="@+id/confirmationImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:visibility="invisible" />
+
+        <com.onfido.android.sdk.capture.detector.rectangle.RectDetectorFrame
+            android:id="@+id/onfido_accessible_rect_detector_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </FrameLayout>
+
+    <com.onfido.android.sdk.capture.ui.camera.liveness.LivenessOverlayView
+        android:id="@+id/livenessOverlayView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/flipArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginVertical="@dimen/onfido_capture_instructions_outer_bottom_margin"
+        android:src="@drawable/onfido_ic_flip_arrow"
+        android:visibility="gone" />
+
+    <com.onfido.android.sdk.capture.ui.camera.OverlayTextView
+        android:id="@+id/overlayTextContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/onfido_capture_instructions_outer_bottom_margin"
+        android:visibility="invisible"
+        tools:ignore="UnknownId" />
+
+    <include
+        android:id="@+id/videoRecordingContainer"
+        layout="@layout/onfido_view_video_recording_indicator"
+        android:visibility="gone" />
+
+    <com.onfido.android.sdk.capture.ui.camera.ConfirmationStepButtons
+        android:id="@+id/confirmationButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/watermarkLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="@dimen/onfido_spacing_2x"
+        android:visibility="invisible" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/passportOverlay"
+        style="@style/OnfidoSampleDocumentOverlayStyle"
+        app:srcCompat="@drawable/onfido_passport_overlay" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/italianIDOverlay"
+        style="@style/OnfidoSampleDocumentOverlayStyle"
+        app:srcCompat="@drawable/onfido_italian_identity_overlay" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/frenchDLOverlay"
+        style="@style/OnfidoSampleDocumentOverlayStyle"
+        app:srcCompat="@drawable/onfido_french_driving_licence_overlay" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/germanDLOverlay"
+        style="@style/OnfidoSampleDocumentOverlayStyle"
+        app:srcCompat="@drawable/onfido_german_driving_licence_overlay" />
+
+    <com.onfido.android.sdk.capture.validation.CaptureValidationBubble
+        android:id="@+id/liveValidationBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="@dimen/onfido_spacing_2x"
+        android:clickable="false"
+        android:importantForAccessibility="noHideDescendants"
+        app:onfidoTightMode="@bool/onfido_validation_bubble_tight_mode" />
+
+    <com.onfido.android.sdk.capture.validation.CaptureValidationBubble
+        android:id="@+id/postCaptureValidationBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="@dimen/onfido_spacing_2x"
+        android:clickable="false"
+        app:onfidoMode="postCapture"
+        app:onfidoTightMode="@bool/onfido_validation_bubble_tight_mode" />
+
+    <FrameLayout
+        android:id="@+id/watermarkLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/onfido_watermark_bottom_margin">
+
+        <com.onfido.android.sdk.capture.ui.widget.WatermarkView
+            android:id="@+id/watermark"
+            style="@style/OnfidoWatermarkStyle"
+            android:layout_marginTop="@dimen/onfido_spacing_1x" />
+    </FrameLayout>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetLeft="@dimen/onfido_toolbar_title_space_left"
+        app:contentInsetStartWithNavigation="@dimen/onfido_toolbar_title_space_left" />
+
+</RelativeLayout>

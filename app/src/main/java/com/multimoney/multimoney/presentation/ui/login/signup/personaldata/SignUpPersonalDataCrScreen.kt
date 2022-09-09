@@ -245,8 +245,8 @@ fun SignUpPersonalDataCrScreen(
                 }
             }
 
-            if (viewModel.onSuccessDataInformationClient?.fullName.isNullOrBlank().not()) {
-                viewModel.onSuccessDataInformationClient?.apply {
+            if (viewModel.uiState.dataInformationClient?.fullName.isNullOrBlank().not()) {
+                viewModel.uiState.dataInformationClient?.apply {
                     viewModel.onUIEvent(SignUpPersonalDataViewModel.UIEvent.OnValidateForm)
                     sharedViewModel.userData?.fullName = fullName
                 }
@@ -265,7 +265,7 @@ fun SignUpPersonalDataCrScreen(
                 }
                 Text(
                     modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-                    text = viewModel.onSuccessDataInformationClient?.fullName.toString(),
+                    text = viewModel.uiState.dataInformationClient?.fullName.toString(),
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
                 )
             }

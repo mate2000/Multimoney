@@ -4,8 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.domain.interaction.credit.QueryCompanyAddressSVUseCase
-import com.multimoney.domain.interaction.credit.QueryCompanyAddressUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCase
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -20,6 +21,7 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnFormValid
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -27,8 +29,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CompanyAddressViewModel @Inject constructor(
-    private val queryCompanyAddressUseCase: QueryCompanyAddressUseCase,
-    private val queryCompanyAddressSVUseCase: QueryCompanyAddressSVUseCase
+    private val queryCompanyProvinceUseCase: QueryCompanyProvinceUseCase,
+    private val queryCompanyCantonUseCase: QueryCompanyCantonUseCase,
+    private val queryCompanyDistrictUseCase: QueryCompanyDistrictUseCase
 ) : BaseViewModel() {
 
     // uiState
@@ -36,17 +39,55 @@ class CompanyAddressViewModel @Inject constructor(
         private set
 
     //stateless
+    var pkUser = ""
+    var user = ""
     var idBrand = Brand.ElSalvador.id
+    private var companyProvinceList: List<CreditCatalogOption?>? = listOf()
     private var companyCantonList: List<CreditCatalogOption?>? = listOf()
     private var companyDistrictList: List<CreditCatalogOption?>? = listOf()
 
-    private fun onDivisionOneValueChange(divisionOne: CreditCatalogOption?) {
-        uiState = uiState.copy(divisionOneSelected = divisionOne)
+    private fun onDivisionOneValueChange(
+        divisionOne: CreditCatalogOption?,
+        onLoadingValueChange: (status: Boolean) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) {
+        uiState = uiState.copy(
+            divisionOneSelected = divisionOne,
+            divisionTwoList = listOf(),
+            divisionTwoSelected = null,
+            divisionThreeList = listOf(),
+            divisionThreeSelected = null
+        )
+        divisionOne?.fkCatalog?.let {
+            onCallQueryCompanyCanton(
+                pkUser,
+                user,
+                idBrand,
+                it.toString(),
+                onLoadingValueChange,
+                onFailureWithDialog
+            )
+        }
         onValidateScreen()
     }
 
-    private fun onDivisionTwoValueChange(divisionTwo: CreditCatalogOption?) {
-        uiState = uiState.copy(divisionTwoSelected = divisionTwo)
+    private fun onDivisionTwoValueChange(
+        divisionTwo: CreditCatalogOption?,
+        onLoadingValueChange: (status: Boolean) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) {
+        uiState =
+            uiState.copy(divisionTwoSelected = divisionTwo, divisionThreeList = listOf(), divisionThreeSelected = null)
+        divisionTwo?.fkCatalog?.let {
+            onCallQueryCompanyDistrict(
+                pkUser,
+                user,
+                idBrand,
+                it.toString(),
+                onLoadingValueChange,
+                onFailureWithDialog
+            )
+        }
         onValidateScreen()
     }
 
@@ -78,89 +119,117 @@ class CompanyAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
+        this.pkUser = pkUser
+        this.user = user
         this.idBrand = idBrand
-        if (idBrand == Brand.ElSalvador.id) {
-            onCallQueryCompanyAddressSV(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
-        } else {
-            onCallQueryCompanyAddress(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
-        }
+        onCallQueryCompanyProvince(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
     }
 
-    private fun onCallQueryCompanyAddress(
+    private fun onCallQueryCompanyProvince(
         pkUser: String,
         user: String,
         idBrand: Int,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
-    ) {
-        executeUseCase {
-            queryCompanyAddressUseCase.invoke(pkUser, user, idBrand)
-                .collectLatest { result ->
-                    result.onSuccess {
-                        companyCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
+    ) = executeUseCase {
+        queryCompanyProvinceUseCase.invoke(pkUser.toInt(), user, idBrand)
+            .collectLatest { result ->
+                result.onSuccess {
+                    companyProvinceList = it?.first()?.subOptions?.filter { filter ->
+                        filter?.description != MIDDLE_DASH
+                    }
+                    uiState = uiState.copy(
+                        divisionOneList = it?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
-                        companyDistrictList = it?.district?.first()?.subOptions?.filter { filter ->
-                            filter?.description != MIDDLE_DASH
-                        }
-                        uiState = uiState.copy(
-                            divisionOneList = it?.province?.first()?.subOptions?.filter { filter ->
-                                filter?.description != MIDDLE_DASH
-                            }
-                        )
-                        onLoadingValueChange(false)
-                    }
-                    result.onLoading {
-                        onLoadingValueChange(true)
-                    }
-                    result.onFailure {
-                        onFailureWithDialog(
-                            false,
-                            DialogParameters(
-                                description = it.getError() ?: "",
-                                isActive = mutableStateOf(true)
-                            )
-                        )
-                    }
+                    )
+                    onLoadingValueChange(false)
                 }
-        }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
+                result.onFailure {
+                    onFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
     }
 
-    private fun onCallQueryCompanyAddressSV(
+    private fun onCallQueryCompanyCanton(
         pkUser: String,
         user: String,
         idBrand: Int,
+        fkCatalogIdentifier: String,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
-    ) {
-        executeUseCase {
-            queryCompanyAddressSVUseCase.invoke(pkUser, user, idBrand)
-                .collectLatest { result ->
-                    result.onSuccess {
-                        companyCantonList = it?.canton?.first()?.subOptions?.filter { filter ->
+    ) = executeUseCase {
+        queryCompanyCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
+            .collectLatest { result ->
+                result.onSuccess {
+                    companyCantonList = it?.first()?.subOptions?.filter { filter ->
+                        filter?.description != MIDDLE_DASH
+                    }
+                    uiState = uiState.copy(
+                        divisionTwoList = it?.first()?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
-                        uiState = uiState.copy(
-                            divisionOneList = it?.province?.first()?.subOptions?.filter { filter ->
-                                filter?.description != MIDDLE_DASH
-                            }
-                        )
-                        onLoadingValueChange(false)
-                    }
-                    result.onLoading {
-                        onLoadingValueChange(true)
-                    }
-                    result.onFailure {
-                        onFailureWithDialog(
-                            false,
-                            DialogParameters(
-                                description = it.getError() ?: "",
-                                isActive = mutableStateOf(true)
-                            )
-                        )
-                    }
+                    )
+                    onLoadingValueChange(false)
                 }
-        }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
+                result.onFailure {
+                    onFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
+    }
+
+    private fun onCallQueryCompanyDistrict(
+        pkUser: String,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String,
+        onLoadingValueChange: (status: Boolean) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) = executeUseCase {
+        queryCompanyDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
+            .collectLatest { result ->
+                result.onSuccess {
+                    companyDistrictList = it?.first()?.subOptions?.filter { filter ->
+                        filter?.description != MIDDLE_DASH
+                    }
+                    uiState = uiState.copy(
+                        divisionThreeList = it?.first()?.subOptions?.filter { filter ->
+                            filter?.description != MIDDLE_DASH
+                        }
+                    )
+                    onLoadingValueChange(false)
+                }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
+                result.onFailure {
+                    onFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
     }
 
     private fun onNextActionClick(nextStepAction: () -> Unit) {
@@ -181,8 +250,16 @@ class CompanyAddressViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNextActionClick -> onNextActionClick(uiEvent.nextStepAction)
-            is OnDivisionOneValueChange -> onDivisionOneValueChange(uiEvent.divisionOne)
-            is OnDivisionTwoValueChange -> onDivisionTwoValueChange(uiEvent.divisionTwo)
+            is OnDivisionOneValueChange -> onDivisionOneValueChange(
+                uiEvent.divisionOne,
+                uiEvent.onLoadingValueChange,
+                uiEvent.onFailureWithDialog
+            )
+            is OnDivisionTwoValueChange -> onDivisionTwoValueChange(
+                uiEvent.divisionTwo,
+                uiEvent.onLoadingValueChange,
+                uiEvent.onFailureWithDialog
+            )
             is OnDivisionThreeValueChange -> onDivisionThreeValueChange(uiEvent.divisionThree)
             is OnAddressValueChange -> onAddressValueChange(uiEvent.address)
             is OnCallCatalogs -> onCallCatalogs(
@@ -198,8 +275,18 @@ class CompanyAddressViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
-        data class OnDivisionOneValueChange(val divisionOne: CreditCatalogOption?) : UIEvent()
-        data class OnDivisionTwoValueChange(val divisionTwo: CreditCatalogOption?) : UIEvent()
+        data class OnDivisionOneValueChange(
+            val divisionOne: CreditCatalogOption?,
+            val onLoadingValueChange: (status: Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+
+        data class OnDivisionTwoValueChange(
+            val divisionTwo: CreditCatalogOption?,
+            val onLoadingValueChange: (status: Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+
         data class OnDivisionThreeValueChange(val divisionThree: CreditCatalogOption?) : UIEvent()
         data class OnAddressValueChange(val address: String) : UIEvent()
         data class OnCallCatalogs(

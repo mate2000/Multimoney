@@ -37,7 +37,7 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceScreen
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton

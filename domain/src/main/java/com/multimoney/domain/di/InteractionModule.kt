@@ -6,16 +6,20 @@ import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUse
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCaseImpl
-import com.multimoney.domain.interaction.credit.QueryCompanyAddressSVUseCase
-import com.multimoney.domain.interaction.credit.QueryCompanyAddressSVUseCaseImpl
-import com.multimoney.domain.interaction.credit.QueryCompanyAddressUseCase
-import com.multimoney.domain.interaction.credit.QueryCompanyAddressUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCase
+import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
-import com.multimoney.domain.interaction.credit.QueryHomeAddressSVUseCase
-import com.multimoney.domain.interaction.credit.QueryHomeAddressSVUseCaseImpl
-import com.multimoney.domain.interaction.credit.QueryHomeAddressUseCase
-import com.multimoney.domain.interaction.credit.QueryHomeAddressUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCase
+import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCase
+import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCase
+import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
@@ -143,26 +147,36 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryCompanyAddressUseCase(creditRepository: CreditRepository): QueryCompanyAddressUseCase =
-        QueryCompanyAddressUseCaseImpl(creditRepository)
+    fun provideQueryCompanyCantonUseCase(creditRepository: CreditRepository): QueryCompanyCantonUseCase =
+        QueryCompanyCantonUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton
-    fun provideQueryCompanyAddressSVUseCase(creditRepository: CreditRepository): QueryCompanyAddressSVUseCase =
-        QueryCompanyAddressSVUseCaseImpl(creditRepository)
+    fun provideQueryCompanyDistrictUseCase(creditRepository: CreditRepository): QueryCompanyDistrictUseCase =
+        QueryCompanyDistrictUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton
-    fun provideQueryHomeAddressUseCase(creditRepository: CreditRepository): QueryHomeAddressUseCase =
-        QueryHomeAddressUseCaseImpl(creditRepository)
-
-    @Provides
-    @Singleton
-    fun provideQueryHomeAddressSVUseCase(creditRepository: CreditRepository): QueryHomeAddressSVUseCase =
-        QueryHomeAddressSVUseCaseImpl(creditRepository)
+    fun provideQueryCompanyProvinceUseCase(creditRepository: CreditRepository): QueryCompanyProvinceUseCase =
+        QueryCompanyProvinceUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton
     fun provideMutationSaveCreditFlowStepUseCase(creditRepository: CreditRepository): MutationSaveCreditFlowStepUseCase =
         MutationSaveCreditFlowStepUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryHomeCantonUseCase(creditRepository: CreditRepository): QueryHomeCantonUseCase =
+        QueryHomeCantonUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryHomeDistrictUseCase(creditRepository: CreditRepository): QueryHomeDistrictUseCase =
+        QueryHomeDistrictUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryHomeProvinceUseCase(creditRepository: CreditRepository): QueryHomeProvinceUseCase =
+        QueryHomeProvinceUseCaseImpl(creditRepository)
 }

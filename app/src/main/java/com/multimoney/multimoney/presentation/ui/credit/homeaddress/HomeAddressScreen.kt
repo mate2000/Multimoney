@@ -113,7 +113,18 @@ fun HomeAddressScreen(
                 .padding(top = 32.dp),
             items = viewModel.uiState.divisionOneList,
             value = viewModel.uiState.divisionOneSelected,
-            onValueChange = { viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnDivisionOneValueChange(it)) },
+            onValueChange = {
+                viewModel.onUIEvent(
+                    HomeAddressViewModel.UIEvent.OnDivisionOneValueChange(
+                        divisionOne = it,
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                        })
+                )
+            },
             labelText = divisionOneText,
             placeHolder = stringResource(id = R.string.select)
         )
@@ -123,7 +134,18 @@ fun HomeAddressScreen(
                 .padding(top = 16.dp),
             items = viewModel.uiState.divisionTwoList,
             value = viewModel.uiState.divisionTwoSelected,
-            onValueChange = { viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnDivisionTwoValueChange(it)) },
+            onValueChange = {
+                viewModel.onUIEvent(
+                    HomeAddressViewModel.UIEvent.OnDivisionTwoValueChange(
+                        divisionTwo = it,
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                        })
+                )
+            },
             labelText = divisionTwoText,
             placeHolder = stringResource(id = R.string.select)
         )

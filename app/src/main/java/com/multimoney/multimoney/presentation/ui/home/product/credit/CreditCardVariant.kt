@@ -370,6 +370,59 @@ fun CardWithCreditInProcess(
     }
 }
 
+@Composable
+@Preview
+fun CardCreditMaxAttempts(
+    action: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .clickable { action.invoke() }
+    ) {
+        CustomInformativeChip(
+            text = stringResource(id = R.string.home_product_process_credit_label),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = MultimoneyTheme.colors.chipBackground,
+            startIcon = R.drawable.ic_warning
+        )
+        Text(
+            text = stringResource(id = R.string.sign_credit_max_attempts_title),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = stringResource(id = R.string.sign_credit_max_attempts_message),
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+        CustomImage(
+            modifier = Modifier
+                .padding(top = 21.dp)
+                .align(Alignment.CenterHorizontally),
+            drawableResource = R.drawable.ic_chevron_up
+        )
+        Text(
+            text = stringResource(id = R.string.sign_credit_max_attempts_contact),
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .align(Alignment.CenterHorizontally),
+            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 sealed class CreditProcessStarted {
     object CreditAcceptContractRefuseFirstTime : CreditProcessStarted()
     object CreditStartProcessIncomplete : CreditProcessStarted()

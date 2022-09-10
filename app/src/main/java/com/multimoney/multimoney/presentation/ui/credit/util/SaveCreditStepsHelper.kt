@@ -177,7 +177,7 @@ class SaveCreditStepsHelper @Inject constructor() {
             maximumAmount = selectionQuestionData?.maximumAmount,
             description = selectionQuestionOption?.description ?: "",
             valueCatalogue = selectionQuestionData?.valueCatalog ?: "",
-            idIdentificatorCatalogue = selectionQuestionOption?.id
+            idIdentificatorCatalogue = selectionQuestionOption?.pkCatalog
         )
     }
 

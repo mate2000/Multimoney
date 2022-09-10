@@ -47,12 +47,12 @@ class SaveCreditStepsHelper @Inject constructor() {
 
     fun saveStepThree(
         user: String?,
-        companyProvince: CreditCatalog,
-        companyProvinceSelected: CreditCatalogOption,
-        companyCanton: CreditCatalog,
-        companyCantonSelected: CreditCatalogOption,
-        companyDistrict: CreditCatalog,
-        companyDistrictSelected: CreditCatalogOption,
+        companyProvince: CreditCatalog?,
+        companyProvinceSelected: CreditCatalogOption?,
+        companyCanton: CreditCatalog?,
+        companyCantonSelected: CreditCatalogOption?,
+        companyDistrict: CreditCatalog?,
+        companyDistrictSelected: CreditCatalogOption?,
         companyAddressValue: String
     ) {
         saveScreenQuestionData(selectionQuestion(user, companyProvince, companyProvinceSelected))
@@ -65,10 +65,10 @@ class SaveCreditStepsHelper @Inject constructor() {
 
     fun saveStepThreeSV(
         user: String?,
-        companyProvince: CreditCatalog,
-        companyProvinceSelected: CreditCatalogOption,
-        companyCanton: CreditCatalog,
-        companyCantonSelected: CreditCatalogOption,
+        companyProvince: CreditCatalog?,
+        companyProvinceSelected: CreditCatalogOption?,
+        companyCanton: CreditCatalog?,
+        companyCantonSelected: CreditCatalogOption?,
         companyAddressValue: String
     ) {
         saveScreenQuestionData(selectionQuestion(user, companyProvince, companyProvinceSelected))
@@ -80,12 +80,12 @@ class SaveCreditStepsHelper @Inject constructor() {
 
     fun saveStepFourGT(
         user: String?,
-        homeProvince: CreditCatalog,
-        homeProvinceSelected: CreditCatalogOption,
-        homeCanton: CreditCatalog,
-        homeCantonSelected: CreditCatalogOption,
-        homeDistrict: CreditCatalog,
-        homeDistrictSelected: CreditCatalogOption,
+        homeProvince: CreditCatalog?,
+        homeProvinceSelected: CreditCatalogOption?,
+        homeCanton: CreditCatalog?,
+        homeCantonSelected: CreditCatalogOption?,
+        homeDistrict: CreditCatalog?,
+        homeDistrictSelected: CreditCatalogOption?,
         homeAddressValue: String,
         homePhoneValue: String
     ) {
@@ -103,10 +103,10 @@ class SaveCreditStepsHelper @Inject constructor() {
 
     fun saveStepFourSV(
         user: String?,
-        homeProvince: CreditCatalog,
-        homeProvinceSelected: CreditCatalogOption,
-        homeCanton: CreditCatalog,
-        homeCantonSelected: CreditCatalogOption,
+        homeProvince: CreditCatalog?,
+        homeProvinceSelected: CreditCatalogOption?,
+        homeCanton: CreditCatalog?,
+        homeCantonSelected: CreditCatalogOption?,
         homeAddressValue: String,
         homePhoneValue: String
     ) {
@@ -123,12 +123,12 @@ class SaveCreditStepsHelper @Inject constructor() {
 
     fun saveStepFourCR(
         user: String?,
-        homeProvince: CreditCatalog,
-        homeProvinceSelected: CreditCatalogOption,
-        homeCanton: CreditCatalog,
-        homeCantonSelected: CreditCatalogOption,
-        homeDistrict: CreditCatalog,
-        homeDistrictSelected: CreditCatalogOption,
+        homeProvince: CreditCatalog?,
+        homeProvinceSelected: CreditCatalogOption?,
+        homeCanton: CreditCatalog?,
+        homeCantonSelected: CreditCatalogOption?,
+        homeDistrict: CreditCatalog?,
+        homeDistrictSelected: CreditCatalogOption?,
         homeAddressValue: String
     ) {
         saveScreenQuestionData(selectionQuestion(user, homeProvince, homeProvinceSelected))
@@ -151,7 +151,7 @@ class SaveCreditStepsHelper @Inject constructor() {
             isCoreCatalogue = textQuestionData?.isCoreCatalog,
             isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
             useValue = textQuestionData?.useValue,
-            maximumAmount = textQuestionData?.maximumAmount?:"",
+            maximumAmount = textQuestionData?.maximumAmount ?: "",
             description = textQuestionData?.description,
             valueCatalogue = "",
             idIdentificatorCatalogue = ""

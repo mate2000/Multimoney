@@ -10,6 +10,7 @@ import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -44,6 +45,20 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel() {
         }
     }
 
+    private fun onNexActionClick(
+        user: String,
+        nextStepAction: () -> Unit,
+        saveCreditStepsHelper: SaveCreditStepsHelper
+    ) {
+        saveCreditStepsHelper.saveStepTwo(
+            user,
+            uiState.companyName,
+            uiState.date,
+            uiState.phoneNumber
+        )
+        nextStepAction()
+    }
+
     data class UIState(
         val companyName: String = "",
         val date: String = "",
@@ -56,12 +71,17 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel() {
             is OnDateValueChange -> onDateValueChange(uiEvent.date)
             is OnCompanyNameValueChange -> onCompanyNameValueChange(uiEvent.companyName)
             is OnPhoneNumberValueChange -> onPhoneNumberValueChange(uiEvent.phoneNumber)
-            is OnNextActionClick -> uiEvent.nextStepAction.invoke()
+            is OnNextActionClick -> onNexActionClick(uiEvent.user, uiEvent.nextStepAction, uiEvent.saveCreditStepsHelper)
         }
     }
 
     sealed class UIEvent {
-        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
+        data class OnNextActionClick(
+            val user: String,
+            val nextStepAction: () -> Unit,
+            val saveCreditStepsHelper: SaveCreditStepsHelper
+        ) : UIEvent()
+
         data class OnCompanyNameValueChange(val companyName: String) : UIEvent()
         data class OnDateValueChange(val date: String) : UIEvent()
         data class OnPhoneNumberValueChange(val phoneNumber: String) : UIEvent()

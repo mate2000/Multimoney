@@ -7,6 +7,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCase
+import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -21,11 +22,11 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnFormValid
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CompanyAddressViewModel @Inject constructor(
@@ -42,6 +43,9 @@ class CompanyAddressViewModel @Inject constructor(
     var pkUser = ""
     var user = ""
     var idBrand = Brand.ElSalvador.id
+    private var companyProvince: CreditCatalog? = null
+    private var companyCanton: CreditCatalog? = null
+    private var companyDistrict: CreditCatalog? = null
     private var companyProvinceList: List<CreditCatalogOption?>? = listOf()
     private var companyCantonList: List<CreditCatalogOption?>? = listOf()
     private var companyDistrictList: List<CreditCatalogOption?>? = listOf()
@@ -135,11 +139,13 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyProvinceUseCase.invoke(pkUser.toInt(), user, idBrand)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyProvinceList = it?.first()?.subOptions?.filter { filter ->
+                    companyProvince = it?.first()
+                    companyProvinceList = companyProvince?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
+
                     uiState = uiState.copy(
-                        divisionOneList = it?.first()?.subOptions?.filter { filter ->
+                        divisionOneList = companyProvince?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
                     )
@@ -171,11 +177,12 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyCantonList = it?.first()?.subOptions?.filter { filter ->
+                    companyCanton = it?.first()
+                    companyCantonList = companyCanton?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
                     uiState = uiState.copy(
-                        divisionTwoList = it?.first()?.subOptions?.filter { filter ->
+                        divisionTwoList = companyCanton?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
                     )
@@ -207,11 +214,12 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyDistrictList = it?.first()?.subOptions?.filter { filter ->
+                    companyDistrict = it?.first()
+                    companyDistrictList = companyDistrict?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
                     uiState = uiState.copy(
-                        divisionThreeList = it?.first()?.subOptions?.filter { filter ->
+                        divisionThreeList = companyDistrict?.subOptions?.filter { filter ->
                             filter?.description != MIDDLE_DASH
                         }
                     )
@@ -232,7 +240,32 @@ class CompanyAddressViewModel @Inject constructor(
             }
     }
 
-    private fun onNextActionClick(nextStepAction: () -> Unit) {
+    private fun onNextActionClick(
+        user: String,
+        nextStepAction: () -> Unit,
+        saveCreditStepsHelper: SaveCreditStepsHelper
+    ) {
+        if (idBrand == Brand.ElSalvador.id) {
+            saveCreditStepsHelper.saveStepThreeSV(
+                user,
+                companyProvince,
+                uiState.divisionOneSelected,
+                companyCanton,
+                uiState.divisionTwoSelected,
+                uiState.address
+            )
+        } else {
+            saveCreditStepsHelper.saveStepThree(
+                user,
+                companyProvince,
+                uiState.divisionOneSelected,
+                companyCanton,
+                uiState.divisionTwoSelected,
+                companyDistrict,
+                uiState.divisionThreeSelected,
+                uiState.address
+            )
+        }
         nextStepAction()
     }
 
@@ -249,7 +282,7 @@ class CompanyAddressViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNextActionClick -> onNextActionClick(uiEvent.nextStepAction)
+            is OnNextActionClick -> onNextActionClick(uiEvent.user, uiEvent.nextStepAction, uiEvent.saveCreditStepsHelper)
             is OnDivisionOneValueChange -> onDivisionOneValueChange(
                 uiEvent.divisionOne,
                 uiEvent.onLoadingValueChange,
@@ -274,7 +307,12 @@ class CompanyAddressViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
+        data class OnNextActionClick(
+            val user: String,
+            val nextStepAction: () -> Unit,
+            val saveCreditStepsHelper: SaveCreditStepsHelper
+        ) : UIEvent()
+
         data class OnDivisionOneValueChange(
             val divisionOne: CreditCatalogOption?,
             val onLoadingValueChange: (status: Boolean) -> Unit,

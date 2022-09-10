@@ -77,9 +77,15 @@ fun HomeAddressScreen(
         sharedViewModel.onUIEvent(
             CreditViewModel.UIEvent.OnSetNavigation(
                 nextAction = {
-                    viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnNextActionClick {
-                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
-                    })
+                    viewModel.onUIEvent(
+                        HomeAddressViewModel.UIEvent.OnNextActionClick(
+                            user = sharedViewModel.email,
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
+                            },
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                        )
+                    )
                 },
                 nextStep = Six.id, previousStep = Four.id
             )

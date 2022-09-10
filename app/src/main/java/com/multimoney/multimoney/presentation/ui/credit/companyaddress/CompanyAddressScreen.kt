@@ -70,9 +70,14 @@ fun CompanyAddressScreen(
         sharedViewModel.onUIEvent(
             CreditViewModel.UIEvent.OnSetNavigation(
                 nextAction = {
-                    viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnNextActionClick {
-                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
-                    })
+                    viewModel.onUIEvent(
+                        CompanyAddressViewModel.UIEvent.OnNextActionClick(
+                            user = sharedViewModel.email,
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
+                            }, saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                        )
+                    )
                 },
                 nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id
             )

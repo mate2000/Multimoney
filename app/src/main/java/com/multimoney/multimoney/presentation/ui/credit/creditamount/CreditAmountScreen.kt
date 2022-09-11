@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmoun
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.Companion.SLIDER_TOTAL
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.skeleton.CreditAmountScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.termandcondition.CreditTermAndCondition
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
@@ -116,9 +117,6 @@ fun CreditAmountScreen(
             CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase(
                 pkUser = 230361,
                 idBrand = Brand.CostaRica.id,
-                onLoadingValueChange = { isLoading ->
-                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
-                },
                 onFailureWithDialog = { isLoading, dialogParameter ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnFailureWithDialog(isLoading, dialogParameter))
                 }
@@ -155,175 +153,179 @@ fun CreditAmountScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-    ) {
-        Text(
+    if (viewModel.isLoading) {
+        CreditAmountScreenSkeleton()
+    } else {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 36.dp, bottom = 40.dp),
-            text = stringResource(id = title),
-            style = Typography.h5.copy(
-                color = MultimoneyTheme.colors.text,
-                fontWeight = FontWeight.SemiBold
-            )
-        )
-        if (viewModel.uiState.isMultipleCurrency) {
-            CustomToggleButton(
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .wrapContentSize()
-                    .align(Alignment.CenterHorizontally),
-                selectedIndex = viewModel.uiState.currencyIndex,
-                items = viewModel.uiState.currencyItems,
-                onIndexChanged = { index -> viewModel.onUIEvent(OnCurrencyIndexChanged(index)) }
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 36.dp, bottom = 40.dp),
+                text = stringResource(id = title),
+                style = Typography.h5.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.SemiBold
+                )
             )
-        }
-        CurrencyAmountInput(
-            value = viewModel.uiState.disbursement,
-            placeHolder = stringResource(
-                id = R.string.credit_amount_disbursement_placeholder,
-                viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex]
-            ),
-            onValueChange = {
-                viewModel.onUIEvent(OnDisbursementValueChange(it))
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            }),
-            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.credit_amount_disbursement_minimum_error_message),
-            isError = viewModel.uiState.disbursementError.first,
-            errorMessage = stringResource(
-                id = viewModel.uiState.disbursementError.second,
-                viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
-                viewModel.uiState.progressFactor
-            ),
-            customTransformation = CurrencyIntegerTransformation(
-                viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
-                CURRENCY_SEPARATOR
-            ),
-            onDebounceValidation = {
-                viewModel.onUIEvent(
-                    CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished(value = it, user = "ecruzGRAPHQL",
-                        idBrand = Brand.CostaRica.id,
-                        onLoadingValueChange = { isLoading ->
-                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
-                        },
-                        onFailureWithDialog = { isLoading, dialogParameter ->
-                            sharedViewModel.onUIEvent(
-                                CreditViewModel.UIEvent.OnFailureWithDialog(
-                                    isLoading,
-                                    dialogParameter
-                                )
-                            )
-                        })
+            if (viewModel.uiState.isMultipleCurrency) {
+                CustomToggleButton(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .wrapContentSize()
+                        .align(Alignment.CenterHorizontally),
+                    selectedIndex = viewModel.uiState.currencyIndex,
+                    items = viewModel.uiState.currencyItems,
+                    onIndexChanged = { index -> viewModel.onUIEvent(OnCurrencyIndexChanged(index)) }
                 )
             }
-        )
-
-        CustomSlider(
-            modifier = Modifier.padding(16.dp),
-            value = viewModel.uiState.sliderValue,
-            valueRangeInitial = viewModel.uiState.sliderValueRangeInitial,
-            valueRangeFinal = SLIDER_TOTAL.toFloat(),
-            minimumLabel = viewModel.uiState.minimumDisbursementLabel,
-            maximumLabel = viewModel.uiState.maximumDisbursementLabel,
-            onValueChange = {
-                viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnSliderValueChange(it))
-            },
-            onValueChangeFinished = {
-                viewModel.onUIEvent(
-                    CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished(
-                        user = "diegomm6@yopmail.com",
-                        idBrand = Brand.CostaRica.id,
-                        onLoadingValueChange = { isLoading ->
-                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
-                        },
-                        onFailureWithDialog = { isLoading, dialogParameter ->
-                            sharedViewModel.onUIEvent(
-                                CreditViewModel.UIEvent.OnFailureWithDialog(
-                                    isLoading,
-                                    dialogParameter
-                                )
-                            )
-                        })
-                )
-            })
-
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .height(1.dp),
-            color = MultimoneyTheme.colors.divider
-        )
-        CustomInformativeChip(
-            text = stringResource(id = R.string.credit_amount_condition_of_credit_info),
-            textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
-            modifier = Modifier.padding(top = 16.dp),
-            onClick = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog) },
-            shape = RoundedCornerShape(24.dp),
-            background = WhiteTransparency10,
-            startIcon = R.drawable.ic_information,
-            startIconTint = MultimoneyTheme.colors.textInformation,
-            size = Large
-        )
-        CreditInfo(
-            iconId = R.drawable.ic_money_gray,
-            textId = R.string.credit_amount_monthly_fee,
-            value = viewModel.uiState.feeLabel
-        )
-        CreditInfo(
-            iconId = R.drawable.ic_percentage,
-            textId = R.string.credit_amount_interest,
-            value = viewModel.uiState.regularInterestRateLabel
-        )
-        CreditInfo(
-            iconId = R.drawable.ic_calendar,
-            textId = R.string.credit_amount_term,
-            value = stringResource(id = R.string.credit_amount_term_value, viewModel.uiState.termLabel)
-        )
-        CreditInfo(
-            iconId = R.drawable.ic_percentage,
-            textId = R.string.credit_amount_commission_for_disbursement,
-            value = viewModel.uiState.commissionDisbursementLabel
-        )
-        Divider(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .fillMaxWidth()
-                .height(1.dp),
-            color = MultimoneyTheme.colors.divider
-        )
-        Row(modifier = Modifier.padding(top = 24.dp), verticalAlignment = CenterVertically) {
-            CustomCheckBox(
-                checked = viewModel.uiState.isTermAndConditionChecked,
-                onCheckedChange = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(it)) },
-                text = stringResource(id = R.string.credit_amount_term_and_conditions_first),
-            )
-            ClickableText(
-                text = AnnotatedString(stringResource(id = R.string.credit_amount_term_and_conditions_second)),
-                style = TextStyle(
-                    fontFamily = PoppinsFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.textLink,
-                    fontSize = 15.sp,
-                    textDecoration = TextDecoration.Underline
+            CurrencyAmountInput(
+                value = viewModel.uiState.disbursement,
+                placeHolder = stringResource(
+                    id = R.string.credit_amount_disbursement_placeholder,
+                    viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex]
                 ),
-                modifier = Modifier
-                    .wrapContentSize()
-                    .padding(start = 4.dp),
-                onClick = {
-                    viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnOpenTermAndCondition)
+                onValueChange = {
+                    viewModel.onUIEvent(OnDisbursementValueChange(it))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                }),
+                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                isRequired = true,
+                isRequiredMessage = stringResource(id = R.string.credit_amount_disbursement_minimum_error_message),
+                isError = viewModel.uiState.disbursementError.first,
+                errorMessage = stringResource(
+                    id = viewModel.uiState.disbursementError.second,
+                    viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
+                    viewModel.uiState.progressFactor
+                ),
+                customTransformation = CurrencyIntegerTransformation(
+                    viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
+                    CURRENCY_SEPARATOR
+                ),
+                onDebounceValidation = {
+                    viewModel.onUIEvent(
+                        CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished(value = it, user = "ecruzGRAPHQL",
+                            idBrand = Brand.CostaRica.id,
+                            onLoadingValueChange = { isLoading ->
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                            },
+                            onFailureWithDialog = { isLoading, dialogParameter ->
+                                sharedViewModel.onUIEvent(
+                                    CreditViewModel.UIEvent.OnFailureWithDialog(
+                                        isLoading,
+                                        dialogParameter
+                                    )
+                                )
+                            })
+                    )
                 }
             )
+
+            CustomSlider(
+                modifier = Modifier.padding(16.dp),
+                value = viewModel.uiState.sliderValue,
+                valueRangeInitial = viewModel.uiState.sliderValueRangeInitial,
+                valueRangeFinal = SLIDER_TOTAL.toFloat(),
+                minimumLabel = viewModel.uiState.minimumDisbursementLabel,
+                maximumLabel = viewModel.uiState.maximumDisbursementLabel,
+                onValueChange = {
+                    viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnSliderValueChange(it))
+                },
+                onValueChangeFinished = {
+                    viewModel.onUIEvent(
+                        CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished(
+                            user = "diegomm6@yopmail.com",
+                            idBrand = Brand.CostaRica.id,
+                            onLoadingValueChange = { isLoading ->
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                            },
+                            onFailureWithDialog = { isLoading, dialogParameter ->
+                                sharedViewModel.onUIEvent(
+                                    CreditViewModel.UIEvent.OnFailureWithDialog(
+                                        isLoading,
+                                        dialogParameter
+                                    )
+                                )
+                            })
+                    )
+                })
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+                    .height(1.dp),
+                color = MultimoneyTheme.colors.divider
+            )
+            CustomInformativeChip(
+                text = stringResource(id = R.string.credit_amount_condition_of_credit_info),
+                textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog) },
+                shape = RoundedCornerShape(24.dp),
+                background = WhiteTransparency10,
+                startIcon = R.drawable.ic_information,
+                startIconTint = MultimoneyTheme.colors.textInformation,
+                size = Large
+            )
+            CreditInfo(
+                iconId = R.drawable.ic_money_gray,
+                textId = R.string.credit_amount_monthly_fee,
+                value = viewModel.uiState.feeLabel
+            )
+            CreditInfo(
+                iconId = R.drawable.ic_percentage,
+                textId = R.string.credit_amount_interest,
+                value = viewModel.uiState.regularInterestRateLabel
+            )
+            CreditInfo(
+                iconId = R.drawable.ic_calendar,
+                textId = R.string.credit_amount_term,
+                value = stringResource(id = R.string.credit_amount_term_value, viewModel.uiState.termLabel)
+            )
+            CreditInfo(
+                iconId = R.drawable.ic_percentage,
+                textId = R.string.credit_amount_commission_for_disbursement,
+                value = viewModel.uiState.commissionDisbursementLabel
+            )
+            Divider(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth()
+                    .height(1.dp),
+                color = MultimoneyTheme.colors.divider
+            )
+            Row(modifier = Modifier.padding(top = 24.dp), verticalAlignment = CenterVertically) {
+                CustomCheckBox(
+                    checked = viewModel.uiState.isTermAndConditionChecked,
+                    onCheckedChange = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(it)) },
+                    text = stringResource(id = R.string.credit_amount_term_and_conditions_first),
+                )
+                ClickableText(
+                    text = AnnotatedString(stringResource(id = R.string.credit_amount_term_and_conditions_second)),
+                    style = TextStyle(
+                        fontFamily = PoppinsFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MultimoneyTheme.colors.textLink,
+                        fontSize = 15.sp,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(start = 4.dp),
+                    onClick = {
+                        viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnOpenTermAndCondition)
+                    }
+                )
+            }
         }
     }
 

@@ -34,7 +34,7 @@ import javax.inject.Inject
 class CreditDocumentViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

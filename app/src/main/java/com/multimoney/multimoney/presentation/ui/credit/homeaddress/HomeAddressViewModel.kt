@@ -30,7 +30,7 @@ import javax.inject.Inject
 class HomeAddressViewModel @Inject constructor(
     private val queryHomeAddressUseCase: QueryHomeAddressUseCase,
     private val queryHomeAddressSVUseCase: QueryHomeAddressSVUseCase
-) : BaseViewModel() {
+) : BaseViewModel(true) {
     // uiState
     var uiState by mutableStateOf(UIState())
         private set

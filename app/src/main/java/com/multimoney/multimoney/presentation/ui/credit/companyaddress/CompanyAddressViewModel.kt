@@ -29,7 +29,7 @@ import javax.inject.Inject
 class CompanyAddressViewModel @Inject constructor(
     private val queryCompanyAddressUseCase: QueryCompanyAddressUseCase,
     private val queryCompanyAddressSVUseCase: QueryCompanyAddressSVUseCase
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     // uiState
     var uiState by mutableStateOf(UIState())

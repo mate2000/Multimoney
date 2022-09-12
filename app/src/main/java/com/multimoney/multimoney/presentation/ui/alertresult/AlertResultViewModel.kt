@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AlertResultViewModel @Inject constructor() : BaseViewModel() {
+class AlertResultViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {

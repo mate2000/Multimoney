@@ -5,4 +5,4 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class CreditTermsAndConditionViewModel @Inject constructor() : BaseViewModel()
+class CreditTermsAndConditionViewModel @Inject constructor() : BaseViewModel(true)

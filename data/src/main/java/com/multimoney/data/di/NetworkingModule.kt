@@ -12,6 +12,7 @@ import com.multimoney.data.networking.CreditApi
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.data.util.CertificateUtil
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.authenticator.FourOhOneAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,16 +59,15 @@ class NetworkingModule {
                     .build()
                 chain.proceed(request)
             }
+            .sslSocketFactory(
+                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+                certificateUtil.getX509TrustManager()
+            )
+            .authenticator(FourOhOneAuthenticator.newInstance(dataStorePreferences))
             .addInterceptor(loggingInterceptor)
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-        if (BuildConfig.BUILD_TYPE != DEBUG) {
-            provider.sslSocketFactory(
-                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-                certificateUtil.getX509TrustManager()
-            )
-        }
         return provider.build()
     }
 
@@ -127,7 +127,6 @@ class NetworkingModule {
         CreditApi(apolloAuthorizedClientProvider(context, SCHEMA_CREDIT, util, preferences))
 
     companion object {
-        const val DEBUG = "debug"
         const val AUTHORIZATION_HEADER = "Authorization"
         const val TIMEOUT = 120L
         const val APOLLO_PREFIX_DB = "multimoney_apollo_"

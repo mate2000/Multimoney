@@ -51,7 +51,7 @@ class CreditAmountViewModel @Inject constructor(
     private val queryCreditOfferUseCase: QueryCreditOfferUseCase,
     private val queryPaymentAmountUseCase: QueryPaymentAmountUseCase,
     private val mutationSaveCreditApplicationUseCase: MutationSaveCreditApplicationUseCase,
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

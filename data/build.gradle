@@ -101,6 +101,10 @@ dependencies {
     implementation apollo.cache
     implementation apollo.cache_sqlite
 
+    // Cognito
+    api cognito.core
+    api cognito.auth
+
     // OkHttp3
     implementation okhttp3.interceptor
 

@@ -14,7 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class JobPlaceViewModel @Inject constructor() : BaseViewModel() {
+class JobPlaceViewModel @Inject constructor() : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set

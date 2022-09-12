@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DocumentGenerationViewModel @Inject constructor() : BaseViewModel() {
+class DocumentGenerationViewModel @Inject constructor() : BaseViewModel(true) {
 
     private fun openSignDocument(link: String?) {
         popAndNavigateTo(

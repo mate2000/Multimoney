@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 @HiltViewModel
 class SignUpEmailViewModel @Inject constructor(
     private val queryValidateUserExistsUseCase: QueryValidateUserExistsUseCase
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

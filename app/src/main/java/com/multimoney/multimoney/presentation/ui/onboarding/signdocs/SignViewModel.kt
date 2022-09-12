@@ -11,7 +11,7 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.util.DialogParameters
 
-class SignViewModel :BaseViewModel() {
+class SignViewModel :BaseViewModel(false) {
     // uiState
     var uiState by mutableStateOf(UIState())
         private set

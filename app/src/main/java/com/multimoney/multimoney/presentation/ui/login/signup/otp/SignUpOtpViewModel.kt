@@ -49,7 +49,7 @@ import kotlin.time.Duration.Companion.seconds
 class SignUpOtpViewModel @Inject constructor(
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
     private val queryValidatePinUseCase: QueryValidatePinUseCase
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

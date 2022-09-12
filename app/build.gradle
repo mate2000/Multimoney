@@ -42,7 +42,7 @@ android {
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
         }
         staging {
-            applicationIdSuffix ".staging"
+            applicationIdSuffix ".sv"
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : properties.sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
@@ -146,10 +146,6 @@ dependencies {
 
     // Lottie
     implementation lottieDependency.lottie
-
-    // Cognito
-    implementation cognito.core
-    implementation cognito.auth
 
     // Desugar
     coreLibraryDesugaring desugar.jdk

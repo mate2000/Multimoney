@@ -40,7 +40,7 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

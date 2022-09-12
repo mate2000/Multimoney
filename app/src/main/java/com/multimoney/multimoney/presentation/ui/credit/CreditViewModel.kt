@@ -32,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

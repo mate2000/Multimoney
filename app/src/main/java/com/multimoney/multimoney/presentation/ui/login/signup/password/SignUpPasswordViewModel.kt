@@ -48,7 +48,7 @@ class SignUpPasswordViewModel @Inject constructor(
     val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences,
     private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

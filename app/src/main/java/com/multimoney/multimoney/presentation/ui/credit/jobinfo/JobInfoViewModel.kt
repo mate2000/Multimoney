@@ -1,20 +1,20 @@
-package com.multimoney.multimoney.presentation.ui.credit.jobplace
+package com.multimoney.multimoney.presentation.ui.credit.jobinfo
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.BaseEvent.OnFormCompleted
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnCompanyNameValueChange
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnDateValueChange
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnPhoneNumberValueChange
-import com.multimoney.multimoney.presentation.ui.credit.jobplace.JobPlaceViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnCompanyNameValueChange
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnPhoneNumberValueChange
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnValidForm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class JobPlaceViewModel @Inject constructor() : BaseViewModel(true) {
+class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set

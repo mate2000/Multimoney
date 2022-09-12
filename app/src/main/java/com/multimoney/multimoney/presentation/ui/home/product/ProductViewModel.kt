@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,11 +30,12 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -45,6 +47,8 @@ class ProductViewModel @Inject constructor(
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
+    private var linkWhatsapp = ""
+
 
     private fun onGetUserData() {
         viewModelScope.launch {
@@ -172,6 +176,10 @@ class ProductViewModel @Inject constructor(
         else -> Tertiary
     }
 
+    private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
+        context.openWhatsAppDeepLink(whatsAppLink)
+    }
+
     data class UIState(
         //Fields
         var idBrand: String = "",
@@ -192,6 +200,10 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
             is OnProductClick -> onProductClick()
             is OnGetIdBrand -> onGetUserData()
+            is UIEvent.OnMaxAttemptsCardClick -> openWhatsAppLink(
+                uiEvent.context,
+                uiEvent.whatsAppLink
+            )
             is OnLastStepChange -> uiState = uiState.copy(lastStep = uiEvent.lastStep)
         }
     }
@@ -199,6 +211,10 @@ class ProductViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
+        data class OnMaxAttemptsCardClick(
+            val whatsAppLink: String,
+            val context: Context
+        ) : UIEvent()
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
         object OnProductClick : UIEvent()

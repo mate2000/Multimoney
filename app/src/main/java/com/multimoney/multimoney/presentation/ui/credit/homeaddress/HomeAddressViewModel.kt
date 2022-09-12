@@ -44,6 +44,7 @@ class HomeAddressViewModel @Inject constructor(
     var pkUser = ""
     var user = ""
     var idBrand = Brand.ElSalvador.id
+    var idUserRequest: String = ""
     private var homeProvince: CreditCatalog? = null
     private var homeCanton: CreditCatalog? = null
     private var homeDistrict: CreditCatalog? = null
@@ -127,12 +128,14 @@ class HomeAddressViewModel @Inject constructor(
         pkUser: String,
         user: String,
         idBrand: Int,
+        idUserRequest:String,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
         this.pkUser = pkUser
         this.user = user
         this.idBrand = idBrand
+        this.idUserRequest = idUserRequest
         onCallQueryHomeProvince(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
     }
 
@@ -143,7 +146,7 @@ class HomeAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
-        queryHomeProvinceUseCase.invoke(pkUser.toInt(), user, idBrand)
+        queryHomeProvinceUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
                     homeProvince = it?.first()
@@ -180,7 +183,7 @@ class HomeAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
-        queryHomeCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
+        queryHomeCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
                     homeCanton = it?.first()
@@ -217,7 +220,7 @@ class HomeAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
-        queryHomeDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
+        queryHomeDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
                     homeDistrict = it?.first()
@@ -324,6 +327,7 @@ class HomeAddressViewModel @Inject constructor(
                 uiEvent.pkUser,
                 uiEvent.user,
                 uiEvent.idBrand,
+                uiEvent.idUserRequest,
                 uiEvent.onLoadingValueChange,
                 uiEvent.onFailureWithDialog
             )
@@ -357,6 +361,7 @@ class HomeAddressViewModel @Inject constructor(
             val pkUser: String,
             val user: String,
             val idBrand: Int,
+            val idUserRequest: String,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()

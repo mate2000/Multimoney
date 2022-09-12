@@ -6,6 +6,7 @@ class QueryHomeProvinceUseCaseImpl(private val creditRepository: CreditRepositor
     override suspend fun invoke(
         pkUser: Int,
         user: String,
-        idBrand: Int
-    ) = creditRepository.queryHomeProvince(pkUser, user, idBrand)
+        idBrand: Int,
+        idUserRequest:String
+    ) = creditRepository.queryHomeProvince(pkUser, user, idBrand, idUserRequest)
 }

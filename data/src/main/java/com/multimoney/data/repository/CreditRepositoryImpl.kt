@@ -13,8 +13,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CreditRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class CreditRepositoryImpl @Inject constructor(
     private val creditApi: CreditApi
@@ -106,9 +106,10 @@ class CreditRepositoryImpl @Inject constructor(
     override suspend fun queryHomeProvince(
         pkUser: Int,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryHomeProvince(pkUser, user, idBrand),
+        apolloCall = creditApi.queryHomeProvince(pkUser, user, idBrand, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -118,9 +119,10 @@ class CreditRepositoryImpl @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryHomeCanton(pkUser, user, idBrand, fkCatalogIdentifier),
+        apolloCall = creditApi.queryHomeCanton(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -130,9 +132,10 @@ class CreditRepositoryImpl @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryHomeDistrict(pkUser, user, idBrand, fkCatalogIdentifier),
+        apolloCall = creditApi.queryHomeDistrict(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -141,9 +144,10 @@ class CreditRepositoryImpl @Inject constructor(
     override suspend fun queryCompanyProvince(
         pkUser: Int,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyProvince(pkUser, user, idBrand),
+        apolloCall = creditApi.queryCompanyProvince(pkUser, user, idBrand, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -153,9 +157,10 @@ class CreditRepositoryImpl @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyCanton(pkUser, user, idBrand, fkCatalogIdentifier),
+        apolloCall = creditApi.queryCompanyCanton(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -165,9 +170,10 @@ class CreditRepositoryImpl @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyDistrict(pkUser, user, idBrand, fkCatalogIdentifier),
+        apolloCall = creditApi.queryCompanyDistrict(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }

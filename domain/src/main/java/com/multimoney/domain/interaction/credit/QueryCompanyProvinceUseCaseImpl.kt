@@ -6,6 +6,7 @@ class QueryCompanyProvinceUseCaseImpl(private val creditRepository: CreditReposi
     override suspend fun invoke(
         pkUser: Int,
         user: String,
-        idBrand: Int
-    ) = creditRepository.queryCompanyProvince(pkUser, user, idBrand)
+        idBrand: Int,
+        idUserRequest:String
+    ) = creditRepository.queryCompanyProvince(pkUser, user, idBrand, idUserRequest)
 }

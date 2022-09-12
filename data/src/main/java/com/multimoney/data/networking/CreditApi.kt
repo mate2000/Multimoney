@@ -94,54 +94,58 @@ class CreditApi @Inject constructor(
             ScreenConfigQuery(pkUser, user, idBrand, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryHomeProvince(pkUser: Int, user: String, idBrand: Int): ApolloCall<HomeProvinceQuery.Data> =
+    fun queryHomeProvince(pkUser: Int, user: String, idBrand: Int, idUserRequest: String): ApolloCall<HomeProvinceQuery.Data> =
         apolloClient.query(
-            HomeProvinceQuery(pkUser, user, idBrand)
+            HomeProvinceQuery(pkUser, user, idBrand, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryHomeCanton(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): ApolloCall<HomeCantonQuery.Data> =
         apolloClient.query(
-            HomeCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier)
+            HomeCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryHomeDistrict(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): ApolloCall<HomeDistrictQuery.Data> =
         apolloClient.query(
-            HomeDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier)
+            HomeDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryCompanyProvince(pkUser: Int, user: String, idBrand: Int): ApolloCall<CompanyProvinceQuery.Data> =
+    fun queryCompanyProvince(pkUser: Int, user: String, idBrand: Int, idUserRequest: String): ApolloCall<CompanyProvinceQuery.Data> =
         apolloClient.query(
-            CompanyProvinceQuery(pkUser, user, idBrand)
+            CompanyProvinceQuery(pkUser, user, idBrand, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCompanyCanton(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): ApolloCall<CompanyCantonQuery.Data> =
         apolloClient.query(
-            CompanyCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier)
+            CompanyCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCompanyDistrict(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): ApolloCall<CompanyDistrictQuery.Data> =
         apolloClient.query(
-            CompanyDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier)
+            CompanyDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditFlowStep(

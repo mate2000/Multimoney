@@ -43,6 +43,7 @@ class CompanyAddressViewModel @Inject constructor(
     var pkUser = ""
     var user = ""
     var idBrand = Brand.ElSalvador.id
+    var idUserRequest: String = ""
     private var companyProvince: CreditCatalog? = null
     private var companyCanton: CreditCatalog? = null
     private var companyDistrict: CreditCatalog? = null
@@ -120,12 +121,14 @@ class CompanyAddressViewModel @Inject constructor(
         pkUser: String,
         user: String,
         idBrand: Int,
+        idUserRequest: String,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
         this.pkUser = pkUser
         this.user = user
         this.idBrand = idBrand
+        this.idUserRequest = idUserRequest
         onCallQueryCompanyProvince(pkUser, user, idBrand, onLoadingValueChange, onFailureWithDialog)
     }
 
@@ -136,7 +139,7 @@ class CompanyAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
-        queryCompanyProvinceUseCase.invoke(pkUser.toInt(), user, idBrand)
+        queryCompanyProvinceUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
                     companyProvince = it?.first()
@@ -174,7 +177,7 @@ class CompanyAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
-        queryCompanyCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
+        queryCompanyCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
                     companyCanton = it?.first()
@@ -211,7 +214,7 @@ class CompanyAddressViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
-        queryCompanyDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier)
+        queryCompanyDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
                     companyDistrict = it?.first()
@@ -299,6 +302,7 @@ class CompanyAddressViewModel @Inject constructor(
                 uiEvent.pkUser,
                 uiEvent.user,
                 uiEvent.idBrand,
+                uiEvent.idUserRequest,
                 uiEvent.onLoadingValueChange,
                 uiEvent.onFailureWithDialog
             )
@@ -331,6 +335,7 @@ class CompanyAddressViewModel @Inject constructor(
             val pkUser: String,
             val user: String,
             val idBrand: Int,
+            val idUserRequest: String,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()

@@ -9,6 +9,7 @@ interface QueryCompanyCantonUseCase {
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest:String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 }

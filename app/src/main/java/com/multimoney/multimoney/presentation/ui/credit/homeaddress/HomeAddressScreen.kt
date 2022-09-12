@@ -26,8 +26,6 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.PK_USER
-import com.multimoney.multimoney.presentation.ui.credit.companyaddress.USER
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
@@ -93,9 +91,10 @@ fun HomeAddressScreen(
         viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnFormValid)
         viewModel.onUIEvent(
             HomeAddressViewModel.UIEvent.OnCallCatalogs(
-                PK_USER,
-                USER,
+                sharedViewModel.pkUser,
+                sharedViewModel.email,
                 sharedViewModel.idBrand.toInt(),
+                idUserRequest = sharedViewModel.idUserRequest,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(OnLoadingValueChange(isLoading))
                 },

@@ -56,27 +56,47 @@ interface CreditRepository {
     suspend fun queryHomeProvince(
         pkUser: Int,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryHomeCanton(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryHomeDistrict(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryCompanyProvince(
         pkUser: Int,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        idUserRequest: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
+    suspend fun queryCompanyCanton(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String,
+        idUserRequest: String
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
+    suspend fun queryCompanyDistrict(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        fkCatalogIdentifier: String,
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun mutationSaveCreditFlowStep(
@@ -87,18 +107,4 @@ interface CreditRepository {
         idUser: Int,
         currentStep: String
     ): Flow<MultimoneyResult<SaveCreditFlowStep?>>
-
-    suspend fun queryCompanyCanton(
-        pkUser: Int,
-        user: String,
-        idBrand: Int,
-        fkCatalogIdentifier: String
-    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
-
-    suspend fun queryCompanyDistrict(
-        pkUser: Int,
-        user: String,
-        idBrand: Int,
-        fkCatalogIdentifier: String
-    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 }

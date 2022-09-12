@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-open class BaseViewModel @AssistedInject constructor(@Assisted private val shouldObserveToken: Boolean) : ViewModel() {
+open class BaseViewModel @AssistedInject constructor(@Assisted val shouldObserveToken: Boolean) : ViewModel() {
 
     var isLoading by mutableStateOf(false)
 
@@ -47,7 +47,7 @@ open class BaseViewModel @AssistedInject constructor(@Assisted private val shoul
         crossinline noInternetAction: suspend () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (preferences.getAuthToken().first().isEmpty()) {
+            if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
                 popAndNavigateTo(Screen.SignInScreen.route, Screen.SignInScreen.route)
             } else if (connectivity.hasNetworkAccess()) {
                 action()
@@ -62,7 +62,7 @@ open class BaseViewModel @AssistedInject constructor(@Assisted private val shoul
         crossinline action: suspend () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (preferences.getAuthToken().first().isEmpty()) {
+            if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
                 popAndNavigateTo(Screen.SignInScreen.route, Screen.SignInScreen.route)
             } else if (checkConnection) {
                 if (connectivity.hasNetworkAccess()) {

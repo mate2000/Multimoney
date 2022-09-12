@@ -21,6 +21,13 @@ class DataStorePreferences @Inject constructor(
     cryptographyHelper = cryptographyHelper
 ) {
 
+    suspend fun setAuthToken(token: String) {
+        setSecuredData(TOKEN_KEY, token)
+    }
+
+    fun getAuthToken(): Flow<String> =
+        getSecuredData(TOKEN_KEY, "")
+
     suspend fun setIdBrand(idBrand: String) {
         setSecuredData(ID_BRAND, idBrand)
     }
@@ -69,6 +76,7 @@ class DataStorePreferences @Inject constructor(
     fun isOnBoardingEnabled(): Flow<Boolean> = getData(ON_BOARDING_ENABLED_KEY, true)
 
     companion object {
+        private val TOKEN_KEY = stringPreferencesKey("auth_token")
         private val ID_BRAND = stringPreferencesKey("id_brand")
         private val PK_USER = stringPreferencesKey("pk_user")
         private val IDENTIFICATION = stringPreferencesKey("identification")

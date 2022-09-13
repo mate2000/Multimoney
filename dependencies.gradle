@@ -46,7 +46,7 @@ ext {
     ]
 
     // Constraint Layout
-    constraint_layout_version = "1.0.1"
+    constraint_layout_version = "1.1.0-alpha01"
 
     constraint_layout = [
             compose: "androidx.constraintlayout:constraintlayout-compose:$constraint_layout_version"

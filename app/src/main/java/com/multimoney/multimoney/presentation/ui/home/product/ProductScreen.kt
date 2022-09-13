@@ -51,12 +51,12 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditAppro
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseFirstTime
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
+import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -84,31 +84,33 @@ fun ProductScreen(
     }
 
     // todo we have to send the pages to the view pager when the back return
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-    ) {
-        TipsAndOffer(
-            modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-            pages = NUMBER_PAGES,
-            viewModel = viewModel
-        )
-        Products(
-            modifier = Modifier.padding(top = 25.dp),
-            pages = NUMBER_PAGES,
-            state = productPagerState,
-            viewModel = viewModel
-        )
-        ProductExtras(
-            modifier = Modifier.padding(top = 32.dp),
-            pages = NUMBER_PAGES,
-            state = bottomPagerState,
-            viewModel = viewModel
-        )
+    if (viewModel.uiState.isLoading) {
+        ProductScreenSkeleton()
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MultimoneyTheme.colors.background)
+        ) {
+            TipsAndOffer(
+                modifier = Modifier.padding(start = 16.dp, top = 20.dp),
+                pages = NUMBER_PAGES,
+                viewModel = viewModel
+            )
+            Products(
+                modifier = Modifier.padding(top = 25.dp),
+                pages = NUMBER_PAGES,
+                state = productPagerState,
+                viewModel = viewModel
+            )
+            ProductExtras(
+                modifier = Modifier.padding(top = 32.dp),
+                pages = NUMBER_PAGES,
+                state = bottomPagerState,
+                viewModel = viewModel
+            )
+        }
     }
-
-    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable

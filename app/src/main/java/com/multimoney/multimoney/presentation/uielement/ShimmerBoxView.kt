@@ -4,6 +4,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,6 +12,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.GrayScale600
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.defaultShimmerTheme
 import com.valentinilk.shimmer.rememberShimmer
@@ -39,13 +41,15 @@ fun ShimmerBoxView(
     content: @Composable () -> Unit
 ) {
     Box(
-        modifier = Modifier.shimmer(
-            duration = duration,
-            delay = delay,
-            repeatMode = repeatMode,
-            rotation = rotation,
-            shimmerWidth = shimmerWidth
-        )
+        modifier = Modifier
+            .background(MultimoneyTheme.colors.background)
+            .shimmer(
+                duration = duration,
+                delay = delay,
+                repeatMode = repeatMode,
+                rotation = rotation,
+                shimmerWidth = shimmerWidth
+            )
     ) {
         content.invoke()
     }

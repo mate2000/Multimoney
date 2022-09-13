@@ -9,6 +9,8 @@ import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
+import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
+import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.Product
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -34,23 +36,24 @@ import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmoun
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import javax.inject.Inject
+import kotlin.math.roundToInt
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
-import java.time.LocalDateTime
-import javax.inject.Inject
-import kotlin.math.roundToInt
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class CreditAmountViewModel @Inject constructor(
     private val queryCreditOfferUseCase: QueryCreditOfferUseCase,
     private val queryPaymentAmountUseCase: QueryPaymentAmountUseCase,
     private val mutationSaveCreditApplicationUseCase: MutationSaveCreditApplicationUseCase,
+    private val queryScreenConfigUseCase: QueryScreenConfigUseCase
 ) : BaseViewModel() {
 
     // UIState
@@ -122,7 +125,6 @@ class CreditAmountViewModel @Inject constructor(
     private fun callQueryCreditOfferUseCase(
         pkUser: Int,
         idBrand: Int,
-        onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
         queryCreditOfferUseCase.invoke(pkUser = pkUser, idBrand = idBrand).collectLatest { result ->
@@ -132,8 +134,9 @@ class CreditAmountViewModel @Inject constructor(
                 currencyItems = products?.map { it?.currency ?: "" }
                 onExecuteTimer()
                 setCreditOffer(INITIAL_CURRENCY_INDEX)
-                onLoadingValueChange.invoke(false)
+                isLoading = false
             }.onFailure {
+                isLoading = false
                 onFailureWithDialog(
                     false,
                     DialogParameters(
@@ -142,7 +145,7 @@ class CreditAmountViewModel @Inject constructor(
                     )
                 )
             }.onLoading {
-                onLoadingValueChange(true)
+                isLoading = true
             }
         }
     }
@@ -183,12 +186,12 @@ class CreditAmountViewModel @Inject constructor(
     }
 
     private fun callMutationSaveCreditApplicationUseCase(
-        pkUser: Int,
+        pkUser: String,
         descPromotion: String,
         idPromotion: Int,
         user: String,
         idBrand: Int,
-        onSuccess: () -> Unit,
+        onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
         onCurrencySymbolValueChange: (currencySymbol: String) -> Unit
@@ -196,7 +199,7 @@ class CreditAmountViewModel @Inject constructor(
         onCurrencySymbolValueChange(uiState.currencyItems[uiState.currencyIndex])
         mutationSaveCreditApplicationUseCase.invoke(
             idUserRequest = idUserRequest,
-            pkUser = pkUser,
+            pkUser = pkUser.toInt(),
             descPromotion = descPromotion,
             interestRate = uiState.regularInterestRateLabel,
             symbolCurrency = uiState.currencyItems[uiState.currencyIndex],
@@ -216,8 +219,15 @@ class CreditAmountViewModel @Inject constructor(
             currentStep = CreditStep.Two.name
         ).collectLatest { result ->
             result.onSuccess {
-                onLoadingValueChange(false)
-                onSuccess.invoke()
+                onCallQueryScreenConfig(
+                    pkUser = pkUser,
+                    user = user,
+                    idBrand = idBrand,
+                    idUserRequest = idUserRequest.toString(),
+                    onSuccess = onSuccess,
+                    onLoadingValueChange = onLoadingValueChange,
+                    onFailureWithDialog = onFailureWithDialog,
+                )
             }.onMessage {
                 onFailureWithDialog(
                     false,
@@ -399,6 +409,32 @@ class CreditAmountViewModel @Inject constructor(
         isFormValid()
     }
 
+    private fun onCallQueryScreenConfig(
+        pkUser: String,
+        user: String,
+        idBrand: Int,
+        idUserRequest: String,
+        onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
+        onLoadingValueChange: (status: Boolean) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) = executeUseCase {
+        queryScreenConfigUseCase.invoke(
+            pkUser, user, idBrand, idUserRequest
+        ).collectLatest { result ->
+            result.onSuccess {
+                onLoadingValueChange(false)
+                onSuccess(it)
+            }.onLoading {
+                onLoadingValueChange(true)
+            }.onFailure {
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(description = it.getError() ?: "")
+                )
+            }
+        }
+    }
+
     data class UIState(
         // Fields
         val isMultipleCurrency: Boolean = false,
@@ -426,7 +462,6 @@ class CreditAmountViewModel @Inject constructor(
             is OnCallQueryCreditOfferUseCase -> callQueryCreditOfferUseCase(
                 uiEvent.pkUser,
                 uiEvent.idBrand,
-                uiEvent.onLoadingValueChange,
                 uiEvent.onFailureWithDialog
             )
             is OnCallMutationSaveCreditApplicationUseCase -> callMutationSaveCreditApplicationUseCase(
@@ -472,17 +507,16 @@ class CreditAmountViewModel @Inject constructor(
         data class OnCallQueryCreditOfferUseCase(
             val pkUser: Int,
             val idBrand: Int,
-            val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
         ) : UIEvent()
 
         data class OnCallMutationSaveCreditApplicationUseCase(
-            val pkUser: Int,
+            val pkUser: String,
             val descPromotion: String,
             val idPromotion: Int,
             val user: String,
             val idBrand: Int,
-            val onSuccess: () -> Unit,
+            val onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
             val onCurrencySymbolValueChange: (currencySymbol: String) -> Unit

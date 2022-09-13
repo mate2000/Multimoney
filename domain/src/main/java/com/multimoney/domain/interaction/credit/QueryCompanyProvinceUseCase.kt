@@ -8,6 +8,7 @@ interface QueryCompanyProvinceUseCase {
     suspend operator fun invoke(
         pkUser: Int,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        idUserRequest:String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 }

@@ -17,5 +17,14 @@ sealed class CreditStep(val id: Int, val name: String) {
             CreditStep.Five.name -> CreditStep.Five.id
             else -> CreditStep.Six.id
         }
+
+        fun getNameById(id: Int) = when (id) {
+            CreditStep.One.id -> CreditStep.One.name
+            CreditStep.Two.id -> CreditStep.Two.name
+            CreditStep.Three.id -> CreditStep.Three.name
+            CreditStep.Four.id -> CreditStep.Four.name
+            CreditStep.Five.id -> CreditStep.Five.name
+            else -> CreditStep.Six.name
+        }
     }
 }

@@ -4,6 +4,8 @@ import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCase
@@ -20,6 +22,8 @@ import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
+import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
@@ -138,6 +142,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideQueryScreenConfigUseCase(creditRepository: CreditRepository): QueryScreenConfigUseCase =
+        QueryScreenConfigUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryCompanyCantonUseCase(creditRepository: CreditRepository): QueryCompanyCantonUseCase =
         QueryCompanyCantonUseCaseImpl(creditRepository)
 
@@ -153,6 +162,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationSaveCreditFlowStepUseCase(creditRepository: CreditRepository): MutationSaveCreditFlowStepUseCase =
+        MutationSaveCreditFlowStepUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryHomeCantonUseCase(creditRepository: CreditRepository): QueryHomeCantonUseCase =
         QueryHomeCantonUseCaseImpl(creditRepository)
 
@@ -165,5 +179,4 @@ class InteractionModule {
     @Singleton
     fun provideQueryHomeProvinceUseCase(creditRepository: CreditRepository): QueryHomeProvinceUseCase =
         QueryHomeProvinceUseCaseImpl(creditRepository)
-
 }

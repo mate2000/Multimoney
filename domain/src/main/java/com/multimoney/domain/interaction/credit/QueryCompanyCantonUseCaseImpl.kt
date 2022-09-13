@@ -7,6 +7,7 @@ class QueryCompanyCantonUseCaseImpl(private val creditRepository: CreditReposito
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
-    ) = creditRepository.queryCompanyCanton(pkUser, user, idBrand, fkCatalogIdentifier)
+        fkCatalogIdentifier: String,
+        idUserRequest: String
+    ) = creditRepository.queryCompanyCanton(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
 }

@@ -34,7 +34,7 @@ android {
         }
         staging {
             testCoverageEnabled true
-            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : properties.apiUrlStaging
             buildConfigField "String", "DATA_STORE_KEY", System.env.STAGING_DATA_STORE_KEY ? "\"${System.env.STAGING_DATA_STORE_KEY}\"" : properties.dataStoreKey
             buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.STAGING_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.STAGING_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }

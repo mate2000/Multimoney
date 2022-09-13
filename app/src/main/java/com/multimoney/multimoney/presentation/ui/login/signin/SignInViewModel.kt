@@ -84,6 +84,7 @@ class SignInViewModel @Inject constructor(
                                             dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
                                         }
                                         val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
+                                        dataStorePreferences.setAuthToken(session.userPoolTokens.value?.accessToken ?: "")
                                         saveUserData(payload)
                                         uiState = uiState.copy(isLoading = false)
                                         if (uiState.isFingerprintChecked) {

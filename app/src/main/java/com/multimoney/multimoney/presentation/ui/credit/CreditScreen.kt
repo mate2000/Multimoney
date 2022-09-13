@@ -70,7 +70,8 @@ fun CreditScreen(
                 (navBackStackEntry.arguments?.getString(
                     CREDIT_STEP,
                     CreditStep.One.id.toString()
-                ))?.toInt() ?: 1
+                ))?.toInt() ?: 0,
+                "148076"
             )
         )
     }
@@ -168,7 +169,7 @@ fun GetStepContent(
         CreditStep.Two.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> CompanyAddressScreen(sharedViewModel = viewModel)
-        CreditStep.Five.id -> CreditDocumentScreen(sharedViewModel = viewModel)
-        else -> HomeAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Five.id -> HomeAddressScreen(sharedViewModel = viewModel)
+        else -> CreditDocumentScreen(sharedViewModel = viewModel)
     }
 }

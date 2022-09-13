@@ -84,12 +84,13 @@ fun CreditAmountScreen(
             // TODO: Send appropriate data for this call because now we don't have this data
             viewModel.onUIEvent(
                 CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase(
-                    pkUser = 230361,
+                    pkUser = "230361",
                     descPromotion = "",
                     idPromotion = 1,
                     user = "diegomm6@yopmail.com",
                     idBrand = Brand.CostaRica.id,
-                    onSuccess = {
+                    onSuccess = { screenConfigData ->
+                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnUpdateScreenConfigData(screenConfigData))
                         sharedViewModel.onUIEvent(
                             CreditViewModel.UIEvent.OnNextStep
                         )

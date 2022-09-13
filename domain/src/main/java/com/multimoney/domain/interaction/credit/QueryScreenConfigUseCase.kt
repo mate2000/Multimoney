@@ -4,11 +4,11 @@ import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
-interface QueryHomeProvinceUseCase {
+interface QueryScreenConfigUseCase {
     suspend operator fun invoke(
-        pkUser: Int,
+        pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest:String
+        idUserRequest: String
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 }

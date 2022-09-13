@@ -83,15 +83,17 @@ class CompanyAddressViewModel @Inject constructor(
     ) {
         uiState =
             uiState.copy(divisionTwoSelected = divisionTwo, divisionThreeList = listOf(), divisionThreeSelected = null)
-        divisionTwo?.pkCatalog?.let {
-            onCallQueryCompanyDistrict(
-                pkUser,
-                user,
-                idBrand,
-                it,
-                onLoadingValueChange,
-                onFailureWithDialog
-            )
+        if (idBrand != Brand.ElSalvador.id) {
+            divisionTwo?.pkCatalog?.let {
+                onCallQueryCompanyDistrict(
+                    pkUser,
+                    user,
+                    idBrand,
+                    it,
+                    onLoadingValueChange,
+                    onFailureWithDialog
+                )
+            }
         }
         onValidateScreen()
     }
@@ -285,7 +287,11 @@ class CompanyAddressViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNextActionClick -> onNextActionClick(uiEvent.user, uiEvent.nextStepAction, uiEvent.saveCreditStepsHelper)
+            is OnNextActionClick -> onNextActionClick(
+                uiEvent.user,
+                uiEvent.nextStepAction,
+                uiEvent.saveCreditStepsHelper
+            )
             is OnDivisionOneValueChange -> onDivisionOneValueChange(
                 uiEvent.divisionOne,
                 uiEvent.onLoadingValueChange,

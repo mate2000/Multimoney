@@ -98,7 +98,7 @@ fun CreditDocumentScreen(
                                 }
                             )
                         )
-                    }, nextStep = CreditStep.Six.id, previousStep = CreditStep.Four.id))
+                    }, nextStep = CreditStep.Seven.id, previousStep = CreditStep.Five.id))
                 }
             }.onLoading {
                 sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(false))

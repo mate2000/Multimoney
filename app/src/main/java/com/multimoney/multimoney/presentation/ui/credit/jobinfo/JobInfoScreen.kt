@@ -63,7 +63,7 @@ fun JobPlaceScreen(
                     }, saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                 )
             )
-        }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Three.id))
+        }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Two.id))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormCompleted -> {

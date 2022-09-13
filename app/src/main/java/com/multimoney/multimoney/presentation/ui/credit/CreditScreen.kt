@@ -89,7 +89,7 @@ fun CreditScreen(
                 isCloseVisible = viewModel.uiState.isCloseVisible,
                 onBackClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
-            if (viewModel.uiState.currentStep > CreditStep.One.id) {
+            if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Six.id) {
                 StepProgressBar(
                     steps = CREDIT_INDICATOR_TOTAL_STEPS,
                     currentStep = viewModel.uiState.currentStep - 1,

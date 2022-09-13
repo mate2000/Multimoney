@@ -169,7 +169,7 @@ fun GetStepContent(
         CreditStep.Two.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> CompanyAddressScreen(sharedViewModel = viewModel)
-        CreditStep.Five.id -> CreditDocumentScreen(sharedViewModel = viewModel)
-        else -> HomeAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Five.id -> HomeAddressScreen(sharedViewModel = viewModel)
+        else -> CreditDocumentScreen(sharedViewModel = viewModel)
     }
 }

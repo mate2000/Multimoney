@@ -63,12 +63,12 @@ class CompanyAddressViewModel @Inject constructor(
             divisionThreeList = listOf(),
             divisionThreeSelected = null
         )
-        divisionOne?.fkCatalog?.let {
+        divisionOne?.pkCatalog?.let {
             onCallQueryCompanyCanton(
                 pkUser,
                 user,
                 idBrand,
-                it.toString(),
+                it,
                 onLoadingValueChange,
                 onFailureWithDialog
             )
@@ -83,12 +83,12 @@ class CompanyAddressViewModel @Inject constructor(
     ) {
         uiState =
             uiState.copy(divisionTwoSelected = divisionTwo, divisionThreeList = listOf(), divisionThreeSelected = null)
-        divisionTwo?.fkCatalog?.let {
+        divisionTwo?.pkCatalog?.let {
             onCallQueryCompanyDistrict(
                 pkUser,
                 user,
                 idBrand,
-                it.toString(),
+                it,
                 onLoadingValueChange,
                 onFailureWithDialog
             )

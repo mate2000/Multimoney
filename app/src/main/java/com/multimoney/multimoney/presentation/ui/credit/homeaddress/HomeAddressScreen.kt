@@ -79,7 +79,7 @@ fun HomeAddressScreen(
                         HomeAddressViewModel.UIEvent.OnNextActionClick(
                             user = sharedViewModel.email,
                             nextStepAction = {
-                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep)
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )

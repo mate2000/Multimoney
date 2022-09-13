@@ -145,14 +145,14 @@ class SaveCreditStepsHelper @Inject constructor() {
             idOptionQuestionRequestCredit = textQuestionData?.pkQuestionOption,
             createUser = user,
             updateUser = user,
-            identificator = textQuestionData?.pkCatalog,
+            identificator = textQuestionData?.pkCatalog ?: "",
             value = value,
             controlType = textQuestionData?.controlType,
             isCoreCatalogue = textQuestionData?.isCoreCatalog,
             isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
             useValue = textQuestionData?.useValue,
             maximumAmount = textQuestionData?.maximumAmount ?: "",
-            description = textQuestionData?.description,
+            description = textQuestionData?.description ?: "",
             valueCatalogue = "",
             idIdentificatorCatalogue = ""
         )

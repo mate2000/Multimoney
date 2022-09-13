@@ -64,12 +64,12 @@ class HomeAddressViewModel @Inject constructor(
             divisionThreeSelected = null,
             divisionThreeList = listOf()
         )
-        divisionOne?.fkCatalog?.let {
+        divisionOne?.pkCatalog?.let {
             onCallQueryHomeCanton(
                 pkUser,
                 user,
                 idBrand,
-                it.toString(),
+                it,
                 onLoadingValueChange,
                 onFailureWithDialog
             )
@@ -84,12 +84,12 @@ class HomeAddressViewModel @Inject constructor(
     ) {
         uiState =
             uiState.copy(divisionTwoSelected = divisionTwo, divisionThreeSelected = null, divisionThreeList = listOf())
-        divisionTwo?.fkCatalog?.let {
+        divisionTwo?.pkCatalog?.let {
             onCallQueryHomeDistrict(
                 pkUser,
                 user,
                 idBrand,
-                it.toString(),
+                it,
                 onLoadingValueChange,
                 onFailureWithDialog
             )

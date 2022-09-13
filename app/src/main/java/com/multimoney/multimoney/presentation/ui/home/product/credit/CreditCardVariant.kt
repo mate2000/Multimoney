@@ -285,11 +285,6 @@ fun CardWithCreditInProcess(
             actionText = R.string.home_product_credit_not_completed_action
             startIcon = R.drawable.ic_warning
         }
-        CreditStartProcessIncomplete -> {
-            title = R.string.home_product_process_title
-            description = R.string.home_product_process_description
-            actionText = R.string.home_product_process_action
-        }
         CreditProcessMissingSignature -> {
             title = R.string.home_product_credit_signature_missing_title
             description = R.string.home_product_credit_signature_missing_description

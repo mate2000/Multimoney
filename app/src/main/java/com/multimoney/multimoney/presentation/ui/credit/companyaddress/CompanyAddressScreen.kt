@@ -114,7 +114,18 @@ fun CompanyAddressScreen(
             onValueChange = {
                 viewModel.onUIEvent(
                     CompanyAddressViewModel.UIEvent.OnDivisionOneValueChange(
-                        it
+                        divisionOne = it,
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading,
+                                    dialogParameters
+                                )
+                            )
+                        }
                     )
                 )
             },
@@ -130,7 +141,18 @@ fun CompanyAddressScreen(
             onValueChange = {
                 viewModel.onUIEvent(
                     CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange(
-                        it
+                        divisionTwo = it,
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading,
+                                    dialogParameters
+                                )
+                            )
+                        }
                     )
                 )
             },

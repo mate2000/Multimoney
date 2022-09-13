@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +44,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
@@ -50,6 +52,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditAppro
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -189,6 +192,12 @@ fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: Produ
 
 @Composable
 fun CreditProduct(viewModel: ProductViewModel) {
+    val context = LocalContext.current
+    val whatsAppLink = stringResource(
+        id = R.string.whatsapp_deep_link,
+        SignUpViewModel.PHONE_HARDCODED
+    )
+
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
             CreditStatus.APPROVED_CREDIT.status -> {
@@ -205,11 +214,21 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 viewModel.uiState.userStatus?.infoCredit?.amountAvailable
                             )
                         }
+                        infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
+                            CardCreditMaxAttempts(
+                                action = {
+                                    viewModel.onUIEvent(
+                                        ProductViewModel.UIEvent.OnMaxAttemptsCardClick(
+                                            whatsAppLink = whatsAppLink,
+                                            context = context
+                                        )
+                                    )
+                                }
+                            )
+                        }
                         (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) <= CreditStep.Five.id) -> CardWithCreditInProcess(
-                            type = CreditProcessOnFidoIncomplete
-                        )
+                        ) <= CreditStep.Five.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
                         infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
                             type = CreditStartProcessIncomplete
                         )

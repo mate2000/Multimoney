@@ -1,0 +1,23 @@
+query CompanyDistrict($pkUser: Int!, $user: String!, $idBrand: Int!, $fkCatalogIdentifier: String!){
+    companyDistrict(companyDistrictInput: {  pkUser: $pkUser, user: $user, idBrand: $idBrand, fkCatalogIdentifier: $fkCatalogIdentifier }) {
+        pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
+        fk_Suv_Cat_Pregunta_Solicitud_Credito
+        tipo_Control
+        descripcion
+        es_Catalogo_Core
+        pk_Identificador_Catalogo
+        es_Catalogo_Sucursal
+        utiliza_Valor
+        valor_Catalogo
+        llave_Formulario
+        monto_Maximo
+        subOpciones {
+            pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
+            descripcion
+            pk_Identificador_Catalogo
+            fk_Identificador_Catalogo
+        }
+        fk_Identificador_Catalogo
+        valor
+    }
+}

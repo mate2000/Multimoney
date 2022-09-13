@@ -18,12 +18,12 @@ import com.multimoney.data.networking.security.apollomodel.ValidationSecurityQue
 import javax.inject.Inject
 
 class SecurityApi @Inject constructor(
-    private val apolloClient: ApolloClient
+    private val apolloAuthorizedClient: ApolloClient
 ) {
     fun queryValidateUserExists(
         email: String
     ): ApolloCall<ValidateUserExistsQuery.Data> =
-        apolloClient.query(ValidateUserExistsQuery(email)).fetchPolicy(
+        apolloAuthorizedClient.query(ValidateUserExistsQuery(email)).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
 
@@ -34,11 +34,11 @@ class SecurityApi @Inject constructor(
         idDocument: Int,
         identification: String,
         firstName: String,
-        secondName:String,
+        secondName: String,
         firstSurname: String,
-        secondSurname:String
+        secondSurname: String
     ): ApolloCall<UserValidationMutation.Data> =
-        apolloClient.mutation(
+        apolloAuthorizedClient.mutation(
             UserValidationMutation(
                 email,
                 currentStep,
@@ -70,7 +70,7 @@ class SecurityApi @Inject constructor(
         currentStep: String,
         idBrand: Int
     ): ApolloCall<UpdateUserRegisterMutation.Data> =
-        apolloClient.mutation(
+        apolloAuthorizedClient.mutation(
             UpdateUserRegisterMutation(
                 pkUser,
                 user,
@@ -97,7 +97,7 @@ class SecurityApi @Inject constructor(
         user: String,
         idBrand: Int
     ): ApolloCall<ValidationSecurityQuery.Data> =
-        apolloClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand)).fetchPolicy(
+        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand)).fetchPolicy(
             FetchPolicy.NetworkOnly
         )
 
@@ -107,7 +107,7 @@ class SecurityApi @Inject constructor(
         email: String,
         idBrand: Int
     ): ApolloCall<ValidateUserStatusQuery.Data> =
-        apolloClient.query(ValidateUserStatusQuery(pkUser, identification, email, idBrand))
+        apolloAuthorizedClient.query(ValidateUserStatusQuery(pkUser, identification, email, idBrand))
             .fetchPolicy(
                 FetchPolicy.NetworkOnly
             )
@@ -117,7 +117,7 @@ class SecurityApi @Inject constructor(
         idBrand: Int,
         user: String
     ): ApolloCall<DataInformationClientQuery.Data> =
-        apolloClient.query(
+        apolloAuthorizedClient.query(
             DataInformationClientQuery(
                 identification, idBrand, user
             )
@@ -133,7 +133,7 @@ class SecurityApi @Inject constructor(
         idBrand: Int,
         user: String
     ): ApolloCall<SendPinProcessMutation.Data> =
-        apolloClient.mutation(
+        apolloAuthorizedClient.mutation(
             SendPinProcessMutation(
                 identification,
                 firstName,
@@ -153,7 +153,7 @@ class SecurityApi @Inject constructor(
         applicationId: String,
         idBrand: Int,
         user: String
-    ): ApolloCall<OnfidoIntialProcessMutation.Data> = apolloClient.mutation(
+    ): ApolloCall<OnfidoIntialProcessMutation.Data> = apolloAuthorizedClient.mutation(
         OnfidoIntialProcessMutation(
             names,
             lastNames,
@@ -174,7 +174,7 @@ class SecurityApi @Inject constructor(
         sendValidatePin: String,
         flowOrigination: String,
         userCreate: String
-    ): ApolloCall<ValidatePinQuery.Data> = apolloClient.query(
+    ): ApolloCall<ValidatePinQuery.Data> = apolloAuthorizedClient.query(
         ValidatePinQuery(
             idBrand,
             appSource,
@@ -192,8 +192,8 @@ class SecurityApi @Inject constructor(
         idBrand: Int,
         user: String
     ): ApolloCall<CatalogTypeIndentificationQuery.Data> =
-        apolloClient.query(CatalogTypeIndentificationQuery(user, idBrand))
+        apolloAuthorizedClient.query(CatalogTypeIndentificationQuery(user, idBrand))
 
     fun queryGetCountry(user: String): ApolloCall<GetCountryQuery.Data> =
-        apolloClient.query(GetCountryQuery(user))
+        apolloAuthorizedClient.query(GetCountryQuery(user))
 }

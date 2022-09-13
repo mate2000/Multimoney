@@ -680,6 +680,8 @@ type CreditMutation {
   saveCreditOperation(saveCreditOperationInput: saveCreditOperationInput): saveCreditOperation
 
   proccessPaymentList(proccessPaymentListInput: proccessPaymentListInput): proccessPaymentList
+
+  saveTermsAndConditions(saveTermsAndConditionsInput: saveTermsAndConditionsInput): saveTermsAndConditions
 }
 
 type saveCreditFlowStep {
@@ -1021,6 +1023,39 @@ input CuentaDestino {
   idMonedaDestino: String!
 
   montoDestino: String!
+}
+
+type saveTermsAndConditions {
+  """
+  saveTermsAndConditions status
+  """
+  status: Int
+
+  """
+  saveTermsAndConditions message
+  """
+  message: String
+
+  """
+  saveTermsAndConditions detail
+  """
+  detail: String
+}
+
+input saveTermsAndConditionsInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+
+  pkUser: Int!
+
+  currentFlow: String!
+
+  identification: String!
 }
 
 schema {

@@ -24,7 +24,7 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel() {
     private fun onValidForm() {
         emitBaseEvent(
             OnFormCompleted(
-                uiState.companyName.isNotEmpty() && uiState.date.isNotEmpty() && uiState.phoneNumber.isNotEmpty()
+                uiState.companyName.isNotEmpty() && uiState.date.isNotEmpty() && uiState.phoneNumber.isNotEmpty() && uiState.phoneNumber.length == PHONE_NUMBER_MAX_LENGTH
             )
         )
     }
@@ -54,7 +54,11 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel() {
         saveCreditStepsHelper.saveStepTwo(
             user,
             uiState.companyName,
-            getFormatDateByString(uiState.date.replace(VISUAL_DATE_SYMBOL, DASH_SYMBOL), DATE_FORMAT, BACKEND_DATE_FORMAT),
+            getFormatDateByString(
+                uiState.date.replace(VISUAL_DATE_SYMBOL, DASH_SYMBOL),
+                DATE_FORMAT,
+                BACKEND_DATE_FORMAT
+            ),
             uiState.phoneNumber
         )
         nextStepAction()
@@ -72,7 +76,11 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel() {
             is OnDateValueChange -> onDateValueChange(uiEvent.date)
             is OnCompanyNameValueChange -> onCompanyNameValueChange(uiEvent.companyName)
             is OnPhoneNumberValueChange -> onPhoneNumberValueChange(uiEvent.phoneNumber)
-            is OnNextActionClick -> onNexActionClick(uiEvent.user, uiEvent.nextStepAction, uiEvent.saveCreditStepsHelper)
+            is OnNextActionClick -> onNexActionClick(
+                uiEvent.user,
+                uiEvent.nextStepAction,
+                uiEvent.saveCreditStepsHelper
+            )
         }
     }
 
@@ -99,7 +107,7 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel() {
         const val JOB_DATE_MIN_YEAR = 1972
         const val JOB_DATE_MIN_MONTH = 0
         const val JOB_DATE_MIN_DAY = 1
-        const val PHONE_NUMBER_MAX_LENGTH = 12
+        const val PHONE_NUMBER_MAX_LENGTH = 8
         const val VISUAL_DATE_SYMBOL = " | "
         const val DASH_SYMBOL = "-"
     }

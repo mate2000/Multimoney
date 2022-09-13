@@ -27,8 +27,8 @@ import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressV
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeAddressViewModel @Inject constructor(
@@ -84,15 +84,17 @@ class HomeAddressViewModel @Inject constructor(
     ) {
         uiState =
             uiState.copy(divisionTwoSelected = divisionTwo, divisionThreeSelected = null, divisionThreeList = listOf())
-        divisionTwo?.pkCatalog?.let {
-            onCallQueryHomeDistrict(
-                pkUser,
-                user,
-                idBrand,
-                it,
-                onLoadingValueChange,
-                onFailureWithDialog
-            )
+        if (idBrand != Brand.ElSalvador.id) {
+            divisionTwo?.pkCatalog?.let {
+                onCallQueryHomeDistrict(
+                    pkUser,
+                    user,
+                    idBrand,
+                    it,
+                    onLoadingValueChange,
+                    onFailureWithDialog
+                )
+            }
         }
         onValidateScreen()
     }
@@ -108,16 +110,18 @@ class HomeAddressViewModel @Inject constructor(
     }
 
     private fun onPhoneValueChange(phone: String) {
-        uiState = uiState.copy(phone = phone)
-        onValidateScreen()
+        if (phone.length <= PHONE_NUMBER_MAX_LENGTH) {
+            uiState = uiState.copy(phone = phone)
+            onValidateScreen()
+        }
     }
 
     private fun onValidateScreen() {
         emitBaseEvent(
             IsFormCompleted(
                 when (idBrand) {
-                    Brand.ElSalvador.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank()
-                    Brand.Guatemala.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank()
+                    Brand.ElSalvador.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank() && uiState.phone.length == PHONE_NUMBER_MAX_LENGTH
+                    Brand.Guatemala.id -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank() && uiState.phone.isNotBlank() && uiState.phone.length == PHONE_NUMBER_MAX_LENGTH
                     else -> uiState.divisionOneSelected != null && uiState.divisionTwoSelected != null && uiState.divisionThreeSelected != null && uiState.address.isNotBlank()
                 }
             )
@@ -128,7 +132,7 @@ class HomeAddressViewModel @Inject constructor(
         pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest:String,
+        idUserRequest: String,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
@@ -309,7 +313,11 @@ class HomeAddressViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNextActionClick -> onNextActionClick(uiEvent.user, uiEvent.nextStepAction, uiEvent.saveCreditStepsHelper)
+            is OnNextActionClick -> onNextActionClick(
+                uiEvent.user,
+                uiEvent.nextStepAction,
+                uiEvent.saveCreditStepsHelper
+            )
             is OnDivisionOneValueChange -> onDivisionOneValueChange(
                 uiEvent.divisionOne,
                 uiEvent.onLoadingValueChange,
@@ -375,5 +383,6 @@ class HomeAddressViewModel @Inject constructor(
 
     companion object {
         const val MIDDLE_DASH = "-"
+        const val PHONE_NUMBER_MAX_LENGTH = 8
     }
 }

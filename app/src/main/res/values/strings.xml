@@ -299,9 +299,9 @@
     <string name="credit_job_date_required" translatable="false">Fecha de ingreso requerida</string>
     <string name="credit_job_joined_date" translatable="false">Fecha en la que ingresaste</string>
     <string name="credit_job_phone_number" translatable="false">Número de teléfono</string>
-    <string name="credit_job_phone_placeholder_sv" translatable="false">+503 0000 0000</string>
-    <string name="credit_job_phone_placeholder_cr" translatable="false">+506 0000 0000</string>
-    <string name="credit_job_phone_placeholder_gt" translatable="false">+502 0000 0000</string>
+    <string name="credit_job_phone_placeholder_sv" translatable="false">0000 0000</string>
+    <string name="credit_job_phone_placeholder_cr" translatable="false">0000 0000</string>
+    <string name="credit_job_phone_placeholder_gt" translatable="false">0000 0000</string>
     <string name="credit_job_phone_placeholder" translatable="false">0000 0000</string>
     <string name="credit_job_phone_required" translatable="false">Número de teléfono requerido</string>
 

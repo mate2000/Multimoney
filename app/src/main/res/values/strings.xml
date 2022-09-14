@@ -86,6 +86,7 @@
     <string name="sign_up_otp_change_phone" translatable="false">Corregir número</string>
     <string name="sign_up_otp_resend" translatable="false">Reenviar código</string>
     <string name="sign_up_otp_call" translatable="false">Recibir código por llamada</string>
+    <string name="sign_up_otp_sms" translatable="false">Recibir código por sms</string>
     <string name="sign_up_otp_expiration_time_phase_one" translatable="false">Código expira en </string>
     <string name="sign_up_otp_expiration_time_phase_three" translatable="false">Código reenviado expira en </string>
     <string name="sign_up_otp_expiration_time_phase_five" translatable="false">Código expira en </string>

@@ -1,14 +1,22 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.multimoney.multimoney.presentation.navigation.BottomNavItem
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.ProductScreen
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-@Preview
 fun HomeScreen(
+    navController: NavController,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
@@ -197,6 +205,42 @@ fun HomeScreen(
             }
         }
     }*/
+
+
+    val items = listOf(
+        BottomNavItem.Home,
+        BottomNavItem.QuickAction,
+        BottomNavItem.Products
+    )
+
+    BottomNavigation(
+        backgroundColor = MultimoneyTheme.colors.background,
+        contentColor = MultimoneyTheme.colors.bottomNavigationIconSelectedColor
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+        items.forEach { item ->
+            BottomNavigationItem(
+                icon = { Icon(painterResource(id = item.icon), contentDescription = "") },
+                selectedContentColor = MultimoneyTheme.colors.bottomNavigationIconSelectedColor,
+                unselectedContentColor = MultimoneyTheme.colors.bottomNavigationIconUnselectedColor,
+                alwaysShowLabel = false,
+                selected = currentRoute == item.route,
+                onClick = {
+                    navController.navigate(item.route) {
+
+                        navController.graph.startDestinationRoute?.let { screen_route ->
+                            popUpTo(screen_route) {
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+            )
+        }
+    }
 }
 
 //fun getRandom(): Int {

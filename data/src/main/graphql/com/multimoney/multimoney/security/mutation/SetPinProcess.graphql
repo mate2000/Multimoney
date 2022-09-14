@@ -19,6 +19,8 @@ mutation SendPinProcess($identification:String!, $firstName:String!, $email:Stri
         cantidad_reenvios_pin
         cantidad_reenvios_otp
         valor_tiempo_exp_pin
+        tipo_envio
+        tipo_envio_sig
         status
         message
         detail

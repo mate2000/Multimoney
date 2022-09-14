@@ -53,11 +53,17 @@ fun MonthlyIncomeScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnValidForm)
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnNextActionClick {
-                sharedViewModel.onUIEvent(
-                    CreditViewModel.UIEvent.OnNextStep
+            viewModel.onUIEvent(
+                MonthlyIncomeViewModel.UIEvent.OnNextActionClick(
+                    user = sharedViewModel.email,
+                    nextStepAction = {
+                        sharedViewModel.onUIEvent(
+                            CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
+                        )
+                    },
+                    saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                 )
-            })
+            )
         }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id))
     }
 

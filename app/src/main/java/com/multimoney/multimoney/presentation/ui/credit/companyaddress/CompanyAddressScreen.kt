@@ -70,9 +70,14 @@ fun CompanyAddressScreen(
         sharedViewModel.onUIEvent(
             CreditViewModel.UIEvent.OnSetNavigation(
                 nextAction = {
-                    viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnNextActionClick {
-                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNextStep)
-                    })
+                    viewModel.onUIEvent(
+                        CompanyAddressViewModel.UIEvent.OnNextActionClick(
+                            user = sharedViewModel.email,
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep)
+                            }, saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                        )
+                    )
                 },
                 nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id
             )
@@ -80,9 +85,10 @@ fun CompanyAddressScreen(
         viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnFormValid)
         viewModel.onUIEvent(
             CompanyAddressViewModel.UIEvent.OnCallCatalogs(
-                PK_USER,
-                USER,
+                sharedViewModel.pkUser,
+                sharedViewModel.email,
                 sharedViewModel.idBrand.toInt(),
+                idUserRequest = sharedViewModel.idUserRequest,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                 },
@@ -202,6 +208,3 @@ fun CompanyAddressScreen(
         )
     }
 }
-
-const val PK_USER = "229913"
-const val USER = "Diego"

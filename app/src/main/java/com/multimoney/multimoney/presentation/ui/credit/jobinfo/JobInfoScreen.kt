@@ -53,12 +53,17 @@ fun JobPlaceScreen(
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(JobInfoViewModel.UIEvent.OnNextActionClick {
-                sharedViewModel.onUIEvent(
-                    CreditViewModel.UIEvent.OnNextStep
+            viewModel.onUIEvent(
+                JobInfoViewModel.UIEvent.OnNextActionClick(
+                    user = sharedViewModel.email,
+                    nextStepAction = {
+                        sharedViewModel.onUIEvent(
+                            CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
+                        )
+                    }, saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                 )
-            })
-        }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Three.id))
+            )
+        }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Two.id))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormCompleted -> {

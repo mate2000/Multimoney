@@ -32,6 +32,10 @@ type CreditQuery {
   terminsAndConditions(terminsAndConditionsInput: terminsAndConditionsInput): terminsAndConditions
 
   listBanks(listBanksInput: listBanksInput): [listBanks]
+
+  creditExtensionAmount(creditExtensionAmountInput: creditExtensionAmountInput): creditExtensionAmount
+
+  creditExtensionMessage(creditExtensionMessageInput: creditExtensionMessageInput): creditExtensionMessage
 }
 
 type creditOffer {
@@ -44,6 +48,11 @@ type creditOffer {
   creditOffer products
   """
   products: [products]
+
+  """
+  creditOffer rejectedBlaze
+  """
+  rejectedBlaze: Boolean!
 }
 
 scalar Long
@@ -390,7 +399,7 @@ input screenConfigInput {
 
   traceIdentifier: String
 
-  idUserRequest: String
+  idUserRequest: String!
 }
 
 type regularExpression {
@@ -672,6 +681,349 @@ input listBanksInput {
   traceIdentifier: String
 }
 
+type creditExtensionAmount {
+  """
+  creditExtensionAmount amountMax
+  """
+  amountMax: Decimal
+
+  """
+  creditExtensionAmount amountMin
+  """
+  amountMin: Decimal
+
+  """
+  creditExtensionAmount labelAmountMaxAvailable
+  """
+  labelAmountMaxAvailable: String
+
+  """
+  creditExtensionAmount labelAmountMinAvailable
+  """
+  labelAmountMinAvailable: String
+
+  """
+  creditExtensionAmount symbol
+  """
+  symbol: String
+
+  """
+  creditExtensionAmount amountTract
+  """
+  amountTract: Int
+
+  """
+  creditExtensionAmount idLoanClient
+  """
+  idLoanClient: Long
+
+  """
+  creditExtensionAmount idProductBase
+  """
+  idProductBase: Int
+
+  """
+  creditExtensionAmount cicle
+  """
+  cicle: Int
+
+  """
+  creditExtensionAmount quotaMax
+  """
+  quotaMax: Decimal
+
+  """
+  creditExtensionAmount promissoryNote
+  """
+  promissoryNote: String
+
+  """
+  creditExtensionAmount amountMinDisbursementCK
+  """
+  amountMinDisbursementCK: Decimal
+
+  """
+  creditExtensionAmount paramMore
+  """
+  paramMore: Boolean
+}
+
+input creditExtensionAmountInput {
+  idClient: Int!
+
+  currency: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type creditExtensionMessage {
+  """
+  creditExtensionMessage pkPromotion
+  """
+  pkPromotion: Long
+
+  """
+  creditExtensionMessage pkPromotionMonth
+  """
+  pkPromotionMonth: Int
+
+  """
+  creditExtensionMessage idClient
+  """
+  idClient: Long
+
+  """
+  creditExtensionMessage amountRequest
+  """
+  amountRequest: Decimal
+
+  """
+  creditExtensionMessage tableClass
+  """
+  tableClass: String
+
+  """
+  creditExtensionMessage idProductSelect
+  """
+  idProductSelect: Int
+
+  """
+  creditExtensionMessage idProductBase
+  """
+  idProductBase: Int
+
+  """
+  creditExtenscreditExtensionMessageion monthSelect
+  """
+  monthSelect: Int
+
+  """
+  creditExtensionMessage quotaCalculator
+  """
+  quotaCalculator: String
+
+  """
+  creditExtensionMessage requiredSms
+  """
+  requiredSms: Boolean
+
+  """
+  creditExtensionMessage numberTelephone
+  """
+  numberTelephone: String
+
+  """
+  creditExtensionMessage fkUser
+  """
+  fkUser: Int
+
+  """
+  creditExtensionMessage menssageAmountExtensionPart1
+  """
+  menssageAmountExtensionPart1: String
+
+  """
+  creditExtensionMessage menssageAmountExtensionPart2
+  """
+  menssageAmountExtensionPart2: String
+
+  """
+  creditExtensionMessage menssageInformationExtensionPart1
+  """
+  menssageInformationExtensionPart1: String
+
+  """
+  creditExtensionMessage menssageInformationExtensionPart2
+  """
+  menssageInformationExtensionPart2: String
+
+  """
+  creditExtensionMessage menssageInformationApp
+  """
+  menssageInformationApp: String
+
+  """
+  creditExtensionMessage currency
+  """
+  currency: String
+
+  """
+  creditExtensionMessage promissoryNote
+  """
+  promissoryNote: String
+
+  """
+  creditExtension product
+  """
+  product: [creditExtensionProductList]
+}
+
+type creditExtensionProductList {
+  """
+  creditExtensionProductList pkPromotion
+  """
+  pkPromotion: Long
+
+  """
+  creditExtensionProductList pkPromotionMonth
+  """
+  pkPromotionMonth: Int
+
+  """
+  creditExtensionProductList DescriptionPromotionTerm
+  """
+  descriptionPromotionTerm: String
+
+  """
+  creditExtensionProductList rateInterestNormal
+  """
+  rateInterestNormal: String
+
+  """
+  creditExtensionProductList rateIntMoratorium
+  """
+  rateIntMoratorium: String
+
+  """
+  creditExtensionProductList comissionMoratorium
+  """
+  comissionMoratorium: Decimal
+
+  """
+  creditExtensionProductList comissionDisbursement
+  """
+  comissionDisbursement: String
+
+  """
+  creditExtensionProductList strRateInterestNormal
+  """
+  strRateInterestNormal: String
+
+  """
+  creditExtensionProductList strComissionDisbursement
+  """
+  strComissionDisbursement: String
+
+  """
+  creditExtensionProductList extensionCommission
+  """
+  extensionCommission: Decimal
+
+  """
+  creditExtensionProductList interestRateExpansion
+  """
+  interestRateExpansion: String
+
+  """
+  creditExtensionProductList showDetail
+  """
+  showDetail: String
+
+  """
+  creditExtensionProductList month
+  """
+  month: String
+
+  """
+  creditExtensionProductList quota
+  """
+  quota: Decimal
+
+  """
+  creditExtensionProductList quotaTotal
+  """
+  quotaTotal: Decimal
+
+  """
+  creditExtensionProductList cicle
+  """
+  cicle: Int
+
+  """
+  creditExtensionProductList isPromotion
+  """
+  isPromotion: Boolean
+
+  """
+  creditExtensionProductList datePay
+  """
+  datePay: DateTime
+
+  """
+  creditExtensionProductList datePayActuality
+  """
+  datePayActuality: DateTime
+
+  """
+  creditExtensionProductList strQuota
+  """
+  strQuota: String
+
+  """
+  creditExtensionProductList strQuotaTotal
+  """
+  strQuotaTotal: String
+
+  """
+  creditExtensionProductList quotaActuality
+  """
+  quotaActuality: Decimal
+
+  """
+  creditExtensionProductList strQuotaActuality
+  """
+  strQuotaActuality: String
+
+  """
+  creditExtensionProductList strDatePay
+  """
+  strDatePay: String
+
+  """
+  creditExtensionProductList strDatePayActuality
+  """
+  strDatePayActuality: String
+}
+
+"""
+The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
+scalar DateTime
+
+input creditExtensionMessageInput {
+  idClient: Int!
+
+  currency: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  amountRequest: Decimal!
+
+  tenantId: String
+
+  traceIdentifier: String
+
+  modelCreditExtensionConfigurator: modelCreditExtensionConfiguratorInput!
+}
+
+input modelCreditExtensionConfiguratorInput {
+  quotaMax: Decimal!
+
+  idLoanClient: Int!
+
+  idProductBase: Int!
+
+  cicle: Int!
+}
+
 type CreditMutation {
   saveCreditFlowStep(saveCreditFlowStepInput: saveCreditFlowStepInput): saveCreditFlowStep
 
@@ -871,11 +1223,6 @@ type saveCreditApplication {
   """
   detail: String
 }
-
-"""
-The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
-"""
-scalar DateTime
 
 input CreditApplicationInputType {
   idUserRequest: Int!

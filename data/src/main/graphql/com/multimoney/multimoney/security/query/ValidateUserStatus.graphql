@@ -8,18 +8,51 @@ query ValidateUserStatus($pkUser: Int!, $identification: String!, $user: String!
         }
     ) {
         infoUser {
+            pkUser
             idBrand
+            fullName
+            firstName
+            secondName
+            lastName
+            secondLastName
             userName
+            email
+            phone
+            birthDate
             idClient
+            vISADirect_ID
+            vISADirect_Usuario
             statusOnfido
+            fecha_ultimo_acceso
         }
         infoCredit {
             idClient
             idLoanClient
             status
+            infoPreApprove {
+                idUserRequest
+                status
+                infoProducts {
+                    idProduct
+                    amountAvailable
+                    symbolCurrency
+                }
+                selectedAmount
+                statusFirm
+                currentStep
+            }
+        }
+        infoVirtualCard {
+            status
         }
         infoBankAccount {
             statusFirm
+            idRequestSysde
+            idRequestGlobal
+            status
+        }
+        infoCrypto {
+            status
         }
     }
 }

@@ -1,5 +1,5 @@
-query CompanyCanton($pkUser: Int!, $user: String!, $idBrand: Int!, $fkCatalogIdentifier: String!){
-    companyCanton(companyCantonInput: {  pkUser: $pkUser, user: $user, idBrand: $idBrand, fkCatalogIdentifier: $fkCatalogIdentifier }) {
+query CompanyCanton($pkUser: Int!, $user: String!, $idBrand: Int!, $fkCatalogIdentifier: String!, $idUserRequest:String!){
+    companyCanton(companyCantonInput: {  pkUser: $pkUser, user: $user, idBrand: $idBrand, fkCatalogIdentifier: $fkCatalogIdentifier, idUserRequest: $idUserRequest }) {
         pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
         fk_Suv_Cat_Pregunta_Solicitud_Credito
         tipo_Control

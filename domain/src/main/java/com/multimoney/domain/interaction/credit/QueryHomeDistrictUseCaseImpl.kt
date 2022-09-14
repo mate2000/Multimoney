@@ -7,6 +7,7 @@ class QueryHomeDistrictUseCaseImpl(private val creditRepository: CreditRepositor
         pkUser: Int,
         user: String,
         idBrand: Int,
-        fkCatalogIdentifier: String
-    ) = creditRepository.queryHomeDistrict(pkUser, user, idBrand, fkCatalogIdentifier)
+        fkCatalogIdentifier: String,
+        idUserRequest: String
+    ) = creditRepository.queryHomeDistrict(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
 }

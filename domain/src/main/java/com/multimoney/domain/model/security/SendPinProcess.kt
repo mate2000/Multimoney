@@ -11,5 +11,7 @@ data class SendPinProcess(
     val numberOfPinForwards: String?,
     val numberOfOtpForwards: String?,
     val pinExpirationTime: String?,
+    val type: String?,
+    val nextType: String?,
     val messageError: MessageError
 )

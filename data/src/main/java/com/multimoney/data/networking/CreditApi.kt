@@ -16,6 +16,7 @@ import com.multimoney.data.networking.credit.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.credit.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.credit.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.credit.apollomodel.ScreenConfigQuery
+import com.multimoney.data.networking.credit.apollomodel.TermsAndConditionsQuery
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import javax.inject.Inject
 
@@ -164,6 +165,17 @@ class CreditApi @Inject constructor(
                 idLogUserRequest,
                 idUser,
                 currentStep
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationTermsAndConditions(
+        user: String,
+        idBrand: Int,
+        systemInDarkTheme: Boolean
+    ): ApolloCall<TermsAndConditionsQuery.Data> =
+        apolloClient.query(
+            TermsAndConditionsQuery(
+                user, idBrand, systemInDarkTheme
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

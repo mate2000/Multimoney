@@ -24,6 +24,8 @@ import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCaseImpl
+import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
+import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
@@ -179,4 +181,10 @@ class InteractionModule {
     @Singleton
     fun provideQueryHomeProvinceUseCase(creditRepository: CreditRepository): QueryHomeProvinceUseCase =
         QueryHomeProvinceUseCaseImpl(creditRepository)
+
+     @Provides
+    @Singleton
+    fun provideTermsAndConditionUseCase(creditRepository: CreditRepository): TermsAndConditionsUseCase =
+        TermsAndConditionsUseCaseImpl(creditRepository)
+
 }

@@ -66,7 +66,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
             user,
             uiState.income,
             getDummyOccupationCatalog(),
-            CreditCatalogOption(4079, "Ama de Casa", "255", 0)
+            CreditCatalogOption( "Ama de Casa", "255", 0)
         )
         onNextStepAction()
     }
@@ -85,7 +85,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
             null,
             "",
             "",
-            listOf(CreditCatalogOption(4079, "Ama de Casa", "255", 0))
+            listOf(CreditCatalogOption("Ama de Casa", "255", 0))
         )
     }
 

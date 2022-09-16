@@ -19,6 +19,8 @@ private fun SendPinProcessMutation.SendPinProccess.mapToDomainModel() = SendPinP
     numberOfPinForwards = cantidad_reenvios_pin,
     numberOfOtpForwards = cantidad_reenvios_otp,
     pinExpirationTime = valor_tiempo_exp_pin,
+    type = tipo_envio,
+    nextType = tipo_envio_sig,
     messageError = mapMessageToDomainModel()
 )
 

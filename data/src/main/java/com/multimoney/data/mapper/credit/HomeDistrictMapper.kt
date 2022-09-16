@@ -21,7 +21,6 @@ private fun HomeDistrictQuery.HomeDistrict.mapToDomainModel() = CreditCatalog(
 )
 
 private fun HomeDistrictQuery.SubOpcione.mapToDomainModel() = CreditCatalogOption(
-    id = pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito,
     description = descripcion,
     pkCatalog = pk_Identificador_Catalogo,
     fkCatalog = fk_Identificador_Catalogo

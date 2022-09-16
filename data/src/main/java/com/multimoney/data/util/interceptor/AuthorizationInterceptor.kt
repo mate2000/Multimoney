@@ -1,4 +1,5 @@
 import com.amazonaws.mobile.client.AWSMobileClient
+import com.amplifyframework.core.Amplify
 import com.apollographql.apollo3.api.http.HttpRequest
 import com.apollographql.apollo3.api.http.HttpResponse
 import com.apollographql.apollo3.network.http.HttpInterceptor

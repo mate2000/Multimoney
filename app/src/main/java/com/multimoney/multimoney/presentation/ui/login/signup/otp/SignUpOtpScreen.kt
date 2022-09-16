@@ -30,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -49,6 +48,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_THREE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_TWO
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DURATION
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
@@ -61,7 +61,7 @@ import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTra
 fun SignUpOtpScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpOtpViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel()
+    sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -94,7 +94,7 @@ fun SignUpOtpScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(SignUpOtpViewModel.UIEvent.OnInitializeTimer(PHASE_ONE))
+            onUIEvent(SignUpOtpViewModel.UIEvent.OnInitializeTimer(PHASE_ONE, TIMER_DURATION))
             baseEvent.collect { event ->
                 when (event) {
                     is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
@@ -176,11 +176,11 @@ fun SignUpOtpScreen(
         viewModel.onCallMutationSendPinProcessEvent.collect { event ->
             event.onSuccess {
                 viewModel.onUIEvent(
-                    SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcessSuccess {
+                    SignUpOtpViewModel.UIEvent.OnCallMutationSendPinProcessSuccess({
                         sharedViewModel.onUIEvent(
                             SignUpViewModel.UIEvent.OnLoadingValueChange(false)
                         )
-                    }
+                    }, it)
                 )
             }.onMessage {
                 sharedViewModel.onUIEvent(
@@ -325,7 +325,7 @@ fun SignUpOtpScreen(
                                 userData?.firstName ?: "",
                                 userData?.email ?: "",
                                 userData?.phoneNumber ?: "",
-                                SEND_METHOD_PHONE,
+                                viewModel.uiState.otpResend ?: SEND_METHOD_PHONE,
                                 userData?.pkUser ?: "",
                                 idBrand ?: 0,
                                 userData?.email ?: ""

@@ -809,6 +809,16 @@ type validateUserExists {
   identification: String
 
   """
+  userValidation strIdIdentification
+  """
+  strIdIdentification: String
+
+  """
+  userValidation idIdentification
+  """
+  idIdentification: Int
+
+  """
   userValidation countryCode
   """
   countryCode: String

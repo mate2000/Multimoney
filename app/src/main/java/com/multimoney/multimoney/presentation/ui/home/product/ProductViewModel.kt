@@ -42,7 +42,7 @@ class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val dataStorePreferences: DataStorePreferences
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

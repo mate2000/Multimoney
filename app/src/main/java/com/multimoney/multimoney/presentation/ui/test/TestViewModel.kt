@@ -15,7 +15,7 @@ import javax.inject.Inject
 class TestViewModel @Inject constructor(
     private val mutationUserValidationUseCase: MutationUserValidationUseCase,
     val onFidoHelper: OnFidoHelper
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     var data by mutableStateOf<UserData?>(null)
 

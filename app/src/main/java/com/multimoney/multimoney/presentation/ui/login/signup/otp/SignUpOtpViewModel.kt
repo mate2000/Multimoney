@@ -48,8 +48,8 @@ import kotlin.time.Duration.Companion.seconds
 @HiltViewModel
 class SignUpOtpViewModel @Inject constructor(
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
-    private val queryValidatePinUseCase: QueryValidatePinUseCase,
-) : BaseViewModel() {
+    private val queryValidatePinUseCase: QueryValidatePinUseCase
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -309,8 +309,10 @@ class SignUpOtpViewModel @Inject constructor(
             )
             is OnValidateForm -> isFormValid()
             is OnNavigateToSignIn -> navigateToSignIn()
-            is OnCallMutationSendPinProcessSuccess -> onCallMutationSendPinProcessSuccess(event.onLoadingValueChange,
-                event.pinProcess)
+            is OnCallMutationSendPinProcessSuccess -> onCallMutationSendPinProcessSuccess(
+                event.onLoadingValueChange,
+                event.pinProcess
+            )
             is OnOtpValueChange -> onOtpValueChange(event.value)
             is OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
         }

@@ -36,17 +36,17 @@ import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmoun
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import javax.inject.Inject
-import kotlin.math.roundToInt
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
+import java.time.LocalDateTime
+import javax.inject.Inject
+import kotlin.math.roundToInt
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class CreditAmountViewModel @Inject constructor(
@@ -54,7 +54,7 @@ class CreditAmountViewModel @Inject constructor(
     private val queryPaymentAmountUseCase: QueryPaymentAmountUseCase,
     private val mutationSaveCreditApplicationUseCase: MutationSaveCreditApplicationUseCase,
     private val queryScreenConfigUseCase: QueryScreenConfigUseCase
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

@@ -50,7 +50,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val queryGetCountryUseCase: QueryGetCountryUseCase,
     private val mutationUserValidationUseCase: MutationUserValidationUseCase
-) : BaseViewModel() {
+) : BaseViewModel(false) {
     // UIState
     var uiState by mutableStateOf(UIState())
         private set

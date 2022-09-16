@@ -31,16 +31,16 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -84,7 +84,7 @@ class SignInViewModel @Inject constructor(
                                             dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
                                         }
                                         val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
-                                        dataStorePreferences.setAuthToken(session.userPoolTokens.value?.accessToken ?: "")
+                                        dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
                                         saveUserData(payload)
                                         uiState = uiState.copy(isLoading = false)
                                         if (uiState.isFingerprintChecked) {

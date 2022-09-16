@@ -35,7 +35,7 @@ class HomeAddressViewModel @Inject constructor(
     private val queryHomeProvinceUseCase: QueryHomeProvinceUseCase,
     private val queryHomeCantonUseCase: QueryHomeCantonUseCase,
     private val queryHomeDistrictUseCase: QueryHomeDistrictUseCase
-) : BaseViewModel() {
+) : BaseViewModel(true) {
     // uiState
     var uiState by mutableStateOf(UIState())
         private set

@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.first
 class CreditTermsAndConditionViewModel @Inject constructor(
     private val termsAndConditionsUseCase: TermsAndConditionsUseCase,
     private val dataStorePreferences: DataStorePreferences
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set

@@ -202,7 +202,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
 
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
-            CreditStatus.APPROVED_CREDIT.status -> {
+            CreditStatus.APPROVED_CREDIT.status, CreditStatus.CREDIT_PRE_APPROVED.status -> {
                 CustomProductBackground(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),

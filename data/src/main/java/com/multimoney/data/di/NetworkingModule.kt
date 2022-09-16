@@ -1,5 +1,6 @@
 package com.multimoney.data.di
 
+import AuthorizationInterceptor
 import android.content.Context
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.normalizedCache
@@ -17,12 +18,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -41,33 +40,18 @@ class NetworkingModule {
     }
 
     private fun authOkHttpClientProvider(
-        certificateUtil: CertificateUtil,
-        dataStorePreferences: DataStorePreferences
+        certificateUtil: CertificateUtil
     ): OkHttpClient {
         val provider = OkHttpClient.Builder()
         provider
-            .addNetworkInterceptor { chain ->
-                val token = runBlocking {
-                    dataStorePreferences.getAuthToken().first()
-                }
-                val request = chain.request().newBuilder()
-                    .addHeader(
-                        AUTHORIZATION_HEADER,
-                        "Bearer $token"
-                    )
-                    .build()
-                chain.proceed(request)
-            }
+            .sslSocketFactory(
+                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
+                certificateUtil.getX509TrustManager()
+            )
             .addInterceptor(loggingInterceptor)
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-        if (BuildConfig.BUILD_TYPE != DEBUG) {
-            provider.sslSocketFactory(
-                certificateUtil.getSSLContext(R.raw.ssl_certificate).socketFactory,
-                certificateUtil.getX509TrustManager()
-            )
-        }
         return provider.build()
     }
 
@@ -82,11 +66,11 @@ class NetworkingModule {
 
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL + schema)
+            .addHttpInterceptor(AuthorizationInterceptor(dataStorePreferences))
             .normalizedCache(sqlNormalizedCacheFactory)
             .okHttpClient(
                 authOkHttpClientProvider(
-                    certificateUtil,
-                    dataStorePreferences = dataStorePreferences
+                    certificateUtil
                 )
             )
             .build()
@@ -127,8 +111,6 @@ class NetworkingModule {
         CreditApi(apolloAuthorizedClientProvider(context, SCHEMA_CREDIT, util, preferences))
 
     companion object {
-        const val DEBUG = "debug"
-        const val AUTHORIZATION_HEADER = "Authorization"
         const val TIMEOUT = 120L
         const val APOLLO_PREFIX_DB = "multimoney_apollo_"
         const val APOLLO_SUFFIX_DB = "_db"

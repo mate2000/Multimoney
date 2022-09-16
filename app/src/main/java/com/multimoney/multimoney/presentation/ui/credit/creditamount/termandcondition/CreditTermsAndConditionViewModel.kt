@@ -36,7 +36,7 @@ class CreditTermsAndConditionViewModel @Inject constructor(
                 systemInDarkTheme
             ).collectLatest {result ->
                 result.onSuccess { htmlResponse ->
-                   uiState = uiState.copy(html = htmlResponse)
+                   uiState = uiState.copy(html = htmlResponse, isLoading = false)
                 }
                 result.onFailure {
                     onFailure(it)

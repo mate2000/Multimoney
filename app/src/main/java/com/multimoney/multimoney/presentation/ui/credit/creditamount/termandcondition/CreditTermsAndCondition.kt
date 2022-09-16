@@ -2,37 +2,44 @@ package com.multimoney.multimoney.presentation.ui.credit.creditamount.termandcon
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.util.MmWebViewHtml
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreditTermAndCondition(
     onAcceptTermsAndCondition: () -> Unit,
     isActive: MutableState<Boolean>,
+    viewModel: CreditTermsAndConditionViewModel = hiltViewModel()
 ) {
+    val isSystemInDrkTheme = isSystemInDarkTheme()
+    LaunchedEffect(key1 = true) {
+        viewModel.fetchTermsAndConditions(isSystemInDrkTheme)
+    }
+
     Dialog(
         onDismissRequest = {
             isActive.value = false
@@ -44,35 +51,25 @@ fun CreditTermAndCondition(
         Column(
             Modifier
                 .fillMaxSize()
-                .background(MultimoneyTheme.colors.background)
-                .padding(horizontal = 16.dp),
+                .background(MultimoneyTheme.colors.background),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             BackCloseNavBar(isBackVisible = false, onCloseClick = {
                 isActive.value = false
             })
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight(0.85f)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Text(
-                    text = stringResource(id = R.string.credit_amount_terms_and_condition_title),
-                    modifier = Modifier.padding(top = 8.dp),
-                    style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.labelText
-                )
-                Text(
-                    text = stringResource(id = R.string.credit_amount_terms_and_condition_description),
-                    modifier = Modifier.padding(top = 16.dp),
-                    style = Typography.body2,
-                    color = MultimoneyTheme.colors.text
-                )
+            if (viewModel.uiState.html.isNotEmpty()){
+                Column(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+                    MmWebViewHtml(
+                        viewModel.uiState.html,
+                        LocalContext.current,
+                    )
+                }
             }
             CustomButton(
                 modifier = Modifier
-                    .padding(bottom = 40.dp)
-                    .fillMaxWidth(),
+                    .padding(bottom = 40.dp, top = 16.dp, start = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
+                    .height(48.dp),
                 text = stringResource(id = R.string.accept),
                 buttonType = PrimaryPrimary,
                 onClick = {
@@ -81,7 +78,11 @@ fun CreditTermAndCondition(
                 }
             )
         }
+
+        LoadingIndicator(viewModel.uiState.isLoading)
     }
+
+
 
     BackHandler {
         isActive.value = false

@@ -199,4 +199,17 @@ class CreditRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
+    override suspend fun mutationTermsAndConditions(
+        user: String,
+        idBrand: Int,
+        systemInDarkTheme: Boolean
+    ) :Flow<MultimoneyResult<String>> = fetchData(
+        apolloCall = creditApi.mutationTermsAndConditions(
+            user, idBrand, systemInDarkTheme
+        ),
+        apolloCallMapper = { data ->
+            Success(data.terminsAndConditions?.terminsAndConditionsHtml ?: "")
+        }
+    )
 }

@@ -47,8 +47,6 @@ class ProductViewModel @Inject constructor(
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
-    private var linkWhatsapp = ""
-
 
     private fun onGetUserData() {
         viewModelScope.launch {

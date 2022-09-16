@@ -15,3 +15,13 @@ fun MmWebView(url: String, context: Context) {
         }
     })
 }
+
+@Composable
+fun MmWebViewHtml(html: String, context: Context) {
+    AndroidView(factory = {
+        WebView(context).apply {
+            webViewClient = WebViewClient()
+            loadData(html, "text/html", "UTF-8")
+        }
+    })
+}

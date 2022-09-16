@@ -1,0 +1,7 @@
+query TermsAndConditions($user:String!, $idBrand:Int!, $styleDark: Boolean!){
+    terminsAndConditions(
+        terminsAndConditionsInput: { user: $user, idBrand: $idBrand, styleDark: $styleDark }
+    ) 	{
+        terminsAndConditionsHtml
+    }
+}

@@ -147,7 +147,10 @@ data class MultimoneyColors(
     val creditNotApprovedText: Color,
     val labelText: Color,
     val chipBackground: Color,
-    val shimmerItemColor: Color
+    val shimmerItemColor: Color,
+    val bottomNavigationDividerColor: Color,
+    val bottomNavigationIconSelectedColor: Color,
+    val bottomNavigationIconUnselectedColor: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -169,7 +172,10 @@ val DarkColorPalette = MultimoneyColors(
     creditNotApprovedText = WhiteTransparency80,
     labelText = WhiteTransparency90,
     chipBackground = BlackTransparency20,
-    shimmerItemColor = WhiteTransparency50
+    shimmerItemColor = WhiteTransparency50,
+    bottomNavigationDividerColor = WhiteTransparency40,
+    bottomNavigationIconSelectedColor = DefaultWhite,
+    bottomNavigationIconUnselectedColor = WhiteTransparency50
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -191,7 +197,10 @@ val LightColorPalette = MultimoneyColors(
     creditNotApprovedText = WhiteTransparency80,
     labelText = WhiteTransparency90,
     chipBackground = BlackTransparency20,
-    shimmerItemColor = GrayScale300
+    shimmerItemColor = GrayScale300,
+    bottomNavigationDividerColor = WhiteTransparency40,
+    bottomNavigationIconSelectedColor = DefaultWhite,
+    bottomNavigationIconUnselectedColor = WhiteTransparency50
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

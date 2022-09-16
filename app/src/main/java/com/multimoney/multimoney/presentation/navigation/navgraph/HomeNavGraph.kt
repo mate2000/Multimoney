@@ -15,12 +15,15 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
     ) {
         composable(route = Screen.HomeScreen.route) {
             HomeScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
+                onInnerNavigate = { innerNavController, navEvent ->
+                    innerNavController.navigate(navEvent.route) {
+                        innerNavController.graph.startDestinationRoute?.let { screenRoute ->
+                            popUpTo(screenRoute) {
+                                saveState = true
+                            }
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
                 }
             )

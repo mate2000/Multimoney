@@ -1,39 +1,35 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.multimoney.multimoney.presentation.navigation.BottomNavItem
+import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavGraph
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.home.product.ProductScreen
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun HomeScreen(
-    navController: NavController,
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // TODO: Remove commented code when not needed. Now It isn't deleted because is used as reference to get data
-//    // Navigation
-//    LaunchedEffect(true) {
-//        viewModel.onUIEvent(OnCallValidateUserStatus())
-//        viewModel.apply {
-//            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-//        }
-//    }
-
-    ProductScreen(onNavigate = onNavigate, onPopAndNavigate)
-    /*if (getRandom() == ZERO) {
-        ProductScreen()
-    } else {
+    /*
         LazyColumn {
             viewModel.uiState.balanceCredit?.balanceCredit?.forEachIndexed { index, balanceCredit ->
                 item {
@@ -203,48 +199,60 @@ fun HomeScreen(
                     )
                 }
             }
-        }
     }*/
 
+    val navController = rememberNavController()
 
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onInnerNavigate = onInnerNavigate)
+    }
+
+    Scaffold(bottomBar = { MMBottomNavigation(navController = navController, viewModel) }) { paddingValues ->
+        Column(Modifier.padding(paddingValues)) {
+            HomeInsideNavGraph(navController = navController)
+        }
+    }
+}
+
+@Composable
+fun MMBottomNavigation(navController: NavHostController, viewModel: HomeViewModel) {
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.QuickAction,
         BottomNavItem.Products
     )
 
-    BottomNavigation(
-        backgroundColor = MultimoneyTheme.colors.background,
-        contentColor = MultimoneyTheme.colors.bottomNavigationIconSelectedColor
-    ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        items.forEach { item ->
-            BottomNavigationItem(
-                icon = { Icon(painterResource(id = item.icon), contentDescription = "") },
-                selectedContentColor = MultimoneyTheme.colors.bottomNavigationIconSelectedColor,
-                unselectedContentColor = MultimoneyTheme.colors.bottomNavigationIconUnselectedColor,
-                alwaysShowLabel = false,
-                selected = currentRoute == item.route,
-                onClick = {
-                    navController.navigate(item.route) {
-
-                        navController.graph.startDestinationRoute?.let { screen_route ->
-                            popUpTo(screen_route) {
-                                saveState = true
-                            }
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+    Column {
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp),
+            color = MultimoneyTheme.colors.bottomNavigationDividerColor
+        )
+        BottomNavigation(
+            modifier = Modifier.height(76.dp),
+            backgroundColor = MultimoneyTheme.colors.background,
+            contentColor = MultimoneyTheme.colors.bottomNavigationIconSelectedColor
+        ) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            items.forEach { item ->
+                BottomNavigationItem(
+                    icon = { Icon(painterResource(id = item.icon), contentDescription = "") },
+                    selectedContentColor = MultimoneyTheme.colors.bottomNavigationIconSelectedColor,
+                    unselectedContentColor = MultimoneyTheme.colors.bottomNavigationIconUnselectedColor,
+                    alwaysShowLabel = false,
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        viewModel.onUIEvent(
+                            HomeViewModel.UIEvent.OnBottomNavigationItemClick(
+                                navController,
+                                item.route
+                            )
+                        )
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
-
-//fun getRandom(): Int {
-//    return Random.nextInt(2)
-//}
-//
-//const val ZERO = 0

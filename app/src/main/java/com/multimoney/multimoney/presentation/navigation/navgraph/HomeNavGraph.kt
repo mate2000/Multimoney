@@ -15,6 +15,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
     ) {
         composable(route = Screen.HomeScreen.route) {
             HomeScreen(
+                navController = navController,
                 onInnerNavigate = { innerNavController, navEvent ->
                     innerNavController.navigate(navEvent.route) {
                         innerNavController.graph.startDestinationRoute?.let { screenRoute ->

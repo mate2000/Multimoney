@@ -82,9 +82,9 @@ val DefaultBlack = Color(0xFF000000)
 val GrayScale200 = Color(0xFFf2f2f2)
 val GrayScale300 = Color(0xFFD9D9D9)
 val GrayScale400 = Color(0xFFB8B8B8)
-val GrayScale500 = Color(0xFF8B8B8B)
-val GrayScale600 = Color(0xFF5F5F5F)
-val GrayScale700 = Color(0xFF393939)
+val GrayScale500 = Color(0xFF8A8A8A)
+val GrayScale600 = Color(0xFF555555)
+val GrayScale700 = Color(0xFF272727)
 val GrayScale800 = Color(0xFF080808)
 
 // WhiteTransparency
@@ -150,7 +150,8 @@ data class MultimoneyColors(
     val shimmerItemColor: Color,
     val bottomNavigationDividerColor: Color,
     val bottomNavigationIconSelectedColor: Color,
-    val bottomNavigationIconUnselectedColor: Color
+    val bottomNavigationIconUnselectedColor: Color,
+    val bottomSheetBackgroundColor: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -175,7 +176,8 @@ val DarkColorPalette = MultimoneyColors(
     shimmerItemColor = WhiteTransparency50,
     bottomNavigationDividerColor = WhiteTransparency40,
     bottomNavigationIconSelectedColor = DefaultWhite,
-    bottomNavigationIconUnselectedColor = WhiteTransparency50
+    bottomNavigationIconUnselectedColor = WhiteTransparency50,
+    bottomSheetBackgroundColor = GrayScale700
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -200,7 +202,8 @@ val LightColorPalette = MultimoneyColors(
     shimmerItemColor = GrayScale300,
     bottomNavigationDividerColor = WhiteTransparency40,
     bottomNavigationIconSelectedColor = DefaultWhite,
-    bottomNavigationIconUnselectedColor = WhiteTransparency50
+    bottomNavigationIconUnselectedColor = WhiteTransparency50,
+    bottomSheetBackgroundColor = DefaultWhite
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

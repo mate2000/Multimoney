@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -22,10 +26,15 @@ import androidx.navigation.compose.rememberNavController
 import com.multimoney.multimoney.presentation.navigation.BottomNavItem
 import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavGraph
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
+import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
+    navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -201,17 +210,37 @@ fun HomeScreen(
             }
     }*/
 
-    val navController = rememberNavController()
+    val innerNavController = rememberNavController()
+    val coroutineScope = rememberCoroutineScope()
+    val quickActionsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate)
-    }
-
-    Scaffold(bottomBar = { MMBottomNavigation(navController = navController, viewModel) }) { paddingValues ->
-        Column(Modifier.padding(paddingValues)) {
-            HomeInsideNavGraph(navController = navController)
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
+                    coroutineScope.launch {
+                        quickActionsModalBottomSheetState.show()
+                    }
+                }
+                HomeViewModel.BaseEvent.OnOpenMyProductsBottomSheet -> {
+                    coroutineScope.launch {
+                        myProductsModalBottomSheetState.show()
+                    }
+                }
+            }
         }
     }
+
+    Scaffold(bottomBar = { MMBottomNavigation(navController = innerNavController, viewModel) }) { paddingValues ->
+        Column(Modifier.padding(paddingValues)) {
+            HomeInsideNavGraph(navController = navController, innerNavController = innerNavController)
+        }
+    }
+
+    QuickActionBottomSheetScreen(viewModel, quickActionsModalBottomSheetState)
+    MyProductsBottomSheetScreen(viewModel, myProductsModalBottomSheetState)
 }
 
 @Composable

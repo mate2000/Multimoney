@@ -230,7 +230,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         }
                         (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) <= CreditStep.Five.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                        ) <= CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
                         infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
                             type = CreditStartProcessIncomplete
                         )
@@ -260,11 +260,8 @@ fun CreditProduct(viewModel: ProductViewModel) {
 }
 
 fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean {
-    // todo it is missing add the condition when the step was 0
     return validateUserStatus?.infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
-            && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status && (CreditStep.Search.getIdByName(
-        validateUserStatus.infoCredit?.infoPreApprove?.currentStep
-    ) >= CreditStep.One.id)
+            && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status && validateUserStatus.infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
 }
 
 @OptIn(ExperimentalPagerApi::class)

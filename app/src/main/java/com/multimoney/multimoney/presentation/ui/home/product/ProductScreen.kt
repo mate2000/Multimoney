@@ -213,10 +213,10 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         hasToShowCreditInitialCard(this) -> {
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                viewModel.uiState.userStatus?.infoCredit?.amountAvailable
+                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()?.amountAvailable
                             )
                         }
-                        infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
                             CardCreditMaxAttempts(
                                 action = {
                                     viewModel.onUIEvent(
@@ -230,8 +230,8 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         }
                         (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) <= CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
-                        infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
+                        ) == CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
                             type = CreditStartProcessIncomplete
                         )
                         else -> CardSmartProduct()
@@ -261,7 +261,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
 
 fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean {
     return validateUserStatus?.infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
-            && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status && validateUserStatus.infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
+            && validateUserStatus.infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status && validateUserStatus.infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -294,8 +294,6 @@ fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip, viewModel: ProductViewModel) 
             Modifier
                 .fillMaxSize()
                 .clickable {
-                    // TODO: Call appropriate screen when all flows are available
-                    viewModel.onUIEvent(OnNavigateToCreditScreen)
                 }) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,

@@ -127,7 +127,7 @@ fun CardGTWithoutCredit() {
 @Composable
 fun CreditApprovedOrStarted(
     creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
-    amount: Double? = 0.0
+    amount: String? = "0.0"
 ) {
     val title: Int
     var description = ""
@@ -138,7 +138,7 @@ fun CreditApprovedOrStarted(
             title = R.string.home_product_credit_approved_card_title
             description = stringResource(
                 id = R.string.home_product_credit_approved_card_description,
-                amount ?: 0.0
+                amount ?: "0.0"
             )
             actionText = R.string.home_product_credit_approved_card_action
         }

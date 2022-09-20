@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
@@ -71,7 +72,7 @@ fun CreditScreen(
                     CREDIT_STEP,
                     CreditStep.One.id.toString()
                 ))?.toInt() ?: 0,
-                "148076"
+                navBackStackEntry.arguments?.getString(ID_USER_REQUEST, "") ?: ""
             )
         )
     }

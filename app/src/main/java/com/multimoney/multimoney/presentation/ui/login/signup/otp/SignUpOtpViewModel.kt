@@ -44,6 +44,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit.SECONDS
 
 @HiltViewModel
 class SignUpOtpViewModel @Inject constructor(
@@ -114,9 +115,8 @@ class SignUpOtpViewModel @Inject constructor(
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
         PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
-        PHASE_TWO -> R.string.sign_up_otp_resend
         PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
-        PHASE_FOUR -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
+        PHASE_TWO, PHASE_FOUR -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
         PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_five
         else -> R.string.sign_up_otp_expiration_time_phase_six
     }
@@ -143,7 +143,7 @@ class SignUpOtpViewModel @Inject constructor(
     private fun isFormValid() = emitBaseEvent(
         OnFormValidateCompleted(
             uiState.otp.trim()
-                .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS && uiState.phaseCount < PHASE_FIVE
+                .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS && uiState.phaseCount < PHASE_SIX
         )
     )
 
@@ -229,7 +229,7 @@ class SignUpOtpViewModel @Inject constructor(
         onLoadingValueChange: () -> Unit,
         pinProcess: SendPinProcess?,
     ) {
-        uiState = uiState.copy(otpResend = pinProcess?.type)
+        uiState = uiState.copy(otpResend = pinProcess?.nextType)
         initializeTimer(totalTime = pinProcess?.pinExpirationTime?.toLong() ?: TIMER_DURATION)
         getPhaseAction()
         onExecuteTimer()
@@ -249,7 +249,7 @@ class SignUpOtpViewModel @Inject constructor(
         tickerFlow(
             period = TIMER_DELAY.seconds,
             initialDelay = TIMER_DELAY.seconds,
-            duration = TIMER_DURATION.seconds
+            duration = uiState.remainingTime.toLong(SECONDS).seconds
         )
             .takeWhile { uiState.isTimerRunning }
             .map {
@@ -372,10 +372,11 @@ class SignUpOtpViewModel @Inject constructor(
         const val PHASE_THREE = 3
         const val PHASE_FOUR = 4
         const val PHASE_FIVE = 5
+        const val PHASE_SIX = 6
 
         const val TOTAL_DIGITS = 4
 
-        const val TIMER_DURATION = 59L
+        const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
 
         const val SEND_METHOD_PHONE = "PHONE"

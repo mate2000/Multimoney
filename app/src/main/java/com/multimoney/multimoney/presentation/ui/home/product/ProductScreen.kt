@@ -41,6 +41,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_STEP_PRE_APPROVED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
@@ -206,17 +207,17 @@ fun CreditProduct(viewModel: ProductViewModel) {
                 CustomProductBackground(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
-                    onClick = { viewModel.onUIEvent(OnProductClick) },
+                    onClick = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) },
                     type = Primary
                 ) {
                     when {
                         hasToShowCreditInitialCard(this) -> {
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                viewModel.uiState.userStatus?.infoCredit?.amountAvailable
+                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()?.amountAvailable
                             )
                         }
-                        infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
                             CardCreditMaxAttempts(
                                 action = {
                                     viewModel.onUIEvent(
@@ -230,21 +231,21 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         }
                         (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) <= CreditStep.Five.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
-                        infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
+                        ) == CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
                             type = CreditStartProcessIncomplete
                         )
                         else -> CardSmartProduct()
                     }
                 }
             }
-            CreditStatus.UNAPPROVED_CREDIT.status -> {
+            CreditStatus.CREDIT_REJECTED.status, CreditStatus.CREDIT_NOT_PRE_APPROVED.status -> {
                 when (viewModel.uiState.idBrand) {
                     Brand.Guatemala.id.toString() -> {
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            onClick = { viewModel.onUIEvent(OnProductClick) },
+                            onClick = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) },
                             type = Primary
                         ) {
                             CardGTWithoutCredit()
@@ -260,11 +261,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
 }
 
 fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean {
-    // todo it is missing add the condition when the step was 0
     return validateUserStatus?.infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
-            && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status && (CreditStep.Search.getIdByName(
-        validateUserStatus.infoCredit?.infoPreApprove?.currentStep
-    ) >= CreditStep.One.id)
+            && validateUserStatus.infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
+            && (validateUserStatus.infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -272,7 +271,7 @@ fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean
 fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
     Column(modifier = modifier) {
         HorizontalPager(count = pages, state = state) { page ->
-            if (viewModel.uiState.userStatus?.infoCredit?.status != CreditStatus.UNAPPROVED_CREDIT.status) {
+            if (viewModel.uiState.userStatus?.infoCredit?.status != CreditStatus.CREDIT_REJECTED.status) {
                 CustomBoxVisaBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     onClick = { type ->

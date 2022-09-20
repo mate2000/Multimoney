@@ -294,6 +294,8 @@ fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip, viewModel: ProductViewModel) 
             Modifier
                 .fillMaxSize()
                 .clickable {
+                    // TODO: Call appropriate screen when all flows are available
+                    viewModel.onUIEvent(OnNavigateToCreditScreen)
                 }) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,

@@ -232,6 +232,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
                         ) == CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                        (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (CreditStep.Search.getIdByName(
+                            infoCredit?.infoPreApprove?.currentStep
+                        ) < CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditStartProcessIncomplete)
                         infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
                             type = CreditStartProcessIncomplete
                         )

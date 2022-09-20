@@ -149,7 +149,7 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onProductClick() {
+    private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
             uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
             uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
@@ -158,6 +158,9 @@ class ProductViewModel @Inject constructor(
             uiState.userStatus?.infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> navigateTo(
                 Screen.CreditScreen.route
             )
+            uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_REJECTED.status -> {
+                openWhatsAppLink(context, whatsAppLink)
+            }
             else -> navigateTo(Screen.CreditScreen.route)
         }
     }
@@ -189,7 +192,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> uiState.balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
-            is OnProductClick -> onProductClick()
+            is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
             is OnGetIdBrand -> onGetUserData()
             is UIEvent.OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -209,7 +212,11 @@ class ProductViewModel @Inject constructor(
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
-        object OnProductClick : UIEvent()
+        data class OnProductClick(
+            val whatsAppLink: String,
+            val context: Context
+        ) : UIEvent()
+
         object OnGetIdBrand : UIEvent()
     }
 
@@ -240,5 +247,9 @@ class ProductViewModel @Inject constructor(
                 ""
             )
         )
+    }
+
+    companion object {
+        const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
     }
 }

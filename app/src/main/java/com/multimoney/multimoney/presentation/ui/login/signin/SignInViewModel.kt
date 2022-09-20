@@ -69,7 +69,7 @@ class SignInViewModel @Inject constructor(
     private fun callCognitoSignIn() {
         uiState = uiState.copy(isLoading = true)
         clearUserEmailError()
-        Amplify.Auth.signOut({
+//        Amplify.Auth.signOut({
             Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
@@ -108,9 +108,9 @@ class SignInViewModel @Inject constructor(
             }, {
                 cognitoError()
             })
-        }, {
-            cognitoError()
-        })
+//        }, {
+//            cognitoError()
+//        })
     }
 
     private suspend fun saveUserData(payload: JSONObject) {

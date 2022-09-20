@@ -201,7 +201,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
 
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
-            CreditStatus.APPROVED_CREDIT.status -> {
+            CreditStatus.APPROVED_CREDIT.status, CreditStatus.CREDIT_PRE_APPROVED.status -> {
                 CustomProductBackground(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
@@ -212,10 +212,10 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         hasToShowCreditInitialCard(this) -> {
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                viewModel.uiState.userStatus?.infoCredit?.amountAvailable
+                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()?.amountAvailable
                             )
                         }
-                        infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
                             CardCreditMaxAttempts(
                                 action = {
                                     viewModel.onUIEvent(
@@ -229,8 +229,8 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         }
                         (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) <= CreditStep.Five.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
-                        infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
+                        ) == CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
                             type = CreditStartProcessIncomplete
                         )
                         else -> CardSmartProduct()
@@ -259,11 +259,8 @@ fun CreditProduct(viewModel: ProductViewModel) {
 }
 
 fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean {
-    // todo it is missing add the condition when the step was 0
     return validateUserStatus?.infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
-            && validateUserStatus.infoCredit?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status && (CreditStep.Search.getIdByName(
-        validateUserStatus.infoCredit?.infoPreApprove?.currentStep
-    ) >= CreditStep.One.id)
+            && validateUserStatus.infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status && validateUserStatus.infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
 }
 
 @OptIn(ExperimentalPagerApi::class)

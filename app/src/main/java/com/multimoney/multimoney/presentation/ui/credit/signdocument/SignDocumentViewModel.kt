@@ -14,7 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SignDocumentViewModel @Inject constructor() : BaseViewModel() {
+class SignDocumentViewModel @Inject constructor() : BaseViewModel(true) {
     // uiState
     var uiState by mutableStateOf(UIState())
         private set

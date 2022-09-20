@@ -107,4 +107,10 @@ interface CreditRepository {
         idUser: Int,
         currentStep: String
     ): Flow<MultimoneyResult<SaveCreditFlowStep?>>
+
+    suspend fun mutationTermsAndConditions(
+        user: String,
+        idBrand: Int,
+        systemInDarkTheme: Boolean
+    ): Flow<MultimoneyResult<String>>
 }

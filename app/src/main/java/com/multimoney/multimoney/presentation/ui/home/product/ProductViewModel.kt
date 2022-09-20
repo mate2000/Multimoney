@@ -42,13 +42,11 @@ class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val dataStorePreferences: DataStorePreferences
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
-    private var linkWhatsapp = ""
-
 
     private fun onGetUserData() {
         viewModelScope.launch {
@@ -58,18 +56,11 @@ class ProductViewModel @Inject constructor(
                 identification = dataStorePreferences.getIdentification().first(),
                 email = dataStorePreferences.getUserEmail().first()
             )
-            // todo uncomment this when the backend implement the correct process in the ValidationUserStatus
-//            callQueryValidateUserStatus(
-//                uiState.pkUser.toInt(),
-//                uiState.identification,
-//                uiState.email,
-//                uiState.idBrand.toInt()
-//            )
             callQueryValidateUserStatus(
-                230361,
-                "502990261",
-                "diegomm6@yopmail.com",
-                5
+                uiState.pkUser.toInt(),
+                uiState.identification,
+                uiState.email,
+                uiState.idBrand.toInt()
             )
         }
     }
@@ -154,13 +145,13 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToCreditScreen() {
         navigateTo(
-            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.identification}/${uiState.email}/${uiState.lastStep}"
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.identification}/${uiState.email}/${uiState.lastStep}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
         )
     }
 
     private fun onProductClick() {
         when {
-            uiState.userStatus?.infoCredit?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
+            uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
             uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
                 Screen.CreditScreen.route
             )
@@ -215,6 +206,7 @@ class ProductViewModel @Inject constructor(
             val whatsAppLink: String,
             val context: Context
         ) : UIEvent()
+
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
         object OnProductClick : UIEvent()

@@ -18,8 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MonthlyIncomeViewModel @Inject constructor() :
-    BaseViewModel() {
+class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set
@@ -67,7 +66,7 @@ class MonthlyIncomeViewModel @Inject constructor() :
             user,
             uiState.income,
             getDummyOccupationCatalog(),
-            CreditCatalogOption(4079, "Ama de Casa", "255", 0)
+            CreditCatalogOption( "Ama de Casa", "255", 0)
         )
         onNextStepAction()
     }
@@ -86,7 +85,7 @@ class MonthlyIncomeViewModel @Inject constructor() :
             null,
             "",
             "",
-            listOf(CreditCatalogOption(4079, "Ama de Casa", "255", 0))
+            listOf(CreditCatalogOption("Ama de Casa", "255", 0))
         )
     }
 
@@ -101,7 +100,11 @@ class MonthlyIncomeViewModel @Inject constructor() :
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNextActionClick -> onNextActionClick(uiEvent.user, uiEvent.nextStepAction, uiEvent.saveCreditStepsHelper)
+            is OnNextActionClick -> onNextActionClick(
+                uiEvent.user,
+                uiEvent.nextStepAction,
+                uiEvent.saveCreditStepsHelper
+            )
             is OnIncomeValueChange -> onIncomeValueChange(uiEvent.income)
             is OnProfessionValueChange -> onProfessionValueChange(uiEvent.profession)
             is OnValidForm -> onValidForm()

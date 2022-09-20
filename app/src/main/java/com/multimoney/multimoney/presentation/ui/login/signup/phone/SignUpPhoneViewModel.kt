@@ -19,7 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpPhoneViewModel @Inject constructor() : BaseViewModel() {
+class SignUpPhoneViewModel @Inject constructor() : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

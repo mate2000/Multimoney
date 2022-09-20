@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpSplashComeBackViewModel @Inject constructor() : BaseViewModel() {
+class SignUpSplashComeBackViewModel @Inject constructor() : BaseViewModel(false) {
 
     // Stateless
     var step: Int? = 0

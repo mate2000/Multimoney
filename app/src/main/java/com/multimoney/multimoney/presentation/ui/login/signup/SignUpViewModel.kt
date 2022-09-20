@@ -47,7 +47,7 @@ import kotlinx.coroutines.flow.collectLatest
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

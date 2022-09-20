@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

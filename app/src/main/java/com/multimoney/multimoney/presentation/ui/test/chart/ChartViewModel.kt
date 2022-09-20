@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChartViewModel @Inject constructor(
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     var data by mutableStateOf<UserData?>(null)
 }

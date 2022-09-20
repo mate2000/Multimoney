@@ -10,7 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : BaseViewModel() {
+class HomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun navigation(innerNavHostController: NavHostController, route: String) {
         when (route) {

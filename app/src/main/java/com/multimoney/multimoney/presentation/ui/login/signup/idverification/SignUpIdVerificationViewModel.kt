@@ -31,7 +31,7 @@ import javax.inject.Inject
 class SignUpIdVerificationViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     var onFidoError: String = ""
 

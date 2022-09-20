@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashScreenViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences
-) : BaseViewModel() {
+) : BaseViewModel(false) {
 
     private fun navigateToNextScreen() {
         viewModelScope.launch {

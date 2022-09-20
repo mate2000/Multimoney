@@ -25,15 +25,15 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CompanyAddressViewModel @Inject constructor(
     private val queryCompanyProvinceUseCase: QueryCompanyProvinceUseCase,
     private val queryCompanyCantonUseCase: QueryCompanyCantonUseCase,
     private val queryCompanyDistrictUseCase: QueryCompanyDistrictUseCase
-) : BaseViewModel() {
+) : BaseViewModel(true) {
 
     // uiState
     var uiState by mutableStateOf(UIState())

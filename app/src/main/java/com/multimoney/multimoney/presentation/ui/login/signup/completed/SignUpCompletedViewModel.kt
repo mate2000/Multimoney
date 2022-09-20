@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpCompletedViewModel @Inject constructor() : BaseViewModel() {
+class SignUpCompletedViewModel @Inject constructor() : BaseViewModel(false) {
 
     private fun onNavigateToSignIn() {
         popAndNavigateTo(

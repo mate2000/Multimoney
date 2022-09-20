@@ -6,16 +6,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.connectivity.Connectivity
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-open class BaseViewModel @Inject constructor() : ViewModel() {
+open class BaseViewModel @Inject constructor(val shouldObserveToken: Boolean) : ViewModel() {
 
     var isLoading by mutableStateOf(false)
 
@@ -25,6 +28,9 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var connectivity: Connectivity
+
+    @Inject
+    lateinit var preferences: DataStorePreferences
 
     /**
      * Use this val to store one time events defined in NavigationEvent Class
@@ -40,7 +46,9 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
         crossinline noInternetAction: suspend () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (connectivity.hasNetworkAccess()) {
+            if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
+                popAndNavigateTo(Screen.SignInScreen.route, Screen.SignInScreen.route)
+            } else if (connectivity.hasNetworkAccess()) {
                 action()
             } else {
                 noInternetAction()
@@ -53,7 +61,9 @@ open class BaseViewModel @Inject constructor() : ViewModel() {
         crossinline action: suspend () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (checkConnection) {
+            if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
+                popAndNavigateTo(Screen.SignInScreen.route, Screen.SignInScreen.route)
+            } else if (checkConnection) {
                 if (connectivity.hasNetworkAccess()) {
                     action()
                 }

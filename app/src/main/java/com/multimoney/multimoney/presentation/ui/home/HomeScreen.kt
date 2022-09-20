@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -214,6 +217,7 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val quickActionsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val activity = (LocalContext.current as? Activity)
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate)
@@ -239,8 +243,27 @@ fun HomeScreen(
         }
     }
 
-    QuickActionBottomSheetScreen(viewModel, quickActionsModalBottomSheetState)
-    MyProductsBottomSheetScreen(viewModel, myProductsModalBottomSheetState)
+    QuickActionBottomSheetScreen(viewModel, coroutineScope, quickActionsModalBottomSheetState)
+    MyProductsBottomSheetScreen(viewModel, coroutineScope, myProductsModalBottomSheetState)
+
+    BackHandler {
+        when {
+            quickActionsModalBottomSheetState.isVisible -> {
+                coroutineScope.launch {
+                    quickActionsModalBottomSheetState.hide()
+                }
+            }
+            myProductsModalBottomSheetState.isVisible -> {
+                coroutineScope.launch {
+                    myProductsModalBottomSheetState.hide()
+                }
+            }
+            else -> {
+                activity?.finish()
+            }
+        }
+
+    }
 }
 
 @Composable

@@ -151,7 +151,7 @@ data class MultimoneyColors(
     val bottomNavigationDividerColor: Color,
     val bottomNavigationIconSelectedColor: Color,
     val bottomNavigationIconUnselectedColor: Color,
-    val bottomSheetBackgroundColor: Color
+    val quickActionLabelColor:Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -177,7 +177,7 @@ val DarkColorPalette = MultimoneyColors(
     bottomNavigationDividerColor = WhiteTransparency40,
     bottomNavigationIconSelectedColor = DefaultWhite,
     bottomNavigationIconUnselectedColor = WhiteTransparency50,
-    bottomSheetBackgroundColor = GrayScale700
+    quickActionLabelColor = WhiteTransparency70
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -203,7 +203,7 @@ val LightColorPalette = MultimoneyColors(
     bottomNavigationDividerColor = WhiteTransparency40,
     bottomNavigationIconSelectedColor = DefaultWhite,
     bottomNavigationIconUnselectedColor = WhiteTransparency50,
-    bottomSheetBackgroundColor = DefaultWhite
+    quickActionLabelColor = GrayScale500
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

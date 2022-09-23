@@ -267,7 +267,7 @@ type infoCreditPreAprrove {
   """
   infoCreditPreAprrove idUserRequest
   """
-  idUserRequest: Int!
+  idUserRequest: Long!
 
   """
   infoCreditPreAprrove status
@@ -282,7 +282,7 @@ type infoCreditPreAprrove {
   """
   infoCreditPreAprrove selectedAmount
   """
-  selectedAmount: Float
+  selectedAmount: Decimal
 
   """
   infoCreditPreAprrove statusFirm

@@ -277,13 +277,8 @@ fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: 
             if (viewModel.uiState.userStatus?.infoCredit?.status != CreditStatus.CREDIT_REJECTED.status) {
                 CustomBoxVisaBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = { type ->
-                        // todo Add logic when the user click the button
-                        // TODO: Remove this button when all functionalities are implemented
-                        viewModel.popAndNavigateTo(
-                            route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
-                            popTo = Screen.AlertResultScreen.baseRoute
-                        )
+                    onClick = {
+                        viewModel.navigateTo(route = Screen.VisaActivateScreen.route)
                     },
                     type = RequestCreditCard
                 )

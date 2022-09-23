@@ -19,6 +19,7 @@
     <string name="select" translatable="false">Seleccionar</string>
     <string name="empty" translatable="false"></string>
     <string name="understood" translatable="false">Entendido</string>
+    <string name="activate" translatable="false">Activar</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -340,4 +341,13 @@
     <!-- Sign Document Reject -->
     <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
     <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
+
+    <!-- Visa -->
+    <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>
+    <string name="visa_cvv_label" translatable="false">CVV</string>
+
+    <!-- Visa Activate-->
+    <string name="visa_activate_title" translatable="false">¡Compras en línea y en comercios!</string>
+    <string name="visa_activate_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios para ti</string>
+
 </resources>

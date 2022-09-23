@@ -34,13 +34,17 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
-import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INFO_INCOMPLETE
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INITIAL_CARD
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_MAX_ATTEMPTS
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_REJECTED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_STEP_PRE_APPROVED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
@@ -211,13 +215,13 @@ fun CreditProduct(viewModel: ProductViewModel) {
                     type = Primary
                 ) {
                     when {
-                        hasToShowCreditInitialCard(this) -> {
+                        viewModel.evaluateCardCondition(CREDIT_INITIAL_CARD, this) -> {
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
                                 viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()?.amountAvailable
                             )
                         }
-                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
+                        viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {
                             CardCreditMaxAttempts(
                                 action = {
                                     viewModel.onUIEvent(
@@ -229,16 +233,20 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 }
                             )
                         }
-                        (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
-                        (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditStartProcessIncomplete)
-                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
-                            type = CreditStartProcessIncomplete
-                        )
-                        else -> CardSmartProduct()
+                        viewModel.evaluateCardCondition(CREDIT_IDENTITY_INCOMPLETE, this) -> {
+                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                        }
+                        viewModel.evaluateCardCondition(CREDIT_INFO_INCOMPLETE, this) -> {
+                            CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
+                                viewModel.onUIEvent(OnNavigateToCreditScreen)
+                            })
+                        }
+                        viewModel.evaluateCardCondition(CREDIT_REJECTED, this) -> {
+                            CardWithCreditInProcess(type = CreditStartProcessIncomplete)
+                        }
+                        else -> {
+                            CardSmartProduct()
+                        }
                     }
                 }
             }

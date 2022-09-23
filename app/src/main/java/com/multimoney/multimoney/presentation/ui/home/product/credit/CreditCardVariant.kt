@@ -261,7 +261,8 @@ fun CardCreditOnFidoRequired() {
 @Composable
 @Preview
 fun CardWithCreditInProcess(
-    type: CreditProcessStarted = CreditAcceptContractRefuseFirstTime
+    type: CreditProcessStarted = CreditAcceptContractRefuseFirstTime,
+    action: () -> Unit = {}
 ) {
     val chipText = R.string.home_product_process_credit_label
     val title: Int
@@ -322,6 +323,9 @@ fun CardWithCreditInProcess(
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
+            .clickable {
+                action.invoke()
+            }
     ) {
         CustomInformativeChip(
             text = stringResource(id = chipText),

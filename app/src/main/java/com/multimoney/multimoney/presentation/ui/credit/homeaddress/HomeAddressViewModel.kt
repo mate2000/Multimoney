@@ -162,6 +162,20 @@ class HomeAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!homeProvince?.pkCatalog.isNullOrEmpty()) {
+                        val selectedHomeProvince =
+                            homeProvinceList?.find { it?.pkCatalog == homeProvince?.pkCatalog }
+                        uiState = uiState.copy(divisionOneSelected = selectedHomeProvince)
+                        onUIEvent(OnDivisionOneValueChange(
+                            selectedHomeProvince,
+                            { loading ->
+                                isLoading = loading
+                            },
+                            { isLoading, dialogParameters ->
+
+                            }
+                        ))
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -199,6 +213,20 @@ class HomeAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!homeCanton?.pkCatalog.isNullOrEmpty()) {
+                        val selectedHomeCanton =
+                            homeCantonList?.find { it?.pkCatalog == homeCanton?.pkCatalog }
+                        uiState = uiState.copy(divisionTwoSelected = selectedHomeCanton)
+                        onUIEvent(OnDivisionTwoValueChange(
+                            selectedHomeCanton,
+                            { loading ->
+                                isLoading = loading
+                            },
+                            { isLoading, dialogParameters ->
+
+                            }
+                        ))
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -236,6 +264,14 @@ class HomeAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!homeDistrict?.pkCatalog.isNullOrEmpty()) {
+                        val selectedHomeDistrict =
+                            homeDistrictList?.find { it?.pkCatalog == homeDistrict?.pkCatalog }
+                        uiState = uiState.copy(divisionThreeSelected = selectedHomeDistrict)
+                        onUIEvent(OnDivisionThreeValueChange(
+                            selectedHomeDistrict
+                        ))
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {

@@ -25,8 +25,8 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CompanyAddressViewModel @Inject constructor(
@@ -154,6 +154,18 @@ class CompanyAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!companyProvince?.pkCatalog.isNullOrEmpty()) {
+                        val selectedProvince =
+                            companyProvinceList?.find { it?.pkCatalog == companyProvince?.pkCatalog }
+                        uiState = uiState.copy(divisionOneSelected = selectedProvince)
+                        onUIEvent(OnDivisionOneValueChange(selectedProvince,
+                            { loading ->
+                                isLoading = loading
+                            },
+                            {isLoading, dialogParameters ->
+
+                            }))
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -191,6 +203,20 @@ class CompanyAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!companyCanton?.pkCatalog.isNullOrEmpty()) {
+                        val selectedCompanyCanton =
+                            companyCantonList?.find { it?.pkCatalog == companyCanton?.pkCatalog }
+                        uiState = uiState.copy(divisionTwoSelected = selectedCompanyCanton)
+                        onUIEvent(OnDivisionTwoValueChange(
+                            selectedCompanyCanton,
+                            { loading ->
+                                isLoading = loading
+                            },
+                            {isLoading, dialogParameters ->
+
+                            }
+                        ))
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -228,6 +254,16 @@ class CompanyAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!companyDistrict?.pkCatalog.isNullOrEmpty()) {
+                        val selectedCompanyDistrict =
+                            companyDistrictList?.find { it?.pkCatalog == companyDistrict?.pkCatalog }
+                        uiState = uiState.copy(divisionThreeSelected = selectedCompanyDistrict)
+                        onUIEvent(
+                            OnDivisionThreeValueChange(
+                                selectedCompanyDistrict
+                            )
+                        )
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {

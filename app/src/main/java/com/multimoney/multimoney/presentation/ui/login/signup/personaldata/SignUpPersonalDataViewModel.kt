@@ -4,6 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
+import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
+import com.multimoney.data.util.catalog.Nationalities.ElSalvador
+import com.multimoney.data.util.catalog.Nationalities.Guatemala
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
@@ -19,6 +23,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnFirstNameChange
@@ -32,17 +37,13 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.CrDocuments
-import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
-import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
-import com.multimoney.data.util.catalog.Nationalities.ElSalvador
-import com.multimoney.data.util.catalog.Nationalities.Guatemala
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
@@ -80,13 +81,33 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     )
 
-    private fun getCountry(nationality: String): String? {
+    private fun getCountry(
+        nationality: String,
+        updateNationality: (nationality: String, idBrand: Int) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
+    ): String? {
         onSuccessCountry?.countryList?.forEach {
-            if (it.countryPrefix == nationality) {
-                return it.countryPrefix
+            if (it.countryPrefix?.lowercase() == nationality.lowercase()) {
+                setDefaultCountry(nationality, updateNationality, onLoadingValueChange)
+                return it.countryDescription
             }
         }
         return ""
+    }
+
+    private fun setDefaultCountry(
+        nationality: String,
+        updateNationality: (nationality: String, idBrand: Int) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
+    ) {
+        callQueryCatalogDocumentType(
+            onSuccessCountry?.countryList?.find { it.countryPrefix == nationality }?.idBrand ?: 0,
+            onLoadingValueChange
+        )
+        updateNationality.invoke(
+            onSuccessCountry?.countryList?.find { it.countryPrefix == nationality }?.countryPrefix ?: "",
+            onSuccessCountry?.countryList?.find { it.countryPrefix == nationality }?.idBrand ?: 0
+        )
     }
 
     private fun getDocumentLength(documentType: String) {
@@ -174,6 +195,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
                         documentList.add(document.description)
                     }
                     uiState = uiState.copy(documentList = documentList)
+                    if (uiState.identificationValueType.isEmpty().not()) {
+                        getDocumentLength(uiState.identificationValueType)
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onFailure {
@@ -197,6 +221,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                         countryList.add(country.countryDescription ?: "")
                     }
                     uiState = uiState.copy(countryList = countryList)
+                    emitBaseEvent(OnGetCountriesSuccess)
                     onLoadingValueChange(false)
                 }
                 result.onFailure {
@@ -256,10 +281,13 @@ class SignUpPersonalDataViewModel @Inject constructor(
         secondName: String,
         firstLastName: String,
         secondLastName: String,
-        fullName: String
+        fullName: String,
+        updateNationality: (nationality: String, idBrand: Int) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
+        val countryValue = getCountry(nationality, updateNationality, onLoadingValueChange) ?: ""
         uiState = uiState.copy(
-            nationalityValue = getCountry(nationality) ?: "",
+            nationalityValue = countryValue,
             identificationValueType = identificationType,
             personalDocumentValue = identificationValue,
             firstNameValue = firstName,
@@ -404,7 +432,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.secondName,
                 event.firstLastName,
                 event.secondLastName,
-                event.fullName
+                event.fullName,
+                event.updateNationality,
+                event.onLoadingValueChange
             )
             is OnNationalityChange -> onNationalityChange(
                 event.nationality,
@@ -452,7 +482,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
             val secondName: String,
             val firstLastName: String,
             val secondLastName: String,
-            val fullName: String
+            val fullName: String,
+            val updateNationality: (nationality: String, idBrand: Int) -> Unit,
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
 
         data class OnNationalityChange(
@@ -515,12 +547,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+        object OnGetCountriesSuccess : BaseEvent()
     }
 
     companion object {
         const val DUI_VERIFICATION_MODULE = 10
         const val FORMAT_VALUE = '0'
-
-        const val STEP_TO_MOVE = 4
     }
 }

@@ -58,6 +58,7 @@ class SignUpViewModel @Inject constructor(
     var isPhoneVerified = false
     var userData: UserData? = null
     var idBrand: Int? = null
+    var strIdIdentification = ""
     var countryCode = ""
     var nextAction: () -> Unit = {}
     var closeDialogDescription: String = ""
@@ -135,7 +136,6 @@ class SignUpViewModel @Inject constructor(
         this.idBrand = idBrand
         userData = userData?.copy(
             nationality = nationality,
-            identificationValueType = "",
             identification = "",
             firstName = "",
             secondName = "",

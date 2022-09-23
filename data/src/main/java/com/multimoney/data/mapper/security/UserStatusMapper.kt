@@ -29,9 +29,9 @@ private fun ValidateUserStatusQuery.InfoCredit.mapToDomainModel() = InfoCredit(
 )
 
 private fun ValidateUserStatusQuery.InfoPreApprove.mapToDomainModel() = InfoPreApprove(
-    idUserRequest = idUserRequest,
+    idUserRequest = idUserRequest.toString().toInt(),
     status = status,
-    selectedAmount = selectedAmount?.toFloat(),
+    selectedAmount = selectedAmount?.toString()?.toFloat(),
     statusFirm = statusFirm,
     currentStep = currentStep,
     infoProducts = infoProducts?.map { it?.mapToDomainModel() }

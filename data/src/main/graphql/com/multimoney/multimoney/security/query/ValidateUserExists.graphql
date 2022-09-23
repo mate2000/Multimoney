@@ -19,6 +19,8 @@ query ValidateUserExists($email:String!){
     contactMeans
     nationality
     identification
+    strIdIdentification
+    idIdentification
     countryCode
     currentStep
     userStatus

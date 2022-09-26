@@ -40,7 +40,7 @@ import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentS
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
-import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
@@ -85,11 +85,11 @@ fun CreditScreen(
             .background(MultimoneyTheme.colors.background)
     ) {
         Column {
-            BackCloseNavBar(
-                isBackVisible = viewModel.uiState.currentStep != CreditStep.One.id,
-                isCloseVisible = viewModel.uiState.isCloseVisible,
-                onBackClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
+            TopNavBar(
+                isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id,
+                isRightButtonVisible = viewModel.uiState.isCloseVisible,
+                onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
+                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
             if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Six.id) {
                 StepProgressBar(
                     steps = CREDIT_INDICATOR_TOTAL_STEPS,

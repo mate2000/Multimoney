@@ -38,12 +38,12 @@ import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_STEP_PRE_APPROVED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
@@ -276,13 +276,8 @@ fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: 
             if (viewModel.uiState.userStatus?.infoCredit?.status != CreditStatus.CREDIT_REJECTED.status) {
                 CustomBoxVisaBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = { type ->
-                        // todo Add logic when the user click the button
-                        // TODO: Remove this button when all functionalities are implemented
-                        viewModel.popAndNavigateTo(
-                            route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
-                            popTo = Screen.AlertResultScreen.baseRoute
-                        )
+                    onClick = {
+                        viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
                     },
                     type = RequestCreditCard
                 )

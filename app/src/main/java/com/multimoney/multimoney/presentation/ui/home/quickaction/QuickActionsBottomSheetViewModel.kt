@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class QuickActionsBottomSheetViewModel @Inject constructor() : BaseViewModel() {
+class QuickActionsBottomSheetViewModel @Inject constructor() : BaseViewModel(true) {
     fun getQuickActions(): List<QuickActionDummy> {
         return listOf(
             QuickActionDummy(R.drawable.ic_quickaction_item_icon, "Quick Action"),

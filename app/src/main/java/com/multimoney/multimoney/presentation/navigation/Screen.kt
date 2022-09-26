@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 // Route
 const val LOGIN_ROUTE = "log_in_route"
 const val HOME_ROUTE = "home_route"
+const val HOME_MAIN_ROUTE = "home_main_route"
 const val CREDIT_ROUTE = "credit_route"
 const val VISA_ROUTE = "visa_route"
 const val TEST_ROUTE = "test_route"
@@ -57,6 +58,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object DocumentGenerationScreen : Screen("document_generation_screen")
     object SignDocumentScreen :
         Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
+
+    // Bottom Navigation
+    object HomeBNScreen : Screen("home_bn_screen")
+    object QuickActionBNScreen : Screen("quick_action_bt_screen")
+    object ProductsBNScreen : Screen("products_bt_screen")
 
     // Alert Result Screens
     object AlertResultScreen : Screen(

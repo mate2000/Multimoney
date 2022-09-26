@@ -35,7 +35,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
-import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -70,11 +70,11 @@ fun SignUpScreen(
             .background(MultimoneyTheme.colors.background)
     ) {
         Column {
-            BackCloseNavBar(
-                isBackVisible = viewModel.uiState.currentStep != SignUpStep.Six.id,
-                isCloseVisible = viewModel.uiState.isCloseVisible,
-                onBackClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
+            TopNavBar(
+                isLeftButtonVisible = viewModel.uiState.currentStep != SignUpStep.Six.id,
+                isRightButtonVisible = viewModel.uiState.isCloseVisible,
+                onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
+                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
             if (viewModel.uiState.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
                     steps = SIGN_UP_INDICATOR_TOTAL_STEPS,

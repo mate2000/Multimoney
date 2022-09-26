@@ -19,6 +19,7 @@
     <string name="select" translatable="false">Seleccionar</string>
     <string name="empty" translatable="false"></string>
     <string name="understood" translatable="false">Entendido</string>
+    <string name="activate" translatable="false">Activar</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -107,22 +108,6 @@
     <string name="sign_up_personal_data_nationality_header" translatable="false">¿Cuáles son tus datos personales?</string>
     <string name="sign_up_personal_data_nationality" translatable="false">Nacionalidad</string>
     <string name="sign_up_personal_data_nationality_placeholder" translatable="false">Selecciona tu país</string>
-    <string-array name="sign_up_personal_data_nationalities" translatable="false">
-        <item name="sign_up_personal_data_el_salvador">El Salvador</item>
-        <item name="sign_up_personal_data_costa_rica">Costa Rica</item>
-        <item name="sign_up_personal_data_guatemala">Guatemala</item>
-    </string-array>
-    <string-array name="sign_up_personal_sv_documents" translatable="false">
-        <item name="sign_up_personal_sv_document_dui">DUI</item>
-        <item name="sign_up_personal_sv_document_passwport">Pasaporte</item>
-    </string-array>
-    <string-array name="sign_up_personal_cr_documents" translatable="false">
-        <item name="sign_up_personal_cr_document_id">Cédula</item>
-        <item name="sign_up_personal_cr_document_dimex">Dimex</item>
-    </string-array>
-    <string-array name="sign_up_personal_gt_documents" translatable="false">
-        <item name="sign_up_personal_cr_document_dpi">DPI</item>
-    </string-array>
     <string name="sign_up_personal_data_document_label" translatable="false">Documento de identidad</string>
     <string name="sign_up_personal_data_document_hint" translatable="false">Selecciona tu documento </string>
     <string name="sign_up_personal_data_document_number_label" translatable="false">Número de identificación</string>
@@ -245,6 +230,13 @@
     <string name="home_product_credit_signature_missing_description" translatable="false">Firmá el contrato para que podás empezar a disfrutar de tu crédito.</string>
     <string name="home_product_credit_signature_missing_action" translatable="false">Firmar</string>
 
+    <!-- my products bottom sheet -->
+    <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
+
+    <!-- quick actions bottom sheet -->
+    <string name="quick_action_bottom_sheet_title"  translatable="false">¿Qué querés hacer?</string>
+    <string name="quick_action_bottom_sheet_credit_section" translatable="false">Credito</string>
+
     <!-- Credit Close Dialog-->
     <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
     <string name="credit_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
@@ -275,9 +267,6 @@
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
-    <string name="credit_monthly_income_income_el_salvador_hint" translatable="false">$ 000,000</string>
-    <string name="credit_monthly_income_income_guatemala_hint" translatable="false">Q 000,000</string>
-    <string name="credit_monthly_income_income_costa_rica_hint" translatable="false">₡ 000,000,000</string>
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
@@ -340,4 +329,23 @@
     <!-- Sign Document Reject -->
     <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
     <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
+
+    <!-- Visa -->
+    <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>
+    <string name="visa_cvv_label" translatable="false">CVV</string>
+
+    <!-- Visa Activate-->
+    <string name="visa_activate_sv_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
+    <string name="visa_activate_sv_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_activate_sv_no_nfc_title" translatable="false">¡Comprá en línea con Multimoney Visa!</string>
+    <string name="visa_activate_sv_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_activate_cr_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
+    <string name="visa_activate_cr_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_activate_cr_no_nfc_title" translatable="false">¡Comprá en línea con Multimoney Visa!</string>
+    <string name="visa_activate_cr_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_activate_gt_nfc_title" translatable="false">¡Compra en línea y en comercios!</string>
+    <string name="visa_activate_gt_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
+    <string name="visa_activate_gt_no_nfc_title" translatable="false">¡Compra en línea con Multimoney Visa!</string>
+    <string name="visa_activate_gt_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
+
 </resources>

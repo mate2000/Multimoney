@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -93,6 +94,12 @@ open class BaseViewModel @Inject constructor(
     fun navigateTo(route: String) = sendNavigationEvent(NavEvent.Navigate(route = route))
 
     /**
+     * Thi function is only use for handle the BottomNavigation navigation
+     */
+    fun innerNavigateTo(innerNavigate: NavHostController, route: String) =
+        sendNavigationEvent(NavEvent.InnerNavigate(innerNavigate = innerNavigate, route = route))
+
+    /**
      * Use this function to pop to specific screen and navigate to specified screen
      **/
     fun popAndNavigateTo(route: String, popTo: String) =
@@ -102,6 +109,7 @@ open class BaseViewModel @Inject constructor(
 
     fun executeNavigation(
         onNavigate: (NavEvent.Navigate) -> Unit = {},
+        onInnerNavigate: (innerNavigate: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
         onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
         onPopBackStack: () -> Unit = {},
     ) {
@@ -109,6 +117,7 @@ open class BaseViewModel @Inject constructor(
             navigationEvent.collectLatest { event ->
                 when (event) {
                     is NavEvent.Navigate -> onNavigate(event)
+                    is NavEvent.InnerNavigate -> onInnerNavigate(event.innerNavigate, event)
                     is NavEvent.PopAndNavigate -> onPopAndNavigate(event)
                     is NavEvent.PopBackStack -> onPopBackStack()
                     else -> Unit

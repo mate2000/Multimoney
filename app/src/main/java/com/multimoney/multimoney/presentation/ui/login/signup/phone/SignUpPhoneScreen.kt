@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +25,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import com.togitech.ccp.data.utils.getDefaultLangCode
 import com.togitech.ccp.data.utils.getDefaultPhoneCode
 import com.togitech.ccp.data.utils.getLibCountries
@@ -32,11 +34,12 @@ import com.togitech.ccp.data.utils.getLibCountries
 @Preview
 fun SignUpPhoneScreen(
     viewModel: SignUpPhoneViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel()
+    sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
 
     // Properties
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
     val getDefaultCountryCode = getDefaultLangCode()
     val getDefaultPhoneCode = getDefaultPhoneCode()
     val selectedCountry =
@@ -64,9 +67,12 @@ fun SignUpPhoneScreen(
                                     )
                                 )
                             )
-                        }, { onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase) }))
+                        },
+                            { onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase) }))
+                        FireBaseEvents.SignUpThree.logEvent(context)
                     },
-                    nextStep = viewModel.getNextStep(sharedViewModel.isPhoneVerified, isOnFidoVerified).id,
+                    nextStep = viewModel.getNextStep(sharedViewModel.isPhoneVerified,
+                        isOnFidoVerified).id,
                     previousStep = SignUpStep.Two.id
                 )
             )

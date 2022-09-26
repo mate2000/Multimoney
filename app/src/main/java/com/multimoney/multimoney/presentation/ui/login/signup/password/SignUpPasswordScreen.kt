@@ -40,6 +40,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
@@ -107,6 +108,7 @@ fun SignUpPasswordScreen(
                         idBrant = idBrand ?: 0
                     )
                 )
+                FireBaseEvents.SignUpFive.logEvent(context)
             }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id))
         }
     }

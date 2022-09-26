@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -26,6 +27,7 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 fun SignInWithPassword(
@@ -33,8 +35,9 @@ fun SignInWithPassword(
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
     onForgotPasswordClick: () -> Unit,
-    onSignInWithBiometricLink: () -> Unit
+    onSignInWithBiometricLink: () -> Unit,
 ) {
+    val context = LocalContext.current
     Column(modifier) {
         CustomOutlinedTextField(
             value = viewModel.uiState.userPassword,
@@ -94,7 +97,10 @@ fun SignInWithPassword(
             }
         }
         CustomButton(
-            onClick = { viewModel.onUIEvent(OnCallCognitoSignIn) },
+            onClick = {
+                FireBaseEvents.LoginPassword.logEvent(context)
+                viewModel.onUIEvent(OnCallCognitoSignIn)
+            },
             text = stringResource(id = R.string.sign_in),
             modifier = Modifier
                 .padding(top = 24.dp)

@@ -55,6 +55,7 @@ import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
@@ -65,6 +66,7 @@ fun SignUpOtpScreen(
 ) {
 
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
@@ -164,6 +166,7 @@ fun SignUpOtpScreen(
                                 }
                             )
                         )
+                        FireBaseEvents.SignUpFour.logEvent(context)
                     },
                     nextStep = viewModel.getNextStep(isOnFidoVerified).id,
                     previousStep = SignUpStep.Three.id

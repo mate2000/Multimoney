@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
@@ -43,6 +45,9 @@ fun SignUpPersonalDataScreen(
     viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
+
+    val context = LocalContext.current
+
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
@@ -78,6 +83,7 @@ fun SignUpPersonalDataScreen(
                                 idBrand = idBrand ?: 0
                             )
                         )
+                        FireBaseEvents.SingUpTwo.logEvent(context)
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id

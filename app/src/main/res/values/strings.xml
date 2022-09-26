@@ -245,6 +245,13 @@
     <string name="home_product_credit_signature_missing_description" translatable="false">Firmá el contrato para que podás empezar a disfrutar de tu crédito.</string>
     <string name="home_product_credit_signature_missing_action" translatable="false">Firmar</string>
 
+    <!-- my products bottom sheet -->
+    <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
+
+    <!-- quick actions bottom sheet -->
+    <string name="quick_action_bottom_sheet_title"  translatable="false">¿Qué querés hacer?</string>
+    <string name="quick_action_bottom_sheet_credit_section" translatable="false">Credito</string>
+
     <!-- Credit Close Dialog-->
     <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
     <string name="credit_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>

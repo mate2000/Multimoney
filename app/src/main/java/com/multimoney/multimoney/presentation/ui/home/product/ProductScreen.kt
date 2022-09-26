@@ -67,13 +67,12 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Preview
 fun ProductScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnGetIdBrand)
         viewModel.apply {
-            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+            executeNavigation(onNavigate = onNavigate)
         }
     }
 

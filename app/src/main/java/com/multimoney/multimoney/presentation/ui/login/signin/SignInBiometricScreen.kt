@@ -39,7 +39,6 @@ fun SignInWithBiometric(
             padding = 24.dp,
             icon = R.drawable.ic_fingerprint,
             onClick = {
-                FireBaseEvents.LoginBiometrics.logEvent(context)
                 onSignInWithBiometricAction()
             }
         )

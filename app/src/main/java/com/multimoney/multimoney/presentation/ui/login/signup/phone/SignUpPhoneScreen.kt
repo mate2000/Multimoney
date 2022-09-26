@@ -69,7 +69,6 @@ fun SignUpPhoneScreen(
                             )
                         },
                             { onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase) }))
-                        FireBaseEvents.SignUpThree.logEvent(context)
                         viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpThree)
                     },
                     nextStep = viewModel.getNextStep(sharedViewModel.isPhoneVerified,

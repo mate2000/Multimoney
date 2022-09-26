@@ -40,10 +40,10 @@ import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
@@ -198,10 +198,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     it?.catalogDocument?.forEach { document ->
                         documentList.add(document.description)
                     }
-                    uiState = uiState.copy(documentList = documentList,
-                        identificationValueType = if (documentList.size == SINGLE_DOCUMENT) documentList.first() else "")
+                    uiState = uiState.copy(documentList = documentList)
                     if (uiState.identificationValueType.isEmpty().not()) {
                         getDocumentLength(uiState.identificationValueType)
+                    } else if (documentList.size == SINGLE_DOCUMENT) {
+                        uiState = uiState.copy(identificationValueType = documentList.first())
                     }
                     onLoadingValueChange(false)
                 }
@@ -476,8 +477,10 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.onCallMutationUpdateUserRegisterUseCase,
             )
             is OnValidateDocument -> validateDocument(event.email)
-            is OnCallQueryGetCountry -> callQueryGetCountryUseCase(event.user,
-                event.onLoadingValueChange)
+            is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
+                event.user,
+                event.onLoadingValueChange
+            )
             is UIEvent.OnValidateForm -> isFormValid()
         }
     }

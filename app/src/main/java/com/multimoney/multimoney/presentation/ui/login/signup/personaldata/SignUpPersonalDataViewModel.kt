@@ -38,6 +38,7 @@ import com.multimoney.data.util.catalog.Nationalities.ElSalvador
 import com.multimoney.data.util.catalog.Nationalities.Guatemala
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest

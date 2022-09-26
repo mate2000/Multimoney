@@ -60,7 +60,7 @@ fun SignUpEmailScreen(
                         )
                     })
             )
-            FireBaseEvents.SignUpOne.logEvent(context)
+            viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpOne)
         }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id))
 
         viewModel.baseEvent.collect { event ->

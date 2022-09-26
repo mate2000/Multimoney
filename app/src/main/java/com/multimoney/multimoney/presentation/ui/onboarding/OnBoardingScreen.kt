@@ -65,8 +65,6 @@ fun OnBoardingScreen(
             .fillMaxSize()
             .pointerInput(Unit) {
                 viewModel.onUIEvent(OnPress(this))
-                FireBaseEvents.OnBoardingEvents.logOnboardingEvent(context,
-                    viewModel.currentStep)
             }
     ) {
         Column(Modifier.weight(0.4f)) {
@@ -76,8 +74,6 @@ fun OnBoardingScreen(
                 paused = viewModel.uiState.isPressed,
                 onFinished = {
                     viewModel.onUIEvent(OnGoToNextScreen)
-                    FireBaseEvents.OnBoardingEvents.logOnboardingEvent(context,
-                        viewModel.currentStep)
                 },
                 backgroundColor = WhiteTransparency20,
                 progressColor = WhiteTransparency70,

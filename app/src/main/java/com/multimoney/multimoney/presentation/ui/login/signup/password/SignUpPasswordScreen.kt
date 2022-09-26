@@ -108,7 +108,7 @@ fun SignUpPasswordScreen(
                         idBrant = idBrand ?: 0
                     )
                 )
-                FireBaseEvents.SignUpFive.logEvent(context)
+                viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFive)
             }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id))
         }
     }

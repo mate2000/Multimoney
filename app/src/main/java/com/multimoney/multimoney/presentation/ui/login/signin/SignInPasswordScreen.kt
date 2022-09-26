@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -37,7 +36,6 @@ fun SignInWithPassword(
     onForgotPasswordClick: () -> Unit,
     onSignInWithBiometricLink: () -> Unit,
 ) {
-    val context = LocalContext.current
     Column(modifier) {
         CustomOutlinedTextField(
             value = viewModel.uiState.userPassword,
@@ -98,7 +96,7 @@ fun SignInWithPassword(
         }
         CustomButton(
             onClick = {
-                FireBaseEvents.LoginPassword.logEvent(context)
+                viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.LoginPassword)
                 viewModel.onUIEvent(OnCallCognitoSignIn)
             },
             text = stringResource(id = R.string.sign_in),

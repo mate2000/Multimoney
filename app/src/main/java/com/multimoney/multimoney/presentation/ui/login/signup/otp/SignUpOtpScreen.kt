@@ -66,7 +66,6 @@ fun SignUpOtpScreen(
 ) {
 
     val focusManager = LocalFocusManager.current
-    val context = LocalContext.current
 
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
@@ -166,7 +165,7 @@ fun SignUpOtpScreen(
                                 }
                             )
                         )
-                        FireBaseEvents.SignUpFour.logEvent(context)
+                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFour)
                     },
                     nextStep = viewModel.getNextStep(isOnFidoVerified).id,
                     previousStep = SignUpStep.Three.id

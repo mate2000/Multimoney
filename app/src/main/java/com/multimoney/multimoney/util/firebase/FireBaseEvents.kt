@@ -3,13 +3,11 @@ package com.multimoney.multimoney.util.firebase
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_ONE
-import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.Companion.STEP_TWO
 
 sealed class FireBaseEvents(
-    private val event: String,
-    private val eventName: String,
-    private val parametersValue: String,
+    val event: String,
+    val eventName: String,
+    val parametersValue: String,
 ) {
     object Splash : FireBaseEvents("Splash", "Splash", "1001 - Splash")
     object OnboardingOne : FireBaseEvents("onboarding_1", "onboarding_1", "1002 - onboarding_1")
@@ -31,21 +29,5 @@ sealed class FireBaseEvents(
         val params = Bundle()
         params.putString(this.eventName, this.parametersValue)
         FirebaseAnalytics.getInstance(context).logEvent(this.event, params)
-    }
-
-    object OnBoardingEvents{
-        fun logOnboardingEvent(context: Context, step: Int) {
-            when (step) {
-                STEP_ONE -> {
-                    OnboardingOne.logEvent(context)
-                }
-                STEP_TWO -> {
-                    OnboardingTwo.logEvent(context)
-                }
-                else -> {
-                    OnboardingThree.logEvent(context)
-                }
-            }
-        }
     }
 }

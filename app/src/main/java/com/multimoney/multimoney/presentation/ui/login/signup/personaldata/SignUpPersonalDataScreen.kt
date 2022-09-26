@@ -46,8 +46,6 @@ fun SignUpPersonalDataScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel(),
 ) {
 
-    val context = LocalContext.current
-
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
@@ -83,7 +81,6 @@ fun SignUpPersonalDataScreen(
                                 idBrand = idBrand ?: 0
                             )
                         )
-                        FireBaseEvents.SingUpTwo.logEvent(context)
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id
@@ -115,6 +112,7 @@ fun SignUpPersonalDataScreen(
                             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
                         },
                         onMoveToStep = { step ->
+                            viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)
                             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnMoveToStep(step))
                         },
                         onLoadingValueChange = {

@@ -94,7 +94,7 @@ fun SignUpCompleted(
 
     // this is required to execute the debounce
     val navigateToSignInFlowValue by navigateToSignFlow.collectAsState(false)
-    FireBaseEvents.SignUpSuccess.logEvent(LocalContext.current)
+    viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpSuccess)
 }
 
 const val TIME_TO_WAIT_IN_MILLI_SECOND = 10000L

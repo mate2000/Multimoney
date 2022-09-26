@@ -13,8 +13,9 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
         startDestination = Screen.VisaActivateScreen.route,
         route = VISA_ROUTE
     ) {
-        composable(route = Screen.VisaActivateScreen.route) {
+        composable(route = Screen.VisaActivateScreen.route) { navBackStackEntry ->
             VisaScreen(
+                navBackStackEntry = navBackStackEntry,
                 onPopBackStack = { navController.popBackStack() },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {

@@ -38,12 +38,12 @@ import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_STEP_PRE_APPROVED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
@@ -278,7 +278,7 @@ fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: 
                 CustomBoxVisaBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     onClick = {
-                        viewModel.navigateTo(route = Screen.VisaActivateScreen.route)
+                        viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
                     },
                     type = RequestCreditCard
                 )

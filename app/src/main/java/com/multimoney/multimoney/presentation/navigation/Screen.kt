@@ -50,20 +50,21 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "credit_screen"
     )
 
-    // HomeNavGraph Screens
-    object VisaActivateScreen : Screen("visa_activate_screen")
+    // VisaNavGraph
+    object VisaActivateScreen : Screen("visa_activate_screen/{$ID_BRAND}", "visa_activate_screen")
 
+    // HomeNavGraph Screens
     object DocumentGenerationScreen : Screen("document_generation_screen")
     object SignDocumentScreen :
         Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
-
-    // TestNavGraph Screens
-    object TestScreen : Screen("test_screen")
-    object ChartScreen : Screen("chart_screen/{$}")
 
     // Alert Result Screens
     object AlertResultScreen : Screen(
         "alert_result_screen/{$ALERT_RESULT_ICON}/{$ALERT_RESULT_TITLE}/{$ALERT_RESULT_DESCRIPTION}/{$ALERT_RESULT_BUTTON_TEXT}",
         "alert_result_screen"
     )
+
+    // TestNavGraph Screens
+    object TestScreen : Screen("test_screen")
+    object ChartScreen : Screen("chart_screen/{$}")
 }

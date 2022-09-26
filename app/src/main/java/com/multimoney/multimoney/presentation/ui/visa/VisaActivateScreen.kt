@@ -13,12 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.visa.VisaActivateViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.visa.VisaActivateViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
@@ -27,15 +29,18 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-@Preview
 fun VisaScreen(
+    navBackStackEntry: NavBackStackEntry,
     onPopBackStack: () -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaActivateViewModel = hiltViewModel()
 ) {
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
+        viewModel.apply {
+            executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
+            onUIEvent(OnGetTextResources(navBackStackEntry.arguments?.getString(ID_BRAND, "") ?: ""))
+        }
     }
 
     Column(
@@ -52,14 +57,14 @@ fun VisaScreen(
                 onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) })
             Text(
                 modifier = Modifier.padding(top = 34.dp, start = 16.dp, end = 16.dp),
-                text = stringResource(id = R.string.visa_activate_title),
+                text = stringResource(id = viewModel.uiState.titleResource),
                 style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
             )
             Text(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                text = stringResource(id = R.string.visa_activate_subtitle),
+                text = stringResource(id = viewModel.uiState.subtitleResource),
                 style = Typography.subtitle1,
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left

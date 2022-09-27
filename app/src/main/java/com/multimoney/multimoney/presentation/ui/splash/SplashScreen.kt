@@ -19,7 +19,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Composable
 fun SplashScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    viewModel: SplashScreenViewModel = hiltViewModel()
+    viewModel: SplashScreenViewModel = hiltViewModel(),
 ) {
     LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     LaunchedEffect(key1 = true) {

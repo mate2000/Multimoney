@@ -13,13 +13,14 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(false) {
 
     // UIState
@@ -80,6 +81,7 @@ class OnBoardingViewModel @Inject constructor(
 
     private fun getStepContent(step: Int): List<Int> = when (step) {
         STEP_ONE -> {
+            provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingOne)
             listOf(
                 R.string.onboarding_step_one_title,
                 R.string.onboarding_step_one_sub_title,
@@ -87,6 +89,7 @@ class OnBoardingViewModel @Inject constructor(
             )
         }
         STEP_TWO -> {
+            provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)
             listOf(
                 R.string.onboarding_step_two_title,
                 R.string.onboarding_step_two_sub_title,
@@ -94,6 +97,7 @@ class OnBoardingViewModel @Inject constructor(
             )
         }
         else -> {
+            provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingThree)
             listOf(
                 R.string.onboarding_step_three_title,
                 R.string.onboarding_step_three_sub_title,
@@ -103,6 +107,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     private fun navigateToNextScreen(screen: String) {
+
         viewModelScope.launch {
             dataStorePreferences.isOnBoardingEnabled(false)
             popAndNavigateTo(
@@ -123,7 +128,7 @@ class OnBoardingViewModel @Inject constructor(
         val icon: Int = R.drawable.ic_onboarding_step_one,
 
         // Interactions
-        val isPressed: Boolean = false
+        val isPressed: Boolean = false,
     )
 
     fun onUIEvent(event: UIEvent) {

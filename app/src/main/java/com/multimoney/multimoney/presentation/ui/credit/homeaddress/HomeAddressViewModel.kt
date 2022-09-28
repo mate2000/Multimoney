@@ -335,6 +335,13 @@ class HomeAddressViewModel @Inject constructor(
         nextStepAction()
     }
 
+    fun loadStepsInfo(list: List<CreditCatalog>){
+        val homeAddress = list.find { it.description == SaveCreditStepsHelper.HOME_ADDRESS }
+        uiState = uiState.copy(address = homeAddress?.value ?: "")
+        val phone = list.find { it.description == SaveCreditStepsHelper.HOME_PHONE }
+        uiState = uiState.copy(phone = phone?.value ?: "")
+    }
+
     data class UIState(
         val divisionOneList: List<CreditCatalogOption?>? = listOf(),
         val divisionTwoList: List<CreditCatalogOption?>? = listOf(),
@@ -411,6 +418,7 @@ class HomeAddressViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnFormValid : UIEvent()
+
     }
 
     sealed class BaseEvent {

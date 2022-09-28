@@ -75,6 +75,7 @@ fun JobPlaceScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidForm)
+        viewModel.onUIEvent(JobInfoViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.screenConfig))
     }
 
     val title = when (sharedViewModel.idBrand.toInt()) {

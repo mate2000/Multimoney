@@ -102,6 +102,7 @@ fun CompanyAddressScreen(
                 }
             )
         )
+        viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.screenConfig))
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {

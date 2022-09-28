@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.credit.jobinfo
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.BaseEvent.OnFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnCompanyNameValueChange
@@ -10,6 +11,7 @@ import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,6 +46,15 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
             uiState = uiState.copy(phoneNumber = phoneNumber)
             onValidForm()
         }
+    }
+
+    private fun loadStepsInfo(list: List<CreditCatalog?>?){
+        val companyName = list?.find { it?.description == SaveCreditStepsHelper.COMPANY_NAME }
+        uiState = uiState.copy(companyName = companyName?.value ?: "")
+        val date = list?.find { it?.description == SaveCreditStepsHelper.STARTED_JOB_DATE }
+        uiState = uiState.copy(date = date?.value ?: "")
+        val phoneNumber = list?.find { it?.description == SaveCreditStepsHelper.COMPANY_PHONE }
+        uiState = uiState.copy(phoneNumber = phoneNumber?.value ?: "")
     }
 
     private fun onNexActionClick(
@@ -81,6 +92,7 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
                 uiEvent.nextStepAction,
                 uiEvent.saveCreditStepsHelper
             )
+            is OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
         }
     }
 
@@ -95,6 +107,7 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
         data class OnDateValueChange(val date: String) : UIEvent()
         data class OnPhoneNumberValueChange(val phoneNumber: String) : UIEvent()
         object OnValidForm : UIEvent()
+        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 
     sealed class BaseEvent {

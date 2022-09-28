@@ -310,6 +310,11 @@ class CompanyAddressViewModel @Inject constructor(
         nextStepAction()
     }
 
+    private fun loadStepsInfo(list: List<CreditCatalog?>?){
+        val companyAddress = list?.find { it?.description == SaveCreditStepsHelper.COMPANY_ADDRESS }
+        uiState = uiState.copy(address = companyAddress?.value ?: "")
+    }
+
     data class UIState(
         val divisionOneList: List<CreditCatalogOption?>? = listOf(),
         val divisionTwoList: List<CreditCatalogOption?>? = listOf(),
@@ -349,6 +354,7 @@ class CompanyAddressViewModel @Inject constructor(
                 uiEvent.onFailureWithDialog
             )
             is OnFormValid -> onValidateScreen()
+            is UIEvent.OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
         }
     }
 
@@ -383,6 +389,7 @@ class CompanyAddressViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnFormValid : UIEvent()
+        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 
     sealed class BaseEvent {

@@ -65,6 +65,7 @@ fun MonthlyIncomeScreen(
                 )
             )
         }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id))
+        viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.screenConfig))
     }
 
     Column(

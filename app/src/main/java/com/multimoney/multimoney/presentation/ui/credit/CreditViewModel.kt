@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DUMMY_URL
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -291,6 +292,7 @@ class CreditViewModel @Inject constructor(
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
         object OnCallMutationSaveCreditFlowStep : UIEvent()
+        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 
     companion object {

@@ -6,15 +6,27 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
-import com.multimoney.multimoney.presentation.ui.visa.VisaScreen
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
+import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScreen
 
 fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     navigation(
-        startDestination = Screen.VisaActivateScreen.route,
+        startDestination = Screen.VisaIssuanceScreen.route,
         route = VISA_ROUTE
     ) {
-        composable(route = Screen.VisaActivateScreen.route) { navBackStackEntry ->
-            VisaScreen(
+        composable(route = Screen.VisaIssuanceScreen.route) { navBackStackEntry ->
+            VisaIssuanceScreen(
+                navBackStackEntry = navBackStackEntry,
+                onPopBackStack = { navController.popBackStack() },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(route = Screen.VisaCardScreen.route) { navBackStackEntry ->
+            VisaCardScreen(
                 navBackStackEntry = navBackStackEntry,
                 onPopBackStack = { navController.popBackStack() },
                 onPopAndNavigate = {

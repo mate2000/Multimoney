@@ -52,7 +52,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     // VisaNavGraph
-    object VisaActivateScreen : Screen("visa_activate_screen/{$ID_BRAND}", "visa_activate_screen")
+    object VisaIssuanceScreen : Screen("visa_issuance_screen/{$ID_BRAND}", "visa_issuance_screen")
+    object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}", "visa_card_screen")
 
     // HomeNavGraph Screens
     object DocumentGenerationScreen : Screen("document_generation_screen")

@@ -118,11 +118,11 @@ class SignUpEmailViewModel @Inject constructor(
         } else if (userData?.userStatus == UserStatus.Blocked.status) {
             onOpenDialog(
                 DialogParameters(
-                    title = string.sign_up_email_blocked_dialog_title,
+                    titleResource = string.sign_up_email_blocked_dialog_title,
                     description = blockedMessage,
                     isActive = mutableStateOf(true),
-                    positiveText = string.contact,
-                    negativeText = string.cancel,
+                    positiveResource = string.contact,
+                    negativeResource = string.cancel,
                     positiveAction = {
                         context.openWhatsAppDeepLink(linkWhatsapp)
                     }
@@ -140,9 +140,9 @@ class SignUpEmailViewModel @Inject constructor(
         isUserStatusIncomplete = false
         onOpenDialog(
             DialogParameters(
-                title = string.sign_up_email_user_completed_dialog_title,
+                titleResource = string.sign_up_email_user_completed_dialog_title,
                 description = userCompletedDialogDescription,
-                positiveText = string.sign_up_email_user_completed_dialog_positive,
+                positiveResource = string.sign_up_email_user_completed_dialog_positive,
                 positiveAction = { previousStepAction() },
                 isActive = mutableStateOf(true)
             )

@@ -150,11 +150,8 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToVisaActivateScreen() {
-        navigateTo(
-            "${Screen.VisaActivateScreen.baseRoute}/${uiState.idBrand}"
-        )
-    }
+    private fun onNavigateToVisaActivateScreen() =
+        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
 
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {

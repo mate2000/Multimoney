@@ -11,7 +11,6 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -145,11 +144,11 @@ class SignUpPasswordViewModel @Inject constructor(
         uiState = uiState.copy(
             isFingerprintChecked = value,
             openDialogCustom = DialogParameters(
-                title = R.string.active_biometric_title,
+                titleResource = R.string.active_biometric_title,
                 description = biometricDialogDescription,
                 isActive = mutableStateOf(showDialog),
-                positiveText = R.string.active_biometric_positive_button_label,
-                negativeText = R.string.active_biometric_negative_button_label,
+                positiveResource = R.string.active_biometric_positive_button_label,
+                negativeResource = R.string.active_biometric_negative_button_label,
                 positiveAction = {
                     onFingerprintCheckedChanged(value = true, showDialog = false)
                 },
@@ -215,9 +214,9 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun showBiometricSuccess(onNextStep: () -> Unit) {
         uiState = uiState.copy(
             openDialogCustom = DialogParameters(
-                title = R.string.dialog_success_biometric_title,
+                titleResource = R.string.dialog_success_biometric_title,
                 description = biometricDialogSuccessDescription,
-                positiveText = R.string.dialog_success_biometric_positive_text,
+                positiveResource = R.string.dialog_success_biometric_positive_text,
                 isActive = mutableStateOf(true),
                 positiveAction = {
                     onNextStep()
@@ -232,9 +231,9 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun showBiometricsFailed(onNextStep: () -> Unit) {
         uiState = uiState.copy(
             openDialogCustom = DialogParameters(
-                title = R.string.dialog_failure_biometric_title,
+                titleResource = R.string.dialog_failure_biometric_title,
                 description = biometricDialogFailureDescription,
-                positiveText = R.string.dialog_failure_biometric_positive_text,
+                positiveResource = R.string.dialog_failure_biometric_positive_text,
                 isActive = mutableStateOf(true),
                 positiveAction = {
                     onNextStep()

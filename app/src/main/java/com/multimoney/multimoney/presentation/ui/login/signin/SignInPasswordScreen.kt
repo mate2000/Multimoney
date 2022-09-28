@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 fun SignInWithPassword(
@@ -33,7 +34,7 @@ fun SignInWithPassword(
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
     onForgotPasswordClick: () -> Unit,
-    onSignInWithBiometricLink: () -> Unit
+    onSignInWithBiometricLink: () -> Unit,
 ) {
     Column(modifier) {
         CustomOutlinedTextField(
@@ -94,7 +95,10 @@ fun SignInWithPassword(
             }
         }
         CustomButton(
-            onClick = { viewModel.onUIEvent(OnCallCognitoSignIn) },
+            onClick = {
+                viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.LoginPassword)
+                viewModel.onUIEvent(OnCallCognitoSignIn)
+            },
             text = stringResource(id = R.string.sign_in),
             modifier = Modifier
                 .padding(top = 24.dp)

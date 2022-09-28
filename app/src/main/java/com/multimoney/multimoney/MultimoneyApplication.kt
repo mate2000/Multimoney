@@ -23,7 +23,7 @@ open class MultimoneyApplication : Application() {
         super.onCreate()
         initThirdPartySdks()
 
-        // Initialize Adjust callbak
+        // Initialize Adjust callback
         registerActivityLifecycleCallbacks(adjustHelper.AdjustLifecycleCallbacks())
     }
 

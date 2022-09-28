@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
@@ -18,6 +19,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomBiometricIconButton
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 fun SignInWithBiometric(
@@ -25,6 +27,7 @@ fun SignInWithBiometric(
     onSignInWithBiometricAction: () -> Unit,
     onLinkEnterWithPassword: () -> Unit
 ) {
+    val context = LocalContext.current
     Column(modifier = modifier, horizontalAlignment = CenterHorizontally) {
         Text(
             text = stringResource(id = R.string.sign_in_biometric_title),
@@ -35,7 +38,9 @@ fun SignInWithBiometric(
             modifier = Modifier.padding(top = 32.dp),
             padding = 24.dp,
             icon = R.drawable.ic_fingerprint,
-            onClick = onSignInWithBiometricAction
+            onClick = {
+                onSignInWithBiometricAction()
+            }
         )
         Row(
             Modifier

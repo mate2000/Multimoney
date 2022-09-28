@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +30,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompletedViewModel.UIEvent.OnNavigateToSignIn
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,6 +94,7 @@ fun SignUpCompleted(
 
     // this is required to execute the debounce
     val navigateToSignInFlowValue by navigateToSignFlow.collectAsState(false)
+    viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpSuccess)
 }
 
 const val TIME_TO_WAIT_IN_MILLI_SECOND = 10000L

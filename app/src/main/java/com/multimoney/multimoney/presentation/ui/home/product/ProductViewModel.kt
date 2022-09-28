@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
@@ -33,10 +34,10 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Te
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -151,6 +152,12 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToVisaActivateScreen() {
+        navigateTo(
+            "${Screen.VisaActivateScreen.baseRoute}/${uiState.idBrand}"
+        )
+    }
+
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
             uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
@@ -224,6 +231,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> uiState.balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
+            is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
             is OnGetIdBrand -> onGetUserData()
             is UIEvent.OnMaxAttemptsCardClick -> openWhatsAppLink(
@@ -244,6 +252,7 @@ class ProductViewModel @Inject constructor(
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
+        object OnNavigateToVisaActivateScreen : UIEvent()
         data class OnProductClick(
             val whatsAppLink: String,
             val context: Context

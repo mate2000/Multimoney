@@ -22,7 +22,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -54,7 +54,7 @@ fun CreditTermAndCondition(
                 .background(MultimoneyTheme.colors.background),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            BackCloseNavBar(isBackVisible = false, onCloseClick = {
+            TopNavBar(isLeftButtonVisible = false, onRightButtonClick = {
                 isActive.value = false
             })
             if (viewModel.uiState.html.isNotEmpty()){

@@ -18,19 +18,21 @@ import com.multimoney.multimoney.presentation.theme.Primary500
  * BackCloseNavBar: NavBar with options to go back and close current screen
  *
  * Parameters:
- * @param isBackVisible: Enable back button.
- * @param isCloseVisible: Enable close button.
- * @param onBackClick: Action when user clicks back button.
- * @param onCloseClick: Action when user clicks close button.
+ * @param isLeftButtonVisible: Enable back button.
+ * @param isRightButtonVisible: Enable close button.
+ * @param onLeftButtonClick: Action when user clicks back button.
+ * @param onRightButtonClick: Action when user clicks close button.
  */
 
 @Composable
 @Preview
-fun BackCloseNavBar(
-    isBackVisible: Boolean = true,
-    isCloseVisible: Boolean = true,
-    onBackClick: () -> Unit = {},
-    onCloseClick: () -> Unit = {}
+fun TopNavBar(
+    isLeftButtonVisible: Boolean = true,
+    isRightButtonVisible: Boolean = true,
+    leftButtonIcon: Int = R.drawable.ic_arrow_left,
+    rightButtonIcon: Int = R.drawable.ic_close,
+    onLeftButtonClick: () -> Unit = {},
+    onRightButtonClick: () -> Unit = {}
 ) {
 
     val tint = if (isSystemInDarkTheme()) {
@@ -45,10 +47,10 @@ fun BackCloseNavBar(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column(Modifier.weight(0.9f)) {
-            if (isBackVisible) {
-                IconButton(onClick = onBackClick) {
+            if (isLeftButtonVisible) {
+                IconButton(onClick = onLeftButtonClick) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_arrow_left),
+                        painter = painterResource(leftButtonIcon),
                         contentDescription = "",
                         tint = tint
                     )
@@ -56,10 +58,10 @@ fun BackCloseNavBar(
             }
         }
         Column(Modifier.weight(0.1f)) {
-            if (isCloseVisible) {
-                IconButton(onClick = onCloseClick) {
+            if (isRightButtonVisible) {
+                IconButton(onClick = onRightButtonClick) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_close),
+                        painter = painterResource(rightButtonIcon),
                         contentDescription = "",
                         tint = tint
                     )

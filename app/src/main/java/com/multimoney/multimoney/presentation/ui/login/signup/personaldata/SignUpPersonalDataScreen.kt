@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
@@ -50,24 +51,36 @@ fun SignUpPersonalDataScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
+                is OnGetCountriesSuccess -> {
+                    sharedViewModel.apply {
+                        viewModel.onUIEvent(
+                            SignUpPersonalDataViewModel.UIEvent.OnStart(
+                                nationality = userData?.nationality ?: "",
+                                identificationType = userData?.strIdIdentification ?: strIdIdentification,
+                                identificationValue = userData?.identification ?: "",
+                                firstName = userData?.firstName ?: "",
+                                secondName = userData?.secondName ?: "",
+                                firstLastName = userData?.firstLastName ?: "",
+                                secondLastName = userData?.secondLastName ?: "",
+                                fullName = userData?.fullName ?: "",
+                                updateNationality = { nationality, idBrand ->
+                                    sharedViewModel.onUIEvent(
+                                        OnNationalityValueChange(nationality, idBrand)
+                                    )
+                                },
+                                onLoadingValueChange = { isLoading ->
+                                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                                }
+                            )
+                        )
+                    }
+                }
             }
         }
     }
 
     LaunchedEffect(true) {
         sharedViewModel.apply {
-            viewModel.onUIEvent(
-                SignUpPersonalDataViewModel.UIEvent.OnStart(
-                    nationality = userData?.nationality ?: "",
-                    identificationType = userData?.identificationValueType ?: "",
-                    identificationValue = userData?.identification ?: "",
-                    firstName = userData?.firstName ?: "",
-                    secondName = userData?.secondName ?: "",
-                    firstLastName = userData?.firstLastName ?: "",
-                    secondLastName = userData?.secondLastName ?: "",
-                    fullName = userData?.fullName ?: ""
-                )
-            )
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(
                     nextAction = {
@@ -91,6 +104,7 @@ fun SignUpPersonalDataScreen(
                         currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
                         onUseDataValueChange = {
+                            sharedViewModel.strIdIdentification = viewModel.uiState.identificationValueType
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnUseDataValueChange(
                                     sharedViewModel.userData?.copy(
@@ -100,6 +114,7 @@ fun SignUpPersonalDataScreen(
                                         secondName = userData?.secondName,
                                         firstLastName = userData?.firstLastName,
                                         secondLastName = userData?.secondLastName,
+                                        identification = userData?.identification,
                                         currentStep = userData?.currentStep
                                     )
                                 )

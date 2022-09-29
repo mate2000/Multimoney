@@ -37,7 +37,7 @@ fun MyProductsBottomSheetScreen(
                 .padding(top = 40.dp, bottom = 40.dp)
         ) {
             Text(
-                text = "My Products",
+                text = "Mis Productos",
                 style = Typography.h4,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center

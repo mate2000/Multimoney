@@ -211,9 +211,11 @@ fun CreditProduct(viewModel: ProductViewModel) {
                 ) {
                     when {
                         hasToShowCreditInitialCard(this) -> {
+                            val infoPreApprove =
+                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()?.amountAvailable
+                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable
                             )
                         }
                         infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {

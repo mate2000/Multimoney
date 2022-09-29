@@ -144,7 +144,9 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyProvinceUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyProvince = it?.first()
+                    if (companyProvince == null){
+                        companyProvince = it?.first()
+                    }
                     companyProvinceList = companyProvince?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
@@ -165,6 +167,7 @@ class CompanyAddressViewModel @Inject constructor(
                             {isLoading, dialogParameters ->
 
                             }))
+                        companyProvince = companyProvince?.copy(pkCatalog = null)
                     }
                     onLoadingValueChange(false)
                 }
@@ -194,7 +197,9 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyCanton = it?.first()
+                    if(companyCanton == null){
+                        companyCanton = it?.first()
+                    }
                     companyCantonList = companyCanton?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
@@ -216,6 +221,7 @@ class CompanyAddressViewModel @Inject constructor(
 
                             }
                         ))
+                        companyCanton = companyCanton?.copy(pkCatalog = null)
                     }
                     onLoadingValueChange(false)
                 }
@@ -245,7 +251,9 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyDistrict = it?.first()
+                    if (companyDistrict == null){
+                        companyDistrict = it?.first()
+                    }
                     companyDistrictList = companyDistrict?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
@@ -263,6 +271,7 @@ class CompanyAddressViewModel @Inject constructor(
                                 selectedCompanyDistrict
                             )
                         )
+                        companyDistrict = companyDistrict?.copy(pkCatalog = null)
                     }
                     onLoadingValueChange(false)
                 }

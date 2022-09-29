@@ -153,7 +153,9 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeProvinceUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    homeProvince = it?.first()
+                    if (homeProvince == null){
+                        homeProvince = it?.first()
+                    }
                     homeProvinceList = homeProvince?.subOptions?.filter { filter ->
                         filter?.description != CompanyAddressViewModel.MIDDLE_DASH
                     }
@@ -166,6 +168,7 @@ class HomeAddressViewModel @Inject constructor(
                         val selectedHomeProvince =
                             homeProvinceList?.find { it?.pkCatalog == homeProvince?.pkCatalog }
                         uiState = uiState.copy(divisionOneSelected = selectedHomeProvince)
+                        homeProvince = homeProvince?.copy(pkCatalog = null)
                         onUIEvent(OnDivisionOneValueChange(
                             selectedHomeProvince,
                             { loading ->
@@ -204,7 +207,9 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    homeCanton = it?.first()
+                    if (homeCanton == null){
+                        homeCanton = it?.first()
+                    }
                     homeCantonList = homeCanton?.subOptions?.filter { filter ->
                         filter?.description != CompanyAddressViewModel.MIDDLE_DASH
                     }
@@ -217,6 +222,7 @@ class HomeAddressViewModel @Inject constructor(
                         val selectedHomeCanton =
                             homeCantonList?.find { it?.pkCatalog == homeCanton?.pkCatalog }
                         uiState = uiState.copy(divisionTwoSelected = selectedHomeCanton)
+                        homeCanton = homeCanton?.copy(pkCatalog = null)
                         onUIEvent(OnDivisionTwoValueChange(
                             selectedHomeCanton,
                             { loading ->
@@ -255,7 +261,9 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    homeDistrict = it?.first()
+                    if (homeDistrict == null){
+                        homeDistrict = it?.first()
+                    }
                     homeDistrictList = homeDistrict?.subOptions?.filter { filter ->
                         filter?.description != CompanyAddressViewModel.MIDDLE_DASH
                     }
@@ -268,6 +276,7 @@ class HomeAddressViewModel @Inject constructor(
                         val selectedHomeDistrict =
                             homeDistrictList?.find { it?.pkCatalog == homeDistrict?.pkCatalog }
                         uiState = uiState.copy(divisionThreeSelected = selectedHomeDistrict)
+                        homeDistrict = homeDistrict?.copy(pkCatalog = null)
                         onUIEvent(OnDivisionThreeValueChange(
                             selectedHomeDistrict
                         ))
@@ -361,17 +370,23 @@ class HomeAddressViewModel @Inject constructor(
                 uiEvent.nextStepAction,
                 uiEvent.saveCreditStepsHelper
             )
-            is OnDivisionOneValueChange -> onDivisionOneValueChange(
-                uiEvent.divisionOne,
-                uiEvent.onLoadingValueChange,
-                uiEvent.onFailureWithDialog
-            )
-            is OnDivisionTwoValueChange -> onDivisionTwoValueChange(
-                uiEvent.divisionTwo,
-                uiEvent.onLoadingValueChange,
-                uiEvent.onFailureWithDialog
-            )
-            is OnDivisionThreeValueChange -> onDivisionThreeValueChange(uiEvent.divisionThree)
+            is OnDivisionOneValueChange -> {
+                onDivisionOneValueChange(
+                    uiEvent.divisionOne,
+                    uiEvent.onLoadingValueChange,
+                    uiEvent.onFailureWithDialog
+                )
+            }
+            is OnDivisionTwoValueChange -> {
+                onDivisionTwoValueChange(
+                    uiEvent.divisionTwo,
+                    uiEvent.onLoadingValueChange,
+                    uiEvent.onFailureWithDialog
+                )
+            }
+            is OnDivisionThreeValueChange -> {
+                onDivisionThreeValueChange(uiEvent.divisionThree)
+            }
             is OnAddressValueChange -> onAddressValueChange(uiEvent.address)
             is OnPhoneNumberValueChange -> onPhoneValueChange(uiEvent.phone)
             is OnCallCatalogs -> onCallCatalogs(

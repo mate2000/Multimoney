@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
@@ -81,7 +82,8 @@ fun CreditScreen(
     viewModel.onUIEvent(OnInitializeText(stringResource(id = string.credit_close_dialog_description)))
 
     if (viewModel.uiState.lastStep != 1) {
-        LoadingMultiMoney(textRes = R.string.accept, viewModel)
+        val stringId = viewModel.getLoadingString()
+        LoadingMultiMoney(textRes = stringId, viewModel)
         LaunchedEffect(true) {
             viewModel.queryCreditSteps()
         }

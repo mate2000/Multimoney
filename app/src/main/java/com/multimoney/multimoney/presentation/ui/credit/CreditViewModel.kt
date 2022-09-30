@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.CreditStep.Search
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
@@ -258,6 +259,16 @@ class CreditViewModel @Inject constructor(
             is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
         }
     }
+
+    fun getLoadingString(): Int =
+        if (idBrand.isNotEmpty()) {
+            when (idBrand.toInt()) {
+                Brand.Guatemala.id -> R.string.credit_glad_to_see_you_gt
+                else -> R.string.credit_glad_to_see_you
+            }
+        } else {
+            R.string.empty
+        }
 
     sealed class UIEvent {
         data class OnInitializeText(val description: String) : UIEvent()

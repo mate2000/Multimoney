@@ -11,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -143,8 +142,10 @@ fun SignUpPersonalDataScreen(
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }.onMessage {
                 sharedViewModel.onUIEvent(
-                    SignUpViewModel.UIEvent.OnOpenDialogValueChange(
-                        DialogParameters(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            title = string.error_empty,
                             description = it?.message ?: "",
                             isActive = mutableStateOf(true)
                         )

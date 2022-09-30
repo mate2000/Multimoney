@@ -39,12 +39,11 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.util.CrDocuments
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
-import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
@@ -112,7 +111,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
     }
 
-    private fun getDocumentLength(documentType: String) {
+    private fun getDocumentLength(documentType: String, isFromBackend: Boolean = false) {
         onSuccessCatalogDocumentType?.catalogDocument?.forEach { documentCatalog ->
             if (documentCatalog.description == documentType) {
                 uiState = uiState.copy(
@@ -123,6 +122,17 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 documentLength =
                     documentCatalog.format.count { documentCatalog.format.last() == it }
             }
+        }
+        if (isFromBackend.not()) {
+            uiState = uiState.copy(
+                personalDocumentValue = "",
+                dataInformationClient = null,
+                firstNameValue = "",
+                secondNameValue = "",
+                firstLastNameValue = "",
+                secondLastNameValue = "",
+                fullNameValue = ""
+            )
         }
     }
 
@@ -162,7 +172,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 user
             ).collectLatest { result ->
                 result.onSuccess {
-                    uiState = uiState.copy(dataInformationClient = it)
+                    uiState = uiState.copy(
+                        dataInformationClient = it
+                    )
                     isLoading = false
                     isFormValid()
                 }
@@ -201,7 +213,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     }
                     uiState = uiState.copy(documentList = documentList)
                     if (uiState.identificationValueType.isEmpty().not()) {
-                        getDocumentLength(uiState.identificationValueType)
+                        getDocumentLength(uiState.identificationValueType, true)
                     } else if (documentList.size == SINGLE_DOCUMENT) {
                         uiState = uiState.copy(identificationValueType = documentList.first())
                     }
@@ -376,8 +388,19 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     fun getFullName(): String =
-        "${uiState.firstNameValue} ${uiState.secondNameValue} ${uiState.firstLastNameValue} ${uiState.secondLastNameValue}"
-
+        if (uiState.firstNameValue.isEmpty()) {
+            uiState.dataInformationClient?.fullName ?: ""
+        } else {
+            var fullName = uiState.firstNameValue
+            if (uiState.secondNameValue.isNotEmpty()) {
+                fullName.plus(" ").plus(uiState.secondNameValue)
+            }
+            fullName.plus(" ").plus(uiState.firstLastNameValue)
+            if (uiState.secondLastNameValue.isNotEmpty()) {
+                fullName.plus(" ").plus(uiState.secondLastNameValue)
+            }
+            fullName
+        }
 
     private fun onNextActionClick(
         email: String, nextStep: String, idBrand: Int,

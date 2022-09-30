@@ -215,9 +215,11 @@ fun CreditProduct(viewModel: ProductViewModel) {
                 ) {
                     when {
                         viewModel.evaluateCardCondition(CREDIT_INITIAL_CARD, this) -> {
+                            val infoPreApprove =
+                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()?.amountAvailable
+                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {

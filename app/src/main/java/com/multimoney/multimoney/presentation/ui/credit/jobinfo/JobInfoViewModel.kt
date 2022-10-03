@@ -59,7 +59,6 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
 
         val phoneNumber = list?.find { it?.description == SaveCreditStepsHelper.COMPANY_PHONE }
         uiState = uiState.copy(phoneNumber = phoneNumber?.value ?: "")
-        //onValidForm()
     }
 
     private fun onNexActionClick(

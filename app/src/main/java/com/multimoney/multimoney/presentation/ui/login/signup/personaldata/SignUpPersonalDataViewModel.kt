@@ -8,6 +8,7 @@ import com.multimoney.data.util.catalog.Nationalities.CostaRicaDimex
 import com.multimoney.data.util.catalog.Nationalities.CostaRicaId
 import com.multimoney.data.util.catalog.Nationalities.ElSalvador
 import com.multimoney.data.util.catalog.Nationalities.Guatemala
+import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
@@ -37,6 +38,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.CrDocuments
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,6 +53,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private val queryCatalogDocumentTypeUseCase: QueryCatalogDocumentTypeUseCase,
     private val queryGetCountryUseCase: QueryGetCountryUseCase,
     private val mutationUserValidationUseCase: MutationUserValidationUseCase,
+    private val queryCreditOfferUseCase: QueryCreditOfferUseCase
 ) : BaseViewModel(false) {
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -233,26 +236,50 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun callQueryGetCountryUseCase(
         user: String,
         onLoadingValueChange: (isLoading: Boolean) -> Unit,
-    ) {
-        viewModelScope.launch {
-            queryGetCountryUseCase.invoke(user).collectLatest { result ->
-                result.onSuccess {
-                    onSuccessCountry = it
-                    val countryList: ArrayList<String> = arrayListOf()
-                    it?.countryList?.forEach { country ->
-                        countryList.add(country.countryDescription ?: "")
-                    }
-                    uiState = uiState.copy(countryList = countryList)
-                    emitBaseEvent(OnGetCountriesSuccess)
-                    onLoadingValueChange(false)
+    ) = executeUseCase {
+        queryGetCountryUseCase.invoke(user).collectLatest { result ->
+            result.onSuccess {
+                onSuccessCountry = it
+                val countryList: ArrayList<String> = arrayListOf()
+                it?.countryList?.forEach { country ->
+                    countryList.add(country.countryDescription ?: "")
                 }
-                result.onFailure {
-                    onLoadingValueChange(false)
-                    onSuccessCountry = null
-                }
-                result.onLoading {
-                    onLoadingValueChange(true)
-                }
+                uiState = uiState.copy(countryList = countryList)
+                emitBaseEvent(OnGetCountriesSuccess)
+                onLoadingValueChange(false)
+            }
+            result.onFailure {
+                onLoadingValueChange(false)
+                onSuccessCountry = null
+            }
+            result.onLoading {
+                onLoadingValueChange(true)
+            }
+        }
+    }
+
+    private fun callQueryCreditOfferUseCase(
+        pkUser: Int,
+        idBrand: Int,
+        onCallMutationUpdateUserRegisterUseCase: () -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
+    ) = executeUseCase {
+        queryCreditOfferUseCase.invoke(pkUser, idBrand).collectLatest { result ->
+            result.onSuccess {
+                onCallMutationUpdateUserRegisterUseCase.invoke()
+            }
+            result.onFailure {
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }
+            result.onLoading {
+                onLoadingValueChange(true)
             }
         }
     }
@@ -305,7 +332,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         secondLastName: String,
         fullName: String,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
         val countryValue = getCountry(nationality, updateNationality, onLoadingValueChange) ?: ""
         uiState = uiState.copy(
@@ -424,11 +451,21 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     private fun onUserDataValidationSuccess(
+        pkUser: Int,
+        idBrand: Int,
         onUseDataValueChange: () -> Unit,
         onCallMutationUpdateUserRegisterUseCase: () -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
         onUseDataValueChange()
-        onCallMutationUpdateUserRegisterUseCase()
+        callQueryCreditOfferUseCase(
+            pkUser,
+            idBrand,
+            onCallMutationUpdateUserRegisterUseCase,
+            onFailureWithDialog,
+            onLoadingValueChange
+        )
     }
 
     data class UIState(
@@ -497,8 +534,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
             )
             is OnNextActionClick -> onNextActionClick(event.email, event.nextStep, event.idBrand)
             is OnUserDataValidationSuccess -> onUserDataValidationSuccess(
+                event.userData?.pkUser?.toInt() ?: 0,
+                event.idBrand,
                 event.onUseDataValueChange,
                 event.onCallMutationUpdateUserRegisterUseCase,
+                event.onFailureWithDialog,
+                event.onLoadingValueChange
             )
             is OnValidateDocument -> validateDocument(event.email)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
@@ -573,12 +614,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
             UIEvent()
 
         data class OnUserDataValidationSuccess(
-            val currentStep: Int,
             val userData: UserData?,
+            val idBrand: Int,
             val onUseDataValueChange: () -> Unit,
             val onCallMutationUpdateUserRegisterUseCase: () -> Unit,
-            val onMoveToStep: (step: Int) -> Unit,
-            val onLoadingValueChange: () -> Unit,
+            val onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
 
         object OnValidateForm : UIEvent()

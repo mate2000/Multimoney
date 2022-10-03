@@ -37,7 +37,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
@@ -103,8 +102,8 @@ fun SignUpPersonalDataScreen(
             result.onSuccess { userData ->
                 viewModel.onUIEvent(
                     SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess(
-                        currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
+                        idBrand = sharedViewModel.idBrand ?: 0,
                         onUseDataValueChange = {
                             sharedViewModel.strIdIdentification = viewModel.uiState.identificationValueType
                             sharedViewModel.onUIEvent(
@@ -125,14 +124,18 @@ fun SignUpPersonalDataScreen(
                         onCallMutationUpdateUserRegisterUseCase = {
                             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
                         },
-                        onMoveToStep = { step ->
-                            viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)
-                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnMoveToStep(step))
-                        },
                         onLoadingValueChange = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnLoadingValueChange(
-                                    false
+                                    it
+                                )
+                            )
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading = isLoading,
+                                    openDialog = dialogParameters
                                 )
                             )
                         }

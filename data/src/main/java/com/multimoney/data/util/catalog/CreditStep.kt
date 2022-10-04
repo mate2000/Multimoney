@@ -1,7 +1,6 @@
 package com.multimoney.data.util.catalog
 
 sealed class CreditStep(val id: Int, val name: String) {
-    object Zero : CreditStep(0, "Origination_Step0")
     object One : CreditStep(1, "Origination_Step1")
     object Two : CreditStep(2, "Origination_Step2")
     object Three : CreditStep(3, "Origination_Step3")

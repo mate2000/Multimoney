@@ -40,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelp
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
@@ -202,6 +203,8 @@ class CreditViewModel @Inject constructor(
         executeUseCase {
             queryScreenConfigUseCase(pkUser, email, idBrand.toInt(), idUserRequest).collectLatest {
                 it.onSuccess {
+                    // Wait 3 seconds to show banner
+                    delay(BANNER_TIME)
                     onUIEvent(OnUpdateScreenConfigData(it))
                     moveToStep(uiState.lastStep)
                 }
@@ -309,5 +312,6 @@ class CreditViewModel @Inject constructor(
     companion object {
         const val CREDIT_TOTAL_STEPS = 6
         const val CREDIT_INDICATOR_TOTAL_STEPS = 4
+        const val BANNER_TIME = 3000L
     }
 }

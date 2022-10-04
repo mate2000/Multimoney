@@ -50,15 +50,25 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
 
     private fun loadStepsInfo(list: List<CreditCatalog?>?){
         val companyName = list?.find { it?.description == SaveCreditStepsHelper.COMPANY_NAME }
-        uiState = uiState.copy(companyName = companyName?.value ?: "")
+        companyName?.value?.let {
+            uiState = uiState.copy(companyName = companyName.value ?: "")
+            onCompanyNameValueChange(it)
+        }
         val date = list?.find { it?.description == SaveCreditStepsHelper.STARTED_JOB_DATE }
         date?.value?.let {
-            uiState = uiState.copy(date = date?.value ?: "")
-            onDateValueChange(it)
+            val dateParsed =  getFormatDateByString(
+                it,
+                BACKEND_DATE_FORMAT,
+                DATE_FORMAT
+            )
+            onDateValueChange(dateParsed)
         }
 
         val phoneNumber = list?.find { it?.description == SaveCreditStepsHelper.COMPANY_PHONE }
-        uiState = uiState.copy(phoneNumber = phoneNumber?.value ?: "")
+        phoneNumber?.value?.let {
+            uiState = uiState.copy(phoneNumber = phoneNumber.value ?: "")
+            onPhoneNumberValueChange(it)
+        }
     }
 
     private fun onNexActionClick(

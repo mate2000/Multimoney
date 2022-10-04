@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
@@ -40,13 +41,14 @@ import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentS
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -79,64 +81,73 @@ fun CreditScreen(
 
     viewModel.onUIEvent(OnInitializeText(stringResource(id = string.credit_close_dialog_description)))
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-    ) {
-        Column {
-            TopNavBar(
-                isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id,
-                isRightButtonVisible = viewModel.uiState.isCloseVisible,
-                onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
-            if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Six.id) {
-                StepProgressBar(
-                    steps = CREDIT_INDICATOR_TOTAL_STEPS,
-                    currentStep = viewModel.uiState.currentStep - 1,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                )
-            }
+    if (viewModel.uiState.lastStep != 1) {
+        val stringId = viewModel.getLoadingString()
+        LoadingMultiMoney(textRes = stringId, viewModel)
+        LaunchedEffect(true) {
+            viewModel.queryCreditSteps()
         }
+    } else {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.SpaceBetween
+                .background(MultimoneyTheme.colors.background)
         ) {
-            GetStepContent(
-                step = viewModel.uiState.currentStep,
-                onNavigate = onNavigate,
-                viewModel = viewModel
-            )
-
             Column {
-                CustomButton(
-                    onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-                    text = stringResource(id = string.button_continue),
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    buttonType = PrimaryPrimary,
-                    enable = viewModel.uiState.isContinueEnabled
+                TopNavBar(
+                    isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id,
+                    isRightButtonVisible = viewModel.uiState.isCloseVisible,
+                    onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
+                    onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
+                if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Six.id) {
+                    StepProgressBar(
+                        steps = CREDIT_INDICATOR_TOTAL_STEPS,
+                        currentStep = viewModel.uiState.currentStep - 1,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                GetStepContent(
+                    step = viewModel.uiState.currentStep,
+                    onNavigate = onNavigate,
+                    viewModel = viewModel
                 )
-                if (viewModel.uiState.isCurrentLocationButtonVisible) {
+
+                Column {
                     CustomButton(
-                        text = stringResource(id = R.string.credit_home_address_select_current_location),
+                        onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
+                        text = stringResource(id = string.button_continue),
                         modifier = Modifier
-                            .padding(top = 12.dp)
+                            .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                             .fillMaxWidth()
                             .height(48.dp),
-                        onClick = {
-                            // active the location to select de current location
-                        },
-                        buttonType = PrimaryTertiaryUnderLined
+                        buttonType = PrimaryPrimary,
+                        enable = viewModel.uiState.isContinueEnabled
                     )
+                    if (viewModel.uiState.isCurrentLocationButtonVisible) {
+                        CustomButton(
+                            text = stringResource(id = R.string.credit_home_address_select_current_location),
+                            modifier = Modifier
+                                .padding(top = 12.dp)
+                                .fillMaxWidth()
+                                .height(48.dp),
+                            onClick = {
+                                // active the location to select de current location
+                            },
+                            buttonType = PrimaryTertiaryUnderLined
+                        )
+                    }
                 }
             }
         }
     }
+
 
     LoadingIndicator(viewModel.uiState.isLoading)
 

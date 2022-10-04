@@ -9,6 +9,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
@@ -130,7 +131,8 @@ class ProductViewModel @Inject constructor(
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
         uiState = uiState.copy(
             userStatus = userStatus,
-            productType = getProductBackgroundType(userStatus)
+            productType = getProductBackgroundType(userStatus),
+            lastStep = CreditStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
         )
         // TODO: Send parameters to balance from userStatus
         callQueryBalanceUseCase()
@@ -179,6 +181,36 @@ class ProductViewModel @Inject constructor(
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
+    }
+
+    fun evaluateCardCondition(action: String, validateUserStatus: ValidateUserStatus): Boolean {
+        validateUserStatus.apply {
+            return when (action) {
+                CREDIT_INITIAL_CARD -> {
+                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
+                            && infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
+                            && (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
+                            || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
+                }
+                CREDIT_MAX_ATTEMPTS -> {
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
+                }
+                CREDIT_IDENTITY_INCOMPLETE -> {
+                    (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
+                        infoCredit?.infoPreApprove?.currentStep
+                    ) == CreditStep.Six.id)
+                }
+                CREDIT_INFO_INCOMPLETE -> {
+                    (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (CreditStep.Search.getIdByName(
+                        infoCredit?.infoPreApprove?.currentStep
+                    ) < CreditStep.Six.id)
+                }
+                CREDIT_REJECTED -> {
+                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
+                }
+                else -> false
+            }
+        }
     }
 
     data class UIState(
@@ -260,5 +292,10 @@ class ProductViewModel @Inject constructor(
 
     companion object {
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
+        const val CREDIT_INITIAL_CARD = "CREDIT_INITIAL_CARD"
+        const val CREDIT_MAX_ATTEMPTS = "CREDIT_MAX_ATTEMPTS"
+        const val CREDIT_IDENTITY_INCOMPLETE = "CREDIT_IDENTITY_INCOMPLETE"
+        const val CREDIT_INFO_INCOMPLETE = "CREDIT_INFO_INCOMPLETE"
+        const val CREDIT_REJECTED = "CREDIT_REJECTED"
     }
 }

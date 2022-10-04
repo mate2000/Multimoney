@@ -348,4 +348,7 @@
     <string name="visa_activate_gt_no_nfc_title" translatable="false">¡Compra en línea con Multimoney Visa!</string>
     <string name="visa_activate_gt_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
 
+    <!-- Credit Loading -->
+    <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
+    <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regresés!</string>
 </resources>

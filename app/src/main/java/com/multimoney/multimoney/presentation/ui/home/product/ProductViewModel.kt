@@ -185,9 +185,6 @@ class ProductViewModel @Inject constructor(
         var userStatus: ValidateUserStatus? = null,
         var productType: ProductBackGroundType = Tertiary,
         var isLoading: Boolean = false,
-
-        // Selected Product
-        var selectedProductTitle: Int = 0
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

@@ -16,7 +16,7 @@
         ],
       },
       main_card: {
-        height: 350,
+        height: 400,
         top: [
           'header_cards',
           'bottom',

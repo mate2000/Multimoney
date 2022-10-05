@@ -1,13 +1,13 @@
-query Balance($user: String!,$identification:String!,$idBrand:Int!,$idClient:String!,$idLoanClient:Int!){
+query Balance($user:String!,$identification:String!,$idBrand:Int!,$idClient:Int!,$idLoanClient:Int!, $creditStatus:Int!, $accountStatus:Int!, $cryptoStatus:Int!, $cardStatus:Int!){
     balanceCredit(
         balanceCreditInput: {
             idBrand: $idBrand
             idClient: $idClient
-            tenantId: ""
-            traceIdentifier: ""
+            status: $creditStatus
         }
     ) {
         resumen {
+            moneda
             saldo_Actual_Label
             saldo_Disponible_Label
             fecha_Pago_Label
@@ -17,6 +17,7 @@ query Balance($user: String!,$identification:String!,$idBrand:Int!,$idClient:Str
     balanceAccountSmart(
         checkAccountInput:{
             identification : $identification
+            status: $accountStatus
             user: $user
             idBrand: $idBrand
         }
@@ -34,6 +35,7 @@ query Balance($user: String!,$identification:String!,$idBrand:Int!,$idClient:Str
     balanceCryptoAccount(
         balanceCryptoInput: {
             identification: $identification
+            status: $cryptoStatus
             idBrand: $idBrand
             user: $user
         }
@@ -47,6 +49,7 @@ query Balance($user: String!,$identification:String!,$idBrand:Int!,$idClient:Str
             idLoanClient: $idLoanClient
             user: $user
             idBrand: $idBrand
+            status: $cardStatus
         }
     ) {
         cardInfo {

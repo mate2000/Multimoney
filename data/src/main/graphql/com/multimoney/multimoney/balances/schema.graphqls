@@ -107,7 +107,7 @@ type balanceCredit {
   """
   balanceCredit Micro_Credito
   """
-  micro_Credito: Boolean!
+  micro_Credito: Boolean
 }
 
 scalar Short
@@ -319,13 +319,15 @@ The `DateTime` scalar type represents a date and time. `DateTime` expects timest
 scalar DateTime
 
 input balanceCreditInput {
+  idClient: Int!
+
+  status: Int!
+
   idBrand: Int!
 
-  idClient: String!
+  tenantId: String
 
-  tenantId: String!
-
-  traceIdentifier: String!
+  traceIdentifier: String
 }
 
 type CheckAccount {
@@ -441,12 +443,12 @@ type Request {
   """
   Request StatusFirm
   """
-  statusFirm: String!
+  statusFirm: String
 
   """
   Request StatusOnfido
   """
-  statusOnfido: String!
+  statusOnfido: String
 
   """
   Request IdRequestSysde
@@ -461,6 +463,8 @@ type Request {
 
 input checkAccountInput {
   identification: String!
+
+  status: Int!
 
   user: String!
 
@@ -543,11 +547,13 @@ type balaceCryptoAccountItem {
 input balanceCryptoInput {
   identification: String!
 
+  assets: String
+
+  status: Int!
+
   idBrand: Int!
 
   user: String!
-
-  assets: String
 
   tenantId: String
 
@@ -654,11 +660,13 @@ type balanceCardInfoItem {
 }
 
 input balanceCardInformationInput {
-  idClient: String!
+  idClient: Int!
 
   identification: String!
 
   idLoanClient: Int!
+
+  status: Int!
 
   user: String!
 

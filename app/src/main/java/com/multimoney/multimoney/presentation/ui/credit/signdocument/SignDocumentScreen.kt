@@ -45,10 +45,10 @@ fun SignDocumentScreen(
 
     if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.dialogParameters.title),
+            title = stringResource(id = viewModel.uiState.dialogParameters.titleResource),
             message = viewModel.uiState.dialogParameters.description,
-            positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveText),
-            negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeText),
+            positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,
             onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
         )

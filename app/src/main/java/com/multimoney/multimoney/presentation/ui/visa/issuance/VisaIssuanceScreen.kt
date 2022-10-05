@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.visa
+package com.multimoney.multimoney.presentation.ui.visa.issuance
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +20,9 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.visa.VisaActivateViewModel.UIEvent.OnGetTextResources
-import com.multimoney.multimoney.presentation.ui.visa.VisaActivateViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnGetTextResources
+import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnIssuanceClick
+import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
@@ -29,11 +30,11 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-fun VisaScreen(
+fun VisaIssuanceScreen(
     navBackStackEntry: NavBackStackEntry,
     onPopBackStack: () -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: VisaActivateViewModel = hiltViewModel()
+    viewModel: VisaIssuanceViewModel = hiltViewModel()
 ) {
     // Navigation
     LaunchedEffect(true) {
@@ -90,11 +91,16 @@ fun VisaScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
-                onClick = { },
+                onClick = {
+                    viewModel.onUIEvent(
+                        OnIssuanceClick(
+                            navBackStackEntry.arguments?.getString(ID_BRAND, "") ?: ""
+                        )
+                    )
+                },
                 text = stringResource(id = R.string.activate),
-                buttonType = PrimaryPrimary,
-
-                )
+                buttonType = PrimaryPrimary
+            )
         }
     }
 }

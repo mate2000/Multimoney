@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.data.util.catalog.CreditStep
@@ -34,10 +33,10 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Te
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -50,30 +49,40 @@ class ProductViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
+    // Stateless
+    var lastStep: Int = 1
+    var balanceCredit: Balance? = null
+    var productType: ProductBackGroundType = Tertiary
+    var pkUser: String = ""
+    var identification: String = ""
+    var email: String = ""
+
     private fun onGetUserData() {
         viewModelScope.launch {
-            uiState = uiState.copy(
-                idBrand = dataStorePreferences.getIdBrand().first(),
-                pkUser = dataStorePreferences.getPkUser().first(),
-                identification = dataStorePreferences.getIdentification().first(),
-                email = dataStorePreferences.getUserEmail().first()
-            )
+            uiState = uiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
+            pkUser = dataStorePreferences.getPkUser().first()
+            identification = dataStorePreferences.getIdentification().first()
+            email = dataStorePreferences.getUserEmail().first()
+
             callQueryValidateUserStatus(
-                uiState.pkUser.toInt(),
-                uiState.identification,
-                uiState.email,
+                pkUser.toInt(),
+                identification,
+                email,
                 uiState.idBrand.toInt()
             )
         }
     }
 
-    // TODO: Remove hardcoded parameters
     private fun callQueryBalanceUseCase(
-        user: String = "ecruzGrapqhql",
-        identification: String = "303190775",
-        idBrand: Int = Brand.CostaRica.id,
-        idClient: String = "192656",
-        idLoanClient: Int = 223034
+        user: String,
+        identification: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        creditStatus: Int,
+        accountStatus: Int,
+        cryptoStatus: Int,
+        cardStatus: Int
     ) {
         executeUseCase {
             queryBalanceUseCase.invoke(
@@ -81,12 +90,16 @@ class ProductViewModel @Inject constructor(
                 identification = identification,
                 idBrand = idBrand,
                 idClient = idClient,
-                idLoanClient = idLoanClient
+                idLoanClient = idLoanClient,
+                creditStatus = creditStatus,
+                accountStatus = accountStatus,
+                cryptoStatus = cryptoStatus,
+                cardStatus = cardStatus,
             ).collectLatest { result ->
                 result.onSuccess { balance ->
                     uiState = uiState.copy(isLoading = false)
                     balance?.let {
-                        uiState = uiState.copy(balanceCredit = balance)
+                        balanceCredit = it
                     }
                 }
                 result.onFailure {
@@ -129,13 +142,20 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
-        uiState = uiState.copy(
-            userStatus = userStatus,
-            productType = getProductBackgroundType(userStatus),
-            lastStep = CreditStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
+        productType = getProductBackgroundType(userStatus)
+        lastStep = CreditStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
+        uiState = uiState.copy(userStatus = userStatus)
+        callQueryBalanceUseCase(
+            user = email,
+            identification = identification,
+            idBrand = uiState.idBrand.toInt(),
+            idClient = uiState.userStatus?.infoUser?.idClient ?: 0,
+            idLoanClient = uiState.userStatus?.infoCredit?.idLoanClient ?: 0,
+            creditStatus = uiState.userStatus?.infoCredit?.status ?: 0,
+            accountStatus = uiState.userStatus?.infoBankAccount?.status ?: 0,
+            cryptoStatus = uiState.userStatus?.infoCrypto?.status ?: 0,
+            cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0,
         )
-        // TODO: Send parameters to balance from userStatus
-        callQueryBalanceUseCase()
     }
 
     private fun onFailure(error: HttpError) {
@@ -148,7 +168,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToCreditScreen() {
         navigateTo(
-            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.identification}/${uiState.email}/${uiState.lastStep}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${pkUser}/${identification}/${email}/${lastStep}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
         )
     }
 
@@ -184,7 +204,7 @@ class ProductViewModel @Inject constructor(
         validateUserStatus.apply {
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
-                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
                             && infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
                             && (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
                             || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
@@ -203,7 +223,7 @@ class ProductViewModel @Inject constructor(
                     ) < CreditStep.Six.id)
                 }
                 CREDIT_REJECTED -> {
-                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
                 }
                 else -> false
             }
@@ -213,19 +233,13 @@ class ProductViewModel @Inject constructor(
     data class UIState(
         //Fields
         var idBrand: String = "",
-        var pkUser: String = "",
-        var identification: String = "",
-        var email: String = "",
-        var lastStep: Int = 1,
-        var balanceCredit: Balance? = null,
         var userStatus: ValidateUserStatus? = null,
-        var productType: ProductBackGroundType = Tertiary,
-        var isLoading: Boolean = false,
+        var isLoading: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnBalanceSuccess -> uiState.balanceCredit = uiEvent.balance
+            is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
@@ -235,7 +249,7 @@ class ProductViewModel @Inject constructor(
                 uiEvent.context,
                 uiEvent.whatsAppLink
             )
-            is OnLastStepChange -> uiState = uiState.copy(lastStep = uiEvent.lastStep)
+            is OnLastStepChange -> lastStep = uiEvent.lastStep
         }
     }
 

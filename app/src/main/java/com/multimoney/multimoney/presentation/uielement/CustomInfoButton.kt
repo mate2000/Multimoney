@@ -21,8 +21,9 @@ import com.multimoney.multimoney.presentation.theme.GradientGrey2
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency5
 
 @Composable
-fun CustomButtonInfo(
-    startIcon: Int = 0,
+fun CustomInfoButton(
+    modifier: Modifier = Modifier,
+    startIcon: Int = R.drawable.ic_payment_fee_icon,
     title: Int = R.string.empty,
     subtitle: Int = R.string.empty,
     endIcon: Int = R.drawable.ic_right_chevron,
@@ -44,7 +45,7 @@ fun CustomButtonInfo(
     }
 
     Button(
-        onClick = onClick, modifier = Modifier
+        onClick = onClick, modifier = modifier
             .border(
                 width = 1.dp,
                 brush = Brush.verticalGradient(
@@ -56,24 +57,37 @@ fun CustomButtonInfo(
     ) {
         ConstraintLayout {
             val (startIconId, titleId, subTitleId, endIconId) = createRefs()
-
-            if (startIcon != 0) {
-                Image(
-                    painter = painterResource(id = startIcon),
-                    contentDescription = "",
-                    modifier = Modifier.constrainAs(startIconId) {
-
-                    })
-            }
-
-            Text(text = stringResource(id = title), modifier = Modifier.constrainAs(titleId) {
-
-            })
-            Text(text = stringResource(id = subtitle), modifier = Modifier.constrainAs(subTitleId) {
-
-            })
-
-            Image(painter = painterResource(id = endIcon), contentDescription = "")
+            Image(
+                painter = painterResource(id = startIcon),
+                contentDescription = "",
+                modifier = Modifier.constrainAs(startIconId) {
+                    top.linkTo(parent.top, margin = 12.dp)
+                    start.linkTo(parent.start, margin = 12.dp)
+                    bottom.linkTo(parent.bottom, margin = 12.dp)
+                })
+            Text(
+                text = stringResource(id = title),
+                modifier = Modifier.constrainAs(titleId) {
+                    top.linkTo(startIconId.top, margin = 4.dp)
+                    start.linkTo(startIconId.end, margin = 16.dp)
+                }
+            )
+            Text(
+                text = stringResource(id = subtitle),
+                modifier = Modifier.constrainAs(subTitleId) {
+                    top.linkTo(titleId.bottom, margin = 4.dp)
+                    start.linkTo(startIconId.start)
+                }
+            )
+            Image(
+                painter = painterResource(id = endIcon),
+                modifier = Modifier.constrainAs(endIconId) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end, margin = 12.dp)
+                    bottom.linkTo(parent.bottom)
+                },
+                contentDescription = ""
+            )
         }
     }
 }

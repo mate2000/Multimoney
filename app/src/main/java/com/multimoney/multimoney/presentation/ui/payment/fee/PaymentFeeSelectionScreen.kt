@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.paymentfee
+package com.multimoney.multimoney.presentation.ui.payment.fee
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

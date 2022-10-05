@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
@@ -59,6 +60,7 @@ fun SignUpEmailScreen(
                         )
                     })
             )
+            viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpOne)
         }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id))
 
         viewModel.baseEvent.collect { event ->

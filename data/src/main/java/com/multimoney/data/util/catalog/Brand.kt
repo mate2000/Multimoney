@@ -5,7 +5,7 @@ sealed class Brand(val id: Int) {
     object ElSalvador : Brand(7)
     object Guatemala : Brand(10)
 
-    object Search{
+    object Search {
         fun getIdBrandByNationality(nationality: String?): Int {
             return when (nationality) {
                 Nationalities.ElSalvador.country.lowercase() -> ElSalvador.id

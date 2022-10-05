@@ -82,9 +82,9 @@ val DefaultBlack = Color(0xFF000000)
 val GrayScale200 = Color(0xFFf2f2f2)
 val GrayScale300 = Color(0xFFD9D9D9)
 val GrayScale400 = Color(0xFFB8B8B8)
-val GrayScale500 = Color(0xFF8B8B8B)
-val GrayScale600 = Color(0xFF5F5F5F)
-val GrayScale700 = Color(0xFF393939)
+val GrayScale500 = Color(0xFF8A8A8A)
+val GrayScale600 = Color(0xFF555555)
+val GrayScale700 = Color(0xFF272727)
 val GrayScale800 = Color(0xFF080808)
 
 // WhiteTransparency
@@ -133,6 +133,7 @@ data class MultimoneyColors(
     val secondary: Color,
     val background: Color,
     val backgroundSplash: Color,
+    val backgroundBottomOptions: Color,
     val text: Color,
     val onBoardingTitleText: Color,
     val onBoardingSubText: Color,
@@ -147,7 +148,11 @@ data class MultimoneyColors(
     val creditNotApprovedText: Color,
     val labelText: Color,
     val chipBackground: Color,
-    val shimmerItemColor: Color
+    val shimmerItemColor: Color,
+    val bottomNavigationDividerColor: Color,
+    val bottomNavigationIconSelectedColor: Color,
+    val bottomNavigationIconUnselectedColor: Color,
+    val quickActionLabelColor:Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -155,6 +160,7 @@ val DarkColorPalette = MultimoneyColors(
     secondary = Secondary500,
     background = GrayScale800,
     backgroundSplash = GrayScale800,
+    backgroundBottomOptions = WhiteTransparency5,
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency90,
@@ -169,7 +175,11 @@ val DarkColorPalette = MultimoneyColors(
     creditNotApprovedText = WhiteTransparency80,
     labelText = WhiteTransparency90,
     chipBackground = BlackTransparency20,
-    shimmerItemColor = WhiteTransparency50
+    shimmerItemColor = WhiteTransparency50,
+    bottomNavigationDividerColor = WhiteTransparency40,
+    bottomNavigationIconSelectedColor = DefaultWhite,
+    bottomNavigationIconUnselectedColor = WhiteTransparency50,
+    quickActionLabelColor = WhiteTransparency70
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -177,6 +187,7 @@ val LightColorPalette = MultimoneyColors(
     secondary = Secondary500,
     background = GrayScale800,
     backgroundSplash = GrayScale800,
+    backgroundBottomOptions = WhiteTransparency5,
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency90,
@@ -191,7 +202,11 @@ val LightColorPalette = MultimoneyColors(
     creditNotApprovedText = WhiteTransparency80,
     labelText = WhiteTransparency90,
     chipBackground = BlackTransparency20,
-    shimmerItemColor = GrayScale300
+    shimmerItemColor = GrayScale300,
+    bottomNavigationDividerColor = WhiteTransparency40,
+    bottomNavigationIconSelectedColor = DefaultWhite,
+    bottomNavigationIconUnselectedColor = WhiteTransparency50,
+    quickActionLabelColor = GrayScale500
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

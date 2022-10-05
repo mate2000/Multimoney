@@ -5,11 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -17,7 +19,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-open class BaseViewModel @Inject constructor(val shouldObserveToken: Boolean) : ViewModel() {
+open class BaseViewModel @Inject constructor(
+    val shouldObserveToken: Boolean,
+) : ViewModel() {
 
     var isLoading by mutableStateOf(false)
 
@@ -31,6 +35,9 @@ open class BaseViewModel @Inject constructor(val shouldObserveToken: Boolean) : 
     @Inject
     lateinit var preferences: DataStorePreferences
 
+    @Inject
+    lateinit var provideFireBaseEventHelper: FireBaseEventHelper
+
     /**
      * Use this val to store one time events defined in NavigationEvent Class
      **/
@@ -42,7 +49,7 @@ open class BaseViewModel @Inject constructor(val shouldObserveToken: Boolean) : 
      **/
     inline fun executeUseCase(
         crossinline action: suspend () -> Unit,
-        crossinline noInternetAction: suspend () -> Unit
+        crossinline noInternetAction: suspend () -> Unit,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
@@ -57,7 +64,7 @@ open class BaseViewModel @Inject constructor(val shouldObserveToken: Boolean) : 
 
     inline fun executeUseCase(
         checkConnection: Boolean = true,
-        crossinline action: suspend () -> Unit
+        crossinline action: suspend () -> Unit,
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
@@ -87,6 +94,12 @@ open class BaseViewModel @Inject constructor(val shouldObserveToken: Boolean) : 
     fun navigateTo(route: String) = sendNavigationEvent(NavEvent.Navigate(route = route))
 
     /**
+     * Thi function is only use for handle the BottomNavigation navigation
+     */
+    fun innerNavigateTo(innerNavigate: NavHostController, route: String) =
+        sendNavigationEvent(NavEvent.InnerNavigate(innerNavigate = innerNavigate, route = route))
+
+    /**
      * Use this function to pop to specific screen and navigate to specified screen
      **/
     fun popAndNavigateTo(route: String, popTo: String) =
@@ -96,13 +109,15 @@ open class BaseViewModel @Inject constructor(val shouldObserveToken: Boolean) : 
 
     fun executeNavigation(
         onNavigate: (NavEvent.Navigate) -> Unit = {},
+        onInnerNavigate: (innerNavigate: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
         onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-        onPopBackStack: () -> Unit = {}
+        onPopBackStack: () -> Unit = {},
     ) {
         viewModelScope.launch {
             navigationEvent.collectLatest { event ->
                 when (event) {
                     is NavEvent.Navigate -> onNavigate(event)
+                    is NavEvent.InnerNavigate -> onInnerNavigate(event.innerNavigate, event)
                     is NavEvent.PopAndNavigate -> onPopAndNavigate(event)
                     is NavEvent.PopBackStack -> onPopBackStack()
                     else -> Unit

@@ -25,7 +25,7 @@ import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_TITLE
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.alertresult.AlertResultViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -47,9 +47,9 @@ fun AlertResultScreen(
             .background(MultimoneyTheme.colors.background),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        BackCloseNavBar(
-            isBackVisible = false,
-            onCloseClick = { viewModel.onUIEvent(OnCloseClick) })
+        TopNavBar(
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) })
 
         Column(
             modifier = Modifier

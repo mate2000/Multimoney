@@ -1,31 +1,47 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.ModalBottomSheetValue.Hidden
+import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.presentation.ui.home.product.ProductScreen
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.multimoney.multimoney.presentation.navigation.BottomNavItem
+import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavGraph
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
+import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-@Preview
 fun HomeScreen(
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    navController: NavHostController,
+    onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // TODO: Remove commented code when not needed. Now It isn't deleted because is used as reference to get data
-//    // Navigation
-//    LaunchedEffect(true) {
-//        viewModel.onUIEvent(OnCallValidateUserStatus())
-//        viewModel.apply {
-//            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-//        }
-//    }
-
-    ProductScreen(onNavigate = onNavigate, onPopAndNavigate)
-    /*if (getRandom() == ZERO) {
-        ProductScreen()
-    } else {
+    /*
         LazyColumn {
             viewModel.uiState.balanceCredit?.balanceCredit?.forEachIndexed { index, balanceCredit ->
                 item {
@@ -195,12 +211,100 @@ fun HomeScreen(
                     )
                 }
             }
-        }
     }*/
+
+    val innerNavController = rememberNavController()
+    val coroutineScope = rememberCoroutineScope()
+    val quickActionsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val activity = (LocalContext.current as? Activity)
+
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onInnerNavigate = onInnerNavigate)
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
+                    coroutineScope.launch {
+                        quickActionsModalBottomSheetState.show()
+                    }
+                }
+                HomeViewModel.BaseEvent.OnOpenMyProductsBottomSheet -> {
+                    coroutineScope.launch {
+                        myProductsModalBottomSheetState.show()
+                    }
+                }
+            }
+        }
+    }
+
+    Scaffold(bottomBar = { MMBottomNavigation(navController = innerNavController, viewModel) }) { paddingValues ->
+        Column(Modifier.padding(paddingValues)) {
+            HomeInsideNavGraph(navController = navController, innerNavController = innerNavController)
+        }
+    }
+
+    QuickActionBottomSheetScreen(viewModel, coroutineScope, quickActionsModalBottomSheetState)
+    MyProductsBottomSheetScreen(viewModel, coroutineScope, myProductsModalBottomSheetState)
+
+    BackHandler {
+        when {
+            quickActionsModalBottomSheetState.isVisible -> {
+                coroutineScope.launch {
+                    quickActionsModalBottomSheetState.hide()
+                }
+            }
+            myProductsModalBottomSheetState.isVisible -> {
+                coroutineScope.launch {
+                    myProductsModalBottomSheetState.hide()
+                }
+            }
+            else -> {
+                activity?.finish()
+            }
+        }
+
+    }
 }
 
-//fun getRandom(): Int {
-//    return Random.nextInt(2)
-//}
-//
-//const val ZERO = 0
+@Composable
+fun MMBottomNavigation(navController: NavHostController, viewModel: HomeViewModel) {
+    val items = listOf(
+        BottomNavItem.Home,
+        BottomNavItem.QuickAction,
+        BottomNavItem.Products
+    )
+
+    Column {
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp),
+            color = MultimoneyTheme.colors.bottomNavigationDividerColor
+        )
+        BottomNavigation(
+            modifier = Modifier.height(76.dp),
+            backgroundColor = MultimoneyTheme.colors.background,
+            contentColor = MultimoneyTheme.colors.bottomNavigationIconSelectedColor
+        ) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            items.forEach { item ->
+                BottomNavigationItem(
+                    icon = { Icon(painterResource(id = item.icon), contentDescription = "") },
+                    selectedContentColor = MultimoneyTheme.colors.bottomNavigationIconSelectedColor,
+                    unselectedContentColor = MultimoneyTheme.colors.bottomNavigationIconUnselectedColor,
+                    alwaysShowLabel = false,
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        viewModel.onUIEvent(
+                            HomeViewModel.UIEvent.OnBottomNavigationItemClick(
+                                navController,
+                                item.route
+                            )
+                        )
+                    }
+                )
+            }
+        }
+    }
+}

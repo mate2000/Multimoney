@@ -55,6 +55,7 @@ import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
@@ -164,6 +165,7 @@ fun SignUpOtpScreen(
                                 }
                             )
                         )
+                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFour)
                     },
                     nextStep = viewModel.getNextStep(isOnFidoVerified).id,
                     previousStep = SignUpStep.Three.id

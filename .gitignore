@@ -58,3 +58,4 @@ amplifytools.xcconfig
 **.sample
 #amplify-do-not-edit-end
 amplify/backend/auth/multimoneyc622a5cd/parameters.json
+app/src/staging/google-services.json

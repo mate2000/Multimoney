@@ -33,19 +33,22 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
-import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
+import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_STEP_PRE_APPROVED
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INFO_INCOMPLETE
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INITIAL_CARD
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_MAX_ATTEMPTS
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_REJECTED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
@@ -58,13 +61,13 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
-import com.multimoney.multimoney.presentation.uielement.BackCloseNavBar
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @OptIn(ExperimentalPagerApi::class)
@@ -72,13 +75,12 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Preview
 fun ProductScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnGetIdBrand)
         viewModel.apply {
-            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+            executeNavigation(onNavigate = onNavigate)
         }
     }
 
@@ -110,9 +112,9 @@ fun ProductScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MultimoneyTheme.colors.background)) {
-                    BackCloseNavBar(
-                        isCloseVisible = false,
-                        onBackClick = {
+                    TopNavBar(
+                        isRightButtonVisible = false,
+                        onLeftButtonClick = {
                             backPressed()
                         }
                     )
@@ -233,7 +235,6 @@ fun Products(
                 modifier = Modifier.padding(top = 8.dp),
                 state = state
             ) {
-
                 // todo add the logic for the others pages
                 CreditProduct(viewModel = viewModel)
             }
@@ -271,13 +272,15 @@ fun CreditProduct(viewModel: ProductViewModel) {
                     type = Primary
                 ) {
                     when {
-                        hasToShowCreditInitialCard(this) -> {
+                        viewModel.evaluateCardCondition(CREDIT_INITIAL_CARD, this) -> {
+                            val infoPreApprove =
+                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()?.amountAvailable
+                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable
                             )
                         }
-                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status -> {
+                        viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {
                             CardCreditMaxAttempts(
                                 action = {
                                     viewModel.onUIEvent(
@@ -289,16 +292,20 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 }
                             )
                         }
-                        (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
-                        (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Six.id) -> CardWithCreditInProcess(type = CreditStartProcessIncomplete)
-                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status -> CardWithCreditInProcess(
-                            type = CreditStartProcessIncomplete
-                        )
-                        else -> CardSmartProduct()
+                        viewModel.evaluateCardCondition(CREDIT_IDENTITY_INCOMPLETE, this) -> {
+                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                        }
+                        viewModel.evaluateCardCondition(CREDIT_INFO_INCOMPLETE, this) -> {
+                            CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
+                                viewModel.onUIEvent(OnNavigateToCreditScreen)
+                            })
+                        }
+                        viewModel.evaluateCardCondition(CREDIT_REJECTED, this) -> {
+                            CardWithCreditInProcess(type = CreditStartProcessIncomplete)
+                        }
+                        else -> {
+                            CardSmartProduct()
+                        }
                     }
                 }
             }
@@ -325,12 +332,6 @@ fun CreditProduct(viewModel: ProductViewModel) {
     }
 }
 
-fun hasToShowCreditInitialCard(validateUserStatus: ValidateUserStatus?): Boolean {
-    return validateUserStatus?.infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
-            && validateUserStatus.infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
-            && (validateUserStatus.infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
-}
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
@@ -340,12 +341,7 @@ fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: 
                 CustomBoxVisaBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     onClick = {
-                        // todo Add logic when the user click the button
-                        // TODO: Remove this button when all functionalities are implemented
-                        viewModel.popAndNavigateTo(
-                            route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
-                            popTo = Screen.AlertResultScreen.baseRoute
-                        )
+                        viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
                     },
                     type = RequestCreditCard
                 )

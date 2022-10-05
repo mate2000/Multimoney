@@ -17,14 +17,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 
 @Composable
 fun LoadingMultiMoney(
     @StringRes
-    textRes: Int
+    textRes: Int,
+    viewModel: CreditViewModel
 ) {
     Column(
         modifier = Modifier

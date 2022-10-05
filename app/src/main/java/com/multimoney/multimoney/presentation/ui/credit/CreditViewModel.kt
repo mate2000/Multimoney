@@ -5,9 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.CreditStep.Search
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
+import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -33,17 +35,20 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DUMMY_URL
+import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
-    val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase
+    val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -62,7 +67,6 @@ class CreditViewModel @Inject constructor(
     var identification: String = ""
     var email: String = ""
     var idUserRequest: String = ""
-    var currentStep: Int = 1
     var screenConfig: List<CreditCatalog?>? = listOf()
 
     private fun onUpdateUserData(
@@ -77,9 +81,8 @@ class CreditViewModel @Inject constructor(
         this.pkUser = pkUser
         this.identification = identification
         this.email = email
-        this.currentStep = currentStep
         this.idUserRequest = idUserRequest
-        moveToStep(currentStep)
+        uiState = uiState.copy(lastStep = currentStep)
     }
 
     private fun onInitializeTexts(description: String) {
@@ -119,7 +122,8 @@ class CreditViewModel @Inject constructor(
         if (step <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
-                isCloseVisible = step >= CreditStep.One.id
+                isCloseVisible = step >= CreditStep.One.id,
+                lastStep = CreditStep.One.id
             )
         } else {
             popAndNavigateTo(
@@ -195,6 +199,19 @@ class CreditViewModel @Inject constructor(
         }
     }
 
+    fun queryCreditSteps() {
+        executeUseCase {
+            queryScreenConfigUseCase(pkUser, email, idBrand.toInt(), idUserRequest).collectLatest {
+                it.onSuccess {
+                    // Wait 3 seconds to show banner
+                    delay(BANNER_TIME)
+                    onUIEvent(OnUpdateScreenConfigData(it))
+                    moveToStep(uiState.lastStep)
+                }
+            }
+        }
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = CreditStep.One.id,
@@ -202,7 +219,8 @@ class CreditViewModel @Inject constructor(
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val isCurrentLocationButtonVisible: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var lastStep: Int = 1
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -245,6 +263,16 @@ class CreditViewModel @Inject constructor(
         }
     }
 
+    fun getLoadingString(): Int =
+        if (idBrand.isNotEmpty()) {
+            when (idBrand.toInt()) {
+                Brand.Guatemala.id -> R.string.credit_glad_to_see_you_gt
+                else -> R.string.credit_glad_to_see_you
+            }
+        } else {
+            R.string.empty
+        }
+
     sealed class UIEvent {
         data class OnInitializeText(val description: String) : UIEvent()
         data class OnSetNavigation(
@@ -278,10 +306,12 @@ class CreditViewModel @Inject constructor(
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
         object OnCallMutationSaveCreditFlowStep : UIEvent()
+        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 
     companion object {
         const val CREDIT_TOTAL_STEPS = 6
         const val CREDIT_INDICATOR_TOTAL_STEPS = 4
+        const val BANNER_TIME = 3000L
     }
 }

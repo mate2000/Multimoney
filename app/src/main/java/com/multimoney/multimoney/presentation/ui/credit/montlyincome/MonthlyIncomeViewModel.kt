@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyInco
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -108,7 +109,13 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
             is OnIncomeValueChange -> onIncomeValueChange(uiEvent.income)
             is OnProfessionValueChange -> onProfessionValueChange(uiEvent.profession)
             is OnValidForm -> onValidForm()
+            is OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
         }
+    }
+
+    private fun loadStepsInfo(list: List<CreditCatalog?>?){
+        val salary = list?.find { it?.description == SaveCreditStepsHelper.SALARY }
+        uiState = uiState.copy(income = salary?.value ?: "")
     }
 
     sealed class UIEvent {
@@ -121,6 +128,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         data class OnIncomeValueChange(val income: String) : UIEvent()
         data class OnProfessionValueChange(val profession: String) : UIEvent()
         object OnValidForm : UIEvent()
+        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 
     sealed class BaseEvent {

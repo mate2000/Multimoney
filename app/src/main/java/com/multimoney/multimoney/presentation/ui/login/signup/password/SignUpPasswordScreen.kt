@@ -293,10 +293,10 @@ fun SignUpPasswordScreen(
     // Dialog
     if (viewModel.uiState.openDialogCustom.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialogCustom.title),
+            title = stringResource(id = viewModel.uiState.openDialogCustom.titleResource),
             message = viewModel.uiState.openDialogCustom.description,
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialogCustom.positiveText),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialogCustom.negativeText),
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialogCustom.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialogCustom.negativeResource),
             onPositiveAction = viewModel.uiState.openDialogCustom.positiveAction,
             onNegativeAction = viewModel.uiState.openDialogCustom.negativeAction,
             onDismissAction = viewModel.uiState.openDialogCustom.dismissAction,

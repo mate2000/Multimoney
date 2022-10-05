@@ -254,10 +254,10 @@ class CreditAmountViewModel @Inject constructor(
         emitBaseEvent(
             OnOpenConditionOfCreditDialog(
                 DialogParameters(
-                    title = R.string.credit_amount_condition_of_credit_info,
+                    titleResource = R.string.credit_amount_condition_of_credit_info,
                     description = conditionModalDescription,
                     isActive = mutableStateOf(true),
-                    positiveText = R.string.accept
+                    positiveResource = R.string.accept
                 )
             )
         )

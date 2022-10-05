@@ -189,11 +189,11 @@ fun SignUpOtpScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            title = R.string.sign_up_email_blocked_dialog_title,
+                            titleResource = R.string.sign_up_email_blocked_dialog_title,
                             description = viewModel.userBlockedForMaxAttend,
                             isActive = mutableStateOf(true),
-                            positiveText = R.string.contact,
-                            negativeText = R.string.cancel,
+                            positiveResource = R.string.contact,
+                            negativeResource = R.string.cancel,
                             negativeAction = {
                                 viewModel.onUIEvent(SignUpOtpViewModel.UIEvent.OnNavigateToSignIn)
                             }

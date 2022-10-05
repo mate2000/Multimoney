@@ -159,7 +159,7 @@ fun SignUpPersonalDataScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            title = string.error_empty,
+                            titleResource = string.error_empty,
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         )

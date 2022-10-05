@@ -2,21 +2,21 @@
   ConstraintSets: {
     start: {
       header_cards: {
-        height: 200,
+        height: 250,
         top: [
           'parent',
           'top'
         ],
       },
       header_title: {
-        height: 100,
+        height: 75,
         bottom: [
           'parent',
           'top'
         ],
       },
       main_card: {
-        height: 200,
+        height: 350,
         top: [
           'header_cards',
           'bottom',
@@ -43,21 +43,21 @@
     },
     end: {
       header_cards: {
-        height: 200,
+        height: 300,
         bottom: [
           'parent',
           'top'
         ]
       },
       header_title: {
-        height: 100,
+        height: 50,
         top: [
           'parent',
           'top'
         ]
       },
       main_card: {
-        height: 200,
+        height: 300,
         top: [
           'header_title',
           'bottom',

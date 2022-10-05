@@ -218,6 +218,7 @@
     <string name="home_credit_sign_document_reject_title" translatable="false">Estás solo a un paso</string>
     <string name="home_credit_sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
     <string name="home_credit_sign_document_reject_action_text" translatable="false">Firmar</string>
+    <string name="home_credit_title" translatable="false">Mi Crédito</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>

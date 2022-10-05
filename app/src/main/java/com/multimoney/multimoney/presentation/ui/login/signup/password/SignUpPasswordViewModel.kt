@@ -11,7 +11,6 @@ import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.options.AuthSignUpOptions
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -189,7 +188,7 @@ class SignUpPasswordViewModel @Inject constructor(
         val attrs = mapOf(
             AuthUserAttributeKey.email() to email,
             AuthUserAttributeKey.name() to firstName,
-            AuthUserAttributeKey.middleName() to lastName,
+            AuthUserAttributeKey.familyName() to lastName,
             AuthUserAttributeKey.phoneNumber() to phone,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_IDENTIFICATION) to identification,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_PK_USER) to pkUser,

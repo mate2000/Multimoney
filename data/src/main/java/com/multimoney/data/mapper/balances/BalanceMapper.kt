@@ -13,6 +13,8 @@ import com.multimoney.domain.model.balance.Summary
 private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     summary = resumen?.map {
         Summary(
+            idCurrency = it?.id_Moneda,
+            currency = it?.moneda,
             currentBalanceLabel = it?.saldo_Actual_Label,
             availableBalanceLabel = it?.saldo_Disponible_Label,
             paymentDateLabel = it?.fecha_Pago_Label,

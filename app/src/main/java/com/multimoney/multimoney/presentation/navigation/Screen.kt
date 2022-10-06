@@ -15,6 +15,7 @@ const val HOME_ROUTE = "home_route"
 const val HOME_MAIN_ROUTE = "home_main_route"
 const val CREDIT_ROUTE = "credit_route"
 const val VISA_ROUTE = "visa_route"
+const val PAYMENT_CREDIT_ROUTE = "payment_credit_route"
 const val TEST_ROUTE = "test_route"
 
 // Parameters
@@ -70,6 +71,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "alert_result_screen/{$ALERT_RESULT_ICON}/{$ALERT_RESULT_TITLE}/{$ALERT_RESULT_DESCRIPTION}/{$ALERT_RESULT_BUTTON_TEXT}",
         "alert_result_screen"
     )
+
+    // Payment Credit
+    object PaymentFeeScreen : Screen("payment_fee_screen")
+    object PaymentAccountScreen : Screen("payment_account_screen")
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

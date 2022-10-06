@@ -24,12 +24,10 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToTestScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,7 +50,6 @@ class ProductViewModel @Inject constructor(
     // Stateless
     var lastStep: Int = 1
     var balanceCredit: Balance? = null
-    var productType: ProductBackGroundType = Tertiary
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
@@ -142,7 +139,6 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
-        productType = getProductBackgroundType(userStatus)
         lastStep = CreditStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
         uiState = uiState.copy(userStatus = userStatus)
         callQueryBalanceUseCase(
@@ -172,6 +168,12 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigatoToTestScren() {
+        navigateTo(
+            Screen.PaymentFeeScreen.route
+        )
+    }
+
     private fun onNavigateToVisaActivateScreen() =
         navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
 
@@ -189,11 +191,6 @@ class ProductViewModel @Inject constructor(
             }
             else -> navigateTo(Screen.CreditScreen.route)
         }
-    }
-
-    private fun getProductBackgroundType(userStatus: ValidateUserStatus) = when {
-        userStatus.infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> Primary
-        else -> Tertiary
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -242,6 +239,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
+            is OnNavigateToTestScreen -> onNavigatoToTestScren()
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
             is OnGetIdBrand -> onGetUserData()
@@ -263,6 +261,7 @@ class ProductViewModel @Inject constructor(
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
+        object OnNavigateToTestScreen : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
         data class OnProductClick(
             val whatsAppLink: String,

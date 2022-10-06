@@ -38,7 +38,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
@@ -48,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.C
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_REJECTED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToTestScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
@@ -111,7 +111,8 @@ fun ProductScreen(
                     contentAlignment = Alignment.TopCenter,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MultimoneyTheme.colors.background)) {
+                        .background(MultimoneyTheme.colors.background)
+                ) {
                     TopNavBar(
                         isRightButtonVisible = false,
                         onLeftButtonClick = {
@@ -224,7 +225,8 @@ fun Products(
             text = stringResource(id = if (headerText == 0) R.string.home_credit_title else headerText),
             modifier = Modifier.padding(horizontal = 16.dp),
             style = if (headerText == 0) Typography.h5.copy(fontWeight = FontWeight.SemiBold) else Typography.body1.copy(
-                fontWeight = FontWeight.SemiBold),
+                fontWeight = FontWeight.SemiBold
+            ),
             color = MultimoneyTheme.colors.labelText
         )
         if (pages == 1) {
@@ -358,7 +360,7 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .fillMaxSize()
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
-                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                    viewModel.onUIEvent(OnNavigateToTestScreen)
                 }) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,

@@ -153,7 +153,9 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeProvinceUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    homeProvince = it?.first()
+                    if (homeProvince == null){
+                        homeProvince = it?.first()
+                    }
                     homeProvinceList = homeProvince?.subOptions?.filter { filter ->
                         filter?.description != CompanyAddressViewModel.MIDDLE_DASH
                     }
@@ -162,6 +164,21 @@ class HomeAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!homeProvince?.pkCatalog.isNullOrEmpty()) {
+                        val selectedHomeProvince =
+                            homeProvinceList?.find { it?.pkCatalog == homeProvince?.pkCatalog }
+                        uiState = uiState.copy(divisionOneSelected = selectedHomeProvince)
+                        homeProvince = homeProvince?.copy(pkCatalog = null)
+                        onUIEvent(OnDivisionOneValueChange(
+                            selectedHomeProvince,
+                            { loading ->
+                                isLoading = loading
+                            },
+                            { isLoading, dialogParameters ->
+
+                            }
+                        ))
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -190,7 +207,9 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    homeCanton = it?.first()
+                    if (homeCanton == null){
+                        homeCanton = it?.first()
+                    }
                     homeCantonList = homeCanton?.subOptions?.filter { filter ->
                         filter?.description != CompanyAddressViewModel.MIDDLE_DASH
                     }
@@ -199,6 +218,21 @@ class HomeAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!homeCanton?.pkCatalog.isNullOrEmpty()) {
+                        val selectedHomeCanton =
+                            homeCantonList?.find { it?.pkCatalog == homeCanton?.pkCatalog }
+                        uiState = uiState.copy(divisionTwoSelected = selectedHomeCanton)
+                        homeCanton = homeCanton?.copy(pkCatalog = null)
+                        onUIEvent(OnDivisionTwoValueChange(
+                            selectedHomeCanton,
+                            { loading ->
+                                isLoading = loading
+                            },
+                            { isLoading, dialogParameters ->
+
+                            }
+                        ))
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -227,7 +261,9 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    homeDistrict = it?.first()
+                    if (homeDistrict == null){
+                        homeDistrict = it?.first()
+                    }
                     homeDistrictList = homeDistrict?.subOptions?.filter { filter ->
                         filter?.description != CompanyAddressViewModel.MIDDLE_DASH
                     }
@@ -236,6 +272,15 @@ class HomeAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!homeDistrict?.pkCatalog.isNullOrEmpty()) {
+                        val selectedHomeDistrict =
+                            homeDistrictList?.find { it?.pkCatalog == homeDistrict?.pkCatalog }
+                        uiState = uiState.copy(divisionThreeSelected = selectedHomeDistrict)
+                        homeDistrict = homeDistrict?.copy(pkCatalog = null)
+                        onUIEvent(OnDivisionThreeValueChange(
+                            selectedHomeDistrict
+                        ))
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -299,6 +344,13 @@ class HomeAddressViewModel @Inject constructor(
         nextStepAction()
     }
 
+    fun loadStepsInfo(list: List<CreditCatalog>){
+        val homeAddress = list.find { it.description == SaveCreditStepsHelper.HOME_ADDRESS }
+        uiState = uiState.copy(address = homeAddress?.value ?: "")
+        val phone = list.find { it.description == SaveCreditStepsHelper.HOME_PHONE }
+        uiState = uiState.copy(phone = phone?.value ?: "")
+    }
+
     data class UIState(
         val divisionOneList: List<CreditCatalogOption?>? = listOf(),
         val divisionTwoList: List<CreditCatalogOption?>? = listOf(),
@@ -318,17 +370,23 @@ class HomeAddressViewModel @Inject constructor(
                 uiEvent.nextStepAction,
                 uiEvent.saveCreditStepsHelper
             )
-            is OnDivisionOneValueChange -> onDivisionOneValueChange(
-                uiEvent.divisionOne,
-                uiEvent.onLoadingValueChange,
-                uiEvent.onFailureWithDialog
-            )
-            is OnDivisionTwoValueChange -> onDivisionTwoValueChange(
-                uiEvent.divisionTwo,
-                uiEvent.onLoadingValueChange,
-                uiEvent.onFailureWithDialog
-            )
-            is OnDivisionThreeValueChange -> onDivisionThreeValueChange(uiEvent.divisionThree)
+            is OnDivisionOneValueChange -> {
+                onDivisionOneValueChange(
+                    uiEvent.divisionOne,
+                    uiEvent.onLoadingValueChange,
+                    uiEvent.onFailureWithDialog
+                )
+            }
+            is OnDivisionTwoValueChange -> {
+                onDivisionTwoValueChange(
+                    uiEvent.divisionTwo,
+                    uiEvent.onLoadingValueChange,
+                    uiEvent.onFailureWithDialog
+                )
+            }
+            is OnDivisionThreeValueChange -> {
+                onDivisionThreeValueChange(uiEvent.divisionThree)
+            }
             is OnAddressValueChange -> onAddressValueChange(uiEvent.address)
             is OnPhoneNumberValueChange -> onPhoneValueChange(uiEvent.phone)
             is OnCallCatalogs -> onCallCatalogs(
@@ -375,6 +433,7 @@ class HomeAddressViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnFormValid : UIEvent()
+
     }
 
     sealed class BaseEvent {

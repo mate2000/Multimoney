@@ -20,6 +20,9 @@
     <string name="empty" translatable="false"></string>
     <string name="understood" translatable="false">Entendido</string>
     <string name="activate" translatable="false">Activar</string>
+    <string name="locked" translatable="false">Bloquear</string>
+    <string name="see_data" translatable="false">Ver datos</string>
+    <string name="link" translatable="false">Vincular</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -203,6 +206,7 @@
     <string name="home_credit_sign_document_reject_title" translatable="false">Estás solo a un paso</string>
     <string name="home_credit_sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
     <string name="home_credit_sign_document_reject_action_text" translatable="false">Firmar</string>
+    <string name="home_credit_title" translatable="false">Mi Crédito</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
@@ -234,7 +238,7 @@
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
 
     <!-- quick actions bottom sheet -->
-    <string name="quick_action_bottom_sheet_title"  translatable="false">¿Qué querés hacer?</string>
+    <string name="quick_action_bottom_sheet_title" translatable="false">¿Qué querés hacer?</string>
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
 
     <!-- Credit Close Dialog-->
@@ -322,9 +326,9 @@
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <!-- Sign Documents limit reached -->
-    <string translatable="false" name="sign_credit_max_attempts_title">!Te vamos a extrañar!</string>
-    <string translatable="false" name="sign_credit_max_attempts_message">Comunícate con nosotros para activar tu crédito</string>
-    <string translatable="false" name="sign_credit_max_attempts_contact">Contactar</string>
+    <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
+    <string name="sign_credit_max_attempts_message" translatable="false">Comunícate con nosotros para activar tu crédito</string>
+    <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
 
     <!-- Sign Document Reject -->
     <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
@@ -334,18 +338,33 @@
     <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>
     <string name="visa_cvv_label" translatable="false">CVV</string>
 
-    <!-- Visa Activate-->
-    <string name="visa_activate_sv_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
-    <string name="visa_activate_sv_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
-    <string name="visa_activate_sv_no_nfc_title" translatable="false">¡Comprá en línea con Multimoney Visa!</string>
-    <string name="visa_activate_sv_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
-    <string name="visa_activate_cr_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
-    <string name="visa_activate_cr_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
-    <string name="visa_activate_cr_no_nfc_title" translatable="false">¡Comprá en línea con Multimoney Visa!</string>
-    <string name="visa_activate_cr_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
-    <string name="visa_activate_gt_nfc_title" translatable="false">¡Compra en línea y en comercios!</string>
-    <string name="visa_activate_gt_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
-    <string name="visa_activate_gt_no_nfc_title" translatable="false">¡Compra en línea con Multimoney Visa!</string>
-    <string name="visa_activate_gt_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
+    <!-- Visa Issuance-->
+    <string name="visa_issuance_sv_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
+    <string name="visa_issuance_sv_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_issuance_sv_no_nfc_title" translatable="false">¡Comprá en línea con Multimoney Visa!</string>
+    <string name="visa_issuance_sv_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_issuance_cr_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
+    <string name="visa_issuance_cr_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_issuance_cr_no_nfc_title" translatable="false">¡Comprá en línea con Multimoney Visa!</string>
+    <string name="visa_issuance_cr_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para vos.</string>
+    <string name="visa_issuance_gt_nfc_title" translatable="false">¡Compra en línea y en comercios!</string>
+    <string name="visa_issuance_gt_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
+    <string name="visa_issuance_gt_no_nfc_title" translatable="false">¡Compra en línea con Multimoney Visa!</string>
+    <string name="visa_issuance_gt_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
 
+    <!-- Visa Card-->
+    <string name="visa_card_sv_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
+    <string name="visa_card_cr_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
+    <string name="visa_card_gt_dialog_description_available" translatable="false">Recuerda que puedes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
+    <string name="visa_card_available_amount" translatable="false">Disponible %s</string>
+
+
+    <!-- Credit Loading -->
+    <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
+    <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regresés!</string>
+
+    <!-- payment fee -->
+    <string name="payment_fee_title" translatable="false">Escogé tu cuota</string>
+    <string name="payment_fee_one_option" translatable="false">Cuota en</string>
+    <string name="payment_fee_both_options" translatable="false">Ambas cuotas</string>
 </resources>

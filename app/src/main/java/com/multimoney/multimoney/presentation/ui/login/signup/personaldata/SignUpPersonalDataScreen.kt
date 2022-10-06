@@ -11,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,7 +37,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
@@ -104,8 +102,8 @@ fun SignUpPersonalDataScreen(
             result.onSuccess { userData ->
                 viewModel.onUIEvent(
                     SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess(
-                        currentStep = sharedViewModel.uiState.currentStep,
                         userData = userData,
+                        idBrand = sharedViewModel.idBrand ?: 0,
                         onUseDataValueChange = {
                             sharedViewModel.strIdIdentification = viewModel.uiState.identificationValueType
                             sharedViewModel.onUIEvent(
@@ -126,14 +124,18 @@ fun SignUpPersonalDataScreen(
                         onCallMutationUpdateUserRegisterUseCase = {
                             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
                         },
-                        onMoveToStep = { step ->
-                            viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)
-                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnMoveToStep(step))
-                        },
                         onLoadingValueChange = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnLoadingValueChange(
-                                    false
+                                    it
+                                )
+                            )
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading = isLoading,
+                                    openDialog = dialogParameters
                                 )
                             )
                         }
@@ -143,8 +145,10 @@ fun SignUpPersonalDataScreen(
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }.onMessage {
                 sharedViewModel.onUIEvent(
-                    SignUpViewModel.UIEvent.OnOpenDialogValueChange(
-                        DialogParameters(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            titleResource = string.error_empty,
                             description = it?.message ?: "",
                             isActive = mutableStateOf(true)
                         )
@@ -155,7 +159,7 @@ fun SignUpPersonalDataScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            title = string.error_empty,
+                            titleResource = string.error_empty,
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         )

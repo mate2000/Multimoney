@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
@@ -23,19 +24,17 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToTestScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -51,7 +50,6 @@ class ProductViewModel @Inject constructor(
     // Stateless
     var lastStep: Int = 1
     var balanceCredit: Balance? = null
-    var productType: ProductBackGroundType = Tertiary
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
@@ -141,10 +139,8 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
-        productType = getProductBackgroundType(userStatus)
-        uiState = uiState.copy(
-            userStatus = userStatus
-        )
+        lastStep = CreditStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
+        uiState = uiState.copy(userStatus = userStatus)
         callQueryBalanceUseCase(
             user = email,
             identification = identification,
@@ -172,11 +168,14 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToVisaActivateScreen() {
+    private fun onNavigatoToTestScren() {
         navigateTo(
-            "${Screen.VisaActivateScreen.baseRoute}/${uiState.idBrand}"
+            Screen.PaymentFeeScreen.route
         )
     }
+
+    private fun onNavigateToVisaActivateScreen() =
+        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
 
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
@@ -194,13 +193,38 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun getProductBackgroundType(userStatus: ValidateUserStatus) = when {
-        userStatus.infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> Primary
-        else -> Tertiary
-    }
-
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
+    }
+
+    fun evaluateCardCondition(action: String, validateUserStatus: ValidateUserStatus): Boolean {
+        validateUserStatus.apply {
+            return when (action) {
+                CREDIT_INITIAL_CARD -> {
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
+                            && infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
+                            && (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
+                            || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
+                }
+                CREDIT_MAX_ATTEMPTS -> {
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
+                }
+                CREDIT_IDENTITY_INCOMPLETE -> {
+                    (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
+                        infoCredit?.infoPreApprove?.currentStep
+                    ) == CreditStep.Six.id)
+                }
+                CREDIT_INFO_INCOMPLETE -> {
+                    (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (CreditStep.Search.getIdByName(
+                        infoCredit?.infoPreApprove?.currentStep
+                    ) < CreditStep.Six.id)
+                }
+                CREDIT_REJECTED -> {
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
+                }
+                else -> false
+            }
+        }
     }
 
     data class UIState(
@@ -215,6 +239,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
+            is OnNavigateToTestScreen -> onNavigatoToTestScren()
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
             is OnGetIdBrand -> onGetUserData()
@@ -236,6 +261,7 @@ class ProductViewModel @Inject constructor(
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
+        object OnNavigateToTestScreen : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
         data class OnProductClick(
             val whatsAppLink: String,
@@ -276,5 +302,10 @@ class ProductViewModel @Inject constructor(
 
     companion object {
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
+        const val CREDIT_INITIAL_CARD = "CREDIT_INITIAL_CARD"
+        const val CREDIT_MAX_ATTEMPTS = "CREDIT_MAX_ATTEMPTS"
+        const val CREDIT_IDENTITY_INCOMPLETE = "CREDIT_IDENTITY_INCOMPLETE"
+        const val CREDIT_INFO_INCOMPLETE = "CREDIT_INFO_INCOMPLETE"
+        const val CREDIT_REJECTED = "CREDIT_REJECTED"
     }
 }

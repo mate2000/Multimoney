@@ -141,7 +141,7 @@ fun SignUpEmailScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            title = R.string.error_empty,
+                            titleResource = R.string.error_empty,
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         )

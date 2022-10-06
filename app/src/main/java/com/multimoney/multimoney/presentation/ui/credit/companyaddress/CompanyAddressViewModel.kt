@@ -25,8 +25,8 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class CompanyAddressViewModel @Inject constructor(
@@ -144,7 +144,9 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyProvinceUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyProvince = it?.first()
+                    if (companyProvince == null){
+                        companyProvince = it?.first()
+                    }
                     companyProvinceList = companyProvince?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
@@ -154,6 +156,19 @@ class CompanyAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!companyProvince?.pkCatalog.isNullOrEmpty()) {
+                        val selectedProvince =
+                            companyProvinceList?.find { it?.pkCatalog == companyProvince?.pkCatalog }
+                        uiState = uiState.copy(divisionOneSelected = selectedProvince)
+                        onUIEvent(OnDivisionOneValueChange(selectedProvince,
+                            { loading ->
+                                isLoading = loading
+                            },
+                            {isLoading, dialogParameters ->
+
+                            }))
+                        companyProvince = companyProvince?.copy(pkCatalog = null)
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -182,7 +197,9 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyCanton = it?.first()
+                    if(companyCanton == null){
+                        companyCanton = it?.first()
+                    }
                     companyCantonList = companyCanton?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
@@ -191,6 +208,21 @@ class CompanyAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!companyCanton?.pkCatalog.isNullOrEmpty()) {
+                        val selectedCompanyCanton =
+                            companyCantonList?.find { it?.pkCatalog == companyCanton?.pkCatalog }
+                        uiState = uiState.copy(divisionTwoSelected = selectedCompanyCanton)
+                        onUIEvent(OnDivisionTwoValueChange(
+                            selectedCompanyCanton,
+                            { loading ->
+                                isLoading = loading
+                            },
+                            {isLoading, dialogParameters ->
+
+                            }
+                        ))
+                        companyCanton = companyCanton?.copy(pkCatalog = null)
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -219,7 +251,9 @@ class CompanyAddressViewModel @Inject constructor(
         queryCompanyDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    companyDistrict = it?.first()
+                    if (companyDistrict == null){
+                        companyDistrict = it?.first()
+                    }
                     companyDistrictList = companyDistrict?.subOptions?.filter { filter ->
                         filter?.description != MIDDLE_DASH
                     }
@@ -228,6 +262,17 @@ class CompanyAddressViewModel @Inject constructor(
                             filter?.description != MIDDLE_DASH
                         }
                     )
+                    if (!companyDistrict?.pkCatalog.isNullOrEmpty()) {
+                        val selectedCompanyDistrict =
+                            companyDistrictList?.find { it?.pkCatalog == companyDistrict?.pkCatalog }
+                        uiState = uiState.copy(divisionThreeSelected = selectedCompanyDistrict)
+                        onUIEvent(
+                            OnDivisionThreeValueChange(
+                                selectedCompanyDistrict
+                            )
+                        )
+                        companyDistrict = companyDistrict?.copy(pkCatalog = null)
+                    }
                     onLoadingValueChange(false)
                 }
                 result.onLoading {
@@ -274,6 +319,11 @@ class CompanyAddressViewModel @Inject constructor(
         nextStepAction()
     }
 
+    private fun loadStepsInfo(list: List<CreditCatalog?>?){
+        val companyAddress = list?.find { it?.description == SaveCreditStepsHelper.COMPANY_ADDRESS }
+        uiState = uiState.copy(address = companyAddress?.value ?: "")
+    }
+
     data class UIState(
         val divisionOneList: List<CreditCatalogOption?>? = listOf(),
         val divisionTwoList: List<CreditCatalogOption?>? = listOf(),
@@ -313,6 +363,7 @@ class CompanyAddressViewModel @Inject constructor(
                 uiEvent.onFailureWithDialog
             )
             is OnFormValid -> onValidateScreen()
+            is UIEvent.OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
         }
     }
 
@@ -347,6 +398,7 @@ class CompanyAddressViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnFormValid : UIEvent()
+        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 
     sealed class BaseEvent {

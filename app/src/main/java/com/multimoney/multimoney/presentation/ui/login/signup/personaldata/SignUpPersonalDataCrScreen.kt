@@ -98,7 +98,7 @@ fun SignUpPersonalDataCrScreen(
             }
         )
 
-        if (viewModel.uiState.identificationValueType == CrDocuments.IdDocument.document) {
+        if (viewModel.uiState.identificationValueType != CrDocuments.IdDocument.document) {
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -259,7 +259,7 @@ fun SignUpPersonalDataCrScreen(
                         modifier = Modifier.padding(start = 8.dp),
                         text = stringResource(id = R.string.sing_up_personal_data_cr_complete_name),
                         style = Typography.body2.copy(
-                            color = MultimoneyTheme.colors.textSubhead
+                            color = MultimoneyTheme.colors.textSuccess
                         )
                     )
                 }

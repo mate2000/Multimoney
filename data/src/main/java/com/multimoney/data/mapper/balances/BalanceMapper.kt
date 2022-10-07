@@ -13,10 +13,14 @@ import com.multimoney.domain.model.balance.Summary
 private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     summary = resumen?.map {
         Summary(
+            currentBalance = it?.saldo_Actual.toString(),
             currentBalanceLabel = it?.saldo_Actual_Label,
+            availableBalance = it?.saldo_Disponible.toString(),
             availableBalanceLabel = it?.saldo_Disponible_Label,
             paymentDateLabel = it?.fecha_Pago_Label,
-            monthlyQuotaLabel = it?.cuota_Mensual_Label
+            monthlyQuota = it?.cuota_Mensual.toString(),
+            monthlyQuotaLabel = it?.cuota_Mensual_Label,
+            balanceAmountCancel = it?.saldo_Monto_Cancelar.toString()
         )
     }
 )

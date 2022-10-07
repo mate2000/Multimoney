@@ -24,6 +24,10 @@ const val ALERT_RESULT_TITLE = "alert_result_title"
 const val ALERT_RESULT_DESCRIPTION = "alert_result_description"
 const val ALERT_RESULT_BUTTON_TEXT = "alert_result_button_text"
 
+// payment process parameters
+const val MONTHLY_QUOTA_ONE = "monthly_quota_one_label"
+const val MONTHLY_QUOTA_TWO = "monthly_quota_two_label"
+
 /**
  * Use this class to declare all your new screens and their routes
  * **/
@@ -35,11 +39,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SignInScreen : Screen("sign_in_screen")
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
 
-    object SignUpSplashComeBackScreen :
-        Screen(
-            "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
-            "sign_up_splash_come_back_screen"
-        )
+    object SignUpSplashComeBackScreen : Screen(
+        "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}", "sign_up_splash_come_back_screen"
+    )
 
     object SignUpCompleted : Screen("sign_up_completed")
 
@@ -48,8 +50,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(
-        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}",
-        "credit_screen"
+        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}", "credit_screen"
     )
 
     // VisaNavGraph
@@ -58,8 +59,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // HomeNavGraph Screens
     object DocumentGenerationScreen : Screen("document_generation_screen")
-    object SignDocumentScreen :
-        Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
+    object SignDocumentScreen : Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")
@@ -73,7 +73,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     // Payment Credit
-    object PaymentFeeScreen : Screen("payment_fee_screen")
+    object PaymentFeeScreen : Screen("payment_fee_screen/${MONTHLY_QUOTA_ONE}/${MONTHLY_QUOTA_TWO}", "payment_fee_screen")
     object PaymentAccountScreen : Screen("payment_account_screen")
 
     // TestNavGraph Screens

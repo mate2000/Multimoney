@@ -8,10 +8,14 @@ query Balance($user:String!,$identification:String!,$idBrand:Int!,$idClient:Int!
     ) {
         resumen {
             moneda
+            saldo_Actual
             saldo_Actual_Label
+            saldo_Disponible
             saldo_Disponible_Label
             fecha_Pago_Label
+            cuota_Mensual
             cuota_Mensual_Label
+            saldo_Monto_Cancelar
         }
     }
     balanceAccountSmart(

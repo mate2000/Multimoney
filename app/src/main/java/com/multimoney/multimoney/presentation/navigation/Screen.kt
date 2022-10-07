@@ -5,6 +5,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
@@ -18,7 +19,7 @@ const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_credit_route"
 const val TEST_ROUTE = "test_route"
 
-// Parameters
+// Parameters Alert
 const val ALERT_RESULT_ICON = "alert_result_icon"
 const val ALERT_RESULT_TITLE = "alert_result_title"
 const val ALERT_RESULT_DESCRIPTION = "alert_result_description"
@@ -74,7 +75,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Payment Credit
     object PaymentFeeScreen : Screen("payment_fee_screen/${MONTHLY_QUOTA_ONE}/${MONTHLY_QUOTA_TWO}", "payment_fee_screen")
-    object PaymentAccountScreen : Screen("payment_account_screen")
+    object PaymentAccountScreen : Screen("payment_account_screen/{$PAYMENT_CURRENCY}", "payment_account_screen")
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

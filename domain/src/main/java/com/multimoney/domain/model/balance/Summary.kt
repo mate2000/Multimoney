@@ -1,7 +1,8 @@
 package com.multimoney.domain.model.balance
 
 data class Summary(
-    val currentBalance: String?,
+    val idCurrency: Int?,
+    val currency: String?,
     val currentBalanceLabel: String?,
     val availableBalance: String?,
     val availableBalanceLabel: String?,

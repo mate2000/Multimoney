@@ -18,9 +18,11 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.Currency
 
 @Composable
 fun PaymentFeeSelectionScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: PaymentFeeSelectionViewModel = hiltViewModel()
 ) {

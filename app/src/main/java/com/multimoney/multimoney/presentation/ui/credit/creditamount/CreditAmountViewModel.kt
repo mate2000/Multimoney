@@ -254,10 +254,10 @@ class CreditAmountViewModel @Inject constructor(
         emitBaseEvent(
             OnOpenConditionOfCreditDialog(
                 DialogParameters(
-                    title = R.string.credit_amount_condition_of_credit_info,
+                    titleResource = R.string.credit_amount_condition_of_credit_info,
                     description = conditionModalDescription,
                     isActive = mutableStateOf(true),
-                    positiveText = R.string.accept
+                    positiveResource = R.string.accept
                 )
             )
         )
@@ -292,7 +292,8 @@ class CreditAmountViewModel @Inject constructor(
                     maximumDisbursementLabel = maximumDisbursementLabel,
                     regularInterestRateLabel = regularInterestRateLabel,
                     termLabel = termLabel,
-                    commissionDisbursementLabel = commissionDisbursementLabel
+                    commissionDisbursementLabel = commissionDisbursementLabel,
+                    disbursementError = Pair(false, R.string.empty)
                 )
                 isFormValid()
             }
@@ -393,6 +394,7 @@ class CreditAmountViewModel @Inject constructor(
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
+        uiState = uiState.copy(disbursementError = Pair(false, R.string.empty))
         if (uiState.disbursementError.first.not() && isTimerRunning.not()) {
             callQueryPaymentAmountUseCase(
                 uiState.disbursement.toDouble().toInt(),

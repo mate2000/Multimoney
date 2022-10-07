@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,8 +37,11 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStatus
-import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.theme.GrayScale200
+import com.multimoney.multimoney.presentation.theme.GrayScale600
+import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
@@ -60,11 +64,14 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
+import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @OptIn(ExperimentalPagerApi::class)
@@ -100,38 +107,59 @@ fun ProductScreen(
                 .background(MultimoneyTheme.colors.background)
                 .scrollable(state = scrollState, orientation = Orientation.Vertical)
         ) {
-           /* TipsAndOffer(
-                modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-                pages = NUMBER_PAGES,
-                viewModel = viewModel
-            )
-            Products(
-                modifier = Modifier.padding(top = 25.dp),
-                pages = NUMBER_PAGES,
-                state = productPagerState,
-                viewModel = viewModel
-            )
-            ProductExtras(
-                modifier = Modifier.padding(top = 32.dp),
-                pages = NUMBER_PAGES,
-                state = bottomPagerState,
-                viewModel = viewModel
-            )*/
-            TipsAndOffer(
-                modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-                pages = NUMBER_PAGES,
-                viewModel = viewModel
-            )
-            CreditDetail(
-                modifier = Modifier.padding(top = 32.dp),
-                balance = viewModel.uiState.balanceCredit
-            )
+            MotionLayoutMM(mainHeader = {
+                TipsAndOffer(
+                    modifier = Modifier.padding(start = 16.dp, top = 20.dp),
+                    viewModel = viewModel
+                )
+            }, secondaryHeader = { backPressed ->
+                Box(
+                    contentAlignment = Alignment.TopCenter,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MultimoneyTheme.colors.background)) {
+                    TopNavBar(
+                        isRightButtonVisible = false,
+                        onLeftButtonClick = {
+                            backPressed()
+                        }
+                    )
+                }
+            }, content = { modifier, headerText ->
+                Products(
+                    modifier = modifier,
+                    pages = NUMBER_PAGES,
+                    state = productPagerState,
+                    viewModel = viewModel,
+                    headerText
+                )
+            }, footer = {
+                ProductExtras(
+                    modifier = Modifier.padding(top = 16.dp),
+                    pages = NUMBER_PAGES,
+                    state = bottomPagerState,
+                    viewModel = viewModel
+                )
+            }, secondaryFooter = {
+                CustomBoxVisaBackground(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    onClick = {
+                        // todo Add logic when the user click the button
+                        // TODO: Remove this button when all functionalities are implemented
+                        viewModel.popAndNavigateTo(
+                            route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
+                            popTo = Screen.AlertResultScreen.baseRoute
+                        )
+                    },
+                    type = RequestCreditCard
+                )
+            }, totalPages = NUMBER_PAGES)
         }
     }
 }
 
 @Composable
-fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
+fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -180,8 +208,8 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         ) {
-            items(items = viewModel.getCreditOfferAndTips(), itemContent = { item ->
-                TipAndOfferItem(item, viewModel)
+            items(items = viewModel.getCreditOfferAndTips(), itemContent = {
+                TipAndOfferItem(viewModel)
             })
         }
     }
@@ -189,21 +217,45 @@ fun TipsAndOffer(modifier: Modifier, pages: Int, viewModel: ProductViewModel) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Products(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
+fun Products(
+    modifier: Modifier,
+    pages: Int,
+    state: PagerState,
+    viewModel: ProductViewModel,
+    headerText: Int,
+) {
     Column(modifier = modifier) {
+        // TODO add dynamic titles when other products are implemented
         Text(
-            text = stringResource(id = R.string.home_my_products),
+            text = stringResource(id = if (headerText == 0) R.string.home_credit_title else headerText),
             modifier = Modifier.padding(horizontal = 16.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            style = if (headerText == 0) Typography.h5.copy(fontWeight = FontWeight.SemiBold) else Typography.body1.copy(
+                fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
         )
-        HorizontalPager(
-            count = pages,
-            modifier = Modifier.padding(top = 8.dp),
-            state = state
-        ) { page ->
-            // todo add the logic for the others pages
+        if (pages == 1) {
             CreditProduct(viewModel = viewModel)
+        } else {
+            HorizontalPager(
+                count = pages,
+                modifier = Modifier.padding(top = 8.dp),
+                state = state
+            ) {
+                // todo add the logic for the others pages
+                CreditProduct(viewModel = viewModel)
+            }
+
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            Row(Modifier.padding(horizontal = 180.dp)) {
+                CustomDotsIndicator(
+                    totalDots = pages,
+                    selectedIndex = state.currentPage,
+                    selectedColor = GrayScale200,
+                    unSelectedColor = GrayScale600,
+                    modifier = Modifier.size(10.dp)
+                )
+            }
         }
     }
 }
@@ -269,7 +321,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            onClick = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) },
+                            onClick = {
+                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                            },
                             type = Primary
                         ) {
                             CardGTWithoutCredit()
@@ -288,7 +342,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
 @Composable
 fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
     Column(modifier = modifier) {
-        HorizontalPager(count = pages, state = state) { page ->
+        HorizontalPager(count = pages, state = state) {
             if (viewModel.uiState.userStatus?.infoCredit?.status != CreditStatus.CREDIT_REJECTED.status) {
                 CustomBoxVisaBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -303,8 +357,8 @@ fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: 
 }
 
 @Composable
-fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip, viewModel: ProductViewModel) {
-    TipBox(type = tipOrOffer.type) {
+fun TipAndOfferItem(viewModel: ProductViewModel) {
+    TipBox {
         Box(
             Modifier
                 .fillMaxSize()
@@ -344,7 +398,7 @@ fun TipAndOfferItem(tipOrOffer: CreditOfferAndTip, viewModel: ProductViewModel) 
 }
 
 @Composable
-fun TipBox(type: String, content: @Composable () -> Unit) {
+fun TipBox(content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
             .size(152.dp, 140.dp)
@@ -360,4 +414,4 @@ fun TipBox(type: String, content: @Composable () -> Unit) {
     }
 }
 
-private const val NUMBER_PAGES = 1
+private const val NUMBER_PAGES = 2

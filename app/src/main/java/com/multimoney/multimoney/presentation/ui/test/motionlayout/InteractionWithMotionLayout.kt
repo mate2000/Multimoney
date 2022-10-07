@@ -4,22 +4,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
@@ -34,22 +33,19 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import kotlin.math.absoluteValue
-
-@Composable
-fun InteractionWithMotionLayout() {
-    Box(
-        modifier = Modifier
-            .fillMaxHeight()
-    ) {
-        MotionLayoutMM()
-    }
-}
 
 @OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
-fun MotionLayoutMM() {
+fun MotionLayoutMM(
+    mainHeader: @Composable () -> Unit,
+    secondaryHeader: @Composable (backFunction: () -> Unit) -> Unit,
+    content: @Composable (modifier: Modifier, headerText: Int) -> Unit,
+    footer: @Composable () -> Unit,
+    secondaryFooter: @Composable () -> Unit,
+    totalPages: Int = TOTAL_PAGES,
+) {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
@@ -65,6 +61,7 @@ fun MotionLayoutMM() {
 
     val swipeAbleState = rememberSwipeableState(initialValue = 0)
     val anchors = mapOf(0f to 0, TOTAL_PERCENTAGE to 1)
+    var isExpanded by remember { mutableStateOf(false) }
 
     // Pager
     val headerTitlePagerState = rememberPagerState()
@@ -82,6 +79,13 @@ fun MotionLayoutMM() {
         bottomEndPagerState.animateScrollToPage(mainCardPagerState.currentPage)
     }
 
+    LaunchedEffect(key1 = isExpanded) {
+        if (isExpanded) {
+            swipeAbleState.animateTo(BEGINNING_ANIMATION)
+            isExpanded = false
+        }
+    }
+
     MotionLayout(
         motionScene = MotionScene(motionSceneContent),
         progress = (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
@@ -90,16 +94,16 @@ fun MotionLayoutMM() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Blue)
+                .background(MultimoneyTheme.colors.background)
                 .layoutId("header_cards"),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "Cards Iniciales", color = Color.White, style = Typography.h4)
+            mainHeader()
         }
         HorizontalPager(
             state = headerTitlePagerState,
             userScrollEnabled = false,
-            count = TOTAL_PAGES, modifier = Modifier
+            count = totalPages, modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("header_title")
         ) { page ->
@@ -130,180 +134,50 @@ fun MotionLayoutMM() {
                         )
                     }
             ) {
-                when (page) {
-                    PAGE_ONE -> Text(
-                        text = "Action Bar $page",
-                        color = Color.White,
-                        style = Typography.h4,
-                        modifier = Modifier
-                            .background(Color.Yellow)
-                    )
-                    PAGE_TWO -> Text(
-                        text = "Action Bar $page",
-                        color = Color.White,
-                        style = Typography.h4,
-                        modifier = Modifier
-                            .background(Color.Yellow)
-                    )
-                    PAGE_THREE -> Text(
-                        text = "Action Bar $page",
-                        color = Color.White,
-                        style = Typography.h4,
-                        modifier = Modifier
-                            .background(Color.Yellow)
-                    )
+                secondaryHeader {
+                    isExpanded = true
                 }
             }
         }
-        HorizontalPager(
-            state = mainCardPagerState,
-            count = TOTAL_PAGES, modifier = Modifier
-                .fillMaxWidth()
-                .layoutId("main_card")
-                .swipeable(
-                    state = swipeAbleState,
-                    anchors = anchors,
-                    thresholds = { _, _ ->
-                        // Entre mas se aproxima a 1 se tiene que hacer mas scroll para que se autocomplete la animacion
-                        FractionalThreshold(0.8f)
-                    },
-                    orientation = Orientation.Vertical
-                )
-        ) { page ->
-            Card(
-                Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        // Calculate the absolute offset for the current page from the
-                        // scroll position. We use the absolute value which allows us to mirror
-                        // any effects for both directions
-                        val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
-
-                        // We animate the scaleX + scaleY, between 85% and 100%
-                        lerp(
-                            start = 0.85f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        ).also { scale ->
-                            scaleX = scale
-                            scaleY = scale
-                        }
-
-                        // We animate the alpha, between 50% and 100%
-                        alpha = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
-                    }
-            ) {
-                when (page) {
-                    PAGE_ONE ->
-                        Text(
-                            text = "Card Principal $page",
-                            color = Color.Black,
-                            style = Typography.h4,
-                            modifier = Modifier
-                                .background(Color.Green)
-                                .size(120.dp, 140.dp)
-                        )
-                    PAGE_TWO -> Text(
-                        text = "Card Principal $page",
-                        color = Color.Black,
-                        style = Typography.h4,
-                        modifier = Modifier
-                            .background(Color.Green)
-                            .size(120.dp, 140.dp)
-                    )
-                    PAGE_THREE -> Text(
-                        text = "Card Principal $page",
-                        color = Color.Black,
-                        style = Typography.h4,
-                        modifier = Modifier
-                            .background(Color.Green)
-                            .size(120.dp, 140.dp)
-                    )
-                }
-            }
-        }
+        content(modifier = Modifier
+            .fillMaxWidth()
+            .layoutId("main_card")
+            .swipeable(
+                reverseDirection = true,
+                state = swipeAbleState,
+                anchors = anchors,
+                thresholds = { _, _ ->
+                    // Entre mas se aproxima a 1 se tiene que hacer mas scroll para que se autocomplete la animacion
+                    FractionalThreshold(FRACTIONAL_THRESHOLD)
+                },
+                orientation = Orientation.Vertical
+            ), headerText = if(swipeAbleState.offset.value > FRACTIONAL_THRESHOLD) CUSTOM_HEADER else R.string.home_my_products)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(bottomInitialCardHeight)
-                .background(Color.Red)
+                .background(MultimoneyTheme.colors.background)
                 .layoutId("bottom_start"),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopCenter
         ) {
-            Text(text = "Contenido Inical", color = Color.White, style = Typography.h4)
+            footer()
         }
         HorizontalPager(
             state = bottomEndPagerState,
             userScrollEnabled = false,
-            count = TOTAL_PAGES, modifier = Modifier
+            count = totalPages, modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("bottom_end")
-        ) { page ->
-            Card(
-                Modifier
-                    .fillMaxWidth()
-                    .height(bottomFinalCardHeight)
-                    .graphicsLayer {
-                        // Calculate the absolute offset for the current page from the
-                        // scroll position. We use the absolute value which allows us to mirror
-                        // any effects for both directions
-                        val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
-
-                        // We animate the scaleX + scaleY, between 85% and 100%
-                        lerp(
-                            start = 0.85f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        ).also { scale ->
-                            scaleX = scale
-                            scaleY = scale
-                        }
-
-                        // We animate the alpha, between 50% and 100%
-                        alpha = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
-                    }
-            ) {
-                when (page) {
-                    PAGE_ONE -> Text(
-                        text = "Cards Final $page",
-                        color = Color.White,
-                        style = Typography.h4,
-                        modifier = Modifier
-                            .background(Color.Black)
-                    )
-                    PAGE_TWO -> Text(
-                        text = "Cards Final $page",
-                        color = Color.White,
-                        style = Typography.h4,
-                        modifier = Modifier
-                            .background(Color.Black)
-                    )
-                    PAGE_THREE -> Text(
-                        text = "Cards Final $page",
-                        color = Color.White,
-                        style = Typography.h4,
-                        modifier = Modifier
-                            .background(Color.Black)
-                    )
-                }
-
-            }
+        ) {
+            secondaryFooter()
         }
     }
 }
 
-const val FORTY_FIVE_PERCENTAGE_OF_SCREEN = 0.45
-const val SIXTY_PERCENTAGE_OF_SCREEN = 0.60
+const val FORTY_FIVE_PERCENTAGE_OF_SCREEN = 0.40
+const val SIXTY_PERCENTAGE_OF_SCREEN = 0.65
+const val FRACTIONAL_THRESHOLD = 0.8f
+const val BEGINNING_ANIMATION = 0
+const val CUSTOM_HEADER = 0
 const val TOTAL_PAGES = 3
-const val PAGE_ONE = 0
-const val PAGE_TWO = 1
-const val PAGE_THREE = 2
 const val TOTAL_PERCENTAGE = 100F

@@ -23,9 +23,9 @@ class SignDocumentViewModel @Inject constructor() : BaseViewModel(true) {
     fun createDialog() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
-                title = string.sign_credit_dialog_title,
+                titleResource = string.sign_credit_dialog_title,
                 description = dialogDescription,
-                positiveText = string.sign_credit_dialog_continue,
+                positiveResource = string.sign_credit_dialog_continue,
                 isActive = mutableStateOf(true)
             )
         )

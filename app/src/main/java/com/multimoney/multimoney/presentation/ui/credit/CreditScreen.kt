@@ -157,10 +157,10 @@ fun CreditScreen(
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.title),
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
             message = viewModel.uiState.openDialog.description,
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveText),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeText),
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )

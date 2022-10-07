@@ -98,10 +98,10 @@ class CreditViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                title = R.string.credit_close_dialog_title,
+                titleResource = R.string.credit_close_dialog_title,
                 description = closeDialogDescription,
-                positiveText = R.string.credit_close_dialog_positive_button_text,
-                negativeText = R.string.credit_close_dialog_negative_button_text,
+                positiveResource = R.string.credit_close_dialog_positive_button_text,
+                negativeResource = R.string.credit_close_dialog_negative_button_text,
                 positiveAction = {
                     popAndNavigateTo(
                         route = Screen.HomeScreen.route,

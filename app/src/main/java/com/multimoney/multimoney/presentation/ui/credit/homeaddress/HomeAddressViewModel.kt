@@ -329,7 +329,7 @@ class HomeAddressViewModel @Inject constructor(
                 )
             }
             Brand.CostaRica.id -> {
-                saveCreditStepsHelper.saveStepThree(
+                saveCreditStepsHelper.saveStepFourCR(
                     user,
                     homeProvince,
                     uiState.divisionOneSelected,

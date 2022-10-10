@@ -360,7 +360,6 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .fillMaxSize()
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
-                    //viewModel.onUIEvent(OnNavigateToTestScreen)
                     viewModel.onUIEvent(OnNavigateToPaymentProcess)
                 }) {
             CustomImage(

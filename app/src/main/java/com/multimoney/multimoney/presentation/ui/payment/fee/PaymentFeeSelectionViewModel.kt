@@ -45,12 +45,12 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
         popAndNavigateTo(Screen.HomeScreen.route, Screen.PaymentFeeScreen.route)
     }
 
-    fun getAllQuotas(): String {
+    fun getAllQuotas(plusString: String): String {
         val quotas = StringBuilder()
         uiState.summaryList.forEachIndexed { index, summary ->
             quotas.append(summary.monthlyQuotaLabel)
             if (uiState.summaryList.lastIndex != index) {
-                quotas.append(" + ")
+                quotas.append(plusString)
             }
         }
         return quotas.toString()

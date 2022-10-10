@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
@@ -94,7 +95,7 @@ fun PaymentFeeSelectionScreen(
                             .padding(top = 12.dp),
                             startIcon = Currency.Search.getAccountIconByIdCurrency(Currency.All.id).feeIcon,
                             title = stringResource(id = Currency.Search.getAccountIconByIdCurrency(Currency.All.id).feeInfoButtonTitle),
-                            subtitle = viewModel.getAllQuotas(),
+                            subtitle = viewModel.getAllQuotas(stringResource(id = string.payment_fee_both_plus_symbol)),
                             onClick = {
                                 viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.All))
                             })

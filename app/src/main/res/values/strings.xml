@@ -367,6 +367,7 @@
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>
     <string name="payment_fee_one_option" translatable="false">Cuota en</string>
     <string name="payment_fee_both_options" translatable="false">Ambas cuotas</string>
+    <string name="payment_fee_both_plus_symbol" translatable="false">\u0020+\u0020</string>
 
     <!-- Payment Account -->
     <string name="payment_account_title_colon" translatable="false">¿Con cuál cuenta vas a pagar tu cuota en colones?</string>

@@ -214,6 +214,7 @@
     <string name="home_product_not_approved_action" translatable="false">Activar cuenta Smart</string>
     <string name="home_product_credit_approved_card_title" translatable="false">Crédito pre aprobado</string>
     <string name="home_product_credit_approved_card_description" translatable="false">¡Podes solicitar\n%1$s hoy mismo!</string>
+    <string name="home_product_gt_credit_approved_card_description" translatable="false">¡Puedes solicitar\n%1$s hoy mismo!</string>
     <string name="home_product_credit_approved_card_action" translatable="false">Solicitar</string>
     <string name="home_product_credit_approved_process_started_card_title" translatable="false">Crédito pre aprobado</string>
     <string name="home_product_credit_approved_process_started_card_description" translatable="false">Tu solicitud de crédito está en proceso. ¡No pierdas la oportunidad!</string>

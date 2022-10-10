@@ -38,7 +38,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
@@ -111,7 +110,8 @@ fun ProductScreen(
                     contentAlignment = Alignment.TopCenter,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MultimoneyTheme.colors.background)) {
+                        .background(MultimoneyTheme.colors.background)
+                ) {
                     TopNavBar(
                         isRightButtonVisible = false,
                         onLeftButtonClick = {
@@ -224,7 +224,8 @@ fun Products(
             text = stringResource(id = if (headerText == 0) R.string.home_credit_title else headerText),
             modifier = Modifier.padding(horizontal = 16.dp),
             style = if (headerText == 0) Typography.h5.copy(fontWeight = FontWeight.SemiBold) else Typography.body1.copy(
-                fontWeight = FontWeight.SemiBold),
+                fontWeight = FontWeight.SemiBold
+            ),
             color = MultimoneyTheme.colors.labelText
         )
         if (pages == 1) {
@@ -277,7 +278,8 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable
+                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable,
+                                viewModel.uiState.idBrand.toInt()
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {

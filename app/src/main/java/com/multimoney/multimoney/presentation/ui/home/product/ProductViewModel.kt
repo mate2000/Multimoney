@@ -212,7 +212,7 @@ class ProductViewModel @Inject constructor(
 
     data class UIState(
         //Fields
-        var idBrand: String = "",
+        var idBrand: String = "0",
         var pkUser: String = "",
         var identification: String = "",
         var email: String = "",

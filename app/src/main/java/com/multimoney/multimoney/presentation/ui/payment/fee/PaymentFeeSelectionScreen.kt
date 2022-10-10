@@ -5,16 +5,28 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
+import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnNavigateToPaymentAccount
+import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnSaveArguments
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -22,22 +34,34 @@ import com.multimoney.multimoney.presentation.util.catalog.Currency
 
 @Composable
 fun PaymentFeeSelectionScreen(
+    navBackStackEntry: NavBackStackEntry,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: PaymentFeeSelectionViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        navBackStackEntry.arguments?.apply {
+            viewModel.onUIEvent(
+                OnSaveArguments(
+                    getString(ID_BRAND),
+                    getString(ID_CLIENT),
+                    getString(ID_LOAN_CLIENT),
+                    (get(SUMMARY_LIST) as Array<Summary>).toList()
+                )
+            )
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
     ) {
-        TopNavBar(
-            onRightButtonClick = {
-
-            },
-            onLeftButtonClick = {
-
-            })
+        TopNavBar(isRightButtonVisible = false, onLeftButtonClick = {
+            viewModel.onUIEvent(OnNavigateBack)
+        })
         Column(
             modifier = Modifier
                 .padding(top = 24.dp, start = 16.dp, end = 16.dp)
@@ -49,34 +73,32 @@ fun PaymentFeeSelectionScreen(
                 color = MultimoneyTheme.colors.labelText
             )
 
-            CustomInfoButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 28.dp),
-                startIcon = R.drawable.ic_payment_colon,
-                title = stringResource(id = R.string.payment_fee_one_option) + " Colones",
-                subtitle = "₡5,000",
-                onClick = {}
-            )
-
-            CustomInfoButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                startIcon = R.drawable.ic_payment_dollar,
-                title = stringResource(id = R.string.payment_fee_one_option) + " Dolares",
-                subtitle = "$80",
-                onClick = {}
-            )
-
-            CustomInfoButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                title = stringResource(id = R.string.payment_fee_both_options),
-                subtitle = "₡5,000 + $80",
-                onClick = {}
-            )
+            LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
+                items(viewModel.uiState.summaryList) { summary ->
+                    CustomInfoButton(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp),
+                        startIcon = Currency.Search.getAccountIconByCurrency(summary.idCurrency).feeIcon,
+                        title = "${stringResource(id = Currency.Search.getAccountIconByCurrency(summary.idCurrency).feeInfoButtonTitle)} ${summary.currency?.lowercase()}",
+                        subtitle = summary.monthlyQuotaLabel ?: "",
+                        onClick = {
+                            viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.Search.getAccountIconByCurrency(summary.idCurrency)))
+                        })
+                }
+                if (viewModel.uiState.summaryList.count() > 1) {
+                    item {
+                        CustomInfoButton(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp),
+                            startIcon = Currency.Search.getAccountIconByCurrency(Currency.All.id).feeIcon,
+                            title = stringResource(id = Currency.Search.getAccountIconByCurrency(Currency.All.id).feeInfoButtonTitle),
+                            subtitle = viewModel.getAllQuotas(),
+                            onClick = {
+                                viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.All))
+                            })
+                    }
+                }
+            }
         }
     }
 }

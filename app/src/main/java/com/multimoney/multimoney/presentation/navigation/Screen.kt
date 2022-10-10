@@ -3,9 +3,7 @@ package com.multimoney.multimoney.presentation.navigation
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
@@ -16,7 +14,7 @@ const val HOME_ROUTE = "home_route"
 const val HOME_MAIN_ROUTE = "home_main_route"
 const val CREDIT_ROUTE = "credit_route"
 const val VISA_ROUTE = "visa_route"
-const val PAYMENT_CREDIT_ROUTE = "payment_credit_route"
+const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val TEST_ROUTE = "test_route"
 
 // Parameters Alert
@@ -26,8 +24,12 @@ const val ALERT_RESULT_DESCRIPTION = "alert_result_description"
 const val ALERT_RESULT_BUTTON_TEXT = "alert_result_button_text"
 
 // payment process parameters
-const val MONTHLY_QUOTA_ONE = "monthly_quota_one_label"
-const val MONTHLY_QUOTA_TWO = "monthly_quota_two_label"
+const val ID_BRAND = "id_brand"
+const val ID_CLIENT = "id_client"
+const val ID_LOAN_CLIENT = "id_loan_client"
+const val CURRENCY = "currency"
+const val ID_CURRENCY = "id_currency"
+const val SUMMARY_LIST = "summary_list"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -74,8 +76,16 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     // Payment Credit
-    object PaymentFeeScreen : Screen("payment_fee_screen/${MONTHLY_QUOTA_ONE}/${MONTHLY_QUOTA_TWO}", "payment_fee_screen")
-    object PaymentAccountScreen : Screen("payment_account_screen/{$PAYMENT_CURRENCY}", "payment_account_screen")
+    object PaymentFeeScreen : Screen(
+        "payment_fee_screen/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}",
+        "payment_fee_screen"
+    )
+
+    object PaymentAccountScreen :
+        Screen(
+            "payment_account_screen/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CURRENCY}/{$ID_CURRENCY}",
+            "payment_account_screen"
+        )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

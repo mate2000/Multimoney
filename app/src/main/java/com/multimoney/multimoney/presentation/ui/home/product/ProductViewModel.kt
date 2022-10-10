@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.data.util.catalog.CreditStep
@@ -29,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.customnavtype.encodeData
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -169,9 +171,18 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPaymentScreen() {
-        navigateTo(
-            "${Screen.PaymentFeeScreen.baseRoute}/${}/${}/${}"
-        )
+        val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
+        val infoCredit = uiState.userStatus?.infoCredit
+        val route = if ((creditSummary?.size ?: 0) > 1 && uiState.idBrand.toInt() == Brand.CostaRica.id) {
+            "${Screen.PaymentFeeScreen.baseRoute}/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+                encodeData(
+                    creditSummary
+                )
+            }"
+        } else {
+            "${Screen.PaymentAccountScreen.baseRoute}/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${creditSummary?.first()?.currency}/${creditSummary?.first()?.idCurrency}"
+        }
+        navigateTo(route)
     }
 
     private fun onNavigateToVisaActivateScreen() =

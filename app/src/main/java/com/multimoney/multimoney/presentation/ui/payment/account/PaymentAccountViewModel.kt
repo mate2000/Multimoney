@@ -8,7 +8,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnSetCurrency
+import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnSetIdCurrency
 import com.multimoney.multimoney.presentation.util.catalog.Currency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -21,15 +21,15 @@ class PaymentAccountViewModel @Inject constructor() : BaseViewModel(true) {
         private set
 
     // Stateless
-    private var currency: String? = null
+    private var idCurrency: Int? = null
 
-    private fun setCurrency(currency: String) {
-        this.currency = currency
+    private fun setCurrency(idCurrency: Int) {
+        this.idCurrency = idCurrency
     }
 
     private fun getTextResources() {
         uiState = uiState.copy(
-            titleResource = Currency.Search.getAccountIconByCurrency(currency).accountTitle
+            titleResource = Currency.Search.getAccountIconByCurrency(idCurrency).accountTitle
         )
     }
 
@@ -44,14 +44,14 @@ class PaymentAccountViewModel @Inject constructor() : BaseViewModel(true) {
                 route = Screen.PaymentFeeScreen.route,
                 popTo = Screen.PaymentAccountScreen.route
             )
-            is OnSetCurrency -> setCurrency(uiEvent.currency)
+            is OnSetIdCurrency -> setCurrency(uiEvent.idCurrency)
             is OnGetTextResources -> getTextResources()
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
-        class OnSetCurrency(val currency: String) : UIEvent()
+        class OnSetIdCurrency(val idCurrency: Int) : UIEvent()
         object OnGetTextResources : UIEvent()
     }
 }

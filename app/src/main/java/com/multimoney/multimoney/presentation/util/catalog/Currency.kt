@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.util.catalog
 
 import com.multimoney.multimoney.R
-import java.util.Locale
 
 sealed class Currency(
     val id: Int,
@@ -16,8 +15,8 @@ sealed class Currency(
         "COLONES",
         R.drawable.ic_account_colon,
         R.string.payment_account_title_colon,
-        R.drawable.ic_account_colon,
-        R.string.payment_account_title_colon
+        R.drawable.ic_payment_colon,
+        R.string.payment_fee_one_option
     )
 
     object Dollar : Currency(
@@ -25,8 +24,8 @@ sealed class Currency(
         "DOLARES",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_dollar,
-        R.drawable.ic_account_colon,
-        R.string.payment_account_title_colon
+        R.drawable.ic_payment_dollar,
+        R.string.payment_fee_one_option
     )
 
     object Quetzales : Currency(
@@ -34,8 +33,8 @@ sealed class Currency(
         "QUETZALES",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_dollar,
-        R.drawable.ic_account_colon,
-        R.string.payment_account_title_colon
+        R.drawable.ic_payment_fee_icon,
+        R.string.empty
     )
 
     object All : Currency(
@@ -43,15 +42,15 @@ sealed class Currency(
         "",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_all,
-        R.drawable.ic_account_colon,
-        R.string.payment_account_title_colon
+        R.drawable.ic_payment_fee_icon,
+        R.string.payment_fee_both_options
     )
 
     object Search {
-        fun getAccountIconByCurrency(currency: String?): Currency {
-            return when (currency?.lowercase(Locale.ROOT)) {
-                Colon.value.lowercase() -> Colon
-                Dollar.value.lowercase() -> Dollar
+        fun getAccountIconByCurrency(currency: Int?): Currency {
+            return when (currency) {
+                Colon.id -> Colon
+                Dollar.id -> Dollar
                 else -> All
             }
         }

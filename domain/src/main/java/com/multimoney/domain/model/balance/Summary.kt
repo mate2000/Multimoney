@@ -1,5 +1,9 @@
 package com.multimoney.domain.model.balance
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Summary(
     val idCurrency: Int?,
     val currency: String?,
@@ -10,4 +14,4 @@ data class Summary(
     val monthlyQuota: String?,
     val monthlyQuotaLabel: String?,
     val balanceAmountCancel: String
-)
+) : Parcelable

@@ -18,14 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme

@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Summary(
     val idCurrency: Int?,
     val currency: String?,
+    val currentBalance: Double?,
     val currentBalanceLabel: String?,
     val availableBalance: String?,
     val availableBalanceLabel: String?,

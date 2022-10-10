@@ -17,9 +17,10 @@ import javax.inject.Inject
 class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
 
     // Stateless
-    var idBrand: String? = ""
-    var idClient: String? = ""
-    var idLoanClient: String? = ""
+    var user: String? = ""
+    var idBrand: Int? = null
+    var idClient: Int? = null
+    var idLoanClient: Int? = null
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -27,8 +28,9 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
 
 
     private fun onSaveArguments(
-        idBrand: String?, idClient: String?, idLoanClient: String?, summaryList: List<Summary>
+        user: String?, idBrand: Int?, idClient: Int?, idLoanClient: Int?, summaryList: List<Summary>
     ) {
+        this.user = user
         this.idBrand = idBrand
         this.idClient = idClient
         this.idLoanClient = idLoanClient
@@ -36,7 +38,7 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun onNavigateToPaymentAccount(currency: Currency) {
-        navigateTo(route = "${Screen.PaymentAccountScreen.baseRoute}/${idBrand}/${idClient}/${idLoanClient}/${currency.value}/${currency.id}")
+        navigateTo(route = "${Screen.PaymentAccountScreen.baseRoute}/${user}/${idBrand}/${idClient}/${idLoanClient}/${currency.value}/${currency.id}")
     }
 
     private fun onNavigateBack() {
@@ -61,7 +63,7 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnSaveArguments -> onSaveArguments(
-                event.idBrand, event.idClient, event.idLoanClient, event.summaryList
+                event.user, event.idBrand, event.idClient, event.idLoanClient, event.summaryList
             )
             is OnNavigateToPaymentAccount -> onNavigateToPaymentAccount(event.currency)
             is OnNavigateBack -> onNavigateBack()
@@ -70,7 +72,7 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
 
     sealed class UIEvent {
         data class OnSaveArguments(
-            val idBrand: String?, val idClient: String?, val idLoanClient: String?, val summaryList: List<Summary>
+            val user: String?, val idBrand: Int?, val idClient: Int?, val idLoanClient: Int?, val summaryList: List<Summary>
         ) : UIEvent()
 
         data class OnNavigateToPaymentAccount(val currency: Currency) : UIEvent()

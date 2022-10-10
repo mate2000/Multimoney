@@ -6,9 +6,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.multimoney.multimoney.presentation.navigation.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PAYMENT_CREDIT_ROUTE
-import com.multimoney.multimoney.presentation.navigation.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionScreen
@@ -16,7 +15,6 @@ import com.multimoney.multimoney.presentation.util.customnavtype.SummaryListNavT
 
 // payment process parameters
 const val USER = "user"
-const val ID_BRAND = "id_brand"
 const val ID_CLIENT = "id_client"
 const val ID_LOAN_CLIENT = "id_loan_client"
 const val CURRENCY = "currency"
@@ -29,7 +27,19 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
     ) {
         composable(
             Screen.PaymentFeeScreen.route,
-            arguments = listOf(navArgument(SUMMARY_LIST) { type = SummaryListNavType() })
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(SUMMARY_LIST) {
+                    type = SummaryListNavType()
+                })
         ) { navBackStackEntry ->
             PaymentFeeSelectionScreen(navBackStackEntry = navBackStackEntry, onNavigate = {
                 navController.navigate(it.route)
@@ -41,7 +51,18 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         }
         composable(
             Screen.PaymentAccountScreen.route,
-            arguments = listOf(navArgument(ID_CURRENCY) { type = NavType.IntType })
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CURRENCY) { type = NavType.IntType }
+            )
         ) { navBackStackEntry ->
             PaymentAccountScreen(navBackStackEntry = navBackStackEntry, onNavigate = {
                 navController.navigate(it.route)

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10

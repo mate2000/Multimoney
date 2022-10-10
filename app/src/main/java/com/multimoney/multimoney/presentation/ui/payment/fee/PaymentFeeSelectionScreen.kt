@@ -18,10 +18,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.SUMMARY_LIST
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnNavigateBack
@@ -45,9 +46,10 @@ fun PaymentFeeSelectionScreen(
         navBackStackEntry.arguments?.apply {
             viewModel.onUIEvent(
                 OnSaveArguments(
-                    getString(ID_BRAND),
-                    getString(ID_CLIENT),
-                    getString(ID_LOAN_CLIENT),
+                    getString(USER),
+                    getInt(ID_BRAND),
+                    getInt(ID_CLIENT),
+                    getInt(ID_LOAN_CLIENT),
                     (get(SUMMARY_LIST) as Array<Summary>).toList()
                 )
             )
@@ -78,11 +80,11 @@ fun PaymentFeeSelectionScreen(
                     CustomInfoButton(modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                        startIcon = Currency.Search.getAccountIconByCurrency(summary.idCurrency).feeIcon,
-                        title = "${stringResource(id = Currency.Search.getAccountIconByCurrency(summary.idCurrency).feeInfoButtonTitle)} ${summary.currency?.lowercase()}",
+                        startIcon = Currency.Search.getAccountIconByIdCurrency(summary.idCurrency).feeIcon,
+                        title = "${stringResource(id = Currency.Search.getAccountIconByIdCurrency(summary.idCurrency).feeInfoButtonTitle)} ${summary.currency?.lowercase()}",
                         subtitle = summary.monthlyQuotaLabel ?: "",
                         onClick = {
-                            viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.Search.getAccountIconByCurrency(summary.idCurrency)))
+                            viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.Search.getAccountIconByIdCurrency(summary.idCurrency)))
                         })
                 }
                 if (viewModel.uiState.summaryList.count() > 1) {
@@ -90,8 +92,8 @@ fun PaymentFeeSelectionScreen(
                         CustomInfoButton(modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
-                            startIcon = Currency.Search.getAccountIconByCurrency(Currency.All.id).feeIcon,
-                            title = stringResource(id = Currency.Search.getAccountIconByCurrency(Currency.All.id).feeInfoButtonTitle),
+                            startIcon = Currency.Search.getAccountIconByIdCurrency(Currency.All.id).feeIcon,
+                            title = stringResource(id = Currency.Search.getAccountIconByIdCurrency(Currency.All.id).feeInfoButtonTitle),
                             subtitle = viewModel.getAllQuotas(),
                             onClick = {
                                 viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.All))

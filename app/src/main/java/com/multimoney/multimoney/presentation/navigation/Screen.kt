@@ -1,12 +1,18 @@
 package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 
 // Route
 const val LOGIN_ROUTE = "log_in_route"
@@ -23,13 +29,7 @@ const val ALERT_RESULT_TITLE = "alert_result_title"
 const val ALERT_RESULT_DESCRIPTION = "alert_result_description"
 const val ALERT_RESULT_BUTTON_TEXT = "alert_result_button_text"
 
-// payment process parameters
 const val ID_BRAND = "id_brand"
-const val ID_CLIENT = "id_client"
-const val ID_LOAN_CLIENT = "id_loan_client"
-const val CURRENCY = "currency"
-const val ID_CURRENCY = "id_currency"
-const val SUMMARY_LIST = "summary_list"
 
 /**
  * Use this class to declare all your new screens and their routes
@@ -77,13 +77,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Payment Credit
     object PaymentFeeScreen : Screen(
-        "payment_fee_screen/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}",
+        "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}",
         "payment_fee_screen"
     )
 
     object PaymentAccountScreen :
         Screen(
-            "payment_account_screen/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CURRENCY}/{$ID_CURRENCY}",
+            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CURRENCY}/{$ID_CURRENCY}",
             "payment_account_screen"
         )
 

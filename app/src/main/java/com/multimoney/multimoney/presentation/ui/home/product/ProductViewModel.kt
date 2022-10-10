@@ -13,6 +13,7 @@ import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.error.HttpError
@@ -33,10 +34,10 @@ import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.customnavtype.encodeData
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -173,21 +174,35 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToPaymentScreen() {
         val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
         val infoCredit = uiState.userStatus?.infoCredit
-        val route = if ((creditSummary?.size ?: 0) > 1 && uiState.idBrand.toInt() == Brand.CostaRica.id) {
-            "${Screen.PaymentFeeScreen.baseRoute}/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+        val route = if ((creditSummary?.size ?: 0) > 1 && validateQuotas(creditSummary)
+            && uiState.idBrand.toInt() == Brand.CostaRica.id
+        ) {
+            "${Screen.PaymentFeeScreen.baseRoute}/${email}/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
                 encodeData(
                     creditSummary
                 )
             }"
         } else {
-            "${Screen.PaymentAccountScreen.baseRoute}/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${creditSummary?.first()?.currency}/${creditSummary?.first()?.idCurrency}"
+            "${Screen.PaymentAccountScreen.baseRoute}/${email}/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${creditSummary?.first()?.currency}/${creditSummary?.first()?.idCurrency}"
         }
         navigateTo(route)
     }
 
+    fun validateQuotas(summaryList: List<Summary>?): Boolean {
+        summaryList?.let {
+            for (summary in summaryList) {
+                if (summary.currentBalance == ZERO) {
+                    return false
+                }
+            }
+            return true
+        } ?: kotlin.run {
+            return false
+        }
+    }
+
     private fun onNavigateToVisaActivateScreen() =
-//        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
-        navigateTo("${Screen.PaymentAccountScreen.baseRoute}/${1}")
+        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
 
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
@@ -214,28 +229,28 @@ class ProductViewModel @Inject constructor(
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
-                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
-                        (
-                            infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() ||
-                                validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED
-                            )
+                            infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
+                            (
+                                    infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() ||
+                                            validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED
+                                    )
                 }
                 CREDIT_MAX_ATTEMPTS -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
                 CREDIT_IDENTITY_INCOMPLETE -> {
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
-                        CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Six.id
-                        )
+                            CreditStep.Search.getIdByName(
+                                infoCredit?.infoPreApprove?.currentStep
+                            ) == CreditStep.Six.id
+                            )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
-                        CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Six.id
-                        )
+                            CreditStep.Search.getIdByName(
+                                infoCredit?.infoPreApprove?.currentStep
+                            ) < CreditStep.Six.id
+                            )
                 }
                 CREDIT_REJECTED -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
@@ -319,6 +334,8 @@ class ProductViewModel @Inject constructor(
     }
 
     companion object {
+        const val ZERO = 0.0
+
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
         const val CREDIT_INITIAL_CARD = "CREDIT_INITIAL_CARD"
         const val CREDIT_MAX_ATTEMPTS = "CREDIT_MAX_ATTEMPTS"

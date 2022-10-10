@@ -20,7 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
@@ -52,7 +56,14 @@ fun PaymentAccountScreen(
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
             onUIEvent(OnSetIdCurrency(navBackStackEntry.arguments?.getInt(ID_CURRENCY, 0) ?: 0))
             onUIEvent(OnGetTextResources)
-            onUIEvent(OnCallQueryGetClientBankAccount(user = "22060", idBrand = 5, idClient = 22060, idLoan = 37297))
+            onUIEvent(
+                OnCallQueryGetClientBankAccount(
+                    user = navBackStackEntry.arguments?.getString(USER, "") ?: "",
+                    idBrand = navBackStackEntry.arguments?.getInt(ID_BRAND, 0) ?: 0,
+                    idClient = navBackStackEntry.arguments?.getInt(ID_CLIENT, 0) ?: 0,
+                    idLoan = navBackStackEntry.arguments?.getInt(ID_LOAN_CLIENT, 0) ?: 0
+                )
+            )
         }
     }
 

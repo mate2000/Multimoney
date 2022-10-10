@@ -15,6 +15,7 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
         Summary(
             idCurrency = it?.id_Moneda,
             currency = it?.moneda,
+            currentBalance = it?.saldo_Actual.toString().toDouble(),
             currentBalanceLabel = it?.saldo_Actual_Label,
             availableBalance = it?.saldo_Disponible.toString(),
             availableBalanceLabel = it?.saldo_Disponible_Label,

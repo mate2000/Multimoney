@@ -65,7 +65,6 @@ ext {
             livedata  : "androidx.compose.runtime:runtime-livedata:${compose_version}",
             test      : "androidx.compose.ui:ui-test-junit4:$compose_version",
             extended_icons: "androidx.compose.material:material-icons-extended:$compose_version",
-
     ]
 
     // Room

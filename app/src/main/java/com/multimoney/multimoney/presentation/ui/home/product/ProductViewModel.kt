@@ -31,10 +31,10 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -91,7 +91,7 @@ class ProductViewModel @Inject constructor(
                 creditStatus = creditStatus,
                 accountStatus = accountStatus,
                 cryptoStatus = cryptoStatus,
-                cardStatus = cardStatus,
+                cardStatus = cardStatus
             ).collectLatest { result ->
                 result.onSuccess { balance ->
                     uiState = uiState.copy(isLoading = false)
@@ -150,7 +150,7 @@ class ProductViewModel @Inject constructor(
             creditStatus = uiState.userStatus?.infoCredit?.status ?: 0,
             accountStatus = uiState.userStatus?.infoBankAccount?.status ?: 0,
             cryptoStatus = uiState.userStatus?.infoCrypto?.status ?: 0,
-            cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0,
+            cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0
         )
     }
 
@@ -164,7 +164,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToCreditScreen() {
         navigateTo(
-            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/${pkUser}/${identification}/${email}/${lastStep}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
         )
     }
 
@@ -175,7 +175,8 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToVisaActivateScreen() =
-        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
+//        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.PaymentAccountScreen.baseRoute}/${1}")
 
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
@@ -201,23 +202,29 @@ class ProductViewModel @Inject constructor(
         validateUserStatus.apply {
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
-                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
-                            && infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
-                            && (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
-                            || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
+                        (
+                            infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() ||
+                                validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED
+                            )
                 }
                 CREDIT_MAX_ATTEMPTS -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
                 CREDIT_IDENTITY_INCOMPLETE -> {
-                    (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (CreditStep.Search.getIdByName(
-                        infoCredit?.infoPreApprove?.currentStep
-                    ) == CreditStep.Six.id)
+                    (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
+                        CreditStep.Search.getIdByName(
+                            infoCredit?.infoPreApprove?.currentStep
+                        ) == CreditStep.Six.id
+                        )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
-                    (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (CreditStep.Search.getIdByName(
-                        infoCredit?.infoPreApprove?.currentStep
-                    ) < CreditStep.Six.id)
+                    (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
+                        CreditStep.Search.getIdByName(
+                            infoCredit?.infoPreApprove?.currentStep
+                        ) < CreditStep.Six.id
+                        )
                 }
                 CREDIT_REJECTED -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
@@ -228,7 +235,7 @@ class ProductViewModel @Inject constructor(
     }
 
     data class UIState(
-        //Fields
+        // Fields
         var idBrand: String = "",
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false

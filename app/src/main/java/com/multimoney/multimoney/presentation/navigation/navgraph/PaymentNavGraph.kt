@@ -2,8 +2,10 @@ package com.multimoney.multimoney.presentation.navigation.navgraph
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.PAYMENT_CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountScreen
@@ -16,7 +18,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         startDestination = Screen.PaymentFeeScreen.route,
         route = PAYMENT_CREDIT_ROUTE
     ) {
-
         composable(Screen.PaymentFeeScreen.route) {
             PaymentFeeSelectionScreen(
                 onNavigate = {
@@ -30,7 +31,8 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.PaymentAccountScreen.route
+            Screen.PaymentAccountScreen.route,
+            arguments = listOf(navArgument(PAYMENT_CURRENCY) { type = NavType.IntType })
         ) { navBackStackEntry ->
             PaymentAccountScreen(
                 navBackStackEntry = navBackStackEntry,

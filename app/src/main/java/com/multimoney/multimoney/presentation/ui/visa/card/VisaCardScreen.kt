@@ -47,13 +47,10 @@ fun VisaCardScreen(
     }
 
     Column(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize()
+        modifier = Modifier.background(MultimoneyTheme.colors.background).fillMaxSize()
     ) {
         Column(
-            Modifier
-                .weight(0.11f)
+            Modifier.weight(0.11f)
         ) {
             TopNavBar(
                 rightButtonIcon = R.drawable.ic_gear,
@@ -61,21 +58,19 @@ fun VisaCardScreen(
                 onRightButtonClick = {
                     // TODO: Execute action when implemented
                     Toast.makeText(
-                        context, "TBD3", Toast.LENGTH_LONG
+                        context,
+                        "TBD3",
+                        Toast.LENGTH_LONG
                     ).show()
-                })
+                }
+            )
         }
         CustomCardVisaVertical(
-            modifier = Modifier
-                .weight(0.45f)
-                .padding(start = 68.dp, end = 68.dp)
-                .fillMaxSize(),
+            modifier = Modifier.weight(0.45f).padding(start = 68.dp, end = 68.dp).fillMaxSize(),
             isTextVisible = viewModel.uiState.isTextVisible
         )
         Column(
-            Modifier
-                .fillMaxWidth()
-                .weight(0.09f),
+            Modifier.fillMaxWidth().weight(0.09f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CustomInformativeChip(
@@ -103,64 +98,60 @@ fun VisaCardScreen(
             )
         }
         Column(
-            Modifier
-                .background(MultimoneyTheme.colors.backgroundBottomOptions)
-                .weight(0.35f)
+            Modifier.background(MultimoneyTheme.colors.backgroundBottomOptions).weight(0.35f)
         ) {
             Row(
-                modifier = Modifier
-                    .padding(top = 16.dp, start = 16.dp, end = 8.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 8.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 if (viewModel.uiState.isNfcAvailable) {
                     CustomButtonBig(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .padding(end = 8.dp),
+                        modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
                         icon = R.drawable.ic_link,
                         text = stringResource(id = R.string.link),
                         onClick = {
                             // TODO: Execute action when implemented
                             Toast.makeText(
-                                context, "TBD1", Toast.LENGTH_LONG
+                                context,
+                                "TBD1",
+                                Toast.LENGTH_LONG
                             ).show()
-                        })
+                        }
+                    )
                 }
                 CustomButtonBig(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(end = 8.dp),
+                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
                     icon = R.drawable.ic_eye,
                     text = stringResource(id = R.string.see_data),
                     onClick = {
                         // TODO: Execute action when implemented
                         Toast.makeText(
-                            context, "TBD2", Toast.LENGTH_LONG
+                            context,
+                            "TBD2",
+                            Toast.LENGTH_LONG
                         ).show()
-                    })
+                    }
+                )
                 CustomButtonBig(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(end = 8.dp),
+                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
                     icon = R.drawable.ic_locked,
                     text = stringResource(id = R.string.locked),
                     onClick = {
                         // TODO: Execute action when implemented
                         Toast.makeText(
-                            context, "TBD3", Toast.LENGTH_LONG
+                            context,
+                            "TBD3",
+                            Toast.LENGTH_LONG
                         ).show()
-                    })
+                    }
+                )
             }
         }
     }
 
     if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(
-            message = stringResource(id = viewModel.uiState.dialogParameters.descriptionResource),
+            message = stringResource(id = viewModel.uiState.dialogParameters.descriptionResource).ifEmpty { viewModel.uiState.dialogParameters.description },
             positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,
             onPositiveAction = viewModel.uiState.dialogParameters.positiveAction

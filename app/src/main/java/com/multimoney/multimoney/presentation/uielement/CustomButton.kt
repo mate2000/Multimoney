@@ -161,7 +161,7 @@ fun CustomButton(
                 )
                 textColor = Primary400
                 arrowIconTint = if (enable) {
-                    DefaultWhite
+                    Primary400
                 } else {
                     GrayScale400
                 }
@@ -283,6 +283,7 @@ fun CustomButton(
                 tint = arrowIconTint
             )
         } else if (trailingIcon != null) {
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Icon(
                 painter = painterResource(id = trailingIcon),
                 contentDescription = "",

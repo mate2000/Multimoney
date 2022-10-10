@@ -372,4 +372,7 @@
     <string name="credit_detail_iban" translatable="false">IBAN</string>
     <string name="credit_detail_max_term" translatable="false">Plazo máximo</string>
     <string name="credit_detail_number" translatable="false">Número de crédito</string>
+    <string name="credit_detail_title" translatable="false">Detalles de mi crédito</string>
+    <string name="credit_detail_client" translatable="false">Cliente</string>
+    <string name="credit_detail_iban_number" translatable="false">Numero de cuenta IBAN</string>
 </resources>

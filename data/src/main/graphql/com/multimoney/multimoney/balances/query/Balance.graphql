@@ -6,13 +6,20 @@ query Balance($user:String!,$identification:String!,$idBrand:Int!,$idClient:Int!
             status: $creditStatus
         }
     ) {
+        pagare
         resumen {
             moneda
             saldo_Actual_Label
             saldo_Disponible_Label
+            pago_Minimo_Label
             fecha_Pago_Label
             cuota_Mensual_Label
+            dias_Vencidos
+            pagos_Vencidos
+            cuenta_Iban
         }
+        limite_credito
+        plazo
     }
     balanceAccountSmart(
         checkAccountInput:{

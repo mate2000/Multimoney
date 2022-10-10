@@ -9,7 +9,11 @@ interface BalanceRepository {
         user: String,
         identification: String,
         idBrand: Int,
-        idClient: String,
-        idLoanClient: Int
+        idClient: Int,
+        idLoanClient: Int,
+        creditStatus: Int,
+        accountStatus: Int,
+        cryptoStatus: Int,
+        cardStatus: Int
     ): Flow<MultimoneyResult<Balance?>>
 }

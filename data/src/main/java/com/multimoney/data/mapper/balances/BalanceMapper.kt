@@ -18,9 +18,9 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             paymentDateLabel = it?.fecha_Pago_Label,
             monthlyQuotaLabel = it?.cuota_Mensual_Label,
             minPaymentLabel = it?.pago_Minimo_Label,
-            expiredPayment = it?.pagos_Vencidos,
-            expiredDays = it?.dias_Vencidos,
-            ibanAccount = it?.cuenta_Iban
+            expiredPayment = it?.pagos_Vencidos ?: 0,
+            expiredDays = it?.dias_Vencidos ?: 0,
+            ibanAccount = it?.cuenta_Iban ?: ""
         )
     },
     creditNumber = this.pagare,

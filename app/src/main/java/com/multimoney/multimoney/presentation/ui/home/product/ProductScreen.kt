@@ -2,8 +2,6 @@ package com.multimoney.multimoney.presentation.ui.home.product
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -59,7 +56,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartPr
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditDetail
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
@@ -91,7 +87,6 @@ fun ProductScreen(
     // Pager
     val productPagerState = rememberPagerState()
     val bottomPagerState = rememberPagerState()
-    val scrollState = rememberScrollState()
 
     LaunchedEffect(key1 = productPagerState.currentPage) {
         bottomPagerState.animateScrollToPage(productPagerState.currentPage)
@@ -105,7 +100,6 @@ fun ProductScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
-                .scrollable(state = scrollState, orientation = Orientation.Vertical)
         ) {
             MotionLayoutMM(mainHeader = {
                 TipsAndOffer(

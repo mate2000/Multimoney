@@ -373,4 +373,7 @@
     <string name="payment_account_title_dollar" translatable="false">¿Con cuál cuenta vas a pagar tu cuota en dólares?</string>
     <string name="payment_account_title_all" translatable="false">¿Con cuál cuenta vas a pagar ambas cuotas?</string>
     <string name="payment_account_create" translatable="false">Agregar cuenta</string>
+    <string name="payment_account_masked_text" translatable="false">••••</string>
+    <string name="payment_account_different_currency_dialog_title" translatable="false">Se aplicará el tipo de cambio</string>
+    <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente al de la cuenta</string>
 </resources>

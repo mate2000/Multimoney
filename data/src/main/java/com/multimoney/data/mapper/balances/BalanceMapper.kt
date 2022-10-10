@@ -27,12 +27,14 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
 )
 
 private fun BalanceQuery.BalanceAccountSmart.mapToDomainModel() =
-    BalanceAccountSmart(account = accounts?.map {
-        Account(
-            totalBalance = it?.totalBalance.toString().toDouble(),
-            gainedInterest = it?.gainedInterest.toString().toDouble()
-        )
-    })
+    BalanceAccountSmart(
+        account = accounts?.map {
+            Account(
+                totalBalance = it?.totalBalance.toString().toDouble(),
+                gainedInterest = it?.gainedInterest.toString().toDouble()
+            )
+        }
+    )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(globalBalance = globalBalance.toString().toDouble())

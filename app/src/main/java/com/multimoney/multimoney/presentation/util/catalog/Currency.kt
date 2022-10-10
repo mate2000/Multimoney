@@ -28,7 +28,7 @@ sealed class Currency(
         R.string.payment_fee_one_option
     )
 
-    object Quetzales : Currency(
+    object Quetzal : Currency(
         3,
         "QUETZALES",
         R.drawable.ic_account_dollar,
@@ -47,10 +47,11 @@ sealed class Currency(
     )
 
     object Search {
-        fun getAccountIconByCurrency(currency: Int?): Currency {
-            return when (currency) {
+        fun getAccountIconByIdCurrency(idCurrency: Int?): Currency {
+            return when (idCurrency) {
                 Colon.id -> Colon
                 Dollar.id -> Dollar
+                Quetzal.id -> Quetzal
                 else -> All
             }
         }

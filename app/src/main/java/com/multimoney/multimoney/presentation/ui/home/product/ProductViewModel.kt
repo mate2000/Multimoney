@@ -174,7 +174,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToPaymentScreen() {
         val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
         val infoCredit = uiState.userStatus?.infoCredit
-        val route = if ((creditSummary?.size ?: 0) > 1 &&  uiState.idBrand.toInt() == Brand.CostaRica.id
+        val route = if ((creditSummary?.size ?: 0) > 1 && validateQuotas(creditSummary) &&  uiState.idBrand.toInt() == Brand.CostaRica.id
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/${email}/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
                 encodeData(

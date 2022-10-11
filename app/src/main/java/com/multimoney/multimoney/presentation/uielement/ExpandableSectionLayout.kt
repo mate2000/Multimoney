@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,9 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
+import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -44,6 +48,17 @@ fun ExpandableSectionLayout(
     title: String,
     content: @Composable () -> Unit
 ) {
+    val textColor: Color = if (isSystemInDarkTheme()) {
+        DefaultWhite
+    } else {
+        GrayScale800
+    }
+    val arrowColor: Color = if (isSystemInDarkTheme()) {
+        Primary400
+    } else {
+        Primary400
+    }
+
     var expanded by remember { mutableStateOf(false) }
     val arrowIcon = if (expanded && enabled) Icons.Default.ExpandLess else Icons.Default.ExpandMore
 
@@ -58,16 +73,15 @@ fun ExpandableSectionLayout(
             Row {
                 Text(
                     text = title,
-                    fontSize = 16.sp,
                     style = Typography.subtitle1.copy(fontWeight = FontWeight.Bold),
-                    color = MultimoneyTheme.colors.text,
+                    color = textColor,
                 )
             }
             IconButton(onClick = { expanded = !expanded }) {
                 Icon(
                     imageVector = arrowIcon,
                     contentDescription = null,
-                    tint = Primary400
+                    tint = arrowColor
                 )
             }
         }

@@ -18,13 +18,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary400
-import com.multimoney.multimoney.presentation.theme.SemanticNegative400
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.ExpandableSectionLayout
 import com.multimoney.multimoney.presentation.util.sendAccount
 
@@ -43,9 +42,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                     val creditLimit = credit?.creditLimit
                     Text(
                         text = creditLimit ?: "",
-                        fontSize = 14.sp,
-                        color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     )
                 }
             )
@@ -55,9 +55,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                     val currentBalanceLabel = summary?.currentBalanceLabel
                     Text(
                         text = currentBalanceLabel ?: "",
-                        fontSize = 14.sp,
-                        color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     )
                 }
             )
@@ -70,7 +71,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                         summary?.monthlyQuotaLabel?.let {
                             Icon(
                                 imageVector = Icons.Filled.Circle,
-                                tint = if (expiredDays > 0) SemanticNegative400 else Primary400,
+                                tint = if (expiredDays > 0) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.dotIndicatorColor,
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(16.dp)
@@ -79,9 +80,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                         }
                         Text(
                             text = monthlyQuotaLabel,
-                            fontSize = 14.sp,
-                            color = MultimoneyTheme.colors.text,
-                            fontWeight = FontWeight.SemiBold
+                            style = Typography.body2.copy(
+                                color = MultimoneyTheme.colors.text,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
                     }
                 }
@@ -95,7 +97,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                         summary?.minPaymentLabel?.let {
                             Icon(
                                 imageVector = Icons.Filled.Circle,
-                                tint = if (expiredDays > 0) SemanticNegative400 else Primary400,
+                                tint = if (expiredDays > 0) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.dotIndicatorColor,
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(16.dp)
@@ -104,9 +106,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                         }
                         Text(
                             text = minPaymentLabel,
-                            fontSize = 14.sp,
-                            color = MultimoneyTheme.colors.text,
-                            fontWeight = FontWeight.SemiBold
+                            style = Typography.body2.copy(
+                                color = MultimoneyTheme.colors.text,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
                     }
                 }
@@ -117,9 +120,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                     val expiredPayment = summary?.expiredPayment
                     Text(
                         text = expiredPayment?.toString() ?: "",
-                        fontSize = 14.sp,
-                        color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     )
                 }
             )
@@ -131,9 +135,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                         Row {
                             Text(
                                 text = ibanAccount,
-                                fontSize = 14.sp,
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold
+                                style = Typography.body2.copy(
+                                    color = MultimoneyTheme.colors.text,
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             )
                             summary?.ibanAccount?.let {
                                 Icon(
@@ -159,9 +164,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                     val term = credit?.term
                     Text(
                         text = term ?: "",
-                        fontSize = 14.sp,
-                        color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     )
                 }
             )
@@ -171,9 +177,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                     val creditNumber = credit?.creditNumber
                     Text(
                         text = creditNumber ?: "",
-                        fontSize = 14.sp,
-                        color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     )
                 }
             )
@@ -195,9 +202,9 @@ fun CreditDetailItem(
     ) {
         Text(
             text = label,
-            fontSize = 14.sp,
-            color = MultimoneyTheme.colors.text,
-            fontWeight = FontWeight.Normal
+            style = Typography.body2.copy(
+                color = MultimoneyTheme.colors.text,
+            )
         )
         value()
     }

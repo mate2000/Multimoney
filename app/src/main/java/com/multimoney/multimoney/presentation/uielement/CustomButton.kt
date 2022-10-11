@@ -58,9 +58,9 @@ fun CustomButton(
     text: String = stringResource(id = R.string.button_continue),
     enable: Boolean = true,
     enableArrowIcon: Boolean = false,
+    trailingIcon: Int? = null,
     onClick: () -> Unit = {}
 ) {
-
     // Handle pressed state
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -161,7 +161,7 @@ fun CustomButton(
                 )
                 textColor = Primary400
                 arrowIconTint = if (enable) {
-                    DefaultWhite
+                    Primary400
                 } else {
                     GrayScale400
                 }
@@ -272,12 +272,20 @@ fun CustomButton(
             } else {
                 Typography.button
             },
-            color = textColor,
+            color = textColor
         )
         if (enableArrowIcon) {
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_right),
+                contentDescription = "",
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+                tint = arrowIconTint
+            )
+        } else if (trailingIcon != null) {
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Icon(
+                painter = painterResource(id = trailingIcon),
                 contentDescription = "",
                 modifier = Modifier.size(ButtonDefaults.IconSize),
                 tint = arrowIconTint

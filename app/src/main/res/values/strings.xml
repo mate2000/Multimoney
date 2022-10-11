@@ -239,7 +239,7 @@
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
 
     <!-- quick actions bottom sheet -->
-    <string name="quick_action_bottom_sheet_title"  translatable="false">¿Qué querés hacer?</string>
+    <string name="quick_action_bottom_sheet_title" translatable="false">¿Qué querés hacer?</string>
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
 
     <!-- Credit Close Dialog-->
@@ -327,9 +327,9 @@
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <!-- Sign Documents limit reached -->
-    <string translatable="false" name="sign_credit_max_attempts_title">!Te vamos a extrañar!</string>
-    <string translatable="false" name="sign_credit_max_attempts_message">Comunícate con nosotros para activar tu crédito</string>
-    <string translatable="false" name="sign_credit_max_attempts_contact">Contactar</string>
+    <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
+    <string name="sign_credit_max_attempts_message" translatable="false">Comunícate con nosotros para activar tu crédito</string>
+    <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
 
     <!-- Sign Document Reject -->
     <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
@@ -363,4 +363,19 @@
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
     <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regresés!</string>
+
+    <!-- Payment Fee -->
+    <string name="payment_fee_title" translatable="false">Pagar al instante</string>
+    <string name="payment_fee_one_option" translatable="false">Cuota en</string>
+    <string name="payment_fee_both_options" translatable="false">Ambas cuotas</string>
+    <string name="payment_fee_both_plus_symbol" translatable="false">\u0020+\u0020</string>
+
+    <!-- Payment Account -->
+    <string name="payment_account_title_colon" translatable="false">¿Con cuál cuenta vas a pagar tu cuota en colones?</string>
+    <string name="payment_account_title_dollar" translatable="false">¿Con cuál cuenta vas a pagar tu cuota en dólares?</string>
+    <string name="payment_account_title_all" translatable="false">¿Con cuál cuenta vas a pagar ambas cuotas?</string>
+    <string name="payment_account_create" translatable="false">Agregar cuenta</string>
+    <string name="payment_account_masked_text" translatable="false">••••</string>
+    <string name="payment_account_different_currency_dialog_title" translatable="false">Se aplicará el tipo de cambio</string>
+    <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente al de la cuenta</string>
 </resources>

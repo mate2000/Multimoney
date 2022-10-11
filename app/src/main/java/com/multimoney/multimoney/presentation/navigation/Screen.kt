@@ -50,6 +50,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}",
         "credit_screen"
     )
+    object HowMuchYouWantPayScreen : Screen("how_much_you_want_pay_screen")
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen("visa_issuance_screen/{$ID_BRAND}", "visa_issuance_screen")

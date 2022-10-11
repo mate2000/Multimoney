@@ -18,9 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -32,7 +32,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.Companio
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
@@ -78,7 +78,24 @@ fun CreditScreen(
         )
     }
 
-    viewModel.onUIEvent(OnInitializeText(stringResource(id = string.credit_close_dialog_description)))
+    if (viewModel.idBrand.isNotEmpty()) {
+        if (viewModel.idBrand.toInt() == Brand.Guatemala.id) {
+            viewModel.onUIEvent(
+                OnSetCloseDialogTexts(
+                    R.string.credit_close_dialog_gt_title,
+                    stringResource(id = R.string.credit_close_dialog_gt_description)
+                )
+            )
+        } else {
+            viewModel.onUIEvent(
+                OnSetCloseDialogTexts(
+                    R.string.credit_close_dialog_title,
+                    stringResource(id = R.string.credit_close_dialog_description)
+                )
+            )
+        }
+    }
+
 
     if (viewModel.uiState.lastStep != 1) {
         val stringId = viewModel.getLoadingString()
@@ -121,7 +138,7 @@ fun CreditScreen(
                 Column {
                     CustomButton(
                         onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-                        text = stringResource(id = string.button_continue),
+                        text = stringResource(id = R.string.button_continue),
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                             .fillMaxWidth()

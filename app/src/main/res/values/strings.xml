@@ -243,8 +243,10 @@
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
 
     <!-- Credit Close Dialog-->
-    <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
-    <string name="credit_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
+    <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que querés salir?</string>
+    <string name="credit_close_dialog_gt_title" translatable="false">¿Estás seguro que quieres salir?</string>
+    <string name="credit_close_dialog_description" translatable="false">Podés retomar tu solicitud de crédito cuando querás.</string>
+    <string name="credit_close_dialog_gt_description" translatable="false">Puedes retomar tu solicitud de crédito cuando quieras</string>
     <string name="credit_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="credit_close_dialog_negative_button_text" translatable="false">Cancelar</string>
 

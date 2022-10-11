@@ -25,7 +25,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCurrencySymbolValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCurrentLocationButtonValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnNextStep
@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DUMMY_URL
-import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobInfoViewModel
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,6 +55,7 @@ class CreditViewModel @Inject constructor(
         private set
 
     // Stateless
+    var closeDialogTitle: Int = R.string.empty
     var closeDialogDescription: String = ""
     var nextAction: () -> Unit = {}
     private var nextStep: Int = CreditStep.One.id
@@ -85,7 +85,8 @@ class CreditViewModel @Inject constructor(
         uiState = uiState.copy(lastStep = currentStep)
     }
 
-    private fun onInitializeTexts(description: String) {
+    private fun onInitializeTexts(title: Int, description: String) {
+        closeDialogTitle = title
         closeDialogDescription = description
     }
 
@@ -98,7 +99,7 @@ class CreditViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.credit_close_dialog_title,
+                titleResource = closeDialogTitle,
                 description = closeDialogDescription,
                 positiveResource = R.string.credit_close_dialog_positive_button_text,
                 negativeResource = R.string.credit_close_dialog_negative_button_text,
@@ -225,7 +226,8 @@ class CreditViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnInitializeText -> onInitializeTexts(
+            is OnSetCloseDialogTexts -> onInitializeTexts(
+                event.title,
                 event.description,
             )
             is OnSetNavigation -> onSetNavigation(
@@ -274,7 +276,7 @@ class CreditViewModel @Inject constructor(
         }
 
     sealed class UIEvent {
-        data class OnInitializeText(val description: String) : UIEvent()
+        data class OnSetCloseDialogTexts(val title: Int, val description: String) : UIEvent()
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
@@ -306,7 +308,6 @@ class CreditViewModel @Inject constructor(
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
         object OnCallMutationSaveCreditFlowStep : UIEvent()
-        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 
     companion object {

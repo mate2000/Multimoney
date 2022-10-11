@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -127,7 +128,8 @@ fun CardGTWithoutCredit() {
 @Composable
 fun CreditApprovedOrStarted(
     creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
-    amount: String? = "0.0"
+    amount: String? = "0.0",
+    idBrand: Int
 ) {
     val title: Int
     var description = ""
@@ -136,10 +138,11 @@ fun CreditApprovedOrStarted(
     when (creditApprovedOrStartedStatus) {
         CreditStatusApproved -> {
             title = R.string.home_product_credit_approved_card_title
-            description = stringResource(
-                id = R.string.home_product_credit_approved_card_description,
-                amount ?: "0.0"
-            )
+            description = if (idBrand == Brand.Guatemala.id) {
+                stringResource(id = R.string.home_product_gt_credit_approved_card_description, amount ?: "0.0")
+            } else {
+                stringResource(id = R.string.home_product_credit_approved_card_description, amount ?: "0.0")
+            }
             actionText = R.string.home_product_credit_approved_card_action
         }
         CreditStatusProcessStarted -> {

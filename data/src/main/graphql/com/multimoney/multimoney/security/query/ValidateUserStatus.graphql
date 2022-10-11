@@ -47,8 +47,6 @@ query ValidateUserStatus($pkUser: Int!, $identification: String!, $user: String!
         }
         infoBankAccount {
             statusFirm
-            idRequestSysde
-            idRequestGlobal
             status
         }
         infoCrypto {

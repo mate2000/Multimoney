@@ -103,14 +103,22 @@ fun SignInScreen(
                 buildAnnotatedString {
                     withStyle(
                         style = Typography.h5.toSpanStyle()
-                            .copy(color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold)
+                            .copy(
+                                color = MultimoneyTheme.colors.text,
+                                fontWeight = FontWeight.SemiBold
+                            )
                     ) {
-                        append(stringResource(id = R.string.sign_in_title_name,
-                            viewModel.uiState.userName))
+                        append(
+                            stringResource(
+                                id = R.string.sign_in_title_name,
+                                viewModel.uiState.userName
+                            )
+                        )
                     }
-                    withStyle(style = Typography.subtitle1.toSpanStyle()
-                        .copy(color = MultimoneyTheme.colors.text)) {
+                    withStyle(
+                        style = Typography.subtitle1.toSpanStyle()
+                            .copy(color = MultimoneyTheme.colors.text)
+                    ) {
                         append(stringResource(id = R.string.sign_in_title_no_name))
                     }
                 }
@@ -119,8 +127,10 @@ fun SignInScreen(
                 buildAnnotatedString {
                     withStyle(
                         style = Typography.h5.toSpanStyle()
-                            .copy(color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold)
+                            .copy(
+                                color = MultimoneyTheme.colors.text,
+                                fontWeight = FontWeight.SemiBold
+                            )
                     ) {
                         append(stringResource(id = R.string.sign_in_title))
                     }

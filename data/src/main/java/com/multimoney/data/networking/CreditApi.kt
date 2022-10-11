@@ -9,6 +9,7 @@ import com.multimoney.data.networking.credit.apollomodel.CompanyCantonQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyProvinceQuery
 import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
+import com.multimoney.data.networking.credit.apollomodel.GetClientBankAccountQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeProvinceQuery
@@ -95,7 +96,12 @@ class CreditApi @Inject constructor(
             ScreenConfigQuery(pkUser, user, idBrand, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryHomeProvince(pkUser: Int, user: String, idBrand: Int, idUserRequest: String): ApolloCall<HomeProvinceQuery.Data> =
+    fun queryHomeProvince(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: String
+    ): ApolloCall<HomeProvinceQuery.Data> =
         apolloClient.query(
             HomeProvinceQuery(pkUser, user, idBrand, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
@@ -122,7 +128,12 @@ class CreditApi @Inject constructor(
             HomeDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryCompanyProvince(pkUser: Int, user: String, idBrand: Int, idUserRequest: String): ApolloCall<CompanyProvinceQuery.Data> =
+    fun queryCompanyProvince(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: String
+    ): ApolloCall<CompanyProvinceQuery.Data> =
         apolloClient.query(
             CompanyProvinceQuery(pkUser, user, idBrand, idUserRequest)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
@@ -155,7 +166,7 @@ class CreditApi @Inject constructor(
         infoQuestion: List<CreditInfoQuestion?>,
         idLogUserRequest: Int,
         idUser: Int,
-        currentStep: String,
+        currentStep: String
     ): ApolloCall<SaveCreditFlowInputMutation.Data> =
         apolloClient.mutation(
             SaveCreditFlowInputMutation(
@@ -175,7 +186,24 @@ class CreditApi @Inject constructor(
     ): ApolloCall<TermsAndConditionsQuery.Data> =
         apolloClient.query(
             TermsAndConditionsQuery(
-                user, idBrand, systemInDarkTheme
+                user,
+                idBrand,
+                systemInDarkTheme
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetClientBankAccount(
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoan: Int
+    ): ApolloCall<GetClientBankAccountQuery.Data> =
+        apolloClient.query(
+            GetClientBankAccountQuery(
+                user,
+                idBrand,
+                idClient,
+                idLoan
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

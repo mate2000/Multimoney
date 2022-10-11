@@ -19,7 +19,6 @@ import com.multimoney.multimoney.presentation.ui.credit.howmuchyouwantpay.HowMuc
 import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentScreen
 
 const val SIGN_DOCUMENT_LINK = "sign_document_link"
-const val ID_BRAND = "id_brand"
 const val PK_USER = "pk_user"
 const val IDENTIFICATION = "identification"
 const val EMAIL = "email"

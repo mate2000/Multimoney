@@ -1,4 +1,4 @@
-query CreditOffer($pkUser: Int!,$idBrand: Int!){
+query CreditOffer($pkUser: Long!,$idBrand: Int!){
     creditOffer(creditOfferInput: { pkUser: $pkUser, idBrand: $idBrand }) {
         idUserRequest
         products {

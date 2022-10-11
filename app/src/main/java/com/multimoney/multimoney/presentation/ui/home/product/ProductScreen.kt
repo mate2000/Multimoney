@@ -279,7 +279,8 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable
+                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable,
+                                viewModel.uiState.idBrand.toInt()
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {

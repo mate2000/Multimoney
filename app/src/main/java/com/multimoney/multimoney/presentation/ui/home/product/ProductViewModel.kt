@@ -261,7 +261,7 @@ class ProductViewModel @Inject constructor(
 
     data class UIState(
         // Fields
-        var idBrand: String = "",
+        var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false
     )

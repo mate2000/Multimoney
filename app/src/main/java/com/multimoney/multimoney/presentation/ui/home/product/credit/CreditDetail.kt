@@ -41,7 +41,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                 label = stringResource(id = R.string.credit_detail_max_credit),
                 value = {
                     Text(
-                        text = viewModel.getCreditLimitLabel(balance?.balanceCredit),
+                        text = credit?.creditLimitLabel ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -53,7 +53,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                 label = stringResource(id = R.string.credit_detail_balance),
                 value = {
                     Text(
-                        text = summary?.currentBalanceLabel ?: "",
+                        text = viewModel.getCreditBalanceLabel(balance?.balanceCredit),
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold

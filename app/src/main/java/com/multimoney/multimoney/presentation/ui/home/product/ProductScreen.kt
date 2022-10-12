@@ -38,7 +38,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
@@ -57,7 +56,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartPr
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditDetail
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
@@ -103,7 +101,7 @@ fun ProductScreen(
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
         ) {
-            /*MotionLayoutMM(mainHeader = {
+            MotionLayoutMM(mainHeader = {
                 TipsAndOffer(
                     modifier = Modifier.padding(start = 16.dp, top = 20.dp),
                     viewModel = viewModel
@@ -150,8 +148,7 @@ fun ProductScreen(
                     },
                     type = RequestCreditCard
                 )
-            }, totalPages = NUMBER_PAGES)*/
-            CreditDetail(balance = viewModel.balanceCredit, modifier = Modifier.background(GrayScale800), viewModel = viewModel)
+            }, totalPages = NUMBER_PAGES)
         }
     }
 }

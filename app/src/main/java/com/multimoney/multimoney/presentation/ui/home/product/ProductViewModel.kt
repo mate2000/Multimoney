@@ -92,10 +92,10 @@ class ProductViewModel @Inject constructor(
         executeUseCase {
             queryBalanceUseCase.invoke(
                 user = user,
-                identification = "111100823",
-                idBrand = Brand.CostaRica.id,
-                idClient = 252914,
-                idLoanClient = 281730,
+                identification = identification,
+                idBrand = idBrand,
+                idClient = idClient,
+                idLoanClient = idLoanClient,
                 creditStatus = creditStatus,
                 accountStatus = accountStatus,
                 cryptoStatus = cryptoStatus,
@@ -351,15 +351,20 @@ class ProductViewModel @Inject constructor(
     }
 
 
-    fun getCreditLimitLabel(balanceCredit: List<BalanceCredit?>?): String =
-        balanceCredit?.joinToString(separator = SEPARATOR) { balance ->
-            balance?.creditLimitLabel ?: ""
-        } ?: ""
+    fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
+        var amount = ""
+        balanceCredit?.forEach { balance ->
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }?.joinToString(separator = SEPARATOR) { summary ->
+                summary.currentBalanceLabel ?: ""
+            } ?: ""
+        }
+        return amount
+    }
 
     fun getQuota(balanceCredit: List<BalanceCredit?>?): String {
         var amount = ""
-        balanceCredit?.forEach {
-            amount = it?.summary?.joinToString(separator = SEPARATOR) { summary ->
+        balanceCredit?.forEach {balance ->
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }?.joinToString(separator = SEPARATOR) { summary ->
                 summary.monthlyQuotaLabel ?: ""
             } ?: ""
         }
@@ -368,8 +373,8 @@ class ProductViewModel @Inject constructor(
 
     fun getMinPayment(balanceCredit: List<BalanceCredit?>?): String {
         var amount = ""
-        balanceCredit?.forEach {
-            amount = it?.summary?.joinToString(separator = SEPARATOR) { summary ->
+        balanceCredit?.forEach { balance ->
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }?.joinToString(separator = SEPARATOR) { summary ->
                 summary.minPaymentLabel ?: ""
             } ?: ""
         }

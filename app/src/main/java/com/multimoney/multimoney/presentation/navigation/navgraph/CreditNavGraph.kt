@@ -15,8 +15,8 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.alertresult.AlertResultScreen
 import com.multimoney.multimoney.presentation.ui.credit.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DocumentGenerationScreen
-import com.multimoney.multimoney.presentation.ui.credit.howmuchyouwantpay.HowMuchYouWantPayScreen
 import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentScreen
+import com.multimoney.multimoney.presentation.ui.payment.amount.HowMuchYouWantPayScreen
 
 const val SIGN_DOCUMENT_LINK = "sign_document_link"
 const val PK_USER = "pk_user"
@@ -68,7 +68,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ALERT_RESULT_ICON) { type = NavType.IntType },
                 navArgument(ALERT_RESULT_TITLE) { type = NavType.IntType },
                 navArgument(ALERT_RESULT_DESCRIPTION) { type = NavType.IntType },
-                navArgument(ALERT_RESULT_BUTTON_TEXT) { type = NavType.IntType })
+                navArgument(ALERT_RESULT_BUTTON_TEXT) { type = NavType.IntType }
+            )
         ) { navBackStackEntry ->
             AlertResultScreen(
                 navBackStackEntry = navBackStackEntry,

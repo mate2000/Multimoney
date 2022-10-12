@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,7 +47,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
  * **/
 
 @Composable
-fun RowScope.RoundedPaymentButton(
+fun RoundedPaymentButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     strokeBrush: Brush,
@@ -62,7 +61,6 @@ fun RowScope.RoundedPaymentButton(
 ) {
     Card(
         modifier = modifier
-            .weight(0.48f)
             .clickable {
                 onClick()
             },
@@ -84,7 +82,7 @@ fun RowScope.RoundedPaymentButton(
                 text = mainText,
                 style = Typography.subtitle1.copy(fontWeight = FontWeight.W700),
                 color = mainTextColor,
-                textAlign = TextAlign.Left,
+                textAlign = TextAlign.Left
 
             )
             Text(

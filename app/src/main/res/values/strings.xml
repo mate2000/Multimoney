@@ -366,14 +366,13 @@
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
     <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regresés!</string>
 
-    <!-- How Much You Do Want To Pay -->
-    <string name="how_much_you_want_to_pay_title_cr" translatable="false">¿Cuánto querés pagar?</string>
-    <string name="how_much_you_want_to_pay_subtitle_cr" translatable="false">Tu cuota mínima debe ser igual o mayor a</string>
-    <string name="how_much_you_want_to_pay_amount_cr" translatable="false">₡%s</string>
-    <string name="how_much_you_want_to_pay_min_amount_cr" translatable="false">Pagar mínimo</string>
-    <string name="how_much_you_want_to_pay_max_amount_cr" translatable="false">Pagar saldo total</string>
-    <string name="how_much_you_want_to_pay_amount_min_error" translatable="false">El pago mínimo es</string>
-    <string name="how_much_you_want_to_pay_amount_max_error" translatable="false">El pago máximo es</string>
+    <!-- Payment Amount -->
+    <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
+    <string name="payment_amount_subtitle" translatable="false">Tu cuota mínima debe ser igual o mayor a</string>
+    <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
+    <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
+    <string name="payment_amount_amount_min_error" translatable="false">El pago mínimo es %s</string>
+    <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es %s</string>
 
     <!-- Payment Fee -->
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>

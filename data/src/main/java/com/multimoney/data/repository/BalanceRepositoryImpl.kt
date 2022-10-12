@@ -19,10 +19,20 @@ class BalanceRepositoryImpl @Inject constructor(
         user: String,
         identification: String,
         idBrand: Int,
-        idClient: String,
-        idLoanClient: Int
+        idClient: Int,
+        idLoanClient: Int,
+        creditStatus: Int,
+        accountStatus: Int,
+        cryptoStatus: Int,
+        cardStatus: Int
     ): Flow<MultimoneyResult<Balance?>> = fetchData(
-        apolloCall = balanceApi.queryBalance(user, identification, idBrand, idClient, idLoanClient),
+        apolloCall = balanceApi.queryBalance(
+            user, identification, idBrand, idClient, idLoanClient,
+            creditStatus,
+            accountStatus,
+            cryptoStatus,
+            cardStatus
+        ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }

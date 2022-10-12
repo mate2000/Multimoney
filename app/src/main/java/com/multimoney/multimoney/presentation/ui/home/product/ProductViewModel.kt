@@ -14,6 +14,7 @@ import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.credit.CreditOfferAndTip
+import com.multimoney.domain.model.credit.ProductMovement
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -43,7 +44,7 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
 
     // UIState
@@ -103,7 +104,7 @@ class ProductViewModel @Inject constructor(
         pkUser: Int,
         identification: String,
         email: String,
-        idBrand: Int
+        idBrand: Int,
     ) {
         viewModelScope.launch {
             queryValidateUserStatusUseCase.invoke(
@@ -184,7 +185,7 @@ class ProductViewModel @Inject constructor(
         validateUserStatus.apply {
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
-                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status
                             && infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status
                             && (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty()
                             || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
@@ -203,7 +204,7 @@ class ProductViewModel @Inject constructor(
                     ) < CreditStep.Six.id)
                 }
                 CREDIT_REJECTED -> {
-                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
                 }
                 else -> false
             }
@@ -244,7 +245,7 @@ class ProductViewModel @Inject constructor(
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
         data class OnMaxAttemptsCardClick(
             val whatsAppLink: String,
-            val context: Context
+            val context: Context,
         ) : UIEvent()
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
@@ -252,7 +253,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToVisaActivateScreen : UIEvent()
         data class OnProductClick(
             val whatsAppLink: String,
-            val context: Context
+            val context: Context,
         ) : UIEvent()
 
         object OnGetIdBrand : UIEvent()
@@ -284,6 +285,14 @@ class ProductViewModel @Inject constructor(
                 "",
                 ""
             )
+        )
+    }
+
+    fun getProductMovement(): List<ProductMovement> {
+        return listOf(
+            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
+            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
+            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
         )
     }
 

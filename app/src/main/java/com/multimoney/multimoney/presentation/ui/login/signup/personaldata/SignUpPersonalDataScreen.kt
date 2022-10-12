@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
 @Preview
@@ -92,6 +93,7 @@ fun SignUpPersonalDataScreen(
                                 idBrand = idBrand ?: 0
                             )
                         )
+                        viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SingUpTwo)
                     },
                     nextStep = Three.id,
                     previousStep = SignUpStep.One.id
@@ -148,7 +150,6 @@ fun SignUpPersonalDataScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            title = string.error_empty,
                             description = it?.message ?: "",
                             isActive = mutableStateOf(true)
                         )

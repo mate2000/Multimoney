@@ -22,9 +22,12 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             paymentDateLabel = it?.fecha_Pago_Label,
             monthlyQuota = it?.cuota_Mensual.toString(),
             monthlyQuotaLabel = it?.cuota_Mensual_Label,
-            balanceAmountCancel = it?.saldo_Monto_Cancelar.toString()
+            balanceAmountCancel = it?.saldo_Monto_Cancelar.toString(),
+            daysExpired = it?.dias_Vencidos ?: 0
         )
-    }
+    },
+    creditLimit = limite_credito,
+    creditLimitLabel = limite_credito_label
 )
 
 private fun BalanceQuery.BalanceAccountSmart.mapToDomainModel() =

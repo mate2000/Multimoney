@@ -45,6 +45,11 @@ type balanceCredit {
   limite_credito: String!
 
   """
+  balanceCredit limite_credito_label
+  """
+  limite_credito_label: String!
+
+  """
   balanceCredit aplicaAumentoLinea
   """
   aplicaAumentoLinea: Boolean!
@@ -271,6 +276,11 @@ type balanceCreditResume {
   balanceCreditResume Debito_Aut_Activo
   """
   debito_Aut_Activo: Boolean!
+
+  """
+  balanceCreditResume VDDebito_Aut_Activo
+  """
+  vDDebito_Aut_Activo: Boolean!
 
   """
   balanceCreditResume Aplica_Crear_Tarjeta

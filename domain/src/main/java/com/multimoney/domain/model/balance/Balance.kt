@@ -5,4 +5,10 @@ data class Balance(
     val balanceAccountSmart: BalanceAccountSmart?,
     val balanceCryptoAccount: BalanceCryptoAccount?,
     val balanceCardInformation: BalanceCardInformation?
-)
+){
+    fun getBalanceCredit() = balanceCredit?.firstOrNull()
+
+    fun getSummary() = getBalanceCredit()?.summary?.firstOrNull()
+
+    fun isExpired() = (getSummary()?.daysExpired ?: 0) > 0
+}

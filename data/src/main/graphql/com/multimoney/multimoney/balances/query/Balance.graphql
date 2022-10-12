@@ -13,11 +13,15 @@ query Balance($user:String!,$identification:String!,$idBrand:Int!,$idClient:Int!
             saldo_Actual_Label
             saldo_Disponible
             saldo_Disponible_Label
+            fec_Pago
             fecha_Pago_Label
             cuota_Mensual
             cuota_Mensual_Label
             saldo_Monto_Cancelar
+            dias_Vencidos
         }
+        limite_credito
+        limite_credito_label
     }
     balanceAccountSmart(
         checkAccountInput:{

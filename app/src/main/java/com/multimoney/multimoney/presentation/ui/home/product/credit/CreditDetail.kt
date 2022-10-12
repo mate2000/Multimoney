@@ -141,7 +141,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                             summary?.ibanAccount?.let {
                                 Icon(
                                     imageVector = Icons.Outlined.Share,
-                                    tint = Primary400,
+                                    tint = MultimoneyTheme.colors.arrowColor,
                                     contentDescription = "",
                                     modifier = Modifier
                                         .clickable {
@@ -164,9 +164,8 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_max_term),
                 value = {
-                    val term = credit?.term
                     Text(
-                        text = term ?: "",
+                        text = credit?.term ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -177,9 +176,8 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_number),
                 value = {
-                    val creditNumber = credit?.creditNumber
                     Text(
-                        text = creditNumber ?: "",
+                        text =credit?.creditNumber ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold

@@ -15,12 +15,24 @@ class BalanceApi @Inject constructor(
         user: String,
         identification: String,
         idBrand: Int,
-        idClient: String,
-        idLoanClient: Int
+        idClient: Int,
+        idLoanClient: Int,
+        creditStatus: Int,
+        accountStatus: Int,
+        cryptoStatus: Int,
+        cardStatus: Int
     ): ApolloCall<BalanceQuery.Data> =
         apolloClient.query(
             BalanceQuery(
-                user, identification, idBrand, idClient, idLoanClient
+                user,
+                identification,
+                idBrand,
+                idClient,
+                idLoanClient,
+                creditStatus,
+                accountStatus,
+                cryptoStatus,
+                cardStatus
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

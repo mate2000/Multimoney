@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -144,6 +144,7 @@ fun CardGTWithoutCredit() {
 fun CreditApprovedOrStarted(
     creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
     amount: String? = "0.0",
+    idBrand: Int
 ) {
     val title: Int
     var description = ""
@@ -152,10 +153,11 @@ fun CreditApprovedOrStarted(
     when (creditApprovedOrStartedStatus) {
         CreditStatusApproved -> {
             title = R.string.home_product_credit_approved_card_title
-            description = stringResource(
-                id = R.string.home_product_credit_approved_card_description,
-                amount ?: "0.0"
-            )
+            description = if (idBrand == Brand.Guatemala.id) {
+                stringResource(id = R.string.home_product_gt_credit_approved_card_description, amount ?: "0.0")
+            } else {
+                stringResource(id = R.string.home_product_credit_approved_card_description, amount ?: "0.0")
+            }
             actionText = R.string.home_product_credit_approved_card_action
         }
         CreditStatusProcessStarted -> {
@@ -456,9 +458,9 @@ fun OngoingCredit(
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        viewModel.uiState.balanceCredit?.getSummary()?.currentBalanceLabel
+        viewModel.balanceCredit?.getSummary()?.currentBalanceLabel
         Text(
-            text = viewModel.uiState.balanceCredit?.getSummary()?.availableBalanceLabel.toString(),
+            text = viewModel.balanceCredit?.getSummary()?.availableBalanceLabel.toString(),
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
@@ -501,7 +503,7 @@ fun OngoingCredit(
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
-                    text = viewModel.uiState.balanceCredit?.getSummary()?.monthlyQuotaLabel.toString(),
+                    text = viewModel.balanceCredit?.getSummary()?.monthlyQuotaLabel.toString(),
                     modifier = Modifier.padding(),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
@@ -534,7 +536,7 @@ fun OngoingCredit(
                     },
                     content = {
                         Text(
-                            text = viewModel.uiState.balanceCredit?.getSummary()?.paymentDateLabel.toString(),
+                            text = viewModel.balanceCredit?.getSummary()?.paymentDateLabel.toString(),
                             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold)
                         )
                     }

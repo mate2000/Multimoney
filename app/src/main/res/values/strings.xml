@@ -214,6 +214,7 @@
     <string name="home_product_not_approved_action" translatable="false">Activar cuenta Smart</string>
     <string name="home_product_credit_approved_card_title" translatable="false">Crédito pre aprobado</string>
     <string name="home_product_credit_approved_card_description" translatable="false">¡Podes solicitar\n%1$s hoy mismo!</string>
+    <string name="home_product_gt_credit_approved_card_description" translatable="false">¡Puedes solicitar\n%1$s hoy mismo!</string>
     <string name="home_product_credit_approved_card_action" translatable="false">Solicitar</string>
     <string name="home_product_credit_approved_process_started_card_title" translatable="false">Crédito pre aprobado</string>
     <string name="home_product_credit_approved_process_started_card_description" translatable="false">Tu solicitud de crédito está en proceso. ¡No pierdas la oportunidad!</string>
@@ -238,12 +239,14 @@
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
 
     <!-- quick actions bottom sheet -->
-    <string name="quick_action_bottom_sheet_title"  translatable="false">¿Qué querés hacer?</string>
+    <string name="quick_action_bottom_sheet_title" translatable="false">¿Qué querés hacer?</string>
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
 
     <!-- Credit Close Dialog-->
-    <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
-    <string name="credit_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
+    <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que querés salir?</string>
+    <string name="credit_close_dialog_gt_title" translatable="false">¿Estás seguro que quieres salir?</string>
+    <string name="credit_close_dialog_description" translatable="false">Podés retomar tu solicitud de crédito cuando querás.</string>
+    <string name="credit_close_dialog_gt_description" translatable="false">Puedes retomar tu solicitud de crédito cuando quieras</string>
     <string name="credit_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="credit_close_dialog_negative_button_text" translatable="false">Cancelar</string>
 
@@ -326,9 +329,9 @@
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <!-- Sign Documents limit reached -->
-    <string translatable="false" name="sign_credit_max_attempts_title">!Te vamos a extrañar!</string>
-    <string translatable="false" name="sign_credit_max_attempts_message">Comunícate con nosotros para activar tu crédito</string>
-    <string translatable="false" name="sign_credit_max_attempts_contact">Contactar</string>
+    <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
+    <string name="sign_credit_max_attempts_message" translatable="false">Comunícate con nosotros para activar tu crédito</string>
+    <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
 
     <!-- Sign Document Reject -->
     <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
@@ -375,4 +378,19 @@
     <string name="credit_detail_title" translatable="false">Detalles de mi crédito</string>
     <string name="credit_detail_client" translatable="false">Cliente</string>
     <string name="credit_detail_iban_number" translatable="false">Numero de cuenta IBAN</string>
+
+    <!-- Payment Fee -->
+    <string name="payment_fee_title" translatable="false">Pagar al instante</string>
+    <string name="payment_fee_one_option" translatable="false">Cuota en</string>
+    <string name="payment_fee_both_options" translatable="false">Ambas cuotas</string>
+    <string name="payment_fee_both_plus_symbol" translatable="false">\u0020+\u0020</string>
+
+    <!-- Payment Account -->
+    <string name="payment_account_title_colon" translatable="false">¿Con cuál cuenta vas a pagar tu cuota en colones?</string>
+    <string name="payment_account_title_dollar" translatable="false">¿Con cuál cuenta vas a pagar tu cuota en dólares?</string>
+    <string name="payment_account_title_all" translatable="false">¿Con cuál cuenta vas a pagar ambas cuotas?</string>
+    <string name="payment_account_create" translatable="false">Agregar cuenta</string>
+    <string name="payment_account_masked_text" translatable="false">••••</string>
+    <string name="payment_account_different_currency_dialog_title" translatable="false">Se aplicará el tipo de cambio</string>
+    <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente al de la cuenta</string>
 </resources>

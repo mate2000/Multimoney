@@ -20,15 +20,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.uielement.ExpandableSectionLayout
-import com.multimoney.multimoney.presentation.util.sendAccount
 
 @Composable
-fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBrand: String) {
+fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewModel) {
     ExpandableSectionLayout(
         title = stringResource(id = R.string.credit_detail_title), modifier = modifier
     ) {
@@ -39,9 +40,8 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_max_credit),
                 value = {
-                    val creditLimit = credit?.creditLimit
                     Text(
-                        text = creditLimit ?: "",
+                        text = viewModel.getCreditLimitLabel(balance?.balanceCredit),
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -52,9 +52,8 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_balance),
                 value = {
-                    val currentBalanceLabel = summary?.currentBalanceLabel
                     Text(
-                        text = currentBalanceLabel ?: "",
+                        text = summary?.currentBalanceLabel ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -65,13 +64,13 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_fee),
                 value = {
-                    val expiredDays = summary?.expiredDays ?: 0
                     Row {
-                        val monthlyQuotaLabel = summary?.monthlyQuotaLabel ?: ""
                         summary?.monthlyQuotaLabel?.let {
                             Icon(
                                 imageVector = Icons.Filled.Circle,
-                                tint = if (expiredDays > 0) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.dotIndicatorColor,
+                                tint = if ((summary.expiredDays
+                                        ?: 0) > 0
+                                ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.dotIndicatorColor,
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(16.dp)
@@ -79,7 +78,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                             )
                         }
                         Text(
-                            text = monthlyQuotaLabel,
+                            text = viewModel.getQuota(balance?.balanceCredit),
                             style = Typography.body2.copy(
                                 color = MultimoneyTheme.colors.text,
                                 fontWeight = FontWeight.SemiBold
@@ -91,13 +90,14 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_min_payment),
                 value = {
-                    val expiredDays = summary?.expiredDays ?: 0
                     Row {
-                        val minPaymentLabel = summary?.minPaymentLabel ?: ""
                         summary?.minPaymentLabel?.let {
                             Icon(
                                 imageVector = Icons.Filled.Circle,
-                                tint = if (expiredDays > 0) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.dotIndicatorColor,
+                                tint = if ((summary.expiredDays ?: 0) > 0)
+                                    MultimoneyTheme.colors.dotIndicatorExpired
+                                else
+                                    MultimoneyTheme.colors.dotIndicatorColor,
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(16.dp)
@@ -105,7 +105,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                             )
                         }
                         Text(
-                            text = minPaymentLabel,
+                            text = viewModel.getMinPayment(balance?.balanceCredit),
                             style = Typography.body2.copy(
                                 color = MultimoneyTheme.colors.text,
                                 fontWeight = FontWeight.SemiBold
@@ -117,9 +117,8 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_overdue_fee),
                 value = {
-                    val expiredPayment = summary?.expiredPayment
                     Text(
-                        text = expiredPayment?.toString() ?: "",
+                        text = summary?.expiredPayment?.toString() ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -127,14 +126,13 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                     )
                 }
             )
-            if (idBrand == Brand.CostaRica.id.toString()) {
+            if (viewModel.uiState.idBrand == Brand.CostaRica.id.toString()) {
                 CreditDetailItem(
                     label = stringResource(id = R.string.credit_detail_iban),
                     value = {
-                        val ibanAccount = summary?.ibanAccount ?: ""
                         Row {
                             Text(
-                                text = ibanAccount,
+                                text = summary?.ibanAccount ?: "",
                                 style = Typography.body2.copy(
                                     color = MultimoneyTheme.colors.text,
                                     fontWeight = FontWeight.SemiBold
@@ -147,8 +145,13 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
                                     contentDescription = "",
                                     modifier = Modifier
                                         .clickable {
-                                            if (ibanAccount.isNotEmpty()) {
-                                                context.sendAccount(userName, ibanAccount)
+                                            if (it.isNotEmpty()) {
+                                                viewModel.onUIEvent(
+                                                    ProductViewModel.UIEvent.OnShareIbanAccount(
+                                                        context,
+                                                        it
+                                                    )
+                                                )
                                             }
                                         }
                                         .padding(start = 16.dp)
@@ -187,7 +190,6 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, userName: String, idBran
         }
     }
 }
-
 
 @Composable
 fun CreditDetailItem(

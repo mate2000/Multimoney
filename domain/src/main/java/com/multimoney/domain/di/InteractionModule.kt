@@ -14,6 +14,8 @@ import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
+import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCase
@@ -182,9 +184,13 @@ class InteractionModule {
     fun provideQueryHomeProvinceUseCase(creditRepository: CreditRepository): QueryHomeProvinceUseCase =
         QueryHomeProvinceUseCaseImpl(creditRepository)
 
-     @Provides
+    @Provides
     @Singleton
     fun provideTermsAndConditionUseCase(creditRepository: CreditRepository): TermsAndConditionsUseCase =
         TermsAndConditionsUseCaseImpl(creditRepository)
 
+    @Provides
+    @Singleton
+    fun provideQueryGetClientBankAccountUseCase(creditRepository: CreditRepository): QueryGetClientBankAccountUseCase =
+        QueryGetClientBankAccountUseCaseImpl(creditRepository)
 }

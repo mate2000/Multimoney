@@ -38,7 +38,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.domain.model.credit.CreditOfferAndTip
+import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
@@ -48,6 +48,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.C
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_REJECTED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
@@ -56,6 +57,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartPr
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditDetail
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
@@ -101,7 +103,7 @@ fun ProductScreen(
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
         ) {
-            MotionLayoutMM(mainHeader = {
+            /*MotionLayoutMM(mainHeader = {
                 TipsAndOffer(
                     modifier = Modifier.padding(start = 16.dp, top = 20.dp),
                     viewModel = viewModel
@@ -111,7 +113,8 @@ fun ProductScreen(
                     contentAlignment = Alignment.TopCenter,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MultimoneyTheme.colors.background)) {
+                        .background(MultimoneyTheme.colors.background)
+                ) {
                     TopNavBar(
                         isRightButtonVisible = false,
                         onLeftButtonClick = {
@@ -147,7 +150,8 @@ fun ProductScreen(
                     },
                     type = RequestCreditCard
                 )
-            }, totalPages = NUMBER_PAGES)
+            }, totalPages = NUMBER_PAGES)*/
+            CreditDetail(balance = viewModel.balanceCredit, modifier = Modifier.background(GrayScale800), viewModel = viewModel)
         }
     }
 }
@@ -224,7 +228,8 @@ fun Products(
             text = stringResource(id = if (headerText == 0) R.string.home_credit_title else headerText),
             modifier = Modifier.padding(horizontal = 16.dp),
             style = if (headerText == 0) Typography.h5.copy(fontWeight = FontWeight.SemiBold) else Typography.body1.copy(
-                fontWeight = FontWeight.SemiBold),
+                fontWeight = FontWeight.SemiBold
+            ),
             color = MultimoneyTheme.colors.labelText
         )
         if (pages == 1) {
@@ -277,7 +282,8 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable
+                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable,
+                                viewModel.uiState.idBrand.toInt()
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {
@@ -358,7 +364,7 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .fillMaxSize()
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
-                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
                 }) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,

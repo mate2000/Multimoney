@@ -3,6 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.CreditApi
+import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -13,8 +14,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CreditRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class CreditRepositoryImpl @Inject constructor(
     private val creditApi: CreditApi
@@ -89,7 +90,8 @@ class CreditRepositoryImpl @Inject constructor(
             } else {
                 Message(data.mapToDomainModel())
             }
-        })
+        }
+    )
 
     override suspend fun queryScreenConfig(
         pkUser: String,
@@ -204,12 +206,31 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         systemInDarkTheme: Boolean
-    ) :Flow<MultimoneyResult<String>> = fetchData(
+    ): Flow<MultimoneyResult<String>> = fetchData(
         apolloCall = creditApi.mutationTermsAndConditions(
-            user, idBrand, systemInDarkTheme
+            user,
+            idBrand,
+            systemInDarkTheme
         ),
         apolloCallMapper = { data ->
             Success(data.terminsAndConditions?.terminsAndConditionsHtml ?: "")
+        }
+    )
+
+    override suspend fun queryGetClientBankAccount(
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoan: Int
+    ): Flow<MultimoneyResult<List<ClientBankAccount?>?>> = fetchData(
+        apolloCall = creditApi.queryGetClientBankAccount(
+            user,
+            idBrand,
+            idClient,
+            idLoan
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
         }
     )
 }

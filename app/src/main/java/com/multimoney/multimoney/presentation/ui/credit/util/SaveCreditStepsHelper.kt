@@ -18,7 +18,14 @@ class SaveCreditStepsHelper @Inject constructor() {
         creditFlowData.add(creditInfoQuestion)
     }
 
-    fun saveStepOne(
+    fun saveStepOne(user: String?, accountNumber: String) {
+        val accountNumberQuestion = inputTextInfoList?.find { it?.description == ACCOUNT_NUMBER }
+
+        val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
+        saveScreenQuestionData(creditInfoQuestionAccountNumber)
+    }
+
+    fun saveStepTwo(
         user: String?,
         monthlyIncomeValue: String,
         occupation: CreditCatalog?,
@@ -30,7 +37,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, occupation, occupationSelected))
     }
 
-    fun saveStepTwo(user: String?, companyName: String, startedJobDate: String, companyPhone: String) {
+    fun saveStepThree(user: String?, companyName: String, startedJobDate: String, companyPhone: String) {
         val companyNameQuestion = inputTextInfoList?.find { it?.description == COMPANY_NAME }
         val companyStartedJobDateQuestion = inputTextInfoList?.find { it?.description == STARTED_JOB_DATE }
         val companyPhoneQuestion = inputTextInfoList?.find { it?.description == COMPANY_PHONE }
@@ -45,7 +52,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(creditInfoQuestionCompanyPhone)
     }
 
-    fun saveStepThree(
+    fun saveStepFour(
         user: String?,
         companyProvince: CreditCatalog?,
         companyProvinceSelected: CreditCatalogOption?,
@@ -63,7 +70,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(textQuestion(user, companyAddressValue, creditInfoQuestionCompanyAddress))
     }
 
-    fun saveStepThreeSV(
+    fun saveStepFourSV(
         user: String?,
         companyProvince: CreditCatalog?,
         companyProvinceSelected: CreditCatalogOption?,
@@ -78,7 +85,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(textQuestion(user, companyAddressValue, creditInfoQuestionCompanyAddress))
     }
 
-    fun saveStepFourGT(
+    fun saveStepFiveGT(
         user: String?,
         homeProvince: CreditCatalog?,
         homeProvinceSelected: CreditCatalogOption?,
@@ -101,7 +108,7 @@ class SaveCreditStepsHelper @Inject constructor() {
 //        saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomePhone))
     }
 
-    fun saveStepFourSV(
+    fun saveStepFiveSV(
         user: String?,
         homeProvince: CreditCatalog?,
         homeProvinceSelected: CreditCatalogOption?,
@@ -121,7 +128,7 @@ class SaveCreditStepsHelper @Inject constructor() {
 //        saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomePhone))
     }
 
-    fun saveStepFourCR(
+    fun saveStepFiveCR(
         user: String?,
         homeProvince: CreditCatalog?,
         homeProvinceSelected: CreditCatalogOption?,
@@ -182,6 +189,7 @@ class SaveCreditStepsHelper @Inject constructor() {
     }
 
     companion object {
+        const val ACCOUNT_NUMBER = "Número de cuenta"
         const val SALARY = "Ingreso Mensual"
         const val COMPANY_NAME = "Nombre Empresa"
         const val STARTED_JOB_DATE = "Fecha Ingreso Laboral Actual"

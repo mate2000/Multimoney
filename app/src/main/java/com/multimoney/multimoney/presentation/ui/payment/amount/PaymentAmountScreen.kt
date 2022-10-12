@@ -1,9 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.payment.amount
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +15,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -33,14 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.ComplementaryBlack
-import com.multimoney.multimoney.presentation.theme.ComplementaryGray
-import com.multimoney.multimoney.presentation.theme.GradientGrey1
-import com.multimoney.multimoney.presentation.theme.GradientGrey2
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnMaximumPaymentButtonClick
+import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnMinimumPaymentButtonClick
+import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnSetParameters
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -53,17 +48,25 @@ import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntege
 @Composable
 fun HowMuchYouWantPayScreen(
     navBackStackEntry: NavBackStackEntry,
-    onPopBackStack: () -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: PaymentAmountViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(true) {
+        viewModel.apply {
+            executeNavigation(onPopAndNavigate = onPopAndNavigate)
+            onUIEvent(OnSetParameters(minimumPayment = 5000, maximumPayment = 35000))
+        }
+    }
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
             TopNavBar(
@@ -73,8 +76,7 @@ fun HowMuchYouWantPayScreen(
             Text(
                 modifier = Modifier.padding(top = 42.dp),
                 text = stringResource(id = R.string.payment_amount_title),
-                style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText,
+                style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.labelText),
                 textAlign = TextAlign.Left
             )
             Row(
@@ -82,10 +84,11 @@ fun HowMuchYouWantPayScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 CustomImage(
+                    modifier = Modifier.padding(top = 3.dp),
                     drawableResource = R.drawable.info_blue_icon
                 )
                 Text(
-                    modifier = Modifier.padding(top = 16.dp, start = 10.dp),
+                    modifier = Modifier.padding(start = 10.dp),
                     text = buildAnnotatedString {
                         append(stringResource(id = R.string.payment_amount_subtitle))
                         append(" ")
@@ -103,152 +106,72 @@ fun HowMuchYouWantPayScreen(
                     textAlign = TextAlign.Left
                 )
             }
-        }
-        Row(
-            modifier = Modifier
-                .padding(top = 24.dp)
-                .fillMaxWidth()
-        ) {
-            RoundedPaymentButton(
+            Row(
                 modifier = Modifier
-                    .weight(0.48f),
-                onClick = { viewModel.setCurrentValueToMin() },
-                strokeBrush = Brush.verticalGradient(
-                    colors = getBrushColorForRoundedButtons(viewModel, true)
-                ),
-                strokeWidth = 1.dp,
-                roundedShapeDp = 24.dp,
-                backgroundColor = if (isSystemInDarkTheme()) {
-                    ComplementaryBlack
-                } else {
-                    ComplementaryBlack
-                },
-                mainText = viewModel.uiState.minimumPaymentLabel,
-                secondaryText = stringResource(id = R.string.payment_amount_min_amount),
-                mainTextColor = MultimoneyTheme.colors.textLink,
-                secondaryTextColor = if (isSystemInDarkTheme()) {
-                    ComplementaryGray
-                } else {
-                    ComplementaryGray
-                }
-            )
-            Spacer(modifier = Modifier.weight(0.04f))
-            RoundedPaymentButton(
-                modifier = Modifier
-                    .weight(0.48f),
-                onClick = { viewModel.setCurrentValueToMax() },
-                strokeBrush = Brush.verticalGradient(
-                    colors = getBrushColorForRoundedButtons(viewModel, false)
-                ),
-                strokeWidth = 1.dp,
-                roundedShapeDp = 24.dp,
-                backgroundColor = if (isSystemInDarkTheme()) {
-                    ComplementaryBlack
-                } else {
-                    ComplementaryBlack
-                },
-                mainText = viewModel.uiState.maximumPaymentLabel,
-                secondaryText = stringResource(id = R.string.payment_amount_max_amount),
-                mainTextColor = MultimoneyTheme.colors.textLink,
-                secondaryTextColor = if (isSystemInDarkTheme()) {
-                    ComplementaryGray
-                } else {
-                    ComplementaryGray
-                }
-            )
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        CurrencyAmountInput(
-            value = viewModel.uiState.currentAmountValueString,
-            placeHolder = viewModel.uiState.currentAmountValueString,
-            onValueChange = {
-                viewModel.onUIEvent(UIEvent.OnAmountValueChange(it))
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            }),
-            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            isRequired = false,
-            isError = viewModel.uiState.currentAmountError.first,
-            errorMessage = stringResource(
-                id = viewModel.uiState.currentAmountError.second,
-                viewModel.getFormattedCurrency()
-            ),
-            customTransformation = CurrencyIntegerTransformation(
-                viewModel.uiState.currency,
-                CreditAmountViewModel.CURRENCY_SEPARATOR
-            ),
-            onDebounceValidation = {
-                viewModel.onUIEvent(UIEvent.OnAmountValueChangeFinished(it))
+                    .padding(top = 24.dp)
+                    .fillMaxWidth()
+            ) {
+                RoundedPaymentButton(
+                    modifier = Modifier
+                        .weight(0.48f),
+                    onClick = { viewModel.onUIEvent(OnMinimumPaymentButtonClick) },
+                    strokeWidth = 1.dp,
+                    roundedShapeDp = 24.dp,
+                    mainText = viewModel.uiState.minimumPaymentLabel,
+                    secondaryText = stringResource(id = R.string.payment_amount_min_amount),
+                    isSelected = viewModel.uiState.isMinimumSelected
+                )
+                Spacer(modifier = Modifier.weight(0.04f))
+                RoundedPaymentButton(
+                    modifier = Modifier
+                        .weight(0.48f),
+                    onClick = { viewModel.onUIEvent(OnMaximumPaymentButtonClick) },
+                    strokeWidth = 1.dp,
+                    roundedShapeDp = 24.dp,
+                    mainText = viewModel.uiState.maximumPaymentLabel,
+                    secondaryText = stringResource(id = R.string.payment_amount_max_amount),
+                    isSelected = viewModel.uiState.isMaximumSelected
+                )
             }
-        )
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 32.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter),
-            verticalArrangement = Arrangement.Center
-        ) {
-            CustomButton(
-                modifier = Modifier
-                    .height(48.dp)
-                    .fillMaxWidth(),
-                onClick = {
+            CurrencyAmountInput(
+                modifier = Modifier.padding(top = 24.dp),
+                value = viewModel.uiState.currentAmountValueString,
+                placeHolder = viewModel.uiState.currentAmountValueString,
+                onValueChange = {
+                    viewModel.onUIEvent(UIEvent.OnAmountValueChange(it))
                 },
-                text = stringResource(id = R.string.button_continue),
-                buttonType = CustomButtonType.PrimaryPrimary,
-                enable = viewModel.uiState.enableButton
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                }),
+                isRequired = true,
+                isRequiredMessage = stringResource(
+                    id = R.string.payment_amount_amount_min_error,
+                    viewModel.getFormattedCurrency()
+                ),
+                isError = viewModel.uiState.currentAmountError.first,
+                errorMessage = stringResource(
+                    id = viewModel.uiState.currentAmountError.second,
+                    viewModel.getFormattedCurrency()
+                ),
+                customTransformation = CurrencyIntegerTransformation(
+                    viewModel.uiState.currency,
+                    CreditAmountViewModel.CURRENCY_SEPARATOR
+                )
             )
         }
-    }
-}
-
-@Composable
-fun getBrushColorForRoundedButtons(
-    viewModel: PaymentAmountViewModel,
-    isMinButton: Boolean
-): List<Color> {
-    val unselectedColors = if (isSystemInDarkTheme()) {
-        listOf(
-            GradientGrey1,
-            GradientGrey2
+        CustomButton(
+            modifier = Modifier
+                .height(48.dp)
+                .fillMaxWidth(),
+            onClick = {
+            },
+            text = stringResource(id = R.string.button_continue),
+            buttonType = CustomButtonType.PrimaryPrimary,
+            enable = viewModel.uiState.enableButton
         )
-    } else {
-        listOf(
-            GradientGrey1,
-            GradientGrey2
-        )
-    }
-    val selectedColors = if (isSystemInDarkTheme()) {
-        listOf(
-            MultimoneyTheme.colors.primary,
-            MultimoneyTheme.colors.primary
-        )
-    } else {
-        listOf(
-            MultimoneyTheme.colors.primary,
-            MultimoneyTheme.colors.primary
-        )
-    }
-    return if (isMinButton) {
-        if (viewModel.uiState.currentAmountValue == viewModel.minAmountValue) {
-            selectedColors
-        } else {
-            unselectedColors
-        }
-    } else {
-        if (viewModel.uiState.currentAmountValue == viewModel.maxAmountValue) {
-            selectedColors
-        } else {
-            unselectedColors
-        }
     }
 }

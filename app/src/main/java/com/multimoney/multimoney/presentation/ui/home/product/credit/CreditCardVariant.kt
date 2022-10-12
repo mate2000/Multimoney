@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.home.product.credit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,10 +29,10 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
-import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary300
-import com.multimoney.multimoney.presentation.theme.SemanticPositive800
+import com.multimoney.multimoney.presentation.theme.SemanticNegative400
+import com.multimoney.multimoney.presentation.theme.SemanticPositive600
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
+import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 
 /**
  * Composable function to show the option to active smart product
@@ -144,7 +145,7 @@ fun CardGTWithoutCredit() {
 fun CreditApprovedOrStarted(
     creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
     amount: String? = "0.0",
-    idBrand: Int
+    idBrand: Int,
 ) {
     val title: Int
     var description = ""
@@ -154,9 +155,11 @@ fun CreditApprovedOrStarted(
         CreditStatusApproved -> {
             title = R.string.home_product_credit_approved_card_title
             description = if (idBrand == Brand.Guatemala.id) {
-                stringResource(id = R.string.home_product_gt_credit_approved_card_description, amount ?: "0.0")
+                stringResource(id = R.string.home_product_gt_credit_approved_card_description,
+                    amount ?: "0.0")
             } else {
-                stringResource(id = R.string.home_product_credit_approved_card_description, amount ?: "0.0")
+                stringResource(id = R.string.home_product_credit_approved_card_description,
+                    amount ?: "0.0")
             }
             actionText = R.string.home_product_credit_approved_card_action
         }
@@ -443,51 +446,41 @@ fun CardCreditMaxAttempts(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OngoingCredit(
-    action: () -> Unit = {},
-    progress: Float,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
 ) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .wrapContentHeight()
-        .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-        .clickable { action.invoke() }) {
+        .padding(top = 12.dp, start = 24.dp, end = 24.dp)) {
         Text(
             text = stringResource(id = R.string.home_product_title),
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        viewModel.balanceCredit?.getSummary()?.currentBalanceLabel
         Text(
             text = viewModel.balanceCredit?.getSummary()?.availableBalanceLabel.toString(),
-            modifier = Modifier.padding(top = 14.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.padding(bottom = 10.dp),
+            style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(15.dp))
-                .wrapContentHeight()
-                .fillMaxWidth()
-        ) {
-            LinearProgressIndicator(modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp),
-                progress = 0.7f,
-                backgroundColor = SemanticPositive800,
-                color = DefaultWhite)
-        }
-        Row(modifier = Modifier.fillMaxWidth()) {
+        CustomRoundedLinearProgress(progress = (viewModel.balanceCredit?.getSummary()?.currentBalance?.toFloat()
+            ?: 1F) / (viewModel.balanceCredit?.getBalanceCredit()?.creditLimit?.toFloat()
+            ?: 1F), modifier = Modifier
+            .fillMaxWidth()
+            .height(4.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             Text(
-                text = "Saldo $234,234",
-                modifier = Modifier.padding(top = 14.dp),
+                text = stringResource(id = R.string.home_product_remaining,
+                    viewModel.balanceCredit?.getSummary()?.currentBalanceLabel.toString()),
+                modifier = Modifier.padding(top = 4.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
             Text(
-                text = " de $234,234",
-                modifier = Modifier.padding(top = 14.dp),
+                text = stringResource(id = R.string.home_product_amount,
+                    viewModel.balanceCredit?.getBalanceCredit()?.creditLimitLabel.toString()),
+                modifier = Modifier.padding(top = 4.dp, start = 3.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.textSubhead
             )
@@ -497,28 +490,30 @@ fun OngoingCredit(
             .padding(bottom = 14.dp)) {
             Column(modifier = Modifier.weight(0.5F)) {
                 Text(
-                    text = "Cuota",
-                    modifier = Modifier.padding(top = 14.dp),
+                    text = stringResource(id = R.string.home_product_fee),
+                    modifier = Modifier.padding(top = 4.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
                     text = viewModel.balanceCredit?.getSummary()?.monthlyQuotaLabel.toString(),
-                    modifier = Modifier.padding(),
+                    modifier = Modifier.padding(top = 4.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
                 )
             }
             Column(modifier = Modifier.weight(0.5F)) {
                 Text(
-                    text = "Vence",
-                    modifier = Modifier.padding(top = 14.dp),
+                    text = stringResource(id = if ((viewModel.balanceCredit?.getSummary()?.daysExpired
+                            ?: 0) > 0
+                    ) R.string.home_product_expired else R.string.home_product_expiration),
+                    modifier = Modifier.padding(top = 4.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
                 )
                 Chip(
                     enabled = false,
-                    colors = ChipDefaults.chipColors(disabledBackgroundColor = SemanticPositive800,
+                    colors = ChipDefaults.chipColors(disabledBackgroundColor = SemanticPositive600,
                         disabledContentColor = MultimoneyTheme.colors.text),
                     modifier = Modifier
                         .height(28.dp)
@@ -528,7 +523,10 @@ fun OngoingCredit(
                             modifier = Modifier
                                 .size(10.dp)
                                 .clip(CircleShape)
-                                .background(Primary300)
+                                .background(if ((viewModel.balanceCredit?.getSummary()?.daysExpired
+                                        ?: 0) > 0
+                                ) SemanticNegative400 else Primary300)
+                                .padding(top = 2.dp)
                         )
                     },
                     onClick = {

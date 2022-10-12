@@ -275,7 +275,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
         when (infoCredit?.status) {
             CreditStatus.EXIST_IN_CORE.status -> {
                 CustomProductBackground(modifier = Modifier.padding(horizontal = 16.dp), onClick = {}, type = Primary) {
-                    OngoingCredit({}, 0.8F, viewModel)
+                    OngoingCredit(viewModel)
                 }
             }
             CreditStatus.APPROVED_CREDIT.status, CreditStatus.CREDIT_PRE_APPROVED.status -> {

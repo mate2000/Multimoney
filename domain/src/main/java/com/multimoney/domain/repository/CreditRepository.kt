@@ -128,5 +128,5 @@ interface CreditRepository {
         user: String,
         idBrand: Int,
         idUserRequest: String
-    ): Flow<MultimoneyResult<List<BanksAndRegularExpression>>>
+    ): Flow<MultimoneyResult<BanksAndRegularExpression>>
 }

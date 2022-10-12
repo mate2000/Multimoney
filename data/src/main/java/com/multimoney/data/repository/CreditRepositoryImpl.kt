@@ -240,7 +240,15 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         idUserRequest: String
-    ): Flow<MultimoneyResult<List<BanksAndRegularExpression>>> {
-        TODO("Not yet implemented")
-    }
+    ): Flow<MultimoneyResult<BanksAndRegularExpression>> = fetchData(
+        apolloCall = creditApi.queryBanksAndRegularExpression(
+            pkUser,
+            user,
+            idBrand,
+            idUserRequest
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 }

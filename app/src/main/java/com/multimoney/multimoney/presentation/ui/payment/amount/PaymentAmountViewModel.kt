@@ -70,8 +70,8 @@ class PaymentAmountViewModel @Inject constructor() : BaseViewModel(true) {
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> popAndNavigateTo(
-                route = Screen.HomeScreen.route,
-                popTo = Screen.VisaIssuanceScreen.route
+                route = Screen.PaymentAccountScreen.route,
+                popTo = Screen.PaymentAmountScreen.route
             )
             is OnAmountValueChange -> onAmountValueChange(uiEvent.value)
             is OnMinimumPaymentButtonClick -> onAmountValueChange(minimumPayment.toString())

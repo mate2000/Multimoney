@@ -55,7 +55,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object CreditScreen : Screen(
         "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}", "credit_screen"
     )
-    object HowMuchYouWantPayScreen : Screen("how_much_you_want_pay_screen")
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen("visa_issuance_screen/{$ID_BRAND}", "visa_issuance_screen")
@@ -87,6 +86,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
             "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CURRENCY}/{$ID_CURRENCY}",
             "payment_account_screen"
         )
+
+    object PaymentAmountScreen : Screen("payment_amount_screen")
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

@@ -16,7 +16,6 @@ import com.multimoney.multimoney.presentation.ui.alertresult.AlertResultScreen
 import com.multimoney.multimoney.presentation.ui.credit.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentScreen
-import com.multimoney.multimoney.presentation.ui.payment.amount.HowMuchYouWantPayScreen
 
 const val SIGN_DOCUMENT_LINK = "sign_document_link"
 const val PK_USER = "pk_user"
@@ -72,16 +71,6 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         ) { navBackStackEntry ->
             AlertResultScreen(
-                navBackStackEntry = navBackStackEntry,
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable(route = Screen.HowMuchYouWantPayScreen.route) { navBackStackEntry ->
-            HowMuchYouWantPayScreen(
                 navBackStackEntry = navBackStackEntry,
                 onPopAndNavigate = {
                     navController.navigate(it.route) {

@@ -10,6 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PAYMENT_CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountScreen
+import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountScreen
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionScreen
 import com.multimoney.multimoney.presentation.util.customnavtype.SummaryListNavType
 
@@ -71,6 +72,16 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     popUpTo(it.popTo) { inclusive = true }
                 }
             })
+        }
+        composable(route = Screen.PaymentAmountScreen.route) { navBackStackEntry ->
+            PaymentAmountScreen(
+                navBackStackEntry = navBackStackEntry,
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

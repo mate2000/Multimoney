@@ -46,7 +46,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
 
 @Composable
-fun HowMuchYouWantPayScreen(
+fun PaymentAmountScreen(
     navBackStackEntry: NavBackStackEntry,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: PaymentAmountViewModel = hiltViewModel()

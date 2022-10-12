@@ -77,9 +77,14 @@ class PaymentAccountViewModel @Inject constructor(
                     titleResource = R.string.payment_account_different_currency_dialog_title,
                     descriptionResource = R.string.payment_account_different_currency_dialog_description,
                     isActive = mutableStateOf(true),
-                    positiveAction = { Log.d("DIALOG_POSITIVE", "Positive clicked") }
+                    positiveAction = {
+                        navigateTo(route = Screen.PaymentAmountScreen.route)
+                    }
                 )
             )
+        }else{
+
+            navigateTo(route = Screen.PaymentAmountScreen.route)
         }
     }
 

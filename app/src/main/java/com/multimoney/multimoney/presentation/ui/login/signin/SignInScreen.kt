@@ -58,7 +58,7 @@ import com.multimoney.multimoney.util.firebase.FireBaseEvents
 fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SignInViewModel = hiltViewModel(),
+    viewModel: SignInViewModel = hiltViewModel()
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
@@ -122,7 +122,6 @@ fun SignInScreen(
                         append(stringResource(id = R.string.sign_in_title_no_name))
                     }
                 }
-
             } else {
                 buildAnnotatedString {
                     withStyle(
@@ -134,7 +133,6 @@ fun SignInScreen(
                     ) {
                         append(stringResource(id = R.string.sign_in_title))
                     }
-
                 }
             },
             textAlign = TextAlign.Center,
@@ -201,9 +199,7 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .height(48.dp),
             onClick = {
-                viewModel.navigateTo(route = Screen.HowMuchYouWantPayScreen.route)
-                // viewModel.navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
-
+                viewModel.navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
             },
             buttonType = PrimaryTertiaryUnderLined
         )

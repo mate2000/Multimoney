@@ -2,12 +2,7 @@ package com.multimoney.multimoney.presentation.ui.credit
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -18,37 +13,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
-import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.*
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnBackClick
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnInitializeText
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
+import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankScreen
 import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
-import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.*
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
-import com.multimoney.multimoney.presentation.uielement.StepProgressBar
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -174,14 +155,12 @@ fun GetStepContent(
     viewModel: CreditViewModel
 ) {
     when (step) {
-        CreditStep.One.id -> CreditAmountScreen(
-            onNavigate = onNavigate,
-            sharedViewModel = viewModel
-        )
-        CreditStep.Two.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
-        CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
-        CreditStep.Four.id -> CompanyAddressScreen(sharedViewModel = viewModel)
-        CreditStep.Five.id -> HomeAddressScreen(sharedViewModel = viewModel)
+        CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
+        CreditStep.Two.id -> CreditBankScreen(sharedViewModel = viewModel)
+        CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
+        CreditStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)
+        CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
         else -> CreditDocumentScreen(sharedViewModel = viewModel)
     }
 }

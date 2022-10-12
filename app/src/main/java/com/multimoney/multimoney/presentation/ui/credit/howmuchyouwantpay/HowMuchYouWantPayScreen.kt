@@ -1,16 +1,26 @@
 package com.multimoney.multimoney.presentation.ui.credit.howmuchyouwantpay
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,10 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.*
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.howmuchyouwantpay.HowMuchYouWantPayViewModel.UIEvent
-import com.multimoney.multimoney.presentation.uielement.*
+import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.stringToIntegerFormat
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
@@ -124,54 +139,28 @@ fun HowMuchYouWantPayScreen(
                     modifier = Modifier
                         .weight(0.48f),
                     onClick = { viewModel.setCurrentValueToMin() },
-                    strokeBrush = Brush.verticalGradient(
-                        colors = getBrushColorForRoundedButtons(viewModel, true)
-                    ),
                     strokeWidth = 1.dp,
                     roundedShapeDp = 24.dp,
-                    backgroundColor = if (isSystemInDarkTheme()) {
-                        ComplementaryBlack
-                    } else {
-                        ComplementaryBlack
-                    },
                     mainText = stringResource(
                         id = viewModel.uiState.minAmountResource,
                         viewModel.uiState.minAmountValue.toString().stringToIntegerFormat()
                     ),
                     secondaryText = stringResource(id = viewModel.uiState.subtitleMinButton),
-                    mainTextColor = MultimoneyTheme.colors.textLink,
-                    secondaryTextColor = if (isSystemInDarkTheme()) {
-                        ComplementaryGray
-                    } else {
-                        ComplementaryGray
-                    }
+                    isSelected = false
                 )
                 Spacer(modifier = Modifier.weight(0.04f))
                 RoundedPaymentButton(
                     modifier = Modifier
                         .weight(0.48f),
                     onClick = { viewModel.setCurrentValueToMax() },
-                    strokeBrush = Brush.verticalGradient(
-                        colors = getBrushColorForRoundedButtons(viewModel, false)
-                    ),
                     strokeWidth = 1.dp,
                     roundedShapeDp = 24.dp,
-                    backgroundColor = if (isSystemInDarkTheme()) {
-                        ComplementaryBlack
-                    } else {
-                        ComplementaryBlack
-                    },
                     mainText = stringResource(
                         id = viewModel.uiState.maxAmountResource,
                         viewModel.uiState.maxAmountValue.toString().stringToIntegerFormat()
                     ),
                     secondaryText = stringResource(id = viewModel.uiState.subtitleMaxButton),
-                    mainTextColor = MultimoneyTheme.colors.textLink,
-                    secondaryTextColor = if (isSystemInDarkTheme()) {
-                        ComplementaryGray
-                    } else {
-                        ComplementaryGray
-                    }
+                    isSelected = false
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))
@@ -231,48 +220,6 @@ fun HowMuchYouWantPayScreen(
                 buttonType = CustomButtonType.PrimaryPrimary,
                 enable = viewModel.uiState.enableButton
             )
-        }
-    }
-}
-
-@Composable
-fun getBrushColorForRoundedButtons(
-    viewModel: HowMuchYouWantPayViewModel,
-    isMinButton: Boolean
-): List<Color> {
-    val unselectedColors = if (isSystemInDarkTheme()) {
-        listOf(
-            GradientGrey1,
-            GradientGrey2
-        )
-    } else {
-        listOf(
-            GradientGrey1,
-            GradientGrey2
-        )
-    }
-    val selectedColors = if (isSystemInDarkTheme()) {
-        listOf(
-            MultimoneyTheme.colors.primary,
-            MultimoneyTheme.colors.primary
-        )
-    } else {
-        listOf(
-            MultimoneyTheme.colors.primary,
-            MultimoneyTheme.colors.primary
-        )
-    }
-    return if (isMinButton) {
-        if (viewModel.uiState.currentAmountValue == viewModel.uiState.minAmountValue) {
-            selectedColors
-        } else {
-            unselectedColors
-        }
-    } else {
-        if (viewModel.uiState.currentAmountValue == viewModel.uiState.maxAmountValue) {
-            selectedColors
-        } else {
-            unselectedColors
         }
     }
 }

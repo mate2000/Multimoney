@@ -354,19 +354,21 @@ class ProductViewModel @Inject constructor(
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
         var amount = ""
         balanceCredit?.forEach { balance ->
-            amount = balance?.summary?.filter { it.currentBalance != ZERO }?.joinToString(separator = SEPARATOR) { summary ->
-                summary.currentBalanceLabel ?: ""
-            } ?: ""
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }
+                ?.joinToString(separator = SEPARATOR) { summary ->
+                    summary.currentBalanceLabel ?: ""
+                } ?: ""
         }
         return amount
     }
 
     fun getQuota(balanceCredit: List<BalanceCredit?>?): String {
         var amount = ""
-        balanceCredit?.forEach {balance ->
-            amount = balance?.summary?.filter { it.currentBalance != ZERO }?.joinToString(separator = SEPARATOR) { summary ->
-                summary.monthlyQuotaLabel ?: ""
-            } ?: ""
+        balanceCredit?.forEach { balance ->
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }
+                ?.joinToString(separator = SEPARATOR) { summary ->
+                    summary.monthlyQuotaLabel ?: ""
+                } ?: ""
         }
         return amount
     }
@@ -374,9 +376,10 @@ class ProductViewModel @Inject constructor(
     fun getMinPayment(balanceCredit: List<BalanceCredit?>?): String {
         var amount = ""
         balanceCredit?.forEach { balance ->
-            amount = balance?.summary?.filter { it.currentBalance != ZERO }?.joinToString(separator = SEPARATOR) { summary ->
-                summary.minPaymentLabel ?: ""
-            } ?: ""
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }
+                ?.joinToString(separator = SEPARATOR) { summary ->
+                    summary.minPaymentLabel ?: ""
+                } ?: ""
         }
         return amount
     }

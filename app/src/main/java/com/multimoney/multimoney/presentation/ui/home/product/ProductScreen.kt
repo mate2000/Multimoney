@@ -2,15 +2,7 @@ package com.multimoney.multimoney.presentation.ui.home.product
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
@@ -47,7 +39,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.C
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_REJECTED
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
@@ -61,13 +52,9 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
+import com.multimoney.multimoney.presentation.uielement.*
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
-import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
-import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
-import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @OptIn(ExperimentalPagerApi::class)
@@ -75,7 +62,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Preview
 fun ProductScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: ProductViewModel = hiltViewModel(),
+    viewModel: ProductViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnGetIdBrand)
@@ -107,48 +94,112 @@ fun ProductScreen(
                     viewModel = viewModel
                 )
             }, secondaryHeader = { backPressed ->
-                Box(
-                    contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MultimoneyTheme.colors.background)
-                ) {
-                    TopNavBar(
-                        isRightButtonVisible = false,
-                        onLeftButtonClick = {
-                            backPressed()
-                        }
-                    )
-                }
-            }, content = { modifier, headerText ->
-                Products(
-                    modifier = modifier,
-                    pages = NUMBER_PAGES,
-                    state = productPagerState,
-                    viewModel = viewModel,
-                    headerText
-                )
-            }, footer = {
-                ProductExtras(
-                    modifier = Modifier.padding(top = 16.dp),
-                    pages = NUMBER_PAGES,
-                    state = bottomPagerState,
-                    viewModel = viewModel
-                )
-            }, secondaryFooter = {
-                CustomBoxVisaBackground(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = {
-                        // todo Add logic when the user click the button
-                        // TODO: Remove this button when all functionalities are implemented
-                        viewModel.popAndNavigateTo(
-                            route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
-                            popTo = Screen.AlertResultScreen.baseRoute
+                    Box(
+                        contentAlignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MultimoneyTheme.colors.background)
+                    ) {
+                        TopNavBar(
+                            isRightButtonVisible = false,
+                            onLeftButtonClick = {
+                                backPressed()
+                            }
                         )
-                    },
-                    type = RequestCreditCard
+                    }
+                }, content = { modifier, headerText ->
+                    Products(
+                        modifier = modifier,
+                        pages = NUMBER_PAGES,
+                        state = productPagerState,
+                        viewModel = viewModel,
+                        headerText
+                    )
+                }, footer = {
+                    ProductExtras(
+                        modifier = Modifier.padding(top = 16.dp),
+                        pages = NUMBER_PAGES,
+                        state = bottomPagerState,
+                        viewModel = viewModel
+                    )
+                }, secondaryFooter = {
+                    Column {
+                        CustomBoxVisaBackground(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            onClick = {
+                                // todo Add logic when the user click the button
+                                // TODO: Remove this button when all functionalities are implemented
+                                viewModel.popAndNavigateTo(
+                                    route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
+                                    popTo = Screen.AlertResultScreen.baseRoute
+                                )
+                            },
+                            type = RequestCreditCard
+                        )
+                        // TODO add logic to decide when to show Disburse and PayFee buttons
+                        PayButtons(
+                            viewModel = viewModel,
+                            canDisburse = true,
+                            canPayFee = true,
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                                .weight(1f, false)
+                        )
+                    }
+                }, totalPages = NUMBER_PAGES)
+        }
+    }
+}
+
+@Composable
+fun PayButtons(
+    viewModel: ProductViewModel,
+    canDisburse: Boolean,
+    canPayFee: Boolean,
+    modifier: Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        if (canDisburse && canPayFee) {
+            CustomButton(
+                text = stringResource(R.string.home_pay_fee_button_text),
+                modifier = Modifier.weight(1f),
+                buttonType = CustomButtonType.PrimarySecondary,
+                onClick = {
+                    // todo add correct route to navigate on click
+                }
+            )
+            Spacer(Modifier.weight(0.1f))
+            CustomButton(
+                text = stringResource(R.string.home_disburse_button_text),
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    // todo add correct route to navigate on click
+                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                }
+            )
+        } else {
+            if (canDisburse) {
+                CustomButton(
+                    text = stringResource(R.string.home_disburse_button_text),
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        // todo add correct route to navigate on click
+                    }
                 )
-            }, totalPages = NUMBER_PAGES)
+            }
+            if (canPayFee) {
+                CustomButton(
+                    text = stringResource(R.string.home_pay_fee_button_text),
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        // todo add correct route to navigate on click
+                    }
+                )
+            }
         }
     }
 }
@@ -217,7 +268,7 @@ fun Products(
     pages: Int,
     state: PagerState,
     viewModel: ProductViewModel,
-    headerText: Int,
+    headerText: Int
 ) {
     Column(modifier = modifier) {
         // TODO add dynamic titles when other products are implemented
@@ -361,8 +412,9 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .fillMaxSize()
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
-                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
-                }) {
+                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                }
+        ) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,
                 modifier = Modifier

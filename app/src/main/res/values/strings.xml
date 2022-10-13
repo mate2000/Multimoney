@@ -207,6 +207,8 @@
     <string name="home_credit_sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
     <string name="home_credit_sign_document_reject_action_text" translatable="false">Firmar</string>
     <string name="home_credit_title" translatable="false">Mi Crédito</string>
+    <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
+    <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>

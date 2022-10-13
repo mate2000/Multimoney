@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
+import com.multimoney.multimoney.presentation.theme.MultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary300
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
@@ -465,8 +466,8 @@ fun OngoingCredit(
             color = MultimoneyTheme.colors.text
         )
         CustomRoundedLinearProgress(progress = (viewModel.balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
-            ?: 1F) / (viewModel.balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
-            ?: 1F), modifier = Modifier
+            ?: DEFAULT_PROGRESS) / (viewModel.balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
+            ?: DEFAULT_PROGRESS), modifier = Modifier
             .fillMaxWidth()
             .height(4.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
@@ -525,7 +526,7 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
                                         ?: 0) > 0
-                                ) SemanticNegative400 else Primary300)
+                                ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor)
                                 .padding(top = 2.dp)
                         )
                     },
@@ -543,6 +544,7 @@ fun OngoingCredit(
         }
     }
 }
+const val DEFAULT_PROGRESS = 1F
 
 sealed class CreditProcessStarted {
     object CreditAcceptContractRefuseFirstTime : CreditProcessStarted()

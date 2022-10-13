@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency40
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INFO_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INITIAL_CARD
@@ -268,7 +269,6 @@ fun CreditProduct(viewModel: ProductViewModel) {
         when (infoCredit?.status) {
             CreditStatus.EXIST_IN_CORE.status -> {
                 CustomProductBackground(modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = {},
                     type = Primary) {
                     OngoingCredit(viewModel)
                 }
@@ -443,7 +443,7 @@ fun ProductDetails(viewModel: ProductViewModel) {
                     color = MultimoneyTheme.colors.labelText
                 ),
                 onClick = {
-
+                    // TODO implement event when views added
                 }
             )
             LazyColumn {
@@ -478,7 +478,7 @@ fun ProductMovement(title: String, date: String, value: String) {
                 color = MultimoneyTheme.colors.labelText)
         }
     }
-    Divider(color = WhiteTransparency30, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+    Divider(color = MultimoneyTheme.colors.bottomNavigationDividerColor, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
 }
 
 private const val NUMBER_PAGES = 2

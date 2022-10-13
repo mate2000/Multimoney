@@ -156,7 +156,9 @@ data class MultimoneyColors(
     val quickActionLabelColor: Color,
     val dotIndicatorColor: Color,
     val dotIndicatorExpired: Color,
-    val arrowColor: Color
+    val arrowColor: Color,
+    val progressBackground: Color,
+    val progressPercentage: Color,
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -187,7 +189,9 @@ val DarkColorPalette = MultimoneyColors(
     quickActionLabelColor = WhiteTransparency70,
     dotIndicatorColor = Primary400,
     dotIndicatorExpired = SemanticNegative400,
-    arrowColor = Primary400
+    arrowColor = Primary400,
+    progressBackground = SemanticPositive800,
+    progressPercentage = DefaultWhite
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -218,7 +222,9 @@ val LightColorPalette = MultimoneyColors(
     quickActionLabelColor = GrayScale500,
     dotIndicatorColor = Primary400,
     dotIndicatorExpired = SemanticNegative400,
-    arrowColor = Primary400
+    arrowColor = Primary400,
+    progressBackground = SemanticPositive800,
+    progressPercentage = DefaultWhite
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

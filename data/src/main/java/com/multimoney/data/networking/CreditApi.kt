@@ -221,5 +221,5 @@ class CreditApi @Inject constructor(
                 idBrand,
                 idUserRequest
             )
-        )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

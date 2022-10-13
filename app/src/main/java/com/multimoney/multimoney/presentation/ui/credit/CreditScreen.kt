@@ -2,7 +2,12 @@ package com.multimoney.multimoney.presentation.ui.credit
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -13,9 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -32,9 +37,14 @@ import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentS
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
-import com.multimoney.multimoney.presentation.uielement.*
+import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
+import com.multimoney.multimoney.presentation.uielement.StepProgressBar
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
@@ -65,7 +75,7 @@ fun CreditScreen(
         )
     }
 
-    viewModel.onUIEvent(OnInitializeText(stringResource(id = string.credit_close_dialog_description)))
+    viewModel.onUIEvent(OnInitializeText(stringResource(id = R.string.credit_close_dialog_description)))
 
     if (viewModel.uiState.lastStep != 1) {
         val stringId = viewModel.getLoadingString()
@@ -85,7 +95,7 @@ fun CreditScreen(
                     isRightButtonVisible = viewModel.uiState.isCloseVisible,
                     onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                     onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
-                if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Six.id) {
+                if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Seven.id) {
                     StepProgressBar(
                         steps = CREDIT_INDICATOR_TOTAL_STEPS,
                         currentStep = viewModel.uiState.currentStep - 1,
@@ -108,7 +118,11 @@ fun CreditScreen(
                 Column {
                     CustomButton(
                         onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-                        text = stringResource(id = string.button_continue),
+                        text = if (viewModel.uiState.currentStep != CreditStep.Two.id) {
+                            stringResource(id = R.string.button_continue)
+                        } else {
+                            stringResource(id = R.string.credit_bank_validate_account_number)
+                        },
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                             .fillMaxWidth()
@@ -133,7 +147,6 @@ fun CreditScreen(
             }
         }
     }
-
 
     LoadingIndicator(viewModel.uiState.isLoading)
 
@@ -161,7 +174,12 @@ fun GetStepContent(
 ) {
     when (step) {
         CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
-        CreditStep.Two.id -> CreditBankScreen(sharedViewModel = viewModel)
+        CreditStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
+            // todo call the correct screen for Costa rica
+            CreditBankScreen(sharedViewModel = viewModel)
+        } else {
+            CreditBankScreen(sharedViewModel = viewModel)
+        }
         CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)
         CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)

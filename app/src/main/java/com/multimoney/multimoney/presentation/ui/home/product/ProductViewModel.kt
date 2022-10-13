@@ -34,10 +34,10 @@ import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.customnavtype.encodeData
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -174,7 +174,8 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToPaymentScreen() {
         val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
         val infoCredit = uiState.userStatus?.infoCredit
-        val route = if ((creditSummary?.size ?: 0) > 1 && validateQuotas(creditSummary) &&  uiState.idBrand.toInt() == Brand.CostaRica.id
+        val route = if ((creditSummary?.size
+                ?: 0) > 1 && validateQuotas(creditSummary) && uiState.idBrand.toInt() == Brand.CostaRica.id
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/${email}/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
                 encodeData(
@@ -241,14 +242,14 @@ class ProductViewModel @Inject constructor(
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
                             CreditStep.Search.getIdByName(
                                 infoCredit?.infoPreApprove?.currentStep
-                            ) == CreditStep.Six.id
+                            ) == CreditStep.Seven.id
                             )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
                             CreditStep.Search.getIdByName(
                                 infoCredit?.infoPreApprove?.currentStep
-                            ) < CreditStep.Six.id
+                            ) < CreditStep.Seven.id
                             )
                 }
                 CREDIT_REJECTED -> {

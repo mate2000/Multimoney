@@ -279,6 +279,9 @@
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label" translatable="false">Selecciona tu profesión</string>
     <string name="credit_monthly_income_profession_hint" translatable="false">Selecciona tu profesión</string>
+    <string name="credit_monthly_income_dollar_symbol" translatable="false">$</string>
+    <string name="credit_monthly_income_colon_symbol" translatable="false">₡</string>
+    <string name="credit_monthly_income_quetzal_symbol" translatable="false">Q\</string>
     <string-array name="credit_monthly_income_professions" translatable="false">
         <item>Administración</item>
         <item>Construcción</item>

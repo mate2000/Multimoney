@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary300
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticPositive600
+import com.multimoney.multimoney.presentation.theme.SemanticPositive700
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
@@ -513,7 +514,7 @@ fun OngoingCredit(
                 )
                 Chip(
                     enabled = false,
-                    colors = ChipDefaults.chipColors(disabledBackgroundColor = SemanticPositive600,
+                    colors = ChipDefaults.chipColors(disabledBackgroundColor = SemanticPositive700,
                         disabledContentColor = MultimoneyTheme.colors.text),
                     modifier = Modifier
                         .height(28.dp)

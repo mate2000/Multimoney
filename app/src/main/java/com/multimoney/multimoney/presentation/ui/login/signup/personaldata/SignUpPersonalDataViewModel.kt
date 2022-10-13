@@ -541,7 +541,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.onFailureWithDialog,
                 event.onLoadingValueChange
             )
-            is OnValidateDocument -> validateDocument(event.email)
+            is OnValidateDocument -> validateDocument(event.document)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
                 event.user,
                 event.onLoadingValueChange
@@ -604,7 +604,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnValidateDocument(
-            val email: String? = null,
+            val document: String? = null,
         ) : UIEvent()
 
         data class OnCallQueryGetCountry(

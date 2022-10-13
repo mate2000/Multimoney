@@ -20,14 +20,20 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             availableBalance = it?.saldo_Disponible.toString(),
             availableBalanceLabel = it?.saldo_Disponible_Label,
             paymentDateLabel = it?.fecha_Pago_Label,
-            monthlyQuota = it?.cuota_Mensual.toString(),
             monthlyQuotaLabel = it?.cuota_Mensual_Label,
+            minPaymentLabel = it?.pago_Minimo_Label,
+            expiredPayment = it?.pagos_Vencidos ?: 0,
+            expiredDays = it?.dias_Vencidos ?: 0,
+            ibanAccount = it?.cuenta_Iban ?: "",
+            monthlyQuota = it?.cuota_Mensual.toString(),
             balanceAmountCancel = it?.saldo_Monto_Cancelar.toString(),
             daysExpired = it?.dias_Vencidos ?: 0
         )
     },
     creditLimit = limite_credito,
-    creditLimitLabel = limite_credito_label
+    creditLimitLabel = limite_credito_label,
+    creditNumber = this.pagare,
+    term = this.plazo
 )
 
 private fun BalanceQuery.BalanceAccountSmart.mapToDomainModel() =

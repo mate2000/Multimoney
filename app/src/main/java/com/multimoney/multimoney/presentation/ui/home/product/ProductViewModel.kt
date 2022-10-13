@@ -13,6 +13,7 @@ import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.credit.ProductMovement
@@ -30,10 +31,12 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.customnavtype.encodeData
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
+import com.multimoney.multimoney.presentation.util.sendAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -57,6 +60,7 @@ class ProductViewModel @Inject constructor(
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
+    var userName: String = ""
 
     private fun onGetUserData() {
         viewModelScope.launch {
@@ -64,6 +68,7 @@ class ProductViewModel @Inject constructor(
             pkUser = dataStorePreferences.getPkUser().first()
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
+            userName = dataStorePreferences.getUserName().first()
 
             callQueryValidateUserStatus(
                 pkUser.toInt(),
@@ -279,7 +284,15 @@ class ProductViewModel @Inject constructor(
                 uiEvent.whatsAppLink
             )
             is OnLastStepChange -> lastStep = uiEvent.lastStep
+            is OnShareIbanAccount -> shareIbanAccount(
+                uiEvent.context,
+                uiEvent.account
+            )
         }
+    }
+
+    private fun shareIbanAccount(context: Context, account: String) {
+        context.sendAccount(userName, account)
     }
 
     sealed class UIEvent {
@@ -300,6 +313,10 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnGetIdBrand : UIEvent()
+        data class OnShareIbanAccount(
+            val context: Context,
+            val account: String
+        ) : UIEvent()
     }
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
@@ -339,14 +356,47 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
+        var amount = ""
+        balanceCredit?.forEach { balance ->
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }
+                ?.joinToString(separator = SEPARATOR) { summary ->
+                    summary.currentBalanceLabel ?: ""
+                } ?: ""
+        }
+        return amount
+    }
+
+    fun getQuota(balanceCredit: List<BalanceCredit?>?): String {
+        var amount = ""
+        balanceCredit?.forEach { balance ->
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }
+                ?.joinToString(separator = SEPARATOR) { summary ->
+                    summary.monthlyQuotaLabel ?: ""
+                } ?: ""
+        }
+        return amount
+    }
+
+    fun getMinPayment(balanceCredit: List<BalanceCredit?>?): String {
+        var amount = ""
+        balanceCredit?.forEach { balance ->
+            amount = balance?.summary?.filter { it.currentBalance != ZERO }
+                ?.joinToString(separator = SEPARATOR) { summary ->
+                    summary.minPaymentLabel ?: ""
+                } ?: ""
+        }
+        return amount
+    }
+
     companion object {
         const val ZERO = 0.0
-
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
         const val CREDIT_INITIAL_CARD = "CREDIT_INITIAL_CARD"
         const val CREDIT_MAX_ATTEMPTS = "CREDIT_MAX_ATTEMPTS"
         const val CREDIT_IDENTITY_INCOMPLETE = "CREDIT_IDENTITY_INCOMPLETE"
         const val CREDIT_INFO_INCOMPLETE = "CREDIT_INFO_INCOMPLETE"
         const val CREDIT_REJECTED = "CREDIT_REJECTED"
+        const val SEPARATOR = " + "
     }
 }

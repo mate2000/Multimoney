@@ -14,6 +14,10 @@ data class Summary(
     val paymentDateLabel: String?,
     val monthlyQuota: String?,
     val monthlyQuotaLabel: String?,
+    val minPaymentLabel: String?,
+    val expiredPayment: Int?,
+    val expiredDays: Int?,
+    val ibanAccount: String?,
     val balanceAmountCancel: String,
     val daysExpired: Int
 ) : Parcelable

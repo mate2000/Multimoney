@@ -32,7 +32,6 @@ import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary300
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
-import com.multimoney.multimoney.presentation.theme.SemanticPositive600
 import com.multimoney.multimoney.presentation.theme.SemanticPositive700
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
@@ -460,27 +459,27 @@ fun OngoingCredit(
             color = MultimoneyTheme.colors.text
         )
         Text(
-            text = viewModel.balanceCredit?.getSummary()?.availableBalanceLabel.toString(),
+            text = viewModel.balanceCredit?.getFirstSummary()?.availableBalanceLabel.toString(),
             modifier = Modifier.padding(bottom = 10.dp),
             style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        CustomRoundedLinearProgress(progress = (viewModel.balanceCredit?.getSummary()?.currentBalance?.toFloat()
-            ?: 1F) / (viewModel.balanceCredit?.getBalanceCredit()?.creditLimit?.toFloat()
+        CustomRoundedLinearProgress(progress = (viewModel.balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
+            ?: 1F) / (viewModel.balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
             ?: 1F), modifier = Modifier
             .fillMaxWidth()
             .height(4.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             Text(
                 text = stringResource(id = R.string.home_product_remaining,
-                    viewModel.balanceCredit?.getSummary()?.currentBalanceLabel.toString()),
+                    viewModel.balanceCredit?.getFirstSummary()?.currentBalanceLabel.toString()),
                 modifier = Modifier.padding(top = 4.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
             Text(
                 text = stringResource(id = R.string.home_product_amount,
-                    viewModel.balanceCredit?.getBalanceCredit()?.creditLimitLabel.toString()),
+                    viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()),
                 modifier = Modifier.padding(top = 4.dp, start = 3.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.textSubhead
@@ -497,7 +496,7 @@ fun OngoingCredit(
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
-                    text = viewModel.balanceCredit?.getSummary()?.monthlyQuotaLabel.toString(),
+                    text = viewModel.balanceCredit?.getFirstSummary()?.monthlyQuotaLabel.toString(),
                     modifier = Modifier.padding(top = 4.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
@@ -505,7 +504,7 @@ fun OngoingCredit(
             }
             Column(modifier = Modifier.weight(0.5F)) {
                 Text(
-                    text = stringResource(id = if ((viewModel.balanceCredit?.getSummary()?.daysExpired
+                    text = stringResource(id = if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
                             ?: 0) > 0
                     ) R.string.home_product_expired else R.string.home_product_expiration),
                     modifier = Modifier.padding(top = 4.dp),
@@ -524,7 +523,7 @@ fun OngoingCredit(
                             modifier = Modifier
                                 .size(10.dp)
                                 .clip(CircleShape)
-                                .background(if ((viewModel.balanceCredit?.getSummary()?.daysExpired
+                                .background(if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
                                         ?: 0) > 0
                                 ) SemanticNegative400 else Primary300)
                                 .padding(top = 2.dp)
@@ -535,7 +534,7 @@ fun OngoingCredit(
                     },
                     content = {
                         Text(
-                            text = viewModel.balanceCredit?.getSummary()?.paymentDateLabel.toString(),
+                            text = viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel.toString(),
                             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold)
                         )
                     }

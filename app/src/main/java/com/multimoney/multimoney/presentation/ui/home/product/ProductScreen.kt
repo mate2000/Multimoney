@@ -39,9 +39,10 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
+import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
@@ -61,6 +62,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartPr
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditDetail
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCredit
@@ -142,19 +144,10 @@ fun ProductScreen(
                     viewModel = viewModel
                 )
             }, secondaryFooter = {
-                CustomBoxVisaBackground(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = {
-                        // todo Add logic when the user click the button
-                        // TODO: Remove this button when all functionalities are implemented
-                        viewModel.popAndNavigateTo(
-                            route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
-                            popTo = Screen.AlertResultScreen.baseRoute
-                        )
-                    },
-                    type = RequestCreditCard
+                CreditDetail(
+                    modifier = Modifier.background(color = GrayScale700),
+                    viewModel = viewModel
                 )
-                //ProductDetails(viewModel)
             }, totalPages = NUMBER_PAGES)
         }
     }
@@ -274,7 +267,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
             CreditStatus.EXIST_IN_CORE.status -> {
-                CustomProductBackground(modifier = Modifier.padding(horizontal = 16.dp), onClick = {}, type = Primary) {
+                CustomProductBackground(modifier = Modifier.padding(horizontal = 16.dp),
+                    onClick = {},
+                    type = Primary) {
                     OngoingCredit(viewModel)
                 }
             }

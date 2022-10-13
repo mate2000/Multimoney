@@ -243,8 +243,10 @@
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
 
     <!-- Credit Close Dialog-->
-    <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
-    <string name="credit_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
+    <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que querés salir?</string>
+    <string name="credit_close_dialog_gt_title" translatable="false">¿Estás seguro que quieres salir?</string>
+    <string name="credit_close_dialog_description" translatable="false">Podés retomar tu solicitud de crédito cuando querás.</string>
+    <string name="credit_close_dialog_gt_description" translatable="false">Puedes retomar tu solicitud de crédito cuando quieras</string>
     <string name="credit_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="credit_close_dialog_negative_button_text" translatable="false">Cancelar</string>
 
@@ -377,6 +379,19 @@
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
     <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regresés!</string>
 
+    <!-- Credit Details -->
+    <string name="credit_detail_max_credit" translatable="false">Línea máxima de crédito</string>
+    <string name="credit_detail_balance" translatable="false">Saldo a la fecha</string>
+    <string name="credit_detail_fee" translatable="false">Cuota</string>
+    <string name="credit_detail_min_payment" translatable="false">Pago mínimo</string>
+    <string name="credit_detail_overdue_fee" translatable="false">Cuotas vencidas</string>
+    <string name="credit_detail_iban" translatable="false">IBAN</string>
+    <string name="credit_detail_max_term" translatable="false">Plazo máximo</string>
+    <string name="credit_detail_number" translatable="false">Número de crédito</string>
+    <string name="credit_detail_title" translatable="false">Detalles de mi crédito</string>
+    <string name="credit_detail_client" translatable="false">Cliente</string>
+    <string name="credit_detail_iban_number" translatable="false">Numero de cuenta IBAN</string>
+
     <!-- Payment Fee -->
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>
     <string name="payment_fee_one_option" translatable="false">Cuota en</string>
@@ -390,5 +405,5 @@
     <string name="payment_account_create" translatable="false">Agregar cuenta</string>
     <string name="payment_account_masked_text" translatable="false">••••</string>
     <string name="payment_account_different_currency_dialog_title" translatable="false">Se aplicará el tipo de cambio</string>
-    <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente al de la cuenta</string>
+    <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente a la de la cuota.</string>
 </resources>

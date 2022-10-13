@@ -1,4 +1,14 @@
-query Balance($user:String!,$identification:String!,$idBrand:Int!,$idClient:Int!,$idLoanClient:Int!, $creditStatus:Int!, $accountStatus:Int!, $cryptoStatus:Int!, $cardStatus:Int!){
+query Balance(
+    $user: String!,
+    $identification: String!,
+    $idBrand: Int!,
+    $idClient: Int!,
+    $idLoanClient: Int!,
+    $creditStatus: Int!,
+    $accountStatus: Int!,
+    $cryptoStatus: Int!,
+    $cardStatus: Int!
+){
     balanceCredit(
         balanceCreditInput: {
             idBrand: $idBrand
@@ -6,6 +16,7 @@ query Balance($user:String!,$identification:String!,$idBrand:Int!,$idClient:Int!
             status: $creditStatus
         }
     ) {
+        pagare
         resumen {
             id_Moneda
             moneda
@@ -13,11 +24,17 @@ query Balance($user:String!,$identification:String!,$idBrand:Int!,$idClient:Int!
             saldo_Actual_Label
             saldo_Disponible
             saldo_Disponible_Label
+            pago_Minimo_Label
             fecha_Pago_Label
             cuota_Mensual
             cuota_Mensual_Label
+            dias_Vencidos
+            pagos_Vencidos
+            cuenta_Iban
             saldo_Monto_Cancelar
         }
+        limite_credito_label
+        plazo
     }
     balanceAccountSmart(
         checkAccountInput:{

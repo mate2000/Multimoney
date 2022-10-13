@@ -29,7 +29,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.*
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetCloseDialogTexts
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankScreen
@@ -75,7 +79,23 @@ fun CreditScreen(
         )
     }
 
-    viewModel.onUIEvent(OnInitializeText(stringResource(id = R.string.credit_close_dialog_description)))
+    if (viewModel.idBrand.isNotEmpty()) {
+        if (viewModel.idBrand.toInt() == Brand.Guatemala.id) {
+            viewModel.onUIEvent(
+                OnSetCloseDialogTexts(
+                    R.string.credit_close_dialog_gt_title,
+                    stringResource(id = R.string.credit_close_dialog_gt_description)
+                )
+            )
+        } else {
+            viewModel.onUIEvent(
+                OnSetCloseDialogTexts(
+                    R.string.credit_close_dialog_title,
+                    stringResource(id = R.string.credit_close_dialog_description)
+                )
+            )
+        }
+    }
 
     if (viewModel.uiState.lastStep != 1) {
         val stringId = viewModel.getLoadingString()

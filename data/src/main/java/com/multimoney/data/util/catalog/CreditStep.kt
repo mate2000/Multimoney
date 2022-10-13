@@ -8,6 +8,7 @@ sealed class CreditStep(val id: Int, val name: String) {
     object Five : CreditStep(5, "Origination_Step5")
     object Six : CreditStep(6, "Origination_Step6")
     object Seven : CreditStep(7, "Origination_Step7")
+    object Eight : CreditStep(8, "Origination_Step8")
 
     object Search {
         fun getIdByName(name: String?) = when (name) {
@@ -18,6 +19,7 @@ sealed class CreditStep(val id: Int, val name: String) {
             CreditStep.Five.name -> CreditStep.Five.id
             CreditStep.Six.name -> CreditStep.Six.id
             CreditStep.Seven.name -> CreditStep.Seven.id
+            CreditStep.Eight.name -> CreditStep.Eight.id
             else -> CreditStep.One.id
         }
 
@@ -29,6 +31,7 @@ sealed class CreditStep(val id: Int, val name: String) {
             CreditStep.Five.id -> CreditStep.Five.name
             CreditStep.Six.id -> CreditStep.Six.name
             CreditStep.Seven.id -> CreditStep.Seven.name
+            CreditStep.Eight.id -> CreditStep.Eight.name
             else -> CreditStep.One.name
         }
     }

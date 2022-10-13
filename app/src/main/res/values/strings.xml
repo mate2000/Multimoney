@@ -276,6 +276,11 @@
     <string name="credit_bank_select" translatable="false">Seleccionar</string>
     <string name="credit_bank_account_destiny" translatable="false">Banco de destino</string>
     <string name="credit_bank_account_type" translatable="false">Tipo de cuenta de destino</string>
+    <string name="credit_bank_account_number_hint" translatable="false">000000000</string>
+    <string name="credit_bank_account_number_required" translatable="false">Número de cuenta requerido</string>
+    <string name="credit_bank_account_number_label" translatable="false">Número de cuenta</string>
+    <string name="credit_bank_account_number_error" translatable="false">Revisar formato</string>
+    <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
 
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>

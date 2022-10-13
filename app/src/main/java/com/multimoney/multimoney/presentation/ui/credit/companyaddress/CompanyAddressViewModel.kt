@@ -296,7 +296,7 @@ class CompanyAddressViewModel @Inject constructor(
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
         if (idBrand == Brand.ElSalvador.id) {
-            saveCreditStepsHelper.saveStepThreeSV(
+            saveCreditStepsHelper.saveStepFourSV(
                 user,
                 companyProvince,
                 uiState.divisionOneSelected,
@@ -305,7 +305,7 @@ class CompanyAddressViewModel @Inject constructor(
                 uiState.address
             )
         } else {
-            saveCreditStepsHelper.saveStepThree(
+            saveCreditStepsHelper.saveStepFour(
                 user,
                 companyProvince,
                 uiState.divisionOneSelected,

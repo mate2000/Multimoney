@@ -153,7 +153,7 @@ data class MultimoneyColors(
     val bottomNavigationDividerColor: Color,
     val bottomNavigationIconSelectedColor: Color,
     val bottomNavigationIconUnselectedColor: Color,
-    val quickActionLabelColor:Color
+    val quickActionLabelColor: Color
 )
 
 val DarkColorPalette = MultimoneyColors(

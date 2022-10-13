@@ -36,6 +36,8 @@ import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticPositive700
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseFirstTime
@@ -449,6 +451,8 @@ fun CardCreditMaxAttempts(
 fun OngoingCredit(
     viewModel: ProductViewModel,
 ) {
+    viewModel.onUIEvent(OnProgressCalculation)
+    viewModel.onUIEvent(IsPaymentExpired)
     Column(modifier = Modifier
         .fillMaxWidth()
         .wrapContentHeight()
@@ -465,9 +469,7 @@ fun OngoingCredit(
             style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        CustomRoundedLinearProgress(progress = (viewModel.balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
-            ?: DEFAULT_PROGRESS) / (viewModel.balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
-            ?: DEFAULT_PROGRESS), modifier = Modifier
+        CustomRoundedLinearProgress(progress = viewModel.productProgress, modifier = Modifier
             .fillMaxWidth()
             .height(4.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
@@ -505,16 +507,14 @@ fun OngoingCredit(
             }
             Column(modifier = Modifier.weight(0.5F)) {
                 Text(
-                    text = stringResource(id = if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                            ?: 0) > 0
-                    ) R.string.home_product_expired else R.string.home_product_expiration),
+                    text = stringResource(id = viewModel.isExpiredTitle),
                     modifier = Modifier.padding(top = 4.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
                 )
                 Chip(
                     enabled = false,
-                    colors = ChipDefaults.chipColors(disabledBackgroundColor = SemanticPositive700,
+                    colors = ChipDefaults.chipColors(disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
                         disabledContentColor = MultimoneyTheme.colors.text),
                     modifier = Modifier
                         .height(28.dp)
@@ -544,7 +544,6 @@ fun OngoingCredit(
         }
     }
 }
-const val DEFAULT_PROGRESS = 1F
 
 sealed class CreditProcessStarted {
     object CreditAcceptContractRefuseFirstTime : CreditProcessStarted()

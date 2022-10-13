@@ -149,6 +149,7 @@ data class MultimoneyColors(
     val creditNotApprovedText: Color,
     val labelText: Color,
     val chipBackground: Color,
+    val productChipBackground: Color,
     val shimmerItemColor: Color,
     val bottomNavigationDividerColor: Color,
     val bottomNavigationIconSelectedColor: Color,
@@ -191,7 +192,8 @@ val DarkColorPalette = MultimoneyColors(
     dotIndicatorExpired = SemanticNegative400,
     arrowColor = Primary400,
     progressBackground = SemanticPositive800,
-    progressPercentage = DefaultWhite
+    progressPercentage = DefaultWhite,
+    productChipBackground = SemanticPositive700
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -224,7 +226,8 @@ val LightColorPalette = MultimoneyColors(
     dotIndicatorExpired = SemanticNegative400,
     arrowColor = Primary400,
     progressBackground = SemanticPositive800,
-    progressPercentage = DefaultWhite
+    progressPercentage = DefaultWhite,
+    productChipBackground = SemanticPositive700
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

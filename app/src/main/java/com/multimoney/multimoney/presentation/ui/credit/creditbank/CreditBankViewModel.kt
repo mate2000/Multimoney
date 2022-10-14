@@ -55,7 +55,7 @@ class CreditBankViewModel @Inject constructor(
                 bankList = bank?.subOptions?.filter { filter ->
                     filter?.description != MIDDLE_DASH
                 }
-                uiState = uiState.copy(backList = bankList)
+                uiState = uiState.copy(bankList = bankList)
                 if (!bank?.pkCatalog.isNullOrEmpty()) {
                     loadStepsInfo(list)
                 }
@@ -135,7 +135,7 @@ class CreditBankViewModel @Inject constructor(
     data class UIState(
         val accountNumber: String = "",
         val accountNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        val backList: List<CreditCatalogOption?>? = listOf(),
+        val bankList: List<CreditCatalogOption?>? = listOf(),
         val bankSelected: CreditCatalogOption? = null,
         val accountTypeListFiltered: List<RegularExpression?>? = listOf(),
         val accountTypeSelectedString: String = "",

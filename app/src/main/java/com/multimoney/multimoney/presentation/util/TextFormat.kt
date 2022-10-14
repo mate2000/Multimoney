@@ -8,6 +8,9 @@ private const val TIME_FORMAT = "%02d:%02d"
 private const val INTEGER_FORMAT_SEPARATOR = ","
 private const val INTEGER_FORMAT =
     "###$INTEGER_FORMAT_SEPARATOR###$INTEGER_FORMAT_SEPARATOR###$INTEGER_FORMAT_SEPARATOR###"
+private const val DOUBLE_FORMAT_SEPARATOR = ","
+private const val DOUBLE_FORMAT =
+    "###$DOUBLE_FORMAT_SEPARATOR###$DOUBLE_FORMAT_SEPARATOR###$DOUBLE_FORMAT_SEPARATOR###.##"
 
 // Convert time to milli seconds
 fun Duration.format(): String {
@@ -26,6 +29,16 @@ fun String.stringToIntegerFormat(separator: String? = null): String =
         DecimalFormat(INTEGER_FORMAT).format(toDouble())
     } else if (isValidAmount() && separator != null) {
         DecimalFormat(INTEGER_FORMAT.replace(INTEGER_FORMAT_SEPARATOR, separator)).format(toDouble())
+    } else {
+        this
+    }
+
+// Format String to Integer decimal format
+fun String.stringToDoubleFormat(separator: String? = null): String =
+    if (isValidAmount() && separator == null) {
+        DecimalFormat(DOUBLE_FORMAT).format(toDouble())
+    } else if (isValidAmount() && separator != null) {
+        DecimalFormat(DOUBLE_FORMAT.replace(DOUBLE_FORMAT_SEPARATOR, separator)).format(toDouble())
     } else {
         this
     }

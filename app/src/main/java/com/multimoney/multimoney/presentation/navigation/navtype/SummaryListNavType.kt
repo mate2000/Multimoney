@@ -1,6 +1,5 @@
-package com.multimoney.multimoney.presentation.util.customnavtype
+package com.multimoney.multimoney.presentation.navigation.navtype
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavType
 import com.google.gson.Gson
@@ -21,9 +20,4 @@ class SummaryListNavType : NavType<List<Summary>>(isNullableAllowed = false) {
     override fun put(bundle: Bundle, key: String, value: List<Summary>) {
         bundle.putParcelableArray(key, value.toTypedArray())
     }
-}
-
-fun encodeData(list: List<Summary>?): String {
-    val listType = object : TypeToken<ArrayList<Summary?>?>() {}.type
-    return Uri.encode(Gson().toJson(list, listType))
 }

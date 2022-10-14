@@ -65,7 +65,6 @@ fun CreditAmountScreen(
     sharedViewModel: CreditViewModel = hiltViewModel(),
     viewModel: CreditAmountViewModel = hiltViewModel()
 ) {
-
     // Properties
     val focusManager = LocalFocusManager.current
 
@@ -80,37 +79,39 @@ fun CreditAmountScreen(
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(true))
-        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(
-                CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase(
-                    pkUser = sharedViewModel.pkUser,
-                    descPromotion = "",
-                    idPromotion = 1,
-                    user = sharedViewModel.email,
-                    idBrand = sharedViewModel.idBrand.toInt(),
-                    onSuccess = { screenConfigData ->
-                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnUpdateScreenConfigData(screenConfigData))
-                        sharedViewModel.onUIEvent(
-                            CreditViewModel.UIEvent.OnNextStep
-                        )
-                    },
-                    onLoadingValueChange = { isLoading ->
-                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
-                    },
-                    onFailureWithDialog = { isLoading, dialogParameter ->
-                        sharedViewModel.onUIEvent(
-                            CreditViewModel.UIEvent.OnFailureWithDialog(
-                                isLoading,
-                                dialogParameter
+        sharedViewModel.onUIEvent(
+            CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
+                viewModel.onUIEvent(
+                    CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase(
+                        pkUser = sharedViewModel.pkUser,
+                        descPromotion = "",
+                        idPromotion = 1,
+                        user = sharedViewModel.email,
+                        idBrand = sharedViewModel.idBrand.toInt(),
+                        onSuccess = { screenConfigData ->
+                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnUpdateScreenConfigData(screenConfigData))
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnNextStep
                             )
-                        )
-                    },
-                    onCurrencySymbolValueChange = { currencySymbol ->
-                        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnCurrencySymbolValueChange(currencySymbol))
-                    }
+                        },
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                        },
+                        onFailureWithDialog = { isLoading, dialogParameter ->
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading,
+                                    dialogParameter
+                                )
+                            )
+                        },
+                        onCurrencySymbolValueChange = { currencySymbol ->
+                            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnCurrencySymbolValueChange(currencySymbol))
+                        }
+                    )
                 )
-            )
-        }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id))
+            }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id)
+        )
 
         viewModel.onUIEvent(
             CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase(
@@ -225,7 +226,8 @@ fun CreditAmountScreen(
                                         dialogParameter
                                     )
                                 )
-                            })
+                            }
+                        )
                     )
                 }
             )
@@ -255,9 +257,11 @@ fun CreditAmountScreen(
                                         dialogParameter
                                     )
                                 )
-                            })
+                            }
+                        )
                     )
-                })
+                }
+            )
 
             Divider(
                 modifier = Modifier
@@ -314,7 +318,7 @@ fun CreditAmountScreen(
                             )
                         )
                     },
-                    text = stringResource(id = R.string.credit_amount_term_and_conditions_first),
+                    text = stringResource(id = R.string.credit_amount_term_and_conditions_first)
                 )
                 ClickableText(
                     text = AnnotatedString(stringResource(id = R.string.credit_amount_term_and_conditions_second)),
@@ -373,7 +377,8 @@ fun CreditInfo(iconId: Int, textId: Int, value: String) {
         Text(
             text = value,
             style = Typography.subtitle1.copy(
-                fontWeight = FontWeight.SemiBold, platformStyle = PlatformTextStyle(
+                fontWeight = FontWeight.SemiBold,
+                platformStyle = PlatformTextStyle(
                     includeFontPadding = false
                 )
             ),

@@ -1,5 +1,9 @@
 package com.multimoney.domain.model.credit
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class ClientBankAccount(
     val id: Int?,
     val idBank: Int?,
@@ -7,4 +11,4 @@ data class ClientBankAccount(
     val accountNumber: String?,
     val idCurrency: Int?,
     val idCurrencyDestination: Int?
-)
+) : Parcelable

@@ -1,10 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.payment.account
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
+import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -12,11 +12,12 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnSetIdCurrency
+import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnSaveArguments
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.Currency
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,25 +34,45 @@ class PaymentAccountViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var idCurrency: Int? = null
+    private var user: String = ""
+    private var idBrand: Int = 0
+    private var idClient: Int = 0
+    private var idLoanClient: Int = 0
+    private var summaryList: List<Summary?>? = null
+    private var idCurrency: Int? = 0
 
-    private fun setCurrency(idCurrency: Int) {
-        this.idCurrency = idCurrency
+    private fun onSaveArguments(
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        summaryList: List<Summary>
+    ) {
+        this.user = user
+        this.idBrand = idBrand
+        this.idClient = idClient
+        this.idLoanClient = idLoanClient
+        this.summaryList = summaryList
+        idCurrency = if (summaryList.count() > 1) {
+            Currency.All.id
+        } else {
+            summaryList.first().idCurrency
+        }
     }
 
     private fun getTextResources() {
         uiState = uiState.copy(
-            titleResource = Currency.Search.getAccountIconByIdCurrency(idCurrency).accountTitle
+            titleResource = Currency.Search.getCurrencyByIdCurrency(idCurrency).accountTitle
         )
     }
 
-    private fun onCallQueryGetClientBankAccountUseCase(user: String, idBrand: Int, idClient: Int, idLoan: Int) {
+    private fun onCallQueryGetClientBankAccountUseCase() {
         executeUseCase {
             queryGetClientBankAccountUseCase.invoke(
                 user = user,
                 idBrand = idBrand,
                 idClient = idClient,
-                idLoan = idLoan
+                idLoan = idLoanClient
             ).collectLatest { result ->
                 result.onSuccess { clientBankAccountList ->
                     uiState = uiState.copy(isLoading = false, clientBankAccountList = clientBankAccountList)
@@ -70,22 +91,42 @@ class PaymentAccountViewModel @Inject constructor(
         }
     }
 
-    private fun onClientBankAccountSelected(accountIdCurrency: Int) {
-        if (idCurrency != accountIdCurrency) {
+    private fun onClientBankAccountSelected(clientBankAccount: ClientBankAccount?) {
+        if (idCurrency != clientBankAccount?.idCurrency) {
             uiState = uiState.copy(
                 openDialog = DialogParameters(
                     titleResource = R.string.payment_account_different_currency_dialog_title,
                     descriptionResource = R.string.payment_account_different_currency_dialog_description,
                     isActive = mutableStateOf(true),
                     positiveAction = {
-                        navigateTo(route = Screen.PaymentAmountScreen.route)
+                        navigateTo(
+                            route = "${Screen.PaymentAmountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+                            encodeData(
+                                summaryList
+                            )
+                            }/${encodeData(clientBankAccount)}"
+                        )
                     }
                 )
             )
-        }else{
-
-            navigateTo(route = Screen.PaymentAmountScreen.route)
+        } else {
+            navigateTo(
+                route = "${Screen.PaymentAmountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+                encodeData(
+                    summaryList
+                )
+                }/${encodeData(clientBankAccount)}"
+            )
         }
+    }
+
+    private fun onNavigateBack() {
+        val route = if ((summaryList?.count() ?: 0) > 1) {
+            "${Screen.PaymentFeeScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(summaryList)}"
+        } else {
+            Screen.HomeScreen.route
+        }
+        popAndNavigateTo(route = route, popTo = Screen.PaymentAccountScreen.route)
     }
 
     fun getMaskedAccount(accountNumber: String, maskedText: String) =
@@ -101,32 +142,32 @@ class PaymentAccountViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNavigateBack -> popAndNavigateTo(
-                route = Screen.PaymentFeeScreen.route,
-                popTo = Screen.PaymentAccountScreen.route
-            )
-            is OnSetIdCurrency -> setCurrency(uiEvent.idCurrency)
-            is OnGetTextResources -> getTextResources()
-            is OnCallQueryGetClientBankAccount -> onCallQueryGetClientBankAccountUseCase(
+            is OnNavigateBack -> onNavigateBack()
+            is OnSaveArguments -> onSaveArguments(
                 user = uiEvent.user,
                 idBrand = uiEvent.idBrand,
                 idClient = uiEvent.idClient,
-                idLoan = uiEvent.idLoan
+                idLoanClient = uiEvent.idLoanClient,
+                summaryList = uiEvent.summaryList
             )
-            is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.accountIdCurrency)
+            is OnGetTextResources -> getTextResources()
+            is OnCallQueryGetClientBankAccount -> onCallQueryGetClientBankAccountUseCase()
+            is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount)
         }
     }
 
     sealed class UIEvent {
-        class OnSetIdCurrency(val idCurrency: Int) : UIEvent()
-        class OnCallQueryGetClientBankAccount(
+        class OnSaveArguments(
             val user: String,
             val idBrand: Int,
             val idClient: Int,
-            val idLoan: Int
+            val idLoanClient: Int,
+            val summaryList: List<Summary>
         ) : UIEvent()
 
-        class OnClientBankAccountSelected(val accountIdCurrency: Int) : UIEvent()
+        class OnCallQueryGetClientBankAccount() : UIEvent()
+
+        class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
         object OnGetTextResources : UIEvent()
         object OnNavigateBack : UIEvent()
     }

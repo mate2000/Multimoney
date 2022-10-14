@@ -1,11 +1,10 @@
 package com.multimoney.multimoney.presentation.navigation
 
+import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
-import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
@@ -43,7 +42,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SignUpScreen : Screen("sign_up_screen/{$SIGN_UP_STEP}", "sign_up_screen")
 
     object SignUpSplashComeBackScreen : Screen(
-        "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}", "sign_up_splash_come_back_screen"
+        "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}",
+        "sign_up_splash_come_back_screen"
     )
 
     object SignUpCompleted : Screen("sign_up_completed")
@@ -53,7 +53,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(
-        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}", "credit_screen"
+        "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}",
+        "credit_screen"
     )
 
     // VisaNavGraph
@@ -83,11 +84,14 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object PaymentAccountScreen :
         Screen(
-            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CURRENCY}/{$ID_CURRENCY}",
+            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}",
             "payment_account_screen"
         )
 
-    object PaymentAmountScreen : Screen("payment_amount_screen")
+    object PaymentAmountScreen : Screen(
+        "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}",
+        "payment_amount_screen"
+    )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

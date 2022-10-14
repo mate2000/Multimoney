@@ -28,14 +28,21 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnMaximumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnMinimumPaymentButtonClick
-import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnSetParameters
+import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnSaveArguments
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -43,7 +50,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
+import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
 @Composable
 fun PaymentAmountScreen(
@@ -56,7 +63,18 @@ fun PaymentAmountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(OnSetParameters(minimumPayment = 5000, maximumPayment = 35000))
+            navBackStackEntry.arguments?.apply {
+                viewModel.onUIEvent(
+                    OnSaveArguments(
+                        getString(USER),
+                        getInt(ID_BRAND),
+                        getInt(ID_CLIENT),
+                        getInt(ID_LOAN_CLIENT),
+                        (get(SUMMARY_LIST) as Array<Summary>).toList(),
+                        getParcelable(CLIENT_BANK_ACCOUNT)
+                    )
+                )
+            }
         }
     }
 
@@ -133,35 +151,37 @@ fun PaymentAmountScreen(
                     isSelected = viewModel.uiState.isMaximumSelected
                 )
             }
-            CurrencyAmountInput(
-                modifier = Modifier.padding(top = 24.dp),
-                value = viewModel.uiState.currentAmountValueString,
-                placeHolder = viewModel.uiState.currentAmountValueString,
-                onValueChange = {
-                    viewModel.onUIEvent(UIEvent.OnAmountValueChange(it))
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.clearFocus()
-                }),
-                isRequired = true,
-                isRequiredMessage = stringResource(
-                    id = R.string.payment_amount_amount_min_error,
-                    viewModel.getFormattedCurrency()
-                ),
-                isError = viewModel.uiState.currentAmountError.first,
-                errorMessage = stringResource(
-                    id = viewModel.uiState.currentAmountError.second,
-                    viewModel.getFormattedCurrency()
-                ),
-                customTransformation = CurrencyIntegerTransformation(
-                    viewModel.uiState.currency,
-                    CreditAmountViewModel.CURRENCY_SEPARATOR
+            if (viewModel.uiState.isAmountVisible) {
+                CurrencyAmountInput(
+                    modifier = Modifier.padding(top = 24.dp),
+                    value = viewModel.uiState.currentAmountValueString,
+                    placeHolder = viewModel.uiState.currentAmountValueString,
+                    onValueChange = {
+                        viewModel.onUIEvent(UIEvent.OnAmountValueChange(it))
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    isRequired = true,
+                    isRequiredMessage = stringResource(
+                        id = R.string.payment_amount_amount_min_error,
+                        viewModel.getFormattedCurrency()
+                    ),
+                    isError = viewModel.uiState.currentAmountError.first,
+                    errorMessage = stringResource(
+                        id = viewModel.uiState.currentAmountError.second,
+                        viewModel.getFormattedCurrency()
+                    ),
+                    customTransformation = CurrencyDoubleTransformation(
+                        viewModel.uiState.currency,
+                        CreditAmountViewModel.CURRENCY_SEPARATOR
+                    )
                 )
-            )
+            }
         }
         CustomButton(
             modifier = Modifier

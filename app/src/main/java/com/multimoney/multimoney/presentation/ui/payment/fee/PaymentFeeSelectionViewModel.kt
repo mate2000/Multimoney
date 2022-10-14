@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnNavigateToPaymentAccount
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnSaveArguments
@@ -26,9 +27,12 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
-
     private fun onSaveArguments(
-        user: String?, idBrand: Int?, idClient: Int?, idLoanClient: Int?, summaryList: List<Summary>
+        user: String?,
+        idBrand: Int?,
+        idClient: Int?,
+        idLoanClient: Int?,
+        summaryList: List<Summary?>?
     ) {
         this.user = user
         this.idBrand = idBrand
@@ -38,7 +42,18 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun onNavigateToPaymentAccount(currency: Currency) {
-        navigateTo(route = "${Screen.PaymentAccountScreen.baseRoute}/${user}/${idBrand}/${idClient}/${idLoanClient}/${currency.value}/${currency.id}")
+        val summaryList = if (currency.id != Currency.All.id) {
+            listOf(uiState.summaryList?.firstOrNull { it?.idCurrency == currency.id })
+        } else {
+            uiState.summaryList
+        }
+        navigateTo(
+            route = "${Screen.PaymentAccountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+            encodeData(
+                summaryList
+            )
+            }"
+        )
     }
 
     private fun onNavigateBack() {
@@ -47,9 +62,9 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun getAllQuotas(plusString: String): String {
         val quotas = StringBuilder()
-        uiState.summaryList.forEachIndexed { index, summary ->
-            quotas.append(summary.monthlyQuotaLabel)
-            if (uiState.summaryList.lastIndex != index) {
+        uiState.summaryList?.forEachIndexed { index, summary ->
+            quotas.append(summary?.monthlyQuotaLabel)
+            if (uiState.summaryList?.lastIndex != index) {
                 quotas.append(plusString)
             }
         }
@@ -57,13 +72,17 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     data class UIState(
-        var summaryList: List<Summary> = listOf()
+        var summaryList: List<Summary?>? = listOf()
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnSaveArguments -> onSaveArguments(
-                event.user, event.idBrand, event.idClient, event.idLoanClient, event.summaryList
+                event.user,
+                event.idBrand,
+                event.idClient,
+                event.idLoanClient,
+                event.summaryList
             )
             is OnNavigateToPaymentAccount -> onNavigateToPaymentAccount(event.currency)
             is OnNavigateBack -> onNavigateBack()
@@ -72,7 +91,11 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
 
     sealed class UIEvent {
         data class OnSaveArguments(
-            val user: String?, val idBrand: Int?, val idClient: Int?, val idLoanClient: Int?, val summaryList: List<Summary>
+            val user: String?,
+            val idBrand: Int?,
+            val idClient: Int?,
+            val idLoanClient: Int?,
+            val summaryList: List<Summary>
         ) : UIEvent()
 
         data class OnNavigateToPaymentAccount(val currency: Currency) : UIEvent()

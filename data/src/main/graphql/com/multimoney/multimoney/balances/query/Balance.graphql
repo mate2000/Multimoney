@@ -24,6 +24,7 @@ query Balance(
             saldo_Actual_Label
             saldo_Disponible
             saldo_Disponible_Label
+            pago_Minimo
             pago_Minimo_Label
             fecha_Pago_Label
             cuota_Mensual

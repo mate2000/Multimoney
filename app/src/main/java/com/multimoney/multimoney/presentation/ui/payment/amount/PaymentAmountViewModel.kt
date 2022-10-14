@@ -3,14 +3,17 @@ package com.multimoney.multimoney.presentation.ui.payment.amount
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.domain.model.balance.Summary
+import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnMaximumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnMinimumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnSetParameters
+import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountViewModel.UIEvent.OnSaveArguments
 import javax.inject.Inject
 
 class PaymentAmountViewModel @Inject constructor() : BaseViewModel(true) {
@@ -19,14 +22,76 @@ class PaymentAmountViewModel @Inject constructor() : BaseViewModel(true) {
         private set
 
     // Stateless
+    private var user: String? = null
+    private var idBrand: Int? = null
+    private var idClient: Int? = null
+    private var idLoanClient: Int? = null
+    private var summaryList: List<Summary>? = null
+    private var clientBankAccount: ClientBankAccount? = null
     private var minimumPayment: Int = 0
     private var maximumPayment: Int = 0
 
-    private fun onSetParameters(minimumPayment: Int, maximumPayment: Int) {
-        this.minimumPayment = minimumPayment
-        this.maximumPayment = maximumPayment
+    private fun onSaveArguments(
+        user: String?,
+        idBrand: Int?,
+        idClient: Int?,
+        idLoanClient: Int?,
+        summaryList: List<Summary>,
+        clientBankAccount: ClientBankAccount?
+    ) {
+        this.user = user
+        this.idBrand = idBrand
+        this.idClient = idClient
+        this.idLoanClient = idLoanClient
+        this.summaryList = summaryList
+        this.clientBankAccount = clientBankAccount
 
+        var minimumPaymentLabel = ""
+        var maximumPaymentLabel = ""
+        var isAmountVisible = false
+        if (summaryList.count() == 1) {
+            val summary = summaryList.first()
+            minimumPaymentLabel = summary.minPaymentLabel.orEmpty()
+            maximumPaymentLabel = summary.currentBalanceLabel.orEmpty()
+            minimumPayment = summary.minPayment?.toInt() ?: 0
+            maximumPayment = summary.currentBalance?.toInt() ?: 0
+            isAmountVisible = true
+        } else {
+            summaryList.forEachIndexed { index, summary ->
+                if (index < summaryList.lastIndex) {
+                    minimumPaymentLabel = minimumPaymentLabel.plus(summary.minPaymentLabel).plus(PAYMENT_PLUS)
+                    maximumPaymentLabel = maximumPaymentLabel.plus(summary.currentBalanceLabel).plus(PAYMENT_PLUS)
+                } else {
+                    minimumPaymentLabel = minimumPaymentLabel.plus(summary.minPaymentLabel)
+                    maximumPaymentLabel = maximumPaymentLabel.plus(summary.currentBalanceLabel)
+                }
+            }
+        }
+        uiState = uiState.copy(
+            minimumPaymentLabel = minimumPaymentLabel,
+            maximumPaymentLabel = maximumPaymentLabel,
+            isAmountVisible = isAmountVisible,
+            currency = minimumPaymentLabel.first().toString()
+        )
         onAmountValueChange(minimumPayment.toString())
+    }
+
+    private fun onPaymentButtonClick(isMinimumSelected: Boolean) {
+        uiState = uiState.copy(
+            currentAmountValueString = if (uiState.isAmountVisible) {
+                if (isMinimumSelected) {
+                    minimumPayment.toString()
+                } else {
+                    maximumPayment.toString()
+                }
+            } else {
+                uiState.currentAmountValueString
+            },
+            isMinimumSelected = isMinimumSelected,
+            isMaximumSelected = !isMinimumSelected,
+            enableButton = true,
+            currentAmountError = Pair(false, R.string.empty)
+        )
     }
 
     private fun onAmountValueChange(value: String) {
@@ -48,6 +113,17 @@ class PaymentAmountViewModel @Inject constructor() : BaseViewModel(true) {
         )
     }
 
+    private fun onNavigateBack() {
+        popAndNavigateTo(
+            route = "${Screen.PaymentAccountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+            encodeData(
+                summaryList
+            )
+            }",
+            popTo = Screen.PaymentAmountScreen.route
+        )
+    }
+
     fun getFormattedCurrency() =
         if (uiState.currentAmountValueString.isNotEmpty() && uiState.currentAmountValueString.toInt() > maximumPayment) {
             uiState.maximumPaymentLabel
@@ -57,38 +133,52 @@ class PaymentAmountViewModel @Inject constructor() : BaseViewModel(true) {
 
     data class UIState(
         // Interactions
-        val minimumPaymentLabel: String = "$5000",
-        val maximumPaymentLabel: String = "$35000",
+        val minimumPaymentLabel: String = "",
+        val maximumPaymentLabel: String = "",
         val isMinimumSelected: Boolean = false,
         val isMaximumSelected: Boolean = false,
         val currency: String = "$",
         val currentAmountValueString: String = "0",
         val currentAmountError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
-        val enableButton: Boolean = false
+        val enableButton: Boolean = false,
+        val isAmountVisible: Boolean = true
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNavigateBack -> popAndNavigateTo(
-                route = Screen.PaymentAccountScreen.route,
-                popTo = Screen.PaymentAmountScreen.route
-            )
+            is OnNavigateBack -> onNavigateBack()
             is OnAmountValueChange -> onAmountValueChange(uiEvent.value)
-            is OnMinimumPaymentButtonClick -> onAmountValueChange(minimumPayment.toString())
-            is OnMaximumPaymentButtonClick -> onAmountValueChange(maximumPayment.toString())
-            is OnSetParameters -> onSetParameters(uiEvent.minimumPayment, uiEvent.maximumPayment)
+            is OnMinimumPaymentButtonClick -> onPaymentButtonClick(true)
+            is OnMaximumPaymentButtonClick -> onPaymentButtonClick(false)
+            is OnSaveArguments -> onSaveArguments(
+                user = uiEvent.user,
+                idBrand = uiEvent.idBrand,
+                idClient = uiEvent.idClient,
+                idLoanClient = uiEvent.idLoanClient,
+                summaryList = uiEvent.summaryList,
+                clientBankAccount = uiEvent.clientBankAccount
+            )
         }
     }
 
     sealed class UIEvent {
+        class OnSaveArguments(
+            val user: String?,
+            val idBrand: Int?,
+            val idClient: Int?,
+            val idLoanClient: Int?,
+            val summaryList: List<Summary>,
+            val clientBankAccount: ClientBankAccount?
+        ) : UIEvent()
+
         object OnNavigateBack : UIEvent()
         object OnMinimumPaymentButtonClick : UIEvent()
         object OnMaximumPaymentButtonClick : UIEvent()
-        class OnSetParameters(val minimumPayment: Int, val maximumPayment: Int) : UIEvent()
         data class OnAmountValueChange(val value: String) : UIEvent()
     }
 
     companion object {
         const val PAYMENT_MUST_HIGHER_THAN_VALUE = 0
+        const val PAYMENT_PLUS = " + "
     }
 }

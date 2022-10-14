@@ -63,6 +63,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
@@ -75,7 +76,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Preview
 fun ProductScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: ProductViewModel = hiltViewModel(),
+    viewModel: ProductViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnGetIdBrand)
@@ -107,49 +108,59 @@ fun ProductScreen(
                     viewModel = viewModel
                 )
             }, secondaryHeader = { backPressed ->
-                Box(
-                    contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MultimoneyTheme.colors.background)
-                ) {
-                    TopNavBar(
-                        isRightButtonVisible = false,
-                        onLeftButtonClick = {
-                            backPressed()
-                        }
-                    )
-                }
-            }, content = { modifier, headerText ->
-                Products(
-                    modifier = modifier,
-                    pages = NUMBER_PAGES,
-                    state = productPagerState,
-                    viewModel = viewModel,
-                    headerText
-                )
-            }, footer = {
-                ProductExtras(
-                    modifier = Modifier.padding(top = 16.dp),
-                    pages = NUMBER_PAGES,
-                    state = bottomPagerState,
-                    viewModel = viewModel
-                )
-            }, secondaryFooter = {
-                CustomBoxVisaBackground(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = {
-                        // todo Add logic when the user click the button
-                        // TODO: Remove this button when all functionalities are implemented
-                        viewModel.popAndNavigateTo(
-                            route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
-                            popTo = Screen.AlertResultScreen.baseRoute
+                    Box(
+                        contentAlignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MultimoneyTheme.colors.background)
+                    ) {
+                        TopNavBar(
+                            isRightButtonVisible = false,
+                            onLeftButtonClick = {
+                                backPressed()
+                            }
                         )
-                    },
-                    type = RequestCreditCard
-                )
-            }, totalPages = NUMBER_PAGES)
+                    }
+                }, content = { modifier, headerText ->
+                    Products(
+                        modifier = modifier,
+                        pages = NUMBER_PAGES,
+                        state = productPagerState,
+                        viewModel = viewModel,
+                        headerText
+                    )
+                }, footer = {
+                    ProductExtras(
+                        modifier = Modifier.padding(top = 16.dp),
+                        pages = NUMBER_PAGES,
+                        state = bottomPagerState,
+                        viewModel = viewModel
+                    )
+                }, secondaryFooter = {
+                    CustomBoxVisaBackground(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        onClick = {
+                            // todo Add logic when the user click the button
+                            // TODO: Remove this button when all functionalities are implemented
+                            viewModel.popAndNavigateTo(
+                                route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
+                                popTo = Screen.AlertResultScreen.baseRoute
+                            )
+                        },
+                        type = RequestCreditCard
+                    )
+                }, totalPages = NUMBER_PAGES)
         }
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }
 
@@ -217,7 +228,7 @@ fun Products(
     pages: Int,
     state: PagerState,
     viewModel: ProductViewModel,
-    headerText: Int,
+    headerText: Int
 ) {
     Column(modifier = modifier) {
         // TODO add dynamic titles when other products are implemented
@@ -362,7 +373,8 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
                     viewModel.onUIEvent(OnNavigateToPaymentProcess)
-                }) {
+                }
+        ) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,
                 modifier = Modifier

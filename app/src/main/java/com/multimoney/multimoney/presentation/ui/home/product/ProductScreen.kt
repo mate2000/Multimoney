@@ -68,6 +68,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
@@ -80,7 +81,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Preview
 fun ProductScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: ProductViewModel = hiltViewModel(),
+    viewModel: ProductViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnGetIdBrand)
@@ -112,41 +113,51 @@ fun ProductScreen(
                     viewModel = viewModel
                 )
             }, secondaryHeader = { backPressed ->
-                Box(
-                    contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MultimoneyTheme.colors.background)
-                ) {
-                    TopNavBar(
-                        isRightButtonVisible = false,
-                        onLeftButtonClick = {
-                            backPressed()
-                        }
+                    Box(
+                        contentAlignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MultimoneyTheme.colors.background)
+                    ) {
+                        TopNavBar(
+                            isRightButtonVisible = false,
+                            onLeftButtonClick = {
+                                backPressed()
+                            }
+                        )
+                    }
+                }, content = { modifier, headerText ->
+                    Products(
+                        modifier = modifier,
+                        pages = NUMBER_PAGES,
+                        state = productPagerState,
+                        viewModel = viewModel,
+                        headerText
                     )
-                }
-            }, content = { modifier, headerText ->
-                Products(
-                    modifier = modifier,
-                    pages = NUMBER_PAGES,
-                    state = productPagerState,
-                    viewModel = viewModel,
-                    headerText
-                )
-            }, footer = {
-                ProductExtras(
-                    modifier = Modifier.padding(top = 16.dp),
-                    pages = NUMBER_PAGES,
-                    state = bottomPagerState,
-                    viewModel = viewModel
-                )
-            }, secondaryFooter = {
-                CreditDetail(
-                    modifier = Modifier.background(color = MultimoneyTheme.colors.creditDetailBackground),
-                    viewModel = viewModel
-                )
-            }, totalPages = NUMBER_PAGES)
+                }, footer = {
+                    ProductExtras(
+                        modifier = Modifier.padding(top = 16.dp),
+                        pages = NUMBER_PAGES,
+                        state = bottomPagerState,
+                        viewModel = viewModel
+                    )
+                }, secondaryFooter = {
+                    CreditDetail(
+                        modifier = Modifier.background(color = MultimoneyTheme.colors.creditDetailBackground),
+                        viewModel = viewModel
+                    )
+                }, totalPages = NUMBER_PAGES)
         }
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }
 
@@ -214,7 +225,7 @@ fun Products(
     pages: Int,
     state: PagerState,
     viewModel: ProductViewModel,
-    headerText: Int,
+    headerText: Int
 ) {
     Column(modifier = modifier) {
         // TODO add dynamic titles when other products are implemented
@@ -264,8 +275,10 @@ fun CreditProduct(viewModel: ProductViewModel) {
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
             CreditStatus.EXIST_IN_CORE.status -> {
-                CustomProductBackground(modifier = Modifier.padding(horizontal = 16.dp),
-                    type = Primary) {
+                CustomProductBackground(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    type = Primary
+                ) {
                     OngoingCredit(viewModel)
                 }
             }
@@ -368,7 +381,8 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
                     viewModel.onUIEvent(OnNavigateToPaymentProcess)
-                }) {
+                }
+        ) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,
                 modifier = Modifier
@@ -419,10 +433,12 @@ fun TipBox(content: @Composable () -> Unit) {
 
 @Composable
 fun ProductDetails(viewModel: ProductViewModel) {
-    Box(Modifier
-        .fillMaxSize()
-        .background(MultimoneyTheme.colors.background)
-        .padding(horizontal = 16.dp)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background)
+            .padding(horizontal = 16.dp)
+    ) {
         Row(Modifier.fillMaxWidth()) {
             Text(
                 text = stringResource(R.string.home_product_movement_title),
@@ -447,9 +463,11 @@ fun ProductDetails(viewModel: ProductViewModel) {
             )
             LazyColumn {
                 items(viewModel.getProductMovement()) { movement ->
-                    ProductMovement(title = movement.title,
+                    ProductMovement(
+                        title = movement.title,
                         date = movement.date,
-                        value = movement.amount)
+                        value = movement.amount
+                    )
                 }
             }
         }
@@ -458,28 +476,40 @@ fun ProductDetails(viewModel: ProductViewModel) {
 
 @Composable
 fun ProductMovement(title: String, date: String, value: String) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(bottom = 8.dp, top = 8.dp)) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp, top = 8.dp)
+    ) {
         Column(modifier = Modifier.weight(0.8f)) {
-            Text(text = title,
+            Text(
+                text = title,
                 style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText)
-            Text(text = date,
+                color = MultimoneyTheme.colors.labelText
+            )
+            Text(
+                text = date,
                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText)
+                color = MultimoneyTheme.colors.labelText
+            )
         }
         Row(Modifier.weight(0.2f)) {
-            CustomImage(modifier = Modifier.align(Alignment.CenterVertically),
-                drawableResource = R.drawable.ic_close)
-            Text(text = value,
+            CustomImage(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                drawableResource = R.drawable.ic_close
+            )
+            Text(
+                text = value,
                 style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText)
+                color = MultimoneyTheme.colors.labelText
+            )
         }
     }
-    Divider(color = MultimoneyTheme.colors.bottomNavigationDividerColor,
+    Divider(
+        color = MultimoneyTheme.colors.bottomNavigationDividerColor,
         thickness = 1.dp,
-        modifier = Modifier.fillMaxWidth())
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 private const val NUMBER_PAGES = 2

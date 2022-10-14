@@ -67,7 +67,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ALERT_RESULT_ICON) { type = NavType.IntType },
                 navArgument(ALERT_RESULT_TITLE) { type = NavType.IntType },
                 navArgument(ALERT_RESULT_DESCRIPTION) { type = NavType.IntType },
-                navArgument(ALERT_RESULT_BUTTON_TEXT) { type = NavType.IntType })
+                navArgument(ALERT_RESULT_BUTTON_TEXT) { type = NavType.IntType }
+            )
         ) { navBackStackEntry ->
             AlertResultScreen(
                 navBackStackEntry = navBackStackEntry,

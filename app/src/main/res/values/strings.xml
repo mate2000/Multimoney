@@ -417,4 +417,12 @@
     <string name="payment_account_masked_text" translatable="false">••••</string>
     <string name="payment_account_different_currency_dialog_title" translatable="false">Se aplicará el tipo de cambio</string>
     <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente a la de la cuota.</string>
+
+    <!-- Payment Amount -->
+    <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
+    <string name="payment_amount_subtitle" translatable="false">Tu cuota mínima debe ser igual o mayor a</string>
+    <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
+    <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
+    <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
+    <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
 </resources>

@@ -41,7 +41,6 @@ fun PaymentFeeSelectionScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: PaymentFeeSelectionViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
         navBackStackEntry.arguments?.apply {
@@ -62,9 +61,13 @@ fun PaymentFeeSelectionScreen(
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
     ) {
-        TopNavBar(isRightButtonVisible = false, onLeftButtonClick = {
-            viewModel.onUIEvent(OnNavigateBack)
-        })
+        TopNavBar(
+            isRightButtonVisible = false,
+            onLeftButtonClick = {
+                viewModel.onUIEvent(OnNavigateBack)
+            },
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
+        )
         Column(
             modifier = Modifier
                 .padding(top = 24.dp, start = 16.dp, end = 16.dp)
@@ -77,28 +80,38 @@ fun PaymentFeeSelectionScreen(
             )
 
             LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
-                items(viewModel.uiState.summaryList) { summary ->
-                    CustomInfoButton(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                        startIcon = Currency.Search.getAccountIconByIdCurrency(summary.idCurrency).feeIcon,
-                        title = "${stringResource(id = Currency.Search.getAccountIconByIdCurrency(summary.idCurrency).feeInfoButtonTitle)} ${summary.currency?.lowercase()}",
-                        subtitle = summary.monthlyQuotaLabel ?: "",
-                        onClick = {
-                            viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.Search.getAccountIconByIdCurrency(summary.idCurrency)))
-                        })
-                }
-                if (viewModel.uiState.summaryList.count() > 1) {
-                    item {
-                        CustomInfoButton(modifier = Modifier
+                items(viewModel.uiState.summaryList ?: listOf()) { summary ->
+                    CustomInfoButton(
+                        modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
-                            startIcon = Currency.Search.getAccountIconByIdCurrency(Currency.All.id).feeIcon,
-                            title = stringResource(id = Currency.Search.getAccountIconByIdCurrency(Currency.All.id).feeInfoButtonTitle),
+                        startIcon = Currency.Search.getCurrencyByIdCurrency(summary?.idCurrency).feeIcon,
+                        title = "${stringResource(id = Currency.Search.getCurrencyByIdCurrency(summary?.idCurrency).feeInfoButtonTitle)} ${summary?.currency?.lowercase()}",
+                        subtitle = summary?.monthlyQuotaLabel ?: "",
+                        onClick = {
+                            viewModel.onUIEvent(
+                                OnNavigateToPaymentAccount(
+                                    Currency.Search.getCurrencyByIdCurrency(
+                                        summary?.idCurrency
+                                    )
+                                )
+                            )
+                        }
+                    )
+                }
+                if ((viewModel.uiState.summaryList?.count() ?: 0) > 1) {
+                    item {
+                        CustomInfoButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp),
+                            startIcon = Currency.Search.getCurrencyByIdCurrency(Currency.All.id).feeIcon,
+                            title = stringResource(id = Currency.Search.getCurrencyByIdCurrency(Currency.All.id).feeInfoButtonTitle),
                             subtitle = viewModel.getAllQuotas(stringResource(id = string.payment_fee_both_plus_symbol)),
                             onClick = {
                                 viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.All))
-                            })
+                            }
+                        )
                     }
                 }
             }

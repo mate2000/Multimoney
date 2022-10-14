@@ -29,11 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
-import com.multimoney.multimoney.presentation.theme.MultimoneyColors
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary300
-import com.multimoney.multimoney.presentation.theme.SemanticNegative400
-import com.multimoney.multimoney.presentation.theme.SemanticPositive700
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
@@ -527,7 +523,7 @@ fun OngoingCredit(
                                 .background(if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
                                         ?: 0) > 0
                                 ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor)
-                                .padding(top = 2.dp)
+                                .padding(top = 2.dp, start = 3.dp)
                         )
                     },
                     onClick = {

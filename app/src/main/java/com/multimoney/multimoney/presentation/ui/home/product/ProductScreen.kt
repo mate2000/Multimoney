@@ -39,14 +39,10 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency40
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INFO_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INITIAL_CARD
@@ -146,7 +142,7 @@ fun ProductScreen(
                 )
             }, secondaryFooter = {
                 CreditDetail(
-                    modifier = Modifier.background(color = GrayScale700),
+                    modifier = Modifier.background(color = MultimoneyTheme.colors.creditDetailBackground),
                     viewModel = viewModel
                 )
             }, totalPages = NUMBER_PAGES)
@@ -478,7 +474,9 @@ fun ProductMovement(title: String, date: String, value: String) {
                 color = MultimoneyTheme.colors.labelText)
         }
     }
-    Divider(color = MultimoneyTheme.colors.bottomNavigationDividerColor, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+    Divider(color = MultimoneyTheme.colors.bottomNavigationDividerColor,
+        thickness = 1.dp,
+        modifier = Modifier.fillMaxWidth())
 }
 
 private const val NUMBER_PAGES = 2

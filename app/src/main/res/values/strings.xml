@@ -234,6 +234,14 @@
     <string name="home_product_credit_signature_missing_title" translatable="false">¡Solo falta tu firma!</string>
     <string name="home_product_credit_signature_missing_description" translatable="false">Firmá el contrato para que podás empezar a disfrutar de tu crédito.</string>
     <string name="home_product_credit_signature_missing_action" translatable="false">Firmar</string>
+    <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
+    <string name="home_product_check_all" translatable="false">Ver todos</string>
+    <string name="home_product_title" translatable="false">Disponible</string>
+    <string name="home_product_fee" translatable="false">Cuota</string>
+    <string name="home_product_expiration" translatable="false">Vence</string>
+    <string name="home_product_expired" translatable="false">Venció</string>
+    <string name="home_product_remaining" translatable="false">Saldo %s</string>
+    <string name="home_product_amount" translatable="false">de %s</string>
 
     <!-- my products bottom sheet -->
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>

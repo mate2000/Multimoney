@@ -26,11 +26,13 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             expiredDays = it?.dias_Vencidos ?: 0,
             ibanAccount = it?.cuenta_Iban ?: "",
             monthlyQuota = it?.cuota_Mensual.toString(),
-            balanceAmountCancel = it?.saldo_Monto_Cancelar.toString()
+            balanceAmountCancel = it?.saldo_Monto_Cancelar.toString(),
+            daysExpired = it?.dias_Vencidos ?: 0
         )
     },
+    creditLimit = limite_credito,
+    creditLimitLabel = limite_credito_label,
     creditNumber = this.pagare,
-    creditLimitLabel = this.limite_credito_label,
     term = this.plazo
 )
 

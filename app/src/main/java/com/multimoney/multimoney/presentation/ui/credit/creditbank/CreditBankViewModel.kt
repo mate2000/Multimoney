@@ -73,11 +73,11 @@ class CreditBankViewModel @Inject constructor(
         }
     }
 
-    private fun onBankValueChanged(backSelected: CreditCatalogOption?) {
+    private fun onBankValueChanged(bankSelected: CreditCatalogOption?) {
         uiState = uiState.copy(
-            bankSelected = backSelected,
+            bankSelected = bankSelected,
             accountTypeListFiltered = accountTypeList?.filter {
-                it?.fkRegularExpression == backSelected?.pkCatalog?.toInt()
+                it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt()
             },
             accountTypeSelectedString = "",
             accountTypeSelected = null,

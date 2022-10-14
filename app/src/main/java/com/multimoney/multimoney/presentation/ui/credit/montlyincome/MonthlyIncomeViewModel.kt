@@ -64,7 +64,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         onNextStepAction: () -> Unit,
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
-        saveCreditStepsHelper.saveStepOne(
+        saveCreditStepsHelper.saveStepTwo(
             user,
             uiState.income,
             getDummyOccupationCatalog(),

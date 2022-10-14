@@ -20,6 +20,25 @@ class SaveCreditStepsHelper @Inject constructor() {
 
     fun saveStepOne(
         user: String?,
+        bank: CreditCatalog?,
+        bankAccountSelected: CreditCatalogOption?,
+        accountType: String,
+        accountNumber: String
+    ) {
+        val accountNumberQuestion = inputTextInfoList?.find { it?.description == ACCOUNT_NUMBER }
+        val accountTypeQuestion = inputTextInfoList?.find { it?.description == ACCOUNT_TYPE }
+
+        saveScreenQuestionData(selectionQuestion(user, bank, bankAccountSelected))
+
+        val creditInfoQuestionAccountType = textByDropdownQuestion(user, accountType, accountTypeQuestion)
+        saveScreenQuestionData(creditInfoQuestionAccountType)
+
+        val creditInfoQuestionAccountNumber = textQuestion(user, accountNumber, accountNumberQuestion)
+        saveScreenQuestionData(creditInfoQuestionAccountNumber)
+    }
+
+    fun saveStepTwo(
+        user: String?,
         monthlyIncomeValue: String,
         occupation: CreditCatalog?,
         occupationSelected: CreditCatalogOption?
@@ -30,7 +49,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, occupation, occupationSelected))
     }
 
-    fun saveStepTwo(user: String?, companyName: String, startedJobDate: String, companyPhone: String) {
+    fun saveStepThree(user: String?, companyName: String, startedJobDate: String, companyPhone: String) {
         val companyNameQuestion = inputTextInfoList?.find { it?.description == COMPANY_NAME }
         val companyStartedJobDateQuestion = inputTextInfoList?.find { it?.description == STARTED_JOB_DATE }
         val companyPhoneQuestion = inputTextInfoList?.find { it?.description == COMPANY_PHONE }
@@ -45,7 +64,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(creditInfoQuestionCompanyPhone)
     }
 
-    fun saveStepThree(
+    fun saveStepFour(
         user: String?,
         companyProvince: CreditCatalog?,
         companyProvinceSelected: CreditCatalogOption?,
@@ -63,7 +82,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(textQuestion(user, companyAddressValue, creditInfoQuestionCompanyAddress))
     }
 
-    fun saveStepThreeSV(
+    fun saveStepFourSV(
         user: String?,
         companyProvince: CreditCatalog?,
         companyProvinceSelected: CreditCatalogOption?,
@@ -78,7 +97,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(textQuestion(user, companyAddressValue, creditInfoQuestionCompanyAddress))
     }
 
-    fun saveStepFourGT(
+    fun saveStepFiveGT(
         user: String?,
         homeProvince: CreditCatalog?,
         homeProvinceSelected: CreditCatalogOption?,
@@ -101,7 +120,7 @@ class SaveCreditStepsHelper @Inject constructor() {
 //        saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomePhone))
     }
 
-    fun saveStepFourSV(
+    fun saveStepFiveSV(
         user: String?,
         homeProvince: CreditCatalog?,
         homeProvinceSelected: CreditCatalogOption?,
@@ -121,7 +140,7 @@ class SaveCreditStepsHelper @Inject constructor() {
 //        saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomePhone))
     }
 
-    fun saveStepFourCR(
+    fun saveStepFiveCR(
         user: String?,
         homeProvince: CreditCatalog?,
         homeProvinceSelected: CreditCatalogOption?,
@@ -139,6 +158,9 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomeAddress))
     }
 
+    /**
+     * This function is use to save all the questions that the value will be got from a textField
+     */
     private fun textQuestion(user: String?, value: String, textQuestionData: CreditCatalog?): CreditInfoQuestion {
         return CreditInfoQuestion(
             idQuestionRequestCredit = textQuestionData?.fkQuestion,
@@ -158,6 +180,37 @@ class SaveCreditStepsHelper @Inject constructor() {
         )
     }
 
+    /**
+     * This function is use to save a question that the value comes from a dropdown but will be save in the screen config.
+     * when the type of question in screenConfig is ComboBoxEvent uses this function to save the value.
+     */
+    private fun textByDropdownQuestion(
+        user: String?,
+        value: String,
+        textQuestionData: CreditCatalog?
+    ): CreditInfoQuestion {
+        return CreditInfoQuestion(
+            idQuestionRequestCredit = textQuestionData?.fkQuestion,
+            idOptionQuestionRequestCredit = textQuestionData?.pkQuestionOption,
+            createUser = user,
+            updateUser = user,
+            identificator = textQuestionData?.pkCatalog ?: "",
+            value = value,
+            controlType = textQuestionData?.controlType,
+            isCoreCatalogue = textQuestionData?.isCoreCatalog,
+            isBranchOfficeCatalogue = textQuestionData?.isCatalogBrandOffice,
+            useValue = textQuestionData?.useValue,
+            maximumAmount = textQuestionData?.maximumAmount ?: "",
+            description = value,
+            valueCatalogue = "",
+            idIdentificatorCatalogue = ""
+        )
+    }
+
+    /**
+     *This function is use to save all the questions that the value will be got from a DropDowns,
+     * powered from a list of Credit CatalogOption.
+     */
     private fun selectionQuestion(
         user: String?,
         selectionQuestionData: CreditCatalog?,
@@ -174,7 +227,7 @@ class SaveCreditStepsHelper @Inject constructor() {
             isCoreCatalogue = selectionQuestionData?.isCoreCatalog,
             isBranchOfficeCatalogue = selectionQuestionData?.isCatalogBrandOffice,
             useValue = selectionQuestionData?.useValue,
-            maximumAmount = selectionQuestionData?.maximumAmount,
+            maximumAmount = selectionQuestionData?.maximumAmount ?: "",
             description = selectionQuestionOption?.description ?: "",
             valueCatalogue = selectionQuestionData?.valueCatalog ?: "",
             idIdentificatorCatalogue = selectionQuestionOption?.pkCatalog
@@ -182,6 +235,8 @@ class SaveCreditStepsHelper @Inject constructor() {
     }
 
     companion object {
+        const val ACCOUNT_NUMBER = "Número de cuenta"
+        const val ACCOUNT_TYPE = "Tipo Cuenta"
         const val SALARY = "Ingreso Mensual"
         const val COMPANY_NAME = "Nombre Empresa"
         const val STARTED_JOB_DATE = "Fecha Ingreso Laboral Actual"

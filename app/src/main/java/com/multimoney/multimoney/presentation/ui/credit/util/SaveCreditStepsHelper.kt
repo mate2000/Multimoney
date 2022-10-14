@@ -28,9 +28,6 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(textQuestion(user, monthlyIncomeValue, monthlyIncomeQuestion))
 
         saveScreenQuestionData(selectionQuestion(user, occupation, occupationSelected))
-
-        // update the screenConfig
-        inputTextInfoList?.find { it?.description == SALARY }?.value = monthlyIncomeValue
     }
 
     fun saveStepTwo(user: String?, companyName: String, startedJobDate: String, companyPhone: String) {

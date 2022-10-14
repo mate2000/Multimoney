@@ -80,12 +80,15 @@ fun CardSmartProduct(action: () -> Unit = {}) {
  */
 @Composable
 @Preview
-fun CardGTWithoutCredit() {
+fun CardGTWithoutCredit(action: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
+            .clickable {
+                action()
+            }
     ) {
         Text(
             text = stringResource(id = R.string.home_product_gt_with_out_credit_title),
@@ -129,7 +132,8 @@ fun CardGTWithoutCredit() {
 fun CreditApprovedOrStarted(
     creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
     amount: String? = "0.0",
-    idBrand: Int
+    idBrand: Int,
+    action: () -> Unit = {}
 ) {
     val title: Int
     var description = ""
@@ -157,6 +161,9 @@ fun CreditApprovedOrStarted(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .clickable {
+                action()
+            }
     ) {
         Text(
             text = stringResource(id = title),

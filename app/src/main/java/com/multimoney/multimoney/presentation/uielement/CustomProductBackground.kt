@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +39,6 @@ private const val SIXTY_PERCENT = 0.60
 @Composable
 fun CustomProductBackground(
     modifier: Modifier,
-    onClick: () -> Unit = {},
     type: ProductBackGroundType = Primary,
     content: @Composable () -> Unit
 ) {
@@ -102,7 +100,7 @@ fun CustomProductBackground(
     }
 
 
-    Box(modifier = modifier.clickable { onClick() }) {
+    Box(modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()

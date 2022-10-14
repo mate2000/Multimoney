@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionThreeValueChange
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnFormValid
+import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -363,7 +364,7 @@ class CompanyAddressViewModel @Inject constructor(
                 uiEvent.onFailureWithDialog
             )
             is OnFormValid -> onValidateScreen()
-            is UIEvent.OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
+            is OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
         }
     }
 

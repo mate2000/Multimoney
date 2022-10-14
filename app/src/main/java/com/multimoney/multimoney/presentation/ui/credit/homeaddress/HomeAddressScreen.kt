@@ -103,6 +103,7 @@ fun HomeAddressScreen(
                 }
             )
         )
+        viewModel.onUIEvent(HomeAddressViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList))
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {

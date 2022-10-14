@@ -15,6 +15,7 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel
+import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.BaseEvent.IsFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnAddressValueChange
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnCallCatalogs
@@ -22,13 +23,14 @@ import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressV
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnDivisionThreeValueChange
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnFormValid
+import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class HomeAddressViewModel @Inject constructor(
@@ -153,7 +155,7 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeProvinceUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    if (homeProvince == null){
+                    if (homeProvince == null) {
                         homeProvince = it?.first()
                     }
                     homeProvinceList = homeProvince?.subOptions?.filter { filter ->
@@ -207,7 +209,7 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeCantonUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    if (homeCanton == null){
+                    if (homeCanton == null) {
                         homeCanton = it?.first()
                     }
                     homeCantonList = homeCanton?.subOptions?.filter { filter ->
@@ -261,7 +263,7 @@ class HomeAddressViewModel @Inject constructor(
         queryHomeDistrictUseCase.invoke(pkUser.toInt(), user, idBrand, fkCatalogIdentifier, idUserRequest)
             .collectLatest { result ->
                 result.onSuccess {
-                    if (homeDistrict == null){
+                    if (homeDistrict == null) {
                         homeDistrict = it?.first()
                     }
                     homeDistrictList = homeDistrict?.subOptions?.filter { filter ->
@@ -277,9 +279,11 @@ class HomeAddressViewModel @Inject constructor(
                             homeDistrictList?.find { it?.pkCatalog == homeDistrict?.pkCatalog }
                         uiState = uiState.copy(divisionThreeSelected = selectedHomeDistrict)
                         homeDistrict = homeDistrict?.copy(pkCatalog = null)
-                        onUIEvent(OnDivisionThreeValueChange(
-                            selectedHomeDistrict
-                        ))
+                        onUIEvent(
+                            OnDivisionThreeValueChange(
+                                selectedHomeDistrict
+                            )
+                        )
                     }
                     onLoadingValueChange(false)
                 }
@@ -344,10 +348,10 @@ class HomeAddressViewModel @Inject constructor(
         nextStepAction()
     }
 
-    fun loadStepsInfo(list: List<CreditCatalog>){
-        val homeAddress = list.find { it.description == SaveCreditStepsHelper.HOME_ADDRESS }
+    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
+        val homeAddress = list?.find { it?.description == SaveCreditStepsHelper.HOME_ADDRESS }
         uiState = uiState.copy(address = homeAddress?.value ?: "")
-        val phone = list.find { it.description == SaveCreditStepsHelper.HOME_PHONE }
+        val phone = list?.find { it?.description == SaveCreditStepsHelper.HOME_PHONE }
         uiState = uiState.copy(phone = phone?.value ?: "")
     }
 
@@ -398,6 +402,7 @@ class HomeAddressViewModel @Inject constructor(
                 uiEvent.onFailureWithDialog
             )
             is OnFormValid -> onValidateScreen()
+            is OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
         }
     }
 
@@ -433,7 +438,7 @@ class HomeAddressViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnFormValid : UIEvent()
-
+        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 
     sealed class BaseEvent {

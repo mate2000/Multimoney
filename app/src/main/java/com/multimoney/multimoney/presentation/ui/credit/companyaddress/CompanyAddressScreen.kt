@@ -102,7 +102,9 @@ fun CompanyAddressScreen(
                 }
             )
         )
-        viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.screenConfig))
+        viewModel.onUIEvent(
+            CompanyAddressViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList)
+        )
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {

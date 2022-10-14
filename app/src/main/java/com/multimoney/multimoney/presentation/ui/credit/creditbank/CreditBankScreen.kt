@@ -80,7 +80,7 @@ fun CreditBankScreen(
                 sharedViewModel.email,
                 sharedViewModel.idBrand.toInt(),
                 sharedViewModel.idUserRequest,
-                sharedViewModel.screenConfig,
+                sharedViewModel.saveCreditStepsHelper.inputTextInfoList,
                 onLoadingValueChange = { isLoading ->
                     sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
                 },

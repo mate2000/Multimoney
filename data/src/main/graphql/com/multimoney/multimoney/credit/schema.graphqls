@@ -44,6 +44,8 @@ type CreditQuery {
   getPromissoryNoteDetail(getPromissoryNoteDetailInput: getPromissoryNoteDetailInput): [getPromissoryNoteDetail]
 
   getExchangeRate(getExchangeRateInput: getExchangeRateInput): getExchangeRate
+
+  accountStatement(accountStatementInput: accountStatementInputType): accountStatement
 }
 
 type creditOffer {
@@ -1261,6 +1263,27 @@ input getExchangeRateInput {
   idDestinationCurrency: String
 
   identificacionNumber: String
+}
+
+type accountStatement {
+  """
+  accountStatement bytePDF
+  """
+  bytePDF: [Byte!]!
+}
+
+scalar Byte
+
+input accountStatementInputType {
+  pagare: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
 }
 
 type CreditMutation {

@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class SaveCreditStepsHelper @Inject constructor() {
 
-    private var inputTextInfoList: List<CreditCatalog?>? = listOf<CreditCatalog>()
+    var inputTextInfoList: List<CreditCatalog?>? = listOf<CreditCatalog>()
     var creditFlowData: MutableList<CreditInfoQuestion> = mutableListOf()
 
     fun start(screenConfig: List<CreditCatalog?>?) {
@@ -18,6 +18,10 @@ class SaveCreditStepsHelper @Inject constructor() {
         creditFlowData.add(creditInfoQuestion)
     }
 
+    private fun getScreenConfigQuestion(description: String, screenValue: String): CreditCatalog? {
+        return inputTextInfoList?.find { it?.description == description }?.apply { value = screenValue }
+    }
+
     fun saveStepOne(
         user: String?,
         bank: CreditCatalog?,
@@ -25,8 +29,8 @@ class SaveCreditStepsHelper @Inject constructor() {
         accountType: String,
         accountNumber: String
     ) {
-        val accountNumberQuestion = inputTextInfoList?.find { it?.description == ACCOUNT_NUMBER }
-        val accountTypeQuestion = inputTextInfoList?.find { it?.description == ACCOUNT_TYPE }
+        val accountNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, accountNumber)
+        val accountTypeQuestion = getScreenConfigQuestion(ACCOUNT_TYPE, accountType)
 
         saveScreenQuestionData(selectionQuestion(user, bank, bankAccountSelected))
 
@@ -43,16 +47,16 @@ class SaveCreditStepsHelper @Inject constructor() {
         occupation: CreditCatalog?,
         occupationSelected: CreditCatalogOption?
     ) {
-        val monthlyIncomeQuestion = inputTextInfoList?.find { it?.description == SALARY }
+        val monthlyIncomeQuestion = getScreenConfigQuestion(SALARY, monthlyIncomeValue)
         saveScreenQuestionData(textQuestion(user, monthlyIncomeValue, monthlyIncomeQuestion))
 
         saveScreenQuestionData(selectionQuestion(user, occupation, occupationSelected))
     }
 
     fun saveStepThree(user: String?, companyName: String, startedJobDate: String, companyPhone: String) {
-        val companyNameQuestion = inputTextInfoList?.find { it?.description == COMPANY_NAME }
-        val companyStartedJobDateQuestion = inputTextInfoList?.find { it?.description == STARTED_JOB_DATE }
-        val companyPhoneQuestion = inputTextInfoList?.find { it?.description == COMPANY_PHONE }
+        val companyNameQuestion = getScreenConfigQuestion(COMPANY_NAME, companyName)
+        val companyStartedJobDateQuestion = getScreenConfigQuestion(STARTED_JOB_DATE, startedJobDate)
+        val companyPhoneQuestion = getScreenConfigQuestion(COMPANY_PHONE, companyPhone)
 
         val creditInfoQuestionCompanyName = textQuestion(user, companyName, companyNameQuestion)
         saveScreenQuestionData(creditInfoQuestionCompanyName)
@@ -78,7 +82,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, companyCanton, companyCantonSelected))
         saveScreenQuestionData(selectionQuestion(user, companyDistrict, companyDistrictSelected))
 
-        val creditInfoQuestionCompanyAddress = inputTextInfoList?.find { it?.description == COMPANY_ADDRESS }
+        val creditInfoQuestionCompanyAddress = getScreenConfigQuestion(COMPANY_ADDRESS, companyAddressValue)
         saveScreenQuestionData(textQuestion(user, companyAddressValue, creditInfoQuestionCompanyAddress))
     }
 
@@ -93,7 +97,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, companyProvince, companyProvinceSelected))
         saveScreenQuestionData(selectionQuestion(user, companyCanton, companyCantonSelected))
 
-        val creditInfoQuestionCompanyAddress = inputTextInfoList?.find { it?.description == COMPANY_ADDRESS }
+        val creditInfoQuestionCompanyAddress = getScreenConfigQuestion(COMPANY_ADDRESS, companyAddressValue)
         saveScreenQuestionData(textQuestion(user, companyAddressValue, creditInfoQuestionCompanyAddress))
     }
 
@@ -112,7 +116,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, homeCanton, homeCantonSelected))
         saveScreenQuestionData(selectionQuestion(user, homeDistrict, homeDistrictSelected))
 
-        val creditInfoQuestionHomeAddress = inputTextInfoList?.find { it?.description == HOME_ADDRESS }
+        val creditInfoQuestionHomeAddress = getScreenConfigQuestion(HOME_ADDRESS, homeAddressValue)
         saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomeAddress))
 
         // todo uncomment this logic when the backend change the configuration and this question
@@ -132,7 +136,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, homeProvince, homeProvinceSelected))
         saveScreenQuestionData(selectionQuestion(user, homeCanton, homeCantonSelected))
 
-        val creditInfoQuestionHomeAddress = inputTextInfoList?.find { it?.description == HOME_ADDRESS }
+        val creditInfoQuestionHomeAddress = getScreenConfigQuestion(HOME_ADDRESS, homeAddressValue)
         saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomeAddress))
 
         // todo uncomment this logic when the backend change the configuration and this question
@@ -154,7 +158,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(selectionQuestion(user, homeCanton, homeCantonSelected))
         saveScreenQuestionData(selectionQuestion(user, homeDistrict, homeDistrictSelected))
 
-        val creditInfoQuestionHomeAddress = inputTextInfoList?.find { it?.description == HOME_ADDRESS }
+        val creditInfoQuestionHomeAddress = getScreenConfigQuestion(HOME_ADDRESS, homeAddressValue)
         saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomeAddress))
     }
 

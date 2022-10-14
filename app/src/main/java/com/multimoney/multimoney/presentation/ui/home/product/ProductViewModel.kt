@@ -42,10 +42,10 @@ import com.multimoney.multimoney.presentation.util.customnavtype.encodeData
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.sendAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -218,16 +218,11 @@ class ProductViewModel @Inject constructor(
 
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
-            uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
-            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
-                Screen.CreditScreen.route
-            )
-            uiState.userStatus?.infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> navigateTo(
-                Screen.CreditScreen.route
-            )
             uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_REJECTED.status -> {
                 openWhatsAppLink(context, whatsAppLink)
             }
+            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> onNavigateToCreditScreen()
+            uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
             else -> navigateTo(Screen.CreditScreen.route)
         }
     }

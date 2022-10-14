@@ -273,7 +273,6 @@ fun CreditProduct(viewModel: ProductViewModel) {
                 CustomProductBackground(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
-                    onClick = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) },
                     type = Primary
                 ) {
                     when {
@@ -283,7 +282,10 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
                                 infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable,
-                                viewModel.uiState.idBrand.toInt()
+                                viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                }
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {
@@ -299,7 +301,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_IDENTITY_INCOMPLETE, this) -> {
-                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete, action = {
+                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                            })
                         }
                         viewModel.evaluateCardCondition(CREDIT_INFO_INCOMPLETE, this) -> {
                             CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
@@ -307,7 +311,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             })
                         }
                         viewModel.evaluateCardCondition(CREDIT_REJECTED, this) -> {
-                            CardWithCreditInProcess(type = CreditStartProcessIncomplete)
+                            CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
+                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                            })
                         }
                         else -> {
                             CardSmartProduct()
@@ -321,12 +327,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            onClick = {
-                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                            },
                             type = Primary
                         ) {
-                            CardGTWithoutCredit()
+                            CardGTWithoutCredit(action = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) })
                         }
                     }
                     else -> {

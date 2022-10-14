@@ -12,6 +12,6 @@ data class CreditCatalog(
     val pkForm: String?,
     val valueCatalog: String?,
     val maximumAmount: String?,
-    val value: String?,
+    var value: String?,
     val subOptions: List<CreditCatalogOption?>?
 )

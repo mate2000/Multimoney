@@ -65,7 +65,7 @@ fun MonthlyIncomeScreen(
                 )
             )
         }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Two.id))
-        viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.screenConfig))
+        viewModel.onUIEvent(MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList))
     }
 
     Column(
@@ -87,7 +87,9 @@ fun MonthlyIncomeScreen(
             leadingIcon = R.drawable.ic_money,
             placeHolder = stringResource(
                 id = R.string.credit_monthly_income_income_hint,
-                sharedViewModel.currencySymbol
+                sharedViewModel.currencySymbol.ifEmpty {
+                    stringResource(id = viewModel.getCurrencySymbol(sharedViewModel.idBrand.toInt()))
+                }
             ),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
@@ -104,7 +106,9 @@ fun MonthlyIncomeScreen(
             },
             isError = viewModel.uiState.incomeError.first,
             errorMessage = stringResource(id = viewModel.uiState.incomeError.second),
-            customTransformation = formatMoney(sharedViewModel.currencySymbol)
+            customTransformation = formatMoney(sharedViewModel.currencySymbol.ifEmpty {
+                stringResource(id = viewModel.getCurrencySymbol(sharedViewModel.idBrand.toInt()))
+            })
         )
         CustomDropdown(
             modifier = Modifier

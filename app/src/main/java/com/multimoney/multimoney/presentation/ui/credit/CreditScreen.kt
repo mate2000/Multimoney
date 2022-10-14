@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
 import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
+import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankScreen
 import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobPlaceScreen
@@ -96,7 +97,6 @@ fun CreditScreen(
         }
     }
 
-
     if (viewModel.uiState.lastStep != 1) {
         val stringId = viewModel.getLoadingString()
         LoadingMultiMoney(textRes = stringId, viewModel)
@@ -115,7 +115,7 @@ fun CreditScreen(
                     isRightButtonVisible = viewModel.uiState.isCloseVisible,
                     onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                     onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
-                if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Six.id) {
+                if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Seven.id) {
                     StepProgressBar(
                         steps = CREDIT_INDICATOR_TOTAL_STEPS,
                         currentStep = viewModel.uiState.currentStep - 1,
@@ -138,7 +138,11 @@ fun CreditScreen(
                 Column {
                     CustomButton(
                         onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-                        text = stringResource(id = R.string.button_continue),
+                        text = if (viewModel.uiState.currentStep != CreditStep.Two.id) {
+                            stringResource(id = R.string.button_continue)
+                        } else {
+                            stringResource(id = R.string.credit_bank_validate_account_number)
+                        },
                         modifier = Modifier
                             .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                             .fillMaxWidth()
@@ -163,7 +167,6 @@ fun CreditScreen(
             }
         }
     }
-
 
     LoadingIndicator(viewModel.uiState.isLoading)
 
@@ -190,14 +193,17 @@ fun GetStepContent(
     viewModel: CreditViewModel
 ) {
     when (step) {
-        CreditStep.One.id -> CreditAmountScreen(
-            onNavigate = onNavigate,
-            sharedViewModel = viewModel
-        )
-        CreditStep.Two.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
-        CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
-        CreditStep.Four.id -> CompanyAddressScreen(sharedViewModel = viewModel)
-        CreditStep.Five.id -> HomeAddressScreen(sharedViewModel = viewModel)
+        CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
+        CreditStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
+            // todo call the correct screen for Costa rica
+            CreditBankScreen(sharedViewModel = viewModel)
+        } else {
+            CreditBankScreen(sharedViewModel = viewModel)
+        }
+        CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
+        CreditStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)
+        CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
         else -> CreditDocumentScreen(sharedViewModel = viewModel)
     }
 }

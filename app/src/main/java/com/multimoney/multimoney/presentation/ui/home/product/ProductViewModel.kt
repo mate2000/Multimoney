@@ -37,10 +37,10 @@ import com.multimoney.multimoney.presentation.util.customnavtype.encodeData
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.sendAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -247,14 +247,14 @@ class ProductViewModel @Inject constructor(
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
                             CreditStep.Search.getIdByName(
                                 infoCredit?.infoPreApprove?.currentStep
-                            ) == CreditStep.Six.id
+                            ) == CreditStep.Seven.id
                             )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
                             CreditStep.Search.getIdByName(
                                 infoCredit?.infoPreApprove?.currentStep
-                            ) < CreditStep.Six.id
+                            ) < CreditStep.Seven.id
                             )
                 }
                 CREDIT_REJECTED -> {

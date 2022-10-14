@@ -307,7 +307,13 @@ fun CreditAmountScreen(
             Row(modifier = Modifier.padding(top = 24.dp), verticalAlignment = CenterVertically) {
                 CustomCheckBox(
                     checked = viewModel.uiState.isTermAndConditionChecked,
-                    onCheckedChange = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(it)) },
+                    onCheckedChange = {
+                        viewModel.onUIEvent(
+                            CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange(
+                                it
+                            )
+                        )
+                    },
                     text = stringResource(id = R.string.credit_amount_term_and_conditions_first),
                 )
                 ClickableText(

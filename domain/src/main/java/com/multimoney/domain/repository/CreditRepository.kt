@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -121,4 +122,11 @@ interface CreditRepository {
         idClient: Int,
         idLoan: Int
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
+
+    suspend fun queryBanksAndRegularExpression(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: String
+    ): Flow<MultimoneyResult<BanksAndRegularExpression>>
 }

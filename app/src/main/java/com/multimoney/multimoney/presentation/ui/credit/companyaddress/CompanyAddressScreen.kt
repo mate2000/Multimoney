@@ -79,7 +79,7 @@ fun CompanyAddressScreen(
                         )
                     )
                 },
-                nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id
+                nextStep = CreditStep.Six.id, previousStep = CreditStep.Four.id
             )
         )
         viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnFormValid)

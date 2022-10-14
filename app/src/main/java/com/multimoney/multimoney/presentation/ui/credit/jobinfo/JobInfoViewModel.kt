@@ -76,7 +76,7 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
         nextStepAction: () -> Unit,
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
-        saveCreditStepsHelper.saveStepTwo(
+        saveCreditStepsHelper.saveStepThree(
             user,
             uiState.companyName,
             getFormatDateByString(

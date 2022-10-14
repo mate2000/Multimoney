@@ -305,7 +305,7 @@ class HomeAddressViewModel @Inject constructor(
     ) {
         when (idBrand) {
             Brand.ElSalvador.id -> {
-                saveCreditStepsHelper.saveStepFourSV(
+                saveCreditStepsHelper.saveStepFiveSV(
                     user,
                     homeProvince,
                     uiState.divisionOneSelected,
@@ -316,7 +316,7 @@ class HomeAddressViewModel @Inject constructor(
                 )
             }
             Brand.Guatemala.id -> {
-                saveCreditStepsHelper.saveStepFourGT(
+                saveCreditStepsHelper.saveStepFiveGT(
                     user,
                     homeProvince,
                     uiState.divisionOneSelected,
@@ -329,7 +329,7 @@ class HomeAddressViewModel @Inject constructor(
                 )
             }
             Brand.CostaRica.id -> {
-                saveCreditStepsHelper.saveStepFourCR(
+                saveCreditStepsHelper.saveStepFiveCR(
                     user,
                     homeProvince,
                     uiState.divisionOneSelected,

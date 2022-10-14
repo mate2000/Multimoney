@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,7 +39,6 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -56,8 +59,10 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartPr
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditDetail
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
+import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCredit
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
@@ -137,17 +142,9 @@ fun ProductScreen(
                         viewModel = viewModel
                     )
                 }, secondaryFooter = {
-                    CustomBoxVisaBackground(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        onClick = {
-                            // todo Add logic when the user click the button
-                            // TODO: Remove this button when all functionalities are implemented
-                            viewModel.popAndNavigateTo(
-                                route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
-                                popTo = Screen.AlertResultScreen.baseRoute
-                            )
-                        },
-                        type = RequestCreditCard
+                    CreditDetail(
+                        modifier = Modifier.background(color = MultimoneyTheme.colors.creditDetailBackground),
+                        viewModel = viewModel
                     )
                 }, totalPages = NUMBER_PAGES)
         }
@@ -277,11 +274,18 @@ fun CreditProduct(viewModel: ProductViewModel) {
 
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
+            CreditStatus.EXIST_IN_CORE.status -> {
+                CustomProductBackground(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    type = Primary
+                ) {
+                    OngoingCredit(viewModel)
+                }
+            }
             CreditStatus.APPROVED_CREDIT.status, CreditStatus.CREDIT_PRE_APPROVED.status -> {
                 CustomProductBackground(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
-                    onClick = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) },
                     type = Primary
                 ) {
                     when {
@@ -291,7 +295,10 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
                                 infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable,
-                                viewModel.uiState.idBrand.toInt()
+                                viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                }
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {
@@ -307,7 +314,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_IDENTITY_INCOMPLETE, this) -> {
-                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete, action = {
+                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                            })
                         }
                         viewModel.evaluateCardCondition(CREDIT_INFO_INCOMPLETE, this) -> {
                             CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
@@ -315,7 +324,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             })
                         }
                         viewModel.evaluateCardCondition(CREDIT_REJECTED, this) -> {
-                            CardWithCreditInProcess(type = CreditStartProcessIncomplete)
+                            CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
+                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                            })
                         }
                         else -> {
                             CardSmartProduct()
@@ -329,12 +340,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            onClick = {
-                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                            },
                             type = Primary
                         ) {
-                            CardGTWithoutCredit()
+                            CardGTWithoutCredit(action = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) })
                         }
                     }
                     else -> {
@@ -421,6 +429,87 @@ fun TipBox(content: @Composable () -> Unit) {
         )
         content()
     }
+}
+
+@Composable
+fun ProductDetails(viewModel: ProductViewModel) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background)
+            .padding(horizontal = 16.dp)
+    ) {
+        Row(Modifier.fillMaxWidth()) {
+            Text(
+                text = stringResource(R.string.home_product_movement_title),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .weight(0.6f),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.labelText
+            )
+            ClickableText(
+                text = AnnotatedString(stringResource(R.string.home_product_check_all)),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .weight(0.4f),
+                style = Typography.button.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.labelText
+                ),
+                onClick = {
+                    // TODO implement event when views added
+                }
+            )
+            LazyColumn {
+                items(viewModel.getProductMovement()) { movement ->
+                    ProductMovement(
+                        title = movement.title,
+                        date = movement.date,
+                        value = movement.amount
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ProductMovement(title: String, date: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp, top = 8.dp)
+    ) {
+        Column(modifier = Modifier.weight(0.8f)) {
+            Text(
+                text = title,
+                style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.labelText
+            )
+            Text(
+                text = date,
+                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.labelText
+            )
+        }
+        Row(Modifier.weight(0.2f)) {
+            CustomImage(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                drawableResource = R.drawable.ic_close
+            )
+            Text(
+                text = value,
+                style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.labelText
+            )
+        }
+    }
+    Divider(
+        color = MultimoneyTheme.colors.bottomNavigationDividerColor,
+        thickness = 1.dp,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 private const val NUMBER_PAGES = 2

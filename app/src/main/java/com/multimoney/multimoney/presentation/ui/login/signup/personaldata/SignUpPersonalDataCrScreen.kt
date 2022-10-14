@@ -92,7 +92,7 @@ fun SignUpPersonalDataCrScreen(
             onDebounceValidation = {
                 viewModel.onUIEvent(
                     SignUpPersonalDataViewModel.UIEvent.OnValidateDocument(
-                        email = sharedViewModel.userData?.email
+                        document = sharedViewModel.userData?.email
                     )
                 )
             }

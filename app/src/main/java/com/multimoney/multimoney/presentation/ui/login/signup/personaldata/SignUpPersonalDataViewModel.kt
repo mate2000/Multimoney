@@ -219,6 +219,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                         getDocumentLength(uiState.identificationValueType, true)
                     } else if (documentList.size == SINGLE_DOCUMENT) {
                         uiState = uiState.copy(identificationValueType = documentList.first())
+                        getDocumentLength(uiState.identificationValueType)
                     }
                     onLoadingValueChange(false)
                 }
@@ -541,7 +542,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.onFailureWithDialog,
                 event.onLoadingValueChange
             )
-            is OnValidateDocument -> validateDocument(event.email)
+            is OnValidateDocument -> validateDocument(event.document)
             is OnCallQueryGetCountry -> callQueryGetCountryUseCase(
                 event.user,
                 event.onLoadingValueChange
@@ -604,7 +605,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnValidateDocument(
-            val email: String? = null,
+            val document: String? = null,
         ) : UIEvent()
 
         data class OnCallQueryGetCountry(

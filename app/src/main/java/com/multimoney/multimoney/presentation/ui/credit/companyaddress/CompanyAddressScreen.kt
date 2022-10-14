@@ -79,7 +79,7 @@ fun CompanyAddressScreen(
                         )
                     )
                 },
-                nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id
+                nextStep = CreditStep.Six.id, previousStep = CreditStep.Four.id
             )
         )
         viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnFormValid)
@@ -102,7 +102,9 @@ fun CompanyAddressScreen(
                 }
             )
         )
-        viewModel.onUIEvent(CompanyAddressViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.screenConfig))
+        viewModel.onUIEvent(
+            CompanyAddressViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList)
+        )
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {

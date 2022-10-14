@@ -234,6 +234,14 @@
     <string name="home_product_credit_signature_missing_title" translatable="false">¡Solo falta tu firma!</string>
     <string name="home_product_credit_signature_missing_description" translatable="false">Firmá el contrato para que podás empezar a disfrutar de tu crédito.</string>
     <string name="home_product_credit_signature_missing_action" translatable="false">Firmar</string>
+    <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
+    <string name="home_product_check_all" translatable="false">Ver todos</string>
+    <string name="home_product_title" translatable="false">Disponible</string>
+    <string name="home_product_fee" translatable="false">Cuota</string>
+    <string name="home_product_expiration" translatable="false">Vence</string>
+    <string name="home_product_expired" translatable="false">Venció</string>
+    <string name="home_product_remaining" translatable="false">Saldo %s</string>
+    <string name="home_product_amount" translatable="false">de %s</string>
 
     <!-- my products bottom sheet -->
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
@@ -271,6 +279,19 @@
     <string name="credit_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
     <string name="credit_amount_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
 
+    <!-- Credit Bank-->
+    <string name="credit_bank_title" translatable="false">¿Dónde querés recibir tu dinero?</string>
+    <string name="credit_bank_title_gt" translatable="false">¿Dónde quieres recibir tu dinero?</string>
+    <string name="credit_bank_condition" translatable="false">La cuenta debe estar a tu nombre</string>
+    <string name="credit_bank_select" translatable="false">Seleccionar</string>
+    <string name="credit_bank_account_destiny" translatable="false">Banco de destino</string>
+    <string name="credit_bank_account_type" translatable="false">Tipo de cuenta de destino</string>
+    <string name="credit_bank_account_number_hint" translatable="false">000000000</string>
+    <string name="credit_bank_account_number_required" translatable="false">Número de cuenta requerido</string>
+    <string name="credit_bank_account_number_label" translatable="false">Número de cuenta</string>
+    <string name="credit_bank_account_number_error" translatable="false">Revisar formato</string>
+    <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
+
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
@@ -279,6 +300,9 @@
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label" translatable="false">Selecciona tu profesión</string>
     <string name="credit_monthly_income_profession_hint" translatable="false">Selecciona tu profesión</string>
+    <string name="credit_monthly_income_dollar_symbol" translatable="false">$</string>
+    <string name="credit_monthly_income_colon_symbol" translatable="false">₡</string>
+    <string name="credit_monthly_income_quetzal_symbol" translatable="false">Q\</string>
     <string-array name="credit_monthly_income_professions" translatable="false">
         <item>Administración</item>
         <item>Construcción</item>
@@ -364,7 +388,7 @@
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
-    <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regresés!</string>
+    <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regreses!</string>
 
     <!-- Credit Details -->
     <string name="credit_detail_max_credit" translatable="false">Línea máxima de crédito</string>

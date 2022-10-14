@@ -19,5 +19,6 @@ data class Summary(
     val expiredPayment: Int?,
     val expiredDays: Int?,
     val ibanAccount: String?,
-    val balanceAmountCancel: String
+    val balanceAmountCancel: String,
+    val daysExpired: Int
 ) : Parcelable

@@ -16,21 +16,26 @@ import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.CreditOfferAndTip
+import com.multimoney.domain.model.credit.ProductMovement
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -60,6 +65,8 @@ class ProductViewModel @Inject constructor(
     var identification: String = ""
     var email: String = ""
     var userName: String = ""
+    var productProgress = 0F
+    var isExpiredTitle = R.string.home_product_expiration
 
     private fun onGetUserData() {
         viewModelScope.launch {
@@ -222,16 +229,11 @@ class ProductViewModel @Inject constructor(
 
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
-            uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
-            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
-                Screen.CreditScreen.route
-            )
-            uiState.userStatus?.infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> navigateTo(
-                Screen.CreditScreen.route
-            )
             uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_REJECTED.status -> {
                 openWhatsAppLink(context, whatsAppLink)
             }
+            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> onNavigateToCreditScreen()
+            uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
             else -> navigateTo(Screen.CreditScreen.route)
         }
     }
@@ -240,16 +242,31 @@ class ProductViewModel @Inject constructor(
         context.openWhatsAppDeepLink(whatsAppLink)
     }
 
+    private fun getProgress() {
+        productProgress = (
+            balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
+                ?: DEFAULT_PROGRESS
+            ) / (
+            balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
+                ?: DEFAULT_PROGRESS
+            )
+    }
+
+    private fun isExpired() {
+        isExpiredTitle = if ((
+            balanceCredit?.getFirstSummary()?.daysExpired
+                ?: 0
+            ) > 0
+        ) R.string.home_product_expired else R.string.home_product_expiration
+    }
+
     fun evaluateCardCondition(action: String, validateUserStatus: ValidateUserStatus): Boolean {
         validateUserStatus.apply {
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
                         infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
-                        (
-                            infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() ||
-                                validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED
-                            )
+                        (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
                 CREDIT_MAX_ATTEMPTS -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
@@ -258,14 +275,14 @@ class ProductViewModel @Inject constructor(
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
                         CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Six.id
+                        ) == CreditStep.Seven.id
                         )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
                         CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Six.id
+                        ) < CreditStep.Seven.id
                         )
                 }
                 CREDIT_REJECTED -> {
@@ -293,7 +310,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
             is OnGetIdBrand -> onGetUserData()
-            is UIEvent.OnMaxAttemptsCardClick -> openWhatsAppLink(
+            is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
                 uiEvent.whatsAppLink
             )
@@ -302,6 +319,8 @@ class ProductViewModel @Inject constructor(
                 uiEvent.context,
                 uiEvent.account
             )
+            OnProgressCalculation -> getProgress()
+            IsPaymentExpired -> isExpired()
         }
     }
 
@@ -321,6 +340,8 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCreditScreen : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
+        object OnProgressCalculation : UIEvent()
+        object IsPaymentExpired : UIEvent()
         data class OnProductClick(
             val whatsAppLink: String,
             val context: Context
@@ -362,6 +383,14 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    fun getProductMovement(): List<ProductMovement> {
+        return listOf(
+            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
+            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
+            ProductMovement("Pago de cuota", "10/06/2022", "3000")
+        )
+    }
+
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
         var amount = ""
         balanceCredit?.forEach { balance ->
@@ -396,6 +425,7 @@ class ProductViewModel @Inject constructor(
     }
 
     companion object {
+        const val DEFAULT_PROGRESS = 1F
         const val ZERO = 0.0
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
         const val CREDIT_INITIAL_CARD = "CREDIT_INITIAL_CARD"

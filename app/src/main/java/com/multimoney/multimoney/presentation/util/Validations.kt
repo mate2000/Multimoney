@@ -63,7 +63,7 @@ fun validDui(personalDocumentValue: String) =
             R.string.sign_up_personal_data_dui_sv_not_valid
         )
     } else {
-        Pair(false, R.string.error_empty)
+        Pair(true, R.string.sign_up_personal_data_id_sv_required)
     }
 
 fun passwordHasMinimumCharacters(value: String): Boolean {

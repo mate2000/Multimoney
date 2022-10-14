@@ -5,6 +5,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.credit.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyCantonQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyProvinceQuery
@@ -204,6 +205,21 @@ class CreditApi @Inject constructor(
                 idBrand,
                 idClient,
                 idLoan
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryBanksAndRegularExpression(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: String
+    ): ApolloCall<BanksAndRegularExpressionQuery.Data> =
+        apolloClient.query(
+            BanksAndRegularExpressionQuery(
+                pkUser,
+                user,
+                idBrand,
+                idUserRequest
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

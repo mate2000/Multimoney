@@ -8,7 +8,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.multimoney.multimoney.presentation.theme.*
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
+import com.multimoney.multimoney.presentation.theme.GrayScale400
+import com.multimoney.multimoney.presentation.theme.GrayScale500
+import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.Primary500
 
 /**
  * CustomRadioButton: Selector that forces the user to only pick one option

@@ -16,7 +16,7 @@
         ],
       },
       main_card: {
-        height: 400,
+        height: '40%',
         top: [
           'header_cards',
           'bottom',
@@ -24,10 +24,11 @@
         ]
       },
       bottom_start: {
+        height: 'spread',
         top: [
           'main_card',
           'bottom',
-          20
+          10
         ],
         bottom: [
           'parent',
@@ -57,7 +58,7 @@
         ]
       },
       main_card: {
-        height: 300,
+        height: '40%',
         top: [
           'header_title',
           'bottom',

@@ -49,7 +49,6 @@ fun MotionLayoutMM(
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
-    val bottomInitialCardHeight = (screenHeight.value * FORTY_FIVE_PERCENTAGE_OF_SCREEN).dp
     val bottomFinalCardHeight = (screenHeight.value * SIXTY_PERCENTAGE_OF_SCREEN).dp
     val context = LocalContext.current
     val motionSceneContent = remember {
@@ -151,11 +150,11 @@ fun MotionLayoutMM(
                     FractionalThreshold(FRACTIONAL_THRESHOLD)
                 },
                 orientation = Orientation.Vertical
-            ), headerText = if(swipeAbleState.offset.value > FRACTIONAL_THRESHOLD) CUSTOM_HEADER else R.string.home_my_products)
+            ),
+            headerText = if (swipeAbleState.offset.value > FRACTIONAL_THRESHOLD) CUSTOM_HEADER else R.string.home_my_products)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(bottomInitialCardHeight)
                 .background(MultimoneyTheme.colors.background)
                 .layoutId("bottom_start"),
             contentAlignment = Alignment.TopCenter
@@ -167,6 +166,7 @@ fun MotionLayoutMM(
             userScrollEnabled = false,
             count = totalPages, modifier = Modifier
                 .fillMaxWidth()
+                .background(MultimoneyTheme.colors.background)
                 .layoutId("bottom_end")
         ) {
             secondaryFooter()

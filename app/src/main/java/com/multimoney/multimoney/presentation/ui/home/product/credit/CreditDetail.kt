@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.domain.model.balance.Balance
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -27,7 +26,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.uielement.ExpandableSectionLayout
 
 @Composable
-fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewModel) {
+fun CreditDetail(modifier: Modifier, viewModel: ProductViewModel) {
     ExpandableSectionLayout(
         title = stringResource(id = R.string.credit_detail_title), modifier = modifier
     ) {
@@ -38,7 +37,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                 label = stringResource(id = R.string.credit_detail_max_credit),
                 value = {
                     Text(
-                        text = balance?.getFirstCredit()?.creditLimitLabel ?: "",
+                        text = viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -50,7 +49,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                 label = stringResource(id = R.string.credit_detail_balance),
                 value = {
                     Text(
-                        text = viewModel.getCreditBalanceLabel(balance?.balanceCredit),
+                        text = viewModel.getCreditBalanceLabel(viewModel.balanceCredit?.balanceCredit),
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -58,14 +57,15 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                     )
                 }
             )
+
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_fee),
                 value = {
                     Row {
-                        balance?.getFirstSummary()?.monthlyQuotaLabel?.let {
+                        viewModel.balanceCredit?.getFirstSummary()?.monthlyQuotaLabel?.let {
                             Icon(
                                 imageVector = Icons.Filled.Circle,
-                                tint = if (balance.getExpiredDays() > 0
+                                tint = if ((viewModel.balanceCredit?.getExpiredDays() ?: 0) > 0
                                 ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.dotIndicatorColor,
                                 contentDescription = "",
                                 modifier = Modifier
@@ -74,7 +74,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                             )
                         }
                         Text(
-                            text = viewModel.getQuota(balance?.balanceCredit),
+                            text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
                             style = Typography.body2.copy(
                                 color = MultimoneyTheme.colors.text,
                                 fontWeight = FontWeight.SemiBold
@@ -87,10 +87,10 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                 label = stringResource(id = R.string.credit_detail_min_payment),
                 value = {
                     Row {
-                        balance?.getFirstSummary()?.minPaymentLabel?.let {
+                        viewModel.balanceCredit?.getFirstSummary()?.minPaymentLabel?.let {
                             Icon(
                                 imageVector = Icons.Filled.Circle,
-                                tint = if (balance.getExpiredDays() > 0)
+                                tint = if ((viewModel.balanceCredit?.getExpiredDays() ?: 0) > 0)
                                     MultimoneyTheme.colors.dotIndicatorExpired
                                 else
                                     MultimoneyTheme.colors.dotIndicatorColor,
@@ -101,7 +101,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                             )
                         }
                         Text(
-                            text = viewModel.getMinPayment(balance?.balanceCredit),
+                            text = viewModel.getMinPayment(viewModel.balanceCredit?.balanceCredit),
                             style = Typography.body2.copy(
                                 color = MultimoneyTheme.colors.text,
                                 fontWeight = FontWeight.SemiBold
@@ -114,7 +114,8 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                 label = stringResource(id = R.string.credit_detail_overdue_fee),
                 value = {
                     Text(
-                        text = balance?.getFirstSummary()?.expiredPayment?.toString() ?: "",
+                        text = viewModel.balanceCredit?.getFirstSummary()?.expiredPayment?.toString()
+                            ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -128,13 +129,14 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                     value = {
                         Row {
                             Text(
-                                text = balance?.getFirstSummary()?.ibanAccount ?: "",
+                                text = viewModel.balanceCredit?.getFirstSummary()?.ibanAccount
+                                    ?: "",
                                 style = Typography.body2.copy(
                                     color = MultimoneyTheme.colors.text,
                                     fontWeight = FontWeight.SemiBold
                                 )
                             )
-                            balance?.getFirstSummary()?.ibanAccount?.let {
+                            viewModel.balanceCredit?.getFirstSummary()?.ibanAccount?.let {
                                 Icon(
                                     imageVector = Icons.Outlined.Share,
                                     tint = MultimoneyTheme.colors.arrowColor,
@@ -161,7 +163,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                 label = stringResource(id = R.string.credit_detail_max_term),
                 value = {
                     Text(
-                        text = balance?.getFirstCredit()?.term ?: "",
+                        text = viewModel.balanceCredit?.getFirstCredit()?.term ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
@@ -173,7 +175,7 @@ fun CreditDetail(balance: Balance?, modifier: Modifier, viewModel: ProductViewMo
                 label = stringResource(id = R.string.credit_detail_number),
                 value = {
                     Text(
-                        text = balance?.getFirstCredit()?.creditNumber ?: "",
+                        text = viewModel.balanceCredit?.getFirstCredit()?.creditNumber ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold

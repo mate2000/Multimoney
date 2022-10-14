@@ -1,15 +1,26 @@
 package com.multimoney.multimoney.presentation.ui.home.product.credit
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Chip
+import androidx.compose.material.ChipDefaults
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,6 +31,9 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseFirstTime
@@ -32,6 +46,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
+import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 
 /**
  * Composable function to show the option to active smart product
@@ -129,7 +144,7 @@ fun CardGTWithoutCredit() {
 fun CreditApprovedOrStarted(
     creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
     amount: String? = "0.0",
-    idBrand: Int
+    idBrand: Int,
 ) {
     val title: Int
     var description = ""
@@ -139,9 +154,11 @@ fun CreditApprovedOrStarted(
         CreditStatusApproved -> {
             title = R.string.home_product_credit_approved_card_title
             description = if (idBrand == Brand.Guatemala.id) {
-                stringResource(id = R.string.home_product_gt_credit_approved_card_description, amount ?: "0.0")
+                stringResource(id = R.string.home_product_gt_credit_approved_card_description,
+                    amount ?: "0.0")
             } else {
-                stringResource(id = R.string.home_product_credit_approved_card_description, amount ?: "0.0")
+                stringResource(id = R.string.home_product_credit_approved_card_description,
+                    amount ?: "0.0")
             }
             actionText = R.string.home_product_credit_approved_card_action
         }
@@ -265,7 +282,7 @@ fun CardCreditOnFidoRequired() {
 @Preview
 fun CardWithCreditInProcess(
     type: CreditProcessStarted = CreditAcceptContractRefuseFirstTime,
-    action: () -> Unit = {}
+    action: () -> Unit = {},
 ) {
     val chipText = R.string.home_product_process_credit_label
     val title: Int
@@ -375,7 +392,7 @@ fun CardWithCreditInProcess(
 @Composable
 @Preview
 fun CardCreditMaxAttempts(
-    action: () -> Unit = {}
+    action: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -422,6 +439,105 @@ fun CardCreditMaxAttempts(
             color = MultimoneyTheme.colors.text,
             textAlign = TextAlign.Center
         )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun OngoingCredit(
+    viewModel: ProductViewModel,
+) {
+    viewModel.onUIEvent(OnProgressCalculation)
+    viewModel.onUIEvent(IsPaymentExpired)
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()
+        .padding(top = 12.dp, start = 24.dp, end = 24.dp)) {
+        Text(
+            text = stringResource(id = R.string.home_product_title),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = viewModel.balanceCredit?.getFirstSummary()?.availableBalanceLabel.toString(),
+            modifier = Modifier.padding(bottom = 10.dp),
+            style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        CustomRoundedLinearProgress(progress = viewModel.productProgress, modifier = Modifier
+            .fillMaxWidth()
+            .height(4.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            Text(
+                text = stringResource(id = R.string.home_product_remaining,
+                    viewModel.balanceCredit?.getFirstSummary()?.currentBalanceLabel.toString()),
+                modifier = Modifier.padding(top = 4.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+            Text(
+                text = stringResource(id = R.string.home_product_amount,
+                    viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()),
+                modifier = Modifier.padding(top = 4.dp, start = 3.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.textSubhead
+            )
+        }
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 14.dp)) {
+            Column(modifier = Modifier.weight(0.5F)) {
+                Text(
+                    text = stringResource(id = R.string.home_product_fee),
+                    modifier = Modifier.padding(top = 4.dp),
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.text
+                )
+                Text(
+                    text = viewModel.balanceCredit?.getFirstSummary()?.monthlyQuotaLabel.toString(),
+                    modifier = Modifier.padding(top = 4.dp),
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.text
+                )
+            }
+            Column(modifier = Modifier.weight(0.5F)) {
+                Text(
+                    text = stringResource(id = viewModel.isExpiredTitle),
+                    modifier = Modifier.padding(top = 4.dp),
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.text
+                )
+                Chip(
+                    enabled = false,
+                    colors = ChipDefaults.chipColors(disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
+                        disabledContentColor = MultimoneyTheme.colors.text),
+                    modifier = Modifier
+                        .height(28.dp)
+                        .padding(top = 2.dp),
+                    leadingIcon = {
+                        Box(
+                            modifier = Modifier
+                                .size(10.dp)
+                                .clip(CircleShape)
+                                .background(if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                        ?: 0) > 0
+                                ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor)
+                                .padding(top = 2.dp, start = 3.dp)
+                        )
+                    },
+                    onClick = {
+                        //Empty on purpose
+                    },
+                    content = {
+                        Text(
+                            text = viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel.toString(),
+                            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold)
+                        )
+                    }
+                )
+            }
+        }
     }
 }
 

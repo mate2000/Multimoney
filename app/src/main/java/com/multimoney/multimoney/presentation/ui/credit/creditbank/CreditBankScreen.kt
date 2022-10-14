@@ -126,7 +126,7 @@ fun CreditBankScreen(
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false)
                 .padding(top = 16.dp),
-            items = viewModel.uiState.backList,
+            items = viewModel.uiState.bankList,
             onValueChange = {
                 viewModel.onUIEvent(CreditBankViewModel.UIEvent.OnBankValueChanged(it))
             },

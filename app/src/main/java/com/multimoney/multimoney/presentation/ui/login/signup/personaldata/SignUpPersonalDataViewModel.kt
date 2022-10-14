@@ -219,6 +219,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                         getDocumentLength(uiState.identificationValueType, true)
                     } else if (documentList.size == SINGLE_DOCUMENT) {
                         uiState = uiState.copy(identificationValueType = documentList.first())
+                        getDocumentLength(uiState.identificationValueType)
                     }
                     onLoadingValueChange(false)
                 }

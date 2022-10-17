@@ -393,4 +393,10 @@
     <string name="payment_account_masked_text" translatable="false">••••</string>
     <string name="payment_account_different_currency_dialog_title" translatable="false">Se aplicará el tipo de cambio</string>
     <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente a la de la cuota.</string>
+
+    <!-- Iban account Screen -->
+    <string name="iban_account_tile" translatable="false">¿En cuál cuenta IBAN querés recibir tu dinero?</string>
+    <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
+    <string name="iban_account_cr" translatable="false">CR</string>
+    <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
 </resources>

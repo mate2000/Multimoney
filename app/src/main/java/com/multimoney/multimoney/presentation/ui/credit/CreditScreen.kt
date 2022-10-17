@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.ui.credit.companyaddress.CompanyAd
 import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.document.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.homeaddress.HomeAddressScreen
+import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.jobinfo.JobPlaceScreen
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -193,7 +194,7 @@ fun GetStepContent(
         CreditStep.One.id -> CreditAmountScreen(
             onNavigate = onNavigate,
             sharedViewModel = viewModel
-        )
+        ) /*IbanAccountScreen(onNavigate = onNavigate,sharedViewModel = viewModel)*/
         CreditStep.Two.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Three.id -> JobPlaceScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> CompanyAddressScreen(sharedViewModel = viewModel)

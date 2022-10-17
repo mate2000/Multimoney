@@ -98,6 +98,7 @@ fun CustomOutlinedTextField(
     labelText: String? = null,
     value: String? = null,
     leadingIcon: Int? = null,
+    leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
     placeHolder: String = "",
     keyboardOptions: KeyboardOptions,
@@ -251,6 +252,8 @@ fun CustomOutlinedTextField(
                         tint = iconTintColor
                     )
                 }
+            } ?: leadingIconComposable?.let {
+                { it(iconTintColor) }
             },
             trailingIcon = if (isPassword) {
                 {

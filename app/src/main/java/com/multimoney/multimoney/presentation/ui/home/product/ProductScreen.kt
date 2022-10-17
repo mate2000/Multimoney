@@ -2,25 +2,20 @@ package com.multimoney.multimoney.presentation.ui.home.product
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -39,7 +34,6 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale700
@@ -69,21 +63,17 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCred
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
+import com.multimoney.multimoney.presentation.uielement.*
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
-import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
-import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
-import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun ProductScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: ProductViewModel = hiltViewModel(),
+    viewModel: ProductViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnGetIdBrand)
@@ -115,40 +105,94 @@ fun ProductScreen(
                     viewModel = viewModel
                 )
             }, secondaryHeader = { backPressed ->
-                Box(
-                    contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MultimoneyTheme.colors.background)
-                ) {
-                    TopNavBar(
-                        isRightButtonVisible = false,
-                        onLeftButtonClick = {
-                            backPressed()
-                        }
+                    Box(
+                        contentAlignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MultimoneyTheme.colors.background)
+                    ) {
+                        TopNavBar(
+                            isRightButtonVisible = false,
+                            onLeftButtonClick = {
+                                backPressed()
+                            }
+                        )
+                    }
+                }, content = { modifier, headerText ->
+                    Products(
+                        modifier = modifier,
+                        pages = NUMBER_PAGES,
+                        state = productPagerState,
+                        viewModel = viewModel,
+                        headerText
                     )
+                }, footer = {
+                    ProductExtras(
+                        modifier = Modifier.padding(top = 16.dp),
+                        pages = NUMBER_PAGES,
+                        state = bottomPagerState,
+                        viewModel = viewModel
+                    )
+                }, secondaryFooter = {
+                    Box(Modifier.fillMaxSize()) {
+                        Column(
+                            Modifier.align(Alignment.TopCenter)
+                                .height(210.dp)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            CreditDetail(
+                                modifier = Modifier.background(color = GrayScale700),
+                                viewModel = viewModel
+                            )
+                        }
+                        PayButtons(
+                            modifier =
+                            Modifier.align(Alignment.BottomCenter)
+                                .padding(16.dp).padding(bottom = 390.dp),
+                            viewModel = viewModel,
+                            canDisburse = viewModel.hasBalance
+                        )
+                    }
+                }, totalPages = NUMBER_PAGES)
+        }
+    }
+}
+
+@Composable
+fun PayButtons(
+    viewModel: ProductViewModel,
+    canDisburse: Boolean,
+    modifier: Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        if (canDisburse) {
+            CustomButton(
+                text = stringResource(R.string.home_pay_fee_button_text),
+                modifier = Modifier.weight(1f).height(48.dp),
+                buttonType = CustomButtonType.PrimarySecondary,
+                onClick = {
+                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
                 }
-            }, content = { modifier, headerText ->
-                Products(
-                    modifier = modifier,
-                    pages = NUMBER_PAGES,
-                    state = productPagerState,
-                    viewModel = viewModel,
-                    headerText
-                )
-            }, footer = {
-                ProductExtras(
-                    modifier = Modifier.padding(top = 16.dp),
-                    pages = NUMBER_PAGES,
-                    state = bottomPagerState,
-                    viewModel = viewModel
-                )
-            }, secondaryFooter = {
-                CreditDetail(
-                    modifier = Modifier.background(color = GrayScale700),
-                    viewModel = viewModel
-                )
-            }, totalPages = NUMBER_PAGES)
+            )
+            Spacer(Modifier.width(16.dp))
+            CustomButton(
+                text = stringResource(R.string.home_disburse_button_text),
+                modifier = Modifier.weight(1f).height(48.dp),
+                onClick = {
+                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                }
+            )
+        } else {
+            CustomButton(
+                text = stringResource(R.string.home_pay_fee_button_text),
+                modifier = Modifier.weight(1f).height(48.dp),
+                onClick = {
+                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
+                }
+            )
         }
     }
 }
@@ -217,7 +261,7 @@ fun Products(
     pages: Int,
     state: PagerState,
     viewModel: ProductViewModel,
-    headerText: Int,
+    headerText: Int
 ) {
     Column(modifier = modifier) {
         // TODO add dynamic titles when other products are implemented
@@ -267,9 +311,11 @@ fun CreditProduct(viewModel: ProductViewModel) {
     viewModel.uiState.userStatus?.apply {
         when (infoCredit?.status) {
             CreditStatus.EXIST_IN_CORE.status -> {
-                CustomProductBackground(modifier = Modifier.padding(horizontal = 16.dp),
+                CustomProductBackground(
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     onClick = {},
-                    type = Primary) {
+                    type = Primary
+                ) {
                     OngoingCredit(viewModel)
                 }
             }
@@ -369,7 +415,8 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
                     viewModel.onUIEvent(OnNavigateToPaymentProcess)
-                }) {
+                }
+        ) {
             CustomImage(
                 drawableResource = R.drawable.ic_logo_multimoney,
                 modifier = Modifier
@@ -420,10 +467,12 @@ fun TipBox(content: @Composable () -> Unit) {
 
 @Composable
 fun ProductDetails(viewModel: ProductViewModel) {
-    Box(Modifier
-        .fillMaxSize()
-        .background(MultimoneyTheme.colors.background)
-        .padding(horizontal = 16.dp)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background)
+            .padding(horizontal = 16.dp)
+    ) {
         Row(Modifier.fillMaxWidth()) {
             Text(
                 text = stringResource(R.string.home_product_movement_title),
@@ -443,14 +492,15 @@ fun ProductDetails(viewModel: ProductViewModel) {
                     color = MultimoneyTheme.colors.labelText
                 ),
                 onClick = {
-
                 }
             )
             LazyColumn {
                 items(viewModel.getProductMovement()) { movement ->
-                    ProductMovement(title = movement.title,
+                    ProductMovement(
+                        title = movement.title,
                         date = movement.date,
-                        value = movement.amount)
+                        value = movement.amount
+                    )
                 }
             }
         }
@@ -459,23 +509,33 @@ fun ProductDetails(viewModel: ProductViewModel) {
 
 @Composable
 fun ProductMovement(title: String, date: String, value: String) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(bottom = 8.dp, top = 8.dp)) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp, top = 8.dp)
+    ) {
         Column(modifier = Modifier.weight(0.8f)) {
-            Text(text = title,
+            Text(
+                text = title,
                 style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText)
-            Text(text = date,
+                color = MultimoneyTheme.colors.labelText
+            )
+            Text(
+                text = date,
                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText)
+                color = MultimoneyTheme.colors.labelText
+            )
         }
         Row(Modifier.weight(0.2f)) {
-            CustomImage(modifier = Modifier.align(Alignment.CenterVertically),
-                drawableResource = R.drawable.ic_close)
-            Text(text = value,
+            CustomImage(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                drawableResource = R.drawable.ic_close
+            )
+            Text(
+                text = value,
                 style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText)
+                color = MultimoneyTheme.colors.labelText
+            )
         }
     }
     Divider(color = WhiteTransparency30, thickness = 1.dp, modifier = Modifier.fillMaxWidth())

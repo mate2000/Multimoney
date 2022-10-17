@@ -145,7 +145,7 @@ class SecurityApi @Inject constructor(
                 idBrand,
                 user
             )
-        )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationOnFidoInitialProcess(
         names: String,
@@ -163,7 +163,7 @@ class SecurityApi @Inject constructor(
             idBrand,
             user
         )
-    )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryValidationPin(
         idBrand: Int,
@@ -187,7 +187,7 @@ class SecurityApi @Inject constructor(
             flowOrigination,
             userCreate
         )
-    )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCatalogIdentification(
         idBrand: Int,

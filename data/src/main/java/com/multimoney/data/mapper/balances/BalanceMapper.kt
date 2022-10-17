@@ -17,20 +17,23 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             currency = it?.moneda,
             currentBalance = it?.saldo_Actual.toString().toDouble(),
             currentBalanceLabel = it?.saldo_Actual_Label,
-            availableBalance = it?.saldo_Disponible.toString(),
+            availableBalance = it?.saldo_Disponible.toString().toDouble(),
             availableBalanceLabel = it?.saldo_Disponible_Label,
             paymentDateLabel = it?.fecha_Pago_Label,
             monthlyQuotaLabel = it?.cuota_Mensual_Label,
+            minPayment = it?.pago_Minimo.toString().toDouble(),
             minPaymentLabel = it?.pago_Minimo_Label,
             expiredPayment = it?.pagos_Vencidos ?: 0,
             expiredDays = it?.dias_Vencidos ?: 0,
             ibanAccount = it?.cuenta_Iban ?: "",
             monthlyQuota = it?.cuota_Mensual.toString(),
-            balanceAmountCancel = it?.saldo_Monto_Cancelar.toString()
+            balanceAmountCancel = it?.saldo_Monto_Cancelar.toString(),
+            daysExpired = it?.dias_Vencidos ?: 0
         )
     },
+    creditLimit = limite_credito,
+    creditLimitLabel = limite_credito_label,
     creditNumber = this.pagare,
-    creditLimitLabel = this.limite_credito_label,
     term = this.plazo
 )
 

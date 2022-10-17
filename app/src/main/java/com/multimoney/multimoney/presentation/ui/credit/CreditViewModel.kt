@@ -25,12 +25,12 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCurrencySymbolValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnCurrentLocationButtonValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnPreviousStep
+import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel.UIEvent.OnUpdateUserData
@@ -67,7 +67,6 @@ class CreditViewModel @Inject constructor(
     var identification: String = ""
     var email: String = ""
     var idUserRequest: String = ""
-    var screenConfig: List<CreditCatalog?>? = listOf()
 
     private fun onUpdateUserData(
         idBrand: String,
@@ -258,8 +257,7 @@ class CreditViewModel @Inject constructor(
                 event.idUserRequest
             )
             is OnUpdateScreenConfigData -> {
-                screenConfig = event.screenConfigData
-                saveCreditStepsHelper.start(screenConfig)
+                saveCreditStepsHelper.start(event.screenConfigData)
             }
             is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
         }
@@ -311,8 +309,8 @@ class CreditViewModel @Inject constructor(
     }
 
     companion object {
-        const val CREDIT_TOTAL_STEPS = 6
-        const val CREDIT_INDICATOR_TOTAL_STEPS = 4
+        const val CREDIT_TOTAL_STEPS = 7
+        const val CREDIT_INDICATOR_TOTAL_STEPS = 5
         const val BANNER_TIME = 3000L
     }
 }

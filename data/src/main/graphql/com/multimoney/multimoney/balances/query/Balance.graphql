@@ -24,6 +24,8 @@ query Balance(
             saldo_Actual_Label
             saldo_Disponible
             saldo_Disponible_Label
+            pago_Minimo
+            fec_Pago
             pago_Minimo_Label
             fecha_Pago_Label
             cuota_Mensual
@@ -32,7 +34,9 @@ query Balance(
             pagos_Vencidos
             cuenta_Iban
             saldo_Monto_Cancelar
+            dias_Vencidos
         }
+        limite_credito
         limite_credito_label
         plazo
     }

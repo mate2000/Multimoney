@@ -4,16 +4,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange
+import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
-import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -63,11 +64,11 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         onNextStepAction: () -> Unit,
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
-        saveCreditStepsHelper.saveStepOne(
+        saveCreditStepsHelper.saveStepTwo(
             user,
             uiState.income,
             getDummyOccupationCatalog(),
-            CreditCatalogOption( "Ama de Casa", "255", 0)
+            CreditCatalogOption("Ama de Casa", "255", 0)
         )
         onNextStepAction()
     }
@@ -88,6 +89,15 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
             "",
             listOf(CreditCatalogOption("Ama de Casa", "255", 0))
         )
+    }
+
+    fun getCurrencySymbol(idBrand: Int): Int {
+        return when (idBrand) {
+            Brand.ElSalvador.id -> R.string.credit_monthly_income_dollar_symbol
+            Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
+            Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
+            else -> R.string.empty
+        }
     }
 
     data class UIState(
@@ -113,7 +123,7 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         }
     }
 
-    private fun loadStepsInfo(list: List<CreditCatalog?>?){
+    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
         val salary = list?.find { it?.description == SaveCreditStepsHelper.SALARY }
         uiState = uiState.copy(income = salary?.value ?: "")
     }

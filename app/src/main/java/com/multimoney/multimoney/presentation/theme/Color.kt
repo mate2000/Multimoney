@@ -41,7 +41,7 @@ val ComplementaryOne600 = Color(0XFF0E6F9F)
 val ComplementaryOne700 = Color(0XFF084563)
 val ComplementaryOne800 = Color(0XFF012131)
 
-//ComplementaryTwo
+// ComplementaryTwo
 val ComplementaryTwo200 = Color(0XFFE6EDFB)
 val ComplementaryTwo300 = Color(0XFFA3C2FD)
 val ComplementaryTwo400 = Color(0XFF4E86EF)
@@ -49,7 +49,6 @@ val ComplementaryTwo500 = Color(0XFF1C63E8)
 val ComplementaryTwo600 = Color(0XFF0D48B7)
 val ComplementaryTwo700 = Color(0XFF062867)
 val ComplementaryTwo800 = Color(0XFF001438)
-
 
 // Semantic Informative
 val SemanticInformative200 = Color(0xFFE5F0FF)
@@ -87,6 +86,11 @@ val GrayScale600 = Color(0xFF555555)
 val GrayScale700 = Color(0xFF272727)
 val GrayScale800 = Color(0xFF080808)
 
+// Complementary Gray
+val ComplementaryGray = Color(0xB2FFFFFF)
+val ComplementaryGray2 = Color(0x99FFFFFF)
+val ComplementaryBlack = Color(0xFF212121)
+
 // WhiteTransparency
 val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)
 val WhiteTransparency10 = Color(0xFFFFFFFF).copy(alpha = 0.1f)
@@ -115,7 +119,7 @@ val BlackTransparency70 = Color(0xFF000000).copy(alpha = 0.7f)
 val BlackTransparency80 = Color(0xFF000000).copy(alpha = 0.8f)
 val BlackTransparency90 = Color(0xFF000000).copy(alpha = 0.9f)
 
-//Gradient Colors
+// Gradient Colors
 val GradientPrimary = Color(0xFFFFF280).copy(alpha = 0.70f)
 val GradientSecondary = Color(0xFFC7FF80).copy(alpha = 0.80f)
 val GradientTertiary = Color(0xFF8DEA8D).copy(alpha = 0.80f)
@@ -125,7 +129,6 @@ val GradientGrey1 = Color(0xFFAEAEAE).copy(alpha = 0.50f)
 val GradientGrey2 = Color(0xFF474747).copy(alpha = 0.50f)
 val GradientGrayLiner1 = Color(0xFF343434).copy(alpha = 0f)
 val GradientGrayLiner2 = Color(0xFF343434)
-
 
 @Immutable
 data class MultimoneyColors(
@@ -149,6 +152,7 @@ data class MultimoneyColors(
     val creditNotApprovedText: Color,
     val labelText: Color,
     val chipBackground: Color,
+    val productChipBackground: Color,
     val shimmerItemColor: Color,
     val bottomNavigationDividerColor: Color,
     val bottomNavigationIconSelectedColor: Color,
@@ -156,7 +160,10 @@ data class MultimoneyColors(
     val quickActionLabelColor: Color,
     val dotIndicatorColor: Color,
     val dotIndicatorExpired: Color,
-    val arrowColor: Color
+    val arrowColor: Color,
+    val progressBackground: Color,
+    val progressPercentage: Color,
+    val creditDetailBackground: Color,
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -187,7 +194,11 @@ val DarkColorPalette = MultimoneyColors(
     quickActionLabelColor = WhiteTransparency70,
     dotIndicatorColor = Primary400,
     dotIndicatorExpired = SemanticNegative400,
-    arrowColor = Primary400
+    arrowColor = Primary400,
+    progressBackground = SemanticPositive800,
+    progressPercentage = DefaultWhite,
+    productChipBackground = SemanticPositive700,
+    creditDetailBackground = GrayScale700
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -218,7 +229,11 @@ val LightColorPalette = MultimoneyColors(
     quickActionLabelColor = GrayScale500,
     dotIndicatorColor = Primary400,
     dotIndicatorExpired = SemanticNegative400,
-    arrowColor = Primary400
+    arrowColor = Primary400,
+    progressBackground = SemanticPositive800,
+    progressPercentage = DefaultWhite,
+    productChipBackground = SemanticPositive700,
+    creditDetailBackground = GrayScale700
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

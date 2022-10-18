@@ -117,9 +117,6 @@ class ProductViewModel @Inject constructor(
                 result.onFailure {
                     onFailure(it)
                 }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
             }
         }
     }
@@ -138,7 +135,6 @@ class ProductViewModel @Inject constructor(
                 idBrand
             ).collectLatest { result ->
                 result.onSuccess { validateUserStatus ->
-                    uiState = uiState.copy(isLoading = false)
                     validateUserStatus?.let {
                         onValidateUserStatusSuccess(it)
                     }

@@ -268,7 +268,7 @@ fun CreditAmountScreen(
                     .fillMaxWidth()
                     .padding(top = 16.dp)
                     .height(1.dp),
-                color = MultimoneyTheme.colors.divider
+                color = MultimoneyTheme.colors.dividerWhite16
             )
             CustomInformativeChip(
                 text = stringResource(id = R.string.credit_amount_condition_of_credit_info),
@@ -306,7 +306,7 @@ fun CreditAmountScreen(
                     .padding(top = 16.dp)
                     .fillMaxWidth()
                     .height(1.dp),
-                color = MultimoneyTheme.colors.divider
+                color = MultimoneyTheme.colors.dividerWhite16
             )
             Row(modifier = Modifier.padding(top = 24.dp), verticalAlignment = CenterVertically) {
                 CustomCheckBox(

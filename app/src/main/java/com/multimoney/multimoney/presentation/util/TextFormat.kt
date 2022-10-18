@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.util
 
 import java.text.DecimalFormat
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.time.Duration
 
@@ -46,3 +47,11 @@ fun String.stringToDoubleFormat(separator: String? = null): String =
 fun String.isValidAmount() = isNotBlank() && isValidAmountLength()
 
 fun String.isValidAmountLength() = length <= 12
+
+fun String.capitalized(): String {
+    return this.lowercase().replaceFirstChar {
+        if (it.isLowerCase())
+            it.titlecase(Locale.getDefault())
+        else it.toString()
+    }
+}

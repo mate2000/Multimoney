@@ -8,19 +8,20 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnIncomeValueChange
-import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnProfessionValueChange
+import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
+import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.capitalized
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -37,63 +38,85 @@ class IbanAccountViewModel @Inject constructor(
 
     private val query: MutableStateFlow<String> = MutableStateFlow("")
 
+    // ViewModel variables
+    private var idBrand: Int = 0
+    private var identification: String = ""
+    private var email: String = ""
+
     init {
         viewModelScope.launch {
             query.debounce(2000).distinctUntilChanged().collectLatest {
-                if (it.length in 1..19) {
+                if (it.length in 1..IBAN_MAX_LENGTH.minus(1)) {
+                    onValidForm(false)
                     uiState = uiState.copy(incomeError = Pair(true, R.string.iban_account_error))
-                } else {
-                    if (it.length == 20) {
-                        var idBrandIban = ""
-                        idBrand = 5
-                        if (idBrand == Brand.CostaRica.id){
-                            idBrandIban = Brand.CostaRica.iban
-                        }
-                        executeUseCase {
-                            uiState = uiState.copy(incomeError = Pair(false, R.string.iban_account_loading))
-
-                            queryValidateBankAccountUseCase(
-                                "$idBrandIban${uiState.accountNumber}",
-                                identification,
-                                email,
-                                5
-                            ).collectLatest {
-                                it.onSuccess {
-                                    it?.let { response ->
-                                        when (response.responseCode) {
-                                            0 -> {
-                                                isAccountValid = true
-                                                onValidForm()
-                                            }
-                                            1 -> {
-                                                isAccountValid = false
-                                                errorMessage = response.responseMessage
-                                            }
-                                        }
-                                    }
-                                }
-                                it.onFailure {
-
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
     }
 
-    // viewmodel variables
-    private var idBrand: Int = 0
-    private var identification: String = ""
-    private var email: String = ""
-    private var isAccountValid: Boolean = false
-    private var errorMessage: String = ""
-
-    private fun onIncomeValueChange(bankAccount: String) {
-        if (bankAccount.isDigitsOnly() && bankAccount.length <= 20) {
-            uiState = uiState.copy(accountNumber = bankAccount, incomeError = Pair(false, R.string.empty))
+    private fun onIncomeValueChange(
+        bankAccount: String,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+    ) {
+        if (bankAccount.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
+            uiState = uiState.copy(
+                accountNumber = bankAccount,
+                incomeError = Pair(false, R.string.empty),
+                validationError = null
+            )
             query.value = bankAccount
+            if (bankAccount.length == IBAN_MAX_LENGTH) {
+                validateIbanAccount(bankAccount) { response ->
+                    onFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = response.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun validateIbanAccount(bankAccount: String, onFailure: (HttpError) -> Unit) {
+        var idBrandIban = ""
+        if (idBrand == Brand.CostaRica.id) {
+            idBrandIban = Brand.CostaRica.iban
+        }
+        executeUseCase {
+            uiState = uiState.copy(incomeError = Pair(false, R.string.iban_account_loading))
+
+            queryValidateBankAccountUseCase(
+                "$idBrandIban${uiState.accountNumber}",
+                identification,
+                email,
+                idBrand
+            ).collectLatest {
+                it.onSuccess { account ->
+                    account?.let { response ->
+                        when (response.responseCode) {
+                            IS_VALID -> {
+                                onValidForm(true)
+                            }
+                            HAS_ERRORS -> {
+                                uiState =
+                                    uiState.copy(
+                                        incomeError = Pair(true, R.string.empty),
+                                        validationError = response.responseMessage.capitalized()
+                                    )
+                            }
+                        }
+                    }
+                }
+                it.onFailure { error ->
+                    uiState = uiState.copy(
+                        incomeError = Pair(false, R.string.empty),
+                        accountNumber = "",
+                    )
+                    onFailure(error)
+                }
+            }
         }
     }
 
@@ -107,34 +130,28 @@ class IbanAccountViewModel @Inject constructor(
         this.idBrand = idBrand.toInt()
     }
 
-    private fun onProfessionValueChange(profession: String) {
-        uiState = uiState.copy(profession = profession)
-        onValidForm()
-    }
-
-    private fun onValidForm() {
+    private fun onValidForm(isValidAccount: Boolean) {
         emitBaseEvent(
-            OnFormValidateCompleted(
-                uiState.accountNumber.isNotEmpty() &&
-                        uiState.profession.isNotEmpty() && uiState.accountNumber.toDouble() > ZERO
-            )
+            OnFormValidateCompleted(isValidAccount)
         )
     }
 
     data class UIState(
         val accountNumber: String = "",
-        val profession: String = "",
         val incomeError: Pair<Boolean, Int> = Pair(
             false,
             R.string.empty
-        )
+        ),
+        val validationError: String? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnIncomeValueChange -> onIncomeValueChange(uiEvent.income)
-            is OnProfessionValueChange -> onProfessionValueChange(uiEvent.profession)
-            is OnValidForm -> onValidForm()
+            is OnAccountValueChange -> onIncomeValueChange(
+                uiEvent.account,
+                uiEvent.onFailureWithDialog
+            )
+            is OnValidForm -> onValidForm(false)
             is OnUpdateUserInfo -> onUpdateUserInfo(
                 uiEvent.identification,
                 uiEvent.email,
@@ -156,8 +173,10 @@ class IbanAccountViewModel @Inject constructor(
             val idBrand: String
         ) : UIEvent()
 
-        data class OnIncomeValueChange(val income: String) : UIEvent()
-        data class OnProfessionValueChange(val profession: String) : UIEvent()
+        data class OnAccountValueChange(
+            val account: String,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
         object OnValidForm : UIEvent()
         data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
@@ -169,6 +188,9 @@ class IbanAccountViewModel @Inject constructor(
 
     companion object {
         const val ZERO = 0
+        const val IS_VALID = 0
+        const val HAS_ERRORS = 1
+        const val IBAN_MAX_LENGTH = 20
     }
 }
 

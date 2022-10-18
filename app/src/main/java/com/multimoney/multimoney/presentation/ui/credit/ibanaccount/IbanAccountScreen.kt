@@ -11,7 +11,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -27,7 +26,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -44,6 +42,18 @@ fun IbanAccountScreen(
     viewModel: IbanAccountViewModel = hiltViewModel()
 ) {
 
+    LaunchedEffect(true){
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is IbanAccountViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    CreditViewModel.UIEvent.OnContinueEnable(
+                        event.isFormValid
+                    )
+                )
+            }
+        }
+    }
+
     LaunchedEffect(true) {
         viewModel.onUIEvent(
             OnUpdateUserInfo(
@@ -52,16 +62,7 @@ fun IbanAccountScreen(
                 sharedViewModel.idBrand
             )
         )
-
-        viewModel.baseEvent.collect { event ->
-            when (event) {
-                is CreditAmountViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    CreditViewModel.UIEvent.OnContinueEnable(
-                        event.isFormValid
-                    )
-                )
-            }
-        }
+        viewModel.onUIEvent(IbanAccountViewModel.UIEvent.OnValidForm)
     }
 
     val focusManager = LocalFocusManager.current
@@ -111,14 +112,23 @@ fun IbanAccountScreen(
             placeHolder = stringResource(id = R.string.iban_account_hint),
             onValueChange = {
                 viewModel.onUIEvent(
-                    IbanAccountViewModel.UIEvent.OnIncomeValueChange(
-                        it
+                    IbanAccountViewModel.UIEvent.OnAccountValueChange(
+                        it,
+                        onFailureWithDialog = { isLoading, dialogParameters ->
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading,
+                                    dialogParameters
+                                )
+                            )
+                        }
                     )
                 )
             },
             canShowNonErrorMessage = true,
             isError = viewModel.uiState.incomeError.first,
-            errorMessage = stringResource(id = viewModel.uiState.incomeError.second),
+            errorMessage = viewModel.uiState.validationError
+                ?: stringResource(id = viewModel.uiState.incomeError.second),
             customTransformation = MaskVisualTransformation(
                 VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.mask,
                 VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.maskChar

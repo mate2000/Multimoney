@@ -161,9 +161,13 @@ fun CustomOutlinedTextField(
         backgroundColor = WhiteTransparency10
         placeholderColor = WhiteTransparency30
         unfocusedIndicatorColor = DefaultBlack
-        errorIndicatorColor = if (isError || canShowNonErrorMessage) SemanticNegative400 else WhiteTransparency90
+        errorIndicatorColor = if (isError || emptyError) {
+            SemanticNegative400
+        } else {
+            WhiteTransparency90
+        }
         when {
-            isError  -> {
+            isError -> {
                 focusedIndicatorColor = SemanticNegative400
                 iconTintColor = SemanticNegative400
                 textColor = WhiteTransparency90
@@ -185,9 +189,13 @@ fun CustomOutlinedTextField(
         backgroundColor = WhiteTransparency10
         placeholderColor = GrayScale500
         unfocusedIndicatorColor = GrayScale400
-        errorIndicatorColor = if (isError || canShowNonErrorMessage) SemanticNegative500 else GrayScale800
+        errorIndicatorColor = if (isError || emptyError) {
+            SemanticNegative500
+        } else {
+            GrayScale800
+        }
         when {
-            isError  -> {
+            isError -> {
                 focusedIndicatorColor = SemanticNegative500
                 iconTintColor = SemanticNegative500
                 textColor = GrayScale800
@@ -324,7 +332,7 @@ fun CustomOutlinedTextField(
         val passwordDebounceFlowValue by passwordVisibleFlow.collectAsState(false)
 
         // Display error message
-        if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not() || emptyError) {
+        if (((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) || emptyError) {
             Row(
                 modifier = Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically

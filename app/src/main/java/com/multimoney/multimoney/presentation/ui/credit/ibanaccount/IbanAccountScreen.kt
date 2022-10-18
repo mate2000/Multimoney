@@ -11,6 +11,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -26,13 +27,16 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.VisualTransformationMasks
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun IbanAccountScreen(
     sharedViewModel: CreditViewModel,
@@ -48,6 +52,16 @@ fun IbanAccountScreen(
                 sharedViewModel.idBrand
             )
         )
+
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is CreditAmountViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    CreditViewModel.UIEvent.OnContinueEnable(
+                        event.isFormValid
+                    )
+                )
+            }
+        }
     }
 
     val focusManager = LocalFocusManager.current
@@ -67,7 +81,7 @@ fun IbanAccountScreen(
 
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 32.dp),
-            value = viewModel.uiState.income,
+            value = viewModel.uiState.accountNumber,
             leadingIconComposable = { tint ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -102,6 +116,7 @@ fun IbanAccountScreen(
                     )
                 )
             },
+            canShowNonErrorMessage = true,
             isError = viewModel.uiState.incomeError.first,
             errorMessage = stringResource(id = viewModel.uiState.incomeError.second),
             customTransformation = MaskVisualTransformation(

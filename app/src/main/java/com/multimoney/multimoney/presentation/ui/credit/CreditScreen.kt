@@ -198,7 +198,9 @@ fun GetStepContent(
         CreditStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
             IbanAccountScreen(sharedViewModel = viewModel)
         } else {
-            CreditBankScreen(sharedViewModel = viewModel)
+            //CreditBankScreen(sharedViewModel = viewModel)
+            IbanAccountScreen(sharedViewModel = viewModel)
+
         }
         CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)

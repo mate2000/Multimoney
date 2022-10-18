@@ -422,6 +422,7 @@
     <string name="iban_account_tile" translatable="false">¿En cuál cuenta IBAN querés recibir tu dinero?</string>
     <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
     <string name="iban_account_cr" translatable="false">CR</string>
+    <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
 
     <!-- Payment Amount -->

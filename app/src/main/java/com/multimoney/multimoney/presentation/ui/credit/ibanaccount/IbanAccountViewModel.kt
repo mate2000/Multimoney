@@ -5,25 +5,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnIncomeValueChange
-import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnLoadCreditSteps
-import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnProfessionValueChange
-import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
+import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -34,6 +35,54 @@ class IbanAccountViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
+    private val query: MutableStateFlow<String> = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            query.debounce(2000).distinctUntilChanged().collectLatest {
+                if (it.length in 1..19) {
+                    uiState = uiState.copy(incomeError = Pair(true, R.string.iban_account_error))
+                } else {
+                    if (it.length == 20) {
+                        var idBrandIban = ""
+                        idBrand = 5
+                        if (idBrand == Brand.CostaRica.id){
+                            idBrandIban = Brand.CostaRica.iban
+                        }
+                        executeUseCase {
+                            uiState = uiState.copy(incomeError = Pair(false, R.string.iban_account_loading))
+
+                            queryValidateBankAccountUseCase(
+                                "$idBrandIban${uiState.accountNumber}",
+                                identification,
+                                email,
+                                5
+                            ).collectLatest {
+                                it.onSuccess {
+                                    it?.let { response ->
+                                        when (response.responseCode) {
+                                            0 -> {
+                                                isAccountValid = true
+                                                onValidForm()
+                                            }
+                                            1 -> {
+                                                isAccountValid = false
+                                                errorMessage = response.responseMessage
+                                            }
+                                        }
+                                    }
+                                }
+                                it.onFailure {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // viewmodel variables
     private var idBrand: Int = 0
     private var identification: String = ""
@@ -41,74 +90,10 @@ class IbanAccountViewModel @Inject constructor(
     private var isAccountValid: Boolean = false
     private var errorMessage: String = ""
 
-    private val textSearch = MutableStateFlow("")
-
     private fun onIncomeValueChange(bankAccount: String) {
-        if (bankAccount.isDigitsOnly()) {
-            when (bankAccount.length) {
-                in 0..20 -> {
-                    uiState = uiState.copy(
-                        income = bankAccount
-                    )
-                    textSearch.value = bankAccount
-                    viewModelScope.launch {
-                        textSearch.debounce(1500).collect {
-                            uiState = if (it.isEmpty() || it.length == 20) {
-                                uiState.copy(
-                                    income = bankAccount,
-                                    incomeError = Pair(false, R.string.empty)
-                                )
-                            } else {
-                                uiState.copy(incomeError = Pair(true, R.string.iban_account_error))
-                            }
-                            if (it.length == 20) {
-                                executeUseCase {
-                                    queryValidateBankAccountUseCase(
-                                        bankAccount,
-                                        identification,
-                                        email,
-                                        idBrand
-                                    ).collectLatest {
-                                        it.onSuccess {
-                                            it?.let {response ->
-                                                when(response.responseCode){
-                                                    0 -> {
-                                                        isAccountValid = true
-                                                    }
-                                                    1 -> {
-                                                        isAccountValid = false
-                                                        errorMessage = response.responseMessage
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        it.onFailure {
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //onValidateScreen()
-                }
-                /*val incomeError = if (income.isNotEmpty() && income == ZERO.toString()) {
-                    Pair(
-                        true,
-                        R.string.credit_monthly_income_greater_than_zero_error
-                    )
-                } else {
-                    Pair(
-                        false,
-                        R.string.credit_monthly_income_greater_than_zero_error
-                    )
-                }
-                uiState = uiState.copy(
-                    income = income,
-                    incomeError = incomeError
-                )
-                onValidForm()*/
-            }
+        if (bankAccount.isDigitsOnly() && bankAccount.length <= 20) {
+            uiState = uiState.copy(accountNumber = bankAccount, incomeError = Pair(false, R.string.empty))
+            query.value = bankAccount
         }
     }
 
@@ -129,26 +114,15 @@ class IbanAccountViewModel @Inject constructor(
 
     private fun onValidForm() {
         emitBaseEvent(
-            OnFormCompleted(
-                uiState.income.isNotEmpty() && uiState.profession.isNotEmpty() && uiState.income.toDouble() > ZERO
+            OnFormValidateCompleted(
+                uiState.accountNumber.isNotEmpty() &&
+                        uiState.profession.isNotEmpty() && uiState.accountNumber.toDouble() > ZERO
             )
         )
     }
 
-    private fun onNextActionClick(
-        user: String,
-        onNextStepAction: () -> Unit,
-        saveCreditStepsHelper: SaveCreditStepsHelper
-    ) {
-        // todo save step
-        /* saveCreditStepsHelper.saveStepOne(
-
-         )
-         onNextStepAction()*/
-    }
-
     data class UIState(
-        val income: String = "",
+        val accountNumber: String = "",
         val profession: String = "",
         val incomeError: Pair<Boolean, Int> = Pair(
             false,
@@ -158,26 +132,15 @@ class IbanAccountViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNextActionClick -> onNextActionClick(
-                uiEvent.user,
-                uiEvent.nextStepAction,
-                uiEvent.saveCreditStepsHelper
-            )
             is OnIncomeValueChange -> onIncomeValueChange(uiEvent.income)
             is OnProfessionValueChange -> onProfessionValueChange(uiEvent.profession)
             is OnValidForm -> onValidForm()
-            is OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
             is OnUpdateUserInfo -> onUpdateUserInfo(
                 uiEvent.identification,
                 uiEvent.email,
                 uiEvent.idBrand
             )
         }
-    }
-
-    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
-        val salary = list?.find { it?.description == SaveCreditStepsHelper.SALARY }
-        uiState = uiState.copy(income = salary?.value ?: "")
     }
 
     sealed class UIEvent {
@@ -200,7 +163,8 @@ class IbanAccountViewModel @Inject constructor(
     }
 
     sealed class BaseEvent {
-        data class OnFormCompleted(val isFormCompleted: Boolean) : BaseEvent()
+        data class OnFormValidateCompleted(val isFormValid: Boolean) :
+            BaseEvent()
     }
 
     companion object {

@@ -63,7 +63,7 @@ fun JobPlaceScreen(
                     }, saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                 )
             )
-        }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Two.id))
+        }, nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormCompleted -> {
@@ -75,7 +75,7 @@ fun JobPlaceScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidForm)
-        viewModel.onUIEvent(JobInfoViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.screenConfig))
+        viewModel.onUIEvent(JobInfoViewModel.UIEvent.OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList))
     }
 
     val title = when (sharedViewModel.idBrand.toInt()) {

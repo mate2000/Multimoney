@@ -9,6 +9,8 @@ type CreditQuery {
 
   ocupation(ocupationInput: screenConfigInput): [screenConfigText]
 
+  profession(professionInput: screenConfigInput): [screenConfigText]
+
   homeProvince(homeProvinceInput: screenConfigInput): [screenConfigText]
 
   homeCanton(homeCantonInput: screenConfigInput): [screenConfigText]
@@ -36,6 +38,14 @@ type CreditQuery {
   creditExtensionAmount(creditExtensionAmountInput: creditExtensionAmountInput): creditExtensionAmount
 
   creditExtensionMessage(creditExtensionMessageInput: creditExtensionMessageInput): creditExtensionMessage
+
+  getPaymentPoints(paymentPointsInput: paymentPointsInput): [getPaymentPoints]
+
+  getPromissoryNoteDetail(getPromissoryNoteDetailInput: getPromissoryNoteDetailInput): [getPromissoryNoteDetail]
+
+  getExchangeRate(getExchangeRateInput: getExchangeRateInput): getExchangeRate
+
+  accountStatement(accountStatementInput: accountStatementInputType): accountStatement
 }
 
 type creditOffer {
@@ -202,7 +212,7 @@ type products {
 scalar Decimal
 
 input creditOfferInput {
-  pkUser: Int!
+  pkUser: Long!
 
   idBrand: Int!
 
@@ -334,11 +344,6 @@ type screenConfigText {
 }
 
 type screenConfigSubText {
-  """
-  screenConfigText Pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
-  """
-  pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito: Int!
-
   """
   screenConfigText Tipo_Control
   """
@@ -1024,6 +1029,263 @@ input modelCreditExtensionConfiguratorInput {
   cicle: Int!
 }
 
+type getPaymentPoints {
+  """
+  getPaymentPoints idBrand
+  """
+  idBrand: Short
+
+  """
+  getPaymentPoints name
+  """
+  name: String
+
+  """
+  getPaymentPoints description
+  """
+  description: String
+
+  """
+  getPaymentPoints address map
+  """
+  address: String
+
+  """
+  getPaymentPoints address description
+  """
+  addressDescription: String
+
+  """
+  getPaymentPoints schedule
+  """
+  schedule: String
+}
+
+input paymentPointsInput {
+  idBrand: Int!
+
+  user: String
+
+  name: String
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type getPromissoryNoteDetail {
+  """
+  getPromissoryNoteDetail Title
+  """
+  title: String
+
+  """
+  getPromissoryNoteDetail Values
+  """
+  values: [genericModel]
+
+  """
+  getPromissoryNoteDetail Options
+  """
+  options: [genericModel]
+
+  """
+  getPromissoryNoteDetail Values_Transactions
+  """
+  values_Transactions: [getPromissoryNoteDetailValues]
+}
+
+type genericModel {
+  """
+  genericModel Text
+  """
+  text: String!
+
+  """
+  genericModel Value
+  """
+  value: String!
+
+  """
+  genericModel Icon
+  """
+  icon: String!
+
+  """
+  genericModel Theme
+  """
+  theme: String!
+
+  """
+  genericModel Title
+  """
+  title: String!
+
+  """
+  genericModel Selected
+  """
+  selected: Boolean!
+
+  """
+  genericModel Values
+  """
+  values: [genericModel]
+}
+
+type getPromissoryNoteDetailValues {
+  """
+  getPromissoryNoteDetailValues Fk_Suv_Cat_Marca
+  """
+  tipo: String!
+
+  """
+  getPromissoryNoteDetailValues Fecha_Aplicacion
+  """
+  fecha_Aplicacion: DateTime!
+
+  """
+  getPromissoryNoteDetailValues Monto
+  """
+  monto: String!
+
+  """
+  getPromissoryNoteDetailValues Id_Prestamo
+  """
+  id_Prestamo: Long!
+
+  """
+  getPromissoryNoteDetailValues Fecha_Inicio
+  """
+  fecha_Inicio: DateTime!
+
+  """
+  getPromissoryNoteDetailValues Fecha_Fin
+  """
+  fecha_Fin: DateTime!
+
+  """
+  getPromissoryNoteDetailValues Fecha_Aplicacion_Label
+  """
+  fecha_Aplicacion_Label: String
+
+  """
+  getPromissoryNoteDetailValues Monto_Label
+  """
+  monto_Label: String
+
+  """
+  getPromissoryNoteDetailValues Client_Secret
+  """
+  client_Secret: String
+
+  """
+  getPromissoryNoteDetailValues Moneda
+  """
+  moneda: String!
+
+  """
+  getPromissoryNoteDetailValues Mes
+  """
+  mes: String
+
+  """
+  getPromissoryNoteDetailValues Indicador
+  """
+  indicador: Int!
+
+  """
+  getPromissoryNoteDetailValues Opcion
+  """
+  opcion: String
+
+  """
+  getPromissoryNoteDetailValues Tipo_Transaccion
+  """
+  tipo_Transaccion: String!
+
+  """
+  getPromissoryNoteDetailValues Id_Tipo_Transaccion
+  """
+  id_Tipo_Transaccion: Int!
+}
+
+input getPromissoryNoteDetailInput {
+  id_Prestamo: Int!
+
+  opcion: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type getExchangeRate {
+  """
+  getExchangeRate result
+  """
+  result: exchangeRateResult
+}
+
+type exchangeRateResult {
+  """
+  exchangeRateResult exchangeRate
+  """
+  exchangeRate: Float!
+
+  """
+  exchangeRateResult amount
+  """
+  amount: Decimal!
+
+  """
+  exchangeRateResult convertedAmount
+  """
+  convertedAmount: Decimal!
+}
+
+input getExchangeRateInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identification: String
+
+  idOriginCurrency: String
+
+  idDestinationCurrency: String
+
+  identificacionNumber: String
+}
+
+type accountStatement {
+  """
+  accountStatement bytePDF
+  """
+  bytePDF: [Byte!]!
+}
+
+scalar Byte
+
+input accountStatementInputType {
+  pagare: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 type CreditMutation {
   saveCreditFlowStep(saveCreditFlowStepInput: saveCreditFlowStepInput): saveCreditFlowStep
 
@@ -1031,9 +1293,19 @@ type CreditMutation {
 
   saveCreditOperation(saveCreditOperationInput: saveCreditOperationInput): saveCreditOperation
 
+  saveCreditOffer(saveCreditOfferInput: saveCreditOfferInput): creditOffer
+
   proccessPaymentList(proccessPaymentListInput: proccessPaymentListInput): proccessPaymentList
 
   saveTermsAndConditions(saveTermsAndConditionsInput: saveTermsAndConditionsInput): saveTermsAndConditions
+
+  activatedClientAutomaticDebit(clientAutomaticDebitInput: clientAutomaticDebitInput): clientAutomaticDebit
+
+  deactivatedClientAutomaticDebit(clientAutomaticDebitInput: clientAutomaticDebitInput): clientAutomaticDebit
+
+  saveClientBankAccount(saveClientBankAccountInput: saveClientBankAccountInput): saveClientBankAccount
+
+  saveCreditExtensionDetail(creditExtensionDetailInput: creditExtensionDetailInput): saveClientBankAccount
 }
 
 type saveCreditFlowStep {
@@ -1299,6 +1571,18 @@ input saveCreditOperationInput {
   traceIdentifier: String
 }
 
+input saveCreditOfferInput {
+  pkUser: Long!
+
+  idUserRequest: Long!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 type proccessPaymentList {
   """
   proccessPaymentList Status
@@ -1403,6 +1687,142 @@ input saveTermsAndConditionsInput {
   currentFlow: String!
 
   identification: String!
+}
+
+type clientAutomaticDebit {
+  """
+  clientAutomaticDebit IsUpdate
+  """
+  isUpdate: Boolean!
+}
+
+input clientAutomaticDebitInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  id_Cliente: Int!
+
+  id_Prestamo: Int!
+
+  origen: String!
+
+  id: Int!
+
+  id_Moneda_Destino: Int
+}
+
+type saveClientBankAccount {
+  """
+  saveClientBankAccount status
+  """
+  status: Int
+
+  """
+  saveClientBankAccount message
+  """
+  message: String
+
+  """
+  saveClientBankAccount detail
+  """
+  detail: String
+}
+
+input saveClientBankAccountInput {
+  id_Cliente: Int!
+
+  id_Banco: Int!
+
+  numeroCuenta: String!
+
+  id_Moneda: Int!
+
+  id_Prestamo: Int!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+input creditExtensionDetailInput {
+  idFlowControl: Long!
+
+  update: Int!
+
+  idAgent: Int!
+
+  idUser: Int!
+
+  idClient: Int!
+
+  detail: String!
+
+  comment: String!
+
+  accountNumber: String!
+
+  idAccount: Int!
+
+  amount: Decimal!
+
+  term: Int!
+
+  idTerm: Int!
+
+  nextPaymentDate: DateTime!
+
+  fee: Decimal!
+
+  totalFee: Decimal!
+
+  maxFee: Decimal!
+
+  outlayCharge: Decimal!
+
+  interestRateOutlay: Decimal!
+
+  regularInterestRate: Decimal!
+
+  cycle: Int!
+
+  idProduct: Int!
+
+  productDescription: String!
+
+  idPromotion: Int!
+
+  creationDate: DateTime!
+
+  modificationDate: DateTime!
+
+  bankAccount: String!
+
+  userEmail: String!
+
+  idOutlayForm: Int!
+
+  outlayForm: String!
+
+  origin: Boolean!
+
+  pkUser: Int!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
 }
 
 schema {

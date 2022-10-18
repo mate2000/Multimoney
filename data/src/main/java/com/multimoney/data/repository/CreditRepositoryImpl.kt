@@ -3,6 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.CreditApi
+import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -228,6 +229,23 @@ class CreditRepositoryImpl @Inject constructor(
             idBrand,
             idClient,
             idLoan
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryBanksAndRegularExpression(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: String
+    ): Flow<MultimoneyResult<BanksAndRegularExpression>> = fetchData(
+        apolloCall = creditApi.queryBanksAndRegularExpression(
+            pkUser,
+            user,
+            idBrand,
+            idUserRequest
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

@@ -36,10 +36,8 @@ import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
-import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INFO_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INITIAL_CARD
@@ -65,10 +63,14 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.*
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
+import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
+import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
+import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.util.NavEvent
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 @Preview
 fun ProductScreen(
@@ -141,7 +143,7 @@ fun ProductScreen(
                                 .verticalScroll(rememberScrollState())
                         ) {
                             CreditDetail(
-                                modifier = Modifier.background(color = GrayScale700),
+                                modifier = Modifier.background(MultimoneyTheme.colors.creditDetailBackground),
                                 viewModel = viewModel
                             )
                         }
@@ -154,7 +156,30 @@ fun ProductScreen(
                         )
                     }
                 }, totalPages = NUMBER_PAGES)
+                    Box(
+                        contentAlignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MultimoneyTheme.colors.background)
+                    ) {
+                        TopNavBar(
+                            isRightButtonVisible = false,
+                            onLeftButtonClick = {
+                                backPressed()
+                            }
+                        )
+                    }
         }
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }
 
@@ -313,7 +338,6 @@ fun CreditProduct(viewModel: ProductViewModel) {
             CreditStatus.EXIST_IN_CORE.status -> {
                 CustomProductBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = {},
                     type = Primary
                 ) {
                     OngoingCredit(viewModel)
@@ -323,7 +347,6 @@ fun CreditProduct(viewModel: ProductViewModel) {
                 CustomProductBackground(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
-                    onClick = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) },
                     type = Primary
                 ) {
                     when {
@@ -333,7 +356,10 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
                                 infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable,
-                                viewModel.uiState.idBrand.toInt()
+                                viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                }
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {
@@ -349,7 +375,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_IDENTITY_INCOMPLETE, this) -> {
-                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete)
+                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete, action = {
+                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                            })
                         }
                         viewModel.evaluateCardCondition(CREDIT_INFO_INCOMPLETE, this) -> {
                             CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
@@ -357,7 +385,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             })
                         }
                         viewModel.evaluateCardCondition(CREDIT_REJECTED, this) -> {
-                            CardWithCreditInProcess(type = CreditStartProcessIncomplete)
+                            CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
+                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                            })
                         }
                         else -> {
                             CardSmartProduct()
@@ -371,12 +401,9 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            onClick = {
-                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                            },
                             type = Primary
                         ) {
-                            CardGTWithoutCredit()
+                            CardGTWithoutCredit(action = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) })
                         }
                     }
                     else -> {
@@ -492,6 +519,7 @@ fun ProductDetails(viewModel: ProductViewModel) {
                     color = MultimoneyTheme.colors.labelText
                 ),
                 onClick = {
+                    // TODO implement event when views added
                 }
             )
             LazyColumn {
@@ -538,7 +566,11 @@ fun ProductMovement(title: String, date: String, value: String) {
             )
         }
     }
-    Divider(color = WhiteTransparency30, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+    Divider(
+        color = MultimoneyTheme.colors.bottomNavigationDividerColor,
+        thickness = 1.dp,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 private const val NUMBER_PAGES = 2

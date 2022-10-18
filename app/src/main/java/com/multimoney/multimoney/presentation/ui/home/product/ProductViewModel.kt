@@ -22,19 +22,23 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.presentation.util.customnavtype.encodeData
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.sendAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -61,6 +65,8 @@ class ProductViewModel @Inject constructor(
     var identification: String = ""
     var email: String = ""
     var userName: String = ""
+    var productProgress = 0F
+    var isExpiredTitle = R.string.home_product_expiration
     var hasBalance: Boolean = false
 
     private fun onGetUserData() {
@@ -168,10 +174,12 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onFailure(error: HttpError) {
-        uiState = uiState.copy(isLoading = false)
-        openDialog = DialogParameters(
-            description = error.getError() ?: "",
-            isActive = mutableStateOf(true)
+        uiState = uiState.copy(
+            isLoading = false,
+            openDialog = DialogParameters(
+                description = error.getError() ?: "",
+                isActive = mutableStateOf(true)
+            )
         )
     }
 
@@ -194,8 +202,15 @@ class ProductViewModel @Inject constructor(
                 creditSummary
             )
             }"
+        } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+            "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+            encodeData(
+                listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
+            )
+            }"
         } else {
-            "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${creditSummary?.first()?.currency}/${creditSummary?.first()?.idCurrency}"
+            // TODO: Send to appropriate screen when is implemented
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
         }
         navigateTo(route)
     }
@@ -218,22 +233,35 @@ class ProductViewModel @Inject constructor(
 
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
-            uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
-            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> navigateTo(
-                Screen.CreditScreen.route
-            )
-            uiState.userStatus?.infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status -> navigateTo(
-                Screen.CreditScreen.route
-            )
             uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_REJECTED.status -> {
                 openWhatsAppLink(context, whatsAppLink)
             }
+            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> onNavigateToCreditScreen()
+            uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
             else -> navigateTo(Screen.CreditScreen.route)
         }
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
+    }
+
+    private fun getProgress() {
+        productProgress = (
+            balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
+                ?: DEFAULT_PROGRESS
+            ) / (
+            balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
+                ?: DEFAULT_PROGRESS
+            )
+    }
+
+    private fun isExpired() {
+        isExpiredTitle = if ((
+            balanceCredit?.getFirstSummary()?.daysExpired
+                ?: 0
+            ) > 0
+        ) R.string.home_product_expired else R.string.home_product_expiration
     }
 
     fun evaluateCardCondition(action: String, validateUserStatus: ValidateUserStatus): Boolean {
@@ -251,14 +279,14 @@ class ProductViewModel @Inject constructor(
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
                         CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Six.id
+                        ) == CreditStep.Seven.id
                         )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
                         CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Six.id
+                        ) < CreditStep.Seven.id
                         )
                 }
                 CREDIT_REJECTED -> {
@@ -274,7 +302,7 @@ class ProductViewModel @Inject constructor(
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false,
-        var isOnTopScreen: Boolean = true
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -286,7 +314,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
             is OnGetIdBrand -> onGetUserData()
-            is UIEvent.OnMaxAttemptsCardClick -> openWhatsAppLink(
+            is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
                 uiEvent.whatsAppLink
             )
@@ -295,6 +323,8 @@ class ProductViewModel @Inject constructor(
                 uiEvent.context,
                 uiEvent.account
             )
+            OnProgressCalculation -> getProgress()
+            IsPaymentExpired -> isExpired()
         }
     }
 
@@ -314,6 +344,8 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToCreditScreen : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
+        object OnProgressCalculation : UIEvent()
+        object IsPaymentExpired : UIEvent()
         data class OnProductClick(
             val whatsAppLink: String,
             val context: Context
@@ -397,6 +429,7 @@ class ProductViewModel @Inject constructor(
     }
 
     companion object {
+        const val DEFAULT_PROGRESS = 1F
         const val ZERO = 0.0
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
         const val CREDIT_INITIAL_CARD = "CREDIT_INITIAL_CARD"

@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.SemanticPositive800
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 
 @Composable
 fun CustomRoundedLinearProgress(progress: Float, modifier: Modifier) {
@@ -22,7 +22,7 @@ fun CustomRoundedLinearProgress(progress: Float, modifier: Modifier) {
     ) {
         LinearProgressIndicator(modifier = modifier,
             progress = progress,
-            backgroundColor = SemanticPositive800,
-            color = DefaultWhite)
+            backgroundColor = MultimoneyTheme.colors.progressBackground,
+            color = MultimoneyTheme.colors.progressPercentage)
     }
 }

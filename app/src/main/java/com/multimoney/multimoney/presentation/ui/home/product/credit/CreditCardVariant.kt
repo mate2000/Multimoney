@@ -30,11 +30,10 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Primary300
-import com.multimoney.multimoney.presentation.theme.SemanticNegative400
-import com.multimoney.multimoney.presentation.theme.SemanticPositive700
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseFirstTime
@@ -96,12 +95,15 @@ fun CardSmartProduct(action: () -> Unit = {}) {
  */
 @Composable
 @Preview
-fun CardGTWithoutCredit() {
+fun CardGTWithoutCredit(action: () -> Unit = {}) {
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
             .wrapContentHeight()
+            .clickable {
+                action()
+            }
     ) {
         Text(
             text = stringResource(id = R.string.home_product_gt_with_out_credit_title),
@@ -146,6 +148,7 @@ fun CreditApprovedOrStarted(
     creditApprovedOrStartedStatus: CreditApprovedOrStartedStatus,
     amount: String? = "0.0",
     idBrand: Int,
+    action: () -> Unit = {}
 ) {
     val title: Int
     var description = ""
@@ -175,6 +178,9 @@ fun CreditApprovedOrStarted(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .clickable {
+                action()
+            }
     ) {
         Text(
             text = stringResource(id = title),
@@ -448,6 +454,8 @@ fun CardCreditMaxAttempts(
 fun OngoingCredit(
     viewModel: ProductViewModel,
 ) {
+    viewModel.onUIEvent(OnProgressCalculation)
+    viewModel.onUIEvent(IsPaymentExpired)
     Column(modifier = Modifier
         .fillMaxWidth()
         .wrapContentHeight()
@@ -464,9 +472,7 @@ fun OngoingCredit(
             style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        CustomRoundedLinearProgress(progress = (viewModel.balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
-            ?: 1F) / (viewModel.balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
-            ?: 1F), modifier = Modifier
+        CustomRoundedLinearProgress(progress = viewModel.productProgress, modifier = Modifier
             .fillMaxWidth()
             .height(4.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
@@ -504,16 +510,14 @@ fun OngoingCredit(
             }
             Column(modifier = Modifier.weight(0.5F)) {
                 Text(
-                    text = stringResource(id = if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                            ?: 0) > 0
-                    ) R.string.home_product_expired else R.string.home_product_expiration),
+                    text = stringResource(id = viewModel.isExpiredTitle),
                     modifier = Modifier.padding(top = 4.dp),
                     style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.text
                 )
                 Chip(
                     enabled = false,
-                    colors = ChipDefaults.chipColors(disabledBackgroundColor = SemanticPositive700,
+                    colors = ChipDefaults.chipColors(disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
                         disabledContentColor = MultimoneyTheme.colors.text),
                     modifier = Modifier
                         .height(28.dp)
@@ -525,8 +529,8 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
                                         ?: 0) > 0
-                                ) SemanticNegative400 else Primary300)
-                                .padding(top = 2.dp)
+                                ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor)
+                                .padding(top = 2.dp, start = 3.dp)
                         )
                     },
                     onClick = {

@@ -47,7 +47,7 @@ sealed class Currency(
     )
 
     object Search {
-        fun getAccountIconByIdCurrency(idCurrency: Int?): Currency {
+        fun getCurrencyByIdCurrency(idCurrency: Int?): Currency {
             return when (idCurrency) {
                 Colon.id -> Colon
                 Dollar.id -> Dollar

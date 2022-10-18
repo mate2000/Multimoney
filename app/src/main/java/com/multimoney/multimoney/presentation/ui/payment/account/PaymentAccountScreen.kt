@@ -19,11 +19,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -31,7 +32,7 @@ import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountV
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnSetIdCurrency
+import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnSaveArguments
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -54,16 +55,19 @@ fun PaymentAccountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(OnSetIdCurrency(navBackStackEntry.arguments?.getInt(ID_CURRENCY, 0) ?: 0))
-            onUIEvent(OnGetTextResources)
-            onUIEvent(
-                OnCallQueryGetClientBankAccount(
-                    user = navBackStackEntry.arguments?.getString(USER, "") ?: "",
-                    idBrand = navBackStackEntry.arguments?.getInt(ID_BRAND, 0) ?: 0,
-                    idClient = navBackStackEntry.arguments?.getInt(ID_CLIENT, 0) ?: 0,
-                    idLoan = navBackStackEntry.arguments?.getInt(ID_LOAN_CLIENT, 0) ?: 0
+            navBackStackEntry.arguments?.apply {
+                viewModel.onUIEvent(
+                    OnSaveArguments(
+                        getString(USER) ?: "",
+                        getInt(ID_BRAND),
+                        getInt(ID_CLIENT),
+                        getInt(ID_LOAN_CLIENT),
+                        (get(SUMMARY_LIST) as Array<Summary>).toList()
+                    )
                 )
-            )
+            }
+            onUIEvent(OnGetTextResources)
+            onUIEvent(OnCallQueryGetClientBankAccount())
         }
     }
 
@@ -90,14 +94,14 @@ fun PaymentAccountScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
-                        startIcon = Currency.Search.getAccountIconByIdCurrency(clientBankAccount?.idCurrency).accountIcon,
+                        startIcon = Currency.Search.getCurrencyByIdCurrency(clientBankAccount?.idCurrency).accountIcon,
                         title = clientBankAccount?.bankDescription ?: "",
                         subtitle = viewModel.getMaskedAccount(
                             clientBankAccount?.accountNumber ?: "",
                             stringResource(id = R.string.payment_account_masked_text)
                         ),
                         onClick = {
-                            viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount?.idCurrency ?: 0))
+                            viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount))
                         }
                     )
                 }

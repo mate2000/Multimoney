@@ -126,9 +126,9 @@ fun IbanAccountScreen(
                 )
             },
             canShowNonErrorMessage = true,
-            isError = viewModel.uiState.incomeError.first,
+            isError = viewModel.uiState.accountError.first,
             errorMessage = viewModel.uiState.validationError
-                ?: stringResource(id = viewModel.uiState.incomeError.second),
+                ?: stringResource(id = viewModel.uiState.accountError.second),
             customTransformation = MaskVisualTransformation(
                 VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.mask,
                 VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.maskChar

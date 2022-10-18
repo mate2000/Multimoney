@@ -48,7 +48,7 @@ class IbanAccountViewModel @Inject constructor(
             query.debounce(2000).distinctUntilChanged().collectLatest {
                 if (it.length in 1..IBAN_MAX_LENGTH.minus(1)) {
                     onValidForm(false)
-                    uiState = uiState.copy(incomeError = Pair(true, R.string.iban_account_error))
+                    uiState = uiState.copy(accountError = Pair(true, R.string.iban_account_error))
                 }
             }
         }
@@ -61,7 +61,7 @@ class IbanAccountViewModel @Inject constructor(
         if (bankAccount.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
             uiState = uiState.copy(
                 accountNumber = bankAccount,
-                incomeError = Pair(false, R.string.empty),
+                accountError = Pair(false, R.string.empty),
                 validationError = null
             )
             query.value = bankAccount
@@ -85,7 +85,7 @@ class IbanAccountViewModel @Inject constructor(
             idBrandIban = Brand.CostaRica.iban
         }
         executeUseCase {
-            uiState = uiState.copy(incomeError = Pair(false, R.string.iban_account_loading))
+            uiState = uiState.copy(accountError = Pair(false, R.string.iban_account_loading))
 
             queryValidateBankAccountUseCase(
                 "$idBrandIban${uiState.accountNumber}",
@@ -103,7 +103,7 @@ class IbanAccountViewModel @Inject constructor(
                             HAS_ERRORS -> {
                                 uiState =
                                     uiState.copy(
-                                        incomeError = Pair(true, R.string.empty),
+                                        accountError = Pair(true, R.string.empty),
                                         validationError = response.responseMessage.capitalized()
                                     )
                             }
@@ -112,7 +112,7 @@ class IbanAccountViewModel @Inject constructor(
                 }
                 it.onFailure { error ->
                     uiState = uiState.copy(
-                        incomeError = Pair(false, R.string.empty),
+                        accountError = Pair(false, R.string.empty),
                         accountNumber = "",
                     )
                     onFailure(error)
@@ -139,7 +139,7 @@ class IbanAccountViewModel @Inject constructor(
 
     data class UIState(
         val accountNumber: String = "",
-        val incomeError: Pair<Boolean, Int> = Pair(
+        val accountError: Pair<Boolean, Int> = Pair(
             false,
             R.string.empty
         ),

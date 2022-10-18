@@ -199,9 +199,8 @@ fun GetStepContent(
             IbanAccountScreen(sharedViewModel = viewModel)
         } else {
             //CreditBankScreen(sharedViewModel = viewModel)
-            // todo remove thi uncomment line above
+            // todo remove this, uncomment line above
             IbanAccountScreen(sharedViewModel = viewModel)
-
         }
         CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)

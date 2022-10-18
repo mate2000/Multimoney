@@ -2,7 +2,17 @@ package com.multimoney.multimoney.presentation.ui.home.product
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -15,7 +25,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -61,13 +70,16 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCred
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
-import com.multimoney.multimoney.presentation.uielement.*
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @OptIn(ExperimentalPagerApi::class)
@@ -136,39 +148,31 @@ fun ProductScreen(
                         viewModel = viewModel
                     )
                 }, secondaryFooter = {
-                    Box(Modifier.fillMaxSize()) {
+                    Column(Modifier.fillMaxSize()) {
                         Column(
-                            Modifier.align(Alignment.TopCenter)
-                                .height(210.dp)
-                                .verticalScroll(rememberScrollState())
+                            Modifier.weight(1.8f),
+                            verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                            CreditDetail(
-                                modifier = Modifier.background(MultimoneyTheme.colors.creditDetailBackground),
-                                viewModel = viewModel
+                            Column(
+                                Modifier
+                                    .weight(3f)
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                CreditDetail(
+                                    modifier = Modifier.background(MultimoneyTheme.colors.creditDetailBackground),
+                                    viewModel = viewModel
+                                )
+                            }
+                            PayButtons(
+                                modifier =
+                                Modifier.padding(16.dp).weight(1f),
+                                viewModel = viewModel,
+                                canDisburse = viewModel.hasBalance
                             )
                         }
-                        PayButtons(
-                            modifier =
-                            Modifier.align(Alignment.BottomCenter)
-                                .padding(16.dp).padding(bottom = 390.dp),
-                            viewModel = viewModel,
-                            canDisburse = viewModel.hasBalance
-                        )
+                        Box(modifier = Modifier.weight(2f))
                     }
                 }, totalPages = NUMBER_PAGES)
-                    Box(
-                        contentAlignment = Alignment.TopCenter,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MultimoneyTheme.colors.background)
-                    ) {
-                        TopNavBar(
-                            isRightButtonVisible = false,
-                            onLeftButtonClick = {
-                                backPressed()
-                            }
-                        )
-                    }
         }
     }
 

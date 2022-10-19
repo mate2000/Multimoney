@@ -49,14 +49,7 @@ class PaymentAmountViewModel @Inject constructor() : BaseViewModel(true) {
         var minimumPaymentLabel = ""
         var maximumPaymentLabel = ""
         var isAmountVisible = false
-        if (summaryList.count() == 1) {
-            val summary = summaryList.first()
-            minimumPaymentLabel = summary.minPaymentLabel.orEmpty()
-            maximumPaymentLabel = summary.currentBalanceLabel.orEmpty()
-            minimumPayment = summary.minPayment?.toInt() ?: 0
-            maximumPayment = summary.currentBalance?.toInt() ?: 0
-            isAmountVisible = true
-        } else {
+        if (summaryList.count() > 1) {
             summaryList.forEachIndexed { index, summary ->
                 if (index < summaryList.lastIndex) {
                     minimumPaymentLabel = minimumPaymentLabel.plus(summary.minPaymentLabel).plus(PAYMENT_PLUS)
@@ -66,6 +59,13 @@ class PaymentAmountViewModel @Inject constructor() : BaseViewModel(true) {
                     maximumPaymentLabel = maximumPaymentLabel.plus(summary.currentBalanceLabel)
                 }
             }
+        } else if (summaryList.isNotEmpty() && summaryList.firstOrNull() != null) {
+            val summary = summaryList.first()
+            minimumPaymentLabel = summary.minPaymentLabel.orEmpty()
+            maximumPaymentLabel = summary.currentBalanceLabel.orEmpty()
+            minimumPayment = summary.minPayment?.toInt() ?: 0
+            maximumPayment = summary.currentBalance?.toInt() ?: 0
+            isAmountVisible = true
         }
         uiState = uiState.copy(
             minimumPaymentLabel = minimumPaymentLabel,

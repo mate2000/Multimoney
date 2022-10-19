@@ -2,20 +2,26 @@ package com.multimoney.multimoney.presentation.ui.payment.account
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
@@ -36,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountV
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -49,8 +56,6 @@ fun PaymentAccountScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: PaymentAccountViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
@@ -67,10 +72,17 @@ fun PaymentAccountScreen(
                 )
             }
             onUIEvent(OnGetTextResources)
-            onUIEvent(OnCallQueryGetClientBankAccount())
+            onUIEvent(OnCallQueryGetClientBankAccount)
         }
     }
+    PaymentAccountContent(viewModel)
+}
 
+@Composable
+@Preview
+fun PaymentAccountContent(
+    viewModel: PaymentAccountViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -87,37 +99,11 @@ fun PaymentAccountScreen(
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-        viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
-            LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
-                items(clientBankAccountList) { clientBankAccount ->
-                    CustomInfoButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        startIcon = Currency.Search.getCurrencyByIdCurrency(clientBankAccount?.idCurrency).accountIcon,
-                        title = clientBankAccount?.bankDescription ?: "",
-                        subtitle = viewModel.getMaskedAccount(
-                            clientBankAccount?.accountNumber ?: "",
-                            stringResource(id = R.string.payment_account_masked_text)
-                        ),
-                        onClick = {
-                            viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount))
-                        }
-                    )
-                }
-            }
+        if (viewModel.uiState.isClientBankAccountListEmpty) {
+            PaymentAccountEmptyState(viewModel)
+        } else {
+            PaymentAccountList(viewModel)
         }
-        CustomButton(
-            text = stringResource(id = R.string.payment_account_create),
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth(),
-            onClick = {
-                Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
-            },
-            buttonType = CustomButtonType.PrimaryTertiary,
-            trailingIcon = R.drawable.ic_plus
-        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
@@ -131,4 +117,86 @@ fun PaymentAccountScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
+}
+
+@Composable
+@Preview
+fun PaymentAccountEmptyState(
+    viewModel: PaymentAccountViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Spacer(modifier = Modifier.wrapContentSize())
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CustomImage(
+                drawableResource = R.drawable.ic_bank
+            )
+            Text(
+                text = stringResource(id = R.string.payment_account_empty_state_description),
+                modifier = Modifier.padding(vertical = 25.dp, horizontal = 58.dp),
+                style = Typography.body1,
+                color = MultimoneyTheme.colors.labelText,
+                textAlign = TextAlign.Center
+            )
+        }
+        CustomButton(
+            onClick = { Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show() },
+            text = stringResource(id = R.string.payment_account_create),
+            modifier = Modifier
+                .padding(vertical = 40.dp, horizontal = 16.dp)
+                .fillMaxWidth(),
+            buttonType = CustomButtonType.PrimaryPrimary
+        )
+    }
+}
+
+@Composable
+@Preview
+fun PaymentAccountList(
+    viewModel: PaymentAccountViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+
+    viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
+        LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
+            items(clientBankAccountList) { clientBankAccount ->
+                CustomInfoButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp),
+                    startIcon = Currency.Search.getCurrencyByIdCurrency(clientBankAccount?.idCurrency).accountIcon,
+                    title = clientBankAccount?.bankDescription ?: "",
+                    subtitle = viewModel.getMaskedAccount(
+                        clientBankAccount?.accountNumber ?: "",
+                        stringResource(id = R.string.payment_account_masked_text)
+                    ),
+                    onClick = {
+                        viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount))
+                    }
+                )
+            }
+        }
+    }
+    CustomButton(
+        text = stringResource(id = R.string.payment_account_create),
+        modifier = Modifier
+            .padding(top = 32.dp)
+            .fillMaxWidth(),
+        onClick = {
+            Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
+        },
+        buttonType = CustomButtonType.PrimaryTertiary,
+        trailingIcon = R.drawable.ic_plus
+    )
 }

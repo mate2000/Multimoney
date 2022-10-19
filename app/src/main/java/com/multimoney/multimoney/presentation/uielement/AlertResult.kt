@@ -9,47 +9,65 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
-import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_BUTTON_TEXT
-import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_DESCRIPTION
-import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_ICON
-import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_TITLE
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.alertresult.AlertResultViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+
+/**
+ * CustomDialog: This Dialog is used to match design system
+ *
+ * Parameters:
+ * @param iconResource: Result icon resource.
+ * @param titleResource: Result title resource
+ * @param descriptionResource: Result description resource
+ * @param buttonTextResource: Result button text resource
+ * @param isTopNavBarVisible: Make TopNavBar visible
+ * @param isLeftButtonVisible: Make left button TopNavBar's visible
+ * @param isRightButtonVisible: Make right button TopNavBar's visible
+ * @param onLeftButtonClick: Action left button TopNavBar's
+ * @param onRightButtonClick: Action right button TopNavBar's
+ * @param onButtonClick: Action to execute when button is clicked
+ */
 
 @Composable
-fun AlertResultScreen(
-    navBackStackEntry: NavBackStackEntry,
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: AlertResultViewModel = hiltViewModel()
+@Preview
+fun AlertResult(
+    iconResource: Int = R.drawable.ic_error_symbol,
+    titleResource: Int = R.string.empty,
+    descriptionResource: Int = R.string.empty,
+    buttonTextResource: Int = R.string.empty,
+    isTopNavBarVisible: Boolean = true,
+    isLeftButtonVisible: Boolean = true,
+    isRightButtonVisible: Boolean = true,
+    onLeftButtonClick: () -> Unit = {},
+    onRightButtonClick: () -> Unit = {},
+    onButtonClick: () -> Unit = {}
 ) {
-    LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        TopNavBar(
-            isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) })
+        if (isTopNavBarVisible) {
+            TopNavBar(
+                isLeftButtonVisible = isLeftButtonVisible,
+                isRightButtonVisible = isRightButtonVisible,
+                onLeftButtonClick = onLeftButtonClick,
+                onRightButtonClick = onRightButtonClick
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -58,18 +76,18 @@ fun AlertResultScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CustomImage(
-                drawableResource = navBackStackEntry.arguments?.getInt(ALERT_RESULT_ICON) ?: 0
+                drawableResource = iconResource
             )
             Text(
                 modifier = Modifier.padding(top = 40.dp, start = 24.dp, end = 24.dp),
-                text = stringResource(id = navBackStackEntry.arguments?.getInt(ALERT_RESULT_TITLE) ?: 0),
+                text = stringResource(id = titleResource),
                 style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Center
             )
             Text(
                 modifier = Modifier.padding(all = 24.dp),
-                text = stringResource(id = navBackStackEntry.arguments?.getInt(ALERT_RESULT_DESCRIPTION) ?: 0),
+                text = stringResource(id = descriptionResource),
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Center
@@ -79,8 +97,8 @@ fun AlertResultScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 40.dp),
-            onClick = { viewModel.onUIEvent(OnCloseClick) },
-            text = stringResource(id = navBackStackEntry.arguments?.getInt(ALERT_RESULT_BUTTON_TEXT) ?: 0),
+            onClick = { onButtonClick() },
+            text = stringResource(id = buttonTextResource),
             buttonType = PrimaryPrimary
         )
     }

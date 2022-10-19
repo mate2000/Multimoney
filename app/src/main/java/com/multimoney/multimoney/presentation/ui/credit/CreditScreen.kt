@@ -59,7 +59,6 @@ fun CreditScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: CreditViewModel = hiltViewModel()
 ) {
-
     val focusManager = LocalFocusManager.current
 
     // Navigation
@@ -71,10 +70,12 @@ fun CreditScreen(
                 navBackStackEntry.arguments?.getString(PK_USER, "") ?: "",
                 navBackStackEntry.arguments?.getString(IDENTIFICATION, "") ?: "",
                 navBackStackEntry.arguments?.getString(EMAIL, "") ?: "",
-                (navBackStackEntry.arguments?.getString(
-                    CREDIT_STEP,
-                    CreditStep.One.id.toString()
-                ))?.toInt() ?: 0,
+                (
+                    navBackStackEntry.arguments?.getString(
+                        CREDIT_STEP,
+                        CreditStep.One.id.toString()
+                    )
+                    )?.toInt() ?: 0,
                 navBackStackEntry.arguments?.getString(ID_USER_REQUEST, "") ?: ""
             )
         )
@@ -115,7 +116,8 @@ fun CreditScreen(
                     isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id,
                     isRightButtonVisible = viewModel.uiState.isCloseVisible,
                     onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                    onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
+                    onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
+                )
                 if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Seven.id) {
                     StepProgressBar(
                         steps = CREDIT_INDICATOR_TOTAL_STEPS,
@@ -198,9 +200,7 @@ fun GetStepContent(
         CreditStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
             IbanAccountScreen(sharedViewModel = viewModel)
         } else {
-            //CreditBankScreen(sharedViewModel = viewModel)
-            // todo remove this, uncomment line above
-            IbanAccountScreen(sharedViewModel = viewModel)
+            CreditBankScreen(sharedViewModel = viewModel)
         }
         CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
         CreditStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)

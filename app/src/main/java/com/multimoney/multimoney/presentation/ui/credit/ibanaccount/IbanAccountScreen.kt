@@ -22,27 +22,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.VisualTransformationMasks
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun IbanAccountScreen(
     sharedViewModel: CreditViewModel,
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: IbanAccountViewModel = hiltViewModel()
 ) {
+    val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(true){
+    LaunchedEffect(true) {
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is IbanAccountViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
@@ -62,10 +61,23 @@ fun IbanAccountScreen(
                 sharedViewModel.idBrand
             )
         )
+        sharedViewModel.onUIEvent(
+            CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
+                viewModel.onUIEvent(
+                    IbanAccountViewModel.UIEvent.OnNextActionClick(
+                        user = sharedViewModel.email,
+                        nextStepAction = {
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
+                            )
+                        },
+                        saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                    )
+                )
+            }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id)
+        )
         viewModel.onUIEvent(IbanAccountViewModel.UIEvent.OnValidForm)
     }
-
-    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
@@ -99,13 +111,15 @@ fun IbanAccountScreen(
                         style = Typography.body2.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = tint
-                        ),
+                        )
                     )
                 }
             },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number, imeAction = ImeAction.Next
-            ), keyboardActions = KeyboardActions(onNext = {
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
                 focusManager.clearFocus()
             }),
             isRequired = false,

@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -15,19 +14,19 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnAccountValueChange
+import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnLoadCreditSteps
+import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.capitalized
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class IbanAccountViewModel @Inject constructor(
     val queryValidateBankAccountUseCase: QueryValidateBankAccountUseCase
@@ -36,22 +35,21 @@ class IbanAccountViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    private val query: MutableStateFlow<String> = MutableStateFlow("")
-
     // ViewModel variables
     private var idBrand: Int = 0
     private var identification: String = ""
     private var email: String = ""
 
-    init {
-        viewModelScope.launch {
-            query.debounce(2000).distinctUntilChanged().collectLatest {
-                if (it.length in 1..IBAN_MAX_LENGTH.minus(1)) {
-                    onValidForm(false)
-                    uiState = uiState.copy(accountError = Pair(true, R.string.iban_account_error))
-                }
-            }
-        }
+    private fun onNextActionClick(
+        user: String,
+        nextStepAction: () -> Unit,
+        saveCreditStepsHelper: SaveCreditStepsHelper
+    ) {
+        saveCreditStepsHelper.saveStepOneCR(
+            user,
+            uiState.accountNumber
+        )
+        nextStepAction()
     }
 
     private fun onIncomeValueChange(
@@ -59,12 +57,19 @@ class IbanAccountViewModel @Inject constructor(
         onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
     ) {
         if (bankAccount.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
-            uiState = uiState.copy(
-                accountNumber = bankAccount,
-                accountError = Pair(false, R.string.empty),
-                validationError = null
-            )
-            query.value = bankAccount
+            uiState = if (bankAccount.length in 1..IBAN_MAX_LENGTH.minus(1)) {
+                onValidForm(false)
+                uiState.copy(
+                    accountNumber = bankAccount,
+                    accountError = Pair(true, R.string.iban_account_error)
+                )
+            } else {
+                uiState.copy(
+                    accountNumber = bankAccount,
+                    accountError = Pair(false, R.string.empty),
+                    validationError = null
+                )
+            }
             if (bankAccount.length == IBAN_MAX_LENGTH) {
                 validateIbanAccount(bankAccount) { response ->
                     onFailureWithDialog(
@@ -96,7 +101,6 @@ class IbanAccountViewModel @Inject constructor(
                 it.onSuccess { account ->
                     account?.let { response ->
                         when (response.responseCode) {
-
                             IS_VALID -> {
                                 onValidForm(true)
                             }
@@ -113,7 +117,7 @@ class IbanAccountViewModel @Inject constructor(
                 it.onFailure { error ->
                     uiState = uiState.copy(
                         accountError = Pair(false, R.string.empty),
-                        accountNumber = "",
+                        accountNumber = ""
                     )
                     onFailure(error)
                 }
@@ -137,6 +141,9 @@ class IbanAccountViewModel @Inject constructor(
         )
     }
 
+    private fun onLoadStep() {
+    }
+
     data class UIState(
         val accountNumber: String = "",
         val accountError: Pair<Boolean, Int> = Pair(
@@ -148,6 +155,11 @@ class IbanAccountViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnNextActionClick -> onNextActionClick(
+                uiEvent.user,
+                uiEvent.nextStepAction,
+                uiEvent.saveCreditStepsHelper
+            )
             is OnAccountValueChange -> onIncomeValueChange(
                 uiEvent.account,
                 uiEvent.onFailureWithDialog
@@ -158,6 +170,7 @@ class IbanAccountViewModel @Inject constructor(
                 uiEvent.email,
                 uiEvent.idBrand
             )
+            is OnLoadCreditSteps -> onLoadStep()
         }
     }
 
@@ -178,6 +191,7 @@ class IbanAccountViewModel @Inject constructor(
             val account: String,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
+
         object OnValidForm : UIEvent()
         data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
@@ -188,10 +202,8 @@ class IbanAccountViewModel @Inject constructor(
     }
 
     companion object {
-        const val ZERO = 0
         const val IS_VALID = 0
         const val HAS_ERRORS = 1
         const val IBAN_MAX_LENGTH = 20
     }
 }
-

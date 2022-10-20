@@ -89,7 +89,8 @@ import kotlinx.coroutines.launch
  * **/
 
 @OptIn(
-    ExperimentalFoundationApi::class, kotlinx.coroutines.FlowPreview::class,
+    ExperimentalFoundationApi::class,
+    kotlinx.coroutines.FlowPreview::class,
     kotlinx.coroutines.ExperimentalCoroutinesApi::class
 )
 @Composable
@@ -119,6 +120,8 @@ fun CustomOutlinedTextField(
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
+
+    if (isRequired) emptyError = value?.isEmpty() == true
 
     val textDebounce = remember { MutableStateFlow("") }
     val textDebounceFlow: Flow<String> = remember {
@@ -205,7 +208,6 @@ fun CustomOutlinedTextField(
     }
 
     Column(modifier = modifier.wrapContentHeight()) {
-
         // Display label is it isn't null
         labelText?.let {
             Text(
@@ -221,7 +223,6 @@ fun CustomOutlinedTextField(
             .clickable {
                 onClick()
             }
-
 
         if (isTextArea) {
             innerModifier = innerModifier.height(80.dp)

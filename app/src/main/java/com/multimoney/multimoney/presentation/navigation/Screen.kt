@@ -16,17 +16,10 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 // Route
 const val LOGIN_ROUTE = "log_in_route"
 const val HOME_ROUTE = "home_route"
-const val HOME_MAIN_ROUTE = "home_main_route"
 const val CREDIT_ROUTE = "credit_route"
 const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val TEST_ROUTE = "test_route"
-
-// Parameters Alert
-const val ALERT_RESULT_ICON = "alert_result_icon"
-const val ALERT_RESULT_TITLE = "alert_result_title"
-const val ALERT_RESULT_DESCRIPTION = "alert_result_description"
-const val ALERT_RESULT_BUTTON_TEXT = "alert_result_button_text"
 
 const val ID_BRAND = "id_brand"
 
@@ -69,12 +62,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object HomeBNScreen : Screen("home_bn_screen")
     object QuickActionBNScreen : Screen("quick_action_bt_screen")
     object ProductsBNScreen : Screen("products_bt_screen")
-
-    // Alert Result Screens
-    object AlertResultScreen : Screen(
-        "alert_result_screen/{$ALERT_RESULT_ICON}/{$ALERT_RESULT_TITLE}/{$ALERT_RESULT_DESCRIPTION}/{$ALERT_RESULT_BUTTON_TEXT}",
-        "alert_result_screen"
-    )
 
     // Payment Credit
     object PaymentFeeScreen : Screen(

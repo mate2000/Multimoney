@@ -38,7 +38,7 @@ class PaymentAccountViewModel @Inject constructor(
     private var idBrand: Int = 0
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
-    private var summaryList: List<Summary?>? = null
+    private var summaryList: List<Summary>? = null
     private var idCurrency: Int? = 0
 
     private fun onSaveArguments(
@@ -55,8 +55,10 @@ class PaymentAccountViewModel @Inject constructor(
         this.summaryList = summaryList
         idCurrency = if (summaryList.count() > 1) {
             Currency.All.id
+        } else if (summaryList.isNotEmpty() && summaryList.firstOrNull() != null) {
+            summaryList.first()?.idCurrency
         } else {
-            summaryList.first().idCurrency
+            idCurrency
         }
     }
 
@@ -75,7 +77,11 @@ class PaymentAccountViewModel @Inject constructor(
                 idLoan = idLoanClient
             ).collectLatest { result ->
                 result.onSuccess { clientBankAccountList ->
-                    uiState = uiState.copy(isLoading = false, clientBankAccountList = clientBankAccountList)
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        clientBankAccountList = clientBankAccountList,
+                        isClientBankAccountListEmpty = clientBankAccountList.isNullOrEmpty()
+                    )
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -136,6 +142,7 @@ class PaymentAccountViewModel @Inject constructor(
         // Interactions
         val titleResource: Int = R.string.empty,
         val clientBankAccountList: List<ClientBankAccount?>? = null,
+        val isClientBankAccountListEmpty: Boolean = true,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )
@@ -165,7 +172,7 @@ class PaymentAccountViewModel @Inject constructor(
             val summaryList: List<Summary>
         ) : UIEvent()
 
-        class OnCallQueryGetClientBankAccount() : UIEvent()
+        object OnCallQueryGetClientBankAccount : UIEvent()
 
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
         object OnGetTextResources : UIEvent()

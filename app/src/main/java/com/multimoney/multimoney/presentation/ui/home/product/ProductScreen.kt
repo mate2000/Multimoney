@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -35,6 +36,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -148,29 +151,40 @@ fun ProductScreen(
                         viewModel = viewModel
                     )
                 }, secondaryFooter = {
-                    Column(Modifier.fillMaxSize()) {
+                    ConstraintLayout(
+                        Modifier.fillMaxSize()
+                    ) {
+                        val (content, buttons) = createRefs()
+
                         Column(
-                            Modifier.weight(1.8f),
-                            verticalArrangement = Arrangement.SpaceBetween
+                            Modifier
+                                .verticalScroll(rememberScrollState())
+                                .constrainAs(content) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(buttons.top)
+                                    height = Dimension.fillToConstraints
+                                }
                         ) {
-                            Column(
-                                Modifier
-                                    .weight(3f)
-                                    .verticalScroll(rememberScrollState())
-                            ) {
-                                CreditDetail(
-                                    modifier = Modifier.background(MultimoneyTheme.colors.creditDetailBackground),
-                                    viewModel = viewModel
-                                )
-                            }
-                            PayButtons(
-                                modifier =
-                                Modifier.padding(16.dp).weight(1f),
-                                viewModel = viewModel,
-                                canDisburse = viewModel.hasBalance
+                            CreditDetail(
+                                modifier = Modifier
+                                    .background(MultimoneyTheme.colors.creditDetailBackground)
+                                    .wrapContentSize(),
+                                viewModel = viewModel
                             )
                         }
-                        Box(modifier = Modifier.weight(2f))
+
+                        PayButtons(
+                            modifier =
+                            Modifier.padding(16.dp).constrainAs(buttons) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                            },
+                            viewModel = viewModel,
+                            canDisburse = viewModel.hasBalance
+                        )
                     }
                 }, totalPages = NUMBER_PAGES)
         }
@@ -407,7 +421,14 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 .padding(horizontal = 16.dp),
                             type = Primary
                         ) {
-                            CardGTWithoutCredit(action = { viewModel.onUIEvent(OnProductClick(whatsAppLink, context)) })
+                            CardGTWithoutCredit(action = {
+                                viewModel.onUIEvent(
+                                    OnProductClick(
+                                        whatsAppLink,
+                                        context
+                                    )
+                                )
+                            })
                         }
                     }
                     else -> {

@@ -7,6 +7,7 @@ import androidx.core.text.isDigitsOnly
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
@@ -16,6 +17,7 @@ import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountV
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnResetAccountNumber
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
@@ -39,6 +41,7 @@ class IbanAccountViewModel @Inject constructor(
     private var idBrand: Int = 0
     private var identification: String = ""
     private var email: String = ""
+    var validateAccount: ValidateAccount? = null
 
     private fun onNextActionClick(
         user: String,
@@ -71,7 +74,7 @@ class IbanAccountViewModel @Inject constructor(
                 )
             }
             if (bankAccount.length == IBAN_MAX_LENGTH) {
-                validateIbanAccount(bankAccount) { response ->
+                validateIbanAccount() { response ->
                     onFailureWithDialog(
                         false,
                         DialogParameters(
@@ -84,7 +87,7 @@ class IbanAccountViewModel @Inject constructor(
         }
     }
 
-    private fun validateIbanAccount(bankAccount: String, onFailure: (HttpError) -> Unit) {
+    private fun validateIbanAccount(onFailure: (HttpError) -> Unit) {
         var idBrandIban = ""
         if (idBrand == Brand.CostaRica.id) {
             idBrandIban = Brand.CostaRica.iban
@@ -102,6 +105,7 @@ class IbanAccountViewModel @Inject constructor(
                     account?.let { response ->
                         when (response.responseCode) {
                             IS_VALID -> {
+                                validateAccount = response
                                 onValidForm(true)
                             }
                             HAS_ERRORS -> {
@@ -141,16 +145,18 @@ class IbanAccountViewModel @Inject constructor(
         )
     }
 
+    private fun onResetAccountNumber() {
+        uiState = uiState.copy(accountNumber = "", ibanSuccess = false)
+    }
+
     private fun onLoadStep() {
     }
 
     data class UIState(
         val accountNumber: String = "",
-        val accountError: Pair<Boolean, Int> = Pair(
-            false,
-            R.string.empty
-        ),
-        val validationError: String? = null
+        val accountError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val validationError: String? = null,
+        val ibanSuccess: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -170,6 +176,7 @@ class IbanAccountViewModel @Inject constructor(
                 uiEvent.email,
                 uiEvent.idBrand
             )
+            is OnResetAccountNumber -> onResetAccountNumber()
             is OnLoadCreditSteps -> onLoadStep()
         }
     }
@@ -193,6 +200,7 @@ class IbanAccountViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnValidForm : UIEvent()
+        object OnResetAccountNumber : UIEvent()
         data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 

@@ -38,7 +38,7 @@ fun CustomInfoButton(
     subtitle: String = "",
     endIcon: Int = R.drawable.ic_right_chevron,
     onClick: () -> Unit = {},
-    endIconClick: () -> Unit = {}
+    onEndIconClick: () -> Unit = {}
 ) {
     val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
         backgroundColor = Color.Transparent,
@@ -115,7 +115,7 @@ fun CustomInfoButton(
                     end.linkTo(parent.end, margin = 12.dp)
                     bottom.linkTo(parent.bottom)
                 }.clickable {
-                    endIconClick()
+                    onEndIconClick()
                 },
                 contentDescription = ""
             )

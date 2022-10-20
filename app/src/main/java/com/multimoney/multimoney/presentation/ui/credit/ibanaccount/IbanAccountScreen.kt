@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,12 +25,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.VisualTransformationMasks
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -92,61 +96,78 @@ fun IbanAccountScreen(
             color = MultimoneyTheme.colors.labelText
         )
 
-        CustomOutlinedTextField(
-            modifier = Modifier.padding(top = 32.dp),
-            value = viewModel.uiState.accountNumber,
-            leadingIconComposable = { tint ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(start = 16.dp, end = 8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_account),
-                        contentDescription = "",
-                        tint = tint
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(id = R.string.iban_account_cr),
-                        style = Typography.body2.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = tint
+        if (viewModel.uiState.ibanSuccess) {
+            CustomInfoButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                startIcon = if (viewModel.validateAccount?.currency == "02") R.drawable.ic_account_dollar else R.drawable.ic_account_colon,
+                title = viewModel.validateAccount?.bankName ?: "",
+                subtitle = getMaskedAccount(
+                    viewModel.uiState.accountNumber,
+                    stringResource(id = string.payment_account_masked_text)
+                ),
+                onEndIconClick = {
+                    viewModel.onUIEvent(IbanAccountViewModel.UIEvent.OnResetAccountNumber)
+                }
+            )
+        } else {
+            CustomOutlinedTextField(
+                modifier = Modifier.padding(top = 32.dp),
+                value = viewModel.uiState.accountNumber,
+                leadingIconComposable = { tint ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_account),
+                            contentDescription = "",
+                            tint = tint
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = stringResource(id = R.string.iban_account_cr),
+                            style = Typography.body2.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = tint
+                            )
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.clearFocus()
+                }),
+                isRequired = false,
+                placeHolder = stringResource(id = R.string.iban_account_hint),
+                onValueChange = {
+                    viewModel.onUIEvent(
+                        IbanAccountViewModel.UIEvent.OnAccountValueChange(
+                            it,
+                            onFailureWithDialog = { isLoading, dialogParameters ->
+                                sharedViewModel.onUIEvent(
+                                    CreditViewModel.UIEvent.OnFailureWithDialog(
+                                        isLoading,
+                                        dialogParameters
+                                    )
+                                )
+                            }
                         )
                     )
-                }
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(onNext = {
-                focusManager.clearFocus()
-            }),
-            isRequired = false,
-            placeHolder = stringResource(id = R.string.iban_account_hint),
-            onValueChange = {
-                viewModel.onUIEvent(
-                    IbanAccountViewModel.UIEvent.OnAccountValueChange(
-                        it,
-                        onFailureWithDialog = { isLoading, dialogParameters ->
-                            sharedViewModel.onUIEvent(
-                                CreditViewModel.UIEvent.OnFailureWithDialog(
-                                    isLoading,
-                                    dialogParameters
-                                )
-                            )
-                        }
-                    )
+                },
+                canShowNonErrorMessage = true,
+                isError = viewModel.uiState.accountError.first,
+                errorMessage = viewModel.uiState.validationError
+                    ?: stringResource(id = viewModel.uiState.accountError.second),
+                customTransformation = MaskVisualTransformation(
+                    VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.mask,
+                    VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.maskChar
                 )
-            },
-            canShowNonErrorMessage = true,
-            isError = viewModel.uiState.accountError.first,
-            errorMessage = viewModel.uiState.validationError
-                ?: stringResource(id = viewModel.uiState.accountError.second),
-            customTransformation = MaskVisualTransformation(
-                VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.mask,
-                VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.maskChar
             )
-        )
+        }
     }
 }

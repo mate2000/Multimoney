@@ -55,5 +55,14 @@ sealed class Currency(
                 else -> All
             }
         }
+
+        fun getCurrencyByCurrency(currency: String): Currency {
+            return when (currency) {
+                Colon.value -> Colon
+                Dollar.value -> Dollar
+                Quetzal.value -> Quetzal
+                else -> All
+            }
+        }
     }
 }

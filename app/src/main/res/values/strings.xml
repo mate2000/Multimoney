@@ -417,6 +417,7 @@
     <string name="payment_account_masked_text" translatable="false">••••</string>
     <string name="payment_account_different_currency_dialog_title" translatable="false">Se aplicará el tipo de cambio</string>
     <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente a la de la cuota.</string>
+    <string name="payment_account_empty_state_description" translatable="false">Agregá una cuenta para \npodás realizar tus pagos</string>
 
     <!-- Iban account Screen -->
     <string name="iban_account_tile" translatable="false">¿En cuál cuenta IBAN querés recibir tu dinero?</string>

@@ -2,17 +2,10 @@ package com.multimoney.multimoney.presentation.navigation.navgraph
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.navArgument
-import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_BUTTON_TEXT
-import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_DESCRIPTION
-import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_ICON
-import com.multimoney.multimoney.presentation.navigation.ALERT_RESULT_TITLE
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.alertresult.AlertResultScreen
 import com.multimoney.multimoney.presentation.ui.credit.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentScreen
@@ -56,24 +49,6 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.SignDocumentScreen.route) { navBackStackEntry ->
             SignDocumentScreen(
-                navBackStackEntry = navBackStackEntry,
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable(
-            route = Screen.AlertResultScreen.route,
-            arguments = listOf(
-                navArgument(ALERT_RESULT_ICON) { type = NavType.IntType },
-                navArgument(ALERT_RESULT_TITLE) { type = NavType.IntType },
-                navArgument(ALERT_RESULT_DESCRIPTION) { type = NavType.IntType },
-                navArgument(ALERT_RESULT_BUTTON_TEXT) { type = NavType.IntType }
-            )
-        ) { navBackStackEntry ->
-            AlertResultScreen(
                 navBackStackEntry = navBackStackEntry,
                 onPopAndNavigate = {
                     navController.navigate(it.route) {

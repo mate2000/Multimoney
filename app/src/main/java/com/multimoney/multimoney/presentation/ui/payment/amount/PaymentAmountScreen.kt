@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
@@ -58,8 +59,6 @@ fun PaymentAmountScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: PaymentAmountViewModel = hiltViewModel()
 ) {
-    val focusManager = LocalFocusManager.current
-
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
@@ -77,7 +76,15 @@ fun PaymentAmountScreen(
             }
         }
     }
+    PaymentAmountContent(viewModel)
+}
 
+@Composable
+@Preview
+fun PaymentAmountContent(
+    viewModel: PaymentAmountViewModel = hiltViewModel()
+) {
+    val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)

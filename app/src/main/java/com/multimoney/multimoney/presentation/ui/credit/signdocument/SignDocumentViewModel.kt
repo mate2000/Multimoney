@@ -3,10 +3,10 @@ package com.multimoney.multimoney.presentation.ui.credit.signdocument
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentViewModel.UIEvent.OnRejectClick
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -31,25 +31,30 @@ class SignDocumentViewModel @Inject constructor() : BaseViewModel(true) {
         )
     }
 
-    private fun navigateToSignDocumentReject() = popAndNavigateTo(
-        route = "${Screen.AlertResultScreen.baseRoute}/${R.drawable.ic_alert}/${R.string.sign_document_reject_title}/${R.string.sign_document_reject_description}/${R.string.understood}",
-        popTo = Screen.AlertResultScreen.baseRoute
-    )
+    private fun onRejectClick() {
+        uiState = uiState.copy(isAlertResultVisible = true)
+    }
 
     data class UIState(
         // Interactions
-        val dialogParameters: DialogParameters = DialogParameters()
+        val dialogParameters: DialogParameters = DialogParameters(),
+        val isAlertResultVisible: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
-            is OnRejectClick -> navigateToSignDocumentReject()
+            is OnRejectClick -> onRejectClick()
+            is OnCloseClick -> popAndNavigateTo(
+                route = Screen.HomeScreen.route,
+                popTo = Screen.SignDocumentScreen.route
+            )
         }
     }
 
     sealed class UIEvent {
         data class OnInitializeText(val dialogDescription: String) : UIEvent()
         object OnRejectClick : UIEvent()
+        object OnCloseClick : UIEvent()
     }
 }

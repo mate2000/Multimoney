@@ -67,7 +67,6 @@ class ProductViewModel @Inject constructor(
     var userName: String = ""
     var productProgress = 0F
     var isExpiredTitle = R.string.home_product_expiration
-    var hasBalance: Boolean = false
 
     private fun onGetUserData() {
         viewModelScope.launch {
@@ -113,9 +112,11 @@ class ProductViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = false)
                     balance?.let {
                         balanceCredit = it
-                        hasBalance = it.getFirstSummary() != null &&
-                            it.getFirstSummary()?.currentBalance != null &&
-                            (it.getFirstSummary()!!.currentBalance!! > 0.0)
+                        uiState = uiState.copy(
+                            hasBalance = it.getFirstSummary() != null &&
+                                it.getFirstSummary()?.currentBalance != null &&
+                                (it.getFirstSummary()!!.currentBalance!! > 0.0)
+                        )
                     }
                 }
                 result.onFailure {
@@ -302,7 +303,8 @@ class ProductViewModel @Inject constructor(
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var hasBalance: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

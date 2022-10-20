@@ -175,15 +175,16 @@ fun ProductScreen(
                             )
                         }
 
-                        PayButtons(
-                            modifier =
-                            Modifier.padding(16.dp).constrainAs(buttons) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom)
-                            },
-                            viewModel = viewModel,
-                            canDisburse = viewModel.hasBalance
+                        CtaButtons(
+                            modifier = Modifier.padding(16.dp)
+                                .constrainAs(buttons) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    bottom.linkTo(parent.bottom)
+                                },
+                            onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
+                            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToCreditScreen) },
+                            canDisburse = viewModel.uiState.hasBalance
                         )
                     }
                 }, totalPages = NUMBER_PAGES)
@@ -202,10 +203,11 @@ fun ProductScreen(
 }
 
 @Composable
-fun PayButtons(
-    viewModel: ProductViewModel,
+fun CtaButtons(
     canDisburse: Boolean,
-    modifier: Modifier
+    modifier: Modifier,
+    onClickPay: () -> Unit = {},
+    onClickDisbursement: () -> Unit = {}
 ) {
     Row(
         modifier = modifier,
@@ -217,7 +219,7 @@ fun PayButtons(
                 modifier = Modifier.weight(1f).height(48.dp),
                 buttonType = CustomButtonType.PrimarySecondary,
                 onClick = {
-                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
+                    onClickPay()
                 }
             )
             Spacer(Modifier.width(16.dp))
@@ -225,7 +227,7 @@ fun PayButtons(
                 text = stringResource(R.string.home_disburse_button_text),
                 modifier = Modifier.weight(1f).height(48.dp),
                 onClick = {
-                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                    onClickDisbursement()
                 }
             )
         } else {
@@ -233,7 +235,7 @@ fun PayButtons(
                 text = stringResource(R.string.home_pay_fee_button_text),
                 modifier = Modifier.weight(1f).height(48.dp),
                 onClick = {
-                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
+                    onClickPay()
                 }
             )
         }

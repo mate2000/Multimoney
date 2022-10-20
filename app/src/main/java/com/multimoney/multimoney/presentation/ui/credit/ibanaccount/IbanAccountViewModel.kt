@@ -24,9 +24,9 @@ import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelp
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.capitalized
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -55,7 +55,7 @@ class IbanAccountViewModel @Inject constructor(
         nextStepAction()
     }
 
-    private fun onIncomeValueChange(
+    private fun onAccountValueValueChange(
         bankAccount: String,
         onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
     ) {
@@ -74,7 +74,7 @@ class IbanAccountViewModel @Inject constructor(
                 )
             }
             if (bankAccount.length == IBAN_MAX_LENGTH) {
-                validateIbanAccount() { response ->
+                validateIbanAccount { response ->
                     onFailureWithDialog(
                         false,
                         DialogParameters(
@@ -106,6 +106,7 @@ class IbanAccountViewModel @Inject constructor(
                         when (response.responseCode) {
                             IS_VALID -> {
                                 validateAccount = response
+                                uiState = uiState.copy(ibanSuccess = true)
                                 onValidForm(true)
                             }
                             HAS_ERRORS -> {
@@ -146,10 +147,28 @@ class IbanAccountViewModel @Inject constructor(
     }
 
     private fun onResetAccountNumber() {
-        uiState = uiState.copy(accountNumber = "", ibanSuccess = false)
+        uiState = uiState.copy(
+            accountNumber = "",
+            accountError = Pair(false, R.string.empty),
+            ibanSuccess = false
+        )
     }
 
-    private fun onLoadStep() {
+    private fun onLoadStep(
+        list: List<CreditCatalog?>?,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+    ) {
+        val ibanNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
+        uiState = uiState.copy(accountNumber = "83031020200071754481")
+        validateIbanAccount { response ->
+            onFailureWithDialog(
+                false,
+                DialogParameters(
+                    description = response.getError() ?: "",
+                    isActive = mutableStateOf(true)
+                )
+            )
+        }
     }
 
     data class UIState(
@@ -166,7 +185,7 @@ class IbanAccountViewModel @Inject constructor(
                 uiEvent.nextStepAction,
                 uiEvent.saveCreditStepsHelper
             )
-            is OnAccountValueChange -> onIncomeValueChange(
+            is OnAccountValueChange -> onAccountValueValueChange(
                 uiEvent.account,
                 uiEvent.onFailureWithDialog
             )
@@ -177,7 +196,7 @@ class IbanAccountViewModel @Inject constructor(
                 uiEvent.idBrand
             )
             is OnResetAccountNumber -> onResetAccountNumber()
-            is OnLoadCreditSteps -> onLoadStep()
+            is OnLoadCreditSteps -> onLoadStep(uiEvent.list, uiEvent.onFailureWithDialog)
         }
     }
 
@@ -201,7 +220,10 @@ class IbanAccountViewModel @Inject constructor(
 
         object OnValidForm : UIEvent()
         object OnResetAccountNumber : UIEvent()
-        data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
+        data class OnLoadCreditSteps(
+            val list: List<CreditCatalog?>?,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -213,5 +235,7 @@ class IbanAccountViewModel @Inject constructor(
         const val IS_VALID = 0
         const val HAS_ERRORS = 1
         const val IBAN_MAX_LENGTH = 20
+        const val DOLLAR_CURRENCY = "02"
+        const val COLON_CURRENCY = "01"
     }
 }

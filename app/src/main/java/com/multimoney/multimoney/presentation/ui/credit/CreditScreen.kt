@@ -137,11 +137,7 @@ fun CreditScreen(
                     Column {
                         CustomButton(
                             onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-                            text = if (viewModel.uiState.currentStep != CreditStep.Two.id) {
-                                stringResource(id = R.string.button_continue)
-                            } else {
-                                stringResource(id = R.string.credit_bank_validate_account_number)
-                            },
+                            text = stringResource(id = R.string.button_continue),
                             modifier = Modifier
                                 .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                                 .fillMaxWidth()

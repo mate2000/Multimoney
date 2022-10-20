@@ -120,7 +120,9 @@ class SecurityApi @Inject constructor(
     ): ApolloCall<DataInformationClientQuery.Data> =
         apolloAuthorizedClient.query(
             DataInformationClientQuery(
-                identification, idBrand, user
+                identification,
+                idBrand,
+                user
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -205,4 +207,5 @@ class SecurityApi @Inject constructor(
         idBrand: Int
     ): ApolloCall<ValidateBankAccountQuery.Data> =
         apolloAuthorizedClient.query(ValidateBankAccountQuery(account, identification, user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 }

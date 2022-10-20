@@ -18,9 +18,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GradientGrey2
@@ -95,9 +97,13 @@ fun CustomInfoButton(
                 modifier = Modifier.constrainAs(titleId) {
                     top.linkTo(startIconId.top, margin = 4.dp)
                     start.linkTo(startIconId.end, margin = 16.dp)
+                    end.linkTo(endIconId.start, margin = 16.dp)
+                    width = Dimension.fillToConstraints
                 },
                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = titleColor
+                color = titleColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = subtitle,

@@ -178,7 +178,7 @@ fun PaymentAccountList(
                         .padding(top = 12.dp),
                     startIcon = Currency.Search.getCurrencyByIdCurrency(clientBankAccount?.idCurrency).accountIcon,
                     title = clientBankAccount?.bankDescription ?: "",
-                    subtitle = viewModel.getMaskedAccount(
+                    subtitle = getMaskedAccount(
                         clientBankAccount?.accountNumber ?: "",
                         stringResource(id = R.string.payment_account_masked_text)
                     ),

@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome.SourceOfIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -85,8 +86,8 @@ fun SignUpScreen(
         }
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxSize(),
+                //.verticalScroll(rememberScrollState()), // FIXME, revert this change
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             GetStepContent(
@@ -132,7 +133,8 @@ fun GetStepContent(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
     when (step) {
-        SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
+        //SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel) // FIXME, revert this change
+        SignUpStep.One.id -> SourceOfIncomeScreen()
         SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
         SignUpStep.Four.id -> SignUpOtpScreen(

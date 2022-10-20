@@ -89,6 +89,7 @@ val GrayScale800 = Color(0xFF080808)
 // Complementary Gray
 val ComplementaryGray = Color(0xB2FFFFFF)
 val ComplementaryGray2 = Color(0x99FFFFFF)
+val ComplementaryGray5 = Color(0x0DFFFFFF)
 val ComplementaryBlack = Color(0xFF212121)
 
 // WhiteTransparency

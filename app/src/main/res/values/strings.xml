@@ -426,4 +426,7 @@
     <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
     <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
     <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
+
+    <!-- Smart - Origin -->
+    <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
 </resources>

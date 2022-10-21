@@ -49,7 +49,7 @@ fun CustomCatalogItem(
     onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .defaultMinSize(minHeight = 120.dp)
             .fillMaxWidth()
             .padding(10.dp)
@@ -70,16 +70,14 @@ fun CustomCatalogItem(
                 .fillMaxWidth()
                 .padding(vertical = 20.dp, horizontal = 14.dp)
         ) {
-            Box(
+            Image(
                 modifier = Modifier.height(28.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Image(
-                    painter = painterResource(iconId.getIconDrawableById()),
-                    contentDescription = label,
-                    contentScale = ContentScale.Crop
-                )
-            }
+                painter = painterResource(iconId.getIconDrawableById()),
+                contentDescription = label,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center
+            )
+
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier

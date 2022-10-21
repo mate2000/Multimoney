@@ -226,7 +226,7 @@ class SignUpViewModel @Inject constructor(
         val currentStep: Int = SignUpStep.One.id,
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
-        val isContinueVisible: Boolean = false,
+        val isContinueVisible: Boolean = true,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )

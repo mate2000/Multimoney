@@ -100,6 +100,8 @@ fun CurrencyAmountInput(
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
 
+    if (isRequired) emptyError = value?.isEmpty() == true
+
     val textDebounce = remember { MutableStateFlow("") }
     val textDebounceFlow: Flow<String> = remember {
         textDebounce.debounce(500)

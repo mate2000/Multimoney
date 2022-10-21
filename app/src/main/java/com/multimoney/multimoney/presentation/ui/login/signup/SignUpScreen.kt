@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,11 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -132,11 +133,17 @@ fun GetStepContent(
     viewModel: SignUpViewModel,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
+    val context = LocalContext.current
     when (step) {
-        //SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel) // FIXME, revert this change
-        SignUpStep.One.id -> SourceOfIncomeScreen()
+       // SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel) // FIXME, revert this change
+        SignUpStep.One.id -> SourceOfIncomeScreen() { sourceOfIncome ->
+            // FIXME, should open the proper screen
+            Toast.makeText(context, "${sourceOfIncome?.label}", Toast.LENGTH_SHORT).show()
+        }
         SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
-        SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
+        SignUpStep.Three.id -> {
+            SignUpPhoneScreen(sharedViewModel = viewModel)
+        }
         SignUpStep.Four.id -> SignUpOtpScreen(
             onPopAndNavigate,
             sharedViewModel = viewModel

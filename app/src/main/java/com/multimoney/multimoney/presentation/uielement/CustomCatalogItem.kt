@@ -33,6 +33,14 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.util.getIconDrawableById
 
+/**
+ * This custom view represent a catalog of items, it can be used
+ * in any list where an icon and text need to be shown in a card.
+ * @param modifier to apply custom style to the view
+ * @param iconId intended to show the proper icon
+ * @param label the text of the item
+ * @param onClick the action that each item will have
+ */
 @Composable
 fun CustomCatalogItem(
     modifier: Modifier = Modifier,

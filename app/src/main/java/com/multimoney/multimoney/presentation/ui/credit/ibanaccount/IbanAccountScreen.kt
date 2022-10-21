@@ -25,15 +25,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.Companion.DOLLAR_CURRENCY
 import com.multimoney.multimoney.presentation.ui.credit.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.VisualTransformationMasks
+import com.multimoney.multimoney.presentation.util.catalog.Currency
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -110,11 +109,11 @@ fun IbanAccountScreen(
         if (viewModel.uiState.ibanSuccess) {
             CustomInfoButton(
                 modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                startIcon = if (viewModel.validateAccount?.currency == DOLLAR_CURRENCY) R.drawable.ic_account_dollar else R.drawable.ic_account_colon,
+                startIcon = if (viewModel.validateAccount?.currency == Currency.Dollar.currency) R.drawable.ic_account_dollar else R.drawable.ic_account_colon,
                 title = viewModel.validateAccount?.bankName ?: "",
                 subtitle = getMaskedAccount(
                     viewModel.uiState.accountNumber,
-                    stringResource(id = string.payment_account_masked_text)
+                    stringResource(id = R.string.payment_account_masked_text)
                 ),
                 endIcon = R.drawable.ic_edit_green,
                 onEndIconClick = {

@@ -24,9 +24,9 @@ import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelp
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.capitalized
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -159,7 +159,7 @@ class IbanAccountViewModel @Inject constructor(
         onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
     ) {
         val ibanNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
-        uiState = uiState.copy(accountNumber = "83031020200071754481")
+        uiState = uiState.copy(accountNumber = ibanNumber?.value ?: "")
         validateIbanAccount { response ->
             onFailureWithDialog(
                 false,
@@ -235,7 +235,5 @@ class IbanAccountViewModel @Inject constructor(
         const val IS_VALID = 0
         const val HAS_ERRORS = 1
         const val IBAN_MAX_LENGTH = 20
-        const val DOLLAR_CURRENCY = "02"
-        const val COLON_CURRENCY = "01"
     }
 }

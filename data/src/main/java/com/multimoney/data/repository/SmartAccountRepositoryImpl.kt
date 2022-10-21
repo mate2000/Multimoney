@@ -1,21 +1,100 @@
 package com.multimoney.data.repository
 
 import com.multimoney.data.base.BaseRepository
+import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.networking.SmartAccountApi
-import com.multimoney.domain.model.credit.CreditOffer
+import com.multimoney.domain.model.accountsmart.AddressesLevelTwo
+import com.multimoney.domain.model.accountsmart.CivilStatusResult
+import com.multimoney.domain.model.accountsmart.GlobalRequest
+import com.multimoney.domain.model.accountsmart.Nationalities
+import com.multimoney.domain.model.accountsmart.Professions
+import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SmartAccountRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SmartAccountRepositoryImpl @Inject constructor(
     private val smartApi: SmartAccountApi,
-) : BaseRepository()
-    /*SmartAccountRepository {
+) : BaseRepository(),
+    SmartAccountRepository {
+
     override suspend fun queryCivilStatus(
-        pkUser: Int,
+        pkUser: String,
         idBrand: Int,
-    ): Flow<MultimoneyResult<CreditOffer?>> {
-        smartApi.queryCivilStatus(pkUser, idBrand)
-    }
-}*/
+    ): Flow<MultimoneyResult<CivilStatusResult?>> =
+        fetchData(apolloCall = smartApi.queryCivilStatus(pkUser, idBrand),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            })
+
+    override suspend fun queryProfessions(
+        pkUser: String,
+        idBrand: Int,
+    ): Flow<MultimoneyResult<Professions?>> =
+        fetchData(apolloCall = smartApi.queryProfession(pkUser, idBrand),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            })
+
+    override suspend fun queryAddressLevelTwo(
+        user: String,
+        idBrand: Int,
+        idAddressLevel1: String,
+    ): Flow<MultimoneyResult<AddressesLevelTwo?>> =
+        fetchData(apolloCall = smartApi.queryAddressLevelTwo(user, idBrand, idAddressLevel1),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            })
+
+    override suspend fun queryNationality(
+        user: String,
+        idBrand: Int,
+    ): Flow<MultimoneyResult<Nationalities?>> =
+        fetchData(apolloCall = smartApi.queryNationality(user, idBrand),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            })
+
+    override suspend fun queryStepByStep(
+        user: String,
+        idBrand: Int,
+        idRequest: Int,
+    ): Flow<MultimoneyResult<StepByStep?>> =
+        fetchData(apolloCall = smartApi.queryStepByStep(user, idBrand, idRequest),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            })
+
+    override suspend fun mutationGlobalRequest(
+        pkUser: Int,
+        status: Int,
+        idProfessionType: Int,
+        idAddressLevel1: Long,
+        idAddressLevel2: Long,
+        idAddressLevel3: Long,
+        idEconomicActivity: Long,
+        income: Float,
+        addressDetail: String,
+        isPEP: Boolean,
+        user: String,
+        idBrand: Int,
+        currentStep: String,
+    ): Flow<MultimoneyResult<GlobalRequest?>> =
+        fetchData(apolloCall = smartApi.mutationGlobalRequest(pkUser,
+            status,
+            idProfessionType,
+            idAddressLevel1,
+            idAddressLevel2,
+            idAddressLevel3,
+            idEconomicActivity,
+            income,
+            addressDetail,
+            isPEP,
+            user,
+            idBrand,
+            currentStep), apolloCallMapper = { data ->
+            Success(data.mapToDomain())
+        })
+}

@@ -3,6 +3,9 @@ package com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -70,12 +73,16 @@ fun SourceOfIncomeContent(
         ) {
             items(sourceOfIncomeList) { sourceOfIncome ->
                 CustomCatalogItem(
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = 140.dp)
+                        .height(140.dp)
+                        .fillMaxWidth()
+                        .padding(10.dp),
                     iconId = sourceOfIncome?.iconId ?: 0,
                     label = sourceOfIncome?.label ?: "",
                     onClick = {
                         // TODO, navigate to other screens from here
-                        Toast.makeText(context, "${sourceOfIncome?.label}", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context, "${sourceOfIncome?.label}", Toast.LENGTH_SHORT).show()
                     }
                 )
             }

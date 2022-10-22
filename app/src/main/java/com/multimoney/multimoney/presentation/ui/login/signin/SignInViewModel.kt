@@ -31,10 +31,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -93,7 +93,7 @@ class SignInViewModel @Inject constructor(
                                     viewModelScope.launch {
                                         // If isBiometricActive false that means the userName has to be saved
                                         if (uiState.isBiometricActive.not()) {
-                                            dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
+                                            dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
                                         }
                                         val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
                                         dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")

@@ -44,6 +44,8 @@ import com.multimoney.domain.interaction.security.QueryDataInformationClientUseC
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
+import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
@@ -195,6 +197,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetClientBankAccountUseCase(creditRepository: CreditRepository): QueryGetClientBankAccountUseCase =
         QueryGetClientBankAccountUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryValidateBankAccountUseCase(securityRepository: SecurityRepository): QueryValidateBankAccountUseCase =
+        QueryValidateBankAccountUseCaseImpl(securityRepository)
 
     @Provides
     @Singleton

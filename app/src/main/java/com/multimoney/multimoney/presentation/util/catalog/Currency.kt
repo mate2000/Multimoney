@@ -4,6 +4,7 @@ import com.multimoney.multimoney.R
 
 sealed class Currency(
     val id: Int,
+    val currency: String,
     val value: String,
     val accountIcon: Int,
     val accountTitle: Int,
@@ -12,6 +13,7 @@ sealed class Currency(
 ) {
     object Colon : Currency(
         1,
+        "01",
         "COLONES",
         R.drawable.ic_account_colon,
         R.string.payment_account_title_colon,
@@ -21,6 +23,7 @@ sealed class Currency(
 
     object Dollar : Currency(
         2,
+        "02",
         "DOLARES",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_dollar,
@@ -30,6 +33,7 @@ sealed class Currency(
 
     object Quetzal : Currency(
         3,
+        "03",
         "QUETZALES",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_dollar,
@@ -39,6 +43,7 @@ sealed class Currency(
 
     object All : Currency(
         100000,
+        "",
         "",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_all,
@@ -52,6 +57,15 @@ sealed class Currency(
                 Colon.id -> Colon
                 Dollar.id -> Dollar
                 Quetzal.id -> Quetzal
+                else -> All
+            }
+        }
+
+        fun getCurrencyByCurrency(currency: String): Currency {
+            return when (currency) {
+                Colon.value -> Colon
+                Dollar.value -> Dollar
+                Quetzal.value -> Quetzal
                 else -> All
             }
         }

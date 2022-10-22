@@ -249,4 +249,16 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+
+    override suspend fun queryValidateBankAccount(
+        account: String,
+        identification: String,
+        user: String,
+        idBrand: Int
+    ) = fetchData(
+        apolloCall = securityApi.queryValidateAccount(account, identification, user, idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 }

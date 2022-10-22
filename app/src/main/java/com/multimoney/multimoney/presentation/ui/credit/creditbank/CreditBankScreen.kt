@@ -39,7 +39,6 @@ fun CreditBankScreen(
     sharedViewModel: CreditViewModel = hiltViewModel(),
     viewModel: CreditBankViewModel = hiltViewModel()
 ) {
-
     val focusManager = LocalFocusManager.current
     var title = R.string.empty
     if (sharedViewModel.idBrand.isNotEmpty()) {
@@ -61,19 +60,21 @@ fun CreditBankScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(CreditBankViewModel.UIEvent.OnValidateForm)
-        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-            viewModel.onUIEvent(
-                CreditBankViewModel.UIEvent.OnNextActionClick(
-                    user = sharedViewModel.email,
-                    nextStepAction = {
-                        sharedViewModel.onUIEvent(
-                            CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
-                        )
-                    },
-                    saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+        sharedViewModel.onUIEvent(
+            CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
+                viewModel.onUIEvent(
+                    CreditBankViewModel.UIEvent.OnNextActionClick(
+                        user = sharedViewModel.email,
+                        nextStepAction = {
+                            sharedViewModel.onUIEvent(
+                                CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
+                            )
+                        },
+                        saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                    )
                 )
-            )
-        }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id))
+            }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id)
+        )
         viewModel.onUIEvent(
             CreditBankViewModel.UIEvent.OnCallQueryBanksAndRegularExpression(
                 sharedViewModel.pkUser.toInt(),
@@ -117,7 +118,7 @@ fun CreditBankScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 9.dp)
-                    .align(Alignment.CenterVertically),
+                    .align(Alignment.CenterVertically)
             )
         }
 
@@ -142,9 +143,11 @@ fun CreditBankScreen(
                 .padding(top = 16.dp),
             items = viewModel.uiState.accountTypeListFiltered?.map { it?.description ?: "" } ?: listOf(),
             onValueChange = { value ->
-                viewModel.onUIEvent(CreditBankViewModel.UIEvent.OnAccountTypeValueChanged(
-                    viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value }
-                ))
+                viewModel.onUIEvent(
+                    CreditBankViewModel.UIEvent.OnAccountTypeValueChanged(
+                        viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value }
+                    )
+                )
             },
             labelText = stringResource(id = R.string.credit_bank_account_type),
             value = viewModel.uiState.accountTypeSelectedString,
@@ -157,7 +160,8 @@ fun CreditBankScreen(
             leadingIcon = R.drawable.ic_account,
             placeHolder = stringResource(R.string.credit_bank_account_number_hint),
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
@@ -172,7 +176,7 @@ fun CreditBankScreen(
                 )
             },
             isError = viewModel.uiState.accountNumberError.first,
-            errorMessage = stringResource(id = viewModel.uiState.accountNumberError.second),
+            errorMessage = stringResource(id = viewModel.uiState.accountNumberError.second)
         )
     }
 }

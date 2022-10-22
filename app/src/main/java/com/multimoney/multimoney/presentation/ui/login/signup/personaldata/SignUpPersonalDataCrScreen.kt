@@ -32,7 +32,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.CrDocuments
-import com.multimoney.multimoney.presentation.util.lowerCaseAndCapitalize
+import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
@@ -257,18 +257,18 @@ fun SignUpPersonalDataCrScreen(
                     viewModel.onUIEvent(SignUpPersonalDataViewModel.UIEvent.OnValidateForm)
                     viewModel.onUIEvent(
                         SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames(
-                            firstName = firstName.lowerCaseAndCapitalize(),
-                            secondName = secondName.lowerCaseAndCapitalize(),
-                            firstLastName = firstLastName.lowerCaseAndCapitalize(),
-                            secondLastName = secondLastName.lowerCaseAndCapitalize(),
+                            firstName = firstName.capitalized(),
+                            secondName = secondName.capitalized(),
+                            firstLastName = firstLastName.capitalized(),
+                            secondLastName = secondLastName.capitalized(),
                             onUpdateAllNamesInShareViewModel = {
                                 sharedViewModel.onUIEvent(
                                     SignUpViewModel.UIEvent.OnUpdateUserNames(
                                         fullName = name,
-                                        firstName = firstName.lowerCaseAndCapitalize(),
-                                        secondName = secondName.lowerCaseAndCapitalize(),
-                                        firstLastName = firstLastName.lowerCaseAndCapitalize(),
-                                        secondLastName = secondLastName.lowerCaseAndCapitalize()
+                                        firstName = firstName.capitalized(),
+                                        secondName = secondName.capitalized(),
+                                        firstLastName = firstLastName.capitalized(),
+                                        secondLastName = secondLastName.capitalized()
                                     )
                                 )
                             }

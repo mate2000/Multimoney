@@ -48,6 +48,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.Currency
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun PaymentAccountScreen(
@@ -177,7 +178,7 @@ fun PaymentAccountList(
                         .padding(top = 12.dp),
                     startIcon = Currency.Search.getCurrencyByIdCurrency(clientBankAccount?.idCurrency).accountIcon,
                     title = clientBankAccount?.bankDescription ?: "",
-                    subtitle = viewModel.getMaskedAccount(
+                    subtitle = getMaskedAccount(
                         clientBankAccount?.accountNumber ?: "",
                         stringResource(id = R.string.payment_account_masked_text)
                     ),

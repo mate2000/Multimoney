@@ -48,10 +48,16 @@ fun String.isValidAmount() = isNotBlank() && isValidAmountLength()
 
 fun String.isValidAmountLength() = length <= 12
 
-fun String.lowerCaseAndCapitalize(): String {
+fun String.capitalized(): String {
     return this.lowercase().replaceFirstChar {
         if (it.isLowerCase()) {
             it.titlecase(Locale.getDefault())
         } else it.toString()
     }
 }
+
+fun getMaskedAccount(accountNumber: String, maskedText: String) =
+    accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+
+const val ACCOUNT_FIRST_DIGITS = 2
+const val ACCOUNT_LAST_DIGITS = 4

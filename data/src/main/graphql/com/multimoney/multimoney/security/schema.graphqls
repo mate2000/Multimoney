@@ -16,6 +16,18 @@ type SecurityQuery {
   catalogTypeIndentification(catalogTypeIndentificationInput: catalogInput): [catalog]
 
   validateUserExists(validateUserExistsInput: validateUserExistsInput): validateUserExists
+
+  getFrequentQuestions(frequentQuestionsInput: FrequentQuestionsInput): [FrequentQuestionsType]
+
+  minicards(minicardsInput: minicardsInput): [minicards]
+
+  termsConditionsSigned(termsConditionsSignedInput: termsConditionsSignedInput): [termsConditionsSigned]
+
+  getCountryContact(getCountryContactInput: getCountryContactInputType): getCountryContact
+
+  getParameterMobileByCategory(parameterMobileInput: parameterMobileInput): [getParameterMobileByCategory]
+
+  getCompanyNameByIdentification(dataCompanyInformationInput: dataCompanyInformation): dataCompanyInformationInput
 }
 
 type dataInformationClient {
@@ -25,6 +37,26 @@ type dataInformationClient {
   nombre: String!
 
   """
+  dataInformationClient nombre1
+  """
+  nombre1: String!
+
+  """
+  dataInformationClient nombre2
+  """
+  nombre2: String!
+
+  """
+  dataInformationClient apellido1
+  """
+  apellido1: String!
+
+  """
+  dataInformationClient apellido2
+  """
+  apellido2: String!
+
+  """
   dataInformationClient tipoIdentificacion
   """
   tipoIdentificacion: String!
@@ -32,7 +64,7 @@ type dataInformationClient {
   """
   dataInformationClient Status
   """
-  status: Boolean!
+  status: String!
 
   """
   dataInformationClient Message
@@ -304,7 +336,12 @@ type productoPreApprove {
   """
   productoPreApprove amountAvailable
   """
-  amountAvailable: String!
+  amountAvailable: Decimal!
+
+  """
+  productoPreApprove amountAvailableFormat
+  """
+  amountAvailableFormat: String!
 
   """
   productoPreApprove symbolCurrency
@@ -348,6 +385,11 @@ type infoCrypto {
   infoCrypto Status
   """
   status: Int!
+
+  """
+  infoCrypto StatusFirm
+  """
+  statusFirm: String!
 }
 
 input userStatusInput {
@@ -435,6 +477,21 @@ type validateBankAccount {
   validateBankAccount bankName
   """
   bankName: String
+
+  """
+  validateBankAccount Status
+  """
+  status: Int
+
+  """
+  validateBankAccount Message
+  """
+  message: String
+
+  """
+  validateBankAccount Detail
+  """
+  detail: String
 }
 
 input validateBankAccountInput {
@@ -593,7 +650,195 @@ type configurationVersionObject {
   """
   configurationVersionObject TimeSesion
   """
-  timeSesion: String
+  timeSesion: Int
+
+  """
+  configurationVersionObject Moneda
+  """
+  moneda: [CurrencyConfigurationType]
+
+  """
+  configurationVersionObject AccountSmart
+  """
+  accountSmart: AccountsmartConfigurationType
+
+  """
+  configurationVersionObject Credit
+  """
+  credit: CreditConfigurationType
+
+  """
+  configurationVersionObject Crypto
+  """
+  crypto: CryptoConfigurationType
+
+  """
+  configurationVersionObject VirtualCard
+  """
+  virtualCard: VirtualcardConfigurationType
+}
+
+type CurrencyConfigurationType {
+  """
+  CurrencyConfigurationType Codigo
+  """
+  codigo: String
+
+  """
+  CurrencyConfigurationType Descripcion
+  """
+  descripcion: String
+}
+
+type AccountsmartConfigurationType {
+  """
+  AccountsmartConfigurationType Activo
+  """
+  activo: Boolean
+
+  """
+  AccountsmartConfigurationType MetodoAbono
+  """
+  metodoAbono: [FundingMethodConfigurationType]
+
+  """
+  AccountsmartConfigurationType MetodoTransferencia
+  """
+  metodoTransferencia: [TransferMethodConfigurationType]
+}
+
+type FundingMethodConfigurationType {
+  """
+  FundingMethodConfigurationType Descripcion
+  """
+  descripcion: String
+
+  """
+  FundingMethodConfigurationType Tipo
+  """
+  tipo: String
+
+  """
+  FundingMethodConfigurationType Mascara
+  """
+  mascara: String
+
+  """
+  FundingMethodConfigurationType Activo
+  """
+  activo: Boolean
+}
+
+type TransferMethodConfigurationType {
+  """
+  TransferMethodConfigurationType Descripcion
+  """
+  descripcion: String
+
+  """
+  TransferMethodConfigurationType Tipo
+  """
+  tipo: String
+
+  """
+  TransferMethodConfigurationType Mascara
+  """
+  mascara: String
+
+  """
+  TransferMethodConfigurationType Activo
+  """
+  activo: Boolean
+}
+
+type CreditConfigurationType {
+  """
+  CreditConfigurationType Activo
+  """
+  activo: Boolean
+
+  """
+  CreditConfigurationType MetodoPago
+  """
+  metodoPago: [PaymentMethodConfigurationType]
+
+  """
+  CreditConfigurationType CuentaTransferencia
+  """
+  cuentaTransferencia: TransferAccountConfigurationType
+}
+
+type PaymentMethodConfigurationType {
+  """
+  PaymentMethodConfigurationType Descripcion
+  """
+  descripcion: String
+
+  """
+  PaymentMethodConfigurationType Tipo
+  """
+  tipo: String
+
+  """
+  PaymentMethodConfigurationType Mascara
+  """
+  mascara: String
+
+  """
+  PaymentMethodConfigurationType Activo
+  """
+  activo: Boolean
+}
+
+type TransferAccountConfigurationType {
+  """
+  TransferAccountConfigurationType NumeroCuenta
+  """
+  numeroCuenta: String
+
+  """
+  TransferAccountConfigurationType Banco
+  """
+  banco: String
+
+  """
+  TransferAccountConfigurationType TipoTransferencia
+  """
+  tipoTransferencia: String
+
+  """
+  TransferAccountConfigurationType NombreBeneficiario
+  """
+  nombreBeneficiario: String
+}
+
+type CryptoConfigurationType {
+  """
+  CryptoConfigurationType Activo
+  """
+  activo: Boolean
+
+  """
+  CryptoConfigurationType Origen
+  """
+  origen: String
+
+  """
+  CryptoConfigurationType HabilitarTransferencias
+  """
+  habilitarTransferencias: Boolean
+}
+
+type VirtualcardConfigurationType {
+  """
+  VirtualcardConfigurationType Activo
+  """
+  activo: Boolean
+
+  """
+  VirtualcardConfigurationType HabilitarAppleWallet
+  """
+  habilitarAppleWallet: Boolean
 }
 
 input getConfigurationVersionInput {
@@ -844,6 +1089,316 @@ input validateUserExistsInput {
   traceIdentifier: String
 }
 
+type FrequentQuestionsType {
+  """
+  FrequentQuestionsType idBrand
+  """
+  idBrand: Short
+
+  """
+  FrequentQuestionsType question
+  """
+  question: String
+
+  """
+  FrequentQuestionsType answer
+  """
+  answer: String
+
+  """
+  FrequentQuestionsType order
+  """
+  order: Int
+}
+
+input FrequentQuestionsInput {
+  idBrand: Int!
+
+  user: String
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type minicards {
+  """
+  minicards Prioridad
+  """
+  prioridad: Int
+
+  """
+  minicards Tipo
+  """
+  tipo: String
+
+  """
+  minicards ImagenUrl
+  """
+  imagenUrl: String
+
+  """
+  minicards Deeplink
+  """
+  deeplink: String
+}
+
+input minicardsInput {
+  infoCreditStatus: Boolean!
+
+  infoVirtualCardStatus: Boolean!
+
+  infoBankAccountStatus: Boolean!
+
+  infoCripto: Boolean!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type termsConditionsSigned {
+  """
+  termsConditionsSigned Tipo
+  """
+  tipo: String
+
+  """
+  termsConditionsSigned FechaFirma
+  """
+  fechaFirma: DateTime
+
+  """
+  termsConditionsSigned Html
+  """
+  html: String
+
+  """
+  termsConditionsSigned Version
+  """
+  version: String
+}
+
+input termsConditionsSignedInput {
+  styleDark: Boolean!
+
+  userId: Int!
+
+  identification: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type getCountryContact {
+  """
+  getCountryContact idBrand
+  """
+  idBrand: Short!
+
+  """
+  getCountryContact whatsappLink
+  """
+  whatsappLink: String!
+
+  """
+  getCountryContact customerServicesPhone
+  """
+  customerServicesPhone: String!
+
+  """
+  getCountryContact customerServicesEmail
+  """
+  customerServicesEmail: String!
+}
+
+input getCountryContactInputType {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type getParameterMobileByCategory {
+  """
+  getParameterMobileByCategory Pk_Suv_Par_Parametro
+  """
+  pk_Suv_Par_Parametro: Int
+
+  """
+  getParameterMobileByCategory Fk_Suv_Cat_Marca
+  """
+  fk_Suv_Cat_Marca: Short
+
+  """
+  getParameterMobileByCategory Usuario_Creacion
+  """
+  usuario_Creacion: String
+
+  """
+  getParameterMobileByCategory Fecha_Creacion
+  """
+  fecha_Creacion: DateTime
+
+  """
+  getParameterMobileByCategory Usuario_Modificacion
+  """
+  usuario_Modificacion: String
+
+  """
+  getParameterMobileByCategory Fecha_Modificacion
+  """
+  fecha_Modificacion: DateTime
+
+  """
+  getParameterMobileByCategory Llave_Busqueda
+  """
+  llave_Busqueda: String
+
+  """
+  getParameterMobileByCategory Descripcion
+  """
+  descripcion: String
+
+  """
+  getParameterMobileByCategory Valor
+  """
+  valor: String
+
+  """
+  getParameterMobileByCategory Categoria
+  """
+  categoria: String
+
+  """
+  getParameterMobileByCategory Editable
+  """
+  editable: Boolean
+
+  """
+  getParameterMobileByCategory Valor_Inicio
+  """
+  valor_Inicio: String
+
+  """
+  getParameterMobileByCategory Direccion_IP
+  """
+  direccion_IP: String
+
+  """
+  getParameterMobileByCategory Descripcion_Inicio
+  """
+  descripcion_Inicio: String
+
+  """
+  getParameterMobileByCategory OptionAplication
+  """
+  optionAplication: String
+
+  """
+  getParameterMobileByCategory Origen
+  """
+  origen: Boolean
+
+  """
+  getParameterMobileByCategory ClientSecret
+  """
+  clientSecret: String
+}
+
+input parameterMobileInput {
+  category: String!
+
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type dataCompanyInformationInput {
+  """
+  dataCompanyInformationInput nombre
+  """
+  nombre: String!
+
+  """
+  dataCompanyInformationInput nombre1
+  """
+  nombre1: String
+
+  """
+  dataCompanyInformationInput nombre2
+  """
+  nombre2: String
+
+  """
+  dataCompanyInformationInput apellido1
+  """
+  apellido1: String
+
+  """
+  dataCompanyInformationInput apellido2
+  """
+  apellido2: String
+
+  """
+  dataCompanyInformationInput tipoIdentificacion
+  """
+  tipoIdentificacion: String
+
+  """
+  dataCompanyInformationInput Status
+  """
+  status: String
+
+  """
+  dataCompanyInformationInput Message
+  """
+  message: String
+
+  """
+  dataCompanyInformationInput regime
+  """
+  regimen: dataInformationClientRegime
+
+  """
+  dataCompanyInformationInput situation
+  """
+  situacion: dataInformationClientSituation
+
+  """
+  dataCompanyInformationInput activitiesList
+  """
+  actividades: [dataInformationClientActivity]
+}
+
+input dataCompanyInformation {
+  identification: String!
+
+  idBrand: Int!
+
+  user: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
 type SecurityMutation {
   userValidation(userValidationInput: userValidationInput): userValidation
 
@@ -856,6 +1411,20 @@ type SecurityMutation {
   onfidoCheckProcess(onfidoCheckProcessInputType: onfidoCheckProcessInputType): onfidoCheckProcess
 
   saveLogTracking(saveLogTrackingInputType: saveLogTrackingInputType): saveLogTracking
+
+  changeDevice(changeDeviceInputType: changeDeviceInput): ChangeDevice
+
+  requestForgotPassword(requestForgotPasswordInputType: requestForgotPasswordInput): RequestForgotPassword
+
+  processforgotPassword(processforgotPasswordInputType: processForgotPasswordInput): ProcessForgotPassword
+
+  valideOTP(valideOTPInputType: valideOTPInput): ValideOTP
+
+  logOut(logOutInputType: logOutInput): LogOut
+
+  phoneValidation(phoneValidationInputType: phoneValidationInput): PhoneValidation
+
+  sendOTP(sendOTPInputType: sendoOTPInput): SendOTP
 }
 
 type userValidation {
@@ -1269,6 +1838,203 @@ input saveLogTrackingInputType {
   keySearch: String!
 
   data: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type ChangeDevice {
+  """
+  ChangeDevice tipo_envio
+  """
+  tipo_envio: String
+
+  """
+  ChangeDevice Status
+  """
+  status: Int
+
+  """
+  ChangeDevice Message
+  """
+  message: String
+
+  """
+  ChangeDevice Detail
+  """
+  detail: String
+}
+
+input changeDeviceInput {
+  email: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type RequestForgotPassword {
+  """
+  RequestForgotPassword tipo_envio
+  """
+  tipo_envio: String
+
+  """
+  RequestForgotPassword Status
+  """
+  status: Int
+
+  """
+  RequestForgotPassword Message
+  """
+  message: String
+
+  """
+  RequestForgotPassword Detail
+  """
+  detail: String
+}
+
+input requestForgotPasswordInput {
+  email: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type ProcessForgotPassword {
+  """
+  RequestForgotPassword Status
+  """
+  status: Int
+
+  """
+  RequestForgotPassword Message
+  """
+  message: String
+
+  """
+  RequestForgotPassword Detail
+  """
+  detail: String
+}
+
+input processForgotPasswordInput {
+  email: String!
+
+  newPassword: String!
+
+  otp: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type ValideOTP {
+  """
+  ValideOTP Status
+  """
+  status: Int
+
+  """
+  ValideOTP Message
+  """
+  message: String
+
+  """
+  ValideOTP Detail
+  """
+  detail: String
+}
+
+input valideOTPInput {
+  email: String!
+
+  otp: String!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type LogOut {
+  """
+  LogOut Status
+  """
+  status: Int
+
+  """
+  LogOut Message
+  """
+  message: String
+
+  """
+  LogOut Detail
+  """
+  detail: String
+}
+
+input logOutInput {
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type PhoneValidation {
+  """
+  PhoneValidation Status
+  """
+  status: Int
+
+  """
+  PhoneValidation Message
+  """
+  message: String
+
+  """
+  PhoneValidation Detail
+  """
+  detail: String
+}
+
+input phoneValidationInput {
+  phone: String!
+
+  identification: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceIdentifier: String
+}
+
+type SendOTP {
+  """
+  SendOTP Status
+  """
+  status: Int
+
+  """
+  SendOTP Message
+  """
+  message: String
+
+  """
+  SendOTP Detail
+  """
+  detail: String
+}
+
+input sendoOTPInput {
+  pkUser: Int!
+
+  user: String!
 
   idBrand: Int!
 

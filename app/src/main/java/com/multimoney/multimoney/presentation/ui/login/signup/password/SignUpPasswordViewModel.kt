@@ -176,6 +176,7 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun signUp(
         email: String,
         firstName: String,
+        secondName:String,
         lastName: String,
         phone: String,
         identification: String,
@@ -188,6 +189,7 @@ class SignUpPasswordViewModel @Inject constructor(
         val attrs = mapOf(
             AuthUserAttributeKey.email() to email,
             AuthUserAttributeKey.name() to firstName,
+            AuthUserAttributeKey.middleName() to secondName,
             AuthUserAttributeKey.familyName() to lastName,
             AuthUserAttributeKey.phoneNumber() to phone,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_IDENTIFICATION) to identification,
@@ -350,6 +352,7 @@ class SignUpPasswordViewModel @Inject constructor(
             is OnCallCognitoSignUp -> signUp(
                 uiEvent.email,
                 uiEvent.firstName,
+                uiEvent.secondName,
                 uiEvent.lastName,
                 uiEvent.phone,
                 uiEvent.identification,
@@ -387,6 +390,7 @@ class SignUpPasswordViewModel @Inject constructor(
         data class OnCallCognitoSignUp(
             val email: String,
             val firstName: String,
+            val secondName:String,
             val lastName: String,
             val phone: String,
             val identification: String,

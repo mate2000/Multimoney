@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.uielement
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,8 +18,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GradientGrey2
@@ -28,15 +32,16 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 
 @Composable
+@Preview
 fun CustomInfoButton(
     modifier: Modifier = Modifier,
     startIcon: Int = R.drawable.ic_payment_fee_icon,
     title: String = "",
     subtitle: String = "",
     endIcon: Int = R.drawable.ic_right_chevron,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onEndIconClick: () -> Unit = {}
 ) {
-
     val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
         backgroundColor = Color.Transparent,
         disabledBackgroundColor = Color.Transparent
@@ -63,7 +68,8 @@ fun CustomInfoButton(
     }
 
     Button(
-        onClick = onClick, modifier = modifier
+        onClick = onClick,
+        modifier = modifier
             .border(
                 width = 1.dp,
                 brush = Brush.verticalGradient(
@@ -84,15 +90,20 @@ fun CustomInfoButton(
                     top.linkTo(parent.top, margin = 12.dp)
                     start.linkTo(parent.start, margin = 12.dp)
                     bottom.linkTo(parent.bottom, margin = 12.dp)
-                })
+                }
+            )
             Text(
                 text = title,
                 modifier = Modifier.constrainAs(titleId) {
                     top.linkTo(startIconId.top, margin = 4.dp)
                     start.linkTo(startIconId.end, margin = 16.dp)
+                    end.linkTo(endIconId.start, margin = 16.dp)
+                    width = Dimension.fillToConstraints
                 },
                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = titleColor
+                color = titleColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = subtitle,
@@ -109,6 +120,8 @@ fun CustomInfoButton(
                     top.linkTo(parent.top)
                     end.linkTo(parent.end, margin = 12.dp)
                     bottom.linkTo(parent.bottom)
+                }.clickable {
+                    onEndIconClick()
                 },
                 contentDescription = ""
             )

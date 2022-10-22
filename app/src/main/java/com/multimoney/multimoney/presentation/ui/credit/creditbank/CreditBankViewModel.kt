@@ -13,10 +13,10 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankViewModel.UIEvent.OnAccountNumberValueChange
-import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankViewModel.UIEvent.OnBankValueChanged
-import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankViewModel.UIEvent.OnAccountTypeValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankViewModel.UIEvent.OnBankValueChanged
 import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
+import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.creditbank.CreditBankViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -31,7 +31,7 @@ class CreditBankViewModel @Inject constructor(
     val queryBanksAndRegularExpressionUseCase: QueryBanksAndRegularExpressionUseCase
 ) : BaseViewModel(true) {
 
-    //Stateless
+    // Stateless
     private var bank: CreditCatalog? = null
     private var bankList: List<CreditCatalogOption?>? = listOf()
     var accountTypeList: List<RegularExpression?>? = listOf()
@@ -64,7 +64,8 @@ class CreditBankViewModel @Inject constructor(
                 onLoadingValueChange(true)
             }.onFailure {
                 onFailureWithDialog(
-                    false, DialogParameters(
+                    false,
+                    DialogParameters(
                         description = it.getError().toString(),
                         isActive = mutableStateOf(true)
                     )
@@ -90,7 +91,8 @@ class CreditBankViewModel @Inject constructor(
     private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
         uiState = uiState.copy(
             accountTypeSelectedString = regulaExpression?.description ?: "",
-            accountTypeSelected = regulaExpression, accountNumber = "",
+            accountTypeSelected = regulaExpression,
+            accountNumber = "",
             accountNumberError = Pair(false, R.string.empty)
         )
         validateForm()
@@ -127,7 +129,7 @@ class CreditBankViewModel @Inject constructor(
             bank,
             uiState.bankSelected,
             uiState.accountTypeSelectedString,
-            uiState.accountNumber,
+            uiState.accountNumber
         )
         nextStepAction()
     }

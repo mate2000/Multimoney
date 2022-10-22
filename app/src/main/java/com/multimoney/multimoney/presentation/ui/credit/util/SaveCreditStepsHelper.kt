@@ -41,6 +41,13 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(creditInfoQuestionAccountNumber)
     }
 
+    fun saveStepOneCR(user: String?, ibanNumber: String) {
+        val ibanNumberQuestion = getScreenConfigQuestion(ACCOUNT_NUMBER, ibanNumber)
+
+        val creditInfoQuestionAccountNumber = textQuestion(user, ibanNumber, ibanNumberQuestion)
+        saveScreenQuestionData(creditInfoQuestionAccountNumber)
+    }
+
     fun saveStepTwo(
         user: String?,
         monthlyIncomeValue: String,

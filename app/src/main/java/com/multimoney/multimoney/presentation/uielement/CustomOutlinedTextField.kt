@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.uielement
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -101,6 +100,7 @@ fun CustomOutlinedTextField(
     labelText: String? = null,
     value: String? = null,
     leadingIcon: Int? = null,
+    leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
     placeHolder: String = "",
     keyboardOptions: KeyboardOptions,
@@ -108,6 +108,7 @@ fun CustomOutlinedTextField(
     isRequired: Boolean = true,
     isRequiredMessage: String? = null,
     isError: Boolean = false,
+    canShowNonErrorMessage: Boolean = false,
     errorMessage: String? = null,
     enabled: Boolean = true,
     isPassword: Boolean = false,
@@ -164,7 +165,11 @@ fun CustomOutlinedTextField(
         backgroundColor = WhiteTransparency10
         placeholderColor = WhiteTransparency30
         unfocusedIndicatorColor = DefaultBlack
-        errorIndicatorColor = SemanticNegative400
+        errorIndicatorColor = if (isError || emptyError) {
+            SemanticNegative400
+        } else {
+            WhiteTransparency90
+        }
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
@@ -188,7 +193,11 @@ fun CustomOutlinedTextField(
         backgroundColor = WhiteTransparency10
         placeholderColor = GrayScale500
         unfocusedIndicatorColor = GrayScale400
-        errorIndicatorColor = SemanticNegative500
+        errorIndicatorColor = if (isError || emptyError) {
+            SemanticNegative500
+        } else {
+            GrayScale800
+        }
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative500
@@ -254,6 +263,8 @@ fun CustomOutlinedTextField(
                         tint = iconTintColor
                     )
                 }
+            } ?: leadingIconComposable?.let {
+                { it(iconTintColor) }
             },
             trailingIcon = if (isPassword) {
                 {
@@ -323,7 +334,7 @@ fun CustomOutlinedTextField(
         val passwordDebounceFlowValue by passwordVisibleFlow.collectAsState(false)
 
         // Display error message
-        if (isError && errorMessage.isNullOrBlank().not() || emptyError) {
+        if (((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) || emptyError) {
             Row(
                 modifier = Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -336,11 +347,9 @@ fun CustomOutlinedTextField(
                     tint = errorIndicatorColor
                 )
                 HtmlText(
-                    text = if (isError && errorMessage.isNullOrBlank().not()) {
-                        Log.wtf("Diego", errorMessage.toString())
+                    text = if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
                         errorMessage ?: ""
                     } else if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
-                        Log.wtf("Diego", isRequiredMessage.toString())
                         isRequiredMessage ?: ""
                     } else if (emptyError) {
                         stringResource(id = R.string.error_empty_field)

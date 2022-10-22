@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -38,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -333,22 +335,22 @@ fun CustomOutlinedTextField(
                     contentDescription = "",
                     tint = errorIndicatorColor
                 )
-                Text(
-                    text =
-                    if (isError && errorMessage.isNullOrBlank().not()) {
+                HtmlText(
+                    text = if (isError && errorMessage.isNullOrBlank().not()) {
+                        Log.wtf("Diego", errorMessage.toString())
                         errorMessage ?: ""
                     } else if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
+                        Log.wtf("Diego", isRequiredMessage.toString())
                         isRequiredMessage ?: ""
                     } else if (emptyError) {
                         stringResource(id = R.string.error_empty_field)
                     } else {
                         ""
                     },
-                    color = errorIndicatorColor,
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),
-                    style = Typography.caption
+                    style = Typography.caption.copy(color = errorIndicatorColor)
                 )
             }
         }

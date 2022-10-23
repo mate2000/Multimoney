@@ -5,6 +5,7 @@ import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.networking.SmartAccountApi
 import com.multimoney.domain.model.accountsmart.AddressesLevelTwo
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
@@ -82,7 +83,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idBrand: Int,
         currentStep: String,
     ): Flow<MultimoneyResult<GlobalRequest?>> =
-        fetchData(apolloCall = smartApi.mutationGlobalRequest(pkUser,
+        fetchData(apolloCall = smartApi.mutationGlobalRequest(
+            pkUser,
             status,
             idProfessionType,
             idAddressLevel1,
@@ -94,7 +96,21 @@ class SmartAccountRepositoryImpl @Inject constructor(
             isPEP,
             user,
             idBrand,
-            currentStep), apolloCallMapper = { data ->
+            currentStep
+        ), apolloCallMapper = { data ->
             Success(data.mapToDomain())
         })
+
+    /**
+     * fetch the list of the source of income catalog for the account smart flow
+     */
+    override suspend fun queryGeneralEconomicActivity(
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<GeneralEconomicActivityResult?>> {
+        return fetchData(
+            apolloCall = smartApi.queryGeneralEconomicActivity(user, idBrand),
+            apolloCallMapper = { data -> Success(data.mapToDomain()) }
+        )
+    }
 }

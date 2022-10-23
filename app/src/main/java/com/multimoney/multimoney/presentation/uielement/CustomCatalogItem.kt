@@ -112,6 +112,9 @@ fun CustomCatalogItemPreview() {
     )
 }
 
+/**
+ * return the specific Economic Activity icon based on the iconId param
+ */
 sealed class IconType(val iconId: Int) {
     object Salaried : IconType(1)
     object FreeLancer : IconType(2)

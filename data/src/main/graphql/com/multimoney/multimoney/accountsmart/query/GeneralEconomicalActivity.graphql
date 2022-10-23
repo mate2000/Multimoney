@@ -1,0 +1,14 @@
+query generalEconomicActivity($user: String!, $idBrand: Int!) {
+    generalEconomicActivity(
+        generalEconomicActivityInput: { user: $user, idBrand: $idBrand }
+    ) {
+        result {
+            id
+            descripcion
+            activityCode
+            subActivityCode
+            subSubActivityCode
+            iconCode
+        }
+    }
+}

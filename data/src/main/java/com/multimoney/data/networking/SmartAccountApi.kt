@@ -6,6 +6,7 @@ import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.accountsmart.apollomodel.CivilStatusQuery
+import com.multimoney.data.networking.accountsmart.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.accountsmart.apollomodel.NationalityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.ProfessionQuery
@@ -77,4 +78,11 @@ class SmartAccountApi @Inject constructor(
             user,
             idBrand,
             currentStep)).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGeneralEconomicActivity(
+        user: String,
+        idBrand: Int,
+    ): ApolloCall<GeneralEconomicActivityQuery.Data> =
+        apolloClient.query(GeneralEconomicActivityQuery(user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 }

@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.domain.model.util.onFailure
@@ -13,10 +14,12 @@ import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class SourceOfIncomeViewModel @Inject constructor(
-    private val queryGeneralEconomicActivityUseCase: QueryGeneralEconomicActivityUseCase
+    private val queryGeneralEconomicActivityUseCase: QueryGeneralEconomicActivityUseCase,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -25,8 +28,10 @@ class SourceOfIncomeViewModel @Inject constructor(
 
     private fun onCallQueryGetSourceOfIncomeUseCase() {
         executeUseCase {
-            // TODO, obtain this params dynamically
-            queryGeneralEconomicActivityUseCase("rob.mm02@yopmail.com", 7).collectLatest {
+            val user = dataStorePreferences.getUserEmail().first().ifEmpty { "rob.mm02@yopmail.com" }
+            val brandId = dataStorePreferences.getIdBrand().first().ifEmpty { "7" }
+
+            queryGeneralEconomicActivityUseCase(user, brandId.toInt()).collectLatest {
                 it.onSuccess { result ->
                     uiState = uiState.copy(
                         generalEconomicActivityList = result?.resultList,

@@ -113,11 +113,17 @@ fun CustomCatalogItemPreview() {
 }
 
 /**
- * return the specific Economic Activity icon based on the iconId param
+ * cast the specific Economic Activity (source of income flow)
+ * for each country SV and CR.
+ * @param iconId to determine the iconType
  */
 sealed class IconType(val iconId: Int) {
     object Salaried : IconType(1)
     object FreeLancer : IconType(2)
     object OwnBusiness : IconType(3)
     object Retired : IconType(4)
+    object FormalSalaried : IconType(6)
+    object OwnBusinessOnPersonalBasis : IconType(7)
+    object OwnBusinessInPartnership : IconType(8)
+    object Other : IconType(5 or 9)
 }

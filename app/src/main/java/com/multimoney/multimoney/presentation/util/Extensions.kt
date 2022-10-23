@@ -45,10 +45,18 @@ fun tickerFlow(
     }
 }
 
+/**
+ * return the proper icon from the local drawable resources depending on the iconId,
+ * either for CR or SV
+ */
 fun Int.getIconDrawableById() = when (this) {
-    IconType.Salaried.iconId -> R.drawable.ic_salaried
-    IconType.FreeLancer.iconId -> R.drawable.ic_freelancer
-    IconType.OwnBusiness.iconId -> R.drawable.ic_own_business
+    IconType.Salaried.iconId,
+    IconType.FormalSalaried.iconId -> R.drawable.ic_salaried
+    IconType.FreeLancer.iconId,
+    IconType.OwnBusinessOnPersonalBasis.iconId -> R.drawable.ic_freelancer
+    IconType.OwnBusiness.iconId,
+    IconType.OwnBusinessInPartnership.iconId -> R.drawable.ic_own_business
     IconType.Retired.iconId -> R.drawable.ic_retired
+    IconType.Other.iconId -> R.drawable.ic_other
     else -> R.drawable.ic_other
 }

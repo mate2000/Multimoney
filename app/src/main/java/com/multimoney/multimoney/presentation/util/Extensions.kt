@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.uielement.IconType
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeIconType
 import kotlin.time.Duration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -45,10 +45,18 @@ fun tickerFlow(
     }
 }
 
-fun Int.getIconDrawableById() = when (this) {
-    IconType.Salaried.iconId -> R.drawable.ic_salaried
-    IconType.FreeLancer.iconId -> R.drawable.ic_freelancer
-    IconType.OwnBusiness.iconId -> R.drawable.ic_own_business
-    IconType.Retired.iconId -> R.drawable.ic_retired
+/**
+ * return the proper icon from the local drawable resources depending on the iconId,
+ * either for CR or SV
+ */
+fun Int.getSourceIncomeIconDrawable() = when (this) {
+    SourceIncomeIconType.Salaried.iconId,
+    SourceIncomeIconType.FormalSalaried.iconId -> R.drawable.ic_salaried
+    SourceIncomeIconType.FreeLancer.iconId,
+    SourceIncomeIconType.OwnBusinessOnPersonalBasis.iconId -> R.drawable.ic_freelancer
+    SourceIncomeIconType.OwnBusiness.iconId,
+    SourceIncomeIconType.OwnBusinessInPartnership.iconId -> R.drawable.ic_own_business
+    SourceIncomeIconType.Retired.iconId -> R.drawable.ic_retired
+    SourceIncomeIconType.Other.iconId -> R.drawable.ic_other
     else -> R.drawable.ic_other
 }

@@ -1,5 +1,15 @@
 package com.multimoney.domain.di
 
+import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCaseImpl
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
@@ -57,6 +67,7 @@ import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
 import com.multimoney.domain.repository.SecurityRepository
+import com.multimoney.domain.repository.SmartAccountRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -207,4 +218,31 @@ class InteractionModule {
     @Singleton
     fun provideQueryBanksAndRegularExpressionUseCase(creditRepository: CreditRepository): QueryBanksAndRegularExpressionUseCase =
         QueryBanksAndRegularExpressionUseCaseImpl(creditRepository)
+
+    // Smart
+
+    @Provides
+    @Singleton
+    fun provideQueryCivilStatusUseCase(smartAccountRepository: SmartAccountRepository): QueryCivilStatusUseCase =
+        QueryCivilStatusUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryProfessionUseCase(smartAccountRepository: SmartAccountRepository): QueryProfessionUseCase =
+        QueryProfessionUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryAddressLevelTwoUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelTwoUseCase =
+        QueryAddressLevelTwoUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryNationalitiesUseCaseUseCase(smartAccountRepository: SmartAccountRepository): QueryNationalitiesUseCase =
+        QueryNationalitiesUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGeneralEconomicActivityUseCase(smartAccountRepository: SmartAccountRepository): QueryGeneralEconomicActivityUseCase =
+        QueryGeneralEconomicActivityUseCaseImpl(smartAccountRepository)
 }

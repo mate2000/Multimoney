@@ -3,38 +3,58 @@ package com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewModelScope
-import com.multimoney.domain.model.smart.origin.sourceofincome.SourceOfIncome
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.test.smart.data.MockDataSource
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 
 @HiltViewModel
-class SourceOfIncomeViewModel @Inject constructor() : BaseViewModel(false) {
+class SourceOfIncomeViewModel @Inject constructor(
+    private val queryGeneralEconomicActivityUseCase: QueryGeneralEconomicActivityUseCase,
+    private val dataStorePreferences: DataStorePreferences
+) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onCallQueryGetSourceOfIncomeUseCase() {
-        // FIXME, mimic success response for now
-        uiState = uiState.copy(isLoading = true)
-        viewModelScope.launch {
-            delay(1000L)
-            uiState = uiState.copy(
-                sourceOfIncomeList = MockDataSource.sourceOfIncomeList,
-                isLoading = false
-            )
+    private fun onCallQueryGetSourceOfIncomeUseCase() = executeUseCase {
+        val user = dataStorePreferences.getUserEmail().first().ifEmpty { "rob.mm02@yopmail.com" }
+        val brandId = dataStorePreferences.getIdBrand().first().ifEmpty { "7" }
+
+        queryGeneralEconomicActivityUseCase(user, brandId.toInt()).collectLatest {
+            it.onSuccess { result ->
+                uiState = uiState.copy(
+                    generalEconomicActivityList = result?.resultList?.sortedBy { item -> item?.iconCode },
+                    isLoading = false
+                )
+            }.onFailure { error ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = error.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
         }
     }
 
     data class UIState(
         // Interactions
-        val sourceOfIncomeList: List<SourceOfIncome?>? = listOf(),
-        val isLoading: Boolean = false
+        val generalEconomicActivityList: List<GeneralEconomicActivity?>? = listOf(),
+        val isLoading: Boolean = false,
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

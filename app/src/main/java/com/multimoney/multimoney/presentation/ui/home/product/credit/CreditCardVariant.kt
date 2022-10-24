@@ -49,7 +49,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 
 /**
- * Composable function to show the option to active smart product
+ * Composable function to show the option to active accountsmart product
  */
 @Composable
 @Preview

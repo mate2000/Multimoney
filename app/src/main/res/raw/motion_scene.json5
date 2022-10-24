@@ -72,10 +72,15 @@
         ]
       },
       bottom_end: {
+        height: 'spread',
         top: [
           'main_card',
           'bottom',
           20
+        ],
+        bottom: [
+          'parent',
+          'bottom'
         ]
       }
     }

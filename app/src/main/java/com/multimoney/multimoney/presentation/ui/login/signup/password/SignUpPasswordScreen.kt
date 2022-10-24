@@ -48,7 +48,6 @@ fun SignUpPasswordScreen(
     viewModel: SignUpPasswordViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
-
     // Properties
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -65,7 +64,7 @@ fun SignUpPasswordScreen(
             biometricPromptNegative = stringResource(id = R.string.cancel),
             biometricDialogDescription = stringResource(id = R.string.active_biometric_message),
             biometricDialogSuccessDescription = stringResource(id = R.string.dialog_success_biometric_description),
-            biometricDialogFailureDescription = stringResource(id = R.string.dialog_failure_biometric_description),
+            biometricDialogFailureDescription = stringResource(id = R.string.dialog_failure_biometric_description)
         )
     )
 
@@ -94,22 +93,26 @@ fun SignUpPasswordScreen(
     }
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(SignUpPasswordViewModel.UIEvent.OnValidForm(
-            onContinueEnable = { isEnabled ->
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(isEnabled))
-            }
-        ))
+        viewModel.onUIEvent(
+            SignUpPasswordViewModel.UIEvent.OnValidForm(
+                onContinueEnable = { isEnabled ->
+                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(isEnabled))
+                }
+            )
+        )
         sharedViewModel.apply {
-            onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
-                viewModel.onUIEvent(
-                    SignUpPasswordViewModel.UIEvent.OnCallPasswordSave(
-                        pkUser = userData?.pkUser ?: "0",
-                        user = userData?.email ?: "",
-                        idBrant = idBrand ?: 0
+            onUIEvent(
+                SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
+                    viewModel.onUIEvent(
+                        SignUpPasswordViewModel.UIEvent.OnCallPasswordSave(
+                            pkUser = userData?.pkUser ?: "0",
+                            user = userData?.email ?: "",
+                            idBrant = idBrand ?: 0
+                        )
                     )
-                )
-                viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFive)
-            }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id))
+                    viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpFive)
+                }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id)
+            )
         }
     }
 
@@ -118,32 +121,36 @@ fun SignUpPasswordScreen(
             event.onSuccess {
                 sharedViewModel.apply {
                     userData?.currentStep = SignUpStep.Five.name
-                    viewModel.onUIEvent(SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp(
-                        email = userData?.email ?: "",
-                        firstName = userData?.firstName ?: "",
-                        lastName = userData?.firstLastName ?: "",
-                        phone = "${userData?.countryCode ?: ""}${userData?.phoneNumber ?: ""}",
-                        identification = userData?.identification ?: "",
-                        pkUser = userData?.pkUser ?: "",
-                        status = userData?.userStatus ?: "",
-                        idBrand = idBrand ?: 0,
-                        onSuccess = {
-                            onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
-                        },
-                        onFailureWithDialog = { dialog ->
-                            onUIEvent(
-                                SignUpViewModel.UIEvent.OnFailureWithDialog(
-                                    false,
-                                    dialog
+                    viewModel.onUIEvent(
+                        SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp(
+                            email = userData?.email ?: "",
+                            firstName = userData?.firstName ?: "",
+                            secondName = userData?.secondName ?: "",
+                            lastName = userData?.firstLastName ?: "",
+                            phone = "${userData?.countryCode ?: ""}${userData?.phoneNumber ?: ""}",
+                            identification = userData?.identification ?: "",
+                            pkUser = userData?.pkUser ?: "",
+                            status = userData?.userStatus ?: "",
+                            idBrand = idBrand ?: 0,
+                            onSuccess = {
+                                onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
+                            },
+                            onFailureWithDialog = { dialog ->
+                                onUIEvent(
+                                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                                        false,
+                                        dialog
+                                    )
                                 )
-                            )
-                        }
-                    ))
+                            }
+                        )
+                    )
                 }
             }.onMessage {
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
-                        false, DialogParameters(
+                        false,
+                        DialogParameters(
                             description = it?.messageError?.message ?: "",
                             isActive = mutableStateOf(true)
                         )
@@ -152,7 +159,8 @@ fun SignUpPasswordScreen(
             }.onFailure {
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
-                        false, DialogParameters(
+                        false,
+                        DialogParameters(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         )
@@ -192,7 +200,8 @@ fun SignUpPasswordScreen(
                                     isEnable
                                 )
                             )
-                        })
+                        }
+                    )
                 )
             },
             keyboardOptions = KeyboardOptions(
@@ -227,7 +236,8 @@ fun SignUpPasswordScreen(
                                     isEnable
                                 )
                             )
-                        })
+                        }
+                    )
                 )
             },
             keyboardOptions = KeyboardOptions(
@@ -248,7 +258,7 @@ fun SignUpPasswordScreen(
                 stringResource(id = viewModel.uiState.confirmPasswordError.second)
             } else {
                 null
-            },
+            }
         )
         FlowRow(
             Modifier

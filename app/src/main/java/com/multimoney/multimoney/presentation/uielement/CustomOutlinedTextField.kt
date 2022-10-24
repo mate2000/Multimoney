@@ -99,6 +99,7 @@ fun CustomOutlinedTextField(
     labelText: String? = null,
     value: String? = null,
     leadingIcon: Int? = null,
+    leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
     placeHolder: String = "",
     keyboardOptions: KeyboardOptions,
@@ -106,6 +107,7 @@ fun CustomOutlinedTextField(
     isRequired: Boolean = true,
     isRequiredMessage: String? = null,
     isError: Boolean = false,
+    canShowNonErrorMessage: Boolean = false,
     errorMessage: String? = null,
     enabled: Boolean = true,
     isPassword: Boolean = false,
@@ -162,7 +164,11 @@ fun CustomOutlinedTextField(
         backgroundColor = WhiteTransparency10
         placeholderColor = WhiteTransparency30
         unfocusedIndicatorColor = DefaultBlack
-        errorIndicatorColor = SemanticNegative400
+        errorIndicatorColor = if (isError || emptyError) {
+            SemanticNegative400
+        } else {
+            WhiteTransparency90
+        }
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
@@ -186,7 +192,11 @@ fun CustomOutlinedTextField(
         backgroundColor = WhiteTransparency10
         placeholderColor = GrayScale500
         unfocusedIndicatorColor = GrayScale400
-        errorIndicatorColor = SemanticNegative500
+        errorIndicatorColor = if (isError || emptyError) {
+            SemanticNegative500
+        } else {
+            GrayScale800
+        }
         when {
             isError -> {
                 focusedIndicatorColor = SemanticNegative500
@@ -252,6 +262,8 @@ fun CustomOutlinedTextField(
                         tint = iconTintColor
                     )
                 }
+            } ?: leadingIconComposable?.let {
+                { it(iconTintColor) }
             },
             trailingIcon = if (isPassword) {
                 {
@@ -321,7 +333,7 @@ fun CustomOutlinedTextField(
         val passwordDebounceFlowValue by passwordVisibleFlow.collectAsState(false)
 
         // Display error message
-        if (isError && errorMessage.isNullOrBlank().not() || emptyError) {
+        if (((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) || emptyError) {
             Row(
                 modifier = Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -335,7 +347,7 @@ fun CustomOutlinedTextField(
                 )
                 Text(
                     text =
-                    if (isError && errorMessage.isNullOrBlank().not()) {
+                    if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
                         errorMessage ?: ""
                     } else if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
                         isRequiredMessage ?: ""

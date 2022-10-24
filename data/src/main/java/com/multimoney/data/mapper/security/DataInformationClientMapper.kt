@@ -4,8 +4,13 @@ import com.multimoney.data.networking.security.apollomodel.DataInformationClient
 import com.multimoney.domain.model.security.ClientInfoCr
 
 private fun DataInformationClientQuery.DataInformationClient.mapToDomainModel() = ClientInfoCr(
-    fullName = nombre,
-    status = status
+    name = nombre,
+    firstName = nombre1,
+    secondName = nombre2,
+    firstLastName = apellido1,
+    secondLastName = apellido2,
+    status = status,
+    message = message
 )
 
 fun DataInformationClientQuery.Data.mapToDomainModel() = dataInformationClient?.mapToDomainModel()

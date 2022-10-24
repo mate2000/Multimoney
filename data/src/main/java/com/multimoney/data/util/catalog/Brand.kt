@@ -1,9 +1,9 @@
 package com.multimoney.data.util.catalog
 
-sealed class Brand(val id: Int) {
-    object CostaRica : Brand(5)
-    object ElSalvador : Brand(7)
-    object Guatemala : Brand(10)
+sealed class Brand(val id: Int, val iban: String) {
+    object CostaRica : Brand(5, "CR")
+    object ElSalvador : Brand(7, "")
+    object Guatemala : Brand(10, "")
 
     object Search {
         fun getIdBrandByNationality(nationality: String?): Int {

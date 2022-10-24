@@ -135,9 +135,6 @@ class PaymentAccountViewModel @Inject constructor(
         popAndNavigateTo(route = route, popTo = Screen.PaymentAccountScreen.route)
     }
 
-    fun getMaskedAccount(accountNumber: String, maskedText: String) =
-        accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
-
     data class UIState(
         // Interactions
         val titleResource: Int = R.string.empty,
@@ -177,10 +174,5 @@ class PaymentAccountViewModel @Inject constructor(
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
         object OnGetTextResources : UIEvent()
         object OnNavigateBack : UIEvent()
-    }
-
-    companion object {
-        const val ACCOUNT_FIRST_DIGITS = 2
-        const val ACCOUNT_LAST_DIGITS = 4
     }
 }

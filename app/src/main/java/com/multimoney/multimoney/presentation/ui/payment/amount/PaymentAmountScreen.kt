@@ -19,12 +19,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
@@ -46,7 +44,6 @@ import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountVie
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -97,33 +94,6 @@ fun PaymentAmountScreen(
                 style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.labelText),
                 textAlign = TextAlign.Left
             )
-            Row(
-                modifier = Modifier.padding(top = 24.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                CustomImage(
-                    modifier = Modifier.padding(top = 3.dp),
-                    drawableResource = R.drawable.info_blue_icon
-                )
-                Text(
-                    modifier = Modifier.padding(start = 10.dp),
-                    text = buildAnnotatedString {
-                        append(stringResource(id = R.string.payment_amount_subtitle))
-                        append(" ")
-                        withStyle(
-                            style = Typography.subtitle1.toSpanStyle()
-                                .copy(
-                                    fontWeight = FontWeight.Bold
-                                )
-                        ) {
-                            append(viewModel.uiState.minimumPaymentLabel)
-                        }
-                    },
-                    style = Typography.subtitle1,
-                    color = MultimoneyTheme.colors.labelText,
-                    textAlign = TextAlign.Left
-                )
-            }
             Row(
                 modifier = Modifier
                     .padding(top = 24.dp)

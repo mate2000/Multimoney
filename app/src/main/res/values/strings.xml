@@ -420,9 +420,13 @@
 
     <!-- Payment Amount -->
     <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
-    <string name="payment_amount_subtitle" translatable="false">Tu cuota mínima debe ser igual o mayor a</string>
     <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
     <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
     <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
     <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
+
+    <!-- Payment Options -->
+    <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
+    <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+
 </resources>

@@ -11,13 +11,16 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
+import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.credit.ProductMovement
+import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
+import com.multimoney.domain.model.util.catalog.ConfigurationPlatform
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -51,6 +54,7 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
+    private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
@@ -61,6 +65,7 @@ class ProductViewModel @Inject constructor(
     // Stateless
     var lastStep: Int = 1
     var balanceCredit: Balance? = null
+    var configurationVersion: ConfigurationVersion? = null
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
@@ -82,6 +87,8 @@ class ProductViewModel @Inject constructor(
                 email,
                 uiState.idBrand.toInt()
             )
+
+            callQueryGetConfigurationVersion(uiState.idBrand.toInt())
         }
     }
 
@@ -95,31 +102,52 @@ class ProductViewModel @Inject constructor(
         accountStatus: Int,
         cryptoStatus: Int,
         cardStatus: Int
-    ) {
-        executeUseCase {
-            queryBalanceUseCase.invoke(
-                user = user,
-                identification = identification,
-                idBrand = idBrand,
-                idClient = idClient,
-                idLoanClient = idLoanClient,
-                creditStatus = creditStatus,
-                accountStatus = accountStatus,
-                cryptoStatus = cryptoStatus,
-                cardStatus = cardStatus
-            ).collectLatest { result ->
-                result.onSuccess { balance ->
-                    uiState = uiState.copy(isLoading = false)
-                    balance?.let {
-                        balanceCredit = it
-                    }
+    ) = executeUseCase {
+        queryBalanceUseCase.invoke(
+            user = user,
+            identification = identification,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            creditStatus = creditStatus,
+            accountStatus = accountStatus,
+            cryptoStatus = cryptoStatus,
+            cardStatus = cardStatus
+        ).collectLatest { result ->
+            result.onSuccess { balance ->
+                configurationVersion?.let { uiState = uiState.copy(isLoading = false) }
+                balance?.let {
+                    balanceCredit = it
                 }
-                result.onFailure {
-                    onFailure(it)
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun callQueryGetConfigurationVersion(
+        idBrand: Int
+    ) = executeUseCase {
+        queryGetConfigurationVersionUseCase.invoke(
+            platform = ConfigurationPlatform.Android.value,
+            appVersion = ConfigurationPlatform.Android.appVersion,
+            idBrand = idBrand
+        ).collectLatest { result ->
+            result.onSuccess { configurationVersion ->
+                balanceCredit?.let { uiState = uiState.copy(isLoading = false) }
+                configurationVersion?.let {
+                    this.configurationVersion = it
                 }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
             }
         }
     }
@@ -129,26 +157,23 @@ class ProductViewModel @Inject constructor(
         identification: String,
         email: String,
         idBrand: Int
-    ) {
-        viewModelScope.launch {
-            queryValidateUserStatusUseCase.invoke(
-                pkUser,
-                identification,
-                email,
-                idBrand
-            ).collectLatest { result ->
-                result.onSuccess { validateUserStatus ->
-                    uiState = uiState.copy(isLoading = false)
-                    validateUserStatus?.let {
-                        onValidateUserStatusSuccess(it)
-                    }
+    ) = executeUseCase {
+        queryValidateUserStatusUseCase.invoke(
+            pkUser,
+            identification,
+            email,
+            idBrand
+        ).collectLatest { result ->
+            result.onSuccess { validateUserStatus ->
+                validateUserStatus?.let {
+                    onValidateUserStatusSuccess(it)
                 }
-                result.onFailure {
-                    onFailure(it)
-                }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
             }
         }
     }

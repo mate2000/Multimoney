@@ -6,6 +6,7 @@ import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.networking.security.apollomodel.CatalogTypeIndentificationQuery
 import com.multimoney.data.networking.security.apollomodel.DataInformationClientQuery
+import com.multimoney.data.networking.security.apollomodel.GetConfigurationVersionQuery
 import com.multimoney.data.networking.security.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.security.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutation
@@ -37,22 +38,13 @@ class SecurityApi @Inject constructor(
         secondName: String,
         firstSurname: String,
         secondSurname: String
-    ): ApolloCall<UserValidationMutation.Data> =
-        apolloAuthorizedClient.mutation(
-            UserValidationMutation(
-                email,
-                currentStep,
-                idBrand,
-                idDocument,
-                identification,
-                firstName,
-                secondName,
-                firstSurname,
-                secondSurname
-            )
-        ).fetchPolicy(
-            FetchPolicy.NetworkOnly
+    ): ApolloCall<UserValidationMutation.Data> = apolloAuthorizedClient.mutation(
+        UserValidationMutation(
+            email, currentStep, idBrand, idDocument, identification, firstName, secondName, firstSurname, secondSurname
         )
+    ).fetchPolicy(
+        FetchPolicy.NetworkOnly
+    )
 
     fun mutationUpdateUserRegister(
         pkUser: String,
@@ -69,27 +61,26 @@ class SecurityApi @Inject constructor(
         countryCode: String?,
         currentStep: String,
         idBrand: Int
-    ): ApolloCall<UpdateUserRegisterMutation.Data> =
-        apolloAuthorizedClient.mutation(
-            UpdateUserRegisterMutation(
-                pkUser,
-                user,
-                email,
-                phoneNumber,
-                fullName,
-                firstName,
-                secondName,
-                lastName,
-                secondLastName,
-                nationality,
-                identification,
-                countryCode,
-                currentStep,
-                idBrand
-            )
-        ).fetchPolicy(
-            FetchPolicy.NetworkOnly
+    ): ApolloCall<UpdateUserRegisterMutation.Data> = apolloAuthorizedClient.mutation(
+        UpdateUserRegisterMutation(
+            pkUser,
+            user,
+            email,
+            phoneNumber,
+            fullName,
+            firstName,
+            secondName,
+            lastName,
+            secondLastName,
+            nationality,
+            identification,
+            countryCode,
+            currentStep,
+            idBrand
         )
+    ).fetchPolicy(
+        FetchPolicy.NetworkOnly
+    )
 
     fun queryValidationSecurity(
         pkUser: Int,
@@ -107,21 +98,21 @@ class SecurityApi @Inject constructor(
         email: String,
         idBrand: Int
     ): ApolloCall<ValidateUserStatusQuery.Data> =
-        apolloAuthorizedClient.query(ValidateUserStatusQuery(pkUser, identification, email, idBrand))
-            .fetchPolicy(
-                FetchPolicy.NetworkOnly
-            )
+        apolloAuthorizedClient.query(ValidateUserStatusQuery(pkUser, identification, email, idBrand)).fetchPolicy(
+            FetchPolicy.NetworkOnly
+        )
 
     fun queryDataInformationClient(
         identification: String,
         idBrand: Int,
         user: String
-    ): ApolloCall<DataInformationClientQuery.Data> =
-        apolloAuthorizedClient.query(
-            DataInformationClientQuery(
-                identification, idBrand, user
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<DataInformationClientQuery.Data> = apolloAuthorizedClient.query(
+        DataInformationClientQuery(
+            identification,
+            idBrand,
+            user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSendPinProcess(
         identification: String,
@@ -132,19 +123,18 @@ class SecurityApi @Inject constructor(
         pkUser: Int,
         idBrand: Int,
         user: String
-    ): ApolloCall<SendPinProcessMutation.Data> =
-        apolloAuthorizedClient.mutation(
-            SendPinProcessMutation(
-                identification,
-                firstName,
-                email,
-                cellPhone,
-                sendMethod,
-                pkUser,
-                idBrand,
-                user
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<SendPinProcessMutation.Data> = apolloAuthorizedClient.mutation(
+        SendPinProcessMutation(
+            identification,
+            firstName,
+            email,
+            cellPhone,
+            sendMethod,
+            pkUser,
+            idBrand,
+            user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationOnFidoInitialProcess(
         names: String,
@@ -176,15 +166,7 @@ class SecurityApi @Inject constructor(
         userCreate: String
     ): ApolloCall<ValidatePinQuery.Data> = apolloAuthorizedClient.query(
         ValidatePinQuery(
-            idBrand,
-            appSource,
-            pkUser.toInt(),
-            ip,
-            pinSecurity,
-            telephone,
-            sendValidatePin,
-            flowOrigination,
-            userCreate
+            idBrand, appSource, pkUser.toInt(), ip, pinSecurity, telephone, sendValidatePin, flowOrigination, userCreate
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -193,7 +175,16 @@ class SecurityApi @Inject constructor(
         user: String
     ): ApolloCall<CatalogTypeIndentificationQuery.Data> =
         apolloAuthorizedClient.query(CatalogTypeIndentificationQuery(user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryGetCountry(user: String): ApolloCall<GetCountryQuery.Data> =
-        apolloAuthorizedClient.query(GetCountryQuery(user))
+        apolloAuthorizedClient.query(GetCountryQuery(user)).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetConfigurationVersion(
+        platform: String,
+        appVersion: String,
+        idBrand: Int
+    ): ApolloCall<GetConfigurationVersionQuery.Data> =
+        apolloAuthorizedClient.query(GetConfigurationVersionQuery(platform, appVersion, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 }

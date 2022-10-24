@@ -32,7 +32,8 @@ import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelection
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.catalog.Currency
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.getCurrency
 
 @Composable
 fun PaymentFeeSelectionScreen(
@@ -85,18 +86,10 @@ fun PaymentFeeSelectionScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
-                        startIcon = Currency.Search.getCurrencyByIdCurrency(summary?.idCurrency).feeIcon,
-                        title = "${stringResource(id = Currency.Search.getCurrencyByIdCurrency(summary?.idCurrency).feeInfoButtonTitle)} ${summary?.currency?.lowercase()}",
+                        startIcon = summary?.idCurrency?.getCurrency()?.feeIcon ?: 0,
+                        title = "${stringResource(id = summary?.idCurrency?.getCurrency()?.feeInfoButtonTitle ?: 0)} ${summary?.currency?.lowercase()}",
                         subtitle = summary?.monthlyQuotaLabel ?: "",
-                        onClick = {
-                            viewModel.onUIEvent(
-                                OnNavigateToPaymentAccount(
-                                    Currency.Search.getCurrencyByIdCurrency(
-                                        summary?.idCurrency
-                                    )
-                                )
-                            )
-                        }
+                        onClick = { viewModel.onUIEvent(OnNavigateToPaymentAccount(summary?.idCurrency?.getCurrency())) }
                     )
                 }
                 if ((viewModel.uiState.summaryList?.count() ?: 0) > 1) {
@@ -105,11 +98,11 @@ fun PaymentFeeSelectionScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 12.dp),
-                            startIcon = Currency.Search.getCurrencyByIdCurrency(Currency.All.id).feeIcon,
-                            title = stringResource(id = Currency.Search.getCurrencyByIdCurrency(Currency.All.id).feeInfoButtonTitle),
+                            startIcon = CurrencyType.All.feeIcon,
+                            title = stringResource(id = CurrencyType.All.feeInfoButtonTitle),
                             subtitle = viewModel.getAllQuotas(stringResource(id = string.payment_fee_both_plus_symbol)),
                             onClick = {
-                                viewModel.onUIEvent(OnNavigateToPaymentAccount(Currency.All))
+                                viewModel.onUIEvent(OnNavigateToPaymentAccount(CurrencyType.All))
                             }
                         )
                     }

@@ -69,7 +69,7 @@ class SignInViewModel @Inject constructor(
     private fun callCognitoSignIn() {
         uiState = uiState.copy(isLoading = true)
         clearUserEmailError()
-//        Amplify.Auth.signOut({
+        Amplify.Auth.signOut({
             Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
@@ -108,9 +108,9 @@ class SignInViewModel @Inject constructor(
             }, {
                 cognitoError()
             })
-//        }, {
-//            cognitoError()
-//        })
+        }, {
+            cognitoError()
+        })
     }
 
     private suspend fun saveUserData(payload: JSONObject) {
@@ -295,7 +295,8 @@ class SignInViewModel @Inject constructor(
 
     private fun onShowBiometricSignInChanged(value: Boolean) {
         uiState = uiState.copy(
-            showBiometricSignIn = value, userEmail = if (value) {
+            showBiometricSignIn = value,
+            userEmail = if (value) {
                 biometricUserEmail
             } else {
                 uiState.userEmail
@@ -376,7 +377,6 @@ class SignInViewModel @Inject constructor(
 
         data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean) :
             UIEvent()
-
 
         object OnStart : UIEvent()
         object OnValidateUserEmail : UIEvent()

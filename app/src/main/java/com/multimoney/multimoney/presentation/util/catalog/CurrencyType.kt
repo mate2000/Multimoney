@@ -2,7 +2,7 @@ package com.multimoney.multimoney.presentation.util.catalog
 
 import com.multimoney.multimoney.R
 
-sealed class Currency(
+sealed class CurrencyType(
     val id: Int,
     val value: String,
     val accountIcon: Int,
@@ -10,7 +10,7 @@ sealed class Currency(
     val feeIcon: Int,
     val feeInfoButtonTitle: Int
 ) {
-    object Colon : Currency(
+    object Colon : CurrencyType(
         1,
         "COLONES",
         R.drawable.ic_account_colon,
@@ -19,7 +19,7 @@ sealed class Currency(
         R.string.payment_fee_one_option
     )
 
-    object Dollar : Currency(
+    object Dollar : CurrencyType(
         2,
         "DOLARES",
         R.drawable.ic_account_dollar,
@@ -28,7 +28,7 @@ sealed class Currency(
         R.string.payment_fee_one_option
     )
 
-    object Quetzal : Currency(
+    object Quetzal : CurrencyType(
         3,
         "QUETZALES",
         R.drawable.ic_account_dollar,
@@ -37,7 +37,7 @@ sealed class Currency(
         R.string.empty
     )
 
-    object All : Currency(
+    object All : CurrencyType(
         100000,
         "",
         R.drawable.ic_account_dollar,
@@ -45,15 +45,4 @@ sealed class Currency(
         R.drawable.ic_payment_fee_icon,
         R.string.payment_fee_both_options
     )
-
-    object Search {
-        fun getCurrencyByIdCurrency(idCurrency: Int?): Currency {
-            return when (idCurrency) {
-                Colon.id -> Colon
-                Dollar.id -> Dollar
-                Quetzal.id -> Quetzal
-                else -> All
-            }
-        }
-    }
 }

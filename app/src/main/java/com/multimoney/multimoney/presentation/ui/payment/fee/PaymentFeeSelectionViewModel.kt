@@ -10,7 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnNavigateToPaymentAccount
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionViewModel.UIEvent.OnSaveArguments
-import com.multimoney.multimoney.presentation.util.catalog.Currency
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -41,9 +41,9 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
         uiState = uiState.copy(summaryList = summaryList)
     }
 
-    private fun onNavigateToPaymentAccount(currency: Currency) {
-        val summaryList = if (currency.id != Currency.All.id) {
-            listOf(uiState.summaryList?.firstOrNull { it?.idCurrency == currency.id })
+    private fun onNavigateToPaymentAccount(currencyType: CurrencyType?) {
+        val summaryList = if (currencyType?.id != CurrencyType.All.id) {
+            listOf(uiState.summaryList?.firstOrNull { it?.idCurrency == currencyType?.id })
         } else {
             uiState.summaryList
         }
@@ -84,7 +84,7 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
                 event.idLoanClient,
                 event.summaryList
             )
-            is OnNavigateToPaymentAccount -> onNavigateToPaymentAccount(event.currency)
+            is OnNavigateToPaymentAccount -> onNavigateToPaymentAccount(event.currencyType)
             is OnNavigateBack -> onNavigateBack()
         }
     }
@@ -98,7 +98,7 @@ class PaymentFeeSelectionViewModel @Inject constructor() : BaseViewModel(true) {
             val summaryList: List<Summary>
         ) : UIEvent()
 
-        data class OnNavigateToPaymentAccount(val currency: Currency) : UIEvent()
+        data class OnNavigateToPaymentAccount(val currencyType: CurrencyType?) : UIEvent()
         object OnNavigateBack : UIEvent()
     }
 }

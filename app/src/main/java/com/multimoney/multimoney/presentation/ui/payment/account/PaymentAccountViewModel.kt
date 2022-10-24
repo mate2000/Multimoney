@@ -19,7 +19,8 @@ import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountV
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountViewModel.UIEvent.OnSaveArguments
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.Currency
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.getCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -54,7 +55,7 @@ class PaymentAccountViewModel @Inject constructor(
         this.idLoanClient = idLoanClient
         this.summaryList = summaryList
         idCurrency = if (summaryList.count() > 1) {
-            Currency.All.id
+            CurrencyType.All.id
         } else {
             summaryList.first().idCurrency
         }
@@ -62,7 +63,7 @@ class PaymentAccountViewModel @Inject constructor(
 
     private fun getTextResources() {
         uiState = uiState.copy(
-            titleResource = Currency.Search.getCurrencyByIdCurrency(idCurrency).accountTitle
+            titleResource = idCurrency?.getCurrency()?.accountTitle ?: 0
         )
     }
 

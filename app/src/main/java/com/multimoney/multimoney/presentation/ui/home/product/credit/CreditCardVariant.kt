@@ -26,7 +26,6 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextAlign.Companion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
@@ -563,7 +562,7 @@ fun OngoingCredit(
                                     platformStyle = PlatformTextStyle(
                                         includeFontPadding = false
                                     )
-                                ),
+                                )
                             )
                         }
                     }

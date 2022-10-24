@@ -26,28 +26,26 @@ class SourceOfIncomeViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onCallQueryGetSourceOfIncomeUseCase() {
-        executeUseCase {
-            val user = dataStorePreferences.getUserEmail().first().ifEmpty { "rob.mm02@yopmail.com" }
-            val brandId = dataStorePreferences.getIdBrand().first().ifEmpty { "7" }
+    private fun onCallQueryGetSourceOfIncomeUseCase() = executeUseCase {
+        val user = dataStorePreferences.getUserEmail().first().ifEmpty { "rob.mm02@yopmail.com" }
+        val brandId = dataStorePreferences.getIdBrand().first().ifEmpty { "7" }
 
-            queryGeneralEconomicActivityUseCase(user, brandId.toInt()).collectLatest {
-                it.onSuccess { result ->
-                    uiState = uiState.copy(
-                        generalEconomicActivityList = result?.resultList,
-                        isLoading = false
+        queryGeneralEconomicActivityUseCase(user, brandId.toInt()).collectLatest {
+            it.onSuccess { result ->
+                uiState = uiState.copy(
+                    generalEconomicActivityList = result?.resultList?.sortedBy { item -> item?.iconCode },
+                    isLoading = false
+                )
+            }.onFailure { error ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = error.getError() ?: "",
+                        isActive = mutableStateOf(true)
                     )
-                }.onFailure { error ->
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = error.getError() ?: "",
-                            isActive = mutableStateOf(true)
-                        )
-                    )
-                }.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
             }
         }
     }

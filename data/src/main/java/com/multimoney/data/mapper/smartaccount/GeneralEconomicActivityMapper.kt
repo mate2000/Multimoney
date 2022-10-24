@@ -18,7 +18,7 @@ private fun GeneralEconomicActivityQuery.Result.mapToDomain() =
 
 private fun GeneralEconomicActivityQuery.GeneralEconomicActivity.mapToDomain() =
     GeneralEconomicActivityResult(
-        resultList = result?.sortedBy { it?.iconCode }?.map { it?.mapToDomain() } ?: listOf()
+        resultList = result?.map { it?.mapToDomain() } ?: listOf()
     )
 
 fun GeneralEconomicActivityQuery.Data.mapToDomain() = generalEconomicActivity?.mapToDomain()

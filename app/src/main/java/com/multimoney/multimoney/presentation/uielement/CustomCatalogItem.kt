@@ -32,7 +32,7 @@ import com.multimoney.multimoney.presentation.theme.GradientGrey1
 import com.multimoney.multimoney.presentation.theme.GradientGrey2
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
-import com.multimoney.multimoney.presentation.util.getIconDrawableById
+import com.multimoney.multimoney.presentation.util.getSourceIncomeIconDrawable
 
 /**
  * This custom view represent a catalog of items, it can be used
@@ -78,7 +78,7 @@ fun CustomCatalogItem(
                 modifier = Modifier
                     .wrapContentHeight()
                     .weight(0.41f),
-                painter = painterResource(iconId.getIconDrawableById()),
+                painter = painterResource(iconId.getSourceIncomeIconDrawable()),
                 contentDescription = label,
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.BottomCenter,
@@ -110,20 +110,4 @@ fun CustomCatalogItemPreview() {
         iconId = R.drawable.ic_freelancer,
         label = "Otro"
     )
-}
-
-/**
- * cast the specific Economic Activity (source of income flow)
- * for each country SV and CR.
- * @param iconId to determine the iconType
- */
-sealed class IconType(val iconId: Int) {
-    object Salaried : IconType(1)
-    object FreeLancer : IconType(2)
-    object OwnBusiness : IconType(3)
-    object Retired : IconType(4)
-    object FormalSalaried : IconType(6)
-    object OwnBusinessOnPersonalBasis : IconType(7)
-    object OwnBusinessInPartnership : IconType(8)
-    object Other : IconType(5 or 9)
 }

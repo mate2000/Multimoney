@@ -140,7 +140,7 @@ fun MotionLayoutMM(
                     state = swipeAbleState,
                     anchors = anchors,
                     thresholds = { _, _ ->
-                        // Entre mas se aproxima a 1 se tiene que hacer mas scroll para que se autocomplete la animacion
+                        // The closer to 1 you have to scroll more for it to autocomplete the animation
                         FractionalThreshold(FRACTIONAL_THRESHOLD)
                     },
                     orientation = Orientation.Vertical

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextAlign.Companion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
@@ -49,6 +50,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
+import com.multimoney.multimoney.presentation.util.getCardDateFormat
 
 /**
  * Composable function to show the option to active smart product
@@ -547,23 +549,21 @@ fun OngoingCredit(
                                         ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
-                                .padding(top = 2.dp, start = 8.dp)
                         )
                     },
                     onClick = {
                         // Empty on purpose
                     },
                     content = {
-                        Box {
+                        Box(contentAlignment = Alignment.Center) {
                             Text(
-                                text = viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel.toString(),
-                                modifier = Modifier.padding(vertical = 4.dp),
+                                text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel.toString()),
                                 style = Typography.body1.copy(
                                     fontWeight = FontWeight.SemiBold,
                                     platformStyle = PlatformTextStyle(
                                         includeFontPadding = false
                                     )
-                                )
+                                ),
                             )
                         }
                     }

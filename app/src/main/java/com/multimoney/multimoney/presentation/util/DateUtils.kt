@@ -21,6 +21,14 @@ fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): S
     }
 }
 
-fun cardDateFormat(date: String) {
-
+fun getCardDateFormat(date: String): String {
+    val dateFormatted = SHORT_DATE_FORMAT.parse(date)
+    return dateFormatted?.let {
+        BAR_DIVIDER_FORMAT.format(dateFormatted)
+    } ?: run {
+        ""
+    }
 }
+
+val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())

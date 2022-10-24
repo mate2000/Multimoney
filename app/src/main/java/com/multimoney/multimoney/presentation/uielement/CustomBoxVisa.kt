@@ -50,7 +50,7 @@ import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCredi
 fun CustomBoxVisaBackground(
     modifier: Modifier = Modifier,
     onClick: (type: BoxVisaType) -> Unit = {},
-    shape: Shape = RoundedCornerShape(24.dp),
+    shape: Shape = RoundedCornerShape(20.dp),
     isEnable: Boolean = true,
     type: BoxVisaType = RequestCreditCard
 ) {

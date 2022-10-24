@@ -20,3 +20,7 @@ fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): S
         ""
     }
 }
+
+fun cardDateFormat(date: String) {
+
+}

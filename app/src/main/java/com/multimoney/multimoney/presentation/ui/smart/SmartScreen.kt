@@ -16,18 +16,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
-import com.multimoney.data.util.catalog.SignUpStep.Five
-import com.multimoney.data.util.catalog.SignUpStep.Six
+import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartSteps.Five
+import com.multimoney.data.util.catalog.SmartSteps.Six
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.SMART_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnMoveToStep
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.SetUserData
+import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentResidentScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -41,18 +45,18 @@ fun SmartScreen(
     navBackStackEntry: NavBackStackEntry,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SmartViewModel,
+    viewModel: SmartViewModel = hiltViewModel(),
 ) {
     val focusManager = LocalFocusManager.current
 
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-        /*navBackStackEntry.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP)?.let { step ->
-            if (step != DEFAULT_STEP) {
-                viewModel.onUIEvent(OnMoveToStep(step.toInt()))
-            }
-        }*/
+        viewModel.onUIEvent(
+            SetUserData(navBackStackEntry.arguments?.getString(ID_BRAND, "") ?: "",
+                navBackStackEntry.arguments?.getString(PK_USER, "") ?: "",
+                navBackStackEntry.arguments?.getString(USER, "") ?: "")
+        )
     }
 
     Column(
@@ -123,6 +127,6 @@ fun GetStepContent(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
     when (step) {
-
+        SmartSteps.One.id -> SmartDocumentResidentScreen(sharedViewModel = viewModel)
     }
 }

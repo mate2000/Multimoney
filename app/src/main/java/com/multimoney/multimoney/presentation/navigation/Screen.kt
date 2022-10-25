@@ -20,6 +20,7 @@ const val HOME_MAIN_ROUTE = "home_main_route"
 const val CREDIT_ROUTE = "credit_route"
 const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_route"
+const val SMART_ROUTE = "smart_route"
 const val TEST_ROUTE = "test_route"
 
 // Parameters Alert
@@ -63,7 +64,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // HomeNavGraph Screens
     object DocumentGenerationScreen : Screen("document_generation_screen")
-    object SignDocumentScreen : Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
+    object SignDocumentScreen :
+        Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")
@@ -92,6 +94,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}",
         "payment_amount_screen"
     )
+
+    // Smart
+    object SmartScreen :
+        Screen("smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
+            "smart_screen")
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

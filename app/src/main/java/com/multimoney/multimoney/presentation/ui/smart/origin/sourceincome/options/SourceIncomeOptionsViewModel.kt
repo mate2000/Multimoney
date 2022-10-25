@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome
+package com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.options
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 
 @HiltViewModel
-class SourceOfIncomeViewModel @Inject constructor(
+class SourceIncomeOptionsViewModel @Inject constructor(
     private val queryGeneralEconomicActivityUseCase: QueryGeneralEconomicActivityUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {

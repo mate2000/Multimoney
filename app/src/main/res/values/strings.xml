@@ -446,4 +446,8 @@
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
     <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
 
+    <!-- Smart Account - Own Business -->
+    <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
+    <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>
+
 </resources>

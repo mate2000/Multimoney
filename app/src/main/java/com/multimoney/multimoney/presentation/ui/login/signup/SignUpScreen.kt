@@ -32,7 +32,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome.SourceOfIncomeScreen
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -133,7 +133,7 @@ fun GetStepContent(
 
     when (step) {
        // SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel) // FIXME, revert this change
-        SignUpStep.One.id -> SourceOfIncomeScreen(sharedViewModel = viewModel)
+        SignUpStep.One.id -> SourceIncomeScreen(sharedViewModel = viewModel)
         SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         SignUpStep.Three.id -> {
             SignUpPhoneScreen(sharedViewModel = viewModel)

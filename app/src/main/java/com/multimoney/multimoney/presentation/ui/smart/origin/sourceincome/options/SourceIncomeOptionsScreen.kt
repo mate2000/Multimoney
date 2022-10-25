@@ -1,6 +1,5 @@
-package com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome
+package com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.options
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
@@ -14,7 +13,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,25 +23,34 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome.SourceOfIncomeViewModel.UIEvent.OnCallQueryGetSourceOfIncome
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome.SourceOfIncomeViewModel.UIState
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.options.SourceIncomeOptionsViewModel.UIEvent.OnCallQueryGetSourceOfIncome
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.options.SourceIncomeOptionsViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.CustomCatalogItem
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 
 @Composable
-fun SourceOfIncomeScreen(
-    viewModel: SourceOfIncomeViewModel = hiltViewModel(),
+fun SourceIncomeOptionsScreen(
+    viewModel: SourceIncomeOptionsViewModel = hiltViewModel(),
+    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
     sharedViewModel: SignUpViewModel = hiltViewModel() // TODO, pass the correct sharedViewModel
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryGetSourceOfIncome)
         sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueVisible(false))
     }
+
     viewModel.uiState.apply {
-        SourceOfIncomeContent(
+        SourceIncomeContent(
             generalEconomicActivityList = generalEconomicActivityList ?: listOf(),
-            isLoading = isLoading
+            isLoading = isLoading,
+            onItemClick = { sourceOfIncome ->
+                sourceOfIncome?.id?.let {
+                    sourceIncomeSharedViewModel.onUIEvent((OnNavigateToSelectedSourceOfIncomeOption(it)))
+                }
+            }
         )
         ShowCustomDialog(this)
     }
@@ -51,11 +58,11 @@ fun SourceOfIncomeScreen(
 
 @Composable
 @Preview
-fun SourceOfIncomeContent(
+fun SourceIncomeContent(
     generalEconomicActivityList: List<GeneralEconomicActivity?> = listOf(),
-    isLoading: Boolean = false
+    isLoading: Boolean = false,
+    onItemClick: (GeneralEconomicActivity?) -> Unit = { }
 ) {
-    val context = LocalContext.current
     Column(
         modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)
     ) {
@@ -79,10 +86,7 @@ fun SourceOfIncomeContent(
                         .padding(10.dp),
                     iconId = sourceOfIncome?.iconCode ?: 0,
                     label = sourceOfIncome?.description ?: "",
-                    onClick = {
-                        // TODO, navigate to other screens from here
-                        Toast.makeText(context, "${sourceOfIncome?.description}", Toast.LENGTH_SHORT).show()
-                    }
+                    onClick = { onItemClick(sourceOfIncome) }
                 )
             }
         }

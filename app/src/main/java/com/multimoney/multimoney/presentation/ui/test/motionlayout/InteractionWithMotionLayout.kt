@@ -5,7 +5,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
@@ -21,9 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
@@ -44,12 +41,8 @@ fun MotionLayoutMM(
     content: @Composable (modifier: Modifier, headerText: Int) -> Unit,
     footer: @Composable () -> Unit,
     secondaryFooter: @Composable () -> Unit,
-    totalPages: Int = TOTAL_PAGES,
+    totalPages: Int = TOTAL_PAGES
 ) {
-    val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
-    val bottomFinalCardHeight = (screenHeight.value * SIXTY_PERCENTAGE_OF_SCREEN).dp
     val context = LocalContext.current
     val motionSceneContent = remember {
         context.resources
@@ -102,14 +95,14 @@ fun MotionLayoutMM(
         HorizontalPager(
             state = headerTitlePagerState,
             userScrollEnabled = false,
-            count = totalPages, modifier = Modifier
+            count = totalPages,
+            modifier = Modifier
                 .fillMaxWidth()
                 .layoutId("header_title")
         ) { page ->
             Card(
                 Modifier
                     .fillMaxWidth()
-                    .height(bottomFinalCardHeight)
                     .graphicsLayer {
                         // Calculate the absolute offset for the current page from the
                         // scroll position. We use the absolute value which allows us to mirror
@@ -138,20 +131,22 @@ fun MotionLayoutMM(
                 }
             }
         }
-        content(modifier = Modifier
-            .fillMaxWidth()
-            .layoutId("main_card")
-            .swipeable(
-                reverseDirection = true,
-                state = swipeAbleState,
-                anchors = anchors,
-                thresholds = { _, _ ->
-                    // Entre mas se aproxima a 1 se tiene que hacer mas scroll para que se autocomplete la animacion
-                    FractionalThreshold(FRACTIONAL_THRESHOLD)
-                },
-                orientation = Orientation.Vertical
-            ),
-            headerText = if (swipeAbleState.offset.value > FRACTIONAL_THRESHOLD) CUSTOM_HEADER else R.string.home_my_products)
+        content(
+            modifier = Modifier
+                .fillMaxWidth()
+                .layoutId("main_card")
+                .swipeable(
+                    reverseDirection = true,
+                    state = swipeAbleState,
+                    anchors = anchors,
+                    thresholds = { _, _ ->
+                        // The closer to 1 you have to scroll more for it to autocomplete the animation
+                        FractionalThreshold(FRACTIONAL_THRESHOLD)
+                    },
+                    orientation = Orientation.Vertical
+                ),
+            headerText = if (swipeAbleState.offset.value > FRACTIONAL_THRESHOLD) CUSTOM_HEADER else R.string.home_my_products
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -164,7 +159,8 @@ fun MotionLayoutMM(
         HorizontalPager(
             state = bottomEndPagerState,
             userScrollEnabled = false,
-            count = totalPages, modifier = Modifier
+            count = totalPages,
+            modifier = Modifier
                 .fillMaxWidth()
                 .background(MultimoneyTheme.colors.background)
                 .layoutId("bottom_end")
@@ -174,8 +170,6 @@ fun MotionLayoutMM(
     }
 }
 
-const val FORTY_FIVE_PERCENTAGE_OF_SCREEN = 0.40
-const val SIXTY_PERCENTAGE_OF_SCREEN = 0.65
 const val FRACTIONAL_THRESHOLD = 0.8f
 const val BEGINNING_ANIMATION = 0
 const val CUSTOM_HEADER = 0

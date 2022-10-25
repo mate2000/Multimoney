@@ -31,10 +31,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -69,7 +69,19 @@ class SignInViewModel @Inject constructor(
     private fun callCognitoSignIn() {
         uiState = uiState.copy(isLoading = true)
         clearUserEmailError()
-//        Amplify.Auth.signOut({
+
+        // TODO: Implement logic to send metadata to cognito
+//        val attrs = mapOf(
+//            DEVICE_ID to "Android 1"
+//        )
+//
+//        val options = AWSCognitoAuthSignInOptions.builder()
+//            .metadata(attrs)
+//            .build()
+
+        Amplify.Auth.signOut({
+            // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
+//        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
             Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
                 if (authSignInResult.isSignInComplete) {
                     Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
@@ -81,7 +93,7 @@ class SignInViewModel @Inject constructor(
                                     viewModelScope.launch {
                                         // If isBiometricActive false that means the userName has to be saved
                                         if (uiState.isBiometricActive.not()) {
-                                            dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
+                                            dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
                                         }
                                         val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
                                         dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
@@ -108,9 +120,9 @@ class SignInViewModel @Inject constructor(
             }, {
                 cognitoError()
             })
-//        }, {
-//            cognitoError()
-//        })
+        }, {
+            cognitoError()
+        })
     }
 
     private suspend fun saveUserData(payload: JSONObject) {
@@ -295,7 +307,8 @@ class SignInViewModel @Inject constructor(
 
     private fun onShowBiometricSignInChanged(value: Boolean) {
         uiState = uiState.copy(
-            showBiometricSignIn = value, userEmail = if (value) {
+            showBiometricSignIn = value,
+            userEmail = if (value) {
                 biometricUserEmail
             } else {
                 uiState.userEmail
@@ -377,10 +390,13 @@ class SignInViewModel @Inject constructor(
         data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean) :
             UIEvent()
 
-
         object OnStart : UIEvent()
         object OnValidateUserEmail : UIEvent()
         object OnCallCognitoSignIn : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
+    }
+
+    companion object {
+        const val DEVICE_ID = "DeviceId"
     }
 }

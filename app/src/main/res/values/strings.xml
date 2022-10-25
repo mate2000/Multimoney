@@ -449,5 +449,12 @@
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
     <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>
+    <string name="smart_own_business_company_name_required" translatable="false">Nombre de la empresa requerido</string>
+    <string name="smart_own_business_description_label" translatable="false">¿Qué hace la empresa?</string>
+    <string name="smart_own_business_description_required" translatable="false">Descripcion de la empresa requerido</string>
+    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el maximo de caracteres permitidos</string>
+    <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
+    <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
+    <string name="smart_own_business_monthly_income_placeholder" translatable="false">$0</string>
 
 </resources>

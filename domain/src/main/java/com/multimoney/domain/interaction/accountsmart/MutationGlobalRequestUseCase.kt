@@ -1,0 +1,23 @@
+package com.multimoney.domain.interaction.accountsmart
+
+import com.multimoney.domain.model.accountsmart.GlobalRequest
+import com.multimoney.domain.model.util.MultimoneyResult
+import kotlinx.coroutines.flow.Flow
+
+interface MutationGlobalRequestUseCase {
+    suspend operator fun invoke(
+        pkUser: Int,
+        status: Int,
+        idProfessionType: Int,
+        idAddressLevel1: Long,
+        idAddressLevel2: Long,
+        idAddressLevel3: Long,
+        idEconomicActivity: Long,
+        income: Float,
+        addressDetail: String,
+        isPEP: Boolean,
+        user: String,
+        idBrand: Int,
+        currentStep: String,
+    ): Flow<MultimoneyResult<GlobalRequest?>>
+}

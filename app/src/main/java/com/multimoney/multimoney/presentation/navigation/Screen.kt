@@ -80,6 +80,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_amount_screen"
     )
 
+    object PaymentPointsScreen : Screen(
+        "payment_amount_screen/{$ID_BRAND}",
+        "payment_amount_screen"
+    )
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")

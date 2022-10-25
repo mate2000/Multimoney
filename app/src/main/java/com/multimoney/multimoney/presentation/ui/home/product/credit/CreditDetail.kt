@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,10 +27,9 @@ import com.multimoney.multimoney.presentation.uielement.ExpandableSectionLayout
 @Composable
 fun CreditDetail(modifier: Modifier, viewModel: ProductViewModel) {
     ExpandableSectionLayout(
-        title = stringResource(id = R.string.credit_detail_title), modifier = modifier
+        title = stringResource(id = R.string.credit_detail_title),
+        modifier = modifier
     ) {
-        val context = LocalContext.current
-
         Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
             CreditDetailItem(
                 label = stringResource(id = R.string.credit_detail_max_credit),
@@ -90,10 +88,11 @@ fun CreditDetail(modifier: Modifier, viewModel: ProductViewModel) {
                         viewModel.balanceCredit?.getFirstSummary()?.minPaymentLabel?.let {
                             Icon(
                                 imageVector = Icons.Filled.Circle,
-                                tint = if ((viewModel.balanceCredit?.getExpiredDays() ?: 0) > 0)
+                                tint = if ((viewModel.balanceCredit?.getExpiredDays() ?: 0) > 0) {
                                     MultimoneyTheme.colors.dotIndicatorExpired
-                                else
-                                    MultimoneyTheme.colors.dotIndicatorColor,
+                                } else {
+                                    MultimoneyTheme.colors.dotIndicatorColor
+                                },
                                 contentDescription = "",
                                 modifier = Modifier
                                     .size(16.dp)
@@ -124,6 +123,8 @@ fun CreditDetail(modifier: Modifier, viewModel: ProductViewModel) {
                 }
             )
             if (viewModel.uiState.idBrand == Brand.CostaRica.id.toString()) {
+                val clientLabel = stringResource(id = R.string.credit_detail_client)
+                val accountLabel = stringResource(id = R.string.credit_detail_iban_number)
                 CreditDetailItem(
                     label = stringResource(id = R.string.credit_detail_iban),
                     value = {
@@ -146,7 +147,8 @@ fun CreditDetail(modifier: Modifier, viewModel: ProductViewModel) {
                                             if (it.isNotEmpty()) {
                                                 viewModel.onUIEvent(
                                                     ProductViewModel.UIEvent.OnShareIbanAccount(
-                                                        context,
+                                                        clientLabel,
+                                                        accountLabel,
                                                         it
                                                     )
                                                 )
@@ -190,7 +192,7 @@ fun CreditDetail(modifier: Modifier, viewModel: ProductViewModel) {
 @Composable
 fun CreditDetailItem(
     label: String,
-    value: @Composable () -> Unit,
+    value: @Composable () -> Unit
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -201,7 +203,7 @@ fun CreditDetailItem(
         Text(
             text = label,
             style = Typography.body2.copy(
-                color = MultimoneyTheme.colors.text,
+                color = MultimoneyTheme.colors.text
             )
         )
         value()

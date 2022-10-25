@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -31,6 +32,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbu
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
 @Preview
@@ -113,13 +116,17 @@ fun SmartOwnBusinessSvContent(viewModel: OwnBusinessViewModel) {
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = {
-                focusManager.moveFocus(FocusDirection.Down)
+                focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.smart_own_business_monthly_income_label),
             isRequired = true,
             isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required),
             leadingIcon = R.drawable.ic_money_gray,
-            placeHolder = stringResource(R.string.smart_own_business_monthly_income_placeholder),
+            placeHolder = stringResource(
+                id = R.string.smart_own_business_monthly_income_placeholder,
+                stringResource(id = Brand.ElSalvador.id.getCurrencySymbol()) // TODO, get it from proper result
+            ),
+            customTransformation = formatMoney(stringResource(Brand.ElSalvador.id.getCurrencySymbol())), // TODO, get it from proper result
             modifier = Modifier.padding(top = 16.dp)
         )
     }

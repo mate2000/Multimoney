@@ -455,6 +455,5 @@
     <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el maximo de caracteres permitidos</string>
     <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
-    <string name="smart_own_business_monthly_income_placeholder" translatable="false">$0</string>
-
+    <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
 </resources>

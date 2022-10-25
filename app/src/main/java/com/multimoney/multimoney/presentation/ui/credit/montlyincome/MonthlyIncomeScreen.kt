@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
@@ -88,7 +89,7 @@ fun MonthlyIncomeScreen(
             placeHolder = stringResource(
                 id = R.string.credit_monthly_income_income_hint,
                 sharedViewModel.currencySymbol.ifEmpty {
-                    stringResource(id = viewModel.getCurrencySymbol(sharedViewModel.idBrand.toInt()))
+                    stringResource(id = sharedViewModel.idBrand.toInt().getCurrencySymbol())
                 }
             ),
             keyboardOptions = KeyboardOptions(
@@ -107,7 +108,7 @@ fun MonthlyIncomeScreen(
             isError = viewModel.uiState.incomeError.first,
             errorMessage = stringResource(id = viewModel.uiState.incomeError.second),
             customTransformation = formatMoney(sharedViewModel.currencySymbol.ifEmpty {
-                stringResource(id = viewModel.getCurrencySymbol(sharedViewModel.idBrand.toInt()))
+                stringResource(id = sharedViewModel.idBrand.toInt().getCurrencySymbol())
             })
         )
         CustomDropdown(

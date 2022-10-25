@@ -425,4 +425,9 @@
     <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
     <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
     <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
+
+    <!-- Smart Card -->
+    <string name="smart_card_balance" translatable="false">Saldo</string>
+    <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
+    <string name="smart_card_monthly_profit_label" translatable="false">ganancia</string>
 </resources>

@@ -164,6 +164,8 @@ data class MultimoneyColors(
     val progressBackground: Color,
     val progressPercentage: Color,
     val creditDetailBackground: Color,
+    val smartCardPlus: Color,
+    val smartCardTrending: Color,
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -198,7 +200,9 @@ val DarkColorPalette = MultimoneyColors(
     progressBackground = SemanticPositive800,
     progressPercentage = DefaultWhite,
     productChipBackground = SemanticPositive700,
-    creditDetailBackground = GrayScale700
+    creditDetailBackground = GrayScale700,
+    smartCardPlus = Secondary300,
+    smartCardTrending = WhiteTransparency80
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -233,7 +237,9 @@ val LightColorPalette = MultimoneyColors(
     progressBackground = SemanticPositive800,
     progressPercentage = DefaultWhite,
     productChipBackground = SemanticPositive700,
-    creditDetailBackground = GrayScale700
+    creditDetailBackground = GrayScale700,
+    smartCardPlus = Secondary300,
+    smartCardTrending = WhiteTransparency80
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

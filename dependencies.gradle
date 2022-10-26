@@ -274,6 +274,12 @@ ext {
             slider: "com.github.SmartToolFactory:Compose-Colorful-Sliders:$slider_version"
     ]
 
+    //HtmlText
+    htmlText_version = "1.0.2"
+    htmlText = [
+            htmlText: "com.github.ireward:compose-html:$htmlText_version"
+    ]
+
     // Common Test
     junit_version = "4.13.2"
     ext_junit_version = "1.1.3"

@@ -38,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -345,9 +346,8 @@ fun CustomOutlinedTextField(
                     contentDescription = "",
                     tint = errorIndicatorColor
                 )
-                Text(
-                    text =
-                    if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
+                HtmlText(
+                    text = if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
                         errorMessage ?: ""
                     } else if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
                         isRequiredMessage ?: ""
@@ -356,11 +356,10 @@ fun CustomOutlinedTextField(
                     } else {
                         ""
                     },
-                    color = errorIndicatorColor,
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),
-                    style = Typography.caption
+                    style = Typography.caption.copy(color = errorIndicatorColor)
                 )
             }
         }

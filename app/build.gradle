@@ -190,6 +190,9 @@ dependencies {
     // Shimmer
     implementation shimmer.shimmer
 
+    //httmText
+    implementation htmlText.htmlText
+
     // Slider
     implementation slider.slider
 

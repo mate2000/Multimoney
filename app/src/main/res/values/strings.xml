@@ -291,7 +291,7 @@
     <string name="credit_bank_account_number_hint" translatable="false">000000000</string>
     <string name="credit_bank_account_number_required" translatable="false">Número de cuenta requerido</string>
     <string name="credit_bank_account_number_label" translatable="false">Número de cuenta</string>
-    <string name="credit_bank_account_number_error" translatable="false">Revisar formato</string>
+    <string name="credit_bank_account_number_error" translatable="false">&lt;b>Revisar formato,&lt;/b> la cuenta no es válida</string>
     <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
 
     <!-- Credit Monthly Income-->

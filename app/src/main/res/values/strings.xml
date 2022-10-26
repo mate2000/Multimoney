@@ -208,6 +208,8 @@
     <string name="home_credit_sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
     <string name="home_credit_sign_document_reject_action_text" translatable="false">Firmar</string>
     <string name="home_credit_title" translatable="false">Mi Crédito</string>
+    <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
+    <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
@@ -290,7 +292,7 @@
     <string name="credit_bank_account_number_hint" translatable="false">000000000</string>
     <string name="credit_bank_account_number_required" translatable="false">Número de cuenta requerido</string>
     <string name="credit_bank_account_number_label" translatable="false">Número de cuenta</string>
-    <string name="credit_bank_account_number_error" translatable="false">Revisar formato</string>
+    <string name="credit_bank_account_number_error" translatable="false">&lt;b>Revisar formato,&lt;/b> la cuenta no es válida</string>
     <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
 
     <!-- Credit Monthly Income-->
@@ -419,6 +421,13 @@
     <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente a la de la cuota.</string>
     <string name="payment_account_empty_state_description" translatable="false">Agregá una cuenta para \npodás realizar tus pagos</string>
 
+    <!-- Iban account Screen -->
+    <string name="iban_account_tile" translatable="false">¿En cuál cuenta IBAN querés recibir tu dinero?</string>
+    <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
+    <string name="iban_account_cr" translatable="false">CR</string>
+    <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
+    <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
+
     <!-- Payment Amount -->
     <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
     <string name="payment_amount_subtitle" translatable="false">Tu cuota mínima debe ser igual o mayor a</string>
@@ -426,4 +435,5 @@
     <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
     <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
     <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
+
 </resources>

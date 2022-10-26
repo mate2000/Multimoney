@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.CrDocuments
+import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
@@ -63,14 +64,17 @@ fun SignUpPersonalDataCrScreen(
             value = viewModel.uiState.personalDocumentValue,
             placeHolder = if (viewModel.uiState.documentFormat != "") viewModel.uiState.documentFormat.replace(
                 viewModel.uiState.documentFormat.last(),
-                FORMAT_VALUE, false
+                FORMAT_VALUE,
+                false
             ) else "",
             onValueChange = { document ->
-                viewModel.onUIEvent(OnIdentificationValueChange(document) {
-                    sharedViewModel.onUIEvent(
-                        OnSharedIdentificationValueChange(document)
-                    )
-                })
+                viewModel.onUIEvent(
+                    OnIdentificationValueChange(document) {
+                        sharedViewModel.onUIEvent(
+                            OnSharedIdentificationValueChange(document)
+                        )
+                    }
+                )
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -132,7 +136,7 @@ fun SignUpPersonalDataCrScreen(
                         .padding(end = 4.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
-                    isError = viewModel.uiState.nameError.first,
+                    isError = viewModel.uiState.nameError.first
                 )
 
                 CustomOutlinedTextField(
@@ -146,7 +150,8 @@ fun SignUpPersonalDataCrScreen(
                                     SignUpViewModel.UIEvent.OnSecondNameValueChange(
                                         secondName
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     isRequired = false,
@@ -180,7 +185,8 @@ fun SignUpPersonalDataCrScreen(
                                     SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
                                         firstLastName
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     keyboardOptions = KeyboardOptions(
@@ -196,7 +202,7 @@ fun SignUpPersonalDataCrScreen(
                         .padding(top = 4.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
-                    isError = viewModel.uiState.lastNameError.first,
+                    isError = viewModel.uiState.lastNameError.first
                 )
 
                 CustomOutlinedTextField(
@@ -211,7 +217,8 @@ fun SignUpPersonalDataCrScreen(
                                     SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
                                         secondLastName
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     keyboardOptions = KeyboardOptions(
@@ -245,10 +252,28 @@ fun SignUpPersonalDataCrScreen(
                 }
             }
 
-            if (viewModel.uiState.dataInformationClient?.fullName.isNullOrBlank().not()) {
+            if (viewModel.uiState.dataInformationClient?.name.isNullOrBlank().not()) {
                 viewModel.uiState.dataInformationClient?.apply {
                     viewModel.onUIEvent(SignUpPersonalDataViewModel.UIEvent.OnValidateForm)
-                    sharedViewModel.userData?.fullName = fullName
+                    viewModel.onUIEvent(
+                        SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames(
+                            firstName = firstName.capitalized(),
+                            secondName = secondName.capitalized(),
+                            firstLastName = firstLastName.capitalized(),
+                            secondLastName = secondLastName.capitalized(),
+                            onUpdateAllNamesInShareViewModel = {
+                                sharedViewModel.onUIEvent(
+                                    SignUpViewModel.UIEvent.OnUpdateUserNames(
+                                        fullName = name,
+                                        firstName = firstName.capitalized(),
+                                        secondName = secondName.capitalized(),
+                                        firstLastName = firstLastName.capitalized(),
+                                        secondLastName = secondLastName.capitalized()
+                                    )
+                                )
+                            }
+                        )
+                    )
                 }
                 Row(modifier = Modifier.padding(top = 16.dp, start = 4.dp)) {
                     CustomImage(
@@ -265,7 +290,7 @@ fun SignUpPersonalDataCrScreen(
                 }
                 Text(
                     modifier = Modifier.padding(top = 8.dp, start = 4.dp),
-                    text = viewModel.uiState.dataInformationClient?.fullName.toString(),
+                    text = viewModel.uiState.dataInformationClient?.name.toString(),
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.text)
                 )
             }

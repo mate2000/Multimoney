@@ -1,0 +1,19 @@
+query ValidateBankAccount($account:String!, $identification:String!, $user: String!, $idBrand: Int!){
+    validateBankAccount(
+        validateBankAccountInput: {
+            account: $account,
+            identification: $identification,
+            user: $user,
+            idBrand: $idBrand
+        }
+    ) {
+        responseCode
+        responseMessage
+        name
+        currency
+        sellPriceDollar
+        buyPriceDollar
+        bankId
+        bankName
+    }
+}

@@ -38,9 +38,9 @@ import com.multimoney.multimoney.presentation.ui.credit.documentgeneration.DUMMY
 import com.multimoney.multimoney.presentation.ui.credit.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -81,7 +81,10 @@ class CreditViewModel @Inject constructor(
         this.identification = identification
         this.email = email
         this.idUserRequest = idUserRequest
-        uiState = uiState.copy(lastStep = currentStep)
+        uiState = uiState.copy(
+            lastStep = currentStep,
+            loadContent = true
+        )
     }
 
     private fun onInitializeTexts(title: Int, description: String) {
@@ -220,14 +223,15 @@ class CreditViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val isCurrentLocationButtonVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        var lastStep: Int = 1
+        var lastStep: Int = 1,
+        var loadContent: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnSetCloseDialogTexts -> onInitializeTexts(
                 event.title,
-                event.description,
+                event.description
             )
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
@@ -240,10 +244,12 @@ class CreditViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
-            is OnCurrentLocationButtonValueChange -> uiState =
-                uiState.copy(isCurrentLocationButtonVisible = event.isVisible)
+            is OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnCurrentLocationButtonValueChange ->
+                uiState =
+                    uiState.copy(isCurrentLocationButtonVisible = event.isVisible)
             is OnNextStep -> nextStep()
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()

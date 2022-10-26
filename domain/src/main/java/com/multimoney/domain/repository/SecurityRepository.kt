@@ -7,6 +7,7 @@ import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -112,4 +113,11 @@ interface SecurityRepository {
         appVersion: String,
         idBrand: Int
     ): Flow<MultimoneyResult<ConfigurationVersion?>>
+
+    suspend fun queryValidateBankAccount(
+        account: String,
+        identification: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ValidateAccount?>>
 }

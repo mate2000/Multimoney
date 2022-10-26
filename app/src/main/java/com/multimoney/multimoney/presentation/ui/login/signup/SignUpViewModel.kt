@@ -38,11 +38,12 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSecondNameValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -232,7 +233,7 @@ class SignUpViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnInitializeText -> onInitializeTexts(
-                event.description,
+                event.description
             )
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
@@ -245,8 +246,9 @@ class SignUpViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnUseDataValueChange -> {
                 if (event.idBrand != null) {
@@ -257,8 +259,9 @@ class SignUpViewModel @Inject constructor(
             is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
-            is OnSharedIdentificationValueChange -> userData =
-                userData?.copy(identification = event.identificationValue)
+            is OnSharedIdentificationValueChange ->
+                userData =
+                    userData?.copy(identification = event.identificationValue)
             is OnNationalityValueChange -> onNationalityChange(event.nationality, event.idBrand)
             is OnCountryCountryCodeValueChange -> onCountryCodeChange(
                 event.countryCode,
@@ -270,6 +273,13 @@ class SignUpViewModel @Inject constructor(
             is OnSecondNameValueChange -> userData?.secondName = event.secondName
             is OnFirstLastNameValueChange -> userData?.firstLastName = event.firstLastName
             is OnSecondLastNameValueChange -> userData?.secondLastName = event.secondLastName
+            is OnUpdateUserNames -> userData = userData?.copy(
+                fullName = event.fullName,
+                firstName = event.firstName,
+                secondName = event.secondName,
+                firstLastName = event.firstLastName,
+                secondLastName = event.secondLastName
+            )
             is OnOpenSplashComeBack -> navigateToSplashComeBack(event.step)
             is OnPhoneVerifiedChanged -> isPhoneVerified = event.isPhoneVerified
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
@@ -312,10 +322,17 @@ class SignUpViewModel @Inject constructor(
         data class OnSecondNameValueChange(val secondName: String) : UIEvent()
         data class OnFirstLastNameValueChange(val firstLastName: String) : UIEvent()
         data class OnSecondLastNameValueChange(val secondLastName: String) : UIEvent()
+        data class OnUpdateUserNames(
+            val fullName: String,
+            val firstName: String,
+            val secondName: String,
+            val firstLastName: String,
+            val secondLastName: String
+        ) : UIEvent()
+
         data class OnOpenSplashComeBack(val step: Int) : UIEvent()
         data class OnPhoneVerifiedChanged(val isPhoneVerified: Boolean) : UIEvent()
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
-
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()

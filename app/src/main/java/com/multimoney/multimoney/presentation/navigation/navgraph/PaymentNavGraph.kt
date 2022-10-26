@@ -8,15 +8,16 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PAYMENT_CREDIT_ROUTE
+import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.ClientBankAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.PaymentMethodListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SummaryListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.TransferAccountNavType
-import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountScreen
-import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountScreen
-import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionScreen
-import com.multimoney.multimoney.presentation.ui.payment.options.PaymentOptionsScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
 
 // payment process parameters
 const val USER = "user"
@@ -49,14 +50,20 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = SummaryListNavType()
                 }
             )
-        ) { navBackStackEntry ->
-            PaymentFeeSelectionScreen(navBackStackEntry = navBackStackEntry, onNavigate = {
-                navController.navigate(it.route)
-            }, onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+        ) {
+            PaymentFeeSelectionScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
         composable(
             Screen.PaymentAccountScreen.route,
@@ -74,14 +81,21 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = SummaryListNavType()
                 }
             )
-        ) { navBackStackEntry ->
-            PaymentAccountScreen(navBackStackEntry = navBackStackEntry, onNavigate = {
-                navController.navigate(it.route)
-            }, onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
+        ) {
+            PaymentAccountScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
-            })
+            )
         }
         composable(
             route = Screen.PaymentAmountScreen.route,
@@ -102,13 +116,15 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = ClientBankAccountNavType()
                 }
             )
-        ) { navBackStackEntry ->
+        ) {
             PaymentAmountScreen(
-                navBackStackEntry = navBackStackEntry,
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }
@@ -125,15 +141,16 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = TransferAccountNavType()
                 }
             )
-        ) { navBackStackEntry ->
+        ) {
             PaymentOptionsScreen(
-                navBackStackEntry = navBackStackEntry,
                 onNavigate = { navController.navigate(it.route) },
-                onPopBackStack = { navController.popBackStack() }, ,
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

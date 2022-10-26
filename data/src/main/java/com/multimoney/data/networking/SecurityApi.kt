@@ -12,6 +12,7 @@ import com.multimoney.data.networking.security.apollomodel.OnfidoIntialProcessMu
 import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
+import com.multimoney.data.networking.security.apollomodel.ValidateBankAccountQuery
 import com.multimoney.data.networking.security.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.security.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.security.apollomodel.ValidateUserStatusQuery
@@ -106,13 +107,14 @@ class SecurityApi @Inject constructor(
         identification: String,
         idBrand: Int,
         user: String
-    ): ApolloCall<DataInformationClientQuery.Data> = apolloAuthorizedClient.query(
-        DataInformationClientQuery(
-            identification,
-            idBrand,
-            user
-        )
-    ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<DataInformationClientQuery.Data> =
+        apolloAuthorizedClient.query(
+            DataInformationClientQuery(
+                identification,
+                idBrand,
+                user
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSendPinProcess(
         identification: String,
@@ -186,5 +188,14 @@ class SecurityApi @Inject constructor(
         idBrand: Int
     ): ApolloCall<GetConfigurationVersionQuery.Data> =
         apolloAuthorizedClient.query(GetConfigurationVersionQuery(platform, appVersion, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryValidateAccount(
+        account: String,
+        identification: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ValidateBankAccountQuery.Data> =
+        apolloAuthorizedClient.query(ValidateBankAccountQuery(account, identification, user, idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 }

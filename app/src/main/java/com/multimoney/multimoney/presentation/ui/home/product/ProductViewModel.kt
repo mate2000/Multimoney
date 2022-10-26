@@ -25,6 +25,7 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -134,7 +135,7 @@ class ProductViewModel @Inject constructor(
     ) = executeUseCase {
         queryGetConfigurationVersionUseCase.invoke(
             platform = ConfigurationPlatform.Android.value,
-            appVersion = ConfigurationPlatform.Android.appVersion,
+            appVersion = BuildConfig.VERSION_NAME,
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
@@ -230,8 +231,11 @@ class ProductViewModel @Inject constructor(
             )
             }"
         } else {
-            // TODO: Send to appropriate screen when is implemented
-            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
+            "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
+            encodeData(
+                configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true }
+            )
+            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}"
         }
         navigateTo(route)
     }
@@ -323,7 +327,8 @@ class ProductViewModel @Inject constructor(
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var hasBalance: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -344,8 +349,8 @@ class ProductViewModel @Inject constructor(
                 uiEvent.context,
                 uiEvent.account
             )
-            OnProgressCalculation -> getProgress()
-            IsPaymentExpired -> isExpired()
+            is OnProgressCalculation -> getProgress()
+            is IsPaymentExpired -> isExpired()
         }
     }
 

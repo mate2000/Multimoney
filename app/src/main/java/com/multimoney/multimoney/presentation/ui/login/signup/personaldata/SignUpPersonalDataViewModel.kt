@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.util.CrDocuments
@@ -68,7 +69,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     // Stateless
     var documentLength = 0
 
-    //Event
+    // Event
     val onUserDataValidationEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
 
     private fun isFormValid() = emitBaseEvent(
@@ -77,8 +78,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 ElSalvador.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == ElSalvador.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
-                        (uiState.personalDocumentValue.length == CostaRicaId.documentSize || uiState.personalDocumentValue.length == CostaRicaDimex.documentSize) &&
-                        !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && uiState.dataInformationClient?.fullName != null
+                    (uiState.personalDocumentValue.length == CostaRicaId.documentSize || uiState.personalDocumentValue.length == CostaRicaDimex.documentSize) &&
+                    !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && uiState.dataInformationClient?.name != null
                 else -> false
             }
         )
@@ -87,7 +88,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun getCountry(
         nationality: String,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ): String? {
         onSuccessCountry?.countryList?.forEach {
             if (it.countryPrefix?.lowercase() == nationality.lowercase()) {
@@ -101,7 +102,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun setDefaultCountry(
         nationality: String,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
         callQueryCatalogDocumentType(
             onSuccessCountry?.countryList?.find { it.countryPrefix == nationality }?.idBrand ?: 0,
@@ -140,7 +141,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     }
 
     private fun validateCrDocument(
-        user: String,
+        user: String
     ): Pair<Boolean, Int> {
         val status = validId(
             if (uiState.identificationValueType == CrDocuments.IdDocument.document) CostaRicaId.documentSize else CostaRicaDimex.documentSize,
@@ -156,7 +157,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 user
             )
         } else {
-            if (uiState.dataInformationClient?.fullName.isNullOrBlank().not()) {
+            if (uiState.dataInformationClient?.name.isNullOrBlank().not()) {
                 uiState = uiState.copy(dataInformationClient = null)
             }
         }
@@ -166,7 +167,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun callQueryDataInformationClient(
         identification: String,
         idBrand: Int,
-        user: String,
+        user: String
     ) {
         viewModelScope.launch {
             queryDataInformationClientUseCase.invoke(
@@ -178,12 +179,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     uiState = uiState.copy(
                         dataInformationClient = it
                     )
-                    isLoading = false
+                    uiState = uiState.copy(isLoading = false)
                     isFormValid()
                 }
                 result.onFailure {
-                    isLoading = false
                     uiState = uiState.copy(
+                        isLoading = false,
                         dataInformationClient = null,
                         personalIdError = Pair(
                             true,
@@ -193,7 +194,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     isFormValid()
                 }
                 result.onLoading {
-                    isLoading = true
+                    uiState = uiState.copy(isLoading = true)
                 }
             }
         }
@@ -201,7 +202,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun callQueryCatalogDocumentType(
         idBrand: Int,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
         viewModelScope.launch {
             queryCatalogDocumentTypeUseCase.invoke(
@@ -236,7 +237,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun callQueryGetCountryUseCase(
         user: String,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) = executeUseCase {
         queryGetCountryUseCase.invoke(user).collectLatest { result ->
             result.onSuccess {
@@ -288,7 +289,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onNationalityChange(
         nationality: Int,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
         uiState = uiState.copy(
             nationalityValue = onSuccessCountry?.countryList?.get(nationality)?.countryDescription
@@ -345,7 +346,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             firstLastNameValue = firstLastName,
             secondLastNameValue = secondLastName,
             fullNameValue = fullName,
-            dataInformationClient = uiState.dataInformationClient?.copy(fullName = fullName)
+            dataInformationClient = uiState.dataInformationClient?.copy(name = fullName)
         )
         isFormValid()
     }
@@ -371,7 +372,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun onIdentificationValueChange(
         identificationValue: String,
-        identificationShareViewModelChange: () -> Unit,
+        identificationShareViewModelChange: () -> Unit
     ) {
         if (identificationValue.length <= documentLength) {
             uiState = uiState.copy(personalDocumentValue = identificationValue)
@@ -381,7 +382,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun onFirstNameValueChange(
         firstName: String,
-        onSharedViewModelFirstNameChange: () -> Unit,
+        onSharedViewModelFirstNameChange: () -> Unit
     ) {
         uiState = uiState.copy(firstNameValue = firstName)
         onSharedViewModelFirstNameChange.invoke()
@@ -390,7 +391,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun onSecondNameValueChange(
         secondName: String,
-        onSharedViewModelSecondNameChange: () -> Unit,
+        onSharedViewModelSecondNameChange: () -> Unit
     ) {
         uiState = uiState.copy(secondNameValue = secondName)
         onSharedViewModelSecondNameChange.invoke()
@@ -399,7 +400,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun onFirstLastNameValueChange(
         firstLastName: String,
-        onSharedViewModelFirstLastNameChange: () -> Unit,
+        onSharedViewModelFirstLastNameChange: () -> Unit
     ) {
         uiState = uiState.copy(firstLastNameValue = firstLastName)
         onSharedViewModelFirstLastNameChange.invoke()
@@ -408,18 +409,34 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun onSecondLastNameValueChange(
         secondLastName: String,
-        onSharedViewModelSecondLastNameChange: () -> Unit,
+        onSharedViewModelSecondLastNameChange: () -> Unit
     ) {
         uiState = uiState.copy(secondLastNameValue = secondLastName)
         onSharedViewModelSecondLastNameChange.invoke()
         isFormValid()
     }
 
+    private fun onUpdateAllNames(
+        firstName: String,
+        secondName: String,
+        firstLastName: String,
+        secondLastName: String,
+        onUpdateAllNamesInShareViewModel: () -> Unit
+    ) {
+        uiState = uiState.copy(
+            firstNameValue = firstName,
+            secondNameValue = secondName,
+            firstLastNameValue = firstLastName,
+            secondLastNameValue = secondLastName
+        )
+        onUpdateAllNamesInShareViewModel()
+    }
+
     fun getFullName(): String =
         if (uiState.firstNameValue.isEmpty()) {
-            uiState.dataInformationClient?.fullName ?: ""
+            uiState.dataInformationClient?.name ?: ""
         } else {
-            var fullName = uiState.firstNameValue
+            val fullName = uiState.firstNameValue
             if (uiState.secondNameValue.isNotEmpty()) {
                 fullName.plus(" ").plus(uiState.secondNameValue)
             }
@@ -431,7 +448,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
         }
 
     private fun onNextActionClick(
-        email: String, nextStep: String, idBrand: Int,
+        email: String,
+        nextStep: String,
+        idBrand: Int
     ) {
         onCallMutationUserValidationUseCase(email, nextStep, idBrand)
     }
@@ -491,6 +510,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val nameError: Pair<Boolean, Int> = Pair(false, 0),
         val lastNameError: Pair<Boolean, Int> = Pair(false, 0),
         val closeKeyboard: Boolean = false,
+        val isLoading: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -528,6 +548,13 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.secondLastName,
                 event.onSharedViewModelSecondLastNameChange
             )
+            is OnUpdateAllNames -> onUpdateAllNames(
+                event.firstName,
+                event.secondName,
+                event.firstLastName,
+                event.secondLastName,
+                event.onUpdateAllNamesInShareViewModel
+            )
             is OnIdentificationTypeValueChange -> onIdentificationTypeValueChange(event.identificationType)
             is OnIdentificationValueChange -> onIdentificationValueChange(
                 event.identification,
@@ -562,55 +589,63 @@ class SignUpPersonalDataViewModel @Inject constructor(
             val secondLastName: String,
             val fullName: String,
             val updateNationality: (nationality: String, idBrand: Int) -> Unit,
-            val onLoadingValueChange: (isLoading: Boolean) -> Unit,
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()
 
         data class OnNationalityChange(
             val nationality: Int,
             val updateNationality: (nationality: String, idBrand: Int) -> Unit,
-            val onLoadingValueChange: (isLoading: Boolean) -> Unit,
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) :
             UIEvent()
 
         data class OnFirstNameChange(
             val firstName: String,
-            val onSharedViewModelFirstNameChange: () -> Unit,
+            val onSharedViewModelFirstNameChange: () -> Unit
         ) : UIEvent()
 
         data class OnSecondNameChange(
             val secondName: String,
-            val onSharedViewModelSecondNameChange: () -> Unit,
+            val onSharedViewModelSecondNameChange: () -> Unit
         ) : UIEvent()
 
         data class OnFirstLastNameChange(
             val firstLastName: String,
-            val onSharedViewModelFirstLastNameChange: () -> Unit,
+            val onSharedViewModelFirstLastNameChange: () -> Unit
         ) : UIEvent()
 
         data class OnSecondLastNameChange(
             val secondLastName: String,
-            val onSharedViewModelSecondLastNameChange: () -> Unit,
+            val onSharedViewModelSecondLastNameChange: () -> Unit
+        ) : UIEvent()
+
+        data class OnUpdateAllNames(
+            val firstName: String,
+            val secondName: String,
+            val firstLastName: String,
+            val secondLastName: String,
+            val onUpdateAllNamesInShareViewModel: () -> Unit
         ) : UIEvent()
 
         data class OnIdentificationTypeValueChange(val identificationType: String) : UIEvent()
         data class OnIdentificationValueChange(
             val identification: String,
-            val identificationShareViewModelChange: () -> Unit,
+            val identificationShareViewModelChange: () -> Unit
         ) : UIEvent()
 
         data class OnNextActionClick(
             val email: String,
             val nextStep: String,
-            val idBrand: Int,
+            val idBrand: Int
         ) : UIEvent()
 
         data class OnValidateDocument(
-            val document: String? = null,
+            val document: String? = null
         ) : UIEvent()
 
         data class OnCallQueryGetCountry(
             val user: String,
-            val onLoadingValueChange: (isLoading: Boolean) -> Unit,
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) :
             UIEvent()
 

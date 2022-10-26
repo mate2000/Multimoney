@@ -4,6 +4,7 @@ import com.multimoney.multimoney.R
 
 sealed class CurrencyType(
     val id: Int,
+    val currency: String,
     val value: String,
     val accountIcon: Int,
     val accountTitle: Int,
@@ -12,6 +13,7 @@ sealed class CurrencyType(
 ) {
     object Colon : CurrencyType(
         1,
+        "01",
         "COLONES",
         R.drawable.ic_account_colon,
         R.string.payment_account_title_colon,
@@ -21,6 +23,7 @@ sealed class CurrencyType(
 
     object Dollar : CurrencyType(
         2,
+        "02",
         "DOLARES",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_dollar,
@@ -30,6 +33,7 @@ sealed class CurrencyType(
 
     object Quetzal : CurrencyType(
         3,
+        "03",
         "QUETZALES",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_dollar,
@@ -39,6 +43,7 @@ sealed class CurrencyType(
 
     object All : CurrencyType(
         100000,
+        "",
         "",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_all,

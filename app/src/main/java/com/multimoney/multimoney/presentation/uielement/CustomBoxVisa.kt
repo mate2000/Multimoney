@@ -30,8 +30,8 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GradientGrayLiner1
 import com.multimoney.multimoney.presentation.theme.GradientGrayLiner2
@@ -198,7 +198,11 @@ fun CreditCardContent(
             tint = startIconColor
         )
         Text(
-            text = cardNumber,
+            text = formatCard(
+                stringResource(id = R.string.home_visa_active_digital_label),
+                cardNumber = cardNumber,
+                maskedText = stringResource(id = R.string.payment_account_masked_text)
+            ),
             modifier = Modifier.padding(start = 16.dp, top = 18.dp, bottom = 18.dp),
             style = Typography.body2.copy(
                 fontWeight = FontWeight.SemiBold,
@@ -229,7 +233,7 @@ fun RequestCreditCardContent(textColor: Color, endIconColor: Color) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(id = string.home_active_credit_card_label),
+            text = stringResource(id = R.string.home_active_credit_card_label),
             modifier = Modifier.padding(vertical = 18.dp),
             style = Typography.body2.copy(
                 fontWeight = FontWeight.SemiBold,
@@ -249,6 +253,12 @@ fun RequestCreditCardContent(textColor: Color, endIconColor: Color) {
         )
     }
 }
+
+fun formatCard(label: String, cardNumber: String?, maskedText: String): String {
+    return label.plus(maskedText).plus(" ${cardNumber?.takeLast(ACCOUNT_LAST_DIGITS)}")
+}
+
+const val ACCOUNT_LAST_DIGITS = 4
 
 sealed class BoxVisaType {
     data class CreditCard(val text: String) : BoxVisaType()

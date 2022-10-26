@@ -65,7 +65,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SignDocumentScreen : Screen("sign_document_screen/{$SIGN_DOCUMENT_LINK}", "sign_document_screen")
 
     // Bottom Navigation
-    object HomeBNSScreen : Screen("home_bns_screen")
+    object HomeBNScreen : Screen("home_bn_screen")
     object QuickActionBNScreen : Screen("quick_action_bt_screen")
     object ProductsBNScreen : Screen("products_bt_screen")
 

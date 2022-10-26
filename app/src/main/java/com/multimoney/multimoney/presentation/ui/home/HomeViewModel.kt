@@ -2,7 +2,7 @@ package com.multimoney.multimoney.presentation.ui.home
 
 import androidx.navigation.NavHostController
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.Screen.HomeBNSScreen
+import com.multimoney.multimoney.presentation.navigation.Screen.HomeBNScreen
 import com.multimoney.multimoney.presentation.navigation.Screen.ProductsBNScreen
 import com.multimoney.multimoney.presentation.navigation.Screen.QuickActionBNScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
@@ -14,7 +14,7 @@ class HomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun navigation(innerNavHostController: NavHostController, route: String) {
         when (route) {
-            HomeBNSScreen.route -> {
+            HomeBNScreen.route -> {
                 innerNavigateTo(innerNavHostController, route)
             }
             QuickActionBNScreen.route -> {

@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.data.util.catalog.CreditStep.Search
+import com.multimoney.data.util.catalog.SmartStep
+import com.multimoney.data.util.catalog.SmartStep.Search
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -58,8 +58,8 @@ class CreditViewModel @Inject constructor(
     var closeDialogTitle: Int = R.string.empty
     var closeDialogDescription: String = ""
     var nextAction: () -> Unit = {}
-    private var nextStep: Int = CreditStep.One.id
-    private var previousStep: Int = CreditStep.One.id
+    private var nextStep: Int = SmartStep.One.id
+    private var previousStep: Int = SmartStep.One.id
     var currencySymbol = ""
 
     var idBrand: String = ""
@@ -125,8 +125,8 @@ class CreditViewModel @Inject constructor(
         if (step <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
-                isCloseVisible = step >= CreditStep.One.id,
-                lastStep = CreditStep.One.id
+                isCloseVisible = step >= SmartStep.One.id,
+                lastStep = SmartStep.One.id
             )
         } else {
             popAndNavigateTo(
@@ -140,7 +140,7 @@ class CreditViewModel @Inject constructor(
         if (nextStep <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep >= CreditStep.One.id
+                isCloseVisible = nextStep >= SmartStep.One.id
             )
         } else {
             documentGenerationProcess()
@@ -148,10 +148,10 @@ class CreditViewModel @Inject constructor(
     }
 
     private fun previousStep() {
-        if (previousStep > CreditStep.One.id || uiState.currentStep == CreditStep.Two.id) {
+        if (previousStep > SmartStep.One.id || uiState.currentStep == SmartStep.Two.id) {
             uiState = uiState.copy(
                 currentStep = previousStep,
-                isCloseVisible = previousStep >= CreditStep.One.id
+                isCloseVisible = previousStep >= SmartStep.One.id
             )
         } else {
             popAndNavigateTo(
@@ -217,7 +217,7 @@ class CreditViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val currentStep: Int = CreditStep.One.id,
+        val currentStep: Int = SmartStep.One.id,
         val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,

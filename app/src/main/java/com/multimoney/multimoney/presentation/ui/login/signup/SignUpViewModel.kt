@@ -195,7 +195,7 @@ class SignUpViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.sign_up_close_dialog_title,
+                titleResource = R.string.general_close_dialog_title,
                 description = closeDialogDescription,
                 positiveResource = R.string.sign_up_close_dialog_positive_button_text,
                 negativeResource = R.string.sign_up_close_dialog_negative_button_text,

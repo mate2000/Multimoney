@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
@@ -110,7 +110,7 @@ fun CreditAmountScreen(
                         }
                     )
                 )
-            }, nextStep = CreditStep.Two.id, previousStep = CreditStep.One.id)
+            }, nextStep = SmartStep.Two.id, previousStep = SmartStep.One.id)
         )
 
         viewModel.onUIEvent(

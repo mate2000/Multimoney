@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartStep
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -98,7 +98,7 @@ fun CreditDocumentScreen(
                                 }
                             )
                         )
-                    }, nextStep = CreditStep.Eight.id, previousStep = CreditStep.Six.id))
+                    }, nextStep = SmartStep.Eight.id, previousStep = SmartStep.Six.id))
                 }
             }.onLoading {
                 sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(false))

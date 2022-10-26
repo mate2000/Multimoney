@@ -27,11 +27,9 @@ import com.multimoney.data.util.catalog.Gender
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnExpirationDateValueChange
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnCallQueryAddressLevelTwoUseCase
@@ -55,7 +53,7 @@ fun SmartDocumentResidentScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is SmartDocumentViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
@@ -73,7 +71,8 @@ fun SmartDocumentResidentScreen(
             sharedViewModel.uiState.idBrand.toInt()))
         viewModel.onUIEvent(OnCallQueryCivilStatusUseCase(sharedViewModel.uiState.user,
             sharedViewModel.uiState.idBrand.toInt()))
-        viewModel.onUIEvent(OnCallQueryProfessionUseCase)
+        viewModel.onUIEvent(OnCallQueryProfessionUseCase(sharedViewModel.uiState.user,
+            sharedViewModel.uiState.idBrand.toInt()))
 
         viewModel.onUIEvent(OnValidateForm)
     }
@@ -120,13 +119,10 @@ fun SmartDocumentResidentScreen(
                             day,
                             SmartDocumentViewModel.DATE_FORMAT
                         )
-                        viewModel.onUIEvent(
-                            OnBirthDateValueChange(
-                                date
-                            ) {
-                                sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnBirthDateValueChange(
-                                    date))
-                            }
+                        viewModel.onUIEvent(OnBirthDateValueChange(date) {
+                            sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnBirthDateValueChange(
+                                date))
+                        }
                         )
                     },
                     calendar.get(Calendar.YEAR),
@@ -185,10 +181,9 @@ fun SmartDocumentResidentScreen(
             items = viewModel.uiState.professionStringList,
             value = viewModel.uiState.profession,
             onValueChange = {
-                viewModel.onUIEvent(OnProfessionChange(it
-                ) { professionId ->
-                    sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnProfessionValueChange(
-                        it, professionId))
+                viewModel.onUIEvent(OnProfessionChange(it) { professionId ->
+                    sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnProfessionValueChange(it,
+                        professionId))
                 })
             },
             labelText = stringResource(id = R.string.profession),

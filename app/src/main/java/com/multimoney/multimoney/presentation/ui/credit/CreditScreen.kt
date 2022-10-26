@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
@@ -70,7 +70,7 @@ fun CreditScreen(
                 navBackStackEntry.arguments?.getString(PK_USER, "") ?: "",
                 navBackStackEntry.arguments?.getString(IDENTIFICATION, "") ?: "",
                 navBackStackEntry.arguments?.getString(EMAIL, "") ?: "",
-                navBackStackEntry.arguments?.getInt(CREDIT_STEP, CreditStep.One.id) ?: CreditStep.One.id,
+                navBackStackEntry.arguments?.getInt(CREDIT_STEP, SmartStep.One.id) ?: SmartStep.One.id,
                 navBackStackEntry.arguments?.getString(ID_USER_REQUEST, "") ?: ""
             )
         )
@@ -109,12 +109,12 @@ fun CreditScreen(
             ) {
                 Column {
                     TopNavBar(
-                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id,
+                        isLeftButtonVisible = viewModel.uiState.currentStep != SmartStep.One.id,
                         isRightButtonVisible = viewModel.uiState.isCloseVisible,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )
-                    if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Seven.id) {
+                    if (viewModel.uiState.currentStep > SmartStep.One.id && viewModel.uiState.currentStep < SmartStep.Seven.id) {
                         StepProgressBar(
                             steps = CREDIT_INDICATOR_TOTAL_STEPS,
                             currentStep = viewModel.uiState.currentStep - 1,
@@ -189,16 +189,16 @@ fun GetStepContent(
     viewModel: CreditViewModel
 ) {
     when (step) {
-        CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
-        CreditStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
+        SmartStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
+        SmartStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
             IbanAccountScreen(sharedViewModel = viewModel)
         } else {
             CreditBankScreen(sharedViewModel = viewModel)
         }
-        CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
-        CreditStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)
-        CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
-        CreditStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
+        SmartStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
+        SmartStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)
+        SmartStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
+        SmartStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
         else -> CreditDocumentScreen(sharedViewModel = viewModel)
     }
 }

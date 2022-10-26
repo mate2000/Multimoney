@@ -26,6 +26,7 @@
     <string name="locked" translatable="false">Bloquear</string>
     <string name="see_data" translatable="false">Ver datos</string>
     <string name="link" translatable="false">Vincular</string>
+    <string name="general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -59,7 +60,6 @@
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
-    <string name="sign_up_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>

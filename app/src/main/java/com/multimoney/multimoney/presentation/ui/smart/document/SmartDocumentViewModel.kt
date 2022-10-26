@@ -86,12 +86,7 @@ class SmartDocumentViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { addresses ->
                 addresses?.let {
-                    val addressesString = arrayListOf<String>()
-                    it.addresses.forEach { address ->
-                        address?.name?.let { name ->
-                            addressesString.add(name)
-                        }
-                    }
+                    val addressesString = it.addresses.map { address -> address?.name ?: "" }
                     uiState = uiState.copy(addressLevelTwoList = it.addresses,
                         addressLevelTwoStringList = addressesString)
                 }
@@ -122,12 +117,8 @@ class SmartDocumentViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess { civilStatus ->
                     civilStatus?.let {
-                        val civilStatusStrings = arrayListOf<String>()
-                        it.status.forEach { status ->
-                            status?.let { civilStatus ->
-                                civilStatusStrings.add(civilStatus.maritalStatusDescription)
-                            }
-                        }
+                        val civilStatusStrings =
+                            it.status.map { status -> status?.maritalStatusDescription ?: "" }
                         uiState = uiState.copy(civilStatusList = it.status,
                             civilStatusStringList = civilStatusStrings)
                     }
@@ -159,11 +150,7 @@ class SmartDocumentViewModel @Inject constructor(
                 result.onSuccess { successfulResult ->
                     val professionList = arrayListOf<String>()
                     successfulResult?.let {
-                        it.status.forEach { profession ->
-                            profession?.name?.let { name ->
-                                professionList.add(name)
-                            }
-                        }
+                        it.status.map { professionStatus -> professionStatus?.name ?: "" }
                         uiState = uiState.copy(professionList = it.status,
                             professionStringList = professionList)
                     }
@@ -236,7 +223,11 @@ class SmartDocumentViewModel @Inject constructor(
     private fun validateForm() {
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
-                uiState.gender.isNotBlank() && uiState.birthdate.isNotBlank() && uiState.civilState.isNotBlank() && uiState.profession.isNotBlank() && uiState.expirationDate.isNotBlank()
+                uiState.gender.isNotBlank()
+                        && uiState.birthdate.isNotBlank()
+                        && uiState.civilState.isNotBlank()
+                        && uiState.profession.isNotBlank()
+                        && uiState.expirationDate.isNotBlank()
             )
         )
     }
@@ -282,7 +273,7 @@ class SmartDocumentViewModel @Inject constructor(
                 event.pkUser)
             is OnCallQueryCivilStatusUseCase -> callQueryCivilStatusUseCase(event.user,
                 event.idBrand)
-            is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase()
+            is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
             is OnValidateForm -> validateForm()
         }
     }
@@ -308,8 +299,7 @@ class SmartDocumentViewModel @Inject constructor(
         data class OnGenderChange(
             val gender: String,
             val onSharedGenderValueChange: (genderId: Int) -> Unit,
-        ) :
-            UIEvent()
+        ) : UIEvent()
 
         data class OnCivilStateChange(
             val civilState: String,
@@ -333,7 +323,7 @@ class SmartDocumentViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnCallQueryCivilStatusUseCase(val user: String, val idBrand: Int) : UIEvent()
-        object OnCallQueryProfessionUseCase : UIEvent()
+        data class OnCallQueryProfessionUseCase(val user: String, val idBrand: Int) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 

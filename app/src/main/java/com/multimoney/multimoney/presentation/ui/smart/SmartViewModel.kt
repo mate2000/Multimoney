@@ -15,7 +15,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBirthDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCivilStateValueChange
@@ -59,7 +58,7 @@ class SmartViewModel @Inject constructor(
 
     private fun callQueryStepByStepUseCase() = executeUseCase {
         queryStepByStepUseCase.invoke(
-            user = "401920903",
+            user = uiState.user,
             idBrand = uiState.idBrand.toInt(),
             idRequest = 264
         ).collectLatest { result ->
@@ -125,7 +124,7 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun moveToStep(step: Int) {
-        if (step <= SignUpViewModel.SIGN_UP_TOTAL_STEPS) {
+        if (step <= SMART_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
                 isCloseVisible = step > SmartSteps.One.id
@@ -142,7 +141,7 @@ class SmartViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.sign_up_close_dialog_title,
+                titleResource = R.string.general_close_dialog_title,
                 description = closeDialogDescription,
                 positiveResource = R.string.sign_up_close_dialog_positive_button_text,
                 negativeResource = R.string.sign_up_close_dialog_negative_button_text,

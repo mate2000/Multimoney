@@ -43,13 +43,14 @@ import com.multimoney.multimoney.util.firebase.FireBaseEvents
 @Preview
 fun SignUpPersonalDataScreen(
     viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
-            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
-        }))
+        viewModel.onUIEvent(
+            OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(isLoading))
+            })
+        )
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))

@@ -58,7 +58,8 @@ fun SignUpPersonalDataSvScreen(
             value = viewModel.uiState.personalDocumentValue,
             placeHolder = if (viewModel.uiState.documentFormat != "") viewModel.uiState.documentFormat.replace(
                 viewModel.uiState.documentFormat.last(),
-                FORMAT_VALUE, false
+                FORMAT_VALUE,
+                false
             ) else "",
             onValueChange = { document ->
                 viewModel.onUIEvent(
@@ -68,7 +69,8 @@ fun SignUpPersonalDataSvScreen(
                             sharedViewModel.onUIEvent(
                                 OnSharedIdentificationValueChange(document)
                             )
-                        })
+                        }
+                    )
                 )
             },
             onDebounceValidation = {
@@ -130,7 +132,7 @@ fun SignUpPersonalDataSvScreen(
                         .padding(end = 4.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
-                    isError = viewModel.uiState.nameError.first,
+                    isError = viewModel.uiState.nameError.first
                 )
 
                 CustomOutlinedTextField(
@@ -146,7 +148,8 @@ fun SignUpPersonalDataSvScreen(
                                             secondName
                                         )
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     keyboardOptions = KeyboardOptions(
@@ -182,7 +185,8 @@ fun SignUpPersonalDataSvScreen(
                                             firstLastName
                                         )
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     keyboardOptions = KeyboardOptions(
@@ -198,7 +202,7 @@ fun SignUpPersonalDataSvScreen(
                         .padding(top = 4.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
-                    isError = viewModel.uiState.lastNameError.first,
+                    isError = viewModel.uiState.lastNameError.first
                 )
 
                 CustomOutlinedTextField(
@@ -215,7 +219,8 @@ fun SignUpPersonalDataSvScreen(
                                             secondLastName
                                         )
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     keyboardOptions = KeyboardOptions(

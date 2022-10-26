@@ -4,10 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
+import com.multimoney.multimoney.presentation.ui.alertresult.AlertResult
+import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.signdocument.SignDocumentViewModel.UIEvent.OnRejectClick
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
@@ -22,7 +26,10 @@ fun SignDocumentScreen(
     viewModel: SignDocumentViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.createDialog()
+        viewModel.apply {
+            executeNavigation(onPopAndNavigate = onPopAndNavigate)
+            createDialog()
+        }
     }
 
     viewModel.onUIEvent(
@@ -30,27 +37,44 @@ fun SignDocumentScreen(
             stringResource(id = string.sign_credit_dialog_description)
         )
     )
+    SignDocumentContent(navBackStackEntry.arguments?.getString(SIGN_DOCUMENT_LINK) ?: "", viewModel)
+}
 
-    MmWebView(
-        navBackStackEntry.arguments?.getString(SIGN_DOCUMENT_LINK) ?: "",
-        LocalContext.current
-    )
-
-    // TODO: Remove this button when all functionalities are implemented
-    CustomButton(
-        onClick = { viewModel.onUIEvent(OnRejectClick) },
-        text = stringResource(id = string.cancel),
-        buttonType = PrimaryPrimary
-    )
-
-    if (viewModel.uiState.dialogParameters.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.dialogParameters.titleResource),
-            message = viewModel.uiState.dialogParameters.description,
-            positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
-            openDialogCustom = viewModel.uiState.dialogParameters.isActive,
-            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
+@Composable
+@Preview
+fun SignDocumentContent(documentLink: String = "", viewModel: SignDocumentViewModel = hiltViewModel()) {
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            iconResource = R.drawable.ic_alert,
+            titleResource = R.string.sign_document_reject_title,
+            descriptionResource = R.string.sign_document_reject_description,
+            buttonTextResource = R.string.understood,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) },
+            onButtonClick = { viewModel.onUIEvent(OnCloseClick) }
         )
+    } else {
+        MmWebView(
+            documentLink,
+            LocalContext.current
+        )
+
+        // TODO: Remove this button when all functionalities are implemented
+        CustomButton(
+            onClick = { viewModel.onUIEvent(OnRejectClick) },
+            text = stringResource(id = string.cancel),
+            buttonType = PrimaryPrimary
+        )
+
+        if (viewModel.uiState.dialogParameters.isActive.value) {
+            CustomDialog(
+                title = stringResource(id = viewModel.uiState.dialogParameters.titleResource),
+                message = viewModel.uiState.dialogParameters.description,
+                positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
+                negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
+                openDialogCustom = viewModel.uiState.dialogParameters.isActive,
+                onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
+            )
+        }
     }
 }

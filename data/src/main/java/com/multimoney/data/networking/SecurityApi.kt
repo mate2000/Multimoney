@@ -11,6 +11,7 @@ import com.multimoney.data.networking.security.apollomodel.OnfidoIntialProcessMu
 import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
+import com.multimoney.data.networking.security.apollomodel.ValidateBankAccountQuery
 import com.multimoney.data.networking.security.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.security.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.security.apollomodel.ValidateUserStatusQuery
@@ -119,7 +120,9 @@ class SecurityApi @Inject constructor(
     ): ApolloCall<DataInformationClientQuery.Data> =
         apolloAuthorizedClient.query(
             DataInformationClientQuery(
-                identification, idBrand, user
+                identification,
+                idBrand,
+                user
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -196,4 +199,13 @@ class SecurityApi @Inject constructor(
 
     fun queryGetCountry(user: String): ApolloCall<GetCountryQuery.Data> =
         apolloAuthorizedClient.query(GetCountryQuery(user))
+
+    fun queryValidateAccount(
+        account: String,
+        identification: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ValidateBankAccountQuery.Data> =
+        apolloAuthorizedClient.query(ValidateBankAccountQuery(account, identification, user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 }

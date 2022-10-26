@@ -207,6 +207,8 @@
     <string name="home_credit_sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
     <string name="home_credit_sign_document_reject_action_text" translatable="false">Firmar</string>
     <string name="home_credit_title" translatable="false">Mi Crédito</string>
+    <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
+    <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
@@ -289,7 +291,7 @@
     <string name="credit_bank_account_number_hint" translatable="false">000000000</string>
     <string name="credit_bank_account_number_required" translatable="false">Número de cuenta requerido</string>
     <string name="credit_bank_account_number_label" translatable="false">Número de cuenta</string>
-    <string name="credit_bank_account_number_error" translatable="false">Revisar formato</string>
+    <string name="credit_bank_account_number_error" translatable="false">&lt;b>Revisar formato,&lt;/b> la cuenta no es válida</string>
     <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
 
     <!-- Credit Monthly Income-->

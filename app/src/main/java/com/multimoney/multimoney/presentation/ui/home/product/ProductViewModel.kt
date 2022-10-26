@@ -113,6 +113,8 @@ class ProductViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = false)
                     balance?.let {
                         balanceCredit = it
+                        val currentBalance = it.getFirstSummary()?.currentBalance ?: 0.0
+                        uiState = uiState.copy(hasBalance = (currentBalance > 0.0))
                     }
                 }
                 result.onFailure {
@@ -299,7 +301,8 @@ class ProductViewModel @Inject constructor(
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var hasBalance: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -23,7 +24,9 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.OwnBusinessViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyDescriptionChange
 import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyNameChange
@@ -32,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbu
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
@@ -39,21 +43,29 @@ import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 @Preview
 fun SmartOwnBusinessSvScreen(
     viewModel: OwnBusinessViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel(), // TODO, pass the correct sharedViewModel
+    sharedViewModel: SmartViewModel = hiltViewModel(),
+    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueVisible(true))
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    SignUpViewModel.UIEvent.OnContinueEnable(event.isFormValid)
+                    SmartViewModel.UIEvent.OnContinueEnable(event.isFormValid)
                 )
             }
         }
     }
     SmartOwnBusinessSvContent(viewModel)
     ShowCustomDialog(uiState = viewModel.uiState)
+
+    // return to the main options screen whenever tapping on navtiva back button from the device
+    BackHandler {
+        sourceIncomeSharedViewModel.onUIEvent((OnNavigateToSelectedSourceOfIncomeOption(
+            SourceIncomeOptionType.MainSourceIncomeScreenType.id
+        )))
+    }
 }
 
 @Composable

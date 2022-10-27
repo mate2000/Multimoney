@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -26,13 +28,13 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -83,8 +85,8 @@ fun SignUpScreen(
         }
         Column(
             modifier = Modifier
-                .fillMaxSize(),
-                //.verticalScroll(rememberScrollState()), // FIXME, revert this change
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             GetStepContent(
@@ -132,8 +134,7 @@ fun GetStepContent(
 ) {
 
     when (step) {
-       // SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel) // FIXME, revert this change
-        SignUpStep.One.id -> SourceIncomeScreen(sharedViewModel = viewModel)
+        SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
         SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
         SignUpStep.Three.id -> {
             SignUpPhoneScreen(sharedViewModel = viewModel)

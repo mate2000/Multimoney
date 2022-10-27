@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeTypeOption
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ class SourceIncomeViewModel @Inject constructor() : BaseViewModel(false) {
 
     data class UIState(
         // Interactions
-        val selectedOption: Int = SourceIncomeTypeOption.MainSourceIncomeScreen.id
+        val selectedOption: Int = SourceIncomeOptionType.MainSourceIncomeScreenType.id
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

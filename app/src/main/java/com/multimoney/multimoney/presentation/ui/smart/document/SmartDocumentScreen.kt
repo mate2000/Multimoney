@@ -3,11 +3,14 @@ package com.multimoney.multimoney.presentation.ui.smart.document
 import android.app.DatePickerDialog
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -126,7 +129,11 @@ fun SmartDocumentScreen(
         viewModel.onUIEvent(OnValidateForm)
     }
 
-    Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -203,7 +210,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.civilStatusStringList,
+            items = Gender.Search.getGenderList(),
             value = viewModel.uiState.civilState,
             onValueChange = { viewModel.onUIEvent(OnCivilStateChange(it)) },
             labelText = stringResource(id = R.string.civil_state),
@@ -215,7 +222,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.professionStringList,
+            items = Gender.Search.getGenderList(),
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
             labelText = stringResource(id = R.string.profession),

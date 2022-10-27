@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -27,7 +25,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentScreen
-import com.multimoney.multimoney.presentation.ui.test.TestScreen
+import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -69,9 +67,7 @@ fun SmartScreen(
             }
         }
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.weight(0.1f),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             GetStepContent(
@@ -79,17 +75,18 @@ fun SmartScreen(
                 viewModel = viewModel,
                 onPopAndNavigate
             )
-            CustomButton(
-                onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
-                text = stringResource(id = string.button_continue),
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                    .fillMaxWidth()
-                    .height(48.dp),
-                buttonType = PrimaryPrimary,
-                enable = viewModel.uiState.isContinueEnabled
-            )
         }
+        CustomButton(
+            onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
+            text = stringResource(id = string.button_continue),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .fillMaxWidth()
+                .height(48.dp),
+            buttonType = PrimaryPrimary,
+            enable = viewModel.uiState.isContinueEnabled,
+            visible = viewModel.uiState.isContinueVisible
+        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
@@ -118,6 +115,7 @@ fun GetStepContent(
     // TODO, add the corresponding screen depending on the step
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
-        SmartSteps.Two.id -> TestScreen(null)
+        // SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel) // FIXME, pass step 2 screen
+        SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel)
     }
 }

@@ -2,10 +2,10 @@ package com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.options.SourceIncomeOptionsScreen
 import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.SmartOwnBusinessSvScreen
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeTypeOption
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 
 /**
  * This is the host screen of options, the content inside should be replaceable for the
@@ -14,12 +14,12 @@ import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeTypeOptio
 @Composable
 fun SourceIncomeScreen(
     viewModel: SourceIncomeViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel() // TODO, pass the correct sharedViewModel
+    sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
     ShowSelectedSourceIncomeOption(
         selectedOption = viewModel.uiState.selectedOption,
         sharedViewModel = sharedViewModel,
-        sourceIncomeMainSharedViewModel = viewModel
+        sourceIncomeSharedViewModel = viewModel
     )
 }
 
@@ -30,17 +30,20 @@ fun SourceIncomeScreen(
 @Composable
 fun ShowSelectedSourceIncomeOption(
     selectedOption: Int,
-    sharedViewModel: SignUpViewModel,
-    sourceIncomeMainSharedViewModel: SourceIncomeViewModel
+    sharedViewModel: SmartViewModel,
+    sourceIncomeSharedViewModel: SourceIncomeViewModel
 ) {
     when (selectedOption) {
-        SourceIncomeTypeOption.OwnBusiness.id -> SmartOwnBusinessSvScreen(sharedViewModel = sharedViewModel)
+        SourceIncomeOptionType.OwnBusiness.id -> SmartOwnBusinessSvScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
         else -> {
             // if no option gets selected whenever tapping an item from the list, then it means
             // we should show the main source of income options screen.
             SourceIncomeOptionsScreen(
                 sharedViewModel = sharedViewModel,
-                sourceIncomeSharedViewModel = sourceIncomeMainSharedViewModel
+                sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
             )
         }
     }

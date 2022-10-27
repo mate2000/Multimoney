@@ -22,7 +22,7 @@ import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.options.SourceIncomeOptionsViewModel.UIEvent.OnCallQueryGetSourceOfIncome
@@ -35,11 +35,11 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 fun SourceIncomeOptionsScreen(
     viewModel: SourceIncomeOptionsViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel() // TODO, pass the correct sharedViewModel
+    sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryGetSourceOfIncome)
-        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueVisible(false))
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(false))
     }
 
     viewModel.uiState.apply {

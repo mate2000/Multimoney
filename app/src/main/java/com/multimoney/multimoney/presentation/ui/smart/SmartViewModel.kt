@@ -34,9 +34,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.parseStringToLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartViewModel @Inject constructor(
@@ -223,7 +223,11 @@ class SmartViewModel @Inject constructor(
      */
     private fun onUpdateAccountSmartData(accountData: AccountSmartData?) {
         accountSmartData = accountData
-        callMutationGlobalRequestUseCase()
+        //callMutationGlobalRequestUseCase()
+
+        // FIXME, temporary adding it to move forward on the smart account flow
+        onUIEvent(OnLoadingValueChange(false))
+        onUIEvent(OnNextStep)
     }
 
     data class UIState(
@@ -232,6 +236,7 @@ class SmartViewModel @Inject constructor(
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
+        val isContinueVisible: Boolean = true,
         val openDialog: DialogParameters = DialogParameters(),
     )
 
@@ -252,6 +257,7 @@ class SmartViewModel @Inject constructor(
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
+            is UIEvent.OnContinueVisible -> uiState = uiState.copy(isContinueVisible = event.visible)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }
@@ -275,6 +281,7 @@ class SmartViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
+        data class OnContinueVisible(val visible: Boolean) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
     }

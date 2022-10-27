@@ -16,7 +16,6 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     ) {
         composable(route = Screen.VisaIssuanceScreen.route) { navBackStackEntry ->
             VisaIssuanceScreen(
-                navBackStackEntry = navBackStackEntry,
                 onPopBackStack = { navController.popBackStack() },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
@@ -27,7 +26,6 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.VisaCardScreen.route) { navBackStackEntry ->
             VisaCardScreen(
-                navBackStackEntry = navBackStackEntry,
                 onPopBackStack = { navController.popBackStack() },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {

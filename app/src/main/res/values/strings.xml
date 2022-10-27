@@ -294,7 +294,7 @@
     <string name="credit_bank_account_number_hint" translatable="false">000000000</string>
     <string name="credit_bank_account_number_required" translatable="false">Número de cuenta requerido</string>
     <string name="credit_bank_account_number_label" translatable="false">Número de cuenta</string>
-    <string name="credit_bank_account_number_error" translatable="false">Revisar formato</string>
+    <string name="credit_bank_account_number_error" translatable="false">&lt;b>Revisar formato,&lt;/b> la cuenta no es válida</string>
     <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
 
     <!-- Credit Monthly Income-->
@@ -433,7 +433,6 @@
 
     <!-- Payment Amount -->
     <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
-    <string name="payment_amount_subtitle" translatable="false">Tu cuota mínima debe ser igual o mayor a</string>
     <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
     <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
     <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
@@ -446,4 +445,8 @@
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
+
+    <!-- Payment Options -->
+    <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
+    <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
 </resources>

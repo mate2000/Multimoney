@@ -54,6 +54,8 @@ import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCas
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
+import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
@@ -136,6 +138,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetCountry(securityRepository: SecurityRepository): QueryGetCountryUseCase =
         QueryGetCountryUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetConfigurationVersion(securityRepository: SecurityRepository): QueryGetConfigurationVersionUseCase =
+        QueryGetConfigurationVersionUseCaseImpl(securityRepository)
 
     // Balance
 

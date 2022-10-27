@@ -24,12 +24,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Gender
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnExpirationDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnCallQueryAddressLevelTwoUseCase
@@ -43,10 +43,11 @@ import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentVie
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 @Composable
-fun SmartDocumentResidentScreen(
+fun SmartDocumentScreen(
     viewModel: SmartDocumentViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
 ) {
@@ -64,15 +65,60 @@ fun SmartDocumentResidentScreen(
     }
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnCallQueryNationalitiesUseCase(sharedViewModel.uiState.user,
-            sharedViewModel.uiState.idBrand.toInt()))
-        viewModel.onUIEvent(OnCallQueryAddressLevelTwoUseCase(sharedViewModel.uiState.user,
-            sharedViewModel.uiState.pkUser,
-            sharedViewModel.uiState.idBrand.toInt()))
-        viewModel.onUIEvent(OnCallQueryCivilStatusUseCase(sharedViewModel.uiState.user,
-            sharedViewModel.uiState.idBrand.toInt()))
-        viewModel.onUIEvent(OnCallQueryProfessionUseCase(sharedViewModel.uiState.user,
-            sharedViewModel.uiState.idBrand.toInt()))
+        // the OnNextActionClick event will be triggering the parent button action (located in SmartScreen)
+        // then, the OnCallMutationUpdateGlobalRequestUseCase() event will receive the form data in order to
+        // update the object that contains the data to be sent to the API, such method will trigger the API
+        // call as well, with the data passed as parameter.
+        sharedViewModel.apply {
+            onUIEvent(
+                SmartViewModel.UIEvent.OnSetNavigation(
+                    nextAction = {
+                        viewModel.onUIEvent(UIEvent.OnNextActionClick(
+                            nextStepAction = {
+                                onUIEvent(
+                                    SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
+                                        // FIXME, pass whatever needed and obtain it from the uiState variable
+                                        accountSmartData = accountSmartData?.copy(
+                                            status = 1,
+                                            idProfessionType = 83,
+                                            currentStep = SmartSteps.Search.getNameById(uiState.currentStep)
+                                        )
+                                    )
+                                )
+                            }
+                        ))
+                    },
+                    nextStep = SmartSteps.Two.id,
+                    previousStep = SmartSteps.One.id
+                )
+            )
+        }
+
+        viewModel.onUIEvent(
+            OnCallQueryNationalitiesUseCase(
+                sharedViewModel.accountSmartData?.user.orEmpty(),
+                sharedViewModel.accountSmartData?.idBrand ?: 0
+            )
+        )
+        viewModel.onUIEvent(
+            OnCallQueryAddressLevelTwoUseCase(
+                sharedViewModel.accountSmartData?.user.orEmpty(),
+                sharedViewModel.accountSmartData?.pkUser.orEmpty(),
+                sharedViewModel.accountSmartData?.idBrand ?: 0
+            )
+        )
+        viewModel.onUIEvent(
+            OnCallQueryCivilStatusUseCase(
+                sharedViewModel.accountSmartData?.user.orEmpty(),
+                sharedViewModel.accountSmartData?.idBrand ?: 0
+            )
+        )
+        viewModel.onUIEvent(
+            OnCallQueryProfessionUseCase(
+                sharedViewModel.accountSmartData?.user.orEmpty(),
+                sharedViewModel.accountSmartData?.idBrand ?: 0
+            )
+        )
 
         viewModel.onUIEvent(OnValidateForm)
     }
@@ -119,19 +165,17 @@ fun SmartDocumentResidentScreen(
                             day,
                             SmartDocumentViewModel.DATE_FORMAT
                         )
-                        viewModel.onUIEvent(OnBirthDateValueChange(date) {
-                            sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnBirthDateValueChange(
-                                date))
-                        }
-                        )
+                        viewModel.onUIEvent(OnBirthDateValueChange(date))
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
-                calendar.set(SmartDocumentViewModel.BIRTH_DATE_MIN_YEAR,
+                calendar.set(
+                    SmartDocumentViewModel.BIRTH_DATE_MIN_YEAR,
                     SmartDocumentViewModel.BIRTH_DATE_MIN_MONTH,
-                    SmartDocumentViewModel.BIRTH_DATE_MIN_DAY)
+                    SmartDocumentViewModel.BIRTH_DATE_MIN_DAY
+                )
                 datePicker.datePicker.minDate = calendar.timeInMillis
                 datePicker.datePicker.maxDate = Date().time
                 datePicker.show()
@@ -146,12 +190,7 @@ fun SmartDocumentResidentScreen(
                 .focusable(false),
             items = Gender.Search.getGenderList(),
             value = viewModel.uiState.gender,
-            onValueChange = { gender ->
-                viewModel.onUIEvent(OnGenderChange(gender) { genderId ->
-                    sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnGenderValueChange(
-                        gender, genderId))
-                })
-            },
+            onValueChange = { gender -> viewModel.onUIEvent(OnGenderChange(gender)) },
             labelText = stringResource(id = R.string.gender),
             placeHolder = stringResource(id = R.string.select)
         )
@@ -161,14 +200,9 @@ fun SmartDocumentResidentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.civilStatusStringList,
+            items = Gender.Search.getGenderList(),
             value = viewModel.uiState.civilState,
-            onValueChange = {
-                viewModel.onUIEvent(OnCivilStateChange(it) { civilStatusId ->
-                    sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnCivilStateValueChange(
-                        it, civilStatusId))
-                })
-            },
+            onValueChange = { viewModel.onUIEvent(OnCivilStateChange(it)) },
             labelText = stringResource(id = R.string.civil_state),
             placeHolder = stringResource(id = R.string.select)
         )
@@ -178,14 +212,9 @@ fun SmartDocumentResidentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.professionStringList,
+            items = Gender.Search.getGenderList(),
             value = viewModel.uiState.profession,
-            onValueChange = {
-                viewModel.onUIEvent(OnProfessionChange(it) { professionId ->
-                    sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnProfessionValueChange(it,
-                        professionId))
-                })
-            },
+            onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
             labelText = stringResource(id = R.string.profession),
             placeHolder = stringResource(id = R.string.select)
         )
@@ -215,22 +244,17 @@ fun SmartDocumentResidentScreen(
                             day,
                             SmartDocumentViewModel.DATE_FORMAT
                         )
-                        viewModel.onUIEvent(
-                            UIEvent.OnExpirationDateValueChange(
-                                date
-                            ) {
-                                sharedViewModel.onUIEvent(OnExpirationDateValueChange(
-                                    date))
-                            }
-                        )
+                        viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
-                calendar.set(SmartDocumentViewModel.BIRTH_DATE_MIN_YEAR,
+                calendar.set(
+                    SmartDocumentViewModel.BIRTH_DATE_MIN_YEAR,
                     SmartDocumentViewModel.BIRTH_DATE_MIN_MONTH,
-                    SmartDocumentViewModel.BIRTH_DATE_MIN_DAY)
+                    SmartDocumentViewModel.BIRTH_DATE_MIN_DAY
+                )
                 datePicker.datePicker.minDate = calendar.timeInMillis
                 datePicker.datePicker.maxDate = Date().time
                 datePicker.show()

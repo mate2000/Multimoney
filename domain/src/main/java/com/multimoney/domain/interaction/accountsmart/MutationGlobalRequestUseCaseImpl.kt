@@ -5,7 +5,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SmartAccountRepository
 import kotlinx.coroutines.flow.Flow
 
-class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) : MutationGlobalRequestUseCase {
+class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
+    MutationGlobalRequestUseCase {
     override suspend fun invoke(
         pkUser: Int,
         status: Int,
@@ -14,13 +15,14 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Float,
+        income: Int,
         addressDetail: String,
         isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
-    ): Flow<MultimoneyResult<GlobalRequest?>> = repository.mutationGlobalRequest(pkUser,
+    ): Flow<MultimoneyResult<GlobalRequest?>> = repository.mutationGlobalRequest(
+        pkUser,
         status,
         idProfessionType,
         idAddressLevel1,
@@ -32,5 +34,6 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         isPEP,
         user,
         idBrand,
-        currentStep)
+        currentStep
+    )
 }

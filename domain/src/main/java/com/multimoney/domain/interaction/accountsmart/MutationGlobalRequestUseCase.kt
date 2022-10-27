@@ -13,7 +13,7 @@ interface MutationGlobalRequestUseCase {
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Float,
+        income: Int,
         addressDetail: String,
         isPEP: Boolean,
         user: String,

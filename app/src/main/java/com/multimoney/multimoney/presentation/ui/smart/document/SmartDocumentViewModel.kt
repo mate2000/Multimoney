@@ -26,12 +26,13 @@ import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentVie
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnGenderChange
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
@@ -87,8 +88,10 @@ class SmartDocumentViewModel @Inject constructor(
             result.onSuccess { addresses ->
                 addresses?.let {
                     val addressesString = it.addresses.map { address -> address?.name ?: "" }
-                    uiState = uiState.copy(addressLevelTwoList = it.addresses,
-                        addressLevelTwoStringList = addressesString)
+                    uiState = uiState.copy(
+                        addressLevelTwoList = it.addresses,
+                        addressLevelTwoStringList = addressesString
+                    )
                 }
                 onUIEvent(OnLoadingValueChange(false))
             }
@@ -119,8 +122,10 @@ class SmartDocumentViewModel @Inject constructor(
                     civilStatus?.let {
                         val civilStatusStrings =
                             it.status.map { status -> status?.maritalStatusDescription ?: "" }
-                        uiState = uiState.copy(civilStatusList = it.status,
-                            civilStatusStringList = civilStatusStrings)
+                        uiState = uiState.copy(
+                            civilStatusList = it.status,
+                            civilStatusStringList = civilStatusStrings
+                        )
                     }
                     onUIEvent(OnLoadingValueChange(false))
                 }
@@ -151,8 +156,10 @@ class SmartDocumentViewModel @Inject constructor(
                     val professionList = arrayListOf<String>()
                     successfulResult?.let {
                         it.status.map { professionStatus -> professionStatus?.name ?: "" }
-                        uiState = uiState.copy(professionList = it.status,
-                            professionStringList = professionList)
+                        uiState = uiState.copy(
+                            professionList = it.status,
+                            professionStringList = professionList
+                        )
                     }
                     onUIEvent(OnLoadingValueChange(false))
                 }
@@ -173,63 +180,51 @@ class SmartDocumentViewModel @Inject constructor(
             }
         }
 
-    private fun onExpirationDateValueChange(
-        expirationDate: String,
-        onSharedExpirationDateExpire: () -> Unit,
-    ) {
+    private fun onExpirationDateValueChange(expirationDate: String) {
         uiState = uiState.copy(expirationDate = expirationDate)
-        onSharedExpirationDateExpire()
         validateForm()
     }
 
-    private fun onBirthDateValueChange(
-        birthdate: String,
-        onSharedBirthDateValueChange: () -> Unit,
-    ) {
+    private fun onBirthDateValueChange(birthdate: String) {
         uiState = uiState.copy(birthdate = birthdate)
-        onSharedBirthDateValueChange()
         validateForm()
     }
 
-    private fun onGenderChange(gender: String, onSharedGenderValueChange: (genderId: Int) -> Unit) {
+    private fun onGenderChange(gender: String) {
         val genderId = Gender.Search.getGenderIdByName(gender)
         uiState = uiState.copy(gender = gender, genderId = genderId)
-        onSharedGenderValueChange(uiState.genderId)
         validateForm()
     }
 
-    private fun onCivilStateChange(
-        civilState: String,
-        onSharedCivilStateValueChange: (civilStateId: Int) -> Unit,
-    ) {
-        val civilStateId =
-            uiState.civilStatusList.find { it?.maritalStatusDescription == civilState }?.maritalStatusId
+    private fun onCivilStateChange(civilState: String) {
+        val civilStateId = uiState.civilStatusList.find {
+            it?.maritalStatusDescription == civilState
+        }?.maritalStatusId
+
         uiState = uiState.copy(civilState = civilState, civilStateId = civilStateId ?: 0)
-        onSharedCivilStateValueChange(uiState.civilStateId)
         validateForm()
     }
 
-    private fun onProfessionChange(
-        profession: String,
-        onProfessionValueChange: (professionId: Int) -> Unit,
-    ) {
-        val professionId =
-            uiState.professionList.find { it?.name == profession }?.id
+    private fun onProfessionChange(profession: String) {
+        val professionId = uiState.professionList.find { it?.name == profession }?.id
         uiState = uiState.copy(profession = profession, professionId = professionId ?: 0)
-        onProfessionValueChange(uiState.professionId)
         validateForm()
     }
 
     private fun validateForm() {
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
-                uiState.gender.isNotBlank()
-                        && uiState.birthdate.isNotBlank()
-                        && uiState.civilState.isNotBlank()
-                        && uiState.profession.isNotBlank()
-                        && uiState.expirationDate.isNotBlank()
+                isFormValid = uiState.gender.isNotBlank() &&
+                        uiState.birthdate.isNotBlank() &&
+                        uiState.civilState.isNotBlank() &&
+                        uiState.profession.isNotBlank() &&
+                        uiState.expirationDate.isNotBlank()
             )
         )
+    }
+
+    private fun onNextActionClick(nextStepAction: () -> Unit) {
+        nextStepAction()
     }
 
     data class UIState(
@@ -255,26 +250,27 @@ class SmartDocumentViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnGenderChange -> onGenderChange(event.gender, event.onSharedGenderValueChange)
-            is OnCivilStateChange -> onCivilStateChange(event.civilState,
-                event.onSharedCivilStatusValueChange)
-            is OnProfessionChange -> onProfessionChange(event.profession,
-                event.onSharedProfessionValueChange)
-            is OnExpirationDateValueChange -> onExpirationDateValueChange(
-                expirationDate = event.date,
-                onSharedExpirationDateExpire = event.onSharedExpirationDateExpire,
+            is OnGenderChange -> onGenderChange(event.gender)
+            is OnCivilStateChange -> onCivilStateChange(event.civilState)
+            is OnProfessionChange -> onProfessionChange(event.profession)
+            is OnExpirationDateValueChange -> onExpirationDateValueChange(expirationDate = event.date)
+            is OnBirthDateValueChange -> onBirthDateValueChange(event.date)
+            is OnCallQueryNationalitiesUseCase -> callQueryNationalitiesUseCase(
+                event.user,
+                event.idBrand
             )
-            is OnBirthDateValueChange -> onBirthDateValueChange(event.date,
-                event.onSharedBirthDateExpire)
-            is OnCallQueryNationalitiesUseCase -> callQueryNationalitiesUseCase(event.user,
-                event.idBrand)
-            is OnCallQueryAddressLevelTwoUseCase -> callQueryAddressLevelTwoUseCase(event.user,
+            is OnCallQueryAddressLevelTwoUseCase -> callQueryAddressLevelTwoUseCase(
+                event.user,
                 event.idBrand,
-                event.pkUser)
-            is OnCallQueryCivilStatusUseCase -> callQueryCivilStatusUseCase(event.user,
-                event.idBrand)
+                event.pkUser
+            )
+            is OnCallQueryCivilStatusUseCase -> callQueryCivilStatusUseCase(
+                event.user,
+                event.idBrand
+            )
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
             is OnValidateForm -> validateForm()
+            is OnNextActionClick -> onNextActionClick(event.nextStepAction)
         }
     }
 
@@ -286,34 +282,13 @@ class SmartDocumentViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
-        data class OnBirthDateValueChange(
-            val date: String,
-            val onSharedBirthDateExpire: () -> Unit,
-        ) : UIEvent()
-
-        data class OnExpirationDateValueChange(
-            val date: String,
-            val onSharedExpirationDateExpire: () -> Unit,
-        ) : UIEvent()
-
-        data class OnGenderChange(
-            val gender: String,
-            val onSharedGenderValueChange: (genderId: Int) -> Unit,
-        ) : UIEvent()
-
-        data class OnCivilStateChange(
-            val civilState: String,
-            val onSharedCivilStatusValueChange: (civilStatusId: Int) -> Unit,
-        ) : UIEvent()
-
-        data class OnProfessionChange(
-            val profession: String,
-            val onSharedProfessionValueChange: (professionId: Int) -> Unit,
-        ) : UIEvent()
-
+        data class OnBirthDateValueChange(val date: String) : UIEvent()
+        data class OnExpirationDateValueChange(val date: String) : UIEvent()
+        data class OnGenderChange(val gender: String) : UIEvent()
+        data class OnCivilStateChange(val civilState: String) : UIEvent()
+        data class OnProfessionChange(val profession: String) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
-
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnCallQueryNationalitiesUseCase(val user: String, val idBrand: Int) : UIEvent()
         data class OnCallQueryAddressLevelTwoUseCase(

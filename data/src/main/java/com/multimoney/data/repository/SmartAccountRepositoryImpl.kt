@@ -12,8 +12,8 @@ import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SmartAccountRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SmartAccountRepositoryImpl @Inject constructor(
     private val smartApi: SmartAccountApi,
@@ -75,14 +75,15 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Float,
+        income: Int,
         addressDetail: String,
         isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
     ): Flow<MultimoneyResult<GlobalRequest?>> =
-        fetchData(apolloCall = smartApi.mutationGlobalRequest(pkUser,
+        fetchData(apolloCall = smartApi.mutationGlobalRequest(
+            pkUser,
             status,
             idProfessionType,
             idAddressLevel1,
@@ -94,7 +95,6 @@ class SmartAccountRepositoryImpl @Inject constructor(
             isPEP,
             user,
             idBrand,
-            currentStep), apolloCallMapper = { data ->
-            Success(data.mapToDomain())
-        })
+            currentStep
+        ), apolloCallMapper = { data -> Success(data.mapToDomain()) })
 }

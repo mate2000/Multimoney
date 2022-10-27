@@ -29,8 +29,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                     type = NavType.StringType
                 },
             )
-        ) { navBackStackEntry ->
-            SmartScreen(navBackStackEntry = navBackStackEntry, onNavigate = {
+        ) {
+            SmartScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
                 navController.navigate(it.route) {

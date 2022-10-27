@@ -31,7 +31,8 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.SetUserData
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentResidentScreen
+import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentScreen
+import com.multimoney.multimoney.presentation.ui.test.TestScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -42,7 +43,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SmartScreen(
-    navBackStackEntry: NavBackStackEntry,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SmartViewModel = hiltViewModel(),
@@ -52,11 +52,6 @@ fun SmartScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-        viewModel.onUIEvent(
-            SetUserData(navBackStackEntry.arguments?.getString(ID_BRAND, "") ?: "",
-                navBackStackEntry.arguments?.getString(PK_USER, "") ?: "",
-                navBackStackEntry.arguments?.getString(USER, "") ?: "")
-        )
     }
 
     Column(
@@ -103,7 +98,6 @@ fun SmartScreen(
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
-
     BackHandler {
         viewModel.onUIEvent(OnBackClick(focusManager))
     }
@@ -126,7 +120,9 @@ fun GetStepContent(
     viewModel: SmartViewModel,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
+    // TODO, add the corresponding screen depending on the step
     when (step) {
-        SmartSteps.One.id -> SmartDocumentResidentScreen(sharedViewModel = viewModel)
+        SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
+        SmartSteps.Two.id -> TestScreen(null)
     }
 }

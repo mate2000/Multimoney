@@ -90,7 +90,7 @@ class ShareHelper @Inject constructor(
     }
 
     companion object {
-        const val IMAGE_NAME = "share_voucher_"
+        const val IMAGE_NAME = "share_image_"
         const val IMAGE_TYPE = ".png"
         const val QUALITY_FINAL = 90
         const val PACKAGE_NAME = "com.multimoney.multimoney"

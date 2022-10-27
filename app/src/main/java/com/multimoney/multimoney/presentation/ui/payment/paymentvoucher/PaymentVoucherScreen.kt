@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.payment.paymentvoucher
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -26,13 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,6 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import androidx.constraintlayout.compose.Dimension.Companion
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
@@ -54,7 +53,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
-import com.multimoney.multimoney.presentation.uielement.SIXTY_PERCENT
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
@@ -66,11 +64,6 @@ fun PaymentVoucherScreen(
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
-
-    val configuration = LocalConfiguration.current
-
-    val screenWidth = configuration.screenWidthDp.dp
-    val startOffset = screenWidth.value * SIXTY_PERCENT
 
     Column(
         modifier = Modifier
@@ -88,42 +81,44 @@ fun PaymentVoucherScreen(
             }
         })
         Column(
-            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                    .border(
-                        width = 1.dp,
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                MultimoneyTheme.colors.gradientOneVoucher,
-                                MultimoneyTheme.colors.gradientTwoVoucher
-                            )
-                        ),
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                MultimoneyTheme.colors.gradientTwoVoucher,
-                                MultimoneyTheme.colors.gradientTwoVoucher,
-                                MultimoneyTheme.colors.gradientTwoVoucher,
-                                MultimoneyTheme.colors.gradientOneVoucher
-                            ),
-                            start = Offset(-startOffset.toFloat(), Float.POSITIVE_INFINITY),
-                            end = Offset(Float.POSITIVE_INFINITY, 0f)
-                        ),
-                        shape = RoundedCornerShape(16.dp)
-                    )
             ) {
+                val (backgroundId, contentId, shareButtonId) = createRefs()
+                CustomImage(
+                    modifier = Modifier.constrainAs(backgroundId) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        height = Dimension.fillToConstraints
+                        width = Companion.fillToConstraints
+                    },
+                    drawableResource = R.drawable.bg_confirmation_card,
+                    contentScale = ContentScale.FillBounds
+                )
                 Column(
-                    modifier = Modifier.onGloballyPositioned {
-                        capturingViewBounds = it.boundsInRoot()
-                    }
+                    modifier = Modifier
+                        .constrainAs(contentId) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(shareButtonId.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .onGloballyPositioned {
+                            capturingViewBounds = it.boundsInRoot()
+                        }
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         CustomImage(
@@ -264,7 +259,10 @@ fun PaymentVoucherScreen(
                             top = 18.dp
                         )
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .height(48.dp).constrainAs(shareButtonId) {
+                            top.linkTo(contentId.bottom)
+                            bottom.linkTo(parent.bottom)
+                        },
                     elevation = ButtonDefaults.elevation(
                         defaultElevation = 0.dp,
                         pressedElevation = 0.dp,

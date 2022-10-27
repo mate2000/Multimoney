@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.navtype.SummaryListNavT
 import com.multimoney.multimoney.presentation.ui.payment.account.PaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.payment.amount.PaymentAmountScreen
 import com.multimoney.multimoney.presentation.ui.payment.fee.PaymentFeeSelectionScreen
+import com.multimoney.multimoney.presentation.ui.payment.paymentvoucher.PaymentVoucherScreen
 
 // payment process parameters
 const val USER = "user"
@@ -107,6 +108,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     }
                 }
             )
+        }
+        composable(route = Screen.PaymentVoucherScreen.route) {
+            PaymentVoucherScreen()
         }
     }
 }

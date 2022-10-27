@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Environment
 import android.view.View
 import androidx.compose.ui.geometry.Rect
+import androidx.core.content.FileProvider
 import androidx.core.graphics.applyCanvas
 import com.multimoney.multimoney.R
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -48,7 +49,7 @@ class SharedHelper @Inject constructor(
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            bmpUri = Uri.fromFile(file)
+            bmpUri = FileProvider.getUriForFile(context, "com.multimoney.multimoney".plus(".provider"), file)
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
@@ -61,7 +62,6 @@ class SharedHelper @Inject constructor(
 
         // Construct share intent as described above based on bitmap
         val shareIntent = Intent()
-        shareIntent.setPackage("com.whatsapp")
         shareIntent.action = Intent.ACTION_SEND
 
         shareIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.payment_vaucher_title_chooser))
@@ -70,7 +70,7 @@ class SharedHelper @Inject constructor(
         shareIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
         shareIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(
-            Intent.createChooser(shareIntent, "").apply {
+            Intent.createChooser(shareIntent, "voucer").apply {
                 addFlags(FLAG_ACTIVITY_NEW_TASK)
             }
         )

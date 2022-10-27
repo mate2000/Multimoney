@@ -126,9 +126,11 @@ val GradientTertiary = Color(0xFF8DEA8D).copy(alpha = 0.80f)
 val GradientComplementaryOne = Color(0xFF61E2AD)
 val GradientComplementaryTwo = Color(0xFF24C281)
 val GradientGrey1 = Color(0xFFAEAEAE).copy(alpha = 0.50f)
+val GradientGrey1test = Color(0xFFAEAEAE).copy(alpha = 0.0f)
 val GradientGrey2 = Color(0xFF474747).copy(alpha = 0.50f)
+val GradientGrey2test = Color(0xFF8C8C8C)
 val GradientGrayLiner1 = Color(0xFF343434).copy(alpha = 0f)
-val GradientGrayLiner2 = Color(0xFF343434)
+val GradientGrayLiner2 = Color(0xFF8C8C8C)
 
 @Immutable
 data class MultimoneyColors(
@@ -164,6 +166,9 @@ data class MultimoneyColors(
     val progressBackground: Color,
     val progressPercentage: Color,
     val creditDetailBackground: Color,
+    val gradientOneVoucher: Color,
+    val gradientTwoVoucher: Color,
+    val iconTintVoucher: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -198,7 +203,10 @@ val DarkColorPalette = MultimoneyColors(
     progressBackground = SemanticPositive800,
     progressPercentage = DefaultWhite,
     productChipBackground = SemanticPositive700,
-    creditDetailBackground = GrayScale700
+    creditDetailBackground = GrayScale700,
+    gradientOneVoucher = GradientGrey1,
+    gradientTwoVoucher = GradientGrey2,
+    iconTintVoucher = WhiteTransparency40,
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -233,7 +241,10 @@ val LightColorPalette = MultimoneyColors(
     progressBackground = SemanticPositive800,
     progressPercentage = DefaultWhite,
     productChipBackground = SemanticPositive700,
-    creditDetailBackground = GrayScale700
+    creditDetailBackground = GrayScale700,
+    gradientOneVoucher = GradientGrey1,
+    gradientTwoVoucher = GradientGrey2,
+    iconTintVoucher = WhiteTransparency40
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

@@ -438,5 +438,13 @@
 
     <!-- Payment Voucher -->
     <string name="payment_vaucher_title_chooser" translatable="false">Voucher</string>
+    <string name="payment_voucher_schedule_paymet">Programar pago automático</string>
+    <string name="payment_voucher_shared_voutcher_button">Compartir</string>
+    <string name="payment_voucher_amount_to_pay_label">Monto debitado</string>
+    <string name="payment_voucher_exchange_rate_label">Tipo de cambio</string>
+    <string name="payment_voucher_reference_number_label">Numero referencia</string>
+    <string name="payment_voucher_from_your_account_label">Desde tu cuenta</string>
+    <string name="payment_voucher_you_have_paymented">Has pagado</string>
+    <string name="payment_voucher_transaction_success">Transaccion Exitosa</string>
 
 </resources>

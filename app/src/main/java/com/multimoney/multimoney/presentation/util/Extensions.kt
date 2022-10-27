@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import kotlin.time.Duration
 import kotlinx.coroutines.delay
@@ -41,5 +42,14 @@ fun tickerFlow(
         emit(Unit)
         delay(period)
         durationTime = durationTime.minus(period)
+    }
+}
+
+fun Int.getCurrencySymbol(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.credit_monthly_income_dollar_symbol
+        Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
+        Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
+        else -> R.string.empty
     }
 }

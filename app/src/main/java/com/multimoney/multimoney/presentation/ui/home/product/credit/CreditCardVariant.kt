@@ -52,6 +52,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 
 /**
  * Composable function to show the option to active smart product
@@ -99,7 +100,7 @@ fun CardOfferSmartProduct(action: () -> Unit = {}) {
 @Composable
 @Preview
 fun CardSmartProduct(
-    currency: String = "",
+    brandId: Int = 0,
     profitTotal: String = "",
     profitMonthly: String = "",
     currentMonth: String = "",
@@ -121,8 +122,7 @@ fun CardSmartProduct(
             color = MultimoneyTheme.colors.text
         )
         Text(
-            //text = viewModel.balanceCredit?.getFirstSummary()?.availableBalanceLabel.toString(),
-            text = "$currency$profitTotal",
+            text = "${brandId.getCurrencySymbol()}$profitTotal",
             modifier = Modifier.padding(bottom = 10.dp),
             style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
@@ -156,7 +156,7 @@ fun CardSmartProduct(
                         tint = MultimoneyTheme.colors.smartCardPlus
                     )
                     Text(
-                        text = "$currency$profitMonthly ${stringResource(id = R.string.smart_card_monthly_profit_label)} $currentMonth",
+                        text = "${brandId.getCurrencySymbol()}$profitMonthly ${stringResource(id = R.string.smart_card_monthly_profit_label)} $currentMonth",
                         modifier = Modifier.padding(start = 4.dp),
                         style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.text

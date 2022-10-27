@@ -17,8 +17,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditStep.Five
-import com.multimoney.data.util.catalog.CreditStep.Seven
+import com.multimoney.data.util.catalog.SmartStep.Five
+import com.multimoney.data.util.catalog.SmartStep.Seven
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography

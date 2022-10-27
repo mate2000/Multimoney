@@ -14,6 +14,7 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SmartAccountRepository
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 import javax.inject.Inject
 
 class SmartAccountRepositoryImpl @Inject constructor(
@@ -72,11 +73,15 @@ class SmartAccountRepositoryImpl @Inject constructor(
         pkUser: Int,
         status: Int,
         idProfessionType: Int,
+        idCivilStatusType: Long,
+        birthday: Date,
+        expirationDate: Date,
+        idGender: Long,
         idAddressLevel1: Long,
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Float,
+        income: Int,
         addressDetail: String,
         isPEP: Boolean,
         user: String,
@@ -87,6 +92,10 @@ class SmartAccountRepositoryImpl @Inject constructor(
             pkUser,
             status,
             idProfessionType,
+            idCivilStatusType,
+            birthday,
+            expirationDate,
+            idGender,
             idAddressLevel1,
             idAddressLevel2,
             idAddressLevel3,
@@ -97,9 +106,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             user,
             idBrand,
             currentStep
-        ), apolloCallMapper = { data ->
-            Success(data.mapToDomain())
-        })
+        ), apolloCallMapper = { data -> Success(data.mapToDomain()) })
 
     /**
      * fetch the list of the source of income catalog for the account smart flow

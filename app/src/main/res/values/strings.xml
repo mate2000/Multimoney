@@ -26,6 +26,7 @@
     <string name="locked" translatable="false">Bloquear</string>
     <string name="see_data" translatable="false">Ver datos</string>
     <string name="link" translatable="false">Vincular</string>
+    <string name="general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -59,7 +60,6 @@
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
-    <string name="sign_up_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
@@ -210,6 +210,8 @@
     <string name="home_credit_sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
     <string name="home_credit_sign_document_reject_action_text" translatable="false">Firmar</string>
     <string name="home_credit_title" translatable="false">Mi Crédito</string>
+    <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
+    <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
@@ -438,8 +440,8 @@
     <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
 
     <!-- Smart Account -->
-    <string name="smart_account_document_title" translatable="false">Información de tu DUI</string>
-    <string name="smart_account_document_issue_title" translatable="false">Fecha de emisión</string>
+    <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
+    <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
     <string name="smart_account_document_issue_date_required" translatable="false">Fecha de nacimiento requerida</string>
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>

@@ -1,5 +1,7 @@
 package com.multimoney.domain.di
 
+import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
@@ -10,6 +12,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCaseImpl
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
@@ -238,11 +242,21 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryNationalitiesUseCaseUseCase(smartAccountRepository: SmartAccountRepository): QueryNationalitiesUseCase =
+    fun provideQueryNationalitiesUseCase(smartAccountRepository: SmartAccountRepository): QueryNationalitiesUseCase =
         QueryNationalitiesUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton
     fun provideQueryGeneralEconomicActivityUseCase(smartAccountRepository: SmartAccountRepository): QueryGeneralEconomicActivityUseCase =
         QueryGeneralEconomicActivityUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryStepByStepUseCase(smartAccountRepository: SmartAccountRepository): QueryStepByStepUseCase =
+        QueryStepByStepUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationGlobalRequestUseCase(smartAccountRepository: SmartAccountRepository): MutationGlobalRequestUseCase =
+        MutationGlobalRequestUseCaseImpl(smartAccountRepository)
 }

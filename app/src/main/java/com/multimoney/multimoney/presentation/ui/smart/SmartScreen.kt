@@ -16,18 +16,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavBackStackEntry
-import com.multimoney.data.util.catalog.SignUpStep.Five
-import com.multimoney.data.util.catalog.SignUpStep.Six
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartSteps.Five
+import com.multimoney.data.util.catalog.SmartSteps.Six
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.SMART_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnMoveToStep
+import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentScreen
+import com.multimoney.multimoney.presentation.ui.test.TestScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -38,21 +38,15 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SmartScreen(
-    navBackStackEntry: NavBackStackEntry,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SmartViewModel,
+    viewModel: SmartViewModel = hiltViewModel(),
 ) {
     val focusManager = LocalFocusManager.current
 
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-        /*navBackStackEntry.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP)?.let { step ->
-            if (step != DEFAULT_STEP) {
-                viewModel.onUIEvent(OnMoveToStep(step.toInt()))
-            }
-        }*/
     }
 
     Column(
@@ -99,7 +93,6 @@ fun SmartScreen(
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
-
     BackHandler {
         viewModel.onUIEvent(OnBackClick(focusManager))
     }
@@ -122,7 +115,9 @@ fun GetStepContent(
     viewModel: SmartViewModel,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
+    // TODO, add the corresponding screen depending on the step
     when (step) {
-
+        SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
+        SmartSteps.Two.id -> TestScreen(null)
     }
 }

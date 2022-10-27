@@ -9,7 +9,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
-import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
@@ -112,6 +112,8 @@ class ProductViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = false)
                     balance?.let {
                         balanceCredit = it
+                        val currentBalance = it.getFirstSummary()?.currentBalance ?: 0.0
+                        uiState = uiState.copy(hasBalance = (currentBalance > 0.0))
                     }
                 }
                 result.onFailure {
@@ -154,7 +156,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
-        lastStep = CreditStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
+        lastStep = SmartStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
         uiState = uiState.copy(userStatus = userStatus)
         callQueryBalanceUseCase(
             user = email,
@@ -208,7 +210,7 @@ class ProductViewModel @Inject constructor(
             // TODO: Send to appropriate screen when is implemented
             "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
         }
-        navigateTo(route)
+        navigateTo("${Screen.SmartScreen.baseRoute}/${userName}/${uiState.idBrand}/${pkUser}")
     }
 
     private fun validateQuotas(summaryList: List<Summary>?): Boolean {
@@ -273,16 +275,16 @@ class ProductViewModel @Inject constructor(
                 }
                 CREDIT_IDENTITY_INCOMPLETE -> {
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
-                        CreditStep.Search.getIdByName(
+                        SmartStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Seven.id
+                        ) == SmartStep.Seven.id
                         )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
-                        CreditStep.Search.getIdByName(
+                        SmartStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Seven.id
+                        ) < SmartStep.Seven.id
                         )
                 }
                 CREDIT_REJECTED -> {
@@ -298,7 +300,8 @@ class ProductViewModel @Inject constructor(
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var hasBalance: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

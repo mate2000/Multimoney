@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -63,7 +63,7 @@ fun JobPlaceScreen(
                     }, saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                 )
             )
-        }, nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id))
+        }, nextStep = SmartStep.Five.id, previousStep = SmartStep.Three.id))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormCompleted -> {

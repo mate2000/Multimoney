@@ -4,46 +4,146 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
-import com.multimoney.data.util.catalog.SignUpStep
+import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.util.error.HttpError
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.parseStringToLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
-class SmartViewModel @Inject constructor() : BaseViewModel(true) {
+class SmartViewModel @Inject constructor(
+    private val queryStepByStepUseCase: QueryStepByStepUseCase,
+    private val mutationGlobalRequestUseCase: MutationGlobalRequestUseCase,
+    private val dataStorePreferences: DataStorePreferences,
+    savedStateHandle: SavedStateHandle,
+) : BaseViewModel(true) {
+
+    // bundle parameters
+    val pkUser = savedStateHandle.get(PK_USER) ?: ""
+    val idBrand = savedStateHandle.get(ID_BRAND) ?: ""
+    val user = savedStateHandle.get(USER) ?: ""
 
     // Stateless
     var nextAction: () -> Unit = {}
     var closeDialogDescription: String = ""
-    private var nextStep: Int = SignUpStep.One.id
-    private var previousStep: Int = SignUpStep.One.id
-    var lastStep: Int = 1
+    var accountSmartData: AccountSmartData? = null
+    private var nextStep: Int = SmartSteps.One.id
+    private var previousStep: Int = SmartSteps.One.id
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
+    init {
+        accountSmartData = AccountSmartData(
+            pkUser = pkUser,
+            idBrand = idBrand.toInt(),
+            user = user
+        )
+    }
+
+    // FIXME, this is the logic to list the data, it should be handled in another ticket
+    private fun callQueryStepByStepUseCase() = executeUseCase {
+        queryStepByStepUseCase.invoke(
+            user = accountSmartData?.user ?: "",
+            idBrand = accountSmartData?.idBrand ?: 0,
+            idRequest = 264
+        ).collectLatest { result ->
+            dataStorePreferences.getIdBrand().first()
+            result.onSuccess {
+                onUIEvent(OnLoadingValueChange(false))
+            }
+            result.onFailure {
+                onUIEvent(
+                    OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                )
+            }
+            result.onLoading {
+                onUIEvent(OnLoadingValueChange(true))
+            }
+        }
+    }
+
+    private fun callMutationGlobalRequestUseCase() = executeUseCase {
+        mutationGlobalRequestUseCase.invoke(
+            pkUser = accountSmartData?.pkUser?.toInt() ?: 0,
+            status = accountSmartData?.status ?: 0,
+            idProfessionType = accountSmartData?.idProfessionType ?: 0,
+            idAddressLevel1 = accountSmartData?.idAddressLevel1 ?: 0,
+            idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
+            idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
+            idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
+            income = accountSmartData?.income?.toInt() ?: 0,
+            addressDetail = accountSmartData?.addressDetail ?: "",
+            isPEP = accountSmartData?.isPEP ?: false,
+            user = accountSmartData?.user ?: "",
+            idBrand = accountSmartData?.idBrand ?: 0,
+            currentStep = accountSmartData?.currentStep ?: "",
+            idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
+            birthday = parseStringToLocalDate(accountSmartData?.birthday ?: ""),
+            expirationDate = parseStringToLocalDate(accountSmartData?.expirationDate ?: ""),
+            idGender = accountSmartData?.idGender ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                onUIEvent(OnLoadingValueChange(false))
+                onUIEvent(OnNextStep)
+            }
+            result.onFailure {
+                onUIEvent(
+                    OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                )
+            }
+            result.onLoading {
+                onUIEvent(OnLoadingValueChange(true))
+            }
+        }
+    }
+
     private fun moveToStep(step: Int) {
-        if (step <= SignUpViewModel.SIGN_UP_TOTAL_STEPS) {
+        if (step <= SMART_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
-                isCloseVisible = step > SignUpStep.One.id
+                isCloseVisible = step > SmartSteps.One.id
             )
         }
     }
@@ -57,7 +157,7 @@ class SmartViewModel @Inject constructor() : BaseViewModel(true) {
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.sign_up_close_dialog_title,
+                titleResource = R.string.general_close_dialog_title,
                 description = closeDialogDescription,
                 positiveResource = R.string.sign_up_close_dialog_positive_button_text,
                 negativeResource = R.string.sign_up_close_dialog_negative_button_text,
@@ -78,10 +178,10 @@ class SmartViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun previousStep() {
-        if (previousStep > SignUpStep.One.id || uiState.currentStep == SignUpStep.Two.id) {
+        if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
             uiState = uiState.copy(
                 currentStep = previousStep,
-                isCloseVisible = previousStep > SignUpStep.One.id
+                isCloseVisible = previousStep > SmartSteps.One.id
             )
         } else {
             popAndNavigateTo(
@@ -92,10 +192,10 @@ class SmartViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun nextStep() {
-        if (nextStep <= SignUpViewModel.SIGN_UP_TOTAL_STEPS) {
+        if (nextStep <= SMART_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep > SignUpStep.One.id
+                isCloseVisible = nextStep > SmartSteps.One.id
             )
         }
     }
@@ -116,9 +216,19 @@ class SmartViewModel @Inject constructor() : BaseViewModel(true) {
         )
     }
 
+    /**
+     * this function will update the accountSmartData object with the new data coming from
+     * the child screen after tapping on the "continue" button, also it will trigger the
+     * API call by calling the callMutationGlobalRequestUseCase() function.
+     */
+    private fun onUpdateAccountSmartData(accountData: AccountSmartData?) {
+        accountSmartData = accountData
+        callMutationGlobalRequestUseCase()
+    }
+
     data class UIState(
         // Interactions
-        val currentStep: Int = SignUpStep.One.id,
+        val currentStep: Int = SmartSteps.One.id,
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
@@ -141,8 +251,8 @@ class SmartViewModel @Inject constructor() : BaseViewModel(true) {
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
-            is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
+            is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }
 
@@ -163,15 +273,14 @@ class SmartViewModel @Inject constructor() : BaseViewModel(true) {
             val previousStep: Int,
         ) : UIEvent()
 
-        data class OnMoveToStep(val step: Int) : UIEvent()
-        data class OnOpenSplashComeBack(val step: Int) : UIEvent()
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
+        data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
+            UIEvent()
     }
 
     companion object {
         const val SMART_TOTAL_STEPS = 6
         const val SMART_INDICATOR_TOTAL_STEPS = 5
-        const val PHONE_HARDCODED = "50371680915"
     }
 }

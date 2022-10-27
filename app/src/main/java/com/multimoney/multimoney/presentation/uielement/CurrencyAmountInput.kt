@@ -76,7 +76,8 @@ import kotlinx.coroutines.launch
  * **/
 
 @OptIn(
-    ExperimentalFoundationApi::class, kotlinx.coroutines.FlowPreview::class,
+    ExperimentalFoundationApi::class,
+    kotlinx.coroutines.FlowPreview::class,
     kotlinx.coroutines.ExperimentalCoroutinesApi::class
 )
 @Composable
@@ -165,7 +166,6 @@ fun CurrencyAmountInput(
     }
 
     Column(modifier = modifier) {
-
         // Display textField
         OutlinedTextField(
             modifier = Modifier

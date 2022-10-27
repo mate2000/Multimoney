@@ -179,12 +179,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     uiState = uiState.copy(
                         dataInformationClient = it
                     )
-                    isLoading = false
+                    uiState = uiState.copy(isLoading = false)
                     isFormValid()
                 }
                 result.onFailure {
-                    isLoading = false
                     uiState = uiState.copy(
+                        isLoading = false,
                         dataInformationClient = null,
                         personalIdError = Pair(
                             true,
@@ -194,7 +194,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     isFormValid()
                 }
                 result.onLoading {
-                    isLoading = true
+                    uiState = uiState.copy(isLoading = true)
                 }
             }
         }
@@ -509,7 +509,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
         val nameError: Pair<Boolean, Int> = Pair(false, 0),
         val lastNameError: Pair<Boolean, Int> = Pair(false, 0),
-        val closeKeyboard: Boolean = false
+        val closeKeyboard: Boolean = false,
+        val isLoading: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {

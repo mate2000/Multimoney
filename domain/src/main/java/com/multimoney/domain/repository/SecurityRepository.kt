@@ -2,6 +2,7 @@ package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
@@ -17,18 +18,18 @@ interface SecurityRepository {
 
     suspend fun queryValidateUserExists(
         email: String
-    ):Flow<MultimoneyResult<UserData?>>
+    ): Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUserValidation(
         email: String,
         currentStep: String,
         idBrand: Int,
-        idDocument:Int,
-        identification:String,
+        idDocument: Int,
+        identification: String,
         firstName: String,
-        secondName:String,
-        firstSurname:String,
-        secondSurname:String
+        secondName: String,
+        firstSurname: String,
+        secondSurname: String
     ): Flow<MultimoneyResult<UserData?>>
 
     suspend fun mutationUpdateUserRegister(
@@ -106,6 +107,12 @@ interface SecurityRepository {
     ): Flow<MultimoneyResult<CatalogType?>>
 
     suspend fun queryGetCountry(user: String): Flow<MultimoneyResult<CountryList?>>
+
+    suspend fun queryGetConfigurationVersion(
+        platform: String,
+        appVersion: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ConfigurationVersion?>>
 
     suspend fun queryValidateBankAccount(
         account: String,

@@ -4,9 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.multimoney.multimoney.R
-import kotlin.time.Duration
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Quetzal
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.CashPaymentPoint
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlin.time.Duration
 
 fun Context.openWhatsAppDeepLink(link: String) {
     val intent = Intent(Intent.ACTION_VIEW)
@@ -29,7 +38,6 @@ fun Context.sendAccount(client: String, accountNumber: String) {
     this.startActivity(chooser)
 }
 
-
 fun tickerFlow(
     period: Duration,
     initialDelay: Duration = Duration.ZERO,
@@ -41,5 +49,26 @@ fun tickerFlow(
         emit(Unit)
         delay(period)
         durationTime = durationTime.minus(period)
+    }
+}
+
+// Currency
+
+fun Int.getCurrency(): CurrencyType {
+    return when (this) {
+        Colon.id -> Colon
+        Dollar.id -> Dollar
+        Quetzal.id -> Quetzal
+        else -> All
+    }
+}
+
+// Payment
+
+fun String.getPaymentMethodType(): PaymentMethodType {
+    return when (this) {
+        VisaDirect.value -> VisaDirect
+        TransferBank.value -> TransferBank
+        else -> CashPaymentPoint
     }
 }

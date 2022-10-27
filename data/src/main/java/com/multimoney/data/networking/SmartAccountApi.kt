@@ -10,6 +10,7 @@ import com.multimoney.data.networking.accountsmart.apollomodel.GlobalRequestMuta
 import com.multimoney.data.networking.accountsmart.apollomodel.NationalityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.ProfessionQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.StepByStepQuery
+import java.util.Date
 import javax.inject.Inject
 
 class SmartAccountApi @Inject constructor(
@@ -53,6 +54,10 @@ class SmartAccountApi @Inject constructor(
         pkUser: Int,
         status: Int,
         idProfessionType: Int,
+        idCivilStatusType: Long,
+        birthday: Date,
+        expirationDate: Date,
+        idGender: Long,
         idAddressLevel1: Long,
         idAddressLevel2: Long,
         idAddressLevel3: Long,
@@ -71,6 +76,10 @@ class SmartAccountApi @Inject constructor(
                 idProfessionType,
                 idAddressLevel1,
                 idAddressLevel2,
+                birthday,
+                expirationDate,
+                idGender,
+                idCivilStatusType,
                 idAddressLevel3,
                 idEconomicActivity,
                 income,

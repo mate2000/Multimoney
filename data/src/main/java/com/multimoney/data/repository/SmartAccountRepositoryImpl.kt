@@ -12,8 +12,9 @@ import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SmartAccountRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
+import javax.inject.Inject
 
 class SmartAccountRepositoryImpl @Inject constructor(
     private val smartApi: SmartAccountApi,
@@ -71,6 +72,10 @@ class SmartAccountRepositoryImpl @Inject constructor(
         pkUser: Int,
         status: Int,
         idProfessionType: Int,
+        idCivilStatusType: Long,
+        birthday: Date,
+        expirationDate: Date,
+        idGender: Long,
         idAddressLevel1: Long,
         idAddressLevel2: Long,
         idAddressLevel3: Long,
@@ -86,6 +91,10 @@ class SmartAccountRepositoryImpl @Inject constructor(
             pkUser,
             status,
             idProfessionType,
+            idCivilStatusType,
+            birthday,
+            expirationDate,
+            idGender,
             idAddressLevel1,
             idAddressLevel2,
             idAddressLevel3,

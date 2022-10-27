@@ -210,7 +210,7 @@ class ProductViewModel @Inject constructor(
             // TODO: Send to appropriate screen when is implemented
             "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
         }
-        navigateTo(route)
+        navigateTo("${Screen.SmartScreen.baseRoute}/${userName}/${uiState.idBrand}/${pkUser}")
     }
 
     private fun validateQuotas(summaryList: List<Summary>?): Boolean {

@@ -1,8 +1,10 @@
 package com.multimoney.multimoney.presentation.util
 
+import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.Companion.DATE_FORMAT
+import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.time.ZoneOffset.UTC
+import java.util.*
 
 fun getPickedDateAsString(year: Int, month: Int, day: Int, dateFormat: String): String {
     val calendar = Calendar.getInstance()
@@ -19,4 +21,24 @@ fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): S
     } ?: run {
         ""
     }
+}
+
+fun parseStringToLocalDate(date: String): Date {
+    val simpleDateFormat = SimpleDateFormat(DATE_FORMAT, Locale.ENGLISH)
+    simpleDateFormat.timeZone = TimeZone.getTimeZone(UTC)
+    return try {
+        simpleDateFormat.parse(date) ?: Date()
+    } catch (e: Exception) {
+        Date()
+    }
+}
+
+fun getISO8601DateFormat(
+    pattern: String? = DATE_FORMAT,
+    local: Locale? = Locale.ENGLISH,
+    formatToUTC: Boolean = true,
+): DateFormat {
+    val dateFormat = SimpleDateFormat(pattern, local)
+    if (formatToUTC) dateFormat.timeZone = TimeZone.getTimeZone(UTC)
+    return dateFormat
 }

@@ -31,8 +31,8 @@ import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentVie
 import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
@@ -201,7 +201,7 @@ class SmartDocumentViewModel @Inject constructor(
             it?.maritalStatusDescription == civilState
         }?.maritalStatusId
 
-        uiState = uiState.copy(civilState = civilState, civilStateId = civilStateId ?: 0)
+        uiState = uiState.copy(civilState = civilState, civilStateId = civilStateId?.toLong() ?: 0)
         validateForm()
     }
 
@@ -232,9 +232,9 @@ class SmartDocumentViewModel @Inject constructor(
         val expirationDate: String = "",
         val birthdate: String = "",
         val gender: String = "",
-        val genderId: Int = 1,
+        val genderId: Long = 1,
         val civilState: String = "",
-        val civilStateId: Int = 0,
+        val civilStateId: Long = 0,
         val profession: String = "",
         val professionId: Int = 0,
         val openDialog: DialogParameters = DialogParameters(),
@@ -289,6 +289,7 @@ class SmartDocumentViewModel @Inject constructor(
         data class OnProfessionChange(val profession: String) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
+
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnCallQueryNationalitiesUseCase(val user: String, val idBrand: Int) : UIEvent()
         data class OnCallQueryAddressLevelTwoUseCase(
@@ -307,7 +308,7 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     companion object {
-        const val DATE_FORMAT = "dd-MM-yyyy"
+        const val DATE_FORMAT = "yyyy/MM/dd"
         const val BACKEND_DATE_FORMAT = "yyyy-MM-dd"
         const val BIRTH_DATE_MIN_YEAR = 1902
         const val BIRTH_DATE_MIN_MONTH = 0

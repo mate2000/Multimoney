@@ -32,17 +32,18 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.parseStringToLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartViewModel @Inject constructor(
     private val queryStepByStepUseCase: QueryStepByStepUseCase,
     private val mutationGlobalRequestUseCase: MutationGlobalRequestUseCase,
     private val dataStorePreferences: DataStorePreferences,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel(true) {
 
     // bundle parameters
@@ -111,7 +112,11 @@ class SmartViewModel @Inject constructor(
             isPEP = accountSmartData?.isPEP ?: false,
             user = accountSmartData?.user ?: "",
             idBrand = accountSmartData?.idBrand ?: 0,
-            currentStep = accountSmartData?.currentStep ?: ""
+            currentStep = accountSmartData?.currentStep ?: "",
+            idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
+            birthday = parseStringToLocalDate(accountSmartData?.birthday ?: ""),
+            expirationDate = parseStringToLocalDate(accountSmartData?.expirationDate ?: ""),
+            idGender = accountSmartData?.idGender ?: 0
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -261,11 +266,13 @@ class SmartViewModel @Inject constructor(
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
+
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
             val previousStep: Int,
         ) : UIEvent()
+
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :

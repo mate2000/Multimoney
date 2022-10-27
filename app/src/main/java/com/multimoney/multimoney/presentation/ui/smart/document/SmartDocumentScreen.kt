@@ -80,7 +80,11 @@ fun SmartDocumentScreen(
                                         // FIXME, pass whatever needed and obtain it from the uiState variable
                                         accountSmartData = sharedViewModel.accountSmartData?.copy(
                                             status = 1,
-                                            idProfessionType = 83,
+                                            idProfessionType = viewModel.uiState.professionId,
+                                            idGender= viewModel.uiState.genderId,
+                                            expirationDate = viewModel.uiState.expirationDate,
+                                            birthday = viewModel.uiState.birthdate,
+                                            idCivilStatusType = viewModel.uiState.civilStateId,
                                             currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                                         )
                                     )

@@ -3,12 +3,17 @@ package com.multimoney.domain.interaction.accountsmart
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
 
 interface MutationGlobalRequestUseCase {
     suspend operator fun invoke(
         pkUser: Int,
         status: Int,
         idProfessionType: Int,
+        idCivilStatusType: Long,
+        birthday: Date,
+        expirationDate: Date,
+        idGender: Long,
         idAddressLevel1: Long,
         idAddressLevel2: Long,
         idAddressLevel3: Long,

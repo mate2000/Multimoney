@@ -21,11 +21,15 @@ fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): S
     }
 }
 
-fun getCardDateFormat(date: String): String {
-    val dateFormatted = SHORT_DATE_FORMAT.parse(date)
-    return dateFormatted?.let {
-        BAR_DIVIDER_FORMAT.format(dateFormatted)
-    } ?: run {
+fun getCardDateFormat(date: String?): String {
+    return if (date.isNullOrEmpty().not()) {
+        val dateFormatted = SHORT_DATE_FORMAT.parse(date)
+        dateFormatted?.let {
+            BAR_DIVIDER_FORMAT.format(dateFormatted)
+        } ?: run {
+            ""
+        }
+    } else {
         ""
     }
 }

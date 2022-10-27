@@ -556,7 +556,7 @@ fun OngoingCredit(
                     content = {
                         Box(contentAlignment = Alignment.Center) {
                             Text(
-                                text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel.toString()),
+                                text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
                                 style = Typography.body1.copy(
                                     fontWeight = FontWeight.SemiBold,
                                     platformStyle = PlatformTextStyle(

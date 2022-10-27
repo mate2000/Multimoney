@@ -114,8 +114,8 @@ class SmartViewModel @Inject constructor(
             idBrand = accountSmartData?.idBrand ?: 0,
             currentStep = accountSmartData?.currentStep ?: "",
             idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
-            birthday = parseStringToLocalDate(accountSmartData?.birthday ?: ""),
-            expirationDate = parseStringToLocalDate(accountSmartData?.expirationDate ?: ""),
+            birthday = accountSmartData?.birthday ?: "",
+            expirationDate = accountSmartData?.expirationDate ?: "",
             idGender = accountSmartData?.idGender ?: 0
         ).collectLatest { result ->
             result.onSuccess {

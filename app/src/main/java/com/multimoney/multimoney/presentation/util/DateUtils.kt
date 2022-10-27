@@ -36,7 +36,7 @@ fun parseStringToLocalDate(date: String): Date {
 fun getISO8601DateFormat(
     pattern: String? = DATE_FORMAT,
     local: Locale? = Locale.ENGLISH,
-    formatToUTC: Boolean = true,
+    formatToUTC: Boolean = true
 ): DateFormat {
     val dateFormat = SimpleDateFormat(pattern, local)
     if (formatToUTC) dateFormat.timeZone = TimeZone.getTimeZone(UTC)

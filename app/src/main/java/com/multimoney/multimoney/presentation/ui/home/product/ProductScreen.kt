@@ -375,7 +375,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable,
+                                infoPreApprove?.amountAvailableFormat,
                                 viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnProductClick(whatsAppLink, context))

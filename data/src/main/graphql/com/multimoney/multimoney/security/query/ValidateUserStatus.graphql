@@ -35,6 +35,7 @@ query ValidateUserStatus($pkUser: Int!, $identification: String!, $user: String!
                 infoProducts {
                     idProduct
                     amountAvailable
+                    amountAvailableFormat
                     symbolCurrency
                 }
                 selectedAmount

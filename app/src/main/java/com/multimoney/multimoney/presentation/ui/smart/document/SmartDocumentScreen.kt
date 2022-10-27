@@ -258,8 +258,7 @@ fun SmartDocumentScreen(
                     SmartDocumentViewModel.BIRTH_DATE_MIN_MONTH,
                     SmartDocumentViewModel.BIRTH_DATE_MIN_DAY
                 )
-                datePicker.datePicker.minDate = calendar.timeInMillis
-                datePicker.datePicker.maxDate = Date().time
+                datePicker.datePicker.minDate = Date().time
                 datePicker.show()
             },
             isClickable = true

@@ -69,19 +69,19 @@ fun SmartDocumentScreen(
         // then, the OnCallMutationUpdateGlobalRequestUseCase() event will receive the form data in order to
         // update the object that contains the data to be sent to the API, such method will trigger the API
         // call as well, with the data passed as parameter.
-        sharedViewModel.apply {
-            onUIEvent(
+
+        sharedViewModel.onUIEvent(
                 SmartViewModel.UIEvent.OnSetNavigation(
                     nextAction = {
                         viewModel.onUIEvent(UIEvent.OnNextActionClick(
                             nextStepAction = {
-                                onUIEvent(
+                                sharedViewModel.onUIEvent(
                                     SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
                                         // FIXME, pass whatever needed and obtain it from the uiState variable
-                                        accountSmartData = accountSmartData?.copy(
+                                        accountSmartData = sharedViewModel.accountSmartData?.copy(
                                             status = 1,
                                             idProfessionType = 83,
-                                            currentStep = SmartSteps.Search.getNameById(uiState.currentStep)
+                                            currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                                         )
                                     )
                                 )
@@ -92,7 +92,6 @@ fun SmartDocumentScreen(
                     previousStep = SmartSteps.One.id
                 )
             )
-        }
 
         viewModel.onUIEvent(
             OnCallQueryNationalitiesUseCase(
@@ -200,7 +199,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = Gender.Search.getGenderList(),
+            items = viewModel.uiState.civilStatusStringList,
             value = viewModel.uiState.civilState,
             onValueChange = { viewModel.onUIEvent(OnCivilStateChange(it)) },
             labelText = stringResource(id = R.string.civil_state),
@@ -212,7 +211,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = Gender.Search.getGenderList(),
+            items = viewModel.uiState.professionStringList,
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
             labelText = stringResource(id = R.string.profession),

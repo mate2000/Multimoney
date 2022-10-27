@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -28,7 +27,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnMoveToStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
@@ -69,9 +67,9 @@ class SmartViewModel @Inject constructor(
             idBrand = idBrand.toInt(),
             user = user
         )
-        Log.d("tellDataOnStart", "accountSmartData: $accountSmartData")
     }
 
+    // FIXME, this is the logic to list the data, it should be handled in another ticket
     private fun callQueryStepByStepUseCase() = executeUseCase {
         queryStepByStepUseCase.invoke(
             user = accountSmartData?.user ?: "",
@@ -116,9 +114,8 @@ class SmartViewModel @Inject constructor(
             currentStep = accountSmartData?.currentStep ?: ""
         ).collectLatest { result ->
             result.onSuccess {
-                // FIXME, should this variable come from the API response?
-                nextStep = SmartSteps.Search.getIdByName(accountSmartData?.currentStep)
                 onUIEvent(OnLoadingValueChange(false))
+                onUIEvent(OnNextStep)
             }
             result.onFailure {
                 onUIEvent(
@@ -221,7 +218,6 @@ class SmartViewModel @Inject constructor(
      */
     private fun onUpdateAccountSmartData(accountData: AccountSmartData?) {
         accountSmartData = accountData
-        Log.d("accountSmartData", "accountSmartData: ${accountSmartData.toString()}")
         callMutationGlobalRequestUseCase()
     }
 
@@ -250,7 +246,6 @@ class SmartViewModel @Inject constructor(
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
-            is OnMoveToStep -> moveToStep(event.step)
             is OnPreviousStep -> previousStep()
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
@@ -266,17 +261,11 @@ class SmartViewModel @Inject constructor(
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
-
-        data class SetUserData(val idBrand: String, val pkUser: String, val user: String) :
-            UIEvent()
-
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
             val previousStep: Int,
         ) : UIEvent()
-
-        data class OnMoveToStep(val step: Int) : UIEvent()
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :

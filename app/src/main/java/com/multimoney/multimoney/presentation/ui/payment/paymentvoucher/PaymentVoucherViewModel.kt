@@ -8,13 +8,13 @@ import androidx.compose.ui.geometry.Rect
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
-import com.multimoney.multimoney.presentation.util.SharedHelper
+import com.multimoney.multimoney.presentation.util.ShareHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class PaymentVoucherViewModel @Inject constructor(
-    val sharedHelper: SharedHelper
+    val shareHelper: ShareHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -32,7 +32,7 @@ class PaymentVoucherViewModel @Inject constructor(
         view: View,
         capturingBounds: Rect
     ) {
-        sharedHelper.sharedScreenShot(view, capturingBounds)
+        shareHelper.sharedScreenShot(view, capturingBounds)
     }
 
     private fun onScheduleAutomaticPayment() {

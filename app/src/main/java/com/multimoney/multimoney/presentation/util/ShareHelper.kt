@@ -21,7 +21,7 @@ import java.io.IOException
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-class SharedHelper @Inject constructor(
+class ShareHelper @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private fun createScreenShot(view: View, capturingViewBounds: Rect): Bitmap {
@@ -39,17 +39,17 @@ class SharedHelper @Inject constructor(
         var bmpUri: Uri? = null
         val file = File(
             context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            "share_image_" + System.currentTimeMillis() + ".png"
+            IMAGE_NAME + System.currentTimeMillis() + IMAGE_TYPE
         )
         try {
             val out = FileOutputStream(file)
-            bitmap.compress(PNG, 90, out)
+            bitmap.compress(PNG, QUALITY_FINAL, out)
             try {
                 out.close()
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            bmpUri = FileProvider.getUriForFile(context, "com.multimoney.multimoney".plus(".provider"), file)
+            bmpUri = FileProvider.getUriForFile(context, PACKAGE_NAME.plus(PROVIDER_TYPE), file)
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
@@ -63,14 +63,12 @@ class SharedHelper @Inject constructor(
         // Construct share intent as described above based on bitmap
         val shareIntent = Intent()
         shareIntent.action = Intent.ACTION_SEND
-
-        shareIntent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.payment_vaucher_title_chooser))
         shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri)
-        shareIntent.type = "image/*"
+        shareIntent.type = IMAGE_INTENT_SEND_TYPE
         shareIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
         shareIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(
-            Intent.createChooser(shareIntent, "voucer").apply {
+            Intent.createChooser(shareIntent, context.getString(R.string.shared)).apply {
                 addFlags(FLAG_ACTIVITY_NEW_TASK)
             }
         )
@@ -83,11 +81,21 @@ class SharedHelper @Inject constructor(
                 Intent.EXTRA_TEXT,
                 text
             )
-            type = "text/plain"
+            type = PLANT_TEXT_SEND_TYPE
             addFlags(FLAG_ACTIVITY_NEW_TASK)
         }
-        val chooser = Intent.createChooser(intent, "")
+        val chooser = Intent.createChooser(intent, context.getString(R.string.shared))
         chooser.addFlags(FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(chooser)
+    }
+
+    companion object {
+        const val IMAGE_NAME = "share_voucher_"
+        const val IMAGE_TYPE = ".png"
+        const val QUALITY_FINAL = 90
+        const val PACKAGE_NAME = "com.multimoney.multimoney"
+        const val PROVIDER_TYPE = ".provider"
+        const val IMAGE_INTENT_SEND_TYPE = "image/*"
+        const val PLANT_TEXT_SEND_TYPE = "text/plain"
     }
 }

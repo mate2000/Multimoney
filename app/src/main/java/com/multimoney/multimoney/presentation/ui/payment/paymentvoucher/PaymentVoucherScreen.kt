@@ -137,7 +137,7 @@ fun PaymentVoucherScreen(
                             color = MultimoneyTheme.colors.text
                         )
                         Text(
-                            text = stringResource(string.payment_voucher_you_have_paymented),
+                            text = stringResource(string.payment_voucher_you_have_paid),
                             modifier = Modifier.padding(top = 32.dp),
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
@@ -255,7 +255,7 @@ fun PaymentVoucherScreen(
                             )
                         }
                     },
-                    text = stringResource(string.payment_voucher_shared_voutcher_button),
+                    text = stringResource(string.payment_voucher_shared_button),
                     modifier = Modifier
                         .padding(
                             start = 24.dp,
@@ -277,7 +277,7 @@ fun PaymentVoucherScreen(
             if (viewModel.uiState.showScheduleAutomaticPaymentProcess) {
                 CustomButton(
                     onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
-                    text = stringResource(string.payment_voucher_schedule_paymet),
+                    text = stringResource(string.payment_voucher_schedule_payment),
                     modifier = Modifier
                         .padding(
                             start = 16.dp,

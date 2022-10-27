@@ -1,5 +1,9 @@
 package com.multimoney.domain.model.accountsmart
 
+/**
+ * This object represent the data to be sent to the API, data will be collected
+ * on every step from the smart flow.
+ */
 data class AccountSmartData(
     var pkUser: String? = "",
     var status: Int? = 0,

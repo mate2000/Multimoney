@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SmartStep
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -82,7 +82,7 @@ fun CreditBankScreen(
                         saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                     )
                 )
-            }, nextStep = SmartStep.Three.id, previousStep = SmartStep.One.id)
+            }, nextStep = CreditStep.Three.id, previousStep = CreditStep.One.id)
         )
         viewModel.onUIEvent(
             OnCallQueryBanksAndRegularExpression(

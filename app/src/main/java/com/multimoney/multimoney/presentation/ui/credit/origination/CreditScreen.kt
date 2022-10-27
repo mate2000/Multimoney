@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
@@ -89,12 +90,12 @@ fun CreditScreen(
             ) {
                 Column {
                     TopNavBar(
-                        isLeftButtonVisible = viewModel.uiState.currentStep != SmartStep.One.id,
+                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id,
                         isRightButtonVisible = viewModel.uiState.isCloseVisible,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )
-                    if (viewModel.uiState.currentStep > SmartStep.One.id && viewModel.uiState.currentStep < SmartStep.Seven.id) {
+                    if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Seven.id) {
                         StepProgressBar(
                             steps = CREDIT_INDICATOR_TOTAL_STEPS,
                             currentStep = viewModel.uiState.currentStep - 1,
@@ -169,16 +170,16 @@ fun GetStepContent(
     viewModel: CreditViewModel
 ) {
     when (step) {
-        SmartStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
-        SmartStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
+        CreditStep.One.id -> CreditAmountScreen(onNavigate = onNavigate, sharedViewModel = viewModel)
+        CreditStep.Two.id -> if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
             IbanAccountScreen(sharedViewModel = viewModel)
         } else {
             CreditBankScreen(sharedViewModel = viewModel)
         }
-        SmartStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
-        SmartStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)
-        SmartStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
-        SmartStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
+        CreditStep.Four.id -> JobPlaceScreen(sharedViewModel = viewModel)
+        CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
         else -> CreditDocumentScreen(sharedViewModel = viewModel)
     }
 }

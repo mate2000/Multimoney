@@ -9,7 +9,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
-import com.multimoney.data.util.catalog.SmartStep
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
@@ -56,7 +56,7 @@ class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
 
     // UIState
@@ -102,7 +102,7 @@ class ProductViewModel @Inject constructor(
         creditStatus: Int,
         accountStatus: Int,
         cryptoStatus: Int,
-        cardStatus: Int
+        cardStatus: Int,
     ) = executeUseCase {
         queryBalanceUseCase.invoke(
             user = user,
@@ -131,7 +131,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun callQueryGetConfigurationVersion(
-        idBrand: Int
+        idBrand: Int,
     ) = executeUseCase {
         queryGetConfigurationVersionUseCase.invoke(
             platform = ConfigurationPlatform.Android.value,
@@ -157,7 +157,7 @@ class ProductViewModel @Inject constructor(
         pkUser: Int,
         identification: String,
         email: String,
-        idBrand: Int
+        idBrand: Int,
     ) = executeUseCase {
         queryValidateUserStatusUseCase.invoke(
             pkUser,
@@ -180,7 +180,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onValidateUserStatusSuccess(userStatus: ValidateUserStatus) {
-        lastStep = SmartStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
+        lastStep = CreditStep.Search.getIdByName(userStatus.infoCredit?.infoPreApprove?.currentStep)
         uiState = uiState.copy(userStatus = userStatus)
         callQueryBalanceUseCase(
             user = email,
@@ -215,26 +215,26 @@ class ProductViewModel @Inject constructor(
         val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
         val infoCredit = uiState.userStatus?.infoCredit
         val route = if ((
-            creditSummary?.size
-                ?: 0
-            ) > 1 && validateQuotas(creditSummary) && uiState.idBrand.toInt() == Brand.CostaRica.id
+                    creditSummary?.size
+                        ?: 0
+                    ) > 1 && validateQuotas(creditSummary) && uiState.idBrand.toInt() == Brand.CostaRica.id
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(
-                creditSummary
-            )
+                encodeData(
+                    creditSummary
+                )
             }"
         } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(
-                listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
-            )
+                encodeData(
+                    listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
+                )
             }"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-            encodeData(
-                configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true }
-            )
+                encodeData(
+                    configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true }
+                )
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}"
         }
         navigateTo("${Screen.SmartScreen.baseRoute}/${userName}/${uiState.idBrand}/${pkUser}")
@@ -273,19 +273,19 @@ class ProductViewModel @Inject constructor(
 
     private fun getProgress() {
         productProgress = (
-            balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
-                ?: DEFAULT_PROGRESS
-            ) / (
-            balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
-                ?: DEFAULT_PROGRESS
-            )
+                balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
+                    ?: DEFAULT_PROGRESS
+                ) / (
+                balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
+                    ?: DEFAULT_PROGRESS
+                )
     }
 
     private fun isExpired() {
         isExpiredTitle = if ((
-            balanceCredit?.getFirstSummary()?.daysExpired
-                ?: 0
-            ) > 0
+                    balanceCredit?.getFirstSummary()?.daysExpired
+                        ?: 0
+                    ) > 0
         ) R.string.home_product_expired else R.string.home_product_expiration
     }
 
@@ -294,25 +294,25 @@ class ProductViewModel @Inject constructor(
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
-                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
-                        (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
+                            infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
+                            (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
                 CREDIT_MAX_ATTEMPTS -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
                 CREDIT_IDENTITY_INCOMPLETE -> {
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
-                        SmartStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) == SmartStep.Seven.id
-                        )
+                            CreditStep.Search.getIdByName(
+                                infoCredit?.infoPreApprove?.currentStep
+                            ) == CreditStep.Seven.id
+                            )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
-                        SmartStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) < SmartStep.Seven.id
-                        )
+                            CreditStep.Search.getIdByName(
+                                infoCredit?.infoPreApprove?.currentStep
+                            ) < CreditStep.Seven.id
+                            )
                 }
                 CREDIT_REJECTED -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
@@ -328,7 +328,7 @@ class ProductViewModel @Inject constructor(
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        var hasBalance: Boolean = false
+        var hasBalance: Boolean = false,
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -363,7 +363,7 @@ class ProductViewModel @Inject constructor(
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
         data class OnMaxAttemptsCardClick(
             val whatsAppLink: String,
-            val context: Context
+            val context: Context,
         ) : UIEvent()
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
@@ -374,13 +374,13 @@ class ProductViewModel @Inject constructor(
         object IsPaymentExpired : UIEvent()
         data class OnProductClick(
             val whatsAppLink: String,
-            val context: Context
+            val context: Context,
         ) : UIEvent()
 
         object OnGetIdBrand : UIEvent()
         data class OnShareIbanAccount(
             val context: Context,
-            val account: String
+            val account: String,
         ) : UIEvent()
     }
 

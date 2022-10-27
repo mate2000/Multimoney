@@ -7,8 +7,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SmartStep
-import com.multimoney.data.util.catalog.SmartStep.Search
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -54,7 +53,7 @@ class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    val queryScreenConfigUseCase: QueryScreenConfigUseCase
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase,
 ) : BaseViewModel(true) {
 
     // UIState
@@ -65,8 +64,8 @@ class CreditViewModel @Inject constructor(
     var closeDialogTitle: Int = R.string.empty
     var closeDialogDescription: String = ""
     var nextAction: () -> Unit = {}
-    private var nextStep: Int = SmartStep.One.id
-    private var previousStep: Int = SmartStep.One.id
+    private var nextStep: Int = CreditStep.One.id
+    private var previousStep: Int = CreditStep.One.id
     var currencySymbol = ""
     var idBrand: String = ""
     var pkUser: String = ""
@@ -124,8 +123,8 @@ class CreditViewModel @Inject constructor(
         if (step <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = step,
-                isCloseVisible = step >= SmartStep.One.id,
-                lastStep = SmartStep.One.id
+                isCloseVisible = step >= CreditStep.One.id,
+                lastStep = CreditStep.One.id
             )
         } else {
             popAndNavigateTo(
@@ -139,7 +138,7 @@ class CreditViewModel @Inject constructor(
         if (nextStep <= CREDIT_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep >= SmartStep.One.id
+                isCloseVisible = nextStep >= CreditStep.One.id
             )
         } else {
             documentGenerationProcess()
@@ -147,10 +146,10 @@ class CreditViewModel @Inject constructor(
     }
 
     private fun previousStep() {
-        if (previousStep > SmartStep.One.id || uiState.currentStep == SmartStep.Two.id) {
+        if (previousStep > CreditStep.One.id || uiState.currentStep == CreditStep.Two.id) {
             uiState = uiState.copy(
                 currentStep = previousStep,
-                isCloseVisible = previousStep >= SmartStep.One.id
+                isCloseVisible = previousStep >= CreditStep.One.id
             )
         } else {
             popAndNavigateTo(
@@ -181,7 +180,7 @@ class CreditViewModel @Inject constructor(
                 infoQuestion = saveCreditStepsHelper.creditFlowData,
                 idLogUserRequest = idUserRequest.toInt(),
                 idUser = pkUser.toInt(),
-                currentStep = Search.getNameById(nextStep)
+                currentStep = CreditStep.Search.getNameById(nextStep)
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
@@ -216,14 +215,14 @@ class CreditViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val currentStep: Int = SmartStep.One.id,
+        val currentStep: Int = CreditStep.One.id,
         val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val isCurrentLocationButtonVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var lastStep: Int = 1,
-        var loadContent: Boolean = false
+        var loadContent: Boolean = false,
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -275,7 +274,7 @@ class CreditViewModel @Inject constructor(
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
-            val previousStep: Int
+            val previousStep: Int,
         ) : UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()

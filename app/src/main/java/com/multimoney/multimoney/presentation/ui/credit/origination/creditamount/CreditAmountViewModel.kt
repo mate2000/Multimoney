@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.multimoney.data.util.catalog.SmartStep
+import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
@@ -215,7 +215,7 @@ class CreditAmountViewModel @Inject constructor(
             minimumAmount = minimumDisbursement.toDouble(),
             creditLimit = maximumDisbursement.toDouble(),
             tractAmount = uiState.progressFactor,
-            currentStep = SmartStep.Two.name
+            currentStep = CreditStep.Two.name
         ).collectLatest { result ->
             result.onSuccess {
                 onCallQueryScreenConfig(

@@ -4,14 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.multimoney.multimoney.R
-import kotlin.time.Duration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlin.time.Duration
 
 fun Context.openWhatsAppDeepLink(link: String) {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(link)
     this.startActivity(intent)
+}
+
+fun Context.openMapsLink(latitude: String, longitude: String) {
+    val mapsIntentUri = Uri.parse(String.format("geo:%s,%s", latitude, longitude))
+    val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
+    mapIntent.setPackage("com.google.android.apps.maps")
+    this.startActivity(mapIntent)
 }
 
 fun Context.sendAccount(client: String, accountNumber: String) {

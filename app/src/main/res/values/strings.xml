@@ -294,6 +294,14 @@
     <string name="credit_bank_account_number_error" translatable="false">&lt;b>Revisar formato,&lt;/b> la cuenta no es válida</string>
     <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
 
+    <!-- Location   -->
+    <string name="payment_location_maps_address_button" translatable="false">Ver dirección en Maps</string>
+    <string name="payment_location_maps_info" translatable="false">Podés pagar utilizando el código de barras.</string>
+    <string name="payment_location_maps_address" translatable="false">Dirección</string>
+    <string name="payment_location_maps_opening_time" translatable="false">Horario</string>
+    <string name="payment_location_maps_payment_amount" translatable="false">Monto a pagar:</string>
+    <string name="payment_location_maps_payment_id" translatable="false">Nº de pagaré:</string>
+
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>

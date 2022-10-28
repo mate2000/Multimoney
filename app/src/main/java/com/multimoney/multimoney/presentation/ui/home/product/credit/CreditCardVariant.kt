@@ -142,8 +142,10 @@ fun CardSmartProduct(
                     Text(
                         text = "${brandId.getCurrency()}$profitMonthly ${stringResource(id = R.string.smart_card_monthly_profit_label)} $currentMonth",
                         modifier = Modifier.padding(start = 4.dp),
-                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                        color = MultimoneyTheme.colors.text
+                        style = Typography.body2.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MultimoneyTheme.colors.text
+                        )
                     )
                 }
             }
@@ -607,9 +609,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                            ?: 0
-                                        ) > 0
+                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                    ?: 0
+                                                ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

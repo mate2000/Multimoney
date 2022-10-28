@@ -431,13 +431,6 @@
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
 
-    <!-- Payment Amount -->
-    <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
-    <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
-    <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
-    <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
-    <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
-
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
@@ -449,4 +442,26 @@
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+
+
+    <!-- Payment Amount -->
+    <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
+    <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
+    <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
+    <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
+    <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
+
+    <!-- Payment Amount Bottom Sheet -->
+    <string name="payment_amount_bottom_sheet_title" translatable="false">Monto a pagar</string>
+    <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
+    <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
+    <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
+    <string name="payment_amount_bottom_sheet_amount_automatic_checkbox" translatable="false">Programar pago automático</string>
+    <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
+    <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
+    <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
+
+    <!-- Payment Amount Error -->
+    <string name="payment_amount_error_button" translatable="false">Ir al inicio</string>
+
 </resources>

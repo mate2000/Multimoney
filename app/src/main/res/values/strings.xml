@@ -17,12 +17,16 @@
     <string name="placeholder_error" translatable="false">Error de proceso</string>
     <string name="whatsapp_deep_link" translatable="false">https://api.whatsapp.com/send/?phone=%1$s&amp;text&amp;app_absent=0</string>
     <string name="select" translatable="false">Seleccionar</string>
+    <string name="gender" translatable="false">Género</string>
+    <string name="civil_state" translatable="false">Estado civil</string>
+    <string name="profession" translatable="false">Profesión</string>
     <string name="empty" translatable="false"></string>
     <string name="understood" translatable="false">Entendido</string>
     <string name="activate" translatable="false">Activar</string>
     <string name="locked" translatable="false">Bloquear</string>
     <string name="see_data" translatable="false">Ver datos</string>
     <string name="link" translatable="false">Vincular</string>
+    <string name="general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -56,7 +60,6 @@
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
-    <string name="sign_up_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
@@ -435,8 +438,15 @@
     <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
     <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
 
+    <!-- Smart Account -->
+    <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
+    <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
+    <string name="smart_account_document_issue_date_required" translatable="false">Fecha de nacimiento requerida</string>
+    <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
+    <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
+    <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
+
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
-
 </resources>

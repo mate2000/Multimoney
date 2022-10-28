@@ -52,7 +52,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgr
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
 
 /**
- * Composable function to show the option to active smart product
+ * Composable function to show the option to active accountsmart product
  */
 @Composable
 @Preview

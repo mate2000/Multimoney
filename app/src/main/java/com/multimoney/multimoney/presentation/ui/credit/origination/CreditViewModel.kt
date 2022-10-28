@@ -8,7 +8,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.data.util.catalog.CreditStep.Search
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -54,7 +53,7 @@ class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    val queryScreenConfigUseCase: QueryScreenConfigUseCase
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase,
 ) : BaseViewModel(true) {
 
     // UIState
@@ -181,7 +180,7 @@ class CreditViewModel @Inject constructor(
                 infoQuestion = saveCreditStepsHelper.creditFlowData,
                 idLogUserRequest = idUserRequest.toInt(),
                 idUser = pkUser.toInt(),
-                currentStep = Search.getNameById(nextStep)
+                currentStep = CreditStep.Search.getNameById(nextStep)
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(isLoading = false)
@@ -223,7 +222,7 @@ class CreditViewModel @Inject constructor(
         val isCurrentLocationButtonVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var lastStep: Int = 1,
-        var loadContent: Boolean = false
+        var loadContent: Boolean = false,
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -275,7 +274,7 @@ class CreditViewModel @Inject constructor(
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
-            val previousStep: Int
+            val previousStep: Int,
         ) : UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()

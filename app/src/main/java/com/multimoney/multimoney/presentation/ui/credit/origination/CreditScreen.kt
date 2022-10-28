@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R

@@ -102,14 +102,17 @@ fun CardSmartProduct(
         Text(
             text = stringResource(id = R.string.smart_card_balance),
             modifier = Modifier.padding(top = 14.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
+            style = Typography.body1.copy(
+                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
+            ),
         )
         Text(
             text = "${brandId.getCurrency()}$profitTotal",
             modifier = Modifier.padding(bottom = 10.dp),
-            style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
+            style = Typography.h4.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
         )
 
         Row(
@@ -130,8 +133,7 @@ fun CardSmartProduct(
                 Text(
                     text = stringResource(id = R.string.smart_card_monthly_profit),
                     modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.subtitle2,
-                    color = MultimoneyTheme.colors.text
+                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.text),
                 )
                 Row {
                     Icon(

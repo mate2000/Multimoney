@@ -1,0 +1,109 @@
+package com.multimoney.multimoney.presentation.ui.credit.payment.points
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent
+import com.multimoney.multimoney.presentation.uielement.CustomItemRow
+import com.multimoney.multimoney.presentation.uielement.CustomSearchBar
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.NavEvent
+
+@Composable
+fun PaymentPointsScreen(
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    viewModel: PaymentPointsViewModel = hiltViewModel()
+) {
+    LaunchedEffect(true) {
+        viewModel.apply {
+            viewModel.executeNavigation(onPopBackStack = onPopBackStack)
+            // viewModel.onUIEvent(OnGetPaymentPoints)
+        }
+    }
+    BackHandler {
+        // TODO
+    }
+    PaymentPointsContent(viewModel)
+}
+
+@Composable
+@Preview
+fun PaymentPointsContent(
+    viewModel: PaymentPointsViewModel = hiltViewModel()
+) {
+    val focusManager = LocalFocusManager.current
+    Column(
+        modifier = Modifier
+            .background(MultimoneyTheme.colors.background)
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
+        TopNavBar(
+            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
+        )
+        Spacer(modifier = Modifier.height(42.dp))
+        Text(
+            text = stringResource(id = R.string.payment_points_title),
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.labelText,
+            textAlign = TextAlign.Left
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        CustomSearchBar(
+            modifier = Modifier.padding(top = 24.dp),
+            value = viewModel.uiState.queryValue,
+            placeHolder = stringResource(id = R.string.payment_points_search),
+            onValueChange = {
+                viewModel.onUIEvent(UIEvent.OnQueryValueChange(it))
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            })
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        LazyColumn(modifier = Modifier) {
+            items(items = viewModel.uiState.pointsItemsList) { point ->
+                if (
+                    (point?.name?.contains(viewModel.uiState.queryValue, true) == true) ||
+                    (point?.description?.contains(viewModel.uiState.queryValue, true) == true)
+                ) {
+                    CustomItemRow(
+                        title = point.name ?: "",
+                        subtitle = point.description ?: "",
+                        onClick = {
+                            // TODO navigate to screen passing parameters
+                        }
+                    )
+                }
+            }
+        }
+    }
+}

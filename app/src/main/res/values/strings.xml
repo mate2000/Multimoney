@@ -449,4 +449,9 @@
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+
+    <!-- Payment Points -->
+    <string name="payment_points_search" translatable="false">Buscar</string>
+    <string name="payment_points_title" translatable="false">Puntos de pago</string>
+
 </resources>

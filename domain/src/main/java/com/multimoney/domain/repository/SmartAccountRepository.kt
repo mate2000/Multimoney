@@ -2,6 +2,7 @@ package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.accountsmart.AddressesLevelTwo
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
@@ -46,4 +47,9 @@ interface SmartAccountRepository {
                                       user: String,
                                       idBrand: Int,
                                       currentStep: String,): Flow<MultimoneyResult<GlobalRequest?>>
+
+    suspend fun queryGeneralEconomicActivity(
+        user: String,
+        idBrand: Int,
+    ): Flow<MultimoneyResult<GeneralEconomicActivityResult?>>
 }

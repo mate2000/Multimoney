@@ -451,4 +451,5 @@
     <string name="smart_account_retired_institution_placeholder" translatable="false">Nombre institución</string>
     <string name="smart_account_retired_amount_label" translatable="false">Ingreso mensual</string>
     <string name="smart_account_retired_amount_placeholder" translatable="false">$000</string>
+    <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
 </resources>

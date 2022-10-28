@@ -203,6 +203,7 @@
     <!-- Home -->
     <string name="home_my_products" translatable="false">Mis Productos</string>
     <string name="home_active_credit_card_label" translatable="false">Activa tu tarjeta digital</string>
+    <string name="home_visa_active_digital_label" translatable="false">Digital\u0020</string>
     <string name="home_on_fido_pending_title" translatable="false">Necesitamos validar tu identidad</string>
     <string name="home_on_fido_pending_description" translatable="false">Sigue el proceso de validación de tu identidad para obtener tu crédito.</string>
     <string name="home_on_fido_pending_action_text" translatable="false">Validar identidad</string>
@@ -314,7 +315,6 @@
         <item>Seguridad</item>
         <item>Informatica</item>
     </string-array>
-
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Contanos de la empresa en la que trabajás</string>

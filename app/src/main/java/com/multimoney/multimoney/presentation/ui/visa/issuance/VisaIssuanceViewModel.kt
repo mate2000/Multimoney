@@ -81,10 +81,7 @@ class VisaIssuanceViewModel @Inject constructor(savedStateHandle: SavedStateHand
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNavigateBack -> popAndNavigateTo(
-                route = Screen.HomeScreen.route,
-                popTo = Screen.VisaIssuanceScreen.route
-            )
+            is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is OnIssuanceClick -> popAndNavigateTo(
                 "${Screen.VisaCardScreen.baseRoute}/$idBrand",
                 Screen.VisaIssuanceScreen.route

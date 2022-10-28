@@ -29,6 +29,16 @@ const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
 
+// Payment maps location parameters
+const val LOCATION_MAPS_PREFIX = "location_maps_"
+const val LOCATION_MAPS_NAME = LOCATION_MAPS_PREFIX + "location_name"
+const val LOCATION_MAPS_ADDRESS = LOCATION_MAPS_PREFIX + "location_address"
+const val LOCATION_MAPS_OPENING_TIME = LOCATION_MAPS_PREFIX + "location_opening_time"
+const val LOCATION_MAPS_PAYMENT_AMOUNT = LOCATION_MAPS_PREFIX + "payment_amount"
+const val LOCATION_MAPS_PAYMENT_ID = LOCATION_MAPS_PREFIX + "payment_id"
+const val LOCATION_MAPS_LATITUDE = LOCATION_MAPS_PREFIX + "latitude"
+const val LOCATION_MAPS_LONGITUDE = LOCATION_MAPS_PREFIX + "longitude"
+
 fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
     navigation(
         startDestination = Screen.PaymentFeeScreen.route,

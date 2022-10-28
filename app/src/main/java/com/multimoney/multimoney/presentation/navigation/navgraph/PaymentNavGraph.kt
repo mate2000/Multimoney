@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
 
 // payment process parameters
 const val USER = "user"
@@ -168,6 +169,25 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         ) {
             PaymentOptionsTransferScreen(
                 onNavigate = { navController.navigate(it.route) },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.PaymentPointsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            PaymentPointsScreen(
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(

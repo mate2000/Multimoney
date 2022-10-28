@@ -438,12 +438,11 @@
     <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
     <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
 
-<<<<<<< HEAD
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
     <string name="smart_card_monthly_profit_label" translatable="false">ganancia</string>
-=======
+
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
@@ -468,6 +467,5 @@
     <string name="payment_options_transfer_go_home" translatable="false">Ir al inicio</string>
     <string name="payment_options_transfer_close_dialog_title" translatable="false">¿Estás seguro que querés salir? </string>
     <string name="payment_options_transfer_close_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
->>>>>>> develop
 
 </resources>

@@ -41,7 +41,7 @@ import com.multimoney.multimoney.presentation.util.DialogParameters
 @Preview
 fun CreditDocumentScreen(
     viewModel: CreditDocumentViewModel = hiltViewModel(),
-    sharedViewModel: CreditViewModel = hiltViewModel()
+    sharedViewModel: CreditViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val launchOnFidoActivityResult =

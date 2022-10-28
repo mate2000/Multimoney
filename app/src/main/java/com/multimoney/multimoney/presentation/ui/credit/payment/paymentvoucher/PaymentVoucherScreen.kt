@@ -158,7 +158,7 @@ fun PaymentVoucherScreen(
                         Modifier
                             .height(1.dp)
                             .fillMaxWidth()
-                            .background(MultimoneyTheme.colors.divider, shape = DottedShape(step = 10.dp))
+                            .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 10.dp))
                     )
                     Text(
                         text = stringResource(string.payment_voucher_from_your_account_label),

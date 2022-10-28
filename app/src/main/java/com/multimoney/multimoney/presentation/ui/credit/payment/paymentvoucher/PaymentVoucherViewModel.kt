@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PaymentVoucherViewModel @Inject constructor(
-    val shareHelper: ShareHelper
+    private val shareHelper: ShareHelper
 ) : BaseViewModel(true) {
 
     // UIState

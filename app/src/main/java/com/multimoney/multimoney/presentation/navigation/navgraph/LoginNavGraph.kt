@@ -12,7 +12,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCo
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBack
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
-import com.multimoney.multimoney.presentation.ui.payment.paymentvoucher.PaymentVoucherScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
 
 const val SIGN_UP_STEP = "sign_up_step"

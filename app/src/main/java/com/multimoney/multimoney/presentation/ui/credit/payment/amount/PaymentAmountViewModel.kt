@@ -154,7 +154,7 @@ class PaymentAmountViewModel @Inject constructor(
                 ),
             currentAmountError = if (value.isNotEmpty() && value.toInt() > maximumPayment) {
                 Pair(true, R.string.payment_amount_amount_max_error)
-            } else if (value.isEmpty() || value.toInt() <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
+            } else if (value.isNotEmpty() && value.toInt() <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
                 Pair(true, R.string.payment_amount_amount_min_error)
             } else {
                 Pair(false, R.string.empty)

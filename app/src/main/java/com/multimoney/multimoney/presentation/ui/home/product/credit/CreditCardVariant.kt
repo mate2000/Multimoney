@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,9 +49,10 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
+import com.multimoney.multimoney.presentation.util.getCardDateFormat
 
 /**
- * Composable function to show the option to active smart product
+ * Composable function to show the option to active accountsmart product
  */
 @Composable
 @Preview
@@ -447,7 +450,7 @@ fun CardCreditMaxAttempts(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalTextApi::class)
 @Composable
 fun OngoingCredit(
     viewModel: ProductViewModel
@@ -545,17 +548,23 @@ fun OngoingCredit(
                                         ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
-                                .padding(top = 2.dp, start = 3.dp)
                         )
                     },
                     onClick = {
                         // Empty on purpose
                     },
                     content = {
-                        Text(
-                            text = viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel.toString(),
-                            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold)
-                        )
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(
+                                text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
+                                style = Typography.body1.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    platformStyle = PlatformTextStyle(
+                                        includeFontPadding = false
+                                    )
+                                )
+                            )
+                        }
                     }
                 )
             }

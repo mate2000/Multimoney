@@ -20,11 +20,11 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
                     innerNavController.navigate(navEvent.route) {
                         innerNavController.graph.startDestinationRoute?.let { screenRoute ->
                             popUpTo(screenRoute) {
-                                saveState = true
+                                saveState = false
                             }
                         }
                         launchSingleTop = true
-                        restoreState = true
+                        restoreState = false
                     }
                 }
             )

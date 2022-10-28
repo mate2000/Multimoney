@@ -11,17 +11,21 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
+import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.credit.ProductMovement
+import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
+import com.multimoney.domain.model.util.catalog.ConfigurationPlatform
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -51,7 +55,8 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
-    private val dataStorePreferences: DataStorePreferences
+    private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
+    private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
 
     // UIState
@@ -61,6 +66,7 @@ class ProductViewModel @Inject constructor(
     // Stateless
     var lastStep: Int = 1
     var balanceCredit: Balance? = null
+    var configurationVersion: ConfigurationVersion? = null
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
@@ -82,6 +88,8 @@ class ProductViewModel @Inject constructor(
                 email,
                 uiState.idBrand.toInt()
             )
+
+            callQueryGetConfigurationVersion(uiState.idBrand.toInt())
         }
     }
 
@@ -94,32 +102,53 @@ class ProductViewModel @Inject constructor(
         creditStatus: Int,
         accountStatus: Int,
         cryptoStatus: Int,
-        cardStatus: Int
-    ) {
-        executeUseCase {
-            queryBalanceUseCase.invoke(
-                user = user,
-                identification = identification,
-                idBrand = idBrand,
-                idClient = idClient,
-                idLoanClient = idLoanClient,
-                creditStatus = creditStatus,
-                accountStatus = accountStatus,
-                cryptoStatus = cryptoStatus,
-                cardStatus = cardStatus
-            ).collectLatest { result ->
-                result.onSuccess { balance ->
-                    uiState = uiState.copy(isLoading = false)
-                    balance?.let {
-                        balanceCredit = it
-                    }
+        cardStatus: Int,
+    ) = executeUseCase {
+        queryBalanceUseCase.invoke(
+            user = user,
+            identification = identification,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            creditStatus = creditStatus,
+            accountStatus = accountStatus,
+            cryptoStatus = cryptoStatus,
+            cardStatus = cardStatus
+        ).collectLatest { result ->
+            result.onSuccess { balance ->
+                configurationVersion?.let { uiState = uiState.copy(isLoading = false) }
+                balance?.let {
+                    balanceCredit = it
                 }
-                result.onFailure {
-                    onFailure(it)
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun callQueryGetConfigurationVersion(
+        idBrand: Int,
+    ) = executeUseCase {
+        queryGetConfigurationVersionUseCase.invoke(
+            platform = ConfigurationPlatform.Android.value,
+            appVersion = BuildConfig.VERSION_NAME,
+            idBrand = idBrand
+        ).collectLatest { result ->
+            result.onSuccess { configurationVersion ->
+                balanceCredit?.let { uiState = uiState.copy(isLoading = false) }
+                configurationVersion?.let {
+                    this.configurationVersion = it
                 }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
             }
         }
     }
@@ -128,27 +157,24 @@ class ProductViewModel @Inject constructor(
         pkUser: Int,
         identification: String,
         email: String,
-        idBrand: Int
-    ) {
-        viewModelScope.launch {
-            queryValidateUserStatusUseCase.invoke(
-                pkUser,
-                identification,
-                email,
-                idBrand
-            ).collectLatest { result ->
-                result.onSuccess { validateUserStatus ->
-                    uiState = uiState.copy(isLoading = false)
-                    validateUserStatus?.let {
-                        onValidateUserStatusSuccess(it)
-                    }
+        idBrand: Int,
+    ) = executeUseCase {
+        queryValidateUserStatusUseCase.invoke(
+            pkUser,
+            identification,
+            email,
+            idBrand
+        ).collectLatest { result ->
+            result.onSuccess { validateUserStatus ->
+                validateUserStatus?.let {
+                    onValidateUserStatusSuccess(it)
                 }
-                result.onFailure {
-                    onFailure(it)
-                }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
             }
         }
     }
@@ -189,26 +215,29 @@ class ProductViewModel @Inject constructor(
         val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
         val infoCredit = uiState.userStatus?.infoCredit
         val route = if ((
-            creditSummary?.size
-                ?: 0
-            ) > 1 && validateQuotas(creditSummary) && uiState.idBrand.toInt() == Brand.CostaRica.id
+                    creditSummary?.size
+                        ?: 0
+                    ) > 1 && validateQuotas(creditSummary) && uiState.idBrand.toInt() == Brand.CostaRica.id
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(
-                creditSummary
-            )
+                encodeData(
+                    creditSummary
+                )
             }"
         } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(
-                listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
-            )
+                encodeData(
+                    listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
+                )
             }"
         } else {
-            // TODO: Send to appropriate screen when is implemented
-            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
+            "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
+                encodeData(
+                    configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true }
+                )
+            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}"
         }
-        navigateTo(route)
+        navigateTo("${Screen.SmartScreen.baseRoute}/${userName}/${uiState.idBrand}/${pkUser}")
     }
 
     private fun validateQuotas(summaryList: List<Summary>?): Boolean {
@@ -244,19 +273,19 @@ class ProductViewModel @Inject constructor(
 
     private fun getProgress() {
         productProgress = (
-            balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
-                ?: DEFAULT_PROGRESS
-            ) / (
-            balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
-                ?: DEFAULT_PROGRESS
-            )
+                balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
+                    ?: DEFAULT_PROGRESS
+                ) / (
+                balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
+                    ?: DEFAULT_PROGRESS
+                )
     }
 
     private fun isExpired() {
         isExpiredTitle = if ((
-            balanceCredit?.getFirstSummary()?.daysExpired
-                ?: 0
-            ) > 0
+                    balanceCredit?.getFirstSummary()?.daysExpired
+                        ?: 0
+                    ) > 0
         ) R.string.home_product_expired else R.string.home_product_expiration
     }
 
@@ -265,25 +294,25 @@ class ProductViewModel @Inject constructor(
             return when (action) {
                 CREDIT_INITIAL_CARD -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
-                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
-                        (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
+                            infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
+                            (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
                 CREDIT_MAX_ATTEMPTS -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
                 CREDIT_IDENTITY_INCOMPLETE -> {
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
-                        CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Seven.id
-                        )
+                            CreditStep.Search.getIdByName(
+                                infoCredit?.infoPreApprove?.currentStep
+                            ) == CreditStep.Seven.id
+                            )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
-                        CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Seven.id
-                        )
+                            CreditStep.Search.getIdByName(
+                                infoCredit?.infoPreApprove?.currentStep
+                            ) < CreditStep.Seven.id
+                            )
                 }
                 CREDIT_REJECTED -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
@@ -298,7 +327,8 @@ class ProductViewModel @Inject constructor(
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var hasBalance: Boolean = false,
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -319,8 +349,8 @@ class ProductViewModel @Inject constructor(
                 uiEvent.context,
                 uiEvent.account
             )
-            OnProgressCalculation -> getProgress()
-            IsPaymentExpired -> isExpired()
+            is OnProgressCalculation -> getProgress()
+            is IsPaymentExpired -> isExpired()
         }
     }
 
@@ -333,7 +363,7 @@ class ProductViewModel @Inject constructor(
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
         data class OnMaxAttemptsCardClick(
             val whatsAppLink: String,
-            val context: Context
+            val context: Context,
         ) : UIEvent()
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
@@ -344,13 +374,13 @@ class ProductViewModel @Inject constructor(
         object IsPaymentExpired : UIEvent()
         data class OnProductClick(
             val whatsAppLink: String,
-            val context: Context
+            val context: Context,
         ) : UIEvent()
 
         object OnGetIdBrand : UIEvent()
         data class OnShareIbanAccount(
             val context: Context,
-            val account: String
+            val account: String,
         ) : UIEvent()
     }
 

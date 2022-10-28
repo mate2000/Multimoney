@@ -1,0 +1,61 @@
+# Welcome to Altair GraphQL Client.
+# You can send your request using CmdOrCtrl + Enter.
+
+# Enter your graphQL query here.
+
+query GetConfigurationVersion($platform: String!, $appVersion: String!, $idBrand: Int!){
+    getConfigurationVersion(
+        getConfigurationVersionInput: {
+            platform: $platform
+            appVersion: $appVersion
+            idBrand: $idBrand
+        }
+    ) {
+        aCTIVA
+        configuracionVersion {
+            timeSesion
+            moneda {
+                codigo
+                descripcion
+            }
+            accountSmart {
+                activo
+                metodoAbono {
+                    descripcion
+                    tipo
+                    mascara
+                    activo
+                }
+                metodoTransferencia {
+                    descripcion
+                    tipo
+                    mascara
+                    activo
+                }
+            }
+            credit {
+                activo
+                metodoPago {
+                    descripcion
+                    tipo
+                    mascara
+                    activo
+                }
+                cuentaTransferencia {
+                    numeroCuenta
+                    banco
+                    tipoTransferencia
+                    nombreBeneficiario
+                }
+            }
+            crypto {
+                activo
+                origen
+                habilitarTransferencias
+            }
+            virtualCard {
+                activo
+            }
+        }
+    }
+}

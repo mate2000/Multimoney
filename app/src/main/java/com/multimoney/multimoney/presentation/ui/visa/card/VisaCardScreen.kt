@@ -17,9 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
@@ -35,8 +33,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun VisaCardScreen(
-    navBackStackEntry: NavBackStackEntry,
-    onPopBackStack: () -> Unit = {},
+    onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaCardViewModel = hiltViewModel()
 ) {
@@ -81,14 +78,7 @@ fun VisaCardScreen(
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
                 modifier = Modifier.padding(top = 16.dp),
                 onClick = {
-                    viewModel.onUIEvent(
-                        UIEvent.OnAvailableAmountClick(
-                            navBackStackEntry.arguments?.getString(
-                                ID_BRAND,
-                                ""
-                            ) ?: ""
-                        )
-                    )
+                    viewModel.onUIEvent(UIEvent.OnAvailableAmountClick)
                 },
                 shape = RoundedCornerShape(24.dp),
                 background = WhiteTransparency10,

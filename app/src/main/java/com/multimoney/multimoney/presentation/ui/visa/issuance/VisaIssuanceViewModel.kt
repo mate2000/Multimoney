@@ -3,11 +3,12 @@ package com.multimoney.multimoney.presentation.ui.visa.issuance
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnIssuanceClick
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.NfcHelper
@@ -15,12 +16,22 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class VisaIssuanceViewModel @Inject constructor(private val nfcHelper: NfcHelper) : BaseViewModel(true) {
+class VisaIssuanceViewModel @Inject constructor(savedStateHandle: SavedStateHandle, private val nfcHelper: NfcHelper) :
+    BaseViewModel(true) {
+
     // uiState
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun getTextResources(idBrand: Int) {
+    // Stateless
+    private var idBrand: Int = 0
+
+    init {
+        idBrand = savedStateHandle.get<String>(ID_BRAND)?.toInt() ?: 0
+        getTextResources()
+    }
+
+    private fun getTextResources() {
         when {
             idBrand == Brand.ElSalvador.id && nfcHelper.isNfcSupported() -> {
                 uiState = uiState.copy(
@@ -70,22 +81,16 @@ class VisaIssuanceViewModel @Inject constructor(private val nfcHelper: NfcHelper
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNavigateBack -> popAndNavigateTo(
-                route = Screen.HomeScreen.route,
-                popTo = Screen.VisaIssuanceScreen.route
-            )
-            is OnGetTextResources -> getTextResources(uiEvent.idBrand.toInt())
+            is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is OnIssuanceClick -> popAndNavigateTo(
-                "${Screen.VisaCardScreen.baseRoute}/${uiEvent.idBrand}",
+                "${Screen.VisaCardScreen.baseRoute}/$idBrand",
                 Screen.VisaIssuanceScreen.route
             )
         }
-
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
-        class OnGetTextResources(val idBrand: String) : UIEvent()
-        class OnIssuanceClick(val idBrand: String) : UIEvent()
+        object OnIssuanceClick : UIEvent()
     }
 }

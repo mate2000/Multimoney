@@ -45,7 +45,8 @@ private fun ValidateUserStatusQuery.InfoProduct.mapToDomainModel() =
     Product(idProduct, amountAvailable.toString(), symbolCurrency)
 
 private fun ValidateUserStatusQuery.InfoBankAccount.mapToDomainModel() = InfoBankAccount(
-    statusFirm = statusFirm, status = status
+    statusFirm = statusFirm,
+    status = status
 )
 
 private fun ValidateUserStatusQuery.InfoCrypto.mapToDomainModel() = InfoCrypto(status = status)

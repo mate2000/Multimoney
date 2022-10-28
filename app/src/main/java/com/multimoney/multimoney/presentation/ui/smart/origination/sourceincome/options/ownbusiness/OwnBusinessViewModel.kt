@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

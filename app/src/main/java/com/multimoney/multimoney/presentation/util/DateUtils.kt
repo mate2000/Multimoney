@@ -1,6 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.Companion.DATE_FORMAT
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.Companion.DATE_FORMAT
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset.UTC

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
@@ -25,13 +25,13 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.OwnBusinessViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyDescriptionChange
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyNameChange
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.OwnBusinessViewModel.UIEvent.OnMonthlyIncomeChange
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.OwnBusinessViewModel.UIState
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyDescriptionChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyNameChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnMonthlyIncomeChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent

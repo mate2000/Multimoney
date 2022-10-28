@@ -24,8 +24,8 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentScreen
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.SourceIncomeScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog

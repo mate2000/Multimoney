@@ -1,10 +1,10 @@
-package com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.options.SourceIncomeOptionsScreen
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceincome.ownbusiness.SmartOwnBusinessSvScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.SmartOwnBusinessSvScreen
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 
 /**

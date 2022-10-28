@@ -446,4 +446,9 @@
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
+    <string name="smart_account_retired_title" translatable="false">Jubilado</string>
+    <string name="smart_account_retired_institution_label" translatable="false">Institución con la que recibe la pensión</string>
+    <string name="smart_account_retired_institution_placeholder" translatable="false">Nombre institución</string>
+    <string name="smart_account_retired_amount_label" translatable="false">Ingreso mensual</string>
+    <string name="smart_account_retired_amount_placeholder" translatable="false">$000</string>
 </resources>

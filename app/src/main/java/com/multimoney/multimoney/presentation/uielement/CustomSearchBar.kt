@@ -13,15 +13,34 @@ import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.VisualTransformation
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.*
-import kotlinx.coroutines.flow.*
+import com.multimoney.multimoney.presentation.theme.DefaultBlack
+import com.multimoney.multimoney.presentation.theme.GrayScale300
+import com.multimoney.multimoney.presentation.theme.GrayScale400
+import com.multimoney.multimoney.presentation.theme.GrayScale500
+import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -23,7 +23,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.*
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency50
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 
 @Composable
 @Preview
@@ -61,7 +65,7 @@ fun CustomItemRow(
                 painter = painterResource(id = startIcon),
                 contentDescription = ""
             )
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Column(modifier = Modifier.fillMaxWidth().padding(end = 16.dp)) {
                 Text(
                     text = title,

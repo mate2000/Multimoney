@@ -9,13 +9,18 @@ import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogNegativeButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -46,18 +51,25 @@ class PaymentPointsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() {
-        popAndNavigateTo(
-            route = "", // TODO define the previous screen
-            popTo = Screen.PaymentPointsScreen.route
+    private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
+
+    private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+
+    private fun onCloseScreen() {
+        uiState = uiState.copy(
+            dialogParameters = uiState.dialogParameters.copy(
+                isActive = mutableStateOf(true),
+                positiveAction = { onUIEvent(OnDialogPositiveButtonClick) },
+                negativeAction = { onUIEvent(OnDialogNegativeButtonClick) }
+            )
         )
     }
 
-    private fun onCloseScreen() {
-        // TODO insertar dialog
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.PaymentPointsScreen.route
+    private fun onCloseDialog() {
+        uiState = uiState.copy(
+            dialogParameters = uiState.dialogParameters.copy(
+                isActive = mutableStateOf(false)
+            )
         )
     }
 
@@ -68,49 +80,47 @@ class PaymentPointsViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(
-                        pointsItemsList = it ?: listOf()
+                        pointsItemsList = it ?: listOf(),
+                        isLoading = false
                     )
                 }.onFailure {
+                    uiState = uiState.copy(
+                        pointsItemsList = listOf(),
+                        isLoading = false
+                    )
                 }.onLoading {
-                    // onLoadingValueChange(true)
+                    onLoadingValueChange(true)
                 }
             }
         }
 
+    private fun onLoadingValueChange(isLoading: Boolean) {
+        uiState = uiState.copy(isLoading = isLoading)
+    }
+
     data class UIState(
         // Interactions
         val queryValue: String = "",
-        val pointsItemsList: List<PaymentPoint?> = listOf(
-            PaymentPoint(
-                name = "Farmacias Económicas",
-                description = "Col. San Francisco Ave. Las Ama",
-                address = null,
-                addressDescription = null,
-                schedule = null
-            ),
-            PaymentPoint(
-                name = "Farmacias Costosas",
-                description = "Col. Bogota, Colombia",
-                address = null,
-                addressDescription = null,
-                schedule = null
-            ),
-            PaymentPoint(
-                name = "Farmacias Regulares",
-                description = "Col. Caracas, Venezuela",
-                address = null,
-                addressDescription = null,
-                schedule = null
-            )
-        )
+        val pointsItemsList: List<PaymentPoint?> = listOf(),
+        val dialogParameters: DialogParameters = DialogParameters(
+            titleResource = R.string.payment_points_dialog_title,
+            descriptionResource = R.string.payment_points_dialog_description,
+            isActive = mutableStateOf(false),
+            positiveResource = R.string.payment_points_dialog_positive_button,
+            negativeResource = R.string.payment_points_dialog_negative_button
+        ),
+        val isLoading: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
+            is OnDialogPositiveButtonClick -> onNavigateHome()
+            is OnDialogNegativeButtonClick -> onCloseDialog()
             is OnCloseScreenClick -> onCloseScreen()
             is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is OnGetPaymentPoints -> onGetPaymentPoints()
+            is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
         }
     }
 
@@ -120,5 +130,8 @@ class PaymentPointsViewModel @Inject constructor(
         data class OnQueryValueChange(val value: String) : UIEvent()
         object OnGetPaymentPoints : UIEvent()
         object OnItemPointClick : UIEvent()
+        object OnDialogPositiveButtonClick : UIEvent()
+        object OnDialogNegativeButtonClick : UIEvent()
+        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
     }
 }

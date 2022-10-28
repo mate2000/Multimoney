@@ -28,8 +28,11 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.CustomSearchBar
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -41,11 +44,11 @@ fun PaymentPointsScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             viewModel.executeNavigation(onPopBackStack = onPopBackStack)
-            // viewModel.onUIEvent(OnGetPaymentPoints)
+            viewModel.onUIEvent(OnGetPaymentPoints)
         }
     }
     BackHandler {
-        // TODO
+        viewModel.onUIEvent(UIEvent.OnNavigateBack)
     }
     PaymentPointsContent(viewModel)
 }
@@ -60,50 +63,69 @@ fun PaymentPointsContent(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
     ) {
         TopNavBar(
-            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
+            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
+            onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnCloseScreenClick) }
         )
-        Spacer(modifier = Modifier.height(42.dp))
-        Text(
-            text = stringResource(id = R.string.payment_points_title),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText,
-            textAlign = TextAlign.Left
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        CustomSearchBar(
-            modifier = Modifier.padding(top = 24.dp),
-            value = viewModel.uiState.queryValue,
-            placeHolder = stringResource(id = R.string.payment_points_search),
-            onValueChange = {
-                viewModel.onUIEvent(UIEvent.OnQueryValueChange(it))
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            })
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        LazyColumn(modifier = Modifier) {
-            items(items = viewModel.uiState.pointsItemsList) { point ->
-                if (
-                    (point?.name?.contains(viewModel.uiState.queryValue, true) == true) ||
-                    (point?.description?.contains(viewModel.uiState.queryValue, true) == true)
-                ) {
-                    CustomItemRow(
-                        title = point.name ?: "",
-                        subtitle = point.description ?: "",
-                        onClick = {
-                            // TODO navigate to screen passing parameters
-                        }
-                    )
+        Column(
+            modifier = Modifier
+                .background(MultimoneyTheme.colors.background)
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(42.dp))
+            Text(
+                text = stringResource(id = R.string.payment_points_title),
+                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.labelText,
+                textAlign = TextAlign.Left
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            CustomSearchBar(
+                modifier = Modifier.padding(top = 24.dp),
+                value = viewModel.uiState.queryValue,
+                placeHolder = stringResource(id = R.string.payment_points_search),
+                onValueChange = {
+                    viewModel.onUIEvent(UIEvent.OnQueryValueChange(it))
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                })
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            LazyColumn(modifier = Modifier) {
+                items(items = viewModel.uiState.pointsItemsList) { point ->
+                    if (
+                        (point?.name?.contains(viewModel.uiState.queryValue, true) == true) ||
+                        (point?.description?.contains(viewModel.uiState.queryValue, true) == true)
+                    ) {
+                        CustomItemRow(
+                            title = point.name ?: "",
+                            subtitle = point.description ?: "",
+                            onClick = {
+                                // TODO navigate to screen passing parameters
+                            }
+                        )
+                    }
                 }
             }
         }
     }
+    if (viewModel.uiState.dialogParameters.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.dialogParameters.titleResource),
+            message = stringResource(id = viewModel.uiState.dialogParameters.descriptionResource),
+            positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
+            openDialogCustom = viewModel.uiState.dialogParameters.isActive,
+            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction,
+            onNegativeAction = viewModel.uiState.dialogParameters.negativeAction
+        )
+    }
+    LoadingIndicator(viewModel.uiState.isLoading)
 }

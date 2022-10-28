@@ -4,7 +4,9 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel2Query
+import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.accountsmart.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.GlobalRequestMutation
@@ -29,12 +31,28 @@ class SmartAccountApi @Inject constructor(
     ): ApolloCall<ProfessionQuery.Data> =
         apolloClient.query(ProfessionQuery(pkUser, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
 
-    fun queryAddressLevelTwo(
+    fun queryAddressLevelOne(
+        user: String,
+        idBrand: Int,
+    ): ApolloCall<AddressLevel1Query.Data> =
+        apolloClient.query(AddressLevel1Query(user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+  fun queryAddressLevelTwo(
         user: String,
         idBrand: Int,
         idAddressLevel1: String,
     ): ApolloCall<AddressLevel2Query.Data> =
         apolloClient.query(AddressLevel2Query(user, idBrand, idAddressLevel1))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+fun queryAddressLevelThree(
+        user: String,
+        idBrand: Int,
+        idAddressLevel1: String,
+        idAddressLevel2: String,
+    ): ApolloCall<AddressLevel3Query.Data> =
+        apolloClient.query(AddressLevel3Query(user, idBrand, idAddressLevel1, idAddressLevel2))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryNationality(

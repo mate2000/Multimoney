@@ -450,6 +450,20 @@
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
 
+    <!-- Payment Options Transfer -->
+    <string name="payment_options_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_title_gt" translatable="false">Transfiere desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_disclaimer" translatable="false">El pago se acreditará en 48 horas hábiles</string>
+    <string name="payment_options_transfer_account" translatable="false">Número de cuenta</string>
+    <string name="payment_options_transfer_bank" translatable="false">Banco</string>
+    <string name="payment_options_transfer_type_transfer" translatable="false">Tipo de transferencia</string>
+    <string name="payment_options_transfer_credit_number" translatable="false">Número de préstamo o producto</string>
+    <string name="payment_options_transfer_beneficiary_name" translatable="false">Nombre del beneficiario o recibidor</string>
+    <string name="payment_options_transfer_go_home" translatable="false">Ir al inicio</string>
+    <string name="payment_options_transfer_close_dialog_title" translatable="false">¿Estás seguro que querés salir? </string>
+    <string name="payment_options_transfer_close_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
+
+
     <!-- Payment Points -->
     <string name="payment_points_search" translatable="false">Buscar</string>
     <string name="payment_points_title" translatable="false">Puntos de pago</string>

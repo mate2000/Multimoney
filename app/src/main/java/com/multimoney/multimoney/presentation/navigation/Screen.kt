@@ -88,22 +88,25 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_amount_screen"
     )
 
+    // Smart
+    object SmartScreen :
+        Screen("smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
+            "smart_screen")
+
     object PaymentOptionsScreen : Screen(
         "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}",
         "payment_options_screen"
+    )
+
+    object PaymentOptionsTransferScreen : Screen(
+        "payment_options_transfer_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$TRANSFER_ACCOUNT}",
+        "payment_options_transfer_screen"
     )
 
     object PaymentPointsScreen : Screen(
         "payment_points_screen/{$ID_BRAND}",
         "payment_points_screen"
     )
-
-    // Smart
-    object SmartScreen :
-        Screen(
-            "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
-            "smart_screen"
-        )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

@@ -4,6 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
@@ -16,8 +17,14 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     ) {
         composable(route = Screen.VisaIssuanceScreen.route) { navBackStackEntry ->
             VisaIssuanceScreen(
-                navBackStackEntry = navBackStackEntry,
-                onPopBackStack = { navController.popBackStack() },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
@@ -27,8 +34,14 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.VisaCardScreen.route) { navBackStackEntry ->
             VisaCardScreen(
-                navBackStackEntry = navBackStackEntry,
-                onPopBackStack = { navController.popBackStack() },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

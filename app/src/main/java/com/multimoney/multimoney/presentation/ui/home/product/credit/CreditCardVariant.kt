@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,10 +54,14 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
+<<<<<<< HEAD
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+=======
+import com.multimoney.multimoney.presentation.util.getCardDateFormat
+>>>>>>> develop
 
 /**
- * Composable function to show the option to active smart product
+ * Composable function to show the option to active accountsmart product
  */
 @Composable
 @Preview
@@ -89,7 +95,7 @@ fun CardOfferSmartProduct(action: () -> Unit = {}) {
                 .padding(bottom = 12.dp)
                 .align(Alignment.CenterHorizontally),
             style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text,
+            color = MultimoneyTheme.colors.text
         )
     }
 }
@@ -241,11 +247,15 @@ fun CreditApprovedOrStarted(
         CreditStatusApproved -> {
             title = R.string.home_product_credit_approved_card_title
             description = if (idBrand == Brand.Guatemala.id) {
-                stringResource(id = R.string.home_product_gt_credit_approved_card_description,
-                    amount ?: "0.0")
+                stringResource(
+                    id = R.string.home_product_gt_credit_approved_card_description,
+                    amount ?: "0.0"
+                )
             } else {
-                stringResource(id = R.string.home_product_credit_approved_card_description,
-                    amount ?: "0.0")
+                stringResource(
+                    id = R.string.home_product_credit_approved_card_description,
+                    amount ?: "0.0"
+                )
             }
             actionText = R.string.home_product_credit_approved_card_action
         }
@@ -289,7 +299,7 @@ fun CreditApprovedOrStarted(
                 .padding(bottom = 12.dp)
                 .align(Alignment.CenterHorizontally),
             style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text,
+            color = MultimoneyTheme.colors.text
         )
     }
 }
@@ -367,12 +377,11 @@ fun CardCreditOnFidoRequired() {
     }
 }
 
-
 @Composable
 @Preview
 fun CardWithCreditInProcess(
     type: CreditProcessStarted = CreditAcceptContractRefuseFirstTime,
-    action: () -> Unit = {},
+    action: () -> Unit = {}
 ) {
     val chipText = R.string.home_product_process_credit_label
     val title: Int
@@ -400,31 +409,26 @@ fun CardWithCreditInProcess(
             title = R.string.home_product_credit_signature_missing_title
             description = R.string.home_product_credit_signature_missing_description
             actionText = R.string.home_product_credit_signature_missing_action
-
         }
         CreditProcessSignatureRefuseFirstTime -> {
             title = R.string.home_product_process_title
             description = R.string.home_product_process_description
             actionText = R.string.home_product_process_action
-
         }
         CreditProcessSignatureRefuseSecondTime -> {
             title = R.string.home_product_process_title
             description = R.string.home_product_process_description
             actionText = R.string.home_product_process_action
-
         }
         CreditProcessCreateAccountFailure -> {
             title = R.string.home_product_process_title
             description = R.string.home_product_process_description
             actionText = R.string.home_product_process_action
-
         }
         CreditProcessOnFidoIncomplete -> {
             title = R.string.home_on_fido_pending_title
             description = R.string.home_on_fido_pending_description
             actionText = R.string.home_on_fido_pending_action_text
-
         }
     }
 
@@ -482,7 +486,7 @@ fun CardWithCreditInProcess(
 @Composable
 @Preview
 fun CardCreditMaxAttempts(
-    action: () -> Unit = {},
+    action: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -532,17 +536,19 @@ fun CardCreditMaxAttempts(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalTextApi::class)
 @Composable
 fun OngoingCredit(
-    viewModel: ProductViewModel,
+    viewModel: ProductViewModel
 ) {
     viewModel.onUIEvent(OnProgressCalculation)
     viewModel.onUIEvent(IsPaymentExpired)
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(top = 12.dp, start = 24.dp, end = 24.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+    ) {
         Text(
             text = stringResource(id = R.string.home_product_title),
             modifier = Modifier.padding(top = 14.dp),
@@ -555,28 +561,37 @@ fun OngoingCredit(
             style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        CustomRoundedLinearProgress(progress = viewModel.productProgress, modifier = Modifier
-            .fillMaxWidth()
-            .height(4.dp))
+        CustomRoundedLinearProgress(
+            progress = viewModel.productProgress,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+        )
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             Text(
-                text = stringResource(id = R.string.home_product_remaining,
-                    viewModel.balanceCredit?.getFirstSummary()?.currentBalanceLabel.toString()),
+                text = stringResource(
+                    id = R.string.home_product_remaining,
+                    viewModel.balanceCredit?.getFirstSummary()?.currentBalanceLabel.toString()
+                ),
                 modifier = Modifier.padding(top = 4.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
             Text(
-                text = stringResource(id = R.string.home_product_amount,
-                    viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()),
+                text = stringResource(
+                    id = R.string.home_product_amount,
+                    viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()
+                ),
                 modifier = Modifier.padding(top = 4.dp, start = 3.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.textSubhead
             )
         }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 14.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 14.dp)
+        ) {
             Column(modifier = Modifier.weight(0.5F)) {
                 Text(
                     text = stringResource(id = R.string.home_product_fee),
@@ -600,8 +615,10 @@ fun OngoingCredit(
                 )
                 Chip(
                     enabled = false,
-                    colors = ChipDefaults.chipColors(disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
-                        disabledContentColor = MultimoneyTheme.colors.text),
+                    colors = ChipDefaults.chipColors(
+                        disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
+                        disabledContentColor = MultimoneyTheme.colors.text
+                    ),
                     modifier = Modifier
                         .height(28.dp)
                         .padding(top = 2.dp),
@@ -611,21 +628,37 @@ fun OngoingCredit(
                                 .size(10.dp)
                                 .clip(CircleShape)
                                 .background(
+<<<<<<< HEAD
                                     if ((viewModel.balanceCredit?.getFirstSummary()?.daysExpired
                                             ?: 0) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                                 .padding(top = 2.dp, start = 3.dp)
+=======
+                                    if ((
+                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                            ?: 0
+                                        ) > 0
+                                    ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
+                                )
+>>>>>>> develop
                         )
                     },
                     onClick = {
-                        //Empty on purpose
+                        // Empty on purpose
                     },
                     content = {
-                        Text(
-                            text = viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel.toString(),
-                            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold)
-                        )
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(
+                                text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
+                                style = Typography.body1.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    platformStyle = PlatformTextStyle(
+                                        includeFontPadding = false
+                                    )
+                                )
+                            )
+                        }
                     }
                 )
             }

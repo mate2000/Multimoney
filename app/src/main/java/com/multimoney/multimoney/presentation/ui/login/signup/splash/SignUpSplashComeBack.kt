@@ -22,13 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBackViewModel.UIEvent.OnOpenStep
-import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBackViewModel.UIEvent.OnStepValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.FlowPreview
@@ -41,20 +38,11 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(FlowPreview::class)
 @Composable
 fun SignUpSplashComeBack(
-    navBackStackEntry: NavBackStackEntry,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpSplashComeBackViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
-        viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate)
-            viewModel.onUIEvent(
-                OnStepValueChange(
-                    navBackStackEntry.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP) ?: DEFAULT_STEP
-                )
-            )
-        }
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
 
     val openStepDebounce = remember { MutableStateFlow(true) }

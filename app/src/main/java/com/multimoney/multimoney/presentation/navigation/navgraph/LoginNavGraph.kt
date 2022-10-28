@@ -9,6 +9,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBack
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
@@ -50,11 +51,12 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SignUpScreen.route) { navBackStackEntry ->
+        composable(route = Screen.SignUpScreen.route) {
             SignUpScreen(
                 // Workaround to solve compose issue when launchSingleTop is combine with arguments
                 // (Use: navController.currentBackStackEntry ?: navBackStackEntry)
-                navBackStackEntry = navController.currentBackStackEntry ?: navBackStackEntry,
+                step = navController.currentBackStackEntry?.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP)
+                    ?: DEFAULT_STEP,
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -66,9 +68,8 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SignUpSplashComeBackScreen.route) { navBackStackEntry ->
+        composable(route = Screen.SignUpSplashComeBackScreen.route) {
             SignUpSplashComeBack(
-                navBackStackEntry = navBackStackEntry,
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         launchSingleTop = true

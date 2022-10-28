@@ -24,6 +24,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -73,6 +73,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCred
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
+import com.multimoney.multimoney.presentation.uielement.BoxVisaType.CreditCard
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -87,15 +88,21 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-@Preview
 fun ProductScreen(
+    isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(true) {
-        viewModel.onUIEvent(OnGetIdBrand)
-        viewModel.apply {
-            executeNavigation(onNavigate = onNavigate)
+    viewModel.apply {
+        isOnRestart = isRestart
+        DisposableEffect(isOnRestart) {
+            if (isOnRestart) {
+                onUIEvent(OnGetIdBrand)
+                executeNavigation(onNavigate = onNavigate)
+            }
+            onDispose {
+                isOnRestart = false
+            }
         }
     }
 
@@ -167,6 +174,10 @@ fun ProductScreen(
                                     height = Dimension.fillToConstraints
                                 }
                         ) {
+                            Divider(color = MultimoneyTheme.colors.dividerWhite30)
+                            Spacer(modifier = Modifier.height(24.dp))
+                            CreditCardView(viewModel = viewModel)
+                            Spacer(modifier = Modifier.height(24.dp))
                             CreditDetail(
                                 modifier = Modifier
                                     .background(MultimoneyTheme.colors.creditDetailBackground)
@@ -444,18 +455,33 @@ fun CreditProduct(viewModel: ProductViewModel) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
+fun ProductExtras(modifier: Modifier, pages: Int = 1, state: PagerState, viewModel: ProductViewModel) {
     Column(modifier = modifier) {
         HorizontalPager(count = pages, state = state) {
-            if (viewModel.uiState.userStatus?.infoCredit?.status != CreditStatus.CREDIT_REJECTED.status) {
-                CustomBoxVisaBackground(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = {
-                        viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
-                    },
-                    type = RequestCreditCard
-                )
-            }
+            CreditCardView(viewModel = viewModel)
+        }
+    }
+}
+
+@Composable
+fun CreditCardView(viewModel: ProductViewModel) {
+    if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
+        viewModel.balanceCredit?.balanceCardInformation?.cardInformation?.let { cardInformation ->
+            CustomBoxVisaBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = {
+                    viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
+                },
+                type = CreditCard(cardInformation.cardNumber ?: "")
+            )
+        } ?: run {
+            CustomBoxVisaBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = {
+                    viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
+                },
+                type = RequestCreditCard
+            )
         }
     }
 }
@@ -468,7 +494,7 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .fillMaxSize()
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
-                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
+                    viewModel.onUIEvent(OnNavigateToCreditScreen)
                 }
         ) {
             CustomImage(

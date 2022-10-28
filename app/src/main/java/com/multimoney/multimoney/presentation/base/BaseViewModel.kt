@@ -20,10 +20,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 open class BaseViewModel @Inject constructor(
-    val shouldObserveToken: Boolean,
+    val shouldObserveToken: Boolean
 ) : ViewModel() {
 
-    var isLoading by mutableStateOf(false)
+    var isOnRestart by mutableStateOf(true)
 
     var openDialog by mutableStateOf(DialogParameters())
 
@@ -49,7 +49,7 @@ open class BaseViewModel @Inject constructor(
      **/
     inline fun executeUseCase(
         crossinline action: suspend () -> Unit,
-        crossinline noInternetAction: suspend () -> Unit,
+        crossinline noInternetAction: suspend () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
@@ -64,7 +64,7 @@ open class BaseViewModel @Inject constructor(
 
     inline fun executeUseCase(
         checkConnection: Boolean = true,
-        crossinline action: suspend () -> Unit,
+        crossinline action: suspend () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (shouldObserveToken && preferences.getAuthToken().first().isEmpty()) {
@@ -105,13 +105,14 @@ open class BaseViewModel @Inject constructor(
     fun popAndNavigateTo(route: String, popTo: String) =
         sendNavigationEvent(NavEvent.PopAndNavigate(route = route, popTo = popTo))
 
-    fun navigateBack() = sendNavigationEvent(NavEvent.PopBackStack)
+    fun navigateBack(popTo: String, isRestart: Boolean) =
+        sendNavigationEvent(NavEvent.PopBackStack(popTo = popTo, isRestart = isRestart))
 
     fun executeNavigation(
         onNavigate: (NavEvent.Navigate) -> Unit = {},
         onInnerNavigate: (innerNavigate: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
         onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-        onPopBackStack: () -> Unit = {},
+        onPopBackStack: (NavEvent.PopBackStack) -> Unit = {}
     ) {
         viewModelScope.launch {
             navigationEvent.collectLatest { event ->
@@ -119,7 +120,7 @@ open class BaseViewModel @Inject constructor(
                     is NavEvent.Navigate -> onNavigate(event)
                     is NavEvent.InnerNavigate -> onInnerNavigate(event.innerNavigate, event)
                     is NavEvent.PopAndNavigate -> onPopAndNavigate(event)
-                    is NavEvent.PopBackStack -> onPopBackStack()
+                    is NavEvent.PopBackStack -> onPopBackStack(event)
                     else -> Unit
                 }
             }

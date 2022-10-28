@@ -31,10 +31,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -80,46 +80,46 @@ class SignInViewModel @Inject constructor(
 //            .build()
 
         Amplify.Auth.signOut({
-            // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
+        // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
 //        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
-            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
-                if (authSignInResult.isSignInComplete) {
-                    Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
-                        val session = authSessionSuccess as AWSCognitoAuthSession
-                        when (session.identityId.type) {
-                            AuthSessionResult.Type.SUCCESS -> {
-                                // Get user attributes in order to save user name for welcome message
-                                Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
-                                    viewModelScope.launch {
-                                        // If isBiometricActive false that means the userName has to be saved
-                                        if (uiState.isBiometricActive.not()) {
-                                            dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
-                                        }
-                                        val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
-                                        dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
-                                        saveUserData(payload)
-                                        uiState = uiState.copy(isLoading = false)
-                                        if (uiState.isFingerprintChecked) {
-                                            uiState = uiState.copy(configureBiometric = true)
-                                        } else {
-                                            navigateToHome()
-                                        }
+        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
+            if (authSignInResult.isSignInComplete) {
+                Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
+                    val session = authSessionSuccess as AWSCognitoAuthSession
+                    when (session.identityId.type) {
+                        AuthSessionResult.Type.SUCCESS -> {
+                            // Get user attributes in order to save user name for welcome message
+                            Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
+                                viewModelScope.launch {
+                                    // If isBiometricActive false that means the userName has to be saved
+                                    if (uiState.isBiometricActive.not()) {
+                                        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
                                     }
-                                }, {
-                                    cognitoError()
-                                })
-                            }
-                            AuthSessionResult.Type.FAILURE -> cognitoError()
+                                    val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
+                                    dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
+                                    saveUserData(payload)
+                                    uiState = uiState.copy(isLoading = false)
+                                    if (uiState.isFingerprintChecked) {
+                                        uiState = uiState.copy(configureBiometric = true)
+                                    } else {
+                                        navigateToHome()
+                                    }
+                                }
+                            }, {
+                                cognitoError()
+                            })
                         }
-                    }, {
-                        cognitoError()
-                    })
-                } else {
+                        AuthSessionResult.Type.FAILURE -> cognitoError()
+                    }
+                }, {
                     cognitoError()
-                }
-            }, {
+                })
+            } else {
                 cognitoError()
-            })
+            }
+        }, {
+            cognitoError()
+        })
         }, {
             cognitoError()
         })

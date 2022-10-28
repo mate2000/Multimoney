@@ -1,0 +1,12 @@
+query CivilStatus($user: String!, $idBrand: Int!){
+    civilStatus(civilStatusInput: {
+            user: $user, idBrand: $idBrand
+        }
+    ) {
+        result {
+            maritalStatusId
+            maritalStatusCode
+            maritalStatusDescription
+        }
+    }
+}

@@ -15,12 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnIssuanceClick
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -31,17 +28,13 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun VisaIssuanceScreen(
-    navBackStackEntry: NavBackStackEntry,
-    onPopBackStack: () -> Unit = {},
+    onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaIssuanceViewModel = hiltViewModel()
 ) {
     // Navigation
     LaunchedEffect(true) {
-        viewModel.apply {
-            executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(OnGetTextResources(navBackStackEntry.arguments?.getString(ID_BRAND, "") ?: ""))
-        }
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
     }
 
     Column(
@@ -55,7 +48,8 @@ fun VisaIssuanceScreen(
         ) {
             TopNavBar(
                 onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-                onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) })
+                onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
+            )
             Text(
                 modifier = Modifier.padding(top = 34.dp, start = 16.dp, end = 16.dp),
                 text = stringResource(id = viewModel.uiState.titleResource),
@@ -92,11 +86,7 @@ fun VisaIssuanceScreen(
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
                 onClick = {
-                    viewModel.onUIEvent(
-                        OnIssuanceClick(
-                            navBackStackEntry.arguments?.getString(ID_BRAND, "") ?: ""
-                        )
-                    )
+                    viewModel.onUIEvent(OnIssuanceClick)
                 },
                 text = stringResource(id = R.string.activate),
                 buttonType = PrimaryPrimary

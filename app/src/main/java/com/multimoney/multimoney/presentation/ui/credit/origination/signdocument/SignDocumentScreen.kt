@@ -58,11 +58,6 @@ fun SignDocumentContent(viewModel: SignDocumentViewModel = hiltViewModel()) {
         )
 
         // TODO: Remove this button when all functionalities are implemented
-        CustomButton(
-            onClick = { viewModel.onUIEvent(OnRejectClick) },
-            text = stringResource(id = string.cancel),
-            buttonType = PrimaryPrimary
-        )
 
         if (viewModel.uiState.dialogParameters.isActive.value) {
             CustomDialog(

@@ -74,8 +74,7 @@ fun AlertResult(
 
         Column(
             modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth(),
+                .wrapContentHeight().fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

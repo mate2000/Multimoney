@@ -55,12 +55,14 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
 @Preview
 fun PaymentVoucherScreen(
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PaymentVoucherViewModel = hiltViewModel()
 ) {
     val view = LocalView.current

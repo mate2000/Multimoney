@@ -129,6 +129,18 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 }
             )
         }
+        composable(route = Screen.PaymentVoucherScreen.route) {
+            PaymentVoucherScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
         composable(
             route = Screen.PaymentOptionsScreen.route,
             arguments = listOf(
@@ -154,9 +166,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     )
                 }
             )
-        }
-        composable(route = Screen.PaymentVoucherScreen.route) {
-            PaymentVoucherScreen()
         }
     }
 }

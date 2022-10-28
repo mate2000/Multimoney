@@ -468,7 +468,7 @@ fun CreditCardView(viewModel: ProductViewModel) {
     if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
         viewModel.balanceCredit?.balanceCardInformation?.cardInformation?.let { cardInformation ->
             CustomBoxVisaBackground(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = {
                     viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
                 },
@@ -476,7 +476,7 @@ fun CreditCardView(viewModel: ProductViewModel) {
             )
         } ?: run {
             CustomBoxVisaBackground(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = {
                     viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
                 },

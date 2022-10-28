@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency50
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
@@ -41,27 +41,29 @@ fun CustomItemRow(
     val titleColor: Color
     val subtitleColor: Color
     val dividerColor: Color
+    val backgroundColor: Color
 
     if (isSystemInDarkTheme()) {
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
         dividerColor = WhiteTransparency50
+        backgroundColor = GrayScale800
     } else {
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
         dividerColor = WhiteTransparency50
+        backgroundColor = GrayScale800
     }
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
-                .background(MultimoneyTheme.colors.background)
+                .background(backgroundColor)
                 .padding(start = 5.dp, top = 24.dp)
                 .fillMaxWidth()
                 .clickable { onClick() },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                modifier = Modifier.background(MultimoneyTheme.colors.background),
                 painter = painterResource(id = startIcon),
                 contentDescription = ""
             )

@@ -9,7 +9,6 @@ import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
 interface SmartAccountRepository {
 
@@ -55,6 +54,7 @@ interface SmartAccountRepository {
         user: String,
         idBrand: Int,
         currentStep: String,
+        specifiesIncomeSource: String
     ): Flow<MultimoneyResult<GlobalRequest?>>
 
     suspend fun queryGeneralEconomicActivity(

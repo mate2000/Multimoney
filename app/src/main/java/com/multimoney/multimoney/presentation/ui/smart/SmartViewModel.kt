@@ -115,7 +115,8 @@ class SmartViewModel @Inject constructor(
             idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
             birthday = accountSmartData?.birthday ?: "",
             expirationDate = accountSmartData?.expirationDate ?: "",
-            idGender = accountSmartData?.idGender ?: 0
+            idGender = accountSmartData?.idGender ?: 0,
+            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: ""
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))

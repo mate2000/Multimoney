@@ -11,7 +11,6 @@ import com.multimoney.data.networking.accountsmart.apollomodel.GlobalRequestMuta
 import com.multimoney.data.networking.accountsmart.apollomodel.NationalityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.ProfessionQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.StepByStepQuery
-import java.util.Date
 import javax.inject.Inject
 
 class SmartAccountApi @Inject constructor(
@@ -69,6 +68,7 @@ class SmartAccountApi @Inject constructor(
         user: String,
         idBrand: Int,
         currentStep: String,
+        specifiesIncomeSource: String
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloClient.mutation(
             GlobalRequestMutation(
@@ -88,7 +88,8 @@ class SmartAccountApi @Inject constructor(
                 isPEP,
                 user,
                 idBrand,
-                currentStep
+                currentStep,
+                specifiesIncomeSource
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

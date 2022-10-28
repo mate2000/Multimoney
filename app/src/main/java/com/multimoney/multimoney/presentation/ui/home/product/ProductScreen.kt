@@ -73,6 +73,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCred
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
+import com.multimoney.multimoney.presentation.uielement.BoxVisaType.CreditCard
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -173,6 +174,10 @@ fun ProductScreen(
                                     height = Dimension.fillToConstraints
                                 }
                         ) {
+                            Divider(color = MultimoneyTheme.colors.dividerWhite30)
+                            Spacer(modifier = Modifier.height(24.dp))
+                            CreditCardView(viewModel = viewModel)
+                            Spacer(modifier = Modifier.height(24.dp))
                             CreditDetail(
                                 modifier = Modifier
                                     .background(MultimoneyTheme.colors.creditDetailBackground)
@@ -450,18 +455,33 @@ fun CreditProduct(viewModel: ProductViewModel) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun ProductExtras(modifier: Modifier, pages: Int, state: PagerState, viewModel: ProductViewModel) {
+fun ProductExtras(modifier: Modifier, pages: Int = 1, state: PagerState, viewModel: ProductViewModel) {
     Column(modifier = modifier) {
         HorizontalPager(count = pages, state = state) {
-            if (viewModel.uiState.userStatus?.infoCredit?.status != CreditStatus.CREDIT_REJECTED.status) {
-                CustomBoxVisaBackground(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    onClick = {
-                        viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
-                    },
-                    type = RequestCreditCard
-                )
-            }
+            CreditCardView(viewModel = viewModel)
+        }
+    }
+}
+
+@Composable
+fun CreditCardView(viewModel: ProductViewModel) {
+    if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
+        viewModel.balanceCredit?.balanceCardInformation?.cardInformation?.let { cardInformation ->
+            CustomBoxVisaBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = {
+                    viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
+                },
+                type = CreditCard(cardInformation.cardNumber ?: "")
+            )
+        } ?: run {
+            CustomBoxVisaBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = {
+                    viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
+                },
+                type = RequestCreditCard
+            )
         }
     }
 }

@@ -56,10 +56,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNavigateBack -> popAndNavigateTo(
-                route = Screen.HomeScreen.route,
-                popTo = Screen.VisaCardScreen.route
-            )
+            is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNfcAvailable -> uiState = uiState.copy(isNfcAvailable = nfcHelper.isNfcSupported())
         }

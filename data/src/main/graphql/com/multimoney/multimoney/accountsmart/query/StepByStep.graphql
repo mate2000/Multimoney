@@ -1,0 +1,56 @@
+query stepByStep($user: String!, $idBrand: Int!, $idRequest: Long!){
+    stepbyStep(stepbyStepInput: { user: $user, idBrand: $idBrand, idRequest: $idRequest })  {
+        knownFor
+        birthdate
+        idGenre
+        strGenre
+        idMaritalStatus
+        strMaritalStatus
+        idProfessionType
+        stridProfessionType
+        idNationalidad
+        strNationality
+        expirationDate
+        dateOfIssue
+        placeOfIssue
+        strplaceOfIssue
+        idAddressLevel1
+        strAddressLevel1
+        idAddressLevel2
+        strAddressLevel2
+        idAddressLevel3
+        strAddressLevel3
+        addressDetail
+        idEconomicActivity
+        strIdEconomicActivity
+        legalID
+        nameCompany
+        specifiesIncomeSource
+        institucionPesion
+        aboutCompany
+        income
+        fullJobAddress
+        entrepreneurship
+        beneficiary {
+            fullName
+            relationship
+            strRelationship
+            allocationPercentage
+        }
+        isActivityOfArt15
+        isUSCitizen
+        isPEP
+        isUSTaxPayer
+        isTaxPayer
+        idOrigenCountry
+        strOrigenCountry
+        currentStep
+        idRequest
+        identification
+        dateCreation
+        statusRequest
+        statusFirm
+        statusOnfido
+        idRequestSysde
+    }
+}

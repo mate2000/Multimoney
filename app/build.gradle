@@ -19,12 +19,12 @@ android {
     compileSdk compile_sdk_version
 
     def getVersionCode = { ->
-        def isAppCenter = System.getenv("BITRISE_BUILD_NUMBER") != null;
+        def isBitrise = System.getenv("BITRISE_BUILD_NUMBER") != null;
 
-        if (isAppCenter) {
+        if (isBitrise) {
             try {
-                def appcenterBuildId = Integer.parseInt(System.getenv("BITRISE_BUILD_NUMBER"))
-                return appcenterBuildId
+                def bitriseBuildNumber = Integer.parseInt(System.getenv("BITRISE_BUILD_NUMBER"))
+                return bitriseBuildNumber
             } catch (e) {
                 // ignore
             }

@@ -14,7 +14,6 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
-import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogNegativeButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnLoadingValueChange
@@ -59,16 +58,7 @@ class PaymentPointsViewModel @Inject constructor(
         uiState = uiState.copy(
             dialogParameters = uiState.dialogParameters.copy(
                 isActive = mutableStateOf(true),
-                positiveAction = { onUIEvent(OnDialogPositiveButtonClick) },
-                negativeAction = { onUIEvent(OnDialogNegativeButtonClick) }
-            )
-        )
-    }
-
-    private fun onCloseDialog() {
-        uiState = uiState.copy(
-            dialogParameters = uiState.dialogParameters.copy(
-                isActive = mutableStateOf(false)
+                positiveAction = { onUIEvent(OnDialogPositiveButtonClick) }
             )
         )
     }
@@ -116,7 +106,6 @@ class PaymentPointsViewModel @Inject constructor(
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
             is OnDialogPositiveButtonClick -> onNavigateHome()
-            is OnDialogNegativeButtonClick -> onCloseDialog()
             is OnCloseScreenClick -> onCloseScreen()
             is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is OnGetPaymentPoints -> onGetPaymentPoints()
@@ -131,7 +120,6 @@ class PaymentPointsViewModel @Inject constructor(
         object OnGetPaymentPoints : UIEvent()
         object OnItemPointClick : UIEvent()
         object OnDialogPositiveButtonClick : UIEvent()
-        object OnDialogNegativeButtonClick : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
     }
 }

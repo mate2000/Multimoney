@@ -4,10 +4,6 @@ ext {
     min_sdk_version = 24
     target_sdk_version = 32
 
-    // Vesion code
-    version_code = 1
-    version_name = "0.0.1"
-
     // Common dependencies:
     core_ktx_version = "1.7.0"
     serialization_json_version = "1.0.1"
@@ -38,7 +34,7 @@ ext {
     ]
 
     // Navigation
-    navigation_version = "2.4.1"
+    navigation_version = "2.5.2"
 
     navigation = [
             compose: "androidx.navigation:navigation-compose:${navigation_version}",
@@ -276,6 +272,12 @@ ext {
     slider_version = "1.0.2"
     slider = [
             slider: "com.github.SmartToolFactory:Compose-Colorful-Sliders:$slider_version"
+    ]
+
+    //HtmlText
+    htmlText_version = "1.0.2"
+    htmlText = [
+            htmlText: "com.github.ireward:compose-html:$htmlText_version"
     ]
 
     // Common Test

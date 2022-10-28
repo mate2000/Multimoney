@@ -308,8 +308,7 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     companion object {
-        const val DATE_FORMAT = "yyyy/MM/dd"
-        const val BACKEND_DATE_FORMAT = "yyyy-MM-dd"
+        const val DATE_FORMAT = "yyyy-MM-dd"
         const val BIRTH_DATE_MIN_YEAR = 1902
         const val BIRTH_DATE_MIN_MONTH = 0
         const val BIRTH_DATE_MIN_DAY = 1

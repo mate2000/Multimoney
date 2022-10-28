@@ -7,6 +7,15 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeIconType
 import kotlin.time.Duration
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Quetzal
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.CashPaymentPoint
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
@@ -30,7 +39,6 @@ fun Context.sendAccount(client: String, accountNumber: String) {
     val chooser = Intent.createChooser(intent, "")
     this.startActivity(chooser)
 }
-
 
 fun tickerFlow(
     period: Duration,
@@ -71,5 +79,23 @@ fun Int.getCurrencySymbol(): Int {
         Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
         Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
         else -> R.string.empty
+    }
+}
+// Currency
+fun Int.getCurrency(): CurrencyType {
+    return when (this) {
+        Colon.id -> Colon
+        Dollar.id -> Dollar
+        Quetzal.id -> Quetzal
+        else -> All
+    }
+}
+
+// Payment
+fun String.getPaymentMethodType(): PaymentMethodType {
+    return when (this) {
+        VisaDirect.value -> VisaDirect
+        TransferBank.value -> TransferBank
+        else -> CashPaymentPoint
     }
 }

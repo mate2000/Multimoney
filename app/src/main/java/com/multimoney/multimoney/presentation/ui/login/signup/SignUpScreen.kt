@@ -17,10 +17,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
@@ -45,7 +43,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SignUpScreen(
-    navBackStackEntry: NavBackStackEntry,
+    step: String,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
@@ -54,10 +52,10 @@ fun SignUpScreen(
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-        navBackStackEntry.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP)?.let { step ->
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
             if (step != DEFAULT_STEP) {
-                viewModel.onUIEvent(OnMoveToStep(step.toInt()))
+                onUIEvent(OnMoveToStep(step.toInt()))
             }
         }
     }
@@ -74,7 +72,8 @@ fun SignUpScreen(
                 isLeftButtonVisible = viewModel.uiState.currentStep != SignUpStep.Six.id,
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
+                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
+            )
             if (viewModel.uiState.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
                     steps = SIGN_UP_INDICATOR_TOTAL_STEPS,

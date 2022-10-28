@@ -32,7 +32,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.presentation.util.parseStringToLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -114,8 +113,8 @@ class SmartViewModel @Inject constructor(
             idBrand = accountSmartData?.idBrand ?: 0,
             currentStep = accountSmartData?.currentStep ?: "",
             idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
-            birthday = parseStringToLocalDate(accountSmartData?.birthday ?: ""),
-            expirationDate = parseStringToLocalDate(accountSmartData?.expirationDate ?: ""),
+            birthday = accountSmartData?.birthday ?: "",
+            expirationDate = accountSmartData?.expirationDate ?: "",
             idGender = accountSmartData?.idGender ?: 0
         ).collectLatest { result ->
             result.onSuccess {

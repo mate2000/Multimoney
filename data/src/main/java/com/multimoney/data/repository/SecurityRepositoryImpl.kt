@@ -5,6 +5,7 @@ import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
@@ -16,9 +17,9 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SecurityRepository
+import kotlinx.coroutines.flow.Flow
 import java.io.Serializable
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
@@ -150,7 +151,6 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
-
     override suspend fun mutationSendPinProcess(
         identification: String,
         firstName: String,
@@ -245,6 +245,18 @@ class SecurityRepositoryImpl @Inject constructor(
     override suspend fun queryGetCountry(user: String): Flow<MultimoneyResult<CountryList?>> =
         fetchData(
             apolloCall = securityApi.queryGetCountry(user),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun queryGetConfigurationVersion(
+        platform: String,
+        appVersion: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ConfigurationVersion?>> =
+        fetchData(
+            apolloCall = securityApi.queryGetConfigurationVersion(platform, appVersion, idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

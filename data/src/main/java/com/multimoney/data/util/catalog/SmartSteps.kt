@@ -1,14 +1,14 @@
 package com.multimoney.data.util.catalog
 
 sealed class SmartSteps(val id: Int, val name: String) {
-    object One : SmartStep(1, "Paso_1")
-    object Two : SmartStep(2, "Paso_2")
-    object Three : SmartStep(3, "Paso_3")
-    object Four : SmartStep(4, "Paso_4")
-    object Five : SmartStep(5, "Paso_5")
-    object Six : SmartStep(6, "Paso_6")
-    object Seven : SmartStep(7, "Paso_7")
-    object Eight : SmartStep(8, "Paso_8")
+    object One : SmartSteps(1, "Paso_1")
+    object Two : SmartSteps(2, "Paso_2")
+    object Three : SmartSteps(3, "Paso_3")
+    object Four : SmartSteps(4, "Paso_4")
+    object Five : SmartSteps(5, "Paso_5")
+    object Six : SmartSteps(6, "Paso_6")
+    object Seven : SmartSteps(7, "Paso_7")
+    object Eight : SmartSteps(8, "Paso_8")
 
     object Search {
         fun getIdByName(name: String?) = when (name) {

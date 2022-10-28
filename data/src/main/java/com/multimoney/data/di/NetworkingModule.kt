@@ -11,6 +11,7 @@ import com.multimoney.data.R
 import com.multimoney.data.networking.BalanceApi
 import com.multimoney.data.networking.CreditApi
 import com.multimoney.data.networking.SecurityApi
+import com.multimoney.data.networking.SmartAccountApi
 import com.multimoney.data.util.CertificateUtil
 import com.multimoney.data.util.DataStorePreferences
 import dagger.Module
@@ -110,6 +111,15 @@ class NetworkingModule {
     ): CreditApi =
         CreditApi(apolloAuthorizedClientProvider(context, SCHEMA_CREDIT, util, preferences))
 
+    @Singleton
+    @Provides
+    fun smartApi(
+        @ApplicationContext context: Context,
+        util: CertificateUtil,
+        preferences: DataStorePreferences
+    ): SmartAccountApi =
+        SmartAccountApi(apolloAuthorizedClientProvider(context, SCHEMA_SMART, util, preferences))
+
     companion object {
         const val TIMEOUT = 120L
         const val APOLLO_PREFIX_DB = "multimoney_apollo_"
@@ -117,6 +127,7 @@ class NetworkingModule {
         const val SCHEMA_SECURITY = "security"
         const val SCHEMA_BALANCES = "balances"
         const val SCHEMA_CREDIT = "credit"
+        const val SCHEMA_SMART = "accountsmart"
     }
 }
 

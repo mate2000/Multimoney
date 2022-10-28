@@ -1,0 +1,2763 @@
+type AccountSmartQuery {
+  civilStatus(civilStatusInput: civilStatusInput): civilStatus
+
+  country(countryInput: countryInput): country
+
+  nationality(nationalityInput: nationalityInput): nationality
+
+  addressLevel1(addressLevel1Input: addressLevel1Input): addressLevel1
+
+  addressLevel2(addressLevel2Input: addressLevel2Input): addressLevel2
+
+  addressLevel3(addressLevel3Input: addressLevel3Input): addressLevel3
+
+  addressLevel4(addressLevel4Input: addressLevel4Input): addressLevel4
+
+  generalEconomicActivity(generalEconomicActivityInput: generalEconomicActivityInput): generalEconomicActivity
+
+  ocupation(ocupationInput: ocupationInput): ocupation
+
+  sendClientAccount(sendClientAccountInput: sendClientAccountInput): sendClientAccount
+
+  smartAccountStatus(smartAccountStatusInput: smartAccountStatusInput): smartAccountStatus
+
+  aCHTransferFavoriteList(aCHTransferFavoriteListInput: aCHTransferFavoriteListInput): aCHTransferFavoriteList
+
+  aCHTransferFavoriteGet(aCHTransferFavoriteGetInput: aCHTransferFavoriteGetInput): aCHTransferFavoriteGet
+
+  typeAccount(typeAccountInput: typeAccountInput): typeAccount
+
+  localTransferFavorite(localTransferFavoriteInput: localTransferFavoriteInput): localTransferFavorite
+
+  listSinpeAccount(listSinpeAccountInput: listSinpeAccountInput): listSinpeAccount
+
+  getExchangeRate(getExchangeRateInput: getExchangeRateInput): getExchangeRate
+
+  getCoreBankMovements(getCoreBankMovementsInput: getCoreBankMovementsInput): getCoreBankMovements
+
+  relatedContactsByPhone(relatedContactsByPhoneInput: relatedContactsByPhoneInput): relatedContactsByPhone
+
+  relationhip(relationhipInput: relationhipInput): [relationhip]
+
+  stepbyStep(stepbyStepInput: stepbyStepInput): stepbyStep
+
+  profession(professionInput: professionInput): profession
+}
+
+type civilStatus {
+  """
+  civilStatus result
+  """
+  result: [civilStatusResult]
+}
+
+type civilStatusResult {
+  """
+  civilStatusResult maritalStatusId
+  """
+  maritalStatusId: Int!
+
+  """
+  civilStatusResult maritalStatusCode
+  """
+  maritalStatusCode: String!
+
+  """
+  civilStatusResult maritalStatusDescription
+  """
+  maritalStatusDescription: String!
+}
+
+input civilStatusInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type country {
+  """
+  Country result
+  """
+  result: [countryListResponse]
+}
+
+type countryListResponse {
+  """
+  countryListResponse id
+  """
+  id: Int!
+
+  """
+  countryListResponse name
+  """
+  name: String!
+}
+
+input countryInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type nationality {
+  """
+  nationality result
+  """
+  result: [nationalityResult]
+}
+
+type nationalityResult {
+  """
+  nationalityResult id
+  """
+  id: Int!
+
+  """
+  nationalityResult name
+  """
+  name: String!
+}
+
+input nationalityInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type addressLevel1 {
+  """
+  addressLevel1 result
+  """
+  result: [addressLevel1Result]
+}
+
+type addressLevel1Result {
+  """
+  addressLevel1Result id
+  """
+  id: String!
+
+  """
+  addressLevel1Result name
+  """
+  name: String!
+
+  """
+  addressLevel1Result code
+  """
+  code: String!
+}
+
+input addressLevel1Input {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type addressLevel2 {
+  """
+  addressLevel2 result
+  """
+  result: [addressLevel2Result]
+}
+
+type addressLevel2Result {
+  """
+  addressLevel2Result id
+  """
+  id: String!
+
+  """
+  addressLevel2Result name
+  """
+  name: String!
+
+  """
+  addressLevel2Result code
+  """
+  code: String!
+}
+
+input addressLevel2Input {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  idAddressLevel1: String
+}
+
+type addressLevel3 {
+  """
+  addressLevel3 result
+  """
+  result: [addressLevel3Result]
+}
+
+type addressLevel3Result {
+  """
+  addressLevel3Result id
+  """
+  id: String!
+
+  """
+  addressLevel3Result name
+  """
+  name: String!
+
+  """
+  addressLevel3Result code
+  """
+  code: String!
+}
+
+input addressLevel3Input {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  idAddressLevel1: String!
+
+  idAddressLevel2: String!
+}
+
+type addressLevel4 {
+  """
+  addressLevel4 result
+  """
+  result: [addressLevel4Result]
+}
+
+type addressLevel4Result {
+  """
+  addressLevel4Result id
+  """
+  id: String!
+
+  """
+  addressLevel4Result name
+  """
+  name: String!
+
+  """
+  addressLevel4Result code
+  """
+  code: String!
+}
+
+input addressLevel4Input {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  idAddressLevel1: String!
+
+  idAddressLevel2: String!
+
+  idAddressLevel3: String!
+}
+
+type generalEconomicActivity {
+  """
+  generalEconomicActivity result
+  """
+  result: [generalEconomicActivityResult]
+}
+
+type generalEconomicActivityResult {
+  """
+  generalEconomicActivityResult id
+  """
+  id: Int!
+
+  """
+  generalEconomicActivityResult descripcion
+  """
+  descripcion: String!
+
+  """
+  generalEconomicActivityResult activityCode
+  """
+  activityCode: String!
+
+  """
+  generalEconomicActivityResult subActivityCode
+  """
+  subActivityCode: String!
+
+  """
+  generalEconomicActivityResult subSubActivityCode
+  """
+  subSubActivityCode: String!
+
+  """
+  generalEconomicActivityResult iconCode
+  """
+  iconCode: String!
+}
+
+input generalEconomicActivityInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type ocupation {
+  """
+  ocupation result
+  """
+  result: [ocupationResult]
+}
+
+type ocupationResult {
+  """
+  ocupationResult id
+  """
+  id: Int!
+
+  """
+  ocupationResult descripcion
+  """
+  descripcion: String!
+}
+
+input ocupationInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type sendClientAccount {
+  """
+  sendClientAccount bodyEmail
+  """
+  bodyEmail: String!
+
+  """
+  sendClientAccount ruta_Documentos
+  """
+  ruta_Documentos: String!
+
+  """
+  sendClientAccount estado_solicitud
+  """
+  estado_solicitud: String!
+
+  """
+  sendClientAccount id_Solicitud_Global
+  """
+  id_Solicitud_Global: Long!
+
+  """
+  sendClientAccount email
+  """
+  email: String!
+
+  """
+  sendClientAccount status
+  """
+  status: String!
+
+  """
+  sendClientAccount reject_reason
+  """
+  reject_reason: String!
+
+  """
+  sendClientAccount _id
+  """
+  _id: String!
+}
+
+scalar Long
+
+input sendClientAccountInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identificationNumber: String!
+}
+
+type smartAccountStatus {
+  """
+  smartAccountStatus result
+  """
+  result: smartAccountStatus_Result
+}
+
+type smartAccountStatus_Result {
+  """
+  smartAccountStatus_Result requestID
+  """
+  requestID: Long!
+
+  """
+  smartAccountStatus_Result message
+  """
+  message: String!
+
+  """
+  smartAccountStatus_Result status
+  """
+  status: String!
+
+  """
+  smartAccountStatus_Result url_Firm_Document
+  """
+  url_Firm_Document: String!
+
+  """
+  smartAccountStatus_Result statusOnfido
+  """
+  statusOnfido: String!
+}
+
+input smartAccountStatusInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identificationNumber: String!
+
+  idAccountSysde: Long!
+
+  idAccount_Request: Long!
+}
+
+type aCHTransferFavoriteList {
+  """
+  resultAllResult Result
+  """
+  result: [aCHTransferFavoriteListResult]
+}
+
+type aCHTransferFavoriteListResult {
+  """
+  aCHTransferFavoriteListResult accountForAchTransferId
+  """
+  accountForAchTransferId: Long!
+
+  """
+  aCHTransferFavoriteListResult accountNumber
+  """
+  accountNumber: String!
+
+  """
+  aCHTransferFavoriteListResult description
+  """
+  description: String!
+
+  """
+  aCHTransferFavoriteListResult titularName
+  """
+  titularName: String!
+
+  """
+  aCHTransferFavoriteListResult notificationEmail
+  """
+  notificationEmail: String!
+
+  """
+  aCHTransferFavoriteListResult identificacionNumber
+  """
+  identificacionNumber: String!
+
+  """
+  aCHTransferFavoriteListResult isFavorite
+  """
+  isFavorite: Boolean!
+
+  """
+  aCHTransferFavoriteListResult typeAccountId
+  """
+  typeAccountId: Long!
+
+  """
+  aCHTransferFavoriteListResult destinationBankId
+  """
+  destinationBankId: Long!
+
+  """
+  aCHTransferFavoriteListResult typeAccountDescription
+  """
+  typeAccountDescription: String!
+
+  """
+  aCHTransferFavoriteListResult destinationBankDescription
+  """
+  destinationBankDescription: String!
+
+  """
+  aCHTransferFavoriteListResult status
+  """
+  status: Int!
+
+  """
+  aCHTransferFavoriteListResult destinationIdentificationBank
+  """
+  destinationIdentificationBank: String!
+
+  """
+  aCHTransferFavoriteListResult transferState
+  """
+  transferState: Boolean!
+
+  """
+  aCHTransferFavoriteListResult accountTypeCode
+  """
+  accountTypeCode: String!
+
+  """
+  aCHTransferFavoriteListResult aCHTypeAccountCode
+  """
+  aCHTypeAccountCode: String!
+
+  """
+  aCHTransferFavoriteListResult aCHPurposeType
+  """
+  aCHPurposeType: String!
+
+  """
+  aCHTransferFavoriteListResult aPIACHAccountCode
+  """
+  aPIACHAccountCode: String!
+
+  """
+  aCHTransferFavoriteListResult identificationNumberAccount
+  """
+  identificationNumberAccount: String!
+
+  """
+  aCHTransferFavoriteListResult identificationTypeAccount
+  """
+  identificationTypeAccount: Int!
+
+  """
+  aCHTransferFavoriteListResult destinationAccountCurrencyId
+  """
+  destinationAccountCurrencyId: Long!
+
+  """
+  aCHTransferFavoriteListResult destinationAccountCurrency
+  """
+  destinationAccountCurrency: String!
+}
+
+input aCHTransferFavoriteListInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  isDebug: Boolean
+
+  accountForAchTransferId: Long
+
+  accountNumber: String
+
+  description: String
+
+  titularName: String
+
+  notificationEmail: String
+
+  identificacionNumber: String
+
+  isFavorite: Boolean
+
+  typeAccountId: Long
+
+  destinationBankId: Long
+
+  typeAccountDescription: String
+
+  destinationBankDescription: String
+
+  status: Int
+
+  destinationIdentificationBank: String
+
+  transferState: Boolean
+
+  accountTypeCode: String
+
+  aCHTypeAccountCode: String
+
+  aCHPurposeType: String
+
+  aPIACHAccountCode: String
+
+  identificationNumberAccount: String
+
+  identificationTypeAccount: Int
+
+  destinationAccountCurrencyId: Long
+
+  destinationAccountCurrency: String
+}
+
+type aCHTransferFavoriteGet {
+  """
+  aCHTransferFavoriteList result
+  """
+  result: aCHTransferFavoriteGetResults
+}
+
+type aCHTransferFavoriteGetResults {
+  """
+  aCHTransferFavoriteGetResults accountForAchTransferId
+  """
+  accountForAchTransferId: Long!
+
+  """
+  aCHTransferFavoriteGetResults accountNumber
+  """
+  accountNumber: String!
+
+  """
+  aCHTransferFavoriteGetResults description
+  """
+  description: String!
+
+  """
+  aCHTransferFavoriteGetResults titularName
+  """
+  titularName: String!
+
+  """
+  aCHTransferFavoriteGetResults notificationEmail
+  """
+  notificationEmail: String!
+
+  """
+  aCHTransferFavoriteGetResults identificacionNumber
+  """
+  identificacionNumber: String!
+
+  """
+  aCHTransferFavoriteGetResults isFavorite
+  """
+  isFavorite: Boolean!
+
+  """
+  aCHTransferFavoriteGetResults typeAccountId
+  """
+  typeAccountId: Long!
+
+  """
+  aCHTransferFavoriteGetResults destinationBankId
+  """
+  destinationBankId: Long!
+
+  """
+  aCHTransferFavoriteGetResults typeAccountDescription
+  """
+  typeAccountDescription: String!
+
+  """
+  aCHTransferFavoriteGetResults destinationBankDescription
+  """
+  destinationBankDescription: String!
+
+  """
+  aCHTransferFavoriteGetResults status
+  """
+  status: Int!
+
+  """
+  aCHTransferFavoriteGetResults destinationIdentificationBank
+  """
+  destinationIdentificationBank: String!
+
+  """
+  aCHTransferFavoriteGetResults transferState
+  """
+  transferState: Boolean!
+
+  """
+  aCHTransferFavoriteGetResults accountTypeCode
+  """
+  accountTypeCode: String!
+
+  """
+  aCHTransferFavoriteGetResults aCHTypeAccountCode
+  """
+  aCHTypeAccountCode: String!
+
+  """
+  aCHTransferFavoriteGetResults aCHPurposeType
+  """
+  aCHPurposeType: String!
+
+  """
+  aCHTransferFavoriteGetResults aPIACHAccountCode
+  """
+  aPIACHAccountCode: String!
+
+  """
+  aCHTransferFavoriteGetResults identificationNumberAccount
+  """
+  identificationNumberAccount: String!
+
+  """
+  aCHTransferFavoriteGetResults identificationTypeAccount
+  """
+  identificationTypeAccount: Int!
+
+  """
+  aCHTransferFavoriteGetResults destinationAccountCurrencyId
+  """
+  destinationAccountCurrencyId: Long!
+
+  """
+  aCHTransferFavoriteGetResults destinationAccountCurrency
+  """
+  destinationAccountCurrency: String!
+}
+
+input aCHTransferFavoriteGetInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  isDebug: Boolean
+
+  accountForAchTransferId: Long
+
+  accountNumber: String
+
+  description: String
+
+  titularName: String
+
+  notificationEmail: String
+
+  identificacionNumber: String
+
+  isFavorite: Boolean
+
+  typeAccountId: Long
+
+  destinationBankId: Long
+
+  typeAccountDescription: String
+
+  destinationBankDescription: String
+
+  status: Int
+
+  destinationIdentificationBank: String
+
+  transferState: Boolean
+
+  accountTypeCode: String
+
+  aCHTypeAccountCode: String
+
+  aCHPurposeType: String
+
+  aPIACHAccountCode: String
+
+  identificationNumberAccount: String
+
+  identificationTypeAccount: Int
+
+  destinationAccountCurrencyId: Long
+
+  destinationAccountCurrency: String
+}
+
+type typeAccount {
+  """
+  typeAccount Result
+  """
+  result: [typeAccountTypeResult]
+}
+
+type typeAccountTypeResult {
+  """
+  typeAccountTypeResult id
+  """
+  id: String!
+
+  """
+  typeAccountTypeResult name
+  """
+  name: String!
+}
+
+input typeAccountInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type localTransferFavorite {
+  """
+  localTransferFavorite Result
+  """
+  result: [localTransferFavoriteResponse]
+}
+
+type localTransferFavoriteResponse {
+  """
+  localTransferFavoriteResponse idFavorite
+  """
+  idFavorite: Long!
+
+  """
+  localTransferFavoriteResponse idCustomer
+  """
+  idCustomer: Long!
+
+  """
+  localTransferFavoriteResponse idAccounType
+  """
+  idAccounType: Int!
+
+  """
+  localTransferFavoriteResponse accountNumber
+  """
+  accountNumber: String!
+
+  """
+  localTransferFavoriteResponse accountName
+  """
+  accountName: String!
+
+  """
+  localTransferFavoriteResponse email
+  """
+  email: String!
+
+  """
+  localTransferFavoriteResponse activo
+  """
+  activo: Boolean
+
+  """
+  localTransferFavoriteResponse phoneNumber
+  """
+  phoneNumber: String!
+
+  """
+  localTransferFavoriteResponse idCurrencyAccount
+  """
+  idCurrencyAccount: Int
+
+  """
+  localTransferFavoriteResponse currencyAccount
+  """
+  currencyAccount: String!
+}
+
+input localTransferFavoriteInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  idCustomer: Long!
+}
+
+type listSinpeAccount {
+  """
+  listSinpeAccount Result
+  """
+  result: [listSinpeAccountResultResponse]
+}
+
+type listSinpeAccountResultResponse {
+  """
+  listSinpeAccountResultResponse id_Cuenta
+  """
+  id_Cuenta: Long!
+
+  """
+  listSinpeAccountResultResponse pais
+  """
+  pais: String!
+
+  """
+  listSinpeAccountResultResponse banco
+  """
+  banco: String!
+
+  """
+  listSinpeAccountResultResponse cliente_Identificacion
+  """
+  cliente_Identificacion: String!
+
+  """
+  listSinpeAccountResultResponse cuenta_Sinpe
+  """
+  cuenta_Sinpe: String!
+
+  """
+  listSinpeAccountResultResponse activo
+  """
+  activo: Boolean!
+
+  """
+  listSinpeAccountResultResponse id_Moneda
+  """
+  id_Moneda: Long!
+
+  """
+  listSinpeAccountResultResponse moneda
+  """
+  moneda: String!
+
+  """
+  listSinpeAccountResultResponse nombre_Cuenta
+  """
+  nombre_Cuenta: String!
+}
+
+input listSinpeAccountInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  id_account: BigInt
+
+  identification: String
+
+  account_number: String
+}
+
+scalar BigInt
+
+type getExchangeRate {
+  """
+  getExchangeRate result
+  """
+  result: exchangeRateResult
+}
+
+type exchangeRateResult {
+  """
+  exchangeRateResult exchangeRate
+  """
+  exchangeRate: Float!
+}
+
+input getExchangeRateInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identification: String
+
+  idOriginCurrency: String
+
+  idDestinationCurrency: String
+
+  identificacionNumber: String
+}
+
+type getCoreBankMovements {
+  """
+  getCoreBankMovements result
+  """
+  result: [getCoreBankMovementsResult]
+}
+
+type getCoreBankMovementsResult {
+  """
+  getCoreBankMovementsResult idTransaction
+  """
+  idTransaction: Long!
+
+  """
+  getCoreBankMovementsResult creationDate
+  """
+  creationDate: DateTime!
+
+  """
+  getCoreBankMovementsResult transactionStateDescription
+  """
+  transactionStateDescription: String!
+
+  """
+  getCoreBankMovementsResult transactionCatalogueDescription
+  """
+  transactionCatalogueDescription: String!
+
+  """
+  getCoreBankMovementsResult amount
+  """
+  amount: Decimal!
+
+  """
+  getCoreBankMovementsResult currencyDescription
+  """
+  currencyDescription: String!
+
+  """
+  getCoreBankMovementsResult bankAuthorization
+  """
+  bankAuthorization: String!
+
+  """
+  getCoreBankMovementsResult idSubTransaction
+  """
+  idSubTransaction: Long!
+}
+
+"""
+The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
+scalar DateTime
+
+scalar Decimal
+
+input getCoreBankMovementsInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identificationNumber: String
+
+  startDate: DateTime
+
+  endDate: DateTime
+
+  accountToken: Long
+}
+
+type relatedContactsByPhone {
+  """
+  relatedContactsByPhone result
+  """
+  result: objRelatedContactsResponse
+}
+
+type objRelatedContactsResponse {
+  """
+  objRelatedContactsResponse phones
+  """
+  phones: [objPhoneResponse]
+}
+
+type objPhoneResponse {
+  """
+  objPhoneResponse Number
+  """
+  number: String!
+
+  """
+  objPhoneResponse Titular
+  """
+  titular: String!
+
+  """
+  objPhoneResponse BankName
+  """
+  bankName: String!
+
+  """
+  objPhoneResponse Identification
+  """
+  identification: String!
+
+  """
+  objPhoneResponse AccountNumber
+  """
+  accountNumber: String!
+
+  """
+  objPhoneResponse email
+  """
+  email: String!
+
+  """
+  objPhoneResponse id_Currency
+  """
+  id_Currency: String!
+
+  """
+  objPhoneResponse Currency
+  """
+  currency: String!
+}
+
+input relatedContactsByPhoneInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  """
+  relatedContactsByPhoneInput Contacts
+  """
+  contacts: [contactsList]
+}
+
+input contactsList {
+  phoneNumber: String
+}
+
+type relationhip {
+  """
+  relationhip RelationshipId
+  """
+  relationshipId: Int!
+
+  """
+  relationhip Code
+  """
+  code: String!
+
+  """
+  relationhip Description
+  """
+  description: String!
+}
+
+input relationhipInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  option: Int!
+}
+
+type stepbyStep {
+  """
+  stepbyStep KnownFor
+  """
+  knownFor: String
+
+  """
+  stepbyStep birthdate
+  """
+  birthdate: DateTime
+
+  """
+  stepbyStep idGenre
+  """
+  idGenre: Long
+
+  """
+  stepbyStep strGenre
+  """
+  strGenre: String
+
+  """
+  stepbyStep idMaritalStatus
+  """
+  idMaritalStatus: Long
+
+  """
+  stepbyStep strMaritalStatus
+  """
+  strMaritalStatus: String
+
+  """
+  stepbyStep idProfessionType
+  """
+  idProfessionType: Long
+
+  """
+  stepbyStep stridProfessionType
+  """
+  stridProfessionType: String
+
+  """
+  stepbyStep idNationalidad
+  """
+  idNationalidad: Long
+
+  """
+  stepbyStep strNationality
+  """
+  strNationality: String
+
+  """
+  stepbyStep expirationDate
+  """
+  expirationDate: DateTime
+
+  """
+  stepbyStep dateOfIssue
+  """
+  dateOfIssue: DateTime
+
+  """
+  stepbyStep placeOfIssue
+  """
+  placeOfIssue: String
+
+  """
+  stepbyStep strplaceOfIssue
+  """
+  strplaceOfIssue: String
+
+  """
+  stepbyStep idAddressLevel1
+  """
+  idAddressLevel1: Long
+
+  """
+  stepbyStep strAddressLevel1
+  """
+  strAddressLevel1: String
+
+  """
+  stepbyStep idAddressLevel2
+  """
+  idAddressLevel2: Long
+
+  """
+  stepbyStep strAddressLevel2
+  """
+  strAddressLevel2: String
+
+  """
+  stepbyStep idAddressLevel3
+  """
+  idAddressLevel3: Long
+
+  """
+  stepbyStep strAddressLevel3
+  """
+  strAddressLevel3: String
+
+  """
+  stepbyStep addressDetail
+  """
+  addressDetail: String
+
+  """
+  stepbyStep idEconomicActivity
+  """
+  idEconomicActivity: Long
+
+  """
+  stepbyStep strIdEconomicActivity
+  """
+  strIdEconomicActivity: String
+
+  """
+  stepbyStep legalID
+  """
+  legalID: String
+
+  """
+  stepbyStep nameCompany
+  """
+  nameCompany: String
+
+  """
+  stepbyStep specifiesIncomeSource
+  """
+  specifiesIncomeSource: String
+
+  """
+  stepbyStep institucionPesion
+  """
+  institucionPesion: String
+
+  """
+  stepbyStep aboutCompany
+  """
+  aboutCompany: String
+
+  """
+  stepbyStep income
+  """
+  income: Decimal
+
+  """
+  stepbyStep fullJobAddress
+  """
+  fullJobAddress: String
+
+  """
+  stepbyStep entrepreneurship
+  """
+  entrepreneurship: String
+
+  """
+  stepbyStep beneficiary
+  """
+  beneficiary: [beneficiarieResult]
+
+  """
+  stepbyStep isActivityOfArt15
+  """
+  isActivityOfArt15: Boolean
+
+  """
+  stepbyStep isUSCitizen
+  """
+  isUSCitizen: Boolean
+
+  """
+  stepbyStep isPEP
+  """
+  isPEP: Boolean
+
+  """
+  stepbyStep isUSTaxPayer
+  """
+  isUSTaxPayer: Boolean
+
+  """
+  stepbyStep isTaxPayer
+  """
+  isTaxPayer: Boolean
+
+  """
+  stepbyStep idOrigenCountry
+  """
+  idOrigenCountry: Long
+
+  """
+  stepbyStep strOrigenCountry
+  """
+  strOrigenCountry: String
+
+  """
+  stepbyStep currentStep
+  """
+  currentStep: String
+
+  """
+  stepbyStep idRequest
+  """
+  idRequest: Long
+
+  """
+  stepbyStep identification
+  """
+  identification: String
+
+  """
+  stepbyStep dateCreation
+  """
+  dateCreation: DateTime
+
+  """
+  stepbyStep statusRequest
+  """
+  statusRequest: String
+
+  """
+  stepbyStep statusFirm
+  """
+  statusFirm: String
+
+  """
+  stepbyStep statusOnfido
+  """
+  statusOnfido: String
+
+  """
+  stepbyStep idRequestSysde
+  """
+  idRequestSysde: Long
+}
+
+type beneficiarieResult {
+  """
+  beneficiarieResult fullName
+  """
+  fullName: String
+
+  """
+  beneficiarieResult relationship
+  """
+  relationship: Long
+
+  """
+  beneficiarieResult strRelationship
+  """
+  strRelationship: String
+
+  """
+  beneficiarieResult allocationPercentage
+  """
+  allocationPercentage: String
+}
+
+input stepbyStepInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  idRequest: Long!
+}
+
+type profession {
+  """
+  profession result
+  """
+  result: [professionResult]
+}
+
+type professionResult {
+  """
+  professionResult id
+  """
+  id: Int!
+
+  """
+  professionResult descripcion
+  """
+  name: String!
+}
+
+input professionInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+}
+
+type AccountSmartMutation {
+  globalRequest(globalRequestInput: globalRequestInput): globalRequest
+
+  attachmentsAccount(attachmentsAccountInput: attachmentsAccountInput): attachmentsAccount
+
+  activatedExternalAccount(activatedExternalAccountInput: activatedExternalAccountInput): activatedExternalAccount
+
+  updateSmartAccountStatus(updateSmartAccountStatusInput: updateSmartAccountStatusInput): updateSmartAccountStatus
+
+  saveAutomatedSmartAccount(saveAutomatedSmartAccountInput: saveAutomatedSmartAccountInput): saveAutomatedSmartAccount
+
+  aCHTransferFavoriteAdd(aCHTransferFavoriteAddInput: aCHTransferFavoriteAddInput): aCHTransferFavoriteAdd
+
+  aCHTransferFavoriteUpdate(aCHTransferFavoriteUpdateInput: aCHTransferFavoriteUpdateInput): aCHTransferFavoriteUpdate
+
+  aCHTransferFavoriteDelete(aCHTransferFavoriteDeleteInput: aCHTransferFavoriteDeleteInput): aCHTransferFavoriteDelete
+
+  aCHTransfer(aCHTransferInput: aCHTransferInput): aCHTransfer
+
+  localTransferFavoriteMan(localTransferFavoriteManInput: localTransferFavoriteManInput): localTransferFavoriteMan
+
+  processLocalTransfer(processLocalTransferInput: processLocalTransferInput): processLocalTransfer
+
+  manageSinpeAccountSave(manageSinpeAccountSaveInput: manageSinpeAccountSaveInput): manageSinpeAccountSave
+
+  manageSinpeAccountUpdate(manageSinpeAccountUpdateInput: manageSinpeAccountUpdateInput): manageSinpeAccountUpdate
+
+  manageSinpeAccountDelete(manageSinpeAccountInput: manageSinpeAccountInput): manageSinpeAccountDelete
+
+  sinpeTransfer(sinpeTransferInput: sinpeTransferInput): sinpeTransfer
+}
+
+type globalRequest {
+  """
+  globalRequest result
+  """
+  result: globalRequestResult
+}
+
+type globalRequestResult {
+  """
+  globalRequestResult idGlobalRequest
+  """
+  idGlobalRequest: Long!
+
+  """
+  globalRequestResult accountExists
+  """
+  accountExists: Boolean!
+
+  """
+  globalRequestResult idSysdeRequest
+  """
+  idSysdeRequest: Long!
+}
+
+input globalRequestInput {
+  pkUser: Int
+
+  status: Int
+
+  knownFor: String
+
+  birthdate: Date
+
+  idGenre: Long
+
+  idMaritalStatus: Long
+
+  idNationality: Long
+
+  idProfessionType: Int
+
+  dateOfIssue: Date
+
+  expirationDate: Date
+
+  placeOfIssue: String
+
+  idAddressLevel1: Long
+
+  idAddressLevel2: Long
+
+  idAddressLevel3: Long
+
+  addressDetail: String
+
+  idEconomicActivity: Long
+
+  nameCompany: String
+
+  positionJob: String
+
+  aboutCompany: String
+
+  income: Decimal
+
+  fullJobAddress: String
+
+  institutionPesion: String
+
+  specifiesIncomeSource: String
+
+  legalID: String
+
+  entrepreneurship: String
+
+  """
+  globalRequestInput listBeneficiaries
+  """
+  listBeneficiaries: [beneficiarieList]
+
+  isPEP: Boolean
+
+  isUSCitizen: Boolean
+
+  isUSTaxPayer: Boolean
+
+  isActivityOfArt15: Boolean
+
+  isTaxPayer: Boolean
+
+  user: String!
+
+  idBrand: Int!
+
+  currentStep: String
+}
+
+"""
+The `Date` scalar type represents a year, month and day in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard.
+"""
+scalar Date
+
+input beneficiarieList {
+  fullName: String
+
+  relationship: String
+
+  allocationPercentage: String
+}
+
+type attachmentsAccount {
+  """
+  attachmentsAccount success
+  """
+  success: Boolean!
+
+  """
+  attachmentsAccount message
+  """
+  message: String!
+
+  """
+  attachmentsAccount data
+  """
+  data: String!
+}
+
+input attachmentsAccountInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identificationFile: String!
+
+  """
+  attachmentsAccountInput fileInfo
+  """
+  fileInfo: [fileDocumentinfowrkList]
+}
+
+input fileDocumentinfowrkList {
+  filename: String
+
+  fileContent: String
+}
+
+type activatedExternalAccount {
+  """
+  sendClientAccount name
+  """
+  name: String!
+}
+
+input activatedExternalAccountInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identification: String!
+
+  firstName: String!
+
+  secondName: String!
+
+  firstSurname: String!
+
+  secondSurname: String!
+
+  birthdate: String!
+
+  gender: String
+
+  email: String
+
+  expritationKey: String
+
+  phone: String
+
+  idPerson: Long!
+
+  """
+  activatedExternalAccountInput accountList
+  """
+  accountList: [accountClientListList]
+}
+
+input accountClientListList {
+  accountNumberToken: String
+
+  accountNumber: String
+
+  ibanAccountNumber: String
+
+  idCurrency: Int
+}
+
+type updateSmartAccountStatus {
+  """
+  updateSmartAccountStatus result
+  """
+  result: updateSmartAccountStatus_Result
+}
+
+type updateSmartAccountStatus_Result {
+  """
+  updateSmartAccountStatus_Result requestID
+  """
+  requestID: Long!
+
+  """
+  updateSmartAccountStatus_Result message
+  """
+  message: String!
+
+  """
+  updateSmartAccountStatus_Result status
+  """
+  status: String!
+
+  """
+  updateSmartAccountStatus_Result url_Firm_Document
+  """
+  url_Firm_Document: String!
+}
+
+input updateSmartAccountStatusInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identificationNumber: String!
+
+  idAccountSysde: Long!
+
+  idAccount_Request: Long!
+
+  newState: String!
+
+  typeState: String!
+}
+
+type saveAutomatedSmartAccount {
+  """
+  saveAutomatedSmartAccount result
+  """
+  result: saveAutomatedSmartAccountResult
+}
+
+type saveAutomatedSmartAccountResult {
+  """
+  saveAutomatedSmartAccountResult requestID
+  """
+  requestID: Long!
+
+  """
+  saveAutomatedSmartAccountResult message
+  """
+  message: String!
+
+  """
+  saveAutomatedSmartAccountResult iDAccount
+  """
+  iDAccount: Long!
+
+  """
+  saveAutomatedSmartAccountResult documentRoute
+  """
+  documentRoute: String!
+
+  """
+  saveAutomatedSmartAccountResult identification
+  """
+  identification: String!
+}
+
+input saveAutomatedSmartAccountInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  identificationNumber: String!
+
+  idRequest: Long!
+}
+
+type aCHTransferFavoriteAdd {
+  """
+  aCHTransferFavoriteAdd result
+  """
+  result: aCHTransferFavoriteAddResult
+}
+
+type aCHTransferFavoriteAddResult {
+  """
+  aCHTransferFavoriteAddResult accountForAchTransferId
+  """
+  accountForAchTransferId: Long!
+
+  """
+  aCHTransferFavoriteAddResult accountNumber
+  """
+  accountNumber: String!
+
+  """
+  aCHTransferFavoriteAddResult description
+  """
+  description: String!
+
+  """
+  aCHTransferFavoriteAddResult titularName
+  """
+  titularName: String!
+
+  """
+  aCHTransferFavoriteAddResult notificationEmail
+  """
+  notificationEmail: String!
+
+  """
+  aCHTransferFavoriteAddResult identificacionNumber
+  """
+  identificacionNumber: String!
+
+  """
+  aCHTransferFavoriteAddResult isFavorite
+  """
+  isFavorite: Boolean!
+
+  """
+  aCHTransferFavoriteAddResult typeAccountId
+  """
+  typeAccountId: Long!
+
+  """
+  aCHTransferFavoriteAddResult destinationBankId
+  """
+  destinationBankId: Long!
+
+  """
+  aCHTransferFavoriteAddResult typeAccountDescription
+  """
+  typeAccountDescription: String!
+
+  """
+  aCHTransferFavoriteAddResult destinationBankDescription
+  """
+  destinationBankDescription: String!
+
+  """
+  aCHTransferFavoriteAddResult status
+  """
+  status: Int!
+
+  """
+  aCHTransferFavoriteAddResult destinationIdentificationBank
+  """
+  destinationIdentificationBank: String!
+
+  """
+  aCHTransferFavoriteAddResult transferState
+  """
+  transferState: Boolean!
+
+  """
+  aCHTransferFavoriteAddResult accountTypeCode
+  """
+  accountTypeCode: String!
+
+  """
+  aCHTransferFavoriteAddResult aCHTypeAccountCode
+  """
+  aCHTypeAccountCode: String!
+
+  """
+  aCHTransferFavoriteAddResult aCHPurposeType
+  """
+  aCHPurposeType: String!
+
+  """
+  aCHTransferFavoriteAddResult aPIACHAccountCode
+  """
+  aPIACHAccountCode: String!
+
+  """
+  aCHTransferFavoriteAddResult identificationNumberAccount
+  """
+  identificationNumberAccount: String!
+
+  """
+  aCHTransferFavoriteAddResult identificationTypeAccount
+  """
+  identificationTypeAccount: Int!
+
+  """
+  aCHTransferFavoriteAddResult destinationAccountCurrencyId
+  """
+  destinationAccountCurrencyId: Long
+
+  """
+  aCHTransferFavoriteAddResult destinationAccountCurrency
+  """
+  destinationAccountCurrency: String!
+}
+
+input aCHTransferFavoriteAddInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  description: String
+
+  titularName: String
+
+  accountNumber: String
+
+  notificationEmail: String
+
+  identificacionNumber: String
+
+  isFavorite: Boolean
+
+  typeAccountId: Long
+
+  destinationBankId: Long
+
+  identificationNumberAccount: String
+
+  identificationTypeAccount: Long
+
+  destinationAccountCurrencyId: Long
+}
+
+type aCHTransferFavoriteUpdate {
+  """
+  aCHTransferFavoriteUpdate data
+  """
+  result: aCHTransferFavoriteUpdateResult
+}
+
+type aCHTransferFavoriteUpdateResult {
+  """
+  aCHTransferFavoriteUpdateResult accountForAchTransferId
+  """
+  accountForAchTransferId: Long!
+
+  """
+  aCHTransferFavoriteUpdateResult accountNumber
+  """
+  accountNumber: String!
+
+  """
+  aCHTransferFavoriteUpdateResult description
+  """
+  description: String!
+
+  """
+  aCHTransferFavoriteUpdateResult titularName
+  """
+  titularName: String!
+
+  """
+  aCHTransferFavoriteUpdateResult notificationEmail
+  """
+  notificationEmail: String!
+
+  """
+  aCHTransferFavoriteUpdateResult identificacionNumber
+  """
+  identificacionNumber: String!
+
+  """
+  aCHTransferFavoriteUpdateResult isFavorite
+  """
+  isFavorite: Boolean!
+
+  """
+  aCHTransferFavoriteUpdateResult typeAccountId
+  """
+  typeAccountId: Long!
+
+  """
+  aCHTransferFavoriteUpdateResult destinationBankId
+  """
+  destinationBankId: Long!
+
+  """
+  aCHTransferFavoriteUpdateResult typeAccountDescription
+  """
+  typeAccountDescription: String!
+
+  """
+  aCHTransferFavoriteUpdateResult destinationBankDescription
+  """
+  destinationBankDescription: String!
+
+  """
+  aCHTransferFavoriteUpdateResult status
+  """
+  status: Int!
+
+  """
+  aCHTransferFavoriteUpdateResult destinationIdentificationBank
+  """
+  destinationIdentificationBank: String!
+
+  """
+  aCHTransferFavoriteUpdateResult transferState
+  """
+  transferState: Boolean!
+
+  """
+  aCHTransferFavoriteUpdateResult accountTypeCode
+  """
+  accountTypeCode: String!
+
+  """
+  aCHTransferFavoriteUpdateResult aCHTypeAccountCode
+  """
+  aCHTypeAccountCode: String!
+
+  """
+  aCHTransferFavoriteUpdateResult aCHPurposeType
+  """
+  aCHPurposeType: String!
+
+  """
+  aCHTransferFavoriteUpdateResult aPIACHAccountCode
+  """
+  aPIACHAccountCode: String!
+
+  """
+  aCHTransferFavoriteUpdateResult identificationNumberAccount
+  """
+  identificationNumberAccount: String!
+
+  """
+  aCHTransferFavoriteUpdateResult identificationTypeAccount
+  """
+  identificationTypeAccount: Int!
+
+  """
+  aCHTransferFavoriteUpdateResult destinationAccountCurrencyId
+  """
+  destinationAccountCurrencyId: Long!
+
+  """
+  aCHTransferFavoriteUpdateResult destinationAccountCurrency
+  """
+  destinationAccountCurrency: String!
+}
+
+input aCHTransferFavoriteUpdateInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  isDebug: Boolean
+
+  accountForAchTransferId: Long
+
+  accountNumber: String
+
+  description: String
+
+  titularName: String
+
+  notificationEmail: String
+
+  identificacionNumber: String
+
+  isFavorite: Boolean
+
+  typeAccountId: Long
+
+  destinationBankId: Long
+
+  typeAccountDescription: String
+
+  destinationBankDescription: String
+
+  status: Int
+
+  destinationIdentificationBank: String
+
+  transferState: Boolean
+
+  accountTypeCode: String
+
+  aCHTypeAccountCode: String
+
+  aCHPurposeType: String
+
+  aPIACHAccountCode: String
+
+  identificationNumberAccount: String
+
+  identificationTypeAccount: Int
+
+  destinationAccountCurrencyId: Long
+
+  destinationAccountCurrency: String
+}
+
+type aCHTransferFavoriteDelete {
+  """
+  aCHTransferFavoriteDelete data
+  """
+  result: aCHTransferFavoriteResultDelete
+}
+
+type aCHTransferFavoriteResultDelete {
+  """
+  aCHTransferFavoriteResultDelete accountForAchTransferId
+  """
+  accountForAchTransferId: Long!
+
+  """
+  aCHTransferFavoriteResultDelete accountNumber
+  """
+  accountNumber: String!
+
+  """
+  aCHTransferFavoriteResultDelete description
+  """
+  description: String!
+
+  """
+  aCHTransferFavoriteResultDelete titularName
+  """
+  titularName: String!
+
+  """
+  aCHTransferFavoriteResultDelete notificationEmail
+  """
+  notificationEmail: String!
+
+  """
+  aCHTransferFavoriteResultDelete identificacionNumber
+  """
+  identificacionNumber: String!
+
+  """
+  aCHTransferFavoriteResultDelete isFavorite
+  """
+  isFavorite: Boolean!
+
+  """
+  aCHTransferFavoriteResultDelete typeAccountId
+  """
+  typeAccountId: Long!
+
+  """
+  aCHTransferFavoriteResultDelete destinationBankId
+  """
+  destinationBankId: Long!
+
+  """
+  aCHTransferFavoriteResultDelete typeAccountDescription
+  """
+  typeAccountDescription: String!
+
+  """
+  aCHTransferFavoriteResultDelete destinationBankDescription
+  """
+  destinationBankDescription: String!
+
+  """
+  aCHTransferFavoriteResultDelete status
+  """
+  status: Int!
+
+  """
+  aCHTransferFavoriteResultDelete destinationIdentificationBank
+  """
+  destinationIdentificationBank: String!
+
+  """
+  aCHTransferFavoriteResultDelete transferState
+  """
+  transferState: Boolean!
+
+  """
+  aCHTransferFavoriteResultDelete accountTypeCode
+  """
+  accountTypeCode: String!
+
+  """
+  aCHTransferFavoriteResultDelete aCHTypeAccountCode
+  """
+  aCHTypeAccountCode: String!
+
+  """
+  aCHTransferFavoriteResultDelete aCHPurposeType
+  """
+  aCHPurposeType: String!
+
+  """
+  aCHTransferFavoriteResultDelete aPIACHAccountCode
+  """
+  aPIACHAccountCode: String!
+
+  """
+  aCHTransferFavoriteResultDelete identificationNumberAccount
+  """
+  identificationNumberAccount: String!
+
+  """
+  aCHTransferFavoriteResultDelete identificationTypeAccount
+  """
+  identificationTypeAccount: Int!
+
+  """
+  aCHTransferFavoriteResultDelete destinationAccountCurrencyId
+  """
+  destinationAccountCurrencyId: Long!
+
+  """
+  aCHTransferFavoriteResultDelete destinationAccountCurrency
+  """
+  destinationAccountCurrency: String!
+}
+
+input aCHTransferFavoriteDeleteInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  isDebug: Boolean
+
+  accountForAchTransferId: Long
+
+  accountNumber: String
+
+  description: String
+
+  titularName: String
+
+  notificationEmail: String
+
+  identificacionNumber: String
+
+  isFavorite: Boolean
+
+  typeAccountId: Long
+
+  destinationBankId: Long
+
+  typeAccountDescription: String
+
+  destinationBankDescription: String
+
+  status: Int
+
+  destinationIdentificationBank: String
+
+  transferState: Boolean
+
+  accountTypeCode: String
+
+  aCHTypeAccountCode: String
+
+  aCHPurposeType: String
+
+  aPIACHAccountCode: String
+
+  identificationNumberAccount: String
+
+  identificationTypeAccount: Int
+
+  destinationAccountCurrencyId: Long
+
+  destinationAccountCurrency: String
+}
+
+type aCHTransfer {
+  """
+  aCHTransfer result
+  """
+  result: objectSendMoneyACHList
+}
+
+type objectSendMoneyACHList {
+  """
+  objectSendMoneyACHList bankAuthorization
+  """
+  bankAuthorization: authorizationList
+
+  """
+  objectSendMoneyACHList coreBanking
+  """
+  coreBanking: processCoreList
+}
+
+type authorizationList {
+  """
+  authorizationList status
+  """
+  status: Int!
+
+  """
+  authorizationList authorizationId
+  """
+  authorizationId: String!
+
+  """
+  authorizationList message
+  """
+  message: String!
+
+  """
+  authorizationList outHours
+  """
+  outHours: Boolean!
+}
+
+type processCoreList {
+  """
+  processCoreList TransferDetail
+  """
+  transferDetail: transferDetailObjList
+}
+
+type transferDetailObjList {
+  """
+  transferDetailObjList status
+  """
+  originName: String!
+
+  """
+  transferDetailObjList authorizationId
+  """
+  originAccount: String!
+
+  """
+  transferDetailObjList message
+  """
+  destinationBank: String!
+
+  """
+  transferDetailObjList outHours
+  """
+  destinationName: String!
+
+  """
+  transferDetailObjList status
+  """
+  destinationAccount: String!
+
+  """
+  transferDetailObjList authorizationId
+  """
+  amount: Decimal!
+
+  """
+  transferDetailObjList message
+  """
+  emailSent: Int!
+
+  """
+  transferDetailObjList outHours
+  """
+  typeAccountDescription: String!
+}
+
+input aCHTransferInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  reasonForTransfer: String
+
+  amountToTransfer: Decimal
+
+  identification: String
+
+  accountForAchTransferId: Long
+}
+
+type localTransferFavoriteMan {
+  """
+  localTransferFavoriteMan Result
+  """
+  result: localTransferFavoriteManResponse
+
+  """
+  localTransferFavoriteMan message
+  """
+  message: String!
+
+  """
+  localTransferFavoriteMan status
+  """
+  status: Int!
+}
+
+type localTransferFavoriteManResponse {
+  """
+  localTransferFavoriteManResponse idFavorite
+  """
+  idFavorite: Long!
+
+  """
+  localTransferFavoriteManResponse idCustomer
+  """
+  idCustomer: Long!
+
+  """
+  localTransferFavoriteManResponse idAccounType
+  """
+  idAccounType: Int!
+
+  """
+  localTransferFavoriteManResponse accountNumber
+  """
+  accountNumber: String!
+
+  """
+  localTransferFavoriteManResponse accountName
+  """
+  accountName: String!
+
+  """
+  localTransferFavoriteManResponse email
+  """
+  email: String!
+
+  """
+  localTransferFavoriteManResponse activo
+  """
+  activo: Boolean
+
+  """
+  localTransferFavoriteManResponse phoneNumber
+  """
+  phoneNumber: String!
+
+  """
+  localTransferFavoriteManResponse idCurrencyAccount
+  """
+  idCurrencyAccount: Int
+
+  """
+  localTransferFavoriteManResponse currencyAccount
+  """
+  currencyAccount: String!
+}
+
+input localTransferFavoriteManInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  idCustomer: Long
+
+  idAccounType: Int
+
+  accountNumber: String
+
+  accountName: String
+
+  email: String
+
+  activo: Boolean
+
+  phoneNumber: String
+
+  idCurrencyAccount: Int
+
+  idFavorite: Long
+}
+
+type processLocalTransfer {
+  """
+  processLocalTransfer Result
+  """
+  result: processLocalTransferResponse
+}
+
+type processLocalTransferResponse {
+  """
+  processLocalTransferResponse authorization
+  """
+  authorization: String!
+
+  """
+  processLocalTransferResponse currentBalance
+  """
+  currentBalance: Decimal!
+
+  """
+  processLocalTransferResponse destinationTitularName
+  """
+  destinationTitularName: String!
+
+  """
+  processLocalTransferResponse originAccountNumber
+  """
+  originAccountNumber: String!
+}
+
+input processLocalTransferInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  pkUsuario: Int
+
+  originIdentification: String
+
+  destinationIdentification: String
+
+  destinationAccountNumber: String
+
+  amount: Decimal
+
+  reason: String
+
+  accountToken: Long
+
+  exchangeRate: Decimal
+
+  originEmail: String
+
+  destinationEmail: String
+
+  idCurrencyOrigin: String
+
+  idCurrencyDestination: String
+}
+
+type manageSinpeAccountSave {
+  """
+  manageSinpeAccountSave Result
+  """
+  result: manageSinpeAccountSaveResponse
+}
+
+type manageSinpeAccountSaveResponse {
+  """
+  manageSinpeAccountSaveResponse id_Account_Sinpe
+  """
+  id_Account_Sinpe: Long!
+}
+
+input manageSinpeAccountSaveInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  id_account: BigInt
+
+  identification: String
+
+  account_number: String
+
+  option: String
+
+  id_Currency: BigInt
+
+  nameAccount: String
+}
+
+type manageSinpeAccountUpdate {
+  """
+  manageSinpeAccountUpdate Result
+  """
+  result: manageSinpeAccountResponse
+}
+
+type manageSinpeAccountResponse {
+  """
+  manageSinpeAccountResponse id_Account_Sinpe
+  """
+  id_Account_Sinpe: Long!
+}
+
+input manageSinpeAccountUpdateInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  id_account: BigInt
+
+  identification: String
+
+  account_number: String
+
+  option: String
+
+  id_Currency: BigInt
+
+  nameAccount: String
+}
+
+type manageSinpeAccountDelete {
+  """
+  manageSinpeAccountDelete Result
+  """
+  result: manageSinpeAccountResponse
+}
+
+input manageSinpeAccountInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  id_account: BigInt
+
+  identification: String
+
+  account_number: String
+
+  option: String
+
+  id_Currency: BigInt
+}
+
+type sinpeTransfer {
+  """
+  sinpeTransfer result
+  """
+  result: sinpeTransferResult
+}
+
+type sinpeTransferResult {
+  """
+  SinpeTransferResult numero_Referencia_Interno
+  """
+  nUMERO_REFERENCIA_INTERNO: String!
+}
+
+input sinpeTransferInput {
+  user: String!
+
+  idBrand: Int!
+
+  tenantId: String
+
+  traceidentifier: String
+
+  pkUsuario: Int
+
+  identification: String
+
+  originCustomerIdentification: String
+
+  ibanAccountOrigin: String
+
+  originCustomerName: Int
+
+  idCurrencyOrigin: String
+
+  amountToTransfer: Decimal
+
+  ibanAccountDestination: String
+
+  destinationCustomerIdentification: Int
+
+  destionationCustomerName: String
+
+  idCurrencyDestination: String
+
+  reasonOfTransfer: String
+
+  tYPE: Int
+
+  exchangeRate: Decimal
+
+  originEmail: String
+
+  destinationEmail: String
+}
+
+schema {
+  query: AccountSmartQuery
+  mutation: AccountSmartMutation
+}

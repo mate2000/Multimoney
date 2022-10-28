@@ -17,6 +17,7 @@ fun Navigation() {
         creditNavGraph(navController = navController)
         visaNavGraph(navController = navController)
         paymentNavGraph(navController = navController)
+        smartNavGraph(navController = navController)
         testNavGraph(navController = navController)
     }
 }

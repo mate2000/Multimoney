@@ -31,14 +31,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Composable
 fun LocationDetailsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: LocationDetailsViewModel = hiltViewModel(),
-    locationName: String = "",
-    locationAddress: String = "",
-    locationOpeningTime: String = "",
-    paymentAmount: String = "",
-    paymentId: String = "",
-    latitude: String = "",
-    longitude: String = ""
+    viewModel: LocationDetailsViewModel = hiltViewModel()
 ) {
 
 //    val focusManager = LocalFocusManager.current
@@ -68,7 +61,7 @@ fun LocationDetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 54.dp, bottom = 24.dp),
-                text = locationName,
+                text = viewModel.locationName,
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold
@@ -78,13 +71,13 @@ fun LocationDetailsScreen(
             // Address
             LocationInfo(
                 title = stringResource(id = R.string.payment_location_maps_address),
-                text = locationAddress
+                text = viewModel.locationAddress
             )
 
             // Opening time
             LocationInfo(
                 title = stringResource(id = R.string.payment_location_maps_opening_time),
-                text = locationOpeningTime
+                text = viewModel.locationOpeningTime
             )
 
             // Payment details
@@ -93,14 +86,14 @@ fun LocationDetailsScreen(
                 Column(modifier = Modifier.fillMaxWidth(0.5f)) {
                     LocationInfo(
                         title = stringResource(id = R.string.payment_location_maps_payment_amount),
-                        text = paymentAmount
+                        text = viewModel.paymentAmount
                     )
                 }
                 // Payment ID
                 Column(modifier = Modifier.fillMaxWidth(0.5f)) {
                     LocationInfo(
                         title = stringResource(id = R.string.payment_location_maps_payment_id),
-                        text = paymentId
+                        text = viewModel.paymentId
                     )
                 }
             }
@@ -121,8 +114,8 @@ fun LocationDetailsScreen(
         CustomButton(
             onClick = {viewModel.onUIEvent(LocationDetailsViewModel.UIEvent.OnNavigateMapsClick(
                 context = context,
-                latitude = latitude,
-                longitude = longitude
+                latitude = viewModel.latitude,
+                longitude = viewModel.longitude
             ))},
             text = stringResource(id = R.string.payment_location_maps_address_button),
             modifier = Modifier

@@ -2,10 +2,22 @@ package com.multimoney.multimoney.presentation.ui.home.product.credit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Chip
+import androidx.compose.material.ChipDefaults
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.TrendingUp
@@ -31,12 +43,19 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusProcessStarted
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.*
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseFirstTime
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditAcceptContractRefuseSecondTime
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessCreateAccountFailure
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessMissingSignature
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessSignatureRefuseFirstTime
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessSignatureRefuseSecondTime
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 
 /**
  * Composable function to show the option to active accountsmart product
@@ -107,7 +126,7 @@ fun CardSmartProduct(
             ),
         )
         Text(
-            text = "${brandId.getCurrency()}$profitTotal",
+            text = "${stringResource(id = brandId.getCurrencySymbol())}$profitTotal",
             modifier = Modifier.padding(bottom = 10.dp),
             style = Typography.h4.copy(
                 fontWeight = FontWeight.SemiBold,
@@ -142,7 +161,12 @@ fun CardSmartProduct(
                         tint = MultimoneyTheme.colors.smartCardPlus
                     )
                     Text(
-                        text = "${brandId.getCurrency()}$profitMonthly ${stringResource(id = R.string.smart_card_monthly_profit_label)} $currentMonth",
+                        text = stringResource(
+                            id = R.string.smart_card_monthly_profit_label,
+                            stringResource(id = brandId.getCurrencySymbol()),
+                            profitMonthly,
+                            currentMonth
+                        ),
                         modifier = Modifier.padding(start = 4.dp),
                         style = Typography.body2.copy(
                             fontWeight = FontWeight.SemiBold,

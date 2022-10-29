@@ -62,6 +62,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardOfferSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
@@ -338,7 +339,10 @@ fun Products(
                 state = state
             ) {
                 // todo add the logic for the others pages
-                CreditProduct(viewModel = viewModel)
+                //CreditProduct(viewModel = viewModel)
+                CardSmartProduct(
+
+                )
             }
 
             Spacer(modifier = Modifier.padding(4.dp))
@@ -421,7 +425,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             })
                         }
                         else -> {
-                            CardSmartProduct()
+                            CardOfferSmartProduct()
                         }
                     }
                 }

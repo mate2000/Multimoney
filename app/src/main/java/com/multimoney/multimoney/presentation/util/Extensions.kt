@@ -64,6 +64,18 @@ fun Int.getCurrency(): CurrencyType {
     }
 }
 
+/**
+ * get currency symbol by idBrand
+ */
+fun Int.getCurrencySymbol(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.credit_monthly_income_dollar_symbol
+        Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
+        Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
+        else -> R.string.empty
+    }
+}
+
 // Payment
 fun String.getPaymentMethodType(): PaymentMethodType {
     return when (this) {

@@ -441,7 +441,7 @@
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
-    <string name="smart_card_monthly_profit_label" translatable="false">ganancia</string>
+    <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
 
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>

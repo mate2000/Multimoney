@@ -7,6 +7,7 @@ import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
@@ -129,4 +130,8 @@ interface CreditRepository {
         idBrand: Int,
         idUserRequest: String
     ): Flow<MultimoneyResult<BanksAndRegularExpression>>
+
+    suspend fun queryGetPaymentPoints(
+        idBrand: Int
+    ): Flow<MultimoneyResult<List<PaymentPoint?>?>>
 }

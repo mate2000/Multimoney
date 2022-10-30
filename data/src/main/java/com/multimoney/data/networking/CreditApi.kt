@@ -11,6 +11,7 @@ import com.multimoney.data.networking.credit.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyProvinceQuery
 import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.credit.apollomodel.GetClientBankAccountQuery
+import com.multimoney.data.networking.credit.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeProvinceQuery
@@ -220,6 +221,15 @@ class CreditApi @Inject constructor(
                 user,
                 idBrand,
                 idUserRequest
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetPaymentPoints(
+        idBrand: Int
+    ): ApolloCall<GetPaymentPointsQuery.Data> =
+        apolloClient.query(
+            GetPaymentPointsQuery(
+                idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

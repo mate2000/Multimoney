@@ -69,7 +69,7 @@ fun PaymentAmountContent(
         Column {
             TopNavBar(
                 onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
-                onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
+                onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBackHome) }
             )
             Text(
                 modifier = Modifier.padding(top = 42.dp),
@@ -120,10 +120,6 @@ fun PaymentAmountContent(
                         focusManager.clearFocus()
                     }),
                     isRequired = true,
-                    isRequiredMessage = stringResource(
-                        id = R.string.payment_amount_amount_min_error,
-                        viewModel.getFormattedCurrency()
-                    ),
                     isError = viewModel.uiState.currentAmountError.first,
                     errorMessage = stringResource(
                         id = viewModel.uiState.currentAmountError.second,

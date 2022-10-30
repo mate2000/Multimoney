@@ -1,14 +1,17 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.amount
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle/*
+import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
-import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase*/
+import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
-//import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.credit.DestinyAccount
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -21,7 +24,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_AC
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-//import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
@@ -29,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAutomaticProgrammedPaymentCheckedChanged
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnHidePaymentBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMaximumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMinimumPaymentButtonClick
@@ -37,16 +41,17 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnProcessPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnShowPaymentBottomSheet
-//import com.multimoney.multimoney.presentation.util.amountToDoubleFormat
+import com.multimoney.multimoney.presentation.util.amountToDoubleFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalMaterialApi::class)
 class PaymentAmountViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    // private val mutationProcessPaymentUseCase: MutationProcessPaymentListUseCase,
-    // private val queryGetExchangeRateCreditUseCase: QueryGetExchangeRateCreditUseCase
+    private val mutationProcessPaymentUseCase: MutationProcessPaymentListUseCase,
+    private val queryGetExchangeRateCreditUseCase: QueryGetExchangeRateCreditUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -70,7 +75,7 @@ class PaymentAmountViewModel @Inject constructor(
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        //identification = savedStateHandle[NAME_CLIENT] ?: ""
+        identification = savedStateHandle[NAME_CLIENT] ?: ""
 
         onInitializeInteractionValues()
     }
@@ -114,7 +119,11 @@ class PaymentAmountViewModel @Inject constructor(
     fun isMultiCurrency() = (summaryList?.count() ?: 1) > 1
 
     private fun onShowPaymentBottomSheet() {
-        // TODO
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+    }
+
+    private fun onHidePaymentBottomSheet() {
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
     }
 
     private fun onAmountButtonClick(isMinimumSelected: Boolean) {
@@ -136,11 +145,7 @@ class PaymentAmountViewModel @Inject constructor(
     }
 
     private fun onPaymentButtonClick() {
-        emitBaseEvent(BaseEvent.OnShowPaymentAmountBottomSheet)
-    }
-
-    private fun onHidePaymentAmountBottomSheet() {
-        emitBaseEvent(BaseEvent.OnHidePaymentAmountBottomSheet)
+        onUIEvent(OnShowPaymentBottomSheet)
     }
 
     private fun onAmountValueChange(value: String) {
@@ -174,12 +179,12 @@ class PaymentAmountViewModel @Inject constructor(
         }
 
     private fun onCallQueryGetExchangeRate() = executeUseCase {
-        /*queryGetExchangeRateCreditUseCase.invoke(
+        queryGetExchangeRateCreditUseCase.invoke(
             idBrand ?: NO_SELECT,
             user ?: "",
             identification ?: "",
-            uiState.clientBankAccount?.idCurrency?.toString() ?: "",
             summaryList?.first()?.idCurrency?.toString() ?: "",
+            uiState.clientBankAccount?.idCurrency?.toString() ?: "", // According to figma, conversions should be based on the customer's account
             uiState.currentAmountValueString.amountToDoubleFormat(uiState.currency, CreditAmountViewModel.CURRENCY_SEPARATOR)
         ).collectLatest { result ->
             result.onSuccess {
@@ -188,13 +193,13 @@ class PaymentAmountViewModel @Inject constructor(
                     exchangeConvertedAmount = it?.result?.convertedAmount ?: 0.0
                 )
             }
-        }*/
+        }
     }
 
     private fun onProcessPayment(paymentDescription: String) =
         executeUseCase {
             onLoadingValueChange(true)
-            /*mutationProcessPaymentUseCase.invoke(
+            mutationProcessPaymentUseCase.invoke(
                 user = user ?: "",
                 idBrand = idBrand ?: NO_SELECT,
                 customerId = idClient ?: NO_SELECT,
@@ -228,16 +233,16 @@ class PaymentAmountViewModel @Inject constructor(
                 }
             ).collectLatest { result ->
                 result.onSuccess {
-                    emitBaseEvent(BaseEvent.OnHidePaymentAmountBottomSheet)
+                    onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
 
                     // TODO Navigate to Diego new screen
                 }.onMessage {
-                    emitBaseEvent(BaseEvent.OnHidePaymentAmountBottomSheet)
+                    onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
                     uiState = uiState.copy(
-                        alertResultTitle = it?.rejectCauseSinpe ?: "",
-                        alertResultDescription = it?.responseMessage ?: "",
+                        alertResultTitle = it?.message ?: "",
+                        alertResultDescription = it?.detail ?: "",
                         isAlertResultVisible = true
                     )
                 }.onFailure {
@@ -249,7 +254,7 @@ class PaymentAmountViewModel @Inject constructor(
                 }.onLoading {
                     onLoadingValueChange(true)
                 }
-            }*/
+            }
         }
 
     private fun getDestinyAccountNumber(idCurrency: Int?): String {
@@ -261,10 +266,7 @@ class PaymentAmountViewModel @Inject constructor(
     }
 
     private fun onAlertResultButtonClick() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.PaymentAmountScreen.route
-        )
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }
 
     private fun onLoadingValueChange(loading: Boolean) {
@@ -289,8 +291,8 @@ class PaymentAmountViewModel @Inject constructor(
         val isAlertResultVisible: Boolean = false,
         val alertResultTitle: String = "",
         val alertResultDescription: String = "",
-        val isLoading: Boolean = false
-        // val bottomSheetVisibleState: ModalBottomSheetValue = ModalBottomSheetValue.Hidden TODO REVIEW
+        val isLoading: Boolean = false,
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -307,6 +309,7 @@ class PaymentAmountViewModel @Inject constructor(
             is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
             is OnCallQueryGetExchangeRateCredit -> onCallQueryGetExchangeRate()
             is OnShowPaymentBottomSheet -> onShowPaymentBottomSheet()
+            is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
         }
     }
 
@@ -323,11 +326,7 @@ class PaymentAmountViewModel @Inject constructor(
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         object OnCallQueryGetExchangeRateCredit : UIEvent()
         object OnShowPaymentBottomSheet : UIEvent()
-    }
-
-    sealed class BaseEvent {
-        object OnShowPaymentAmountBottomSheet : BaseEvent()
-        object OnHidePaymentAmountBottomSheet : BaseEvent()
+        object OnHidePaymentBottomSheet : UIEvent()
     }
 
     companion object {

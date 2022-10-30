@@ -67,6 +67,14 @@ fun PaymentAmountBottomSheetScreen(
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Center
                 )
+            } else if (viewModel.shouldDisplayExchangeRate()) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "${viewModel.uiState.currency}${viewModel.uiState.exchangeConvertedAmount.toString().stringToIntegerFormat(CURRENCY_SEPARATOR.toString())}",
+                    style = Typography.h4.copy(fontWeight = FontWeight.W600),
+                    color = MultimoneyTheme.colors.text,
+                    textAlign = TextAlign.Center
+                )
             } else {
                 Text(
                     modifier = Modifier.fillMaxWidth(),

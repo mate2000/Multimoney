@@ -15,10 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,12 +33,13 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
-import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnHidePaymentBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMaximumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMinimumPaymentButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -61,8 +59,6 @@ fun PaymentAmountScreen(
     viewModel: PaymentAmountViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
-    // val paymentAmountBottomSheetState = rememberModalBottomSheetState(viewModel.uiState.bottomSheetVisibleState)
-    val paymentAmountBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -70,34 +66,19 @@ fun PaymentAmountScreen(
             if (shouldDisplayExchangeRate()) {
                 onUIEvent(OnCallQueryGetExchangeRateCredit)
             }
-            baseEvent.collect { event ->
-                when (event) {
-                    BaseEvent.OnShowPaymentAmountBottomSheet -> {
-                        coroutineScope.launch {
-                            paymentAmountBottomSheetState.show()
-                            // onUIEvent(OnShowPaymentBottomSheet)
-                        }
-                    }
-                    BaseEvent.OnHidePaymentAmountBottomSheet -> {
-                        coroutineScope.launch {
-                            paymentAmountBottomSheetState.hide()
-                            // onUIEvent(OnShowPaymentBottomSheet)
-                        }
-                    }
-                }
-            }
         }
     }
     BackHandler {
         when {
-            paymentAmountBottomSheetState.isVisible -> {
+            viewModel.uiState.bottomSheetVisibleState.isVisible -> {
                 coroutineScope.launch {
-                    paymentAmountBottomSheetState.hide()
+                    viewModel.onUIEvent(OnHidePaymentBottomSheet)
                 }
             }
+            else -> viewModel.onUIEvent(OnNavigateBack)
         }
     }
-    PaymentAmountContent(viewModel, coroutineScope, paymentAmountBottomSheetState)
+    PaymentAmountContent(viewModel, coroutineScope)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -105,8 +86,7 @@ fun PaymentAmountScreen(
 @Preview
 fun PaymentAmountContent(
     viewModel: PaymentAmountViewModel = hiltViewModel(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    paymentAmountBottomSheetState: ModalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
@@ -130,7 +110,7 @@ fun PaymentAmountContent(
             Column {
                 TopNavBar(
                     onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
-                    onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) }
+                    onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBackHome) }
                 )
                 Text(
                     modifier = Modifier.padding(top = 42.dp),
@@ -209,7 +189,7 @@ fun PaymentAmountContent(
     PaymentAmountBottomSheetScreen(
         viewModel,
         coroutineScope,
-        paymentAmountBottomSheetState,
+        viewModel.uiState.bottomSheetVisibleState,
         stringResource(id = R.string.payment_amount_bottom_sheet_process_payment_description_label)
     )
     LoadingIndicator(viewModel.uiState.isLoading)

@@ -18,12 +18,13 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentA
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
-import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferScreen
 
 // payment process parameters
 const val USER = "user"
 const val ID_CLIENT = "id_client"
+const val NAME_CLIENT = "name_client"
 const val ID_LOAN_CLIENT = "id_loan_client"
 const val SUMMARY_LIST = "summary_list"
 const val CLIENT_BANK_ACCOUNT = "client_bank_account"
@@ -50,6 +51,12 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(SUMMARY_LIST) {
                     type = SummaryListNavType()
+                },
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
+                },
+                navArgument(NAME_CLIENT) {
+                    type = NavType.StringType
                 }
             )
         ) {
@@ -81,6 +88,12 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(SUMMARY_LIST) {
                     type = SummaryListNavType()
+                },
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
+                },
+                navArgument(NAME_CLIENT) {
+                    type = NavType.StringType
                 }
             )
         ) {
@@ -116,6 +129,12 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(CLIENT_BANK_ACCOUNT) {
                     type = ClientBankAccountNavType()
+                },
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
+                },
+                navArgument(NAME_CLIENT) {
+                    type = NavType.StringType
                 }
             )
         ) {

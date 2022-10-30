@@ -57,6 +57,7 @@ fun SmartDocumentScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is SmartDocumentViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(

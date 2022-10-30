@@ -21,10 +21,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.BaseEvent.OnFormValidateCompleted
@@ -48,11 +53,32 @@ fun SmartOwnBusinessSvScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
+
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+        sharedViewModel.onUIEvent(OnContinueVisible(true))
+
+        sharedViewModel.onUIEvent(
+            OnSetNavigation(
+                nextAction = {
+                    sharedViewModel.onUIEvent(
+                        OnCallMutationUpdateGlobalRequestUseCase(
+                            accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                companyName = viewModel.uiState.companyNameValue,
+                                aboutCompany = viewModel.uiState.companyDescriptionValue,
+                                income = viewModel.uiState.monthlyIncomeValue.toFloat()
+                            )
+                        )
+                    )
+                },
+                nextStep = SmartSteps.Two.id,
+                previousStep = SmartSteps.One.id
+            )
+        )
+
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    SmartViewModel.UIEvent.OnContinueEnable(event.isFormValid)
+                    OnContinueEnable(event.isFormValid)
                 )
             }
         }
@@ -62,9 +88,11 @@ fun SmartOwnBusinessSvScreen(
 
     // return to the main options screen whenever tapping on navtiva back button from the device
     BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent((OnNavigateToSelectedSourceOfIncomeOption(
-            SourceIncomeOptionType.MainSourceIncomeScreenType.id
-        )))
+        sourceIncomeSharedViewModel.onUIEvent(
+            (OnNavigateToSelectedSourceOfIncomeOption(
+                SourceIncomeOptionType.MainSourceIncomeScreenType.id
+            ))
+        )
     }
 }
 

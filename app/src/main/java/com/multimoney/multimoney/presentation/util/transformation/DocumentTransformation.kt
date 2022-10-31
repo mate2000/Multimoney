@@ -5,7 +5,7 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import java.text.NumberFormat
-import java.util.Locale
+import java.util.*
 import kotlin.math.absoluteValue
 
 fun formatId(): VisualTransformation =
@@ -92,6 +92,36 @@ fun formatDpi(): VisualTransformation =
         }
     }
 
+fun formatBusinessIdentification(): VisualTransformation =
+    object : VisualTransformation {
+        override fun filter(text: AnnotatedString): TransformedText {
+            val offset = object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    if (offset <= 1) return offset
+                    if (offset <= 4) return offset + 1
+                    if (offset <= 10) return offset + 2
+                    return 10
+                }
+
+                override fun transformedToOriginal(offset: Int): Int {
+                    if (offset <= 0) return offset
+                    if (offset <= 3) return offset - 1
+                    if (offset <= 9) return offset - 2
+                    return 9
+                }
+            }
+
+            var formattedText = ""
+            val trimmed = if (text.text.length >= 11) text.text.substring(0..10) else text.text
+            for (i in trimmed.indices) {
+                if (i == 1 || i == 4) formattedText += "-"
+                formattedText += trimmed[i]
+            }
+
+            return TransformedText(AnnotatedString(formattedText), offset)
+        }
+    }
+
 fun formatMoney(currencySymbol: String): VisualTransformation =
     object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
@@ -110,6 +140,49 @@ fun formatMoney(currencySymbol: String): VisualTransformation =
         }
     }
 
+fun formatDecimalMoney(currencySymbol: String): VisualTransformation =
+    object : VisualTransformation {
+        override fun filter(text: AnnotatedString): TransformedText {
+            return TransformedText(
+                text = AnnotatedString(getDecimalMoneyText(currencySymbol, text)),
+                object : OffsetMapping {
+                    override fun originalToTransformed(offset: Int): Int {
+                        return getDecimalMoneyText(currencySymbol, text).length
+                    }
+
+                    override fun transformedToOriginal(offset: Int): Int {
+                        return text.length
+                    }
+                }
+            )
+        }
+    }
+
+fun getDecimalMoneyText(currency: String, text: AnnotatedString): String {
+    return if (text.text.toDoubleOrNull().formatWithComma().isNotEmpty()) {
+        val lastChars = text.text.takeLast(3)
+        return if (text.text.last() == '.') {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}."
+        } else if (lastChars.takeLast(2) == ".0") {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}.0"
+        } else if (lastChars[0] == '.' && lastChars[2] == '0') {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}0"
+        } else {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}"
+        }
+    } else {
+        ""
+    }
+}
+
+fun Double?.formatWithComma(): String {
+    return if (this != null) {
+        NumberFormat.getNumberInstance(Locale.US).format(this)
+    } else {
+        ""
+    }
+}
+
 fun getMoneyText(currency: String, text: AnnotatedString): String {
     return if (text.text.toLongOrNull().formatWithComma().isNotEmpty()) {
         "$currency ${text.text.toLongOrNull().formatWithComma()}"
@@ -126,7 +199,8 @@ fun Long?.formatWithComma(): String {
     }
 }
 
-class MaskVisualTransformation(private val mask: String, val maskChar: Char) : VisualTransformation {
+class MaskVisualTransformation(private val mask: String, val maskChar: Char) :
+    VisualTransformation {
 
     private val specialSymbolsIndices = mask.indices.filter { mask[it] != maskChar }
 

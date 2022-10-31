@@ -5,6 +5,7 @@ import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.SecurityApi
 import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
+import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.OnfidoToken
@@ -24,6 +25,22 @@ import javax.inject.Inject
 class SecurityRepositoryImpl @Inject constructor(
     private val securityApi: SecurityApi
 ) : BaseRepository(), SecurityRepository, Serializable {
+
+    override suspend fun queryGetCompanyNameByIdentification(
+        identification: String,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<Company?>> =
+        fetchData(
+            apolloCall = securityApi.queryGetCompanyNameByIdentification(
+                identification,
+                idBrand,
+                user
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
 
     override suspend fun queryValidateUserExists(
         email: String

@@ -1,10 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 
+import OwnBusinessOnPersonalBasisScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.SmartOwnBusinessSvScreen
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 
@@ -40,6 +41,10 @@ fun ShowSelectedSourceIncomeOption(
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
         SourceIncomeOptionType.OtherSV.id, SourceIncomeOptionType.OtherCR.id -> OtherIncomeScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
+        SourceIncomeOptionType.OwnBusinessOnPersonalBasis.id -> OwnBusinessOnPersonalBasisScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )

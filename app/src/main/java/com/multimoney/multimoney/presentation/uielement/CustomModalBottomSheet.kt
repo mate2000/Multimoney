@@ -43,7 +43,6 @@ fun CustomModalBottomSheet(
     coroutineScope: CoroutineScope,
     content: @Composable () -> Unit
 ) {
-
     val backgroundColor: Color
     val titleColor: Color
     if (isSystemInDarkTheme()) {
@@ -69,7 +68,7 @@ fun CustomModalBottomSheet(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, start = 24.dp, end = 16.dp)
+                        .padding(top = 16.dp, start = 24.dp, end = 16.dp, bottom = 16.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -91,12 +90,13 @@ fun CustomModalBottomSheet(
                                     closeAction()
                                     modalBottomSheetState.hide()
                                 }
-                            })
+                            }
+                        )
                     }
                     content()
                 }
             }
-        },
+        }
     ) {
         Box(
             Modifier

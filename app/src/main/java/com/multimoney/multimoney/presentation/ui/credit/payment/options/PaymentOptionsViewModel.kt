@@ -14,8 +14,11 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnPaymentMethodClick
+import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -49,22 +52,37 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
         )
     }
 
+    private fun onPaymentMethodClick(paymentMethodType: String) {
+        val route = when (paymentMethodType) {
+            PaymentMethodType.TransferBank.value ->
+                "${Screen.PaymentOptionsTransferScreen.baseRoute}/$idBrand/$creditNumber/${encodeData(transferAccount)}"
+            PaymentMethodType.VisaDirect.value -> {
+                "${Screen.PaymentPointsScreen.baseRoute}/$idBrand"
+            }
+            else -> {
+                "${Screen.PaymentPointsScreen.baseRoute}/$idBrand"
+            }
+        }
+        navigateTo(route = route)
+    }
+
     data class UIState(
         // Interactions
         val titleResource: Int = R.string.empty,
-        val paymentMethodList: List<PaymentMethod>? = null,
-        val transferAccount: TransferAccount? = null
+        val paymentMethodList: List<PaymentMethod>? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnGetTextResources -> onGetTextResource()
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is OnPaymentMethodClick -> onPaymentMethodClick(uiEvent.paymentMethodType)
         }
     }
 
     sealed class UIEvent {
         object OnGetTextResources : UIEvent()
         object OnNavigateBack : UIEvent()
+        class OnPaymentMethodClick(val paymentMethodType: String) : UIEvent()
     }
 }

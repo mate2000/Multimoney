@@ -386,7 +386,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                                 viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
                             CreditApprovedOrStarted(
                                 creditApprovedOrStartedStatus = CreditStatusApproved,
-                                infoPreApprove?.symbolCurrency + infoPreApprove?.amountAvailable,
+                                infoPreApprove?.amountAvailableFormat,
                                 viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
@@ -468,7 +468,7 @@ fun CreditCardView(viewModel: ProductViewModel) {
     if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
         viewModel.balanceCredit?.balanceCardInformation?.cardInformation?.let { cardInformation ->
             CustomBoxVisaBackground(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = {
                     viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
                 },
@@ -476,7 +476,7 @@ fun CreditCardView(viewModel: ProductViewModel) {
             )
         } ?: run {
             CustomBoxVisaBackground(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = {
                     viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
                 },
@@ -494,7 +494,7 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
                 .fillMaxSize()
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
-                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
+                    viewModel.onUIEvent(OnNavigateToCreditScreen)
                 }
         ) {
             CustomImage(

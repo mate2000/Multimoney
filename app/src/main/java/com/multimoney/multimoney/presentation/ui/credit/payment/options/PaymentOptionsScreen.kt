@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnPaymentMethodClick
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent.Navigate
@@ -79,7 +80,7 @@ fun PaymentOptionsContent(viewModel: PaymentOptionsViewModel = hiltViewModel()) 
                         startIcon = paymentMethod.type?.getPaymentMethodType()?.icon ?: 0,
                         title = paymentMethod.description ?: "",
                         onClick = {
-//                            viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount))
+                            viewModel.onUIEvent(OnPaymentMethodClick(paymentMethod.type ?: ""))
                         }
                     )
                 }

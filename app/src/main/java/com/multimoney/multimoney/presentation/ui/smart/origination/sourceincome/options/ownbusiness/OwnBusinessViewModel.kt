@@ -18,13 +18,13 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
 
     private fun onCompanyNameValueChange(companyName: String) {
         uiState = uiState.copy(companyNameValue = companyName)
-        isFormValid()
+        onValidateForm()
     }
 
     private fun onCompanyDescriptionValueChange(description: String) {
         if (description.length <= DESCRIPTION_MAX_LENGTH) {
             uiState = uiState.copy(companyDescriptionValue = description)
-            isFormValid()
+            onValidateForm()
         } else {
             uiState = uiState.copy(
                 openDialog = DialogParameters(
@@ -37,16 +37,14 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
 
     private fun onMonthlyIncomeValueChange(monthlyIncome: String) {
         uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
-        isFormValid()
+        onValidateForm()
     }
 
-    private fun isFormValid() = emitBaseEvent(
-        BaseEvent.OnFormValidateCompleted(
-            uiState.companyNameValue.isNotBlank() &&
-                    uiState.companyDescriptionValue.isNotBlank() &&
-                    uiState.monthlyIncomeValue.isNotBlank()
-        )
-    )
+    fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
+
+    fun isFormValid() = uiState.companyNameValue.isNotBlank() &&
+            uiState.companyDescriptionValue.isNotBlank() &&
+            uiState.monthlyIncomeValue.isNotBlank()
 
     data class UIState(
         // Interactions

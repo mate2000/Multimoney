@@ -2,7 +2,6 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.creditbank
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -24,6 +23,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
@@ -39,7 +40,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.C
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
-import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
@@ -116,20 +117,12 @@ fun CreditBankScreen(
             )
         )
 
-        Row(modifier = Modifier.padding(top = 24.dp)) {
-            CustomImage(
-                drawableResource = R.drawable.ic_information,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-            Text(
-                text = stringResource(id = R.string.credit_bank_condition),
-                style = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 9.dp)
-                    .align(Alignment.CenterVertically)
-            )
-        }
+        CustomInformativeText(
+            modifier = Modifier.padding(top = 24.dp),
+            drawableResource = drawable.ic_information,
+            text = stringResource(id = string.credit_bank_condition),
+            textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
+        )
 
         CustomDropdown(
             modifier = Modifier

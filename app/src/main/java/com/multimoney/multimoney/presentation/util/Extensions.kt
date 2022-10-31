@@ -69,12 +69,22 @@ fun Int.getCurrency(): CurrencyType {
  */
 fun Int.getCurrencySymbol(): Int {
     return when (this) {
-        Brand.ElSalvador.id -> R.string.credit_monthly_income_dollar_symbol
-        Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
-        Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
+        Brand.ElSalvador.id -> R.string.dollar_symbol
+        Brand.CostaRica.id -> R.string.colon_symbol
+        Brand.Guatemala.id -> R.string.quetzal_symbol
         else -> R.string.empty
     }
 }
+
+fun Int.getCurrencySymbolValue(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.dollar_symbol_value
+        Brand.CostaRica.id -> R.string.colon_symbol_value
+        Brand.Guatemala.id -> R.string.quetzal_symbol_value
+        else -> R.string.empty
+    }
+}
+
 
 // Payment
 fun String.getPaymentMethodType(): PaymentMethodType {

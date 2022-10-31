@@ -56,6 +56,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 
 /**
  * Composable function to show the option to active accountsmart product
@@ -126,7 +127,7 @@ fun CardSmartProduct(
             ),
         )
         Text(
-            text = "${stringResource(id = brandId.getCurrencySymbol())}$profitTotal",
+            text = stringResource(id = brandId.getCurrencySymbolValue(), profitTotal),
             modifier = Modifier.padding(bottom = 10.dp),
             style = Typography.h4.copy(
                 fontWeight = FontWeight.SemiBold,

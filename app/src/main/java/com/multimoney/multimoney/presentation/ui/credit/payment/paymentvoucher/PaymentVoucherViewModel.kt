@@ -21,8 +21,6 @@ class PaymentVoucherViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    // stateLess
-
     data class UIState(
         val test: String = "",
         val showScheduleAutomaticPaymentProcess: Boolean = true

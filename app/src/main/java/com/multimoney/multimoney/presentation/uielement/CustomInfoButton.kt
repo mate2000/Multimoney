@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,11 +41,12 @@ fun CustomInfoButton(
     subtitle: String = "",
     endIcon: Int = R.drawable.ic_right_chevron,
     onClick: () -> Unit = {},
-    onEndIconClick: () -> Unit = {}
+    onEndIconClick: () -> Unit = {},
+    enable: Boolean = true
 ) {
     val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
-        backgroundColor = Color.Transparent,
-        disabledBackgroundColor = Color.Transparent
+        backgroundColor = Transparent,
+        disabledBackgroundColor = Transparent
     )
 
     val gradientBorderOneColor: Color
@@ -56,13 +58,13 @@ fun CustomInfoButton(
     if (isSystemInDarkTheme()) {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = WhiteTransparency5
+        background = if (enable) WhiteTransparency5 else Transparent
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     } else {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = WhiteTransparency5
+        background = if (enable) WhiteTransparency5 else Transparent
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     }
@@ -79,7 +81,8 @@ fun CustomInfoButton(
             ),
         shape = RoundedCornerShape(20.dp),
         colors = buttonColor,
-        contentPadding = PaddingValues(0.dp)
+        contentPadding = PaddingValues(0.dp),
+        enabled = enable
     ) {
         ConstraintLayout(Modifier.background(background).fillMaxWidth()) {
             val (startIconId, titleId, subTitleId, endIconId) = createRefs()

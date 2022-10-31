@@ -6,7 +6,11 @@ import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
+import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
@@ -129,4 +133,31 @@ interface CreditRepository {
         idBrand: Int,
         idUserRequest: String
     ): Flow<MultimoneyResult<BanksAndRegularExpression>>
+
+    suspend fun queryGetPaymentPoints(
+        idBrand: Int
+    ): Flow<MultimoneyResult<List<PaymentPoint?>?>>
+
+    suspend fun queryGetExchangeRateCredit(
+        idBrand: Int,
+        user: String,
+        identification: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String,
+        amount: Double
+    ): Flow<MultimoneyResult<ExchangeRate?>>
+
+    suspend fun mutationProcessPaymentList(
+        user: String,
+        idBrand: Int,
+        customerId: Int,
+        identification: String,
+        originAccountNumber: String,
+        destinyAccountNumber: String,
+        currencyId: String,
+        customerName: String,
+        description: String,
+        destinyAccount: List<DestinyAccount?>,
+        amount: Any
+    ): Flow<MultimoneyResult<ProcessPaymentList?>>
 }

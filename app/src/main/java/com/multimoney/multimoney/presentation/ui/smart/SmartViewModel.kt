@@ -33,9 +33,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartViewModel @Inject constructor(
@@ -115,7 +115,9 @@ class SmartViewModel @Inject constructor(
             idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
             birthday = accountSmartData?.birthday ?: "",
             expirationDate = accountSmartData?.expirationDate ?: "",
-            idGender = accountSmartData?.idGender ?: 0
+            idGender = accountSmartData?.idGender ?: 0,
+            companyName = accountSmartData?.companyName.orEmpty(),
+            aboutCompany = accountSmartData?.aboutCompany.orEmpty()
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -231,6 +233,7 @@ class SmartViewModel @Inject constructor(
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
+        val isContinueVisible: Boolean = true,
         val openDialog: DialogParameters = DialogParameters(),
     )
 
@@ -251,6 +254,7 @@ class SmartViewModel @Inject constructor(
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
+            is UIEvent.OnContinueVisible -> uiState = uiState.copy(isContinueVisible = event.visible)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }
@@ -274,6 +278,7 @@ class SmartViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
+        data class OnContinueVisible(val visible: Boolean) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
     }

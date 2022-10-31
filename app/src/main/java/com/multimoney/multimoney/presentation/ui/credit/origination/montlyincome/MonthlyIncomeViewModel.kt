@@ -91,15 +91,6 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         )
     }
 
-    fun getCurrencySymbol(idBrand: Int): Int {
-        return when (idBrand) {
-            Brand.ElSalvador.id -> R.string.dollar_symbol
-            Brand.CostaRica.id -> R.string.colon_symbol
-            Brand.Guatemala.id -> R.string.quetzal_symbol
-            else -> R.string.empty
-        }
-    }
-
     data class UIState(
         val income: String = "",
         val profession: String = "",

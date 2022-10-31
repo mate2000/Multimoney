@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.document
+package com.multimoney.multimoney.presentation.ui.smart.origination.document
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.focusable
@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,16 +32,16 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnCallQueryAddressLevelTwoUseCase
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnCallQueryCivilStatusUseCase
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnCallQueryNationalitiesUseCase
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnCallQueryProfessionUseCase
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnCivilStateChange
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnGenderChange
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
-import com.multimoney.multimoney.presentation.ui.smart.document.SmartDocumentViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryAddressLevelTwoUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryCivilStatusUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryNationalitiesUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCivilStateChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
@@ -55,6 +57,7 @@ fun SmartDocumentScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is SmartDocumentViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
@@ -77,7 +80,6 @@ fun SmartDocumentScreen(
                             nextStepAction = {
                                 sharedViewModel.onUIEvent(
                                     SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
-                                        // FIXME, pass whatever needed and obtain it from the uiState variable
                                         accountSmartData = sharedViewModel.accountSmartData?.copy(
                                             status = 1,
                                             idProfessionType = viewModel.uiState.professionId,
@@ -126,7 +128,11 @@ fun SmartDocumentScreen(
         viewModel.onUIEvent(OnValidateForm)
     }
 
-    Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(
             text = buildAnnotatedString {
                 withStyle(

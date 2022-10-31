@@ -8,6 +8,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
@@ -79,19 +80,22 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object PaymentAccountScreen :
         Screen(
-            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}",
+            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}",
             "payment_account_screen"
         )
 
     object PaymentAmountScreen : Screen(
-        "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}",
+        "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}/{$IDENTIFICATION}/{$NAME_CLIENT}",
         "payment_amount_screen"
     )
 
     // Smart
     object SmartScreen :
-        Screen("smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
-            "smart_screen")
+        Screen(
+            "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
+            "smart_screen"
+        )
+    object PaymentVoucherScreen : Screen(route = "payment_voucher_screen")
 
     object PaymentOptionsScreen : Screen(
         "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}",
@@ -101,6 +105,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object PaymentOptionsTransferScreen : Screen(
         "payment_options_transfer_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$TRANSFER_ACCOUNT}",
         "payment_options_transfer_screen"
+    )
+
+    object PaymentPointsScreen : Screen(
+        "payment_points_screen/{$ID_BRAND}",
+        "payment_points_screen"
     )
 
     // TestNavGraph Screens

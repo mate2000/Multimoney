@@ -34,7 +34,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Pr
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Secondary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
 
-private const val SIXTY_PERCENT = 0.60
+const val SIXTY_PERCENT = 0.60
 
 @Composable
 fun CustomProductBackground(

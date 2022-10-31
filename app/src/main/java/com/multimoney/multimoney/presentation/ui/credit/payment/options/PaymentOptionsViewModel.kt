@@ -57,12 +57,10 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
             PaymentMethodType.TransferBank.value ->
                 "${Screen.PaymentOptionsTransferScreen.baseRoute}/$idBrand/$creditNumber/${encodeData(transferAccount)}"
             PaymentMethodType.VisaDirect.value -> {
-                // TODO: Open cash payment screen
-                "${Screen.PaymentOptionsTransferScreen.baseRoute}/$idBrand/$creditNumber/${encodeData(transferAccount)}"
+                "${Screen.PaymentPointsScreen.baseRoute}/$idBrand"
             }
             else -> {
-                // TODO: Open cash payment screen
-                "${Screen.PaymentOptionsTransferScreen.baseRoute}/$idBrand/$creditNumber/${encodeData(transferAccount)}"
+                "${Screen.PaymentPointsScreen.baseRoute}/$idBrand"
             }
         }
         navigateTo(route = route)

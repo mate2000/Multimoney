@@ -450,10 +450,6 @@
     <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
     <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
 
-    <!-- Payment Options -->
-    <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
-    <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
-
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>

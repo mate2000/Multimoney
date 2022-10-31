@@ -59,6 +59,7 @@ fun CustomButton(
     buttonType: CustomButtonType = CustomButtonType.PrimaryPrimary,
     text: String = stringResource(id = R.string.button_continue),
     enable: Boolean = true,
+    visible: Boolean = true,
     elevation: ButtonElevation = ButtonDefaults.elevation(),
     enableArrowIcon: Boolean = false,
     trailingIcon: Int? = null,
@@ -74,7 +75,7 @@ fun CustomButton(
     var borderStroke: BorderStroke? = null
 
     val textColor: Color
-    var underLined: Boolean = false
+    var underLined = false
 
     when (buttonType) {
         CustomButtonType.PrimaryPrimary -> {
@@ -259,41 +260,43 @@ fun CustomButton(
         }
     }
 
-    Button(
-        modifier = modifier,
-        onClick = onClick,
-        colors = buttonColor,
-        shape = RoundedCornerShape(50),
-        border = borderStroke,
-        elevation = elevation,
-        enabled = enable,
-        interactionSource = interactionSource
-    ) {
-        Text(
-            text = text,
-            style = if (underLined) {
-                Typography.button.copy(textDecoration = TextDecoration.Underline)
-            } else {
-                Typography.button
-            },
-            color = textColor
-        )
-        if (enableArrowIcon) {
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_right),
-                contentDescription = "",
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                tint = arrowIconTint
+    if (visible) {
+        Button(
+            modifier = modifier,
+            onClick = onClick,
+            colors = buttonColor,
+            shape = RoundedCornerShape(50),
+            border = borderStroke,
+            elevation = elevation,
+            enabled = enable,
+            interactionSource = interactionSource
+        ) {
+            Text(
+                text = text,
+                style = if (underLined) {
+                    Typography.button.copy(textDecoration = TextDecoration.Underline)
+                } else {
+                    Typography.button
+                },
+                color = textColor
             )
-        } else if (trailingIcon != null) {
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Icon(
-                painter = painterResource(id = trailingIcon),
-                contentDescription = "",
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                tint = arrowIconTint
-            )
+            if (enableArrowIcon) {
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    contentDescription = "",
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                    tint = arrowIconTint
+                )
+            } else if (trailingIcon != null) {
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Icon(
+                    painter = painterResource(id = trailingIcon),
+                    contentDescription = "",
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                    tint = arrowIconTint
+                )
+            }
         }
     }
 }

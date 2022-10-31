@@ -3,6 +3,10 @@ package com.multimoney.multimoney.presentation.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeIconType
+import kotlin.time.Duration
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -14,7 +18,6 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Tra
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import kotlin.time.Duration
 
 fun Context.openWhatsAppDeepLink(link: String) {
     val intent = Intent(Intent.ACTION_VIEW)
@@ -33,6 +36,34 @@ fun tickerFlow(
         emit(Unit)
         delay(period)
         durationTime = durationTime.minus(period)
+    }
+}
+
+/**
+ * return the proper icon from the local drawable resources depending on the iconId,
+ * either for CR or SV
+ */
+fun Int.getSourceIncomeIconDrawable() = when (this) {
+    SourceIncomeIconType.Salaried.iconId,
+    SourceIncomeIconType.FormalSalaried.iconId -> R.drawable.ic_salaried
+    SourceIncomeIconType.FreeLancer.iconId,
+    SourceIncomeIconType.OwnBusinessOnPersonalBasis.iconId -> R.drawable.ic_freelancer
+    SourceIncomeIconType.OwnBusiness.iconId,
+    SourceIncomeIconType.OwnBusinessInPartnership.iconId -> R.drawable.ic_own_business
+    SourceIncomeIconType.Retired.iconId -> R.drawable.ic_retired
+    SourceIncomeIconType.Other.iconId -> R.drawable.ic_other
+    else -> R.drawable.ic_other
+}
+
+/**
+ * get currency symbol by idBrand
+ */
+fun Int.getCurrencySymbol(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.credit_monthly_income_dollar_symbol
+        Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
+        Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
+        else -> R.string.empty
     }
 }
 

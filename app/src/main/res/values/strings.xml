@@ -450,6 +450,18 @@
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
+    <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
+
+    <!-- Smart Account - Own Business -->
+    <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
+    <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>
+    <string name="smart_own_business_company_name_required" translatable="false">Nombre de la empresa requerido</string>
+    <string name="smart_own_business_description_label" translatable="false">¿Qué hace la empresa?</string>
+    <string name="smart_own_business_description_required" translatable="false">Descripcion de la empresa requerido</string>
+    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el maximo de caracteres permitidos</string>
+    <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
+    <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
+    <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
 
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
@@ -467,8 +479,6 @@
     <string name="payment_options_transfer_go_home" translatable="false">Ir al inicio</string>
     <string name="payment_options_transfer_close_dialog_title" translatable="false">¿Estás seguro que querés salir? </string>
     <string name="payment_options_transfer_close_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
-
-
 
     <!-- Payment Amount -->
     <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
@@ -497,4 +507,5 @@
     <string name="payment_points_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
+    
 </resources>

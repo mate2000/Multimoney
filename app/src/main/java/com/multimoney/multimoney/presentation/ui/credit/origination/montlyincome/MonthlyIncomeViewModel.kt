@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
@@ -89,15 +88,6 @@ class MonthlyIncomeViewModel @Inject constructor() : BaseViewModel(true) {
             "",
             listOf(CreditCatalogOption("Ama de Casa", "255", 0))
         )
-    }
-
-    fun getCurrencySymbol(idBrand: Int): Int {
-        return when (idBrand) {
-            Brand.ElSalvador.id -> R.string.credit_monthly_income_dollar_symbol
-            Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
-            Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
-            else -> R.string.empty
-        }
     }
 
     data class UIState(

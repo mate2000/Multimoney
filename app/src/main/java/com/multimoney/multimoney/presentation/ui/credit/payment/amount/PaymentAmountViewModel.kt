@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMinimumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnNavigateToVoucher
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnProcessPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnShowPaymentBottomSheet
@@ -172,6 +173,8 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
+    private fun onNavigateToVoucher() = navigateTo(Screen.PaymentVoucherScreen.route)
+
     fun getFormattedCurrency() =
         if (uiState.currentAmountValueString.isNotEmpty() && uiState.currentAmountValueString.toInt() > maximumPayment) {
             uiState.maximumPaymentLabel
@@ -204,7 +207,7 @@ class PaymentAmountViewModel @Inject constructor(
                 user = user ?: "",
                 idBrand = idBrand ?: NO_SELECT,
                 customerId = idClient ?: NO_SELECT,
-                identification = identification ?: "", // TODO poner en formato electronico
+                identification = identification ?: "",
                 originAccountNumber = uiState.clientBankAccount?.accountNumber ?: "",
                 destinyAccountNumber = getDestinyAccountNumber(uiState.clientBankAccount?.idCurrency),
                 currencyId = uiState.clientBankAccount?.idCurrency?.toString() ?: "",
@@ -236,8 +239,7 @@ class PaymentAmountViewModel @Inject constructor(
                 result.onSuccess {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
-
-                    // TODO Navigate to Diego new screen
+                    onUIEvent(OnNavigateToVoucher)
                 }.onMessage {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
@@ -321,6 +323,7 @@ class PaymentAmountViewModel @Inject constructor(
             is OnCallQueryGetExchangeRateCredit -> onCallQueryGetExchangeRate()
             is OnShowPaymentBottomSheet -> onShowPaymentBottomSheet()
             is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
+            is OnNavigateToVoucher -> onNavigateToVoucher()
         }
     }
 
@@ -338,6 +341,7 @@ class PaymentAmountViewModel @Inject constructor(
         object OnCallQueryGetExchangeRateCredit : UIEvent()
         object OnShowPaymentBottomSheet : UIEvent()
         object OnHidePaymentBottomSheet : UIEvent()
+        object OnNavigateToVoucher : UIEvent()
     }
 
     companion object {

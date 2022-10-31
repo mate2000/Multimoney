@@ -56,13 +56,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun PaymentAmountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: PaymentAmountViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopBackStack = onPopBackStack)
+            executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
             if (shouldDisplayExchangeRate()) {
                 onUIEvent(OnCallQueryGetExchangeRateCredit)
             }

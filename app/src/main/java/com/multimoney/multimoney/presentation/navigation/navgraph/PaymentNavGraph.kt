@@ -19,7 +19,6 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherScreen
-import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferScreen
 
@@ -148,6 +147,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
                 }
             )
         }

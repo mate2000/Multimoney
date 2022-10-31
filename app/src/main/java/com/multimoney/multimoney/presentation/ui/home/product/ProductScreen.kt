@@ -346,7 +346,7 @@ fun Products(
                 state = state
             ) {
                 // todo add the logic for the others pages
-                if (pages == PAGE_ONE) {
+                if (currentPage == PAGE_ONE) {
                     CreditProduct(viewModel = viewModel)
                 } else {
                     viewModel.balanceCredit?.balanceAccountSmart?.let {

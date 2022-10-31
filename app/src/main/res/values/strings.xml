@@ -461,7 +461,7 @@
 
     <!-- Smart Account - Other -->
     <string name="smart_other_title" translatable="false">Otros</string>
-    <string name="smart_other_specify_your_source_of_income" translatable="false">Especificá tu fuente de ingresos</string>
+    <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
 
     <!-- Payment Options -->

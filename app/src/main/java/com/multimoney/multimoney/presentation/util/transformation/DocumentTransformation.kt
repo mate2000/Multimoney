@@ -110,6 +110,49 @@ fun formatMoney(currencySymbol: String): VisualTransformation =
         }
     }
 
+fun formatDecimalMoney(currencySymbol: String): VisualTransformation =
+    object : VisualTransformation {
+        override fun filter(text: AnnotatedString): TransformedText {
+            return TransformedText(
+                text = AnnotatedString(getDecimalMoneyText(currencySymbol, text)),
+                object : OffsetMapping {
+                    override fun originalToTransformed(offset: Int): Int {
+                        return getDecimalMoneyText(currencySymbol, text).length
+                    }
+
+                    override fun transformedToOriginal(offset: Int): Int {
+                        return text.length
+                    }
+                }
+            )
+        }
+    }
+
+fun getDecimalMoneyText(currency: String, text: AnnotatedString): String {
+    return if (text.text.toDoubleOrNull().formatWithComma().isNotEmpty()) {
+        val lastChars = text.text.takeLast(3)
+        return if (text.text.last() == '.') {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}."
+        } else if (lastChars.takeLast(2) == ".0") {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}.0"
+        } else if (lastChars[0] == '.' && lastChars[2] == '0') {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}0"
+        } else {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}"
+        }
+    } else {
+        ""
+    }
+}
+
+fun Double?.formatWithComma(): String {
+    return if (this != null) {
+        NumberFormat.getNumberInstance(Locale.US).format(this)
+    } else {
+        ""
+    }
+}
+
 fun getMoneyText(currency: String, text: AnnotatedString): String {
     return if (text.text.toLongOrNull().formatWithComma().isNotEmpty()) {
         "$currency ${text.text.toLongOrNull().formatWithComma()}"

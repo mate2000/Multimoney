@@ -213,8 +213,7 @@ class SmartDocumentViewModel @Inject constructor(
         profession: String,
         onProfessionValueChange: (professionId: Int) -> Unit,
     ) {
-        val professionId =
-            uiState.professionList.find { it?.name == profession }?.id
+        val professionId = uiState.professionList.find { it?.name == profession }?.id
         uiState = uiState.copy(profession = profession, professionId = professionId ?: 0)
         onProfessionValueChange(uiState.professionId)
         validateForm()

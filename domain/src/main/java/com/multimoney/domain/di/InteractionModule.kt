@@ -259,5 +259,4 @@ class InteractionModule {
     @Singleton
     fun provideQueryGeneralEconomicActivityUseCase(smartAccountRepository: SmartAccountRepository): QueryGeneralEconomicActivityUseCase =
         QueryGeneralEconomicActivityUseCaseImpl(smartAccountRepository)
-
 }

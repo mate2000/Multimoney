@@ -1,0 +1,124 @@
+package com.multimoney.multimoney.presentation.ui.smart.payment
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
+import com.multimoney.domain.model.accountsmart.Profession
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.DialogParameters
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
+
+@HiltViewModel
+class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseCase: QueryProfessionUseCase) :
+    BaseViewModel(true) {
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    private fun validateForm() {
+        emitBaseEvent(OnFormValidateCompleted(
+            uiState.profession.isNotBlank()
+                    && uiState.paymentAmount.isNotBlank())
+        )
+    }
+
+    private fun onAmountValueChange(paymentAmount: String) {
+        uiState = uiState.copy(paymentAmount = paymentAmount)
+        validateForm()
+    }
+
+    private fun onProfessionValueChange(
+        profession: String,
+        onChangeSharedProfession: (id: Int) -> Unit,
+    ) {
+        uiState = uiState.copy(profession = profession)
+        validateForm()
+        onChangeSharedProfession(uiState.professionList.find { it?.name == profession }?.id ?: 0)
+    }
+
+    private fun callQueryProfessionUseCase(user: String = "40192", idBrand: Int = 5) =
+        executeUseCase {
+            queryProfessionUseCase.invoke(
+                user = user,
+                idBrand = idBrand
+            ).collectLatest { result ->
+                result.onSuccess { successfulResult ->
+                    successfulResult?.let {
+                        uiState = uiState.copy(professionList = it.status)
+                    }
+                    onUIEvent(OnLoadingValueChange(false))
+                }
+                result.onFailure {
+                    onUIEvent(
+                        OnFailureWithDialog(
+                            isLoading = false,
+                            openDialog = DialogParameters(
+                                description = it.getError() ?: "",
+                                isActive = mutableStateOf(true)
+                            )
+                        )
+                    )
+                }
+                result.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
+            }
+        }
+
+    data class UIState(
+        // Fields
+        val profession: String = "",
+        val paymentAmount: String = "",
+        val professionList: List<Profession?> = listOf(),
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is OnValidateForm -> validateForm()
+            is OnPaymentAmountChange -> onAmountValueChange(event.paymentAmount)
+            is OnProfessionChange -> onProfessionValueChange(event.profession,
+                event.onChangeSharedProfession)
+            is OnFailureWithDialog -> {
+
+            }
+            is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
+            is OnLoadingValueChange -> {}
+        }
+    }
+
+    sealed class UIEvent {
+        data class OnPaymentAmountChange(val paymentAmount: String) : UIEvent()
+        data class OnProfessionChange(
+            val profession: String,
+            val onChangeSharedProfession: (id: Int) -> Unit,
+        ) : UIEvent()
+
+        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
+            UIEvent()
+
+        data class OnCallQueryProfessionUseCase(val user: String, val idBrand: Int) : UIEvent()
+        object OnValidateForm : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+    }
+
+    companion object {
+        const val INSTITUTION_MAX_LENGTH = 100
+    }
+}

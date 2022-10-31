@@ -33,9 +33,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartViewModel @Inject constructor(
@@ -117,7 +117,8 @@ class SmartViewModel @Inject constructor(
             expirationDate = accountSmartData?.expirationDate ?: "",
             idGender = accountSmartData?.idGender ?: 0,
             companyName = accountSmartData?.companyName.orEmpty(),
-            aboutCompany = accountSmartData?.aboutCompany.orEmpty()
+            aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
+            institutionPension = accountSmartData?.institutionPension.orEmpty()
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -254,7 +255,8 @@ class SmartViewModel @Inject constructor(
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
-            is UIEvent.OnContinueVisible -> uiState = uiState.copy(isContinueVisible = event.visible)
+            is UIEvent.OnContinueVisible -> uiState =
+                uiState.copy(isContinueVisible = event.visible)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }

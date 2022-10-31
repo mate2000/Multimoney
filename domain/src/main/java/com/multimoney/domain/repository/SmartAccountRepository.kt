@@ -56,6 +56,7 @@ interface SmartAccountRepository {
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String
     ): Flow<MultimoneyResult<GlobalRequest?>>
 
     suspend fun queryGeneralEconomicActivity(

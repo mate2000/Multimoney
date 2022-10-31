@@ -5,6 +5,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.SmartOwnBusinessSvScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredScreen
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 
 /**
@@ -14,7 +16,7 @@ import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionTyp
 @Composable
 fun SourceIncomeScreen(
     viewModel: SourceIncomeViewModel = hiltViewModel(),
-    sharedViewModel: SmartViewModel = hiltViewModel()
+    sharedViewModel: SmartViewModel = hiltViewModel(),
 ) {
     ShowSelectedSourceIncomeOption(
         selectedOption = viewModel.uiState.selectedOption,
@@ -31,13 +33,17 @@ fun SourceIncomeScreen(
 fun ShowSelectedSourceIncomeOption(
     selectedOption: Int,
     sharedViewModel: SmartViewModel,
-    sourceIncomeSharedViewModel: SourceIncomeViewModel
+    sourceIncomeSharedViewModel: SourceIncomeViewModel,
 ) {
     when (selectedOption) {
         SourceIncomeOptionType.OwnBusiness.id -> SmartOwnBusinessSvScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
+        SourceIncomeOptionType.FormalSalaried.id -> SmartCrSalaryScreen(sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel)
+        SourceIncomeOptionType.Retired.id -> SmartRetiredScreen(sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel)
         else -> {
             // if no option gets selected whenever tapping an item from the list, then it means
             // we should show the main source of income options screen.

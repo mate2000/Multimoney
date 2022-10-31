@@ -278,6 +278,8 @@ class InteractionModule {
     fun provideQueryGeneralEconomicActivityUseCase(smartAccountRepository: SmartAccountRepository): QueryGeneralEconomicActivityUseCase =
         QueryGeneralEconomicActivityUseCaseImpl(smartAccountRepository)
 
+    @Provides
+    @Singleton
     fun provideQueryGetExchangeRateUseCase(creditRepository: CreditRepository): QueryGetExchangeRateCreditUseCase =
         QueryGetExchangeRateCreditUseCaseImpl(creditRepository)
 

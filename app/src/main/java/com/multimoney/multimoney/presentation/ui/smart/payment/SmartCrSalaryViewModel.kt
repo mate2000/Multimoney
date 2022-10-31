@@ -29,11 +29,11 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         private set
 
     private fun validateForm() {
-        emitBaseEvent(OnFormValidateCompleted(
-            uiState.profession.isNotBlank()
-                    && uiState.paymentAmount.isNotBlank())
-        )
+        emitBaseEvent(OnFormValidateCompleted(onValidateForm()))
     }
+
+    fun onValidateForm() = uiState.profession.isNotBlank()
+            && uiState.paymentAmount.isNotBlank()
 
     private fun onAmountValueChange(paymentAmount: String) {
         uiState = uiState.copy(paymentAmount = paymentAmount)
@@ -42,11 +42,9 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
 
     private fun onProfessionValueChange(
         profession: String,
-        onChangeSharedProfession: (id: Int) -> Unit,
     ) {
         uiState = uiState.copy(profession = profession)
         validateForm()
-        onChangeSharedProfession(uiState.professionList.find { it?.name == profession }?.id ?: 0)
     }
 
     private fun callQueryProfessionUseCase(user: String = "40192", idBrand: Int = 5) =
@@ -83,28 +81,26 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         val profession: String = "",
         val paymentAmount: String = "",
         val professionList: List<Profession?> = listOf(),
+        val isLoading: Boolean = false,
+        val isContinueVisible: Boolean = true,
+        val openDialog: DialogParameters = DialogParameters(),
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnValidateForm -> validateForm()
             is OnPaymentAmountChange -> onAmountValueChange(event.paymentAmount)
-            is OnProfessionChange -> onProfessionValueChange(event.profession,
-                event.onChangeSharedProfession)
-            is OnFailureWithDialog -> {
-
-            }
+            is OnProfessionChange -> onProfessionValueChange(event.profession)
+            is OnFailureWithDialog -> uiState =
+                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
-            is OnLoadingValueChange -> {}
+            is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
         }
     }
 
     sealed class UIEvent {
         data class OnPaymentAmountChange(val paymentAmount: String) : UIEvent()
-        data class OnProfessionChange(
-            val profession: String,
-            val onChangeSharedProfession: (id: Int) -> Unit,
-        ) : UIEvent()
+        data class OnProfessionChange(val profession: String) : UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :

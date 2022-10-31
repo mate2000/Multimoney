@@ -115,7 +115,9 @@ class SmartViewModel @Inject constructor(
             idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
             birthday = accountSmartData?.birthday ?: "",
             expirationDate = accountSmartData?.expirationDate ?: "",
-            idGender = accountSmartData?.idGender ?: 0
+            idGender = accountSmartData?.idGender ?: 0,
+            companyName = accountSmartData?.companyName.orEmpty(),
+            aboutCompany = accountSmartData?.aboutCompany.orEmpty()
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -222,11 +224,7 @@ class SmartViewModel @Inject constructor(
      */
     private fun onUpdateAccountSmartData(accountData: AccountSmartData?) {
         accountSmartData = accountData
-        //callMutationGlobalRequestUseCase()
-
-        // FIXME, temporary adding it to move forward on the smart account flow
-        onUIEvent(OnLoadingValueChange(false))
-        onUIEvent(OnNextStep)
+        callMutationGlobalRequestUseCase()
     }
 
     data class UIState(

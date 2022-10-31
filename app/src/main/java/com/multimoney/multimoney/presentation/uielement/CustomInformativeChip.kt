@@ -39,7 +39,6 @@ fun CustomInformativeChip(
     endIconTint: Color = DefaultWhite,
     size: Size = Small
 ) {
-
     val startPadding: Dp = calculatePadding(startIcon)
     val endPadding: Dp = calculatePadding(endIcon)
     var topPadding: Dp = 0.dp
@@ -60,7 +59,7 @@ fun CustomInformativeChip(
         modifier = modifier
             .clip(shape)
             .background(background)
-            .clickable { onClick() },
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier
@@ -86,7 +85,7 @@ fun CustomInformativeChip(
                     platformStyle = PlatformTextStyle(
                         includeFontPadding = false
                     )
-                ),
+                )
             )
             if (endIcon != 0) {
                 Icon(

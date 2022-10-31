@@ -25,21 +25,6 @@ fun Context.openWhatsAppDeepLink(link: String) {
     this.startActivity(intent)
 }
 
-fun Context.sendAccount(client: String, accountNumber: String) {
-    val clientStringLabel = getString(R.string.credit_detail_client)
-    val ibanAccountLabel = getString(R.string.credit_detail_iban_number)
-    val intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(
-            Intent.EXTRA_TEXT,
-            "$clientStringLabel: ${client.uppercase()}\n$ibanAccountLabel: $accountNumber"
-        )
-        type = "text/plain"
-    }
-    val chooser = Intent.createChooser(intent, "")
-    this.startActivity(chooser)
-}
-
 fun tickerFlow(
     period: Duration,
     initialDelay: Duration = Duration.ZERO,
@@ -81,6 +66,7 @@ fun Int.getCurrencySymbol(): Int {
         else -> R.string.empty
     }
 }
+
 // Currency
 fun Int.getCurrency(): CurrencyType {
     return when (this) {

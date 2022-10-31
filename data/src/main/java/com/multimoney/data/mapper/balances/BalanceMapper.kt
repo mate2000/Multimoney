@@ -3,7 +3,6 @@ package com.multimoney.data.mapper.balances
 import com.multimoney.data.networking.balances.apollomodel.BalanceQuery
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
-import com.multimoney.domain.model.balance.BalanceAccountSmart
 import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
@@ -37,15 +36,14 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     term = this.plazo
 )
 
-private fun BalanceQuery.BalanceAccountSmart.mapToDomainModel() =
-    BalanceAccountSmart(
-        account = accounts?.map {
-            Account(
-                totalBalance = it?.totalBalance.toString().toDouble(),
-                gainedInterest = it?.gainedInterest.toString().toDouble()
-            )
-        }
+private fun BalanceQuery.Account.mapToDomainModel() =
+    Account(
+        currency = this.currencyCode,
+        totalBalance = this.totalBalance.toString().toDouble(),
+        gainedInterest = this.gainedInterest.toString().toDouble()
     )
+
+
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(globalBalance = globalBalance.toString().toDouble())
@@ -56,7 +54,7 @@ private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
 fun BalanceQuery.Data.mapToDomainModel() =
     Balance(
         balanceCredit = balanceCredit?.map { it?.mapToDomainModel() },
-        balanceAccountSmart = balanceAccountSmart?.mapToDomainModel(),
+        balanceAccountSmart = balanceAccountSmart?.accounts?.map { it?.mapToDomainModel() },
         balanceCryptoAccount = balanceCryptoAccount?.mapToDomainModel(),
         balanceCardInformation = balanceCardInformation?.mapToDomainModel()
     )

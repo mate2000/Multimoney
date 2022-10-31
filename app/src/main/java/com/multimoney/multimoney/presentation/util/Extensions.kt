@@ -55,18 +55,6 @@ fun Int.getSourceIncomeIconDrawable() = when (this) {
     else -> R.drawable.ic_other
 }
 
-/**
- * get currency symbol by idBrand
- */
-fun Int.getCurrencySymbol(): Int {
-    return when (this) {
-        Brand.ElSalvador.id -> R.string.credit_monthly_income_dollar_symbol
-        Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
-        Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
-        else -> R.string.empty
-    }
-}
-
 // Currency
 fun Int.getCurrency(): CurrencyType {
     return when (this) {
@@ -74,6 +62,27 @@ fun Int.getCurrency(): CurrencyType {
         Dollar.id -> Dollar
         Quetzal.id -> Quetzal
         else -> All
+    }
+}
+
+/**
+ * get currency symbol by idBrand
+ */
+fun Int.getCurrencySymbol(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.dollar_symbol
+        Brand.CostaRica.id -> R.string.colon_symbol
+        Brand.Guatemala.id -> R.string.quetzal_symbol
+        else -> R.string.empty
+    }
+}
+
+fun Int.getCurrencySymbolValue(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.dollar_symbol_value
+        Brand.CostaRica.id -> R.string.colon_symbol_value
+        Brand.Guatemala.id -> R.string.quetzal_symbol_value
+        else -> R.string.empty
     }
 }
 

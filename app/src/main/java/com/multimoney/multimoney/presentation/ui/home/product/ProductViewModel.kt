@@ -120,6 +120,8 @@ class ProductViewModel @Inject constructor(
                 configurationVersion?.let { uiState = uiState.copy(isLoading = false) }
                 balance?.let {
                     balanceCredit = it
+                    val currentBalance = it.getFirstSummary()?.currentBalance ?: 0.0
+                    uiState = uiState.copy(hasBalance = (currentBalance > 0.0))
                 }
             }
             result.onFailure {

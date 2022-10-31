@@ -32,6 +32,8 @@ import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCase
+import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCase
@@ -236,6 +238,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryBanksAndRegularExpressionUseCase(creditRepository: CreditRepository): QueryBanksAndRegularExpressionUseCase =
         QueryBanksAndRegularExpressionUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetPaymentPointsUseCase(creditRepository: CreditRepository): QueryGetPaymentPointsUseCase =
+        QueryGetPaymentPointsUseCaseImpl(creditRepository)
 
     // Smart
 

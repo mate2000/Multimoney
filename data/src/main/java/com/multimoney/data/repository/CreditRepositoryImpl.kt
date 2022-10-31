@@ -10,6 +10,7 @@ import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
@@ -246,6 +247,17 @@ class CreditRepositoryImpl @Inject constructor(
             user,
             idBrand,
             idUserRequest
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetPaymentPoints(
+        idBrand: Int
+    ): Flow<MultimoneyResult<List<PaymentPoint?>?>> = fetchData(
+        apolloCall = creditApi.queryGetPaymentPoints(
+            idBrand
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

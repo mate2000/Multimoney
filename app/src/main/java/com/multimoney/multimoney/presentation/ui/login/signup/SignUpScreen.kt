@@ -101,8 +101,7 @@ fun SignUpScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 buttonType = CustomButtonType.PrimaryPrimary,
-                enable = viewModel.uiState.isContinueEnabled,
-                visible = viewModel.uiState.isContinueVisible
+                enable = viewModel.uiState.isContinueEnabled
             )
         }
     }
@@ -135,9 +134,7 @@ fun GetStepContent(
     when (step) {
         SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
         SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
-        SignUpStep.Three.id -> {
-            SignUpPhoneScreen(sharedViewModel = viewModel)
-        }
+        SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
         SignUpStep.Four.id -> SignUpOtpScreen(
             onPopAndNavigate,
             sharedViewModel = viewModel

@@ -226,13 +226,13 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 creditSummary
             )
-            }"
+            }/$identification/$userName"
         } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
             encodeData(
                 listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
             )
-            }"
+            }/$identification/$userName"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
             encodeData(
@@ -382,8 +382,7 @@ class ProductViewModel @Inject constructor(
             val clientLabel: String,
             val accountLabel: String,
             val ibanAccount: String
-        ) :
-            UIEvent()
+        ) : UIEvent()
     }
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {

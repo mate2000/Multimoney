@@ -54,3 +54,9 @@ fun String.getPaymentMethodType(): PaymentMethodType {
         else -> CashPaymentPoint
     }
 }
+
+fun String.getMaskedText(
+    maskSymbol: String,
+    firstDigits: Int,
+    lastDigits: Int
+) = take(firstDigits).plus(maskSymbol).plus(takeLast(lastDigits))

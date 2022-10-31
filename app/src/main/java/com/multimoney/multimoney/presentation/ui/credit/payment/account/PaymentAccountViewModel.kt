@@ -14,8 +14,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -48,6 +50,8 @@ class PaymentAccountViewModel @Inject constructor(
     private var idLoanClient: Int = 0
     private var summaryList: List<Summary>? = null
     private var idCurrency: Int? = 0
+    private var identification: String? = null
+    private var userName: String? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -55,6 +59,8 @@ class PaymentAccountViewModel @Inject constructor(
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        userName = savedStateHandle[NAME_CLIENT] ?: ""
         idCurrency = if ((summaryList?.count() ?: 0) > 1) {
             CurrencyType.All.id
         } else {
@@ -110,7 +116,7 @@ class PaymentAccountViewModel @Inject constructor(
                             encodeData(
                                 summaryList
                             )
-                            }/${encodeData(clientBankAccount)}"
+                            }/${encodeData(clientBankAccount)}/$identification/$userName"
                         )
                     }
                 )
@@ -121,7 +127,7 @@ class PaymentAccountViewModel @Inject constructor(
                 encodeData(
                     summaryList
                 )
-                }/${encodeData(clientBankAccount)}"
+                }/${encodeData(clientBankAccount)}/$identification/$userName"
             )
         }
     }

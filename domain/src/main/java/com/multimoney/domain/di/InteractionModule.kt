@@ -14,6 +14,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCaseImpl
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
+import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
@@ -30,6 +32,8 @@ import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
+import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCase
@@ -266,4 +270,14 @@ class InteractionModule {
     @Singleton
     fun provideMutationGlobalRequestUseCase(smartAccountRepository: SmartAccountRepository): MutationGlobalRequestUseCase =
         MutationGlobalRequestUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetExchangeRateUseCase(creditRepository: CreditRepository): QueryGetExchangeRateCreditUseCase =
+        QueryGetExchangeRateCreditUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationProcessPaymentListUseCase(creditRepository: CreditRepository): MutationProcessPaymentListUseCase =
+        MutationProcessPaymentListUseCaseImpl(creditRepository)
 }

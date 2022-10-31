@@ -238,7 +238,7 @@ class ProductViewModel @Inject constructor(
             )
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}"
         }
-        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser")
+        navigateTo(route)
     }
 
     private fun validateQuotas(summaryList: List<Summary>?): Boolean {

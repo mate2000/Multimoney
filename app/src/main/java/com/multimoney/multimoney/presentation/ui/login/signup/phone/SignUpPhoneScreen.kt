@@ -1,14 +1,12 @@
 package com.multimoney.multimoney.presentation.ui.login.signup.phone
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -20,10 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import com.togitech.ccp.data.utils.getDefaultLangCode
@@ -34,9 +34,8 @@ import com.togitech.ccp.data.utils.getLibCountries
 @Preview
 fun SignUpPhoneScreen(
     viewModel: SignUpPhoneViewModel = hiltViewModel(),
-    sharedViewModel: SignUpViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
-
     // Properties
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -56,23 +55,29 @@ fun SignUpPhoneScreen(
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(
                     nextAction = {
-                        viewModel.onUIEvent(SignUpPhoneViewModel.UIEvent.OnNextActionClick({
-                            onUIEvent(
-                                SignUpViewModel.UIEvent.OnUseDataValueChange(
-                                    userData?.copy(
-                                        currentStep = viewModel.getNextStep(
-                                            sharedViewModel.isPhoneVerified,
-                                            isOnFidoVerified
-                                        ).name
+                        viewModel.onUIEvent(
+                            SignUpPhoneViewModel.UIEvent.OnNextActionClick(
+                                {
+                                    onUIEvent(
+                                        SignUpViewModel.UIEvent.OnUseDataValueChange(
+                                            userData?.copy(
+                                                currentStep = viewModel.getNextStep(
+                                                    sharedViewModel.isPhoneVerified,
+                                                    isOnFidoVerified
+                                                ).name
+                                            )
+                                        )
                                     )
-                                )
+                                },
+                                { onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase) }
                             )
-                        },
-                            { onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase) }))
+                        )
                         viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.SignUpThree)
                     },
-                    nextStep = viewModel.getNextStep(sharedViewModel.isPhoneVerified,
-                        isOnFidoVerified).id,
+                    nextStep = viewModel.getNextStep(
+                        sharedViewModel.isPhoneVerified,
+                        isOnFidoVerified
+                    ).id,
                     previousStep = SignUpStep.Two.id
                 )
             )
@@ -125,19 +130,12 @@ fun SignUpPhoneScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Row(modifier = Modifier.padding(top = 12.dp)) {
-            CustomImage(
-                drawableResource = R.drawable.ic_information,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-            Text(
-                text = stringResource(id = R.string.sign_up_phone_information),
-                style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textInformation),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 9.dp)
-            )
-        }
+        CustomInformativeText(
+            modifier = Modifier.padding(top = 12.dp),
+            drawableResource = drawable.ic_information,
+            text = stringResource(id = string.sign_up_phone_information),
+            textStyle = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textInformation)
+        )
 
         // Fields
         PhoneTextField(
@@ -151,7 +149,8 @@ fun SignUpPhoneScreen(
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnPhoneNumberValueChange(it)
                             )
-                        })
+                        }
+                    )
                 )
             },
             onDebounceValidation = {
@@ -180,7 +179,8 @@ fun SignUpPhoneScreen(
                                     true
                                 )
                             )
-                        })
+                        }
+                    )
                 )
             }
         )

@@ -79,7 +79,7 @@ class SignInViewModel @Inject constructor(
 //            .metadata(attrs)
 //            .build()
 
-//        Amplify.Auth.signOut({
+        Amplify.Auth.signOut({
         // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
 //        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
         Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
@@ -120,9 +120,9 @@ class SignInViewModel @Inject constructor(
         }, {
             cognitoError()
         })
-//        }, {
-//            cognitoError()
-//        })
+        }, {
+            cognitoError()
+        })
     }
 
     private suspend fun saveUserData(payload: JSONObject) {

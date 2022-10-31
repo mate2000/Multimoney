@@ -43,8 +43,8 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
-import com.multimoney.multimoney.presentation.util.sendAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -56,7 +56,8 @@ class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
+    private val helper: ShareHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -347,17 +348,14 @@ class ProductViewModel @Inject constructor(
                 uiEvent.whatsAppLink
             )
             is OnLastStepChange -> lastStep = uiEvent.lastStep
-            is OnShareIbanAccount -> shareIbanAccount(
-                uiEvent.context,
-                uiEvent.account
-            )
+            is OnShareIbanAccount -> shareIbanAccount(uiEvent.clientLabel, uiEvent.accountLabel, uiEvent.ibanAccount)
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
         }
     }
 
-    private fun shareIbanAccount(context: Context, account: String) {
-        context.sendAccount(userName, account)
+    private fun shareIbanAccount(clientLabel: String, accountLabel: String, ibanAccount: String) {
+        helper.shareTextPlain("$clientLabel: ${userName.uppercase()}\n$accountLabel: $ibanAccount")
     }
 
     sealed class UIEvent {
@@ -381,9 +379,11 @@ class ProductViewModel @Inject constructor(
 
         object OnGetIdBrand : UIEvent()
         data class OnShareIbanAccount(
-            val context: Context,
-            val account: String
-        ) : UIEvent()
+            val clientLabel: String,
+            val accountLabel: String,
+            val ibanAccount: String
+        ) :
+            UIEvent()
     }
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {

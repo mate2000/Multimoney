@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -23,21 +22,6 @@ fun Context.openWhatsAppDeepLink(link: String) {
     this.startActivity(intent)
 }
 
-fun Context.sendAccount(client: String, accountNumber: String) {
-    val clientStringLabel = getString(R.string.credit_detail_client)
-    val ibanAccountLabel = getString(R.string.credit_detail_iban_number)
-    val intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(
-            Intent.EXTRA_TEXT,
-            "$clientStringLabel: ${client.uppercase()}\n$ibanAccountLabel: $accountNumber"
-        )
-        type = "text/plain"
-    }
-    val chooser = Intent.createChooser(intent, "")
-    this.startActivity(chooser)
-}
-
 fun tickerFlow(
     period: Duration,
     initialDelay: Duration = Duration.ZERO,
@@ -53,7 +37,6 @@ fun tickerFlow(
 }
 
 // Currency
-
 fun Int.getCurrency(): CurrencyType {
     return when (this) {
         Colon.id -> Colon
@@ -64,7 +47,6 @@ fun Int.getCurrency(): CurrencyType {
 }
 
 // Payment
-
 fun String.getPaymentMethodType(): PaymentMethodType {
     return when (this) {
         VisaDirect.value -> VisaDirect

@@ -1,6 +1,6 @@
 package com.multimoney.domain.repository
 
-import com.multimoney.domain.model.accountsmart.AddressesLevelTwo
+import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
@@ -9,7 +9,6 @@ import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
 interface SmartAccountRepository {
 
@@ -20,11 +19,23 @@ interface SmartAccountRepository {
 
     suspend fun queryProfessions(pkUser: String, idBrand: Int): Flow<MultimoneyResult<Professions?>>
 
+    suspend fun queryAddressLevelOne(
+        user: String,
+        idBrand: Int,
+    ): Flow<MultimoneyResult<AddressesLevel?>>
+
     suspend fun queryAddressLevelTwo(
         user: String,
         idBrand: Int,
         idAddressLevel1: String,
-    ): Flow<MultimoneyResult<AddressesLevelTwo?>>
+    ): Flow<MultimoneyResult<AddressesLevel?>>
+
+    suspend fun queryAddressLevelThree(
+        user: String,
+        idBrand: Int,
+        idAddressLevel1: String,
+        idAddressLevel2: String,
+    ): Flow<MultimoneyResult<AddressesLevel?>>
 
     suspend fun queryNationality(
         user: String,

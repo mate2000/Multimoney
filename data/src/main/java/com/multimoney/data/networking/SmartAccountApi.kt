@@ -4,16 +4,15 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
-import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel3Query
-import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel1Query
+import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel2Query
+import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.accountsmart.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.accountsmart.apollomodel.NationalityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.ProfessionQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.StepByStepQuery
-import java.util.Date
 import javax.inject.Inject
 
 class SmartAccountApi @Inject constructor(
@@ -38,7 +37,7 @@ class SmartAccountApi @Inject constructor(
         apolloClient.query(AddressLevel1Query(user, idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
-  fun queryAddressLevelTwo(
+    fun queryAddressLevelTwo(
         user: String,
         idBrand: Int,
         idAddressLevel1: String,
@@ -46,7 +45,7 @@ class SmartAccountApi @Inject constructor(
         apolloClient.query(AddressLevel2Query(user, idBrand, idAddressLevel1))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
-fun queryAddressLevelThree(
+    fun queryAddressLevelThree(
         user: String,
         idBrand: Int,
         idAddressLevel1: String,

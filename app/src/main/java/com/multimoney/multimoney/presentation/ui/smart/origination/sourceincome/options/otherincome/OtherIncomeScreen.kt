@@ -44,6 +44,7 @@ fun OtherIncomeScreen(
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(

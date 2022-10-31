@@ -23,6 +23,8 @@ interface MutationGlobalRequestUseCase {
         user: String,
         idBrand: Int,
         currentStep: String,
-        specifiesIncomeSource: String
+        specifiesIncomeSource: String,
+        entrepreneurship: String,
+        legalID: String
     ): Flow<MultimoneyResult<GlobalRequest?>>
 }

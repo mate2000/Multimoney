@@ -25,7 +25,9 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         user: String,
         idBrand: Int,
         currentStep: String,
-        specifiesIncomeSource: String
+        specifiesIncomeSource: String,
+        entrepreneurship: String,
+        legalID: String
     ): Flow<MultimoneyResult<GlobalRequest?>> = repository.mutationGlobalRequest(
         pkUser,
         status,
@@ -44,6 +46,8 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         user,
         idBrand,
         currentStep,
-        specifiesIncomeSource
+        specifiesIncomeSource,
+        entrepreneurship,
+        legalID
     )
 }

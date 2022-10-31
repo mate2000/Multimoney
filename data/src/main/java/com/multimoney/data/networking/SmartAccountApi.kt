@@ -68,7 +68,9 @@ class SmartAccountApi @Inject constructor(
         user: String,
         idBrand: Int,
         currentStep: String,
-        specifiesIncomeSource: String
+        specifiesIncomeSource: String,
+        entrepreneurship: String,
+        legalID: String
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloClient.mutation(
             GlobalRequestMutation(
@@ -89,7 +91,9 @@ class SmartAccountApi @Inject constructor(
                 user,
                 idBrand,
                 currentStep,
-                specifiesIncomeSource
+                specifiesIncomeSource,
+                entrepreneurship,
+                legalID
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -11,9 +11,11 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.BaseEvent
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnBusinessActivityChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnIdentificationChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnIncomeAmountChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,7 +52,7 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
             val idBrand: Int,
             val user: String
         ) : UIEvent()
-
+        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 
@@ -65,6 +67,7 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
                     uiEvent.user
                 )
             is OnValidateForm -> validateForm()
+            is OnNextActionClick -> OnNextActionClick(uiEvent.nextStepAction)
         }
     }
 
@@ -163,5 +166,13 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
                     uiState.businessIdentification.isNotBlank()
             )
         )
+    }
+
+    private fun onNextActionClick(nextStepAction: () -> Unit) {
+        nextStepAction()
+    }
+
+    sealed class BaseEvent {
+        data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
     }
 }

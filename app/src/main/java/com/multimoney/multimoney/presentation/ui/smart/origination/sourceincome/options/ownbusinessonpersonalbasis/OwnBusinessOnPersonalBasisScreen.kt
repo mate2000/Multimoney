@@ -15,16 +15,22 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps.Five
+import com.multimoney.data.util.catalog.SmartSteps.Search
+import com.multimoney.data.util.catalog.SmartSteps.Three
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnIdentificationChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
@@ -48,6 +54,38 @@ fun OwnBusinessOnPersonalBasisScreen(
                 )
             }
         }
+    }
+
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(
+            OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(
+                        OnNextActionClick(
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(
+                                    OnCallMutationUpdateGlobalRequestUseCase(
+                                        // FIXME, pass whatever needed and obtain it from the uiState variable
+                                        accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                            status = 1,
+                                            currentStep = Search.getNameById(
+                                                sharedViewModel.uiState.currentStep
+                                            ),
+                                            income = viewModel.uiState.businessIncome.toFloat(),
+                                            legalID = viewModel.uiState.businessIdentification,
+                                            entrepreneurship = viewModel.uiState.businessActivity
+                                        )
+                                    )
+                                )
+                            }
+                        )
+                    )
+                },
+                // TODO check for correct steps
+                nextStep = Five.id,
+                previousStep = Three.id
+            )
+        )
     }
 
     Column(

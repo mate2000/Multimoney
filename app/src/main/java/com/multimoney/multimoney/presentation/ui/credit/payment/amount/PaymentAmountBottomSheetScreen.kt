@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -29,7 +28,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.util.getCurrency
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
-import com.multimoney.multimoney.presentation.util.stringToIntegerFormat
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -54,7 +52,7 @@ fun PaymentAmountBottomSheetScreen(
             if (viewModel.isMultiCurrency()) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = getMultiCurrencyAmountIncludingExchange(viewModel),
+                    text = viewModel.getMultiCurrencyAmountIncludingExchange(),
                     style = Typography.h4.copy(fontWeight = FontWeight.W600),
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Center
@@ -70,7 +68,7 @@ fun PaymentAmountBottomSheetScreen(
             } else if (viewModel.shouldDisplayExchangeRate()) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "${viewModel.uiState.currency}${viewModel.uiState.exchangeConvertedAmount.toString().stringToIntegerFormat(CURRENCY_SEPARATOR.toString())}",
+                    text = viewModel.getConvertedAmountFormatted(),
                     style = Typography.h4.copy(fontWeight = FontWeight.W600),
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Center
@@ -78,7 +76,7 @@ fun PaymentAmountBottomSheetScreen(
             } else {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "${viewModel.uiState.currency}${viewModel.uiState.currentAmountValueString.stringToIntegerFormat(CURRENCY_SEPARATOR.toString())}",
+                    text = viewModel.getCurrentAmountFormatted(),
                     style = Typography.h4.copy(fontWeight = FontWeight.W600),
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Center
@@ -174,11 +172,4 @@ fun CurrencyExchangeRow(viewModel: PaymentAmountViewModel) {
             )
         }
     }
-}
-
-fun getMultiCurrencyAmountIncludingExchange(viewModel: PaymentAmountViewModel): String {
-    val balance = viewModel.summaryList?.find { it.idCurrency == viewModel.uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
-    val exchangedAmount = viewModel.uiState.exchangeConvertedAmount
-    val total = balance + exchangedAmount
-    return viewModel.uiState.currency + total
 }

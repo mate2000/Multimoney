@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnProcessPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnShowPaymentBottomSheet
 import com.multimoney.multimoney.presentation.util.amountToDoubleFormat
+import com.multimoney.multimoney.presentation.util.stringToIntegerFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -75,7 +76,7 @@ class PaymentAmountViewModel @Inject constructor(
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        identification = savedStateHandle[NAME_CLIENT] ?: ""
+        userName = savedStateHandle[NAME_CLIENT] ?: ""
 
         onInitializeInteractionValues()
     }
@@ -116,7 +117,7 @@ class PaymentAmountViewModel @Inject constructor(
         isMultiCurrency() ||
             uiState.clientBankAccount?.idCurrency?.toString() != summaryList?.first()?.idCurrency?.toString()
 
-    fun isMultiCurrency() = (summaryList?.count() ?: 1) > 1
+    fun isMultiCurrency() = true/*(summaryList?.count() ?: 1) > 1*/
 
     private fun onShowPaymentBottomSheet() {
         uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
@@ -257,20 +258,30 @@ class PaymentAmountViewModel @Inject constructor(
             }
         }
 
-    private fun getDestinyAccountNumber(idCurrency: Int?): String {
-        return summaryList?.find { it.idCurrency == idCurrency }?.ibanAccount ?: ""
-    }
+    private fun getDestinyAccountNumber(idCurrency: Int?): String =
+        summaryList?.find { it.idCurrency == idCurrency }?.ibanAccount ?: ""
 
     private fun onAutomaticProgrammedPaymentCheckedChanged(value: Boolean) {
         uiState = uiState.copy(isAutomaticProgrammedPaymentChecked = value)
     }
 
-    private fun onAlertResultButtonClick() {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
-    }
+    private fun onAlertResultButtonClick() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
     private fun onLoadingValueChange(loading: Boolean) {
         uiState = uiState.copy(isLoading = loading)
+    }
+
+    fun getConvertedAmountFormatted() =
+        "${uiState.currency}${uiState.exchangeConvertedAmount.toString().stringToIntegerFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())}"
+
+    fun getCurrentAmountFormatted() =
+        "${uiState.currency}${uiState.currentAmountValueString.stringToIntegerFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())}"
+
+    fun getMultiCurrencyAmountIncludingExchange(): String {
+        val balance = summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
+        val exchangedAmount = uiState.exchangeConvertedAmount
+        val total = balance + exchangedAmount
+        return uiState.currency + total
     }
 
     data class UIState(

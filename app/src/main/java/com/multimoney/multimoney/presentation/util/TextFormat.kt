@@ -48,6 +48,9 @@ fun String.isValidAmount() = isNotBlank() && isValidAmountLength()
 
 fun String.isValidAmountLength() = length <= 12
 
+fun String.amountToDoubleFormat(currency: String, separator: Char) =
+    replace(currency, "").replace(separator.toString(), "").toDouble()
+
 fun String.capitalized(): String {
     return this.lowercase().replaceFirstChar {
         if (it.isLowerCase()) {

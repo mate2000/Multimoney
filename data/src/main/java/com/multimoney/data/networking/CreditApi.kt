@@ -11,16 +11,19 @@ import com.multimoney.data.networking.credit.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.credit.apollomodel.CompanyProvinceQuery
 import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.credit.apollomodel.GetClientBankAccountQuery
+import com.multimoney.data.networking.credit.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.credit.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.credit.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.credit.apollomodel.PaymentAmountQuery
+import com.multimoney.data.networking.credit.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.credit.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.credit.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.credit.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.credit.apollomodel.TermsAndConditionsQuery
 import com.multimoney.domain.model.credit.CreditInfoQuestion
+import com.multimoney.domain.model.credit.DestinyAccount
 import javax.inject.Inject
 
 class CreditApi @Inject constructor(
@@ -230,6 +233,55 @@ class CreditApi @Inject constructor(
         apolloClient.query(
             GetPaymentPointsQuery(
                 idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetExchangeCreditRate(
+        idBrand: Int,
+        user: String,
+        identification: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String,
+        amount: Double
+    ): ApolloCall<GetExchangeRateCreditQuery.Data> =
+        apolloClient.query(
+            GetExchangeRateCreditQuery(
+                idBrand,
+                user,
+                identification,
+                idOriginCurrency,
+                idDestinationCurrency,
+                amount
+            )
+        )
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationProcessPaymentList(
+        user: String,
+        idBrand: Int,
+        customerId: Int,
+        identification: String,
+        originAccountNumber: String,
+        destinyAccountNumber: String,
+        currencyId: String,
+        customerName: String,
+        description: String,
+        destinyAccount: List<DestinyAccount?>,
+        amount: Any
+    ): ApolloCall<ProccessPaymentListMutation.Data> =
+        apolloClient.mutation(
+            ProccessPaymentListMutation(
+                user,
+                idBrand,
+                customerId,
+                identification,
+                originAccountNumber,
+                destinyAccountNumber,
+                currencyId,
+                customerName,
+                description,
+                destinyAccount.map { it?.mapToApolloModel() },
+                amount
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

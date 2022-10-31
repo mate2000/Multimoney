@@ -95,6 +95,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
             "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
             "smart_screen"
         )
+    object PaymentVoucherScreen : Screen(route = "payment_voucher_screen")
 
     object PaymentOptionsScreen : Screen(
         "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}",

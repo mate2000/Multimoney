@@ -18,6 +18,8 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentA
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferScreen
 
@@ -139,6 +141,18 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         ) {
             PaymentAmountScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(route = Screen.PaymentVoucherScreen.route) {
+            PaymentVoucherScreen(
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(

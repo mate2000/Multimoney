@@ -158,14 +158,16 @@ class IbanAccountViewModel @Inject constructor(
     ) {
         val ibanNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
         uiState = uiState.copy(accountNumber = ibanNumber?.value ?: "")
-        validateIbanAccount { response ->
-            onFailureWithDialog(
-                false,
-                DialogParameters(
-                    description = response.getError() ?: "",
-                    isActive = mutableStateOf(true)
+        if (uiState.accountNumber.isNotEmpty()) {
+            validateIbanAccount { response ->
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(
+                        description = response.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
                 )
-            )
+            }
         }
     }
 

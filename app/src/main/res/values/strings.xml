@@ -26,6 +26,7 @@
     <string name="locked" translatable="false">Bloquear</string>
     <string name="see_data" translatable="false">Ver datos</string>
     <string name="link" translatable="false">Vincular</string>
+    <string name="shared" translatable="false">Compartir</string>
     <string name="general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
 
     <!-- Errors -->
@@ -431,6 +432,17 @@
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
 
+    <!-- Payment Voucher -->
+    <string name="payment_voucher_title_chooser" translatable="false">Voucher</string>
+    <string name="payment_voucher_schedule_payment" translatable="false">Programar pago automático</string>
+    <string name="payment_voucher_shared_button" translatable="false">Compartir</string>
+    <string name="payment_voucher_amount_to_pay_label" translatable="false">Monto debitado</string>
+    <string name="payment_voucher_exchange_rate_label" translatable="false">Tipo de cambio</string>
+    <string name="payment_voucher_reference_number_label" translatable="false">N° de referencia | %s:</string>
+    <string name="payment_voucher_from_your_account_label" translatable="false">Desde tu cuenta</string>
+    <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
+    <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
+
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
@@ -485,5 +497,4 @@
     <string name="payment_points_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
-
 </resources>

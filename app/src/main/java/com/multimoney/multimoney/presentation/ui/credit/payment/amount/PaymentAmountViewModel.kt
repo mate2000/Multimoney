@@ -117,7 +117,7 @@ class PaymentAmountViewModel @Inject constructor(
         isMultiCurrency() ||
             uiState.clientBankAccount?.idCurrency?.toString() != summaryList?.first()?.idCurrency?.toString()
 
-    fun isMultiCurrency() = true/*(summaryList?.count() ?: 1) > 1*/
+    fun isMultiCurrency() = (summaryList?.count() ?: 1) > 1
 
     private fun onShowPaymentBottomSheet() {
         uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))

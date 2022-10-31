@@ -88,11 +88,9 @@ fun OtherIncomeScreen(
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
-            (
-                SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
-                    SourceIncomeOptionType.MainSourceIncomeScreenType.id
-                )
-                )
+            SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
+                SourceIncomeOptionType.MainSourceIncomeScreenType.id
+            )
         )
     }
 }
@@ -118,7 +116,7 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: String) {
             onValueChange = {
                 viewModel.onUIEvent(OnIncomeSourceChange(it))
             },
-            labelText = stringResource(R.string.smart_other_specify_your_source_of_income),
+            labelText = stringResource(R.string.smart_other_source_of_income_label),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next

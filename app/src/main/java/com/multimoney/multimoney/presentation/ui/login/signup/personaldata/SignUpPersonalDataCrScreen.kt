@@ -235,7 +235,7 @@ fun SignUpPersonalDataCrScreen(
                 )
             }
         } else {
-            if (viewModel.isLoading) {
+            if (viewModel.uiState.isLoading) {
                 sharedViewModel.userData?.fullName = null
                 Row(modifier = Modifier.padding(top = 12.dp)) {
                     CustomImage(

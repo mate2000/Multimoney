@@ -28,25 +28,35 @@ interface SmartAccountRepository {
     suspend fun queryNationality(
         user: String,
         idBrand: Int,
-    ):  Flow<MultimoneyResult<Nationalities?>>
+    ): Flow<MultimoneyResult<Nationalities?>>
 
-    suspend fun queryStepByStep(user: String,
-                                idBrand: Int,
-                                idRequest: Int,): Flow<MultimoneyResult<StepByStep?>>
+    suspend fun queryStepByStep(
+        user: String,
+        idBrand: Int,
+        idRequest: Int,
+    ): Flow<MultimoneyResult<StepByStep?>>
 
-    suspend fun mutationGlobalRequest(pkUser: Int,
-                                      status: Int,
-                                      idProfessionType: Int,
-                                      idAddressLevel1: Long,
-                                      idAddressLevel2: Long,
-                                      idAddressLevel3: Long,
-                                      idEconomicActivity: Long,
-                                      income: Float,
-                                      addressDetail: String,
-                                      isPEP: Boolean,
-                                      user: String,
-                                      idBrand: Int,
-                                      currentStep: String,): Flow<MultimoneyResult<GlobalRequest?>>
+    suspend fun mutationGlobalRequest(
+        pkUser: Int,
+        status: Int,
+        idProfessionType: Int,
+        idCivilStatusType: Long,
+        birthday: String,
+        expirationDate: String,
+        idGender: Long,
+        companyName: String,
+        aboutCompany: String,
+        idAddressLevel1: Long,
+        idAddressLevel2: Long,
+        idAddressLevel3: Long,
+        idEconomicActivity: Long,
+        income: Int,
+        addressDetail: String,
+        isPEP: Boolean,
+        user: String,
+        idBrand: Int,
+        currentStep: String,
+    ): Flow<MultimoneyResult<GlobalRequest?>>
 
     suspend fun queryGeneralEconomicActivity(
         user: String,

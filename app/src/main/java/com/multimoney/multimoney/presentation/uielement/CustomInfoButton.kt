@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,11 +41,12 @@ fun CustomInfoButton(
     subtitle: String = "",
     endIcon: Int = R.drawable.ic_right_chevron,
     onClick: () -> Unit = {},
-    onEndIconClick: () -> Unit = {}
+    onEndIconClick: () -> Unit = {},
+    enable: Boolean = true
 ) {
     val buttonColor: ButtonColors = ButtonDefaults.buttonColors(
-        backgroundColor = Color.Transparent,
-        disabledBackgroundColor = Color.Transparent
+        backgroundColor = Transparent,
+        disabledBackgroundColor = Transparent
     )
 
     val gradientBorderOneColor: Color
@@ -56,13 +58,13 @@ fun CustomInfoButton(
     if (isSystemInDarkTheme()) {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = WhiteTransparency5
+        background = if (enable) WhiteTransparency5 else Transparent
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     } else {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
-        background = WhiteTransparency5
+        background = if (enable) WhiteTransparency5 else Transparent
         titleColor = WhiteTransparency90
         subtitleColor = WhiteTransparency60
     }
@@ -79,7 +81,8 @@ fun CustomInfoButton(
             ),
         shape = RoundedCornerShape(20.dp),
         colors = buttonColor,
-        contentPadding = PaddingValues(0.dp)
+        contentPadding = PaddingValues(0.dp),
+        enabled = enable
     ) {
         ConstraintLayout(Modifier.background(background).fillMaxWidth()) {
             val (startIconId, titleId, subTitleId, endIconId) = createRefs()
@@ -92,28 +95,49 @@ fun CustomInfoButton(
                     bottom.linkTo(parent.bottom, margin = 12.dp)
                 }
             )
-            Text(
-                text = title,
-                modifier = Modifier.constrainAs(titleId) {
-                    top.linkTo(startIconId.top, margin = 4.dp)
-                    start.linkTo(startIconId.end, margin = 16.dp)
-                    end.linkTo(endIconId.start, margin = 16.dp)
-                    width = Dimension.fillToConstraints
-                },
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = titleColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = subtitle,
-                modifier = Modifier.constrainAs(subTitleId) {
-                    top.linkTo(titleId.bottom, margin = 4.dp)
-                    start.linkTo(titleId.start)
-                },
-                style = Typography.caption,
-                color = subtitleColor
-            )
+            if (subtitle.isNotEmpty()) {
+                Text(
+                    text = title,
+                    modifier = Modifier.constrainAs(titleId) {
+                        top.linkTo(startIconId.top, margin = 4.dp)
+                        start.linkTo(startIconId.end, margin = 16.dp)
+                        end.linkTo(endIconId.start, margin = 16.dp)
+                        bottom.linkTo(subTitleId.top)
+                        height = Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
+                    },
+                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                    color = titleColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = subtitle,
+                    modifier = Modifier.constrainAs(subTitleId) {
+                        top.linkTo(titleId.bottom, margin = 4.dp)
+                        bottom.linkTo(startIconId.bottom)
+                        start.linkTo(titleId.start)
+                        height = Dimension.fillToConstraints
+                    },
+                    style = Typography.caption,
+                    color = subtitleColor
+                )
+            } else {
+                Text(
+                    text = title,
+                    modifier = Modifier.constrainAs(titleId) {
+                        top.linkTo(startIconId.top, margin = 4.dp)
+                        start.linkTo(startIconId.end, margin = 16.dp)
+                        end.linkTo(endIconId.start, margin = 16.dp)
+                        bottom.linkTo(startIconId.bottom)
+                        width = Dimension.fillToConstraints
+                    },
+                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                    color = titleColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
             Image(
                 painter = painterResource(id = endIcon),
                 modifier = Modifier.constrainAs(endIconId) {

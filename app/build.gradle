@@ -18,12 +18,26 @@ properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")
 android {
     compileSdk compile_sdk_version
 
+    def getVersionCode = { ->
+        def isBitrise = System.getenv("BITRISE_BUILD_NUMBER") != null;
+
+        if (isBitrise) {
+            try {
+                def bitriseBuildNumber = Integer.parseInt(System.getenv("BITRISE_BUILD_NUMBER"))
+                return bitriseBuildNumber
+            } catch (e) {
+                // ignore
+            }
+        }
+        return 1 // default
+    }
+
     defaultConfig {
         applicationId "com.multimoney.multimoney"
         minSdk min_sdk_version
         targetSdk target_sdk_version
-        versionCode version_code
-        versionName version_name
+        versionCode getVersionCode()
+        versionName System.getenv("VERSION_NAME") ? String.valueOf(System.getenv("VERSION_NAME")) : properties.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -175,6 +189,9 @@ dependencies {
 
     // Shimmer
     implementation shimmer.shimmer
+
+    //httmText
+    implementation htmlText.htmlText
 
     // Slider
     implementation slider.slider

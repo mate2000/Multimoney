@@ -11,6 +11,7 @@ import com.multimoney.data.networking.accountsmart.apollomodel.GlobalRequestMuta
 import com.multimoney.data.networking.accountsmart.apollomodel.NationalityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.ProfessionQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.StepByStepQuery
+import java.util.Date
 import javax.inject.Inject
 
 class SmartAccountApi @Inject constructor(
@@ -54,30 +55,46 @@ class SmartAccountApi @Inject constructor(
         pkUser: Int,
         status: Int,
         idProfessionType: Int,
+        idCivilStatusType: Long,
+        birthday: String,
+        expirationDate: String,
+        idGender: Long,
+        companyName: String,
+        aboutCompany: String,
         idAddressLevel1: Long,
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Float,
+        income: Int,
         addressDetail: String,
         isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
     ): ApolloCall<GlobalRequestMutation.Data> =
-        apolloClient.mutation(GlobalRequestMutation(pkUser,
-            status,
-            idProfessionType,
-            idAddressLevel1,
-            idAddressLevel2,
-            idAddressLevel3,
-            idEconomicActivity,
-            income,
-            addressDetail,
-            isPEP,
-            user,
-            idBrand,
-            currentStep)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloClient.mutation(
+            GlobalRequestMutation(
+                pkUser,
+                status,
+                idProfessionType,
+                idAddressLevel1,
+                idAddressLevel2,
+                birthday,
+                expirationDate,
+                idGender,
+                idCivilStatusType,
+                companyName,
+                aboutCompany,
+                idAddressLevel3,
+                idEconomicActivity,
+                income,
+                addressDetail,
+                isPEP,
+                user,
+                idBrand,
+                currentStep
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryGeneralEconomicActivity(
         user: String,

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 
 @Composable
 fun LoadingMultiMoney(

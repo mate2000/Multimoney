@@ -31,10 +31,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -302,7 +302,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun onNavigateToForgotPassword() {
-        // navigate to forgot screen
+        // TODO navigate to forgot screen
     }
 
     private fun onShowBiometricSignInChanged(value: Boolean) {

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -15,10 +17,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
@@ -26,13 +26,13 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
-import com.multimoney.multimoney.presentation.ui.smart.origin.sourceofincome.SourceOfIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -43,7 +43,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SignUpScreen(
-    navBackStackEntry: NavBackStackEntry,
+    step: String,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignUpViewModel = hiltViewModel()
@@ -52,10 +52,10 @@ fun SignUpScreen(
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-        navBackStackEntry.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP)?.let { step ->
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
             if (step != DEFAULT_STEP) {
-                viewModel.onUIEvent(OnMoveToStep(step.toInt()))
+                onUIEvent(OnMoveToStep(step.toInt()))
             }
         }
     }
@@ -72,7 +72,8 @@ fun SignUpScreen(
                 isLeftButtonVisible = viewModel.uiState.currentStep != SignUpStep.Six.id,
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
+                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
+            )
             if (viewModel.uiState.currentStep != SignUpStep.Five.id) {
                 StepProgressBar(
                     steps = SIGN_UP_INDICATOR_TOTAL_STEPS,
@@ -83,8 +84,8 @@ fun SignUpScreen(
         }
         Column(
             modifier = Modifier
-                .fillMaxSize(),
-                //.verticalScroll(rememberScrollState()), // FIXME, revert this change
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             GetStepContent(
@@ -100,8 +101,7 @@ fun SignUpScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 buttonType = CustomButtonType.PrimaryPrimary,
-                enable = viewModel.uiState.isContinueEnabled,
-                visible = viewModel.uiState.isContinueVisible
+                enable = viewModel.uiState.isContinueEnabled
             )
         }
     }
@@ -132,12 +132,9 @@ fun GetStepContent(
 ) {
 
     when (step) {
-       // SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel) // FIXME, revert this change
-        SignUpStep.One.id -> SourceOfIncomeScreen(sharedViewModel = viewModel)
+        SignUpStep.One.id -> SignUpEmailScreen(sharedViewModel = viewModel)
         SignUpStep.Two.id -> SignUpPersonalDataScreen(sharedViewModel = viewModel)
-        SignUpStep.Three.id -> {
-            SignUpPhoneScreen(sharedViewModel = viewModel)
-        }
+        SignUpStep.Three.id -> SignUpPhoneScreen(sharedViewModel = viewModel)
         SignUpStep.Four.id -> SignUpOtpScreen(
             onPopAndNavigate,
             sharedViewModel = viewModel

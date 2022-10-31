@@ -26,6 +26,7 @@
     <string name="locked" translatable="false">Bloquear</string>
     <string name="see_data" translatable="false">Ver datos</string>
     <string name="link" translatable="false">Vincular</string>
+    <string name="shared" translatable="false">Compartir</string>
     <string name="general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
 
     <!-- Errors -->
@@ -203,6 +204,7 @@
     <!-- Home -->
     <string name="home_my_products" translatable="false">Mis Productos</string>
     <string name="home_active_credit_card_label" translatable="false">Activa tu tarjeta digital</string>
+    <string name="home_visa_active_digital_label" translatable="false">Digital\u0020</string>
     <string name="home_on_fido_pending_title" translatable="false">Necesitamos validar tu identidad</string>
     <string name="home_on_fido_pending_description" translatable="false">Sigue el proceso de validación de tu identidad para obtener tu crédito.</string>
     <string name="home_on_fido_pending_action_text" translatable="false">Validar identidad</string>
@@ -294,7 +296,7 @@
     <string name="credit_bank_account_number_hint" translatable="false">000000000</string>
     <string name="credit_bank_account_number_required" translatable="false">Número de cuenta requerido</string>
     <string name="credit_bank_account_number_label" translatable="false">Número de cuenta</string>
-    <string name="credit_bank_account_number_error" translatable="false">Revisar formato</string>
+    <string name="credit_bank_account_number_error" translatable="false">&lt;b>Revisar formato,&lt;/b> la cuenta no es válida</string>
     <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
 
     <!-- Credit Monthly Income-->
@@ -314,7 +316,6 @@
         <item>Seguridad</item>
         <item>Informatica</item>
     </string-array>
-
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Contanos de la empresa en la que trabajás</string>
@@ -431,13 +432,16 @@
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
 
-    <!-- Payment Amount -->
-    <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
-    <string name="payment_amount_subtitle" translatable="false">Tu cuota mínima debe ser igual o mayor a</string>
-    <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
-    <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
-    <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
-    <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
+    <!-- Payment Voucher -->
+    <string name="payment_voucher_title_chooser" translatable="false">Voucher</string>
+    <string name="payment_voucher_schedule_payment" translatable="false">Programar pago automático</string>
+    <string name="payment_voucher_shared_button" translatable="false">Compartir</string>
+    <string name="payment_voucher_amount_to_pay_label" translatable="false">Monto debitado</string>
+    <string name="payment_voucher_exchange_rate_label" translatable="false">Tipo de cambio</string>
+    <string name="payment_voucher_reference_number_label" translatable="false">N° de referencia | %s:</string>
+    <string name="payment_voucher_from_your_account_label" translatable="false">Desde tu cuenta</string>
+    <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
+    <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
 
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
@@ -456,4 +460,62 @@
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+
+
+    <!-- Smart Account - Own Business -->
+    <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
+    <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>
+    <string name="smart_own_business_company_name_required" translatable="false">Nombre de la empresa requerido</string>
+    <string name="smart_own_business_description_label" translatable="false">¿Qué hace la empresa?</string>
+    <string name="smart_own_business_description_required" translatable="false">Descripcion de la empresa requerido</string>
+    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el maximo de caracteres permitidos</string>
+    <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
+    <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
+    <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
+
+    <!-- Payment Options -->
+    <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
+    <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+
+    <!-- Payment Options Transfer -->
+    <string name="payment_options_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_title_gt" translatable="false">Transfiere desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_disclaimer" translatable="false">El pago se acreditará en 48 horas hábiles</string>
+    <string name="payment_options_transfer_account" translatable="false">Número de cuenta</string>
+    <string name="payment_options_transfer_bank" translatable="false">Banco</string>
+    <string name="payment_options_transfer_type_transfer" translatable="false">Tipo de transferencia</string>
+    <string name="payment_options_transfer_credit_number" translatable="false">Número de préstamo o producto</string>
+    <string name="payment_options_transfer_beneficiary_name" translatable="false">Nombre del beneficiario o recibidor</string>
+    <string name="payment_options_transfer_go_home" translatable="false">Ir al inicio</string>
+    <string name="payment_options_transfer_close_dialog_title" translatable="false">¿Estás seguro que querés salir? </string>
+    <string name="payment_options_transfer_close_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
+
+    <!-- Payment Amount -->
+    <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
+    <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
+    <string name="payment_amount_max_amount" translatable="false">Pagar saldo total</string>
+    <string name="payment_amount_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
+    <string name="payment_amount_amount_max_error" translatable="false">El pago máximo es de %s</string>
+
+    <!-- Payment Amount Bottom Sheet -->
+    <string name="payment_amount_bottom_sheet_title" translatable="false">Monto a pagar</string>
+    <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
+    <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
+    <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
+    <string name="payment_amount_bottom_sheet_amount_automatic_checkbox" translatable="false">Programar pago automático</string>
+    <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
+    <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
+    <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
+
+    <!-- Payment Amount Error -->
+    <string name="payment_amount_error_button" translatable="false">Ir al inicio</string>
+
+    <!-- Payment Points -->
+    <string name="payment_points_search" translatable="false">Buscar</string>
+    <string name="payment_points_title" translatable="false">Puntos de pago</string>
+    <string name="payment_points_dialog_title" translatable="false">¿Estás seguro que querés salir?</string>
+    <string name="payment_points_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
+    <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
+    <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
+
 </resources>

@@ -129,7 +129,7 @@ val GradientComplementaryTwo = Color(0xFF24C281)
 val GradientGrey1 = Color(0xFFAEAEAE).copy(alpha = 0.50f)
 val GradientGrey2 = Color(0xFF474747).copy(alpha = 0.50f)
 val GradientGrayLiner1 = Color(0xFF343434).copy(alpha = 0f)
-val GradientGrayLiner2 = Color(0xFF343434)
+val GradientGrayLiner2 = Color(0xFF8C8C8C)
 
 @Immutable
 data class MultimoneyColors(
@@ -145,7 +145,8 @@ data class MultimoneyColors(
     val textInformation: Color,
     val textSubhead: Color,
     val textSuccess: Color,
-    val divider: Color,
+    val dividerWhite16: Color,
+    val dividerWhite30: Color,
     val circularProgressIndicator: Color,
     val timerColor: Color,
     val iconColor: Color,
@@ -165,6 +166,9 @@ data class MultimoneyColors(
     val progressBackground: Color,
     val progressPercentage: Color,
     val creditDetailBackground: Color,
+    val gradientOneVoucher: Color,
+    val gradientTwoVoucher: Color,
+    val iconTintVoucher: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -180,7 +184,8 @@ val DarkColorPalette = MultimoneyColors(
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
     textSuccess = SemanticPositive400,
-    divider = WhiteTransparency16,
+    dividerWhite16 = WhiteTransparency16,
+    dividerWhite30 = WhiteTransparency30,
     circularProgressIndicator = DefaultWhite,
     timerColor = DefaultWhite,
     iconColor = WhiteTransparency90,
@@ -199,7 +204,10 @@ val DarkColorPalette = MultimoneyColors(
     progressBackground = SemanticPositive800,
     progressPercentage = DefaultWhite,
     productChipBackground = SemanticPositive700,
-    creditDetailBackground = GrayScale700
+    creditDetailBackground = GrayScale700,
+    gradientOneVoucher = GradientGrey1,
+    gradientTwoVoucher = GradientGrey2,
+    iconTintVoucher = WhiteTransparency40,
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -215,7 +223,8 @@ val LightColorPalette = MultimoneyColors(
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
     textSuccess = SemanticPositive400,
-    divider = GrayScale400,
+    dividerWhite16 = WhiteTransparency16,
+    dividerWhite30 = WhiteTransparency30,
     circularProgressIndicator = Primary500,
     timerColor = DefaultBlack,
     iconColor = GrayScale800,
@@ -234,7 +243,10 @@ val LightColorPalette = MultimoneyColors(
     progressBackground = SemanticPositive800,
     progressPercentage = DefaultWhite,
     productChipBackground = SemanticPositive700,
-    creditDetailBackground = GrayScale700
+    creditDetailBackground = GrayScale700,
+    gradientOneVoucher = GradientGrey1,
+    gradientTwoVoucher = GradientGrey2,
+    iconTintVoucher = WhiteTransparency40
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

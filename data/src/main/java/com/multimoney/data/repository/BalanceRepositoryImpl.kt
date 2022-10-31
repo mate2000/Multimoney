@@ -27,7 +27,11 @@ class BalanceRepositoryImpl @Inject constructor(
         cardStatus: Int
     ): Flow<MultimoneyResult<Balance?>> = fetchData(
         apolloCall = balanceApi.queryBalance(
-            user, identification, idBrand, idClient, idLoanClient,
+            user,
+            identification,
+            idBrand,
+            idClient,
+            idLoanClient,
             creditStatus,
             accountStatus,
             cryptoStatus,

@@ -27,8 +27,8 @@ class SourceIncomeOptionsViewModel @Inject constructor(
         private set
 
     private fun onCallQueryGetSourceOfIncomeUseCase() = executeUseCase {
-        val user = dataStorePreferences.getUserEmail().first().ifEmpty { "rob.mm02@yopmail.com" }
-        val brandId = dataStorePreferences.getIdBrand().first().ifEmpty { "7" }
+        val user = dataStorePreferences.getUserEmail().first()
+        val brandId = dataStorePreferences.getIdBrand().first()
 
         queryGeneralEconomicActivityUseCase(user, brandId.toInt()).collectLatest {
             it.onSuccess { result ->

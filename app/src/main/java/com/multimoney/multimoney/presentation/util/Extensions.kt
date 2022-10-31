@@ -25,21 +25,6 @@ fun Context.openWhatsAppDeepLink(link: String) {
     this.startActivity(intent)
 }
 
-fun Context.sendAccount(client: String, accountNumber: String) {
-    val clientStringLabel = getString(R.string.credit_detail_client)
-    val ibanAccountLabel = getString(R.string.credit_detail_iban_number)
-    val intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(
-            Intent.EXTRA_TEXT,
-            "$clientStringLabel: ${client.uppercase()}\n$ibanAccountLabel: $accountNumber"
-        )
-        type = "text/plain"
-    }
-    val chooser = Intent.createChooser(intent, "")
-    this.startActivity(chooser)
-}
-
 fun tickerFlow(
     period: Duration,
     initialDelay: Duration = Duration.ZERO,
@@ -70,17 +55,6 @@ fun Int.getSourceIncomeIconDrawable() = when (this) {
     else -> R.drawable.ic_other
 }
 
-/**
- * get currency symbol by idBrand
- */
-fun Int.getCurrencySymbol(): Int {
-    return when (this) {
-        Brand.ElSalvador.id -> R.string.credit_monthly_income_dollar_symbol
-        Brand.CostaRica.id -> R.string.credit_monthly_income_colon_symbol
-        Brand.Guatemala.id -> R.string.credit_monthly_income_quetzal_symbol
-        else -> R.string.empty
-    }
-}
 // Currency
 fun Int.getCurrency(): CurrencyType {
     return when (this) {
@@ -88,6 +62,27 @@ fun Int.getCurrency(): CurrencyType {
         Dollar.id -> Dollar
         Quetzal.id -> Quetzal
         else -> All
+    }
+}
+
+/**
+ * get currency symbol by idBrand
+ */
+fun Int.getCurrencySymbol(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.dollar_symbol
+        Brand.CostaRica.id -> R.string.colon_symbol
+        Brand.Guatemala.id -> R.string.quetzal_symbol
+        else -> R.string.empty
+    }
+}
+
+fun Int.getCurrencySymbolValue(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.dollar_symbol_value
+        Brand.CostaRica.id -> R.string.colon_symbol_value
+        Brand.Guatemala.id -> R.string.quetzal_symbol_value
+        else -> R.string.empty
     }
 }
 
@@ -99,3 +94,9 @@ fun String.getPaymentMethodType(): PaymentMethodType {
         else -> CashPaymentPoint
     }
 }
+
+fun String.getMaskedText(
+    maskSymbol: String,
+    firstDigits: Int,
+    lastDigits: Int
+) = take(firstDigits).plus(maskSymbol).plus(takeLast(lastDigits))

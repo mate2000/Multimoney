@@ -116,6 +116,8 @@ class SmartViewModel @Inject constructor(
             birthday = accountSmartData?.birthday ?: "",
             expirationDate = accountSmartData?.expirationDate ?: "",
             idGender = accountSmartData?.idGender ?: 0,
+            companyName = accountSmartData?.companyName.orEmpty(),
+            aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
             specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
             entrepreneurship = accountSmartData?.entrepreneurship ?: "",
             legalID = accountSmartData?.legalID ?: ""
@@ -225,11 +227,7 @@ class SmartViewModel @Inject constructor(
      */
     private fun onUpdateAccountSmartData(accountData: AccountSmartData?) {
         accountSmartData = accountData
-        //callMutationGlobalRequestUseCase()
-
-        // FIXME, temporary adding it to move forward on the smart account flow
-        onUIEvent(OnLoadingValueChange(false))
-        onUIEvent(OnNextStep)
+        callMutationGlobalRequestUseCase()
     }
 
     data class UIState(

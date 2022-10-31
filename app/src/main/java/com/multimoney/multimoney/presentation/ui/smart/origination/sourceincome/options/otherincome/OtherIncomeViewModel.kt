@@ -56,13 +56,10 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         onValidateForm()
     }
 
-    private fun onValidateForm() {
-        emitBaseEvent(
-            BaseEvent.OnFormValidateCompleted(
-                uiState.incomeSource.isNotBlank() && uiState.incomeAmount.isNotBlank()
-            )
-        )
-    }
+    private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
+
+    fun isFormValid(): Boolean =
+        uiState.incomeSource.isNotBlank() && uiState.incomeAmount.isNotBlank()
 
     companion object {
         const val DESCRIPTION_MAX_LENGTH = 150

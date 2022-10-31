@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.BaseEvent.OnFormValidateCompleted
@@ -44,7 +45,25 @@ fun OtherIncomeScreen(
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
+        sharedViewModel.onUIEvent(OnContinueVisible(true))
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+
+        sharedViewModel.onUIEvent(
+            OnSetNavigation(
+                nextAction = {
+                    sharedViewModel.onUIEvent(
+                        OnCallMutationUpdateGlobalRequestUseCase(
+                            accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                income = viewModel.uiState.incomeAmount.toFloat(),
+                                specifiesIncomeSource = viewModel.uiState.incomeSource
+                            )
+                        )
+                    )
+                },
+                nextStep = SmartSteps.Four.id,
+                previousStep = SmartSteps.Three.id
+            )
+        )
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
@@ -52,28 +71,6 @@ fun OtherIncomeScreen(
                 )
             }
         }
-    }
-
-    LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(
-            OnSetNavigation(
-                nextAction = {
-                    sharedViewModel.onUIEvent(
-                        OnCallMutationUpdateGlobalRequestUseCase(
-                            accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                currentStep = SmartSteps.Search.getNameById(
-                                    sharedViewModel.uiState.currentStep
-                                ),
-                                income = viewModel.uiState.incomeAmount.toFloat(),
-                                specifiesIncomeSource = viewModel.uiState.incomeSource
-                            )
-                        )
-                    )
-                },
-                nextStep = SmartSteps.Five.id,
-                previousStep = SmartSteps.Three.id
-            )
-        )
     }
 
     OtherIncomeContent(viewModel, sharedViewModel.idBrand)

@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +29,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent.OnIncomeSourceChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -58,27 +58,18 @@ fun OtherIncomeScreen(
         sharedViewModel.onUIEvent(
             OnSetNavigation(
                 nextAction = {
-                    viewModel.onUIEvent(
-                        UIEvent.OnNextActionClick(
-                            nextStepAction = {
-                                sharedViewModel.onUIEvent(
-                                    OnCallMutationUpdateGlobalRequestUseCase(
-                                        // FIXME, pass whatever needed and obtain it from the uiState variable
-                                        accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                            status = 1,
-                                            currentStep = SmartSteps.Search.getNameById(
-                                                sharedViewModel.uiState.currentStep
-                                            ),
-                                            income = viewModel.uiState.incomeAmount.toFloat(),
-                                            specifiesIncomeSource = viewModel.uiState.incomeSource
-                                        )
-                                    )
-                                )
-                            }
+                    sharedViewModel.onUIEvent(
+                        OnCallMutationUpdateGlobalRequestUseCase(
+                            accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                currentStep = SmartSteps.Search.getNameById(
+                                    sharedViewModel.uiState.currentStep
+                                ),
+                                income = viewModel.uiState.incomeAmount.toFloat(),
+                                specifiesIncomeSource = viewModel.uiState.incomeSource
+                            )
                         )
                     )
                 },
-                // TODO check for correct steps
                 nextStep = SmartSteps.Five.id,
                 previousStep = SmartSteps.Three.id
             )
@@ -122,8 +113,8 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: String) {
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             ),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
             }),
             isTextArea = true,
             isError = viewModel.uiState.sourceError.first,

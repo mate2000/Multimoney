@@ -26,7 +26,6 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
     sealed class UIEvent {
         data class OnIncomeAmountChange(val income: String) : UIEvent()
         data class OnIncomeSourceChange(val income: String) : UIEvent()
-        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 
@@ -38,27 +37,26 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         when (uiEvent) {
             is UIEvent.OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
             is UIEvent.OnIncomeSourceChange -> incomeSourceChange(uiEvent.income)
-            is UIEvent.OnNextActionClick -> onNextActionClick(uiEvent.nextStepAction)
-            is UIEvent.OnValidateForm -> validateForm()
+            is UIEvent.OnValidateForm -> onValidateForm()
         }
     }
     private fun incomeAmountChange(income: String) {
         if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
             uiState = uiState.copy(incomeAmount = income)
         }
-        validateForm()
+        onValidateForm()
     }
 
     private fun incomeSourceChange(source: String) {
-        uiState = if (source.length < 150) {
+        uiState = if (source.length < DESCRIPTION_MAX_LENGTH) {
             uiState.copy(incomeSource = source)
         } else {
             uiState.copy(sourceError = Pair(true, R.string.smart_own_business_description_max_char_error))
         }
-        validateForm()
+        onValidateForm()
     }
 
-    private fun validateForm() {
+    private fun onValidateForm() {
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 uiState.incomeSource.isNotBlank() && uiState.incomeAmount.isNotBlank()
@@ -66,7 +64,7 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         )
     }
 
-    private fun onNextActionClick(nextStepAction: () -> Unit) {
-        nextStepAction()
+    companion object {
+        const val DESCRIPTION_MAX_LENGTH = 150
     }
 }

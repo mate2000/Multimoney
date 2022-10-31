@@ -47,6 +47,7 @@ fun OwnBusinessOnPersonalBasisScreen(
         ?.let { stringResource(it) } ?: "$"
 
     LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(

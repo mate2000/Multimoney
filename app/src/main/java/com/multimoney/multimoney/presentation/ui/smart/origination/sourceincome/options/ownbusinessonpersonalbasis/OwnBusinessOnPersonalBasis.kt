@@ -163,7 +163,7 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
             BaseEvent.OnFormValidateCompleted(
                 uiState.businessIncome.isNotBlank() &&
                     uiState.businessActivity.isNotBlank() &&
-                    uiState.businessIdentification.isNotBlank()
+                    uiState.identificationSuccess.first
             )
         )
     }

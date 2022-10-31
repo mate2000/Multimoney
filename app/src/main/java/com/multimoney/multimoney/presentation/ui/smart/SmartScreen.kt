@@ -112,10 +112,8 @@ fun GetStepContent(
     viewModel: SmartViewModel,
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
-    // TODO, add the corresponding screen depending on the step
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
-        // SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel) // FIXME, pass step 2 screen
-        SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel)
+        SmartSteps.Three.id -> SourceIncomeScreen(sharedViewModel = viewModel)
     }
 }

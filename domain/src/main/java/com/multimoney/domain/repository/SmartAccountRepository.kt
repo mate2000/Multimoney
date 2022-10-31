@@ -9,7 +9,6 @@ import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
 interface SmartAccountRepository {
 
@@ -45,6 +44,8 @@ interface SmartAccountRepository {
         birthday: String,
         expirationDate: String,
         idGender: Long,
+        companyName: String,
+        aboutCompany: String,
         idAddressLevel1: Long,
         idAddressLevel2: Long,
         idAddressLevel3: Long,

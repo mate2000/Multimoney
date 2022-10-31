@@ -80,7 +80,6 @@ fun SmartDocumentScreen(
                             nextStepAction = {
                                 sharedViewModel.onUIEvent(
                                     SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
-                                        // FIXME, pass whatever needed and obtain it from the uiState variable
                                         accountSmartData = sharedViewModel.accountSmartData?.copy(
                                             status = 1,
                                             idProfessionType = viewModel.uiState.professionId,
@@ -210,7 +209,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = Gender.Search.getGenderList(),
+            items = viewModel.uiState.civilStatusStringList,
             value = viewModel.uiState.civilState,
             onValueChange = { viewModel.onUIEvent(OnCivilStateChange(it)) },
             labelText = stringResource(id = R.string.civil_state),
@@ -222,7 +221,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = Gender.Search.getGenderList(),
+            items = viewModel.uiState.professionStringList,
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
             labelText = stringResource(id = R.string.profession),

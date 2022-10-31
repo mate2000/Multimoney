@@ -48,7 +48,9 @@ fun SourceIncomeOptionsScreen(
             isLoading = isLoading,
             onItemClick = { sourceOfIncome ->
                 sourceOfIncome?.id?.let {
-                    sourceIncomeSharedViewModel.onUIEvent((OnNavigateToSelectedSourceOfIncomeOption(it)))
+                    sourceIncomeSharedViewModel.onUIEvent(
+                        (OnNavigateToSelectedSourceOfIncomeOption(it))
+                    )
                 }
             }
         )

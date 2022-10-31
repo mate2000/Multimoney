@@ -20,7 +20,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -70,8 +69,8 @@ fun SmartOwnBusinessSvScreen(
                         )
                     )
                 },
-                nextStep = SmartSteps.Two.id,
-                previousStep = SmartSteps.One.id
+                nextStep = SmartSteps.Four.id,
+                previousStep = SmartSteps.Three.id
             )
         )
 
@@ -83,10 +82,10 @@ fun SmartOwnBusinessSvScreen(
             }
         }
     }
-    SmartOwnBusinessSvContent(viewModel)
+    SmartOwnBusinessSvContent(viewModel, sharedViewModel)
     ShowCustomDialog(uiState = viewModel.uiState)
 
-    // return to the main options screen whenever tapping on navtiva back button from the device
+    // return to the main options screen whenever tapping on native back button from the device
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
             (OnNavigateToSelectedSourceOfIncomeOption(
@@ -97,7 +96,10 @@ fun SmartOwnBusinessSvScreen(
 }
 
 @Composable
-fun SmartOwnBusinessSvContent(viewModel: OwnBusinessViewModel) {
+fun SmartOwnBusinessSvContent(
+    viewModel: OwnBusinessViewModel,
+    sharedViewModel: SmartViewModel
+) {
     val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier
@@ -164,9 +166,13 @@ fun SmartOwnBusinessSvContent(viewModel: OwnBusinessViewModel) {
             leadingIcon = R.drawable.ic_money_gray,
             placeHolder = stringResource(
                 id = R.string.smart_own_business_monthly_income_placeholder,
-                stringResource(id = Brand.ElSalvador.id.getCurrencySymbol()) // TODO, get it from proper result
+                stringResource(sharedViewModel.idBrand.toInt().getCurrencySymbol())
             ),
-            customTransformation = formatMoney(stringResource(Brand.ElSalvador.id.getCurrencySymbol())), // TODO, get it from proper result
+            customTransformation = formatMoney(
+                stringResource(
+                    sharedViewModel.idBrand.toInt().getCurrencySymbol()
+                )
+            ),
             modifier = Modifier.padding(top = 16.dp)
         )
     }

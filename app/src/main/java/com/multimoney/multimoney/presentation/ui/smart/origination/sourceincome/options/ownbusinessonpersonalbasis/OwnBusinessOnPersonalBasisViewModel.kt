@@ -37,7 +37,8 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
         var businessIdentification: String = "",
         var identificationSuccess: Pair<Boolean, Int> = Pair(false, R.string.empty),
         var identificationLoading: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var identificationError: Pair<Boolean, String> = Pair(false, ""),
+        var identificationError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        var identificationValidationError: String? = null,
         var companyName: String = ""
     )
 
@@ -99,7 +100,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
             if (identification.length == 10) {
                 callQueryGetCompanyUseCase(identification, idBrand, user)
             } else if (identification.length > 1) {
-                uiState = uiState.copy(identificationError = Pair(true, "Revisar formato Debe tener 10 digitos"))
+                uiState = uiState.copy(identificationError = Pair(true, R.string.smart_business_personal_basis_identification_format_error))
             }
         }
         onValidateForm()
@@ -138,10 +139,8 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
                 result.onFailure {
                     clearIdentificationStatus()
                     uiState = uiState.copy(
-                        identificationError = Pair(
-                            true,
-                            it.getError() ?: "Error confirming identification"
-                        )
+                        identificationError = Pair(true, R.string.empty),
+                        identificationValidationError = it.getError() ?: "Error trying to validate"
                     )
                 }
             }
@@ -151,9 +150,11 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
 
     private fun clearIdentificationStatus() {
         uiState = uiState.copy(
-            identificationError = Pair(false, ""),
+            identificationError = Pair(false, R.string.empty),
             identificationLoading = Pair(false, R.string.empty),
-            identificationSuccess = Pair(false, R.string.empty)
+            identificationSuccess = Pair(false, R.string.empty),
+            identificationValidationError = null,
+            companyName = ""
         )
     }
 

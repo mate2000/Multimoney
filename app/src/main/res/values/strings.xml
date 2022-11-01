@@ -480,7 +480,7 @@
     <!--Smart Account - Own Business On Personal basis-->
     <string name="smart_business_personal_basis_identification_placeholder" translatable="false">0-000-000000</string>
     <string name="smart_business_personal_basis_identification_label" translatable="false">Cedula juridica</string>
-    <string name="smart_business_personal_basis_identification_error" translatable="false">Revisar formato Debe tener 10 digitos</string>
+    <string name="smart_business_personal_basis_identification_format_error" translatable="false">Revisar formato Debe tener 10 digitos</string>
     <string name="smart_business_personal_basis_identification_loading" translatable="false">Un momento, estamos verificando tu numero de identification...</string>
     <string name="smart_business_personal_basis_identification_success" translatable="false">Nombre empresa</string>
     <string name="smart_business_personal_basis_activity_label" translatable="false">¿A que se dedica tu sociedad?</string>
@@ -488,6 +488,7 @@
     <string name="smart_business_personal_basis_activity_required_message" translatable="false">Actividad requerida</string>
     <string name="smart_business_personal_basis_income_required_message" translatable="false">Ingresos requeridos</string>
     <string name="smart_business_personal_basis_identification_required_message" translatable="false">Cedula juridica requerida</string>
+
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>

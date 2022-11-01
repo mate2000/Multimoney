@@ -180,7 +180,7 @@ fun OwnBusinessOnPersonalBasisContent(
             placeHolder = stringResource(R.string.smart_business_personal_basis_identification_placeholder),
             customTransformation = formatBusinessIdentification(),
             isError = viewModel.uiState.identificationError.first,
-            errorMessage = viewModel.uiState.identificationError.second,
+            errorMessage = viewModel.uiState.identificationValidationError ?: stringResource(viewModel.uiState.identificationError.second),
             showInfo = viewModel.uiState.identificationLoading.first,
             infoMessage = stringResource(viewModel.uiState.identificationLoading.second),
             isSuccess = viewModel.uiState.identificationSuccess.first,

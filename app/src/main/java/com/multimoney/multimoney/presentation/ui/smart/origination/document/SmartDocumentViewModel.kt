@@ -46,7 +46,7 @@ class SmartDocumentViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun callQueryNationalitiesUseCase(user: String = "401920903", idBrand: Int = 5) =
+    private fun callQueryNationalitiesUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryNationalitiesUseCase.invoke(
                 user = user,
@@ -76,9 +76,9 @@ class SmartDocumentViewModel @Inject constructor(
         }
 
     private fun callQueryAddressLevelTwoUseCase(
-        user: String = "401920903",
-        idBrand: Int = 5,
-        idAddressLevelOne: String = "1",
+        user: String,
+        idBrand: Int,
+        idAddressLevelOne: String,
     ) = executeUseCase {
         queryAddressLevelTwoUseCase.invoke(
             user = user,
@@ -106,7 +106,7 @@ class SmartDocumentViewModel @Inject constructor(
         }
     }
 
-    private fun callQueryCivilStatusUseCase(user: String = "401920903", idBrand: Int = 5) =
+    private fun callQueryCivilStatusUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryCivilStatusUseCase.invoke(
                 user = user,
@@ -133,7 +133,7 @@ class SmartDocumentViewModel @Inject constructor(
             }
         }
 
-    private fun callQueryProfessionUseCase(user: String = "40192", idBrand: Int = 5) =
+    private fun callQueryProfessionUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryProfessionUseCase.invoke(
                 user = user,

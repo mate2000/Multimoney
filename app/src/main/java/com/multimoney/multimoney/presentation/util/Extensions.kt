@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeIconType
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import kotlin.time.Duration
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
@@ -44,14 +44,14 @@ fun tickerFlow(
  * either for CR or SV
  */
 fun Int.getSourceIncomeIconDrawable() = when (this) {
-    SourceIncomeIconType.Salaried.iconId,
-    SourceIncomeIconType.FormalSalaried.iconId -> R.drawable.ic_salaried
-    SourceIncomeIconType.FreeLancer.iconId,
-    SourceIncomeIconType.OwnBusinessOnPersonalBasis.iconId -> R.drawable.ic_freelancer
-    SourceIncomeIconType.OwnBusiness.iconId,
-    SourceIncomeIconType.OwnBusinessInPartnership.iconId -> R.drawable.ic_own_business
-    SourceIncomeIconType.Retired.iconId -> R.drawable.ic_retired
-    SourceIncomeIconType.Other.iconId -> R.drawable.ic_other
+    SourceIncomeType.Salaried.iconId,
+    SourceIncomeType.FormalSalaried.iconId -> R.drawable.ic_salaried
+    SourceIncomeType.FreeLancer.iconId,
+    SourceIncomeType.OwnBusinessOnPersonalBasis.iconId -> R.drawable.ic_freelancer
+    SourceIncomeType.OwnBusiness.iconId,
+    SourceIncomeType.OwnBusinessInPartnership.iconId -> R.drawable.ic_own_business
+    SourceIncomeType.Retired.iconId -> R.drawable.ic_retired
+    SourceIncomeType.Other.iconId -> R.drawable.ic_other
     else -> R.drawable.ic_other
 }
 

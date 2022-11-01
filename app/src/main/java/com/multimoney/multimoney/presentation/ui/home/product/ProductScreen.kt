@@ -346,7 +346,7 @@ fun Products(
                 state = state
             ) {
                 // todo add the logic for the others pages
-                if (currentPage == PAGE_ONE) {
+                if (currentPage == PAGE_ZERO) {
                     CreditProduct(viewModel = viewModel)
                 } else {
                     viewModel.balanceCredit?.balanceAccountSmart?.let {
@@ -658,4 +658,4 @@ fun ProductMovement(title: String, date: String, value: String) {
 }
 
 private const val NUMBER_PAGES = 2
-private const val PAGE_ONE = 1
+private const val PAGE_ZERO = 0

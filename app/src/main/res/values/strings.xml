@@ -28,6 +28,13 @@
     <string name="link" translatable="false">Vincular</string>
     <string name="shared" translatable="false">Compartir</string>
     <string name="general_close_dialog_title" translatable="false">¿Estás seguro que quieres salir?</string>
+    <string name="dollar_symbol_value" translatable="false">$%s</string>
+    <string name="colon_symbol_value" translatable="false">₡%s</string>
+    <string name="quetzal_symbol_value" translatable="false">Q%s</string>
+    <string name="dollar_symbol" translatable="false">$</string>
+    <string name="colon_symbol" translatable="false">₡</string>
+    <string name="quetzal_symbol" translatable="false">Q</string>
+    <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -307,9 +314,6 @@
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
     <string name="credit_monthly_income_profession_label" translatable="false">Selecciona tu profesión</string>
     <string name="credit_monthly_income_profession_hint" translatable="false">Selecciona tu profesión</string>
-    <string name="credit_monthly_income_dollar_symbol" translatable="false">$</string>
-    <string name="credit_monthly_income_colon_symbol" translatable="false">₡</string>
-    <string name="credit_monthly_income_quetzal_symbol" translatable="false">Q\</string>
     <string-array name="credit_monthly_income_professions" translatable="false">
         <item>Administración</item>
         <item>Construcción</item>
@@ -443,6 +447,11 @@
     <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
     <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
 
+    <!-- Smart Card -->
+    <string name="smart_card_balance" translatable="false">Saldo</string>
+    <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
+    <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
+
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
@@ -472,6 +481,11 @@
     <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
     <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
+
+    <!-- Smart Account - Other -->
+    <string name="smart_other_title" translatable="false">Otros</string>
+    <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
+    <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
 
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>

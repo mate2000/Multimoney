@@ -62,6 +62,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CardOfferSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
@@ -129,76 +130,77 @@ fun ProductScreen(
                     viewModel = viewModel
                 )
             }, secondaryHeader = { backPressed ->
-                    Box(
-                        contentAlignment = Alignment.TopCenter,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MultimoneyTheme.colors.background)
-                    ) {
-                        TopNavBar(
-                            isRightButtonVisible = false,
-                            onLeftButtonClick = {
-                                backPressed()
-                            }
-                        )
-                    }
-                }, content = { modifier, headerText ->
-                    Products(
-                        modifier = modifier,
-                        pages = NUMBER_PAGES,
-                        state = productPagerState,
-                        viewModel = viewModel,
-                        headerText
-                    )
-                }, footer = {
-                    ProductExtras(
-                        modifier = Modifier.padding(top = 16.dp),
-                        pages = NUMBER_PAGES,
-                        state = bottomPagerState,
-                        viewModel = viewModel
-                    )
-                }, secondaryFooter = {
-                    ConstraintLayout(
-                        Modifier.fillMaxSize()
-                    ) {
-                        val (content, buttons) = createRefs()
-
-                        Column(
-                            Modifier
-                                .verticalScroll(rememberScrollState())
-                                .constrainAs(content) {
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(buttons.top)
-                                    height = Dimension.fillToConstraints
-                                }
-                        ) {
-                            Divider(color = MultimoneyTheme.colors.dividerWhite30)
-                            Spacer(modifier = Modifier.height(24.dp))
-                            CreditCardView(viewModel = viewModel)
-                            Spacer(modifier = Modifier.height(24.dp))
-                            CreditDetail(
-                                modifier = Modifier
-                                    .background(MultimoneyTheme.colors.creditDetailBackground)
-                                    .wrapContentSize(),
-                                viewModel = viewModel
-                            )
+                Box(
+                    contentAlignment = Alignment.TopCenter,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MultimoneyTheme.colors.background)
+                ) {
+                    TopNavBar(
+                        isRightButtonVisible = false,
+                        onLeftButtonClick = {
+                            backPressed()
                         }
+                    )
+                }
+            }, content = { modifier, headerText ->
+                Products(
+                    modifier = modifier,
+                    pages = NUMBER_PAGES,
+                    state = productPagerState,
+                    viewModel = viewModel,
+                    headerText
+                )
+            }, footer = {
+                ProductExtras(
+                    modifier = Modifier.padding(top = 16.dp),
+                    pages = NUMBER_PAGES,
+                    state = bottomPagerState,
+                    viewModel = viewModel
+                )
+            }, secondaryFooter = {
+                ConstraintLayout(
+                    Modifier.fillMaxSize()
+                ) {
+                    val (content, buttons) = createRefs()
 
-                        CtaButtons(
-                            modifier = Modifier.padding(16.dp)
-                                .constrainAs(buttons) {
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                    bottom.linkTo(parent.bottom)
-                                },
-                            onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
-                            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToCreditScreen) },
-                            canDisburse = viewModel.uiState.hasBalance
+                    Column(
+                        Modifier
+                            .verticalScroll(rememberScrollState())
+                            .constrainAs(content) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(buttons.top)
+                                height = Dimension.fillToConstraints
+                            }
+                    ) {
+                        Divider(color = MultimoneyTheme.colors.dividerWhite30)
+                        Spacer(modifier = Modifier.height(24.dp))
+                        CreditCardView(viewModel = viewModel)
+                        Spacer(modifier = Modifier.height(24.dp))
+                        CreditDetail(
+                            modifier = Modifier
+                                .background(MultimoneyTheme.colors.creditDetailBackground)
+                                .wrapContentSize(),
+                            viewModel = viewModel
                         )
                     }
-                }, totalPages = NUMBER_PAGES)
+
+                    CtaButtons(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .constrainAs(buttons) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom)
+                            },
+                        onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
+                        onClickDisbursement = { viewModel.onUIEvent(OnNavigateToCreditScreen) },
+                        canDisburse = viewModel.uiState.hasBalance
+                    )
+                }
+            }, totalPages = NUMBER_PAGES)
         }
     }
 
@@ -227,7 +229,9 @@ fun CtaButtons(
         if (canDisburse) {
             CustomButton(
                 text = stringResource(R.string.home_pay_fee_button_text),
-                modifier = Modifier.weight(1f).height(48.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
                 buttonType = CustomButtonType.PrimarySecondary,
                 onClick = {
                     onClickPay()
@@ -236,7 +240,9 @@ fun CtaButtons(
             Spacer(Modifier.width(16.dp))
             CustomButton(
                 text = stringResource(R.string.home_disburse_button_text),
-                modifier = Modifier.weight(1f).height(48.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
                 onClick = {
                     onClickDisbursement()
                 }
@@ -244,7 +250,9 @@ fun CtaButtons(
         } else {
             CustomButton(
                 text = stringResource(R.string.home_pay_fee_button_text),
-                modifier = Modifier.weight(1f).height(48.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
                 onClick = {
                     onClickPay()
                 }
@@ -338,7 +346,19 @@ fun Products(
                 state = state
             ) {
                 // todo add the logic for the others pages
-                CreditProduct(viewModel = viewModel)
+                if (currentPage == PAGE_ZERO) {
+                    CreditProduct(viewModel = viewModel)
+                } else {
+                    viewModel.balanceCredit?.balanceAccountSmart?.let {
+                        if (it.isNotEmpty()) {
+                            CardSmartProduct(
+                                brandId = viewModel.uiState.idBrand.toInt(),
+                                profitMonthly = it.firstOrNull()?.gainedInterest.toString(),
+                                profitTotal = it.firstOrNull()?.totalBalance.toString()
+                            )
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.padding(4.dp))
@@ -406,22 +426,28 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             )
                         }
                         viewModel.evaluateCardCondition(CREDIT_IDENTITY_INCOMPLETE, this) -> {
-                            CardWithCreditInProcess(type = CreditProcessOnFidoIncomplete, action = {
-                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                            })
+                            CardWithCreditInProcess(
+                                type = CreditProcessOnFidoIncomplete,
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                })
                         }
                         viewModel.evaluateCardCondition(CREDIT_INFO_INCOMPLETE, this) -> {
-                            CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
-                                viewModel.onUIEvent(OnNavigateToCreditScreen)
-                            })
+                            CardWithCreditInProcess(
+                                type = CreditStartProcessIncomplete,
+                                action = {
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                                })
                         }
                         viewModel.evaluateCardCondition(CREDIT_REJECTED, this) -> {
-                            CardWithCreditInProcess(type = CreditStartProcessIncomplete, action = {
-                                viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                            })
+                            CardWithCreditInProcess(
+                                type = CreditStartProcessIncomplete,
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                })
                         }
                         else -> {
-                            CardSmartProduct()
+                            CardOfferSmartProduct()
                         }
                     }
                 }
@@ -455,7 +481,12 @@ fun CreditProduct(viewModel: ProductViewModel) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun ProductExtras(modifier: Modifier, pages: Int = 1, state: PagerState, viewModel: ProductViewModel) {
+fun ProductExtras(
+    modifier: Modifier,
+    pages: Int = 1,
+    state: PagerState,
+    viewModel: ProductViewModel
+) {
     Column(modifier = modifier) {
         HorizontalPager(count = pages, state = state) {
             CreditCardView(viewModel = viewModel)
@@ -627,3 +658,4 @@ fun ProductMovement(title: String, date: String, value: String) {
 }
 
 private const val NUMBER_PAGES = 2
+private const val PAGE_ZERO = 0

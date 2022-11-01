@@ -43,9 +43,9 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.documentgene
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(

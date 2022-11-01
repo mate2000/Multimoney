@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.SmartOwnBusinessSvScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryScreen
@@ -44,6 +45,10 @@ fun ShowSelectedSourceIncomeOption(
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel)
         SourceIncomeOptionType.Retired.id -> SmartRetiredScreen(sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel)
+        SourceIncomeOptionType.OtherSV.id, SourceIncomeOptionType.OtherCR.id -> OtherIncomeScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
         else -> {
             // if no option gets selected whenever tapping an item from the list, then it means
             // we should show the main source of income options screen.

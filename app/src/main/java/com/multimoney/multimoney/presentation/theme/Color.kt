@@ -166,6 +166,8 @@ data class MultimoneyColors(
     val progressBackground: Color,
     val progressPercentage: Color,
     val creditDetailBackground: Color,
+    val smartCardPlus: Color,
+    val smartCardTrending: Color,
     val gradientOneVoucher: Color,
     val gradientTwoVoucher: Color,
     val iconTintVoucher: Color
@@ -205,6 +207,8 @@ val DarkColorPalette = MultimoneyColors(
     progressPercentage = DefaultWhite,
     productChipBackground = SemanticPositive700,
     creditDetailBackground = GrayScale700,
+    smartCardPlus = Secondary300,
+    smartCardTrending = WhiteTransparency80,
     gradientOneVoucher = GradientGrey1,
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40,
@@ -244,6 +248,8 @@ val LightColorPalette = MultimoneyColors(
     progressPercentage = DefaultWhite,
     productChipBackground = SemanticPositive700,
     creditDetailBackground = GrayScale700,
+    smartCardPlus = Secondary300,
+    smartCardTrending = WhiteTransparency80,
     gradientOneVoucher = GradientGrey1,
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40

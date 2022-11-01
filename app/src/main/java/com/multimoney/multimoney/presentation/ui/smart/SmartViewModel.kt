@@ -187,8 +187,8 @@ class SmartViewModel @Inject constructor(
             )
         } else {
             popAndNavigateTo(
-                route = Screen.SignInScreen.route,
-                popTo = Screen.SignUpScreen.route
+                route = Screen.HomeScreen.route,
+                popTo = Screen.SmartScreen.route
             )
         }
     }

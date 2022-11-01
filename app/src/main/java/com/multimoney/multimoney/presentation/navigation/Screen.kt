@@ -90,8 +90,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     // Smart
-    object SmartScreen :
-        Screen(
+    object SmartScreen : Screen(
             "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
             "smart_screen"
         )

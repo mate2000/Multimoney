@@ -11,7 +11,6 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsViewModel.UIEvent.OnCallQueryGetSourceOfIncome
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsViewModel.UIEvent.OnSelectedSourceOfIncome
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -57,18 +56,15 @@ class SourceIncomeOptionsViewModel @Inject constructor(
         val generalEconomicActivityList: List<GeneralEconomicActivity?>? = listOf(),
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val sourceOfIncome: Int = 0,
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnCallQueryGetSourceOfIncome -> onCallQueryGetSourceOfIncomeUseCase()
-            is OnSelectedSourceOfIncome -> uiState = uiState.copy(sourceOfIncome = uiEvent.id)
         }
     }
 
     sealed class UIEvent {
         object OnCallQueryGetSourceOfIncome : UIEvent()
-        data class OnSelectedSourceOfIncome(val id: Int) : UIEvent()
     }
 }

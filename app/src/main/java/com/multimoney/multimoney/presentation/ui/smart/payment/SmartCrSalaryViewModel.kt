@@ -12,7 +12,6 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnValidateForm
@@ -57,7 +56,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
                     successfulResult?.let {
                         uiState = uiState.copy(professionList = it.status)
                     }
-                    onUIEvent(OnLoadingValueChange(false))
+                    uiState = uiState.copy(isLoading = false)
                 }
                 result.onFailure {
                     onUIEvent(
@@ -71,7 +70,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
                     )
                 }
                 result.onLoading {
-                    onUIEvent(OnLoadingValueChange(true))
+                    uiState = uiState.copy(isLoading =true)
                 }
             }
         }
@@ -82,7 +81,6 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         val paymentAmount: String = "",
         val professionList: List<Profession?> = listOf(),
         val isLoading: Boolean = false,
-        val isContinueVisible: Boolean = true,
         val openDialog: DialogParameters = DialogParameters(),
     )
 
@@ -94,7 +92,6 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
             is OnFailureWithDialog -> uiState =
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
-            is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
         }
     }
 
@@ -102,7 +99,6 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         data class OnPaymentAmountChange(val paymentAmount: String) : UIEvent()
         data class OnProfessionChange(val profession: String) : UIEvent()
 
-        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
 
@@ -112,9 +108,5 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
-    }
-
-    companion object {
-        const val INSTITUTION_MAX_LENGTH = 100
     }
 }

@@ -38,15 +38,19 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ShowCustomDialog
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
@@ -99,6 +103,8 @@ fun SmartCrSalaryScreen(
         )
     }
 
+    ShowCustomDialog(viewModel.uiState)
+
     Column(modifier = Modifier
         .padding(vertical = 16.dp, horizontal = 16.dp)
         .verticalScroll(rememberScrollState())) {
@@ -134,7 +140,8 @@ fun SmartCrSalaryScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = string.smart_account_formal_placeholder),
-            customTransformation = formatMoney("₡")
+            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrand.toInt()
+                .getCurrencySymbol()))
         )
 
         CustomDropdown(
@@ -151,6 +158,19 @@ fun SmartCrSalaryScreen(
             },
             labelText = stringResource(id = string.smart_account_formal_select_profession),
             placeHolder = stringResource(id = string.select)
+        )
+    }
+}
+
+@Composable
+fun ShowCustomDialog(uiState: UIState) {
+    if (uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(uiState.openDialog.titleResource),
+            message = stringResource(uiState.openDialog.descriptionResource).ifEmpty { uiState.openDialog.description },
+            positiveButtonText = stringResource(uiState.openDialog.positiveResource),
+            openDialogCustom = uiState.openDialog.isActive,
+            onPositiveAction = uiState.openDialog.positiveAction
         )
     }
 }

@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewM
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
@@ -72,7 +73,6 @@ fun SmartRetiredScreen(
                 previousStep = Three.id
             )
         )
-
 
         viewModel.baseEvent.collect { event ->
             when (event) {
@@ -144,7 +144,8 @@ fun SmartRetiredScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_amount_placeholder),
-            customTransformation = formatMoney("$")
+            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrand.toInt()
+                .getCurrencySymbol()))
         )
     }
 }

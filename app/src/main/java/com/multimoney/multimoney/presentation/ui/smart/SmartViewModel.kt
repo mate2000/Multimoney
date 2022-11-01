@@ -118,6 +118,7 @@ class SmartViewModel @Inject constructor(
             idGender = accountSmartData?.idGender ?: 0,
             companyName = accountSmartData?.companyName.orEmpty(),
             aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
+            institutionPension = accountSmartData?.institutionPension.orEmpty(),
             specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: ""
         ).collectLatest { result ->
             result.onSuccess {
@@ -255,7 +256,8 @@ class SmartViewModel @Inject constructor(
                 uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
-            is UIEvent.OnContinueVisible -> uiState = uiState.copy(isContinueVisible = event.visible)
+            is UIEvent.OnContinueVisible -> uiState =
+                uiState.copy(isContinueVisible = event.visible)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }

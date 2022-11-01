@@ -70,6 +70,7 @@ class SmartAccountApi @Inject constructor(
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
         specifiesIncomeSource: String
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloClient.mutation(
@@ -85,6 +86,7 @@ class SmartAccountApi @Inject constructor(
                 idCivilStatusType,
                 companyName,
                 aboutCompany,
+                institutionPension,
                 idAddressLevel3,
                 idEconomicActivity,
                 income,

@@ -56,6 +56,7 @@ interface SmartAccountRepository {
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
         specifiesIncomeSource: String
     ): Flow<MultimoneyResult<GlobalRequest?>>
 

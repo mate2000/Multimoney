@@ -106,7 +106,7 @@ fun OwnBusinessOnPersonalBasisContent(
             .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = stringResource(R.string.smart_other_title),
+            text = stringResource(R.string.smart_business_personal_basis_title),
             style = Typography.h6.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text

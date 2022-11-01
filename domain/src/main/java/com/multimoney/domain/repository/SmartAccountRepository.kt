@@ -56,6 +56,8 @@ interface SmartAccountRepository {
         birthday: String,
         expirationDate: String,
         idGender: Long,
+        companyName: String,
+        aboutCompany: String,
         idAddressLevel1: Long,
         idAddressLevel2: Long,
         idAddressLevel3: Long,
@@ -66,6 +68,8 @@ interface SmartAccountRepository {
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
+        specifiesIncomeSource: String
     ): Flow<MultimoneyResult<GlobalRequest?>>
 
     suspend fun queryGeneralEconomicActivity(

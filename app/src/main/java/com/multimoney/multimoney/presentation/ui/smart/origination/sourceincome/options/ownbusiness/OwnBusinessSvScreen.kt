@@ -20,11 +20,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.BaseEvent.OnFormValidateCompleted
@@ -48,28 +52,55 @@ fun SmartOwnBusinessSvScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
+
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+        sharedViewModel.onUIEvent(OnContinueVisible(true))
+
+        sharedViewModel.onUIEvent(
+            OnSetNavigation(
+                nextAction = {
+                    sharedViewModel.onUIEvent(
+                        OnCallMutationUpdateGlobalRequestUseCase(
+                            accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                idEconomicActivity = SourceIncomeOptionType.OwnBusiness.id.toLong(),
+                                companyName = viewModel.uiState.companyNameValue,
+                                aboutCompany = viewModel.uiState.companyDescriptionValue,
+                                income = viewModel.uiState.monthlyIncomeValue.toFloat()
+                            )
+                        )
+                    )
+                },
+                nextStep = SmartSteps.Four.id,
+                previousStep = SmartSteps.Three.id
+            )
+        )
+
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    SmartViewModel.UIEvent.OnContinueEnable(event.isFormValid)
+                    OnContinueEnable(event.isFormValid)
                 )
             }
         }
     }
-    SmartOwnBusinessSvContent(viewModel)
+    SmartOwnBusinessSvContent(viewModel, sharedViewModel)
     ShowCustomDialog(uiState = viewModel.uiState)
 
-    // return to the main options screen whenever tapping on navtiva back button from the device
+    // return to the main options screen whenever tapping on native back button from the device
     BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent((OnNavigateToSelectedSourceOfIncomeOption(
-            SourceIncomeOptionType.MainSourceIncomeScreenType.id
-        )))
+        sourceIncomeSharedViewModel.onUIEvent(
+            (OnNavigateToSelectedSourceOfIncomeOption(
+                SourceIncomeOptionType.MainSourceIncomeScreenType.id
+            ))
+        )
     }
 }
 
 @Composable
-fun SmartOwnBusinessSvContent(viewModel: OwnBusinessViewModel) {
+fun SmartOwnBusinessSvContent(
+    viewModel: OwnBusinessViewModel,
+    sharedViewModel: SmartViewModel
+) {
     val focusManager = LocalFocusManager.current
     Column(
         modifier = Modifier
@@ -136,9 +167,13 @@ fun SmartOwnBusinessSvContent(viewModel: OwnBusinessViewModel) {
             leadingIcon = R.drawable.ic_money_gray,
             placeHolder = stringResource(
                 id = R.string.smart_own_business_monthly_income_placeholder,
-                stringResource(id = Brand.ElSalvador.id.getCurrencySymbol()) // TODO, get it from proper result
+                stringResource(sharedViewModel.idBrand.toInt().getCurrencySymbol())
             ),
-            customTransformation = formatMoney(stringResource(Brand.ElSalvador.id.getCurrencySymbol())), // TODO, get it from proper result
+            customTransformation = formatMoney(
+                stringResource(
+                    sharedViewModel.idBrand.toInt().getCurrencySymbol()
+                )
+            ),
             modifier = Modifier.padding(top = 16.dp)
         )
     }

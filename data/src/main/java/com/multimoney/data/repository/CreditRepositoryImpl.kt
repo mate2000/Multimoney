@@ -9,7 +9,11 @@ import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
+import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
@@ -249,6 +253,73 @@ class CreditRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetPaymentPoints(
+        idBrand: Int
+    ): Flow<MultimoneyResult<List<PaymentPoint?>?>> = fetchData(
+        apolloCall = creditApi.queryGetPaymentPoints(
+            idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetExchangeRateCredit(
+        idBrand: Int,
+        user: String,
+        identification: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String,
+        amount: Double
+    ): Flow<MultimoneyResult<ExchangeRate?>> = fetchData(
+        apolloCall = creditApi.queryGetExchangeCreditRate(
+            idBrand,
+            user,
+            identification,
+            idOriginCurrency,
+            idDestinationCurrency,
+            amount
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationProcessPaymentList(
+        user: String,
+        idBrand: Int,
+        customerId: Int,
+        identification: String,
+        originAccountNumber: String,
+        destinyAccountNumber: String,
+        currencyId: String,
+        customerName: String,
+        description: String,
+        destinyAccount: List<DestinyAccount?>,
+        amount: Any
+    ): Flow<MultimoneyResult<ProcessPaymentList?>> = fetchData(
+        apolloCall = creditApi.mutationProcessPaymentList(
+            user = user,
+            idBrand = idBrand,
+            customerId = customerId,
+            identification = identification,
+            originAccountNumber = originAccountNumber,
+            destinyAccountNumber = destinyAccountNumber,
+            currencyId = currencyId,
+            customerName = customerName,
+            description = description,
+            destinyAccount = destinyAccount,
+            amount = amount
+        ),
+        apolloCallMapper = { data ->
+            if (data.proccessPaymentList?.status == null || data.proccessPaymentList.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
         }
     )
 }

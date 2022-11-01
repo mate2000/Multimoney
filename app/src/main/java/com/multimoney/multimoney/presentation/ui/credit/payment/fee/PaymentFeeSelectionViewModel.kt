@@ -8,8 +8,10 @@ import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -32,12 +34,16 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
     var idBrand: Int? = null
     var idClient: Int? = null
     var idLoanClient: Int? = null
+    var identification: String? = null
+    var userName: String? = null
 
     init {
         user = savedStateHandle[USER]
         idBrand = savedStateHandle[ID_BRAND]
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        identification = savedStateHandle[IDENTIFICATION]
+        userName = savedStateHandle[NAME_CLIENT]
         uiState = uiState.copy(summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList())
     }
 
@@ -52,7 +58,7 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
             encodeData(
                 summaryList
             )
-            }"
+            }/$identification/$userName"
         )
     }
 

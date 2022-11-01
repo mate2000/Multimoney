@@ -10,16 +10,17 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsViewModel.UIEvent.OnCallQueryGetSourceOfIncome
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @HiltViewModel
 class SourceIncomeOptionsViewModel @Inject constructor(
     private val queryGeneralEconomicActivityUseCase: QueryGeneralEconomicActivityUseCase,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(false) {
 
     // UIState
@@ -27,8 +28,8 @@ class SourceIncomeOptionsViewModel @Inject constructor(
         private set
 
     private fun onCallQueryGetSourceOfIncomeUseCase() = executeUseCase {
-        val user = dataStorePreferences.getUserEmail().first().ifEmpty { "rob.mm02@yopmail.com" }
-        val brandId = dataStorePreferences.getIdBrand().first().ifEmpty { "7" }
+        val user = dataStorePreferences.getUserEmail().first()
+        val brandId = dataStorePreferences.getIdBrand().first()
 
         queryGeneralEconomicActivityUseCase(user, brandId.toInt()).collectLatest {
             it.onSuccess { result ->
@@ -54,12 +55,12 @@ class SourceIncomeOptionsViewModel @Inject constructor(
         // Interactions
         val generalEconomicActivityList: List<GeneralEconomicActivity?>? = listOf(),
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnCallQueryGetSourceOfIncome -> onCallQueryGetSourceOfIncomeUseCase()
+            is OnCallQueryGetSourceOfIncome -> onCallQueryGetSourceOfIncomeUseCase()
         }
     }
 

@@ -153,9 +153,8 @@ class SmartDocumentViewModel @Inject constructor(
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { successfulResult ->
-                    val professionList = arrayListOf<String>()
                     successfulResult?.let {
-                        it.status.map { professionStatus -> professionStatus?.name ?: "" }
+                        val professionList = it.status.map { professionStatus -> professionStatus?.name ?: "" }
                         uiState = uiState.copy(
                             professionList = it.status,
                             professionStringList = professionList

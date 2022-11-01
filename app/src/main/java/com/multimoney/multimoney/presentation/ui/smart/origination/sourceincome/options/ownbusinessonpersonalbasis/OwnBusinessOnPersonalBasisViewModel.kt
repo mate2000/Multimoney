@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
+import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.util.regex.Pattern
@@ -65,7 +66,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
     }
 
     private fun businessActivityChange(source: String) {
-        uiState = if (source.length < 150) {
+        uiState = if (source.length < DESCRIPTION_MAX_LENGTH) {
             uiState.copy(businessActivity = source)
         } else {
             uiState.copy(
@@ -90,13 +91,13 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
         idBrand: Int,
         user: String
     ) {
-        if (identification.length < 11) {
+        if (identification.length <= IDENTIFICATION_LENGTH) {
             clearIdentificationStatus()
             uiState = uiState.copy(businessIdentification = identification)
 
-            if (identification.length == 10) {
+            if (identification.length == IDENTIFICATION_LENGTH) {
                 callQueryGetCompanyUseCase(identification, idBrand, user)
-            } else if (identification.length > 1) {
+            } else if (identification.length > MIN_IDENTIFICATION_CHARS) {
                 uiState = uiState.copy(identificationError = Pair(true, R.string.smart_business_personal_basis_identification_format_error))
             }
         }
@@ -162,9 +163,14 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
     fun isFormValid(): Boolean = uiState.businessIncome.isNotBlank() &&
         uiState.businessActivity.isNotBlank() &&
         uiState.identificationSuccess.first &&
-        uiState.businessIdentification.length == 10
+        uiState.businessIdentification.length == IDENTIFICATION_LENGTH
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+    }
+
+    companion object {
+        const val IDENTIFICATION_LENGTH = 10
+        const val MIN_IDENTIFICATION_CHARS = 1
     }
 }

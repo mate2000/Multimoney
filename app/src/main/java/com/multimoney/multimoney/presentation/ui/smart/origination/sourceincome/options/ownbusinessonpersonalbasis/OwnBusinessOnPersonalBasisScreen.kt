@@ -1,36 +1,39 @@
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.SmartSteps.Five
-import com.multimoney.data.util.catalog.SmartSteps.Search
-import com.multimoney.data.util.catalog.SmartSteps.Three
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnIdentificationChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnBusinessActivityChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIdentificationChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
@@ -39,15 +42,32 @@ import com.multimoney.multimoney.presentation.util.transformation.formatDecimalM
 
 @Composable
 fun OwnBusinessOnPersonalBasisScreen(
-    viewModel: OwnBusinessOnPersonalBasis = hiltViewModel(),
+    viewModel: OwnBusinessOnPersonalBasisViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-    val currencySymbol = sharedViewModel.idBrand.toIntOrNull()?.getCurrencySymbol()
-        ?.let { stringResource(it) } ?: "$"
-
     LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
+        sharedViewModel.onUIEvent(OnContinueVisible(true))
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+
+        sharedViewModel.onUIEvent(
+            OnSetNavigation(
+                nextAction = {
+                    sharedViewModel.onUIEvent(
+                        OnCallMutationUpdateGlobalRequestUseCase(
+                            accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                income = viewModel.uiState.businessIncome.toFloat(),
+                                legalID = viewModel.uiState.businessIdentification,
+                                entrepreneurship = viewModel.uiState.businessActivity
+                            )
+
+                        )
+                    )
+                },
+                nextStep = SmartSteps.Four.id,
+                previousStep = SmartSteps.Three.id
+            )
+        )
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
@@ -57,49 +77,39 @@ fun OwnBusinessOnPersonalBasisScreen(
         }
     }
 
-    LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(
-            OnSetNavigation(
-                nextAction = {
-                    viewModel.onUIEvent(
-                        OnNextActionClick(
-                            nextStepAction = {
-                                sharedViewModel.onUIEvent(
-                                    OnCallMutationUpdateGlobalRequestUseCase(
-                                        // FIXME, pass whatever needed and obtain it from the uiState variable
-                                        accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                            status = 1,
-                                            currentStep = Search.getNameById(
-                                                sharedViewModel.uiState.currentStep
-                                            ),
-                                            income = viewModel.uiState.businessIncome.toFloat(),
-                                            legalID = viewModel.uiState.businessIdentification,
-                                            entrepreneurship = viewModel.uiState.businessActivity
-                                        )
-                                    )
-                                )
-                            }
-                        )
-                    )
-                },
-                // TODO check for correct steps
-                nextStep = Five.id,
-                previousStep = Three.id
+    OwnBusinessOnPersonalBasisContent(viewModel, sharedViewModel.idBrand, sharedViewModel.user)
+
+    BackHandler {
+        sourceIncomeSharedViewModel.onUIEvent(
+            OnNavigateToSelectedSourceOfIncomeOption(
+                MainSourceIncomeScreenType.id
             )
         )
     }
+}
+
+@Composable
+fun OwnBusinessOnPersonalBasisContent(
+    viewModel: OwnBusinessOnPersonalBasisViewModel,
+    idBrand: String,
+    user: String
+) {
+    val focusManager = LocalFocusManager.current
+    val currencySymbol = idBrand.toIntOrNull()?.getCurrencySymbol()
+        ?.let { stringResource(it) } ?: "$"
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         CustomOutlinedTextField(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             value = viewModel.uiState.businessActivity,
             onValueChange = {
                 viewModel.onUIEvent(
-                    OwnBusinessOnPersonalBasis.UIEvent.OnBusinessActivityChange(
+                    OnBusinessActivityChange(
                         it
                     )
                 )
@@ -110,11 +120,12 @@ fun OwnBusinessOnPersonalBasisScreen(
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(onDone = {
+                focusManager.moveFocus(FocusDirection.Down)
             }),
             isTextArea = true,
             isError = viewModel.uiState.activityError.first,
             errorMessage = stringResource(viewModel.uiState.activityError.second),
-            isRequired = true
+            isRequiredMessage = stringResource(R.string.smart_business_personal_basis_activity_required_message)
         )
 
         CustomOutlinedTextField(
@@ -122,7 +133,7 @@ fun OwnBusinessOnPersonalBasisScreen(
             value = viewModel.uiState.businessIncome,
             onValueChange = {
                 viewModel.onUIEvent(
-                    OwnBusinessOnPersonalBasis.UIEvent.OnIncomeAmountChange(
+                    OnIncomeAmountChange(
                         it
                     )
                 )
@@ -133,6 +144,7 @@ fun OwnBusinessOnPersonalBasisScreen(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = {
+                focusManager.moveFocus(FocusDirection.Down)
             }),
             placeHolder = stringResource(
                 R.string.decimal_income_placeholder,
@@ -141,7 +153,9 @@ fun OwnBusinessOnPersonalBasisScreen(
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
             isError = viewModel.uiState.incomeError.first,
-            errorMessage = stringResource(viewModel.uiState.incomeError.second)
+            errorMessage = stringResource(viewModel.uiState.incomeError.second),
+            isRequired = true,
+            isRequiredMessage = stringResource(R.string.smart_business_personal_basis_income_required_message)
         )
 
         CustomOutlinedTextField(
@@ -151,8 +165,8 @@ fun OwnBusinessOnPersonalBasisScreen(
                 viewModel.onUIEvent(
                     OnIdentificationChange(
                         it,
-                        sharedViewModel.idBrand.toInt(),
-                        sharedViewModel.user
+                        idBrand.toInt(),
+                        user
                     )
                 )
             },
@@ -170,7 +184,8 @@ fun OwnBusinessOnPersonalBasisScreen(
             showInfo = viewModel.uiState.identificationLoading.first,
             infoMessage = stringResource(viewModel.uiState.identificationLoading.second),
             isSuccess = viewModel.uiState.identificationSuccess.first,
-            successMessage = stringResource(viewModel.uiState.identificationSuccess.second)
+            successMessage = stringResource(viewModel.uiState.identificationSuccess.second),
+            isRequiredMessage = stringResource(R.string.smart_business_personal_basis_identification_required_message)
         )
         Text(
             text = viewModel.uiState.companyName,
@@ -179,14 +194,6 @@ fun OwnBusinessOnPersonalBasisScreen(
                 .padding(start = 5.dp)
                 .wrapContentSize(),
             style = Typography.caption
-        )
-    }
-
-    BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent(
-            OnNavigateToSelectedSourceOfIncomeOption(
-                MainSourceIncomeScreenType.id
-            )
         )
     }
 }

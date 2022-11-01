@@ -10,13 +10,10 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.BaseEvent
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnBusinessActivityChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnIdentificationChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnIncomeAmountChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasis.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnBusinessActivityChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIdentificationChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIncomeAmountChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -24,7 +21,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
-class OwnBusinessOnPersonalBasis @Inject constructor(
+class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
     private val queryCompany: QueryCompanyNameByIdentityUseCase
 ) : BaseViewModel(true) {
     var idBrand = Brand.ElSalvador.id
@@ -53,7 +50,6 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
             val user: String
         ) : UIEvent()
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
-        object OnValidateForm : UIEvent()
     }
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -66,7 +62,6 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
                     uiEvent.idBrand,
                     uiEvent.user
                 )
-            is OnValidateForm -> validateForm()
             is OnNextActionClick -> OnNextActionClick(uiEvent.nextStepAction)
         }
     }
@@ -82,12 +77,14 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
                 )
             )
         }
+        onValidateForm()
     }
 
     private fun incomeAmountChange(income: String) {
         if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
             uiState = uiState.copy(businessIncome = income)
         }
+        onValidateForm()
     }
 
     private fun identificationChange(
@@ -97,14 +94,15 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
     ) {
         if (identification.length < 11) {
             clearIdentificationStatus()
-            uiState = uiState.copy(
-                businessIdentification = identification,
-                identificationError = Pair(true, "Revisar formato Debe tener 10 digitos")
-            )
+            uiState = uiState.copy(businessIdentification = identification)
+
             if (identification.length == 10) {
                 callQueryGetCompanyUseCase(identification, idBrand, user)
+            } else if (identification.length > 1) {
+                uiState = uiState.copy(identificationError = Pair(true, "Revisar formato Debe tener 10 digitos"))
             }
         }
+        onValidateForm()
     }
 
     private fun callQueryGetCompanyUseCase(
@@ -147,6 +145,7 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
                     )
                 }
             }
+            onValidateForm()
         }
     }
 
@@ -158,19 +157,14 @@ class OwnBusinessOnPersonalBasis @Inject constructor(
         )
     }
 
-    private fun validateForm() {
-        emitBaseEvent(
-            BaseEvent.OnFormValidateCompleted(
-                uiState.businessIncome.isNotBlank() &&
-                    uiState.businessActivity.isNotBlank() &&
-                    uiState.identificationSuccess.first
-            )
-        )
+    private fun onValidateForm() {
+        emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
     }
 
-    private fun onNextActionClick(nextStepAction: () -> Unit) {
-        nextStepAction()
-    }
+    fun isFormValid(): Boolean = uiState.businessIncome.isNotBlank() &&
+        uiState.businessActivity.isNotBlank() &&
+        uiState.identificationSuccess.first &&
+        uiState.businessIdentification.length == 10
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()

@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -24,8 +23,6 @@ import javax.inject.Inject
 class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
     private val queryCompany: QueryCompanyNameByIdentityUseCase
 ) : BaseViewModel(true) {
-    var idBrand = Brand.ElSalvador.id
-
     var uiState by mutableStateOf(UIState())
         private set
 

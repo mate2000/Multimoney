@@ -70,6 +70,7 @@ class SmartAccountApi @Inject constructor(
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
         specifiesIncomeSource: String,
         entrepreneurship: String,
         legalID: String
@@ -87,6 +88,7 @@ class SmartAccountApi @Inject constructor(
                 idCivilStatusType,
                 companyName,
                 aboutCompany,
+                institutionPension,
                 idAddressLevel3,
                 idEconomicActivity,
                 income,

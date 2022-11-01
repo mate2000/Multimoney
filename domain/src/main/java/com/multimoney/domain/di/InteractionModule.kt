@@ -272,11 +272,6 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryGeneralEconomicActivityUseCase(smartAccountRepository: SmartAccountRepository): QueryGeneralEconomicActivityUseCase =
-        QueryGeneralEconomicActivityUseCaseImpl(smartAccountRepository)
-
-    @Provides
-    @Singleton
     fun provideQueryStepByStepUseCase(smartAccountRepository: SmartAccountRepository): QueryStepByStepUseCase =
         QueryStepByStepUseCaseImpl(smartAccountRepository)
 
@@ -284,6 +279,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationGlobalRequestUseCase(smartAccountRepository: SmartAccountRepository): MutationGlobalRequestUseCase =
         MutationGlobalRequestUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGeneralEconomicActivityUseCase(smartAccountRepository: SmartAccountRepository): QueryGeneralEconomicActivityUseCase =
+        QueryGeneralEconomicActivityUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

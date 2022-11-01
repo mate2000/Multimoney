@@ -221,7 +221,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.professionStringList,
+            items = viewModel.uiState.professionList.map { professionStatus -> professionStatus?.name ?: "" },
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
             labelText = stringResource(id = R.string.profession),

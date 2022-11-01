@@ -88,6 +88,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
         specifiesIncomeSource: String,
         entrepreneurship: String,
         legalID: String
@@ -112,6 +113,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             user,
             idBrand,
             currentStep,
+            institutionPension,
             specifiesIncomeSource,
             entrepreneurship,
             legalID

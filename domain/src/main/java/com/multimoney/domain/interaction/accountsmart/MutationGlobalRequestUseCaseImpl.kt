@@ -27,6 +27,7 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
         specifiesIncomeSource: String,
         entrepreneurship: String,
         legalID: String
@@ -50,6 +51,7 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         user,
         idBrand,
         currentStep,
+        institutionPension,
         specifiesIncomeSource,
         entrepreneurship,
         legalID

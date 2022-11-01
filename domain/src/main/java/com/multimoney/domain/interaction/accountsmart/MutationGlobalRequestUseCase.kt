@@ -25,6 +25,7 @@ interface MutationGlobalRequestUseCase {
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
         specifiesIncomeSource: String,
         entrepreneurship: String,
         legalID: String

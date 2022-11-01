@@ -88,6 +88,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
         specifiesIncomeSource: String
     ): Flow<MultimoneyResult<GlobalRequest?>> =
         fetchData(apolloCall = smartApi.mutationGlobalRequest(
@@ -110,6 +111,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             user,
             idBrand,
             currentStep,
+            institutionPension,
             specifiesIncomeSource
         ), apolloCallMapper = { data -> Success(data.mapToDomain()) })
 

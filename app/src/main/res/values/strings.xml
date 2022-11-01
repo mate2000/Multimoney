@@ -459,7 +459,17 @@
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
     <string name="smart_account_document_expiration_date_required" translatable="false">Fecha de vencimiento requerida</string>
+    <string name="smart_account_retired_title" translatable="false">Jubilado</string>
+    <string name="smart_account_retired_institution_label" translatable="false">Institución con la que recibe la pensión</string>
+    <string name="smart_account_retired_institution_placeholder" translatable="false">Nombre institución</string>
+    <string name="smart_account_retired_amount_label" translatable="false">Ingreso mensual</string>
+    <string name="smart_account_retired_amount_placeholder" translatable="false">$000</string>
     <string name="smart_origin_main_income_title" translatable="false">¿Cuál es tu principal fuente de ingresos?</string>
+    <string name="smart_account_formal_title" translatable="false">Asalariado Formal</string>
+    <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
+    <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
+    <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+
 
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
@@ -521,5 +531,5 @@
     <string name="payment_points_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
-    
+
 </resources>

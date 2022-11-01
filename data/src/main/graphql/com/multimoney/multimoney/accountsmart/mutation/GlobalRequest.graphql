@@ -6,6 +6,7 @@ mutation GlobalRequest($pkUser: Int!, $status: Int!, $idProfessionType: Int!, $i
     $idMaritalStatus: Long!,
     $nameCompany: String,
     $aboutCompany: String!,
+    $institutionPension: String!,
     $idAddressLevel3: Long!, $idEconomicActivity: Long!, $income: Decimal!, $addressDetail: String!
     $isPEP: Boolean!, $user: String!, $idBrand: Int!, $currentStep: String!, $specifiesIncomeSource: String!) {
     globalRequest(globalRequestInput: {
@@ -16,6 +17,7 @@ mutation GlobalRequest($pkUser: Int!, $status: Int!, $idProfessionType: Int!, $i
         expirationDate:$expirationDate,
         idGenre:$idGenre,
         idMaritalStatus: $idMaritalStatus,
+        institutionPesion: $institutionPension,
         nameCompany: $nameCompany,
         aboutCompany : $aboutCompany,
         idAddressLevel1 : $idAddressLevel1

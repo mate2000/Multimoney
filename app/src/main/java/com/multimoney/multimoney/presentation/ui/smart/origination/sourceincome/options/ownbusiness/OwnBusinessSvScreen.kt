@@ -62,6 +62,7 @@ fun SmartOwnBusinessSvScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                idEconomicActivity = SourceIncomeOptionType.OwnBusiness.id.toLong(),
                                 companyName = viewModel.uiState.companyNameValue,
                                 aboutCompany = viewModel.uiState.companyDescriptionValue,
                                 income = viewModel.uiState.monthlyIncomeValue.toFloat()

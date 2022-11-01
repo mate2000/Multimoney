@@ -24,4 +24,5 @@ data class AccountSmartData(
     val currentStep: String? = "",
     val aboutCompany: String? = "",
     val companyName: String? = "",
+    var specifiesIncomeSource: String? = ""
 )

@@ -34,6 +34,7 @@
     <string name="dollar_symbol" translatable="false">$</string>
     <string name="colon_symbol" translatable="false">₡</string>
     <string name="quetzal_symbol" translatable="false">Q</string>
+    <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -470,6 +471,11 @@
     <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
     <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
+
+    <!-- Smart Account - Other -->
+    <string name="smart_other_title" translatable="false">Otros</string>
+    <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
+    <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
 
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>

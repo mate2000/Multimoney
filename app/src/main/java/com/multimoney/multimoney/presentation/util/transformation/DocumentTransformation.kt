@@ -97,9 +97,9 @@ fun formatBusinessIdentification(): VisualTransformation =
         override fun filter(text: AnnotatedString): TransformedText {
             val offset = object : OffsetMapping {
                 override fun originalToTransformed(offset: Int): Int {
-                    if (offset <= 2) return offset
-                    if (offset <= 5) return offset + 1
-                    if (offset <= 11) return offset + 2
+                    if (offset <= 1) return offset
+                    if (offset <= 4) return offset + 1
+                    if (offset <= 10) return offset + 2
                     return 11
                 }
 

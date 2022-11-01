@@ -1,5 +1,5 @@
 package com.multimoney.domain.model.accountsmart
 
 data class AddressesLevel(
-    val addresses: List<AddressLevelTwo?>,
+    val addresses: List<Address?>,
 )

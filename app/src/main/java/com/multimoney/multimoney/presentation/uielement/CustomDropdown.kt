@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.multimoney.domain.model.accountsmart.Address
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -190,6 +191,31 @@ fun CustomDropdown(
         value = value?.description ?: "",
         onValueChange = { valueSelected ->
             onValueChange(items?.findLast { it?.description == valueSelected })
+        },
+        labelText = labelText,
+        placeHolder = placeHolder,
+        isError = isError,
+        enabled = enabled
+    )
+}
+
+@Composable
+fun CustomDropdown(
+    modifier: Modifier,
+    items: List<Address?>?,
+    value: Address?,
+    onValueChange: (newText: Address?) -> Unit = {},
+    labelText: String,
+    placeHolder: String?,
+    isError: Boolean = false,
+    enabled: Boolean = true,
+) {
+    CustomDropdown(
+        modifier = modifier,
+        items = items?.map { it?.name ?: "" } ?: listOf(),
+        value = value?.name ?: "",
+        onValueChange = { valueSelected ->
+            onValueChange(items?.findLast { it?.name == valueSelected })
         },
         labelText = labelText,
         placeHolder = placeHolder,

@@ -461,4 +461,11 @@
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+
+    <!-- Smart Living Address -->
+    <string name="smart_liv_address_title" translatable="false">¿Dónde vivís?</string>
+    <string name="smart_liv_address_province" translatable="false">Provincia</string>
+    <string name="smart_liv_address_town" translatable="false">Cantón</string>
+    <string name="smart_liv_address_district" translatable="false">Distrito</string>
+
 </resources>

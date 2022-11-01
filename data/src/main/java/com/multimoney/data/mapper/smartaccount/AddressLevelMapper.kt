@@ -3,14 +3,14 @@ package com.multimoney.data.mapper.smartaccount
 import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel3Query
-import com.multimoney.domain.model.accountsmart.AddressLevelTwo
+import com.multimoney.domain.model.accountsmart.Address
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 
-private fun AddressLevel1Query.Result.mapToDomain() = AddressLevelTwo(id, name, code)
+private fun AddressLevel1Query.Result.mapToDomain() = Address(id, name, code)
 
-private fun AddressLevel2Query.Result.mapToDomain() = AddressLevelTwo(id, name, code)
+private fun AddressLevel2Query.Result.mapToDomain() = Address(id, name, code)
 
-private fun AddressLevel3Query.Result.mapToDomain() = AddressLevelTwo(id, name, code)
+private fun AddressLevel3Query.Result.mapToDomain() = Address(id, name, code)
 
 private fun AddressLevel1Query.AddressLevel1.mapToDomain() =
     AddressesLevel(addresses = result?.map { it?.mapToDomain() } ?: listOf())

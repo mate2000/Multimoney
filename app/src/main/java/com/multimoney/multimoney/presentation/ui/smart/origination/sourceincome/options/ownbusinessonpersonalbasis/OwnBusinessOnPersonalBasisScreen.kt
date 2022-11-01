@@ -97,7 +97,7 @@ fun OwnBusinessOnPersonalBasisContent(
 ) {
     val focusManager = LocalFocusManager.current
     val currencySymbol = idBrand.toIntOrNull()?.getCurrencySymbol()
-        ?.let { stringResource(it) } ?: "$"
+        ?.let { stringResource(it) } ?: stringResource(R.string.empty)
 
     Column(
         modifier = Modifier

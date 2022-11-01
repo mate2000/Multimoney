@@ -35,8 +35,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyDescriptionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyNameChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnMonthlyIncomeChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIState
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
@@ -65,7 +63,8 @@ fun SmartOwnBusinessSvScreen(
                                 idEconomicActivity = SourceIncomeOptionType.OwnBusiness.id.toLong(),
                                 companyName = viewModel.uiState.companyNameValue,
                                 aboutCompany = viewModel.uiState.companyDescriptionValue,
-                                income = viewModel.uiState.monthlyIncomeValue.toFloat()
+                                income = viewModel.uiState.monthlyIncomeValue.toFloat(),
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
@@ -84,7 +83,6 @@ fun SmartOwnBusinessSvScreen(
         }
     }
     SmartOwnBusinessSvContent(viewModel, sharedViewModel)
-    ShowCustomDialog(uiState = viewModel.uiState)
 
     // return to the main options screen whenever tapping on native back button from the device
     BackHandler {
@@ -147,6 +145,8 @@ fun SmartOwnBusinessSvContent(
             isRequired = true,
             isRequiredMessage = stringResource(R.string.smart_own_business_description_required),
             isTextArea = true,
+            isError = viewModel.uiState.companyDescriptionError.first,
+            errorMessage = stringResource(viewModel.uiState.companyDescriptionError.second),
             modifier = Modifier.padding(top = 16.dp)
         )
         CustomOutlinedTextField(
@@ -175,19 +175,6 @@ fun SmartOwnBusinessSvContent(
                 )
             ),
             modifier = Modifier.padding(top = 16.dp)
-        )
-    }
-}
-
-@Composable
-fun ShowCustomDialog(uiState: UIState) {
-    if (uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(uiState.openDialog.titleResource),
-            message = stringResource(uiState.openDialog.descriptionResource),
-            positiveButtonText = stringResource(uiState.openDialog.positiveResource),
-            openDialogCustom = uiState.openDialog.isActive,
-            onPositiveAction = uiState.openDialog.positiveAction
         )
     }
 }

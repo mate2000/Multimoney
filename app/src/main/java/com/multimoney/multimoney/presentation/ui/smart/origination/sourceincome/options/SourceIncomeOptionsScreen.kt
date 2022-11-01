@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsViewModel.UIEvent.OnCallQueryGetSourceOfIncome
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomCatalogItem
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -97,7 +98,7 @@ fun SourceIncomeContent(
 }
 
 @Composable
-fun ShowCustomDialog(uiState: SmartCrSalaryViewModel.UIState) {
+fun ShowCustomDialog(uiState: UIState) {
     if (uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(uiState.openDialog.titleResource),

@@ -46,7 +46,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         validateForm()
     }
 
-    private fun callQueryProfessionUseCase(user: String = "40192", idBrand: Int = 5) =
+    private fun callQueryProfessionUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryProfessionUseCase.invoke(
                 user = user,

@@ -74,7 +74,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Payment Credit
     object PaymentFeeScreen : Screen(
-        "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}",
+        "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}",
         "payment_fee_screen"
     )
 

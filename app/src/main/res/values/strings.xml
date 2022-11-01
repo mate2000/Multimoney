@@ -478,12 +478,13 @@
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
 
     <!--Smart Account - Own Business On Personal basis-->
+    <string name="smart_business_personal_basis_title" translatable="false">Negocio propio en sociedad</string>
     <string name="smart_business_personal_basis_identification_placeholder" translatable="false">0-000-000000</string>
-    <string name="smart_business_personal_basis_identification_label" translatable="false">Cedula juridica</string>
+    <string name="smart_business_personal_basis_identification_label" translatable="false">Cédula jurídica</string>
     <string name="smart_business_personal_basis_identification_format_error" translatable="false">Revisar formato Debe tener 10 digitos</string>
-    <string name="smart_business_personal_basis_identification_loading" translatable="false">Un momento, estamos verificando tu numero de identification...</string>
+    <string name="smart_business_personal_basis_identification_loading" translatable="false">Un momento, estamos verificando tu numero de identificatión...</string>
     <string name="smart_business_personal_basis_identification_success" translatable="false">Nombre empresa</string>
-    <string name="smart_business_personal_basis_activity_label" translatable="false">¿A que se dedica tu sociedad?</string>
+    <string name="smart_business_personal_basis_activity_label" translatable="false">¿A qué se dedica tu sociedad?</string>
     <string name="smart_business_personal_basis_activity_error" translatable="false">Has alcanzado el maximo de caracteres permitidos</string>
     <string name="smart_business_personal_basis_activity_required_message" translatable="false">Actividad requerida</string>
     <string name="smart_business_personal_basis_income_required_message" translatable="false">Ingresos requeridos</string>

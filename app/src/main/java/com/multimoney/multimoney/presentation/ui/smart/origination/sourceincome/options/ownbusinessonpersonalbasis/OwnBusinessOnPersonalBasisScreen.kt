@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -104,6 +105,13 @@ fun OwnBusinessOnPersonalBasisContent(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        Text(
+            text = stringResource(R.string.smart_other_title),
+            style = Typography.h6.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            )
+        )
         CustomOutlinedTextField(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             value = viewModel.uiState.businessActivity,

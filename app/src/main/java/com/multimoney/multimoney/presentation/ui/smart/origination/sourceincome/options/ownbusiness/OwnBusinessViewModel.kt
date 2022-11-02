@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
-import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -23,17 +22,21 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     }
 
     private fun onCompanyDescriptionValueChange(description: String) {
-        if (description.length <= DESCRIPTION_MAX_LENGTH) {
-            uiState = uiState.copy(companyDescriptionValue = description)
-            onValidateForm()
+        uiState = if (description.length <= DESCRIPTION_MAX_LENGTH) {
+            uiState.copy(
+                companyDescriptionValue = description,
+                companyDescriptionError = Pair(false, R.string.empty)
+            )
         } else {
-            uiState = uiState.copy(
-                openDialog = DialogParameters(
-                    isActive = mutableStateOf(true),
-                    descriptionResource = R.string.smart_own_business_description_max_char_error
+            uiState.copy(
+                companyDescriptionValue = description,
+                companyDescriptionError = Pair(
+                    true,
+                    R.string.smart_own_business_description_max_char_error
                 )
             )
         }
+        onValidateForm()
     }
 
     private fun onMonthlyIncomeValueChange(monthlyIncome: String) {
@@ -41,11 +44,12 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
         onValidateForm()
     }
 
-    fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
+    private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
     fun isFormValid() = uiState.companyNameValue.isNotBlank() &&
             uiState.companyDescriptionValue.isNotBlank() &&
-            uiState.monthlyIncomeValue.isNotBlank()
+            !uiState.companyDescriptionError.first
+            && uiState.monthlyIncomeValue.isNotBlank()
 
     data class UIState(
         // Interactions
@@ -53,7 +57,10 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
         val companyDescriptionValue: String = "",
         val monthlyIncomeValue: String = "",
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        var companyDescriptionError: Pair<Boolean, Int> = Pair(
+            false,
+            R.string.smart_own_business_description_max_char_error
+        )
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -73,5 +80,4 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
     }
-
 }

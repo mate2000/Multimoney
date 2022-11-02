@@ -209,7 +209,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.civilStatusStringList,
+            items = viewModel.uiState.civilStatusList.map { it?.maritalStatusDescription.orEmpty() },
             value = viewModel.uiState.civilState,
             onValueChange = { viewModel.onUIEvent(OnCivilStateChange(it)) },
             labelText = stringResource(id = R.string.civil_state),
@@ -221,7 +221,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.professionList.map { professionStatus -> professionStatus?.name ?: "" },
+            items = viewModel.uiState.professionList.map { it?.name.orEmpty() },
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
             labelText = stringResource(id = R.string.profession),

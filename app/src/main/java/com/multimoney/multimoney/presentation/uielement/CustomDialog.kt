@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -36,6 +38,8 @@ import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
+import com.multimoney.multimoney.presentation.util.findActivity
+import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 /**
  * CustomDialog: This Dialog is used to match design system
@@ -67,6 +71,8 @@ fun CustomDialog(
     onDismissAction: () -> Unit = {},
     openDialogCustom: MutableState<Boolean> = mutableStateOf(false)
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
 
     // Colors
     val titleColor: Color
@@ -111,7 +117,13 @@ fun CustomDialog(
             backgroundColor = backgroundColor,
             modifier = Modifier
                 .defaultMinSize(minHeight = 123.dp)
-                .fillMaxWidth()
+                .fillMaxWidth().pointerInput(Unit) {
+                    detectTapAndPressUnconsumed(
+                        onTap = {
+                            activity.onUserInteraction()
+                        }
+                    )
+                }
         ) {
             Column(
                 modifier = Modifier.padding(start = 24.dp, end = 20.dp, bottom = 18.dp),

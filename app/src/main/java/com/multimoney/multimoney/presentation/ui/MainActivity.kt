@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.fragment.app.FragmentActivity
 import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
@@ -16,5 +17,10 @@ class MainActivity : FragmentActivity() {
                 Navigation()
             }
         }
+    }
+
+    override fun onUserInteraction() {
+        super.onUserInteraction()
+        Log.wtf("Diego", "Interaction")
     }
 }

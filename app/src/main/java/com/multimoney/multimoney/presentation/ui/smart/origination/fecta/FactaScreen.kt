@@ -68,8 +68,8 @@ fun FactaScreen(
                         )
                     )
                 },
-                nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Two.id
+                nextStep = SmartSteps.Six.id,
+                previousStep = SmartSteps.Four.id
             )
         )
         viewModel.baseEvent.collect { event ->

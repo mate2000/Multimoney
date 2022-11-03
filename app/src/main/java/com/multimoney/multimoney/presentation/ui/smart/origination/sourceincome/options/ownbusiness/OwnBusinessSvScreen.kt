@@ -70,7 +70,7 @@ fun SmartOwnBusinessSvScreen(
                 },
                 overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Three.id
+                previousStep = SmartSteps.Two.id
             )
         )
 

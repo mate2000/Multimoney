@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -40,6 +41,15 @@ fun SourceIncomeOptionsScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallQueryGetSourceOfIncome)
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(false))
+
+        // set navigation to move to the previous step (2), when the back button gets pressed
+        // it will return to the step 2 screen.
+        sharedViewModel.onUIEvent(
+            SmartViewModel.UIEvent.OnSetNavigation(
+                nextStep = SmartSteps.Four.id,
+                previousStep = SmartSteps.Two.id
+            )
+        )
     }
 
     viewModel.uiState.apply {

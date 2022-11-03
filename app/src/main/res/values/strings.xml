@@ -489,6 +489,20 @@
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
 
+    <!--Smart Account - Own Business On Personal basis-->
+    <string name="smart_business_personal_basis_title" translatable="false">Negocio propio en sociedad</string>
+    <string name="smart_business_personal_basis_identification_placeholder" translatable="false">0-000-000000</string>
+    <string name="smart_business_personal_basis_identification_label" translatable="false">Cédula jurídica</string>
+    <string name="smart_business_personal_basis_identification_format_error" translatable="false">Revisar formato Debe tener 10 digitos</string>
+    <string name="smart_business_personal_basis_identification_loading" translatable="false">Un momento, estamos verificando tu numero de identificatión...</string>
+    <string name="smart_business_personal_basis_identification_success" translatable="false">Nombre empresa</string>
+    <string name="smart_business_personal_basis_activity_label" translatable="false">¿A qué se dedica tu sociedad?</string>
+    <string name="smart_business_personal_basis_activity_error" translatable="false">Has alcanzado el maximo de caracteres permitidos</string>
+    <string name="smart_business_personal_basis_activity_required_message" translatable="false">Actividad requerida</string>
+    <string name="smart_business_personal_basis_income_required_message" translatable="false">Ingresos requeridos</string>
+    <string name="smart_business_personal_basis_identification_required_message" translatable="false">Cedula juridica requerida</string>
+    <string name="smart_business_personal_basis_company_name_not_found" translatable="false">No se encontro el nombre de la compañia</string>
+
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
@@ -544,5 +558,9 @@
     <string name="facta_screen_activities_according_to_article_15" translatable="false">¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
     <string name="facta_screen_are_you_us_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en Estados Unidos?</string>
     <string name="facta_screen_are_you_other_country_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en otro país diferente de Costa Rica?</string>
-
+    <string name="facta_screen_article_15_info" translatable="false">
+        Prestamistas, casas de empeño, comercio de metales y piedras preciosas, tarjetas y operadores de tarjetas de crédito, organizaciones sin fines de lucro, proveedores de servicios fiduciarios, compra y venta de bienes inmuebles, facilidad crediticia, administración de recursos de terceros.
+    </string>
+    <string name="facta_screen_article_15_info_title" translatable="false">Art 15 o 15 bis de la ley 8204</string>
+    <string name="facta_screen_learn_more" translatable="false">¿De qué se trata?</string>
 </resources>

@@ -3,8 +3,10 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.fecta
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnClickInfo
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnCrGoPageOne
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnCrGoPageTwo
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsActivityOfArt15Change
@@ -13,6 +15,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaVi
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsUSCitizenChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsUSTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,7 +31,8 @@ class FactaViewModel @Inject constructor() : BaseViewModel(true) {
         var isActivityOfArt15: Boolean? = null,
         var isUSTaxPayer: Boolean? = null,
         var isTaxPayer: Boolean? = null,
-        var crPage: Int = 1
+        var crPage: Int = 1,
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     sealed class UIEvent {
@@ -37,6 +41,7 @@ class FactaViewModel @Inject constructor() : BaseViewModel(true) {
         data class OnIsActivityOfArt15Change(val condition: Boolean, val idBrand: Int) : UIEvent()
         data class OnIsUSTaxPayerChange(val condition: Boolean, val idBrand: Int) : UIEvent()
         data class OnIsTaxPayerChange(val condition: Boolean, val idBrand: Int) : UIEvent()
+        object OnClickInfo : UIEvent()
         object OnCrGoPageOne : UIEvent()
         object OnCrGoPageTwo : UIEvent()
         data class OnValidateForm(val idBrand: Int) : UIEvent()
@@ -49,6 +54,7 @@ class FactaViewModel @Inject constructor() : BaseViewModel(true) {
             is OnIsActivityOfArt15Change -> onIsActivityOfArt15Change(event.condition, event.idBrand)
             is OnIsTaxPayerChange -> onIsTaxPayerChange(event.condition, event.idBrand)
             is OnIsUSTaxPayerChange -> onIsUSTaxPayerChange(event.condition, event.idBrand)
+            is OnClickInfo -> onClickInfo()
             is OnCrGoPageOne -> onCrGoPageOne()
             is OnCrGoPageTwo -> onCrGoPageTwo()
             is OnValidateForm -> onValidateForm(event.idBrand)
@@ -78,6 +84,16 @@ class FactaViewModel @Inject constructor() : BaseViewModel(true) {
     private fun onIsTaxPayerChange(condition: Boolean, idBrand: Int) {
         uiState = uiState.copy(isTaxPayer = condition)
         onValidateForm(idBrand)
+    }
+
+    private fun onClickInfo() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.facta_screen_article_15_info_title,
+                isActive = mutableStateOf(true),
+                descriptionResource = R.string.facta_screen_article_15_info
+            )
+        )
     }
 
     private fun onCrGoPageTwo() {

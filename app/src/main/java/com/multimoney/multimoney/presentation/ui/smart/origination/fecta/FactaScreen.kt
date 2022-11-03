@@ -7,11 +7,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnClickInfo
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnCrGoPageOne
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnCrGoPageTwo
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsActivityOfArt15Change
@@ -32,8 +39,10 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaVi
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsUSCitizenChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsUSTaxPayerChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOnlyRadioButtons
 
 @Composable
@@ -94,6 +103,7 @@ fun FactaScreen(
             sharedViewModel.onUIEvent(OnContinueVisible(true))
         }
     }
+    ShowCustomDialog(viewModel.uiState)
 }
 
 @Composable
@@ -116,7 +126,11 @@ fun ContentSV(
             optionsTwo = Triple(stringResource(R.string.facta_screen_no_i_am_not), false, { viewModel.onUiEvent(OnIsUSCitizenChange(false, 7)) })
         )
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(40.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        )
 
         Text(
             text = stringResource(R.string.facta_screen_are_you_or_family_pep),
@@ -139,19 +153,35 @@ fun ContentOneCR(
     viewModel: FactaViewModel,
     modifier: Modifier
 ) {
+    val annotatedText = buildAnnotatedString {
+        append(stringResource(R.string.facta_screen_activities_according_to_article_15) + " ")
+        pushStringAnnotation("info", "info")
+        withStyle(style = SpanStyle(Color.Blue)) {
+            append(stringResource(R.string.facta_screen_learn_more))
+        }
+        pop()
+    }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Text(
-                text = stringResource(R.string.facta_screen_activities_according_to_article_15),
+            ClickableText(
+                text = annotatedText,
                 style = Typography.body1.copy(
                     fontSize = 17.sp,
                     letterSpacing = (-0.41).sp,
-                    lineHeight = 22.sp
+                    color = WhiteTransparency90
                 ),
-                color = WhiteTransparency90
+                onClick = { offset ->
+                    annotatedText.getStringAnnotations(
+                        tag = "info",
+                        start = offset,
+                        end = offset
+                    )[0].let {
+                        viewModel.onUiEvent(OnClickInfo)
+                    }
+                }
             )
         }
         CustomOnlyRadioButtons(
@@ -160,7 +190,11 @@ fun ContentOneCR(
             optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsActivityOfArt15Change(false, 5)) })
         )
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(40.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        )
 
         Text(
             text = stringResource(R.string.facta_screen_are_you_or_family_pep),
@@ -172,8 +206,8 @@ fun ContentOneCR(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isPEP,
-            optionsOne = Triple(stringResource(R.string.facta_screen_yes_they_qualify), true, { viewModel.onUiEvent(OnIsPEPChange(true, 5)) }),
-            optionsTwo = Triple(stringResource(R.string.facta_screen_no_they_do_not_qualify), false, { viewModel.onUiEvent(OnIsPEPChange(false, 5)) })
+            optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsPEPChange(true, 5)) }),
+            optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsPEPChange(false, 5)) })
         )
     }
     CustomButton(
@@ -210,7 +244,11 @@ fun ContentTwoCR(
             optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsUSTaxPayerChange(false, 5)) })
         )
 
-        Spacer(modifier = Modifier.fillMaxWidth().height(40.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        )
 
         Text(
             text = stringResource(R.string.facta_screen_are_you_other_country_tax_payer),
@@ -224,6 +262,20 @@ fun ContentTwoCR(
             condition = viewModel.uiState.isTaxPayer,
             optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsTaxPayerChange(true, 5)) }),
             optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsTaxPayerChange(false, 5)) })
+        )
+    }
+}
+
+@Composable
+fun ShowCustomDialog(uiState: UIState) {
+    if (uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(uiState.openDialog.titleResource),
+            message = stringResource(uiState.openDialog.descriptionResource),
+            topIcon = R.drawable.info_blue_icon,
+            positiveButtonText = stringResource(uiState.openDialog.positiveResource),
+            openDialogCustom = uiState.openDialog.isActive,
+            onPositiveAction = uiState.openDialog.positiveAction
         )
     }
 }

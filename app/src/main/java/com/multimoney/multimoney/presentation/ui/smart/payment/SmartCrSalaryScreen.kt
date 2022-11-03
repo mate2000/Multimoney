@@ -84,6 +84,7 @@ fun SmartCrSalaryScreen(
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = Four.id,
                 previousStep = Two.id
             )

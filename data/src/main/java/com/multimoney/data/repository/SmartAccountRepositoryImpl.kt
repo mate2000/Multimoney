@@ -3,7 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.networking.SmartAccountApi
-import com.multimoney.domain.model.accountsmart.AddressesLevelTwo
+import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
@@ -39,12 +39,32 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 Success(data.mapToDomain())
             })
 
+    override suspend fun queryAddressLevelOne(
+        user: String,
+        idBrand: Int,
+    ): Flow<MultimoneyResult<AddressesLevel?>> =
+        fetchData(apolloCall = smartApi.queryAddressLevelOne(user, idBrand),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            })
+
     override suspend fun queryAddressLevelTwo(
         user: String,
         idBrand: Int,
         idAddressLevel1: String,
-    ): Flow<MultimoneyResult<AddressesLevelTwo?>> =
+    ): Flow<MultimoneyResult<AddressesLevel?>> =
         fetchData(apolloCall = smartApi.queryAddressLevelTwo(user, idBrand, idAddressLevel1),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomain())
+            })
+
+    override suspend fun queryAddressLevelThree(
+        user: String,
+        idBrand: Int,
+        idAddressLevel1: String,
+        idAddressLevel2: String,
+    ): Flow<MultimoneyResult<AddressesLevel?>> =
+        fetchData(apolloCall = smartApi.queryAddressLevelThree(user, idBrand, idAddressLevel1, idAddressLevel2),
             apolloCallMapper = { data ->
                 Success(data.mapToDomain())
             })

@@ -97,7 +97,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
 
             if (identification.length == IDENTIFICATION_LENGTH) {
                 callQueryGetCompanyUseCase(identification, idBrand, user)
-            } else if (identification.length > MIN_IDENTIFICATION_CHARS) {
+            } else if (identification.length > IDENTIFICATION_MIN_LENGTH) {
                 uiState = uiState.copy(identificationError = Pair(true, R.string.smart_business_personal_basis_identification_format_error))
             }
         }
@@ -171,6 +171,6 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
 
     companion object {
         const val IDENTIFICATION_LENGTH = 10
-        const val MIN_IDENTIFICATION_CHARS = 1
+        const val IDENTIFICATION_MIN_LENGTH = 1
     }
 }

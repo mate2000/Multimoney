@@ -21,11 +21,15 @@ interface MutationGlobalRequestUseCase {
         idEconomicActivity: Long,
         income: Int,
         addressDetail: String,
-        isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
         institutionPension: String,
-        specifiesIncomeSource: String
+        specifiesIncomeSource: String,
+        isActivityOfArt15: Boolean,
+        isUSCitizen: Boolean,
+        isPEP: Boolean,
+        isUSTaxPayer: Boolean,
+        isTaxPayer: Boolean
     ): Flow<MultimoneyResult<GlobalRequest?>>
 }

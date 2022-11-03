@@ -49,6 +49,7 @@ class SmartViewModel @Inject constructor(
     val pkUser = savedStateHandle.get(PK_USER) ?: ""
     val idBrand = savedStateHandle.get(ID_BRAND) ?: ""
     val user = savedStateHandle.get(USER) ?: ""
+    val idBrandAsInt = idBrand.toIntOrNull() ?: -1
 
     // Stateless
     var nextAction: () -> Unit = {}
@@ -108,7 +109,6 @@ class SmartViewModel @Inject constructor(
             idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
             income = accountSmartData?.income?.toInt() ?: 0,
             addressDetail = accountSmartData?.addressDetail ?: "",
-            isPEP = accountSmartData?.isPEP ?: false,
             user = accountSmartData?.user ?: "",
             idBrand = accountSmartData?.idBrand ?: 0,
             currentStep = accountSmartData?.currentStep ?: "",
@@ -119,7 +119,12 @@ class SmartViewModel @Inject constructor(
             companyName = accountSmartData?.companyName.orEmpty(),
             aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
             institutionPension = accountSmartData?.institutionPension.orEmpty(),
-            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: ""
+            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
+            isActivityOfArt15 = accountSmartData?.isActivityOfArt15 ?: false,
+            isUSCitizen = accountSmartData?.isUSCitizen ?: false,
+            isPEP = accountSmartData?.isPEP ?: false,
+            isUSTaxPayer = accountSmartData?.isUSTaxPayer ?: false,
+            isTaxPayer = accountSmartData?.isTaxPayer ?: false
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))

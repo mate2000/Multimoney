@@ -14,7 +14,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -122,8 +121,14 @@ fun ContentSV(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isUSCitizen,
-            optionsOne = Triple(stringResource(R.string.facta_screen_yes_i_am), true, { viewModel.onUiEvent(OnIsUSCitizenChange(true, IDBRAND_SV)) }),
-            optionsTwo = Triple(stringResource(R.string.facta_screen_no_i_am_not), false, { viewModel.onUiEvent(OnIsUSCitizenChange(false, IDBRAND_SV)) })
+            optionsOne = Triple(
+                stringResource(R.string.facta_screen_yes_i_am),
+                true
+            ) { viewModel.onUiEvent(OnIsUSCitizenChange(true, IDBRAND_SV)) },
+            optionsTwo = Triple(
+                stringResource(R.string.facta_screen_no_i_am_not),
+                false
+            ) { viewModel.onUiEvent(OnIsUSCitizenChange(false, IDBRAND_SV)) }
         )
 
         Spacer(
@@ -142,8 +147,14 @@ fun ContentSV(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isPEP,
-            optionsOne = Triple(stringResource(R.string.facta_screen_yes_they_qualify), true, { viewModel.onUiEvent(OnIsPEPChange(true, IDBRAND_SV)) }),
-            optionsTwo = Triple(stringResource(R.string.facta_screen_no_they_do_not_qualify), false, { viewModel.onUiEvent(OnIsPEPChange(false, IDBRAND_SV)) })
+            optionsOne = Triple(
+                stringResource(R.string.facta_screen_yes_they_qualify),
+                true
+            ) { viewModel.onUiEvent(OnIsPEPChange(true, IDBRAND_SV)) },
+            optionsTwo = Triple(
+                stringResource(R.string.facta_screen_no_they_do_not_qualify),
+                false
+            ) { viewModel.onUiEvent(OnIsPEPChange(false, IDBRAND_SV)) }
         )
     }
 }
@@ -155,7 +166,7 @@ fun ContentOneCR(
 ) {
     val annotatedText = buildAnnotatedString {
         append(stringResource(R.string.facta_screen_activities_according_to_article_15) + " ")
-        pushStringAnnotation("info", "info")
+        pushStringAnnotation(INFO_TAG, INFO_TAG)
         withStyle(style = SpanStyle(Color.Blue)) {
             append(stringResource(R.string.facta_screen_learn_more))
         }
@@ -175,7 +186,7 @@ fun ContentOneCR(
                 ),
                 onClick = { offset ->
                     annotatedText.getStringAnnotations(
-                        tag = "info",
+                        tag = INFO_TAG,
                         start = offset,
                         end = offset
                     )[0].let {
@@ -186,8 +197,14 @@ fun ContentOneCR(
         }
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isActivityOfArt15,
-            optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsActivityOfArt15Change(true, IDBRAND_CR)) }),
-            optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsActivityOfArt15Change(false, IDBRAND_CR)) })
+            optionsOne = Triple(
+                stringResource(R.string.yes),
+                true
+            ) { viewModel.onUiEvent(OnIsActivityOfArt15Change(true, IDBRAND_CR)) },
+            optionsTwo = Triple(
+                stringResource(R.string.no),
+                false
+            ) { viewModel.onUiEvent(OnIsActivityOfArt15Change(false, IDBRAND_CR)) }
         )
 
         Spacer(
@@ -206,8 +223,14 @@ fun ContentOneCR(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isPEP,
-            optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsPEPChange(true, IDBRAND_CR)) }),
-            optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsPEPChange(false, IDBRAND_CR)) })
+            optionsOne = Triple(
+                stringResource(R.string.yes),
+                true
+            ) { viewModel.onUiEvent(OnIsPEPChange(true, IDBRAND_CR)) },
+            optionsTwo = Triple(
+                stringResource(R.string.no),
+                false
+            ) { viewModel.onUiEvent(OnIsPEPChange(false, IDBRAND_CR)) }
         )
     }
     CustomButton(
@@ -240,8 +263,14 @@ fun ContentTwoCR(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isUSTaxPayer,
-            optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsUSTaxPayerChange(true, IDBRAND_CR)) }),
-            optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsUSTaxPayerChange(false, IDBRAND_CR)) })
+            optionsOne = Triple(
+                stringResource(R.string.yes),
+                true
+            ) { viewModel.onUiEvent(OnIsUSTaxPayerChange(true, IDBRAND_CR)) },
+            optionsTwo = Triple(
+                stringResource(R.string.no),
+                false
+            ) { viewModel.onUiEvent(OnIsUSTaxPayerChange(false, IDBRAND_CR)) }
         )
 
         Spacer(
@@ -260,8 +289,14 @@ fun ContentTwoCR(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isTaxPayer,
-            optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsTaxPayerChange(true, IDBRAND_CR)) }),
-            optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsTaxPayerChange(false, IDBRAND_CR)) })
+            optionsOne = Triple(
+                stringResource(R.string.yes),
+                true
+            ) { viewModel.onUiEvent(OnIsTaxPayerChange(true, IDBRAND_CR)) },
+            optionsTwo = Triple(
+                stringResource(R.string.no),
+                false
+            ) { viewModel.onUiEvent(OnIsTaxPayerChange(false, IDBRAND_CR)) }
         )
     }
 }
@@ -282,3 +317,4 @@ fun ShowCustomDialog(uiState: UIState) {
 
 const val IDBRAND_CR = 5
 const val IDBRAND_SV = 7
+const val INFO_TAG = "info"

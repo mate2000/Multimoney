@@ -108,8 +108,8 @@ fun SmartLivAddressScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 32.dp),
-                    items = viewModel.uiState.divisionOneList,
-                    value = viewModel.uiState.divisionOneSelected,
+                    items = viewModel.uiState.divisionOneList?.map { it?.name.orEmpty() } ?: listOf(),
+                    value = viewModel.uiState.divisionOneSelected?.name ?: "",
                     onValueChange = {
                         viewModel.onUIEvent(
                             SmartLivAddressViewModel.UIEvent.OnDivisionOneValueChange(
@@ -139,8 +139,8 @@ fun SmartLivAddressScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 32.dp),
-                items = viewModel.uiState.divisionTwoList,
-                value = viewModel.uiState.divisionTwoSelected,
+                items = viewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() } ?: listOf(),
+                value = viewModel.uiState.divisionTwoSelected?.name ?: "",
                 onValueChange = {
                     viewModel.onUIEvent(
                         SmartLivAddressViewModel.UIEvent.OnDivisionTwoValueChange(
@@ -163,8 +163,8 @@ fun SmartLivAddressScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 32.dp),
-                items = viewModel.uiState.divisionThreeList,
-                value = viewModel.uiState.divisionThreeSelected,
+                items = viewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() } ?: listOf(),
+                value = viewModel.uiState.divisionThreeSelected?.name ?: "",
                 onValueChange = {
                     viewModel.onUIEvent(
                         SmartLivAddressViewModel.UIEvent.OnDivisionThreeValueChange(

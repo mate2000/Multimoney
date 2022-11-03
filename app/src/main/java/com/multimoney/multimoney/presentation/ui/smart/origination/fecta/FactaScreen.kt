@@ -51,7 +51,7 @@ fun FactaScreen(
 ) {
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(sharedViewModel.idBrandAsInt)))
-        if (sharedViewModel.idBrandAsInt == IDBRAND_CR) viewModel.onUiEvent(OnCrGoPageOne)
+        if (sharedViewModel.idBrandAsInt == ID_BRAND_CR) viewModel.onUiEvent(OnCrGoPageOne)
 
         sharedViewModel.onUIEvent(
             OnSetNavigation(
@@ -82,7 +82,7 @@ fun FactaScreen(
     }
 
     when (sharedViewModel.idBrandAsInt) {
-        IDBRAND_CR -> {
+        ID_BRAND_CR -> {
             when (viewModel.uiState.crPage) {
                 CR_PAGE_ONE -> {
                     ContentOneCR(viewModel, Modifier.padding(16.dp))
@@ -97,7 +97,7 @@ fun FactaScreen(
                 }
             }
         }
-        IDBRAND_SV -> {
+        ID_BRAND_SV -> {
             ContentSV(viewModel, Modifier.padding(16.dp))
             sharedViewModel.onUIEvent(OnContinueVisible(true))
         }
@@ -124,11 +124,11 @@ fun ContentSV(
             optionsOne = Triple(
                 stringResource(R.string.facta_screen_yes_i_am),
                 true
-            ) { viewModel.onUiEvent(OnIsUSCitizenChange(true, IDBRAND_SV)) },
+            ) { viewModel.onUiEvent(OnIsUSCitizenChange(true, ID_BRAND_SV)) },
             optionsTwo = Triple(
                 stringResource(R.string.facta_screen_no_i_am_not),
                 false
-            ) { viewModel.onUiEvent(OnIsUSCitizenChange(false, IDBRAND_SV)) }
+            ) { viewModel.onUiEvent(OnIsUSCitizenChange(false, ID_BRAND_SV)) }
         )
 
         Spacer(
@@ -150,11 +150,11 @@ fun ContentSV(
             optionsOne = Triple(
                 stringResource(R.string.facta_screen_yes_they_qualify),
                 true
-            ) { viewModel.onUiEvent(OnIsPEPChange(true, IDBRAND_SV)) },
+            ) { viewModel.onUiEvent(OnIsPEPChange(true, ID_BRAND_SV)) },
             optionsTwo = Triple(
                 stringResource(R.string.facta_screen_no_they_do_not_qualify),
                 false
-            ) { viewModel.onUiEvent(OnIsPEPChange(false, IDBRAND_SV)) }
+            ) { viewModel.onUiEvent(OnIsPEPChange(false, ID_BRAND_SV)) }
         )
     }
 }
@@ -200,11 +200,11 @@ fun ContentOneCR(
             optionsOne = Triple(
                 stringResource(R.string.yes),
                 true
-            ) { viewModel.onUiEvent(OnIsActivityOfArt15Change(true, IDBRAND_CR)) },
+            ) { viewModel.onUiEvent(OnIsActivityOfArt15Change(true, ID_BRAND_CR)) },
             optionsTwo = Triple(
                 stringResource(R.string.no),
                 false
-            ) { viewModel.onUiEvent(OnIsActivityOfArt15Change(false, IDBRAND_CR)) }
+            ) { viewModel.onUiEvent(OnIsActivityOfArt15Change(false, ID_BRAND_CR)) }
         )
 
         Spacer(
@@ -226,11 +226,11 @@ fun ContentOneCR(
             optionsOne = Triple(
                 stringResource(R.string.yes),
                 true
-            ) { viewModel.onUiEvent(OnIsPEPChange(true, IDBRAND_CR)) },
+            ) { viewModel.onUiEvent(OnIsPEPChange(true, ID_BRAND_CR)) },
             optionsTwo = Triple(
                 stringResource(R.string.no),
                 false
-            ) { viewModel.onUiEvent(OnIsPEPChange(false, IDBRAND_CR)) }
+            ) { viewModel.onUiEvent(OnIsPEPChange(false, ID_BRAND_CR)) }
         )
     }
     CustomButton(
@@ -266,11 +266,11 @@ fun ContentTwoCR(
             optionsOne = Triple(
                 stringResource(R.string.yes),
                 true
-            ) { viewModel.onUiEvent(OnIsUSTaxPayerChange(true, IDBRAND_CR)) },
+            ) { viewModel.onUiEvent(OnIsUSTaxPayerChange(true, ID_BRAND_CR)) },
             optionsTwo = Triple(
                 stringResource(R.string.no),
                 false
-            ) { viewModel.onUiEvent(OnIsUSTaxPayerChange(false, IDBRAND_CR)) }
+            ) { viewModel.onUiEvent(OnIsUSTaxPayerChange(false, ID_BRAND_CR)) }
         )
 
         Spacer(
@@ -292,11 +292,11 @@ fun ContentTwoCR(
             optionsOne = Triple(
                 stringResource(R.string.yes),
                 true
-            ) { viewModel.onUiEvent(OnIsTaxPayerChange(true, IDBRAND_CR)) },
+            ) { viewModel.onUiEvent(OnIsTaxPayerChange(true, ID_BRAND_CR)) },
             optionsTwo = Triple(
                 stringResource(R.string.no),
                 false
-            ) { viewModel.onUiEvent(OnIsTaxPayerChange(false, IDBRAND_CR)) }
+            ) { viewModel.onUiEvent(OnIsTaxPayerChange(false, ID_BRAND_CR)) }
         )
     }
 }
@@ -315,6 +315,6 @@ fun ShowCustomDialog(uiState: UIState) {
     }
 }
 
-const val IDBRAND_CR = 5
-const val IDBRAND_SV = 7
+const val ID_BRAND_CR = 5
+const val ID_BRAND_SV = 7
 const val INFO_TAG = "info"

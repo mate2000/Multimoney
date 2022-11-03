@@ -49,7 +49,7 @@ class SmartViewModel @Inject constructor(
     val pkUser = savedStateHandle.get(PK_USER) ?: ""
     val idBrand = savedStateHandle.get(ID_BRAND) ?: ""
     val user = savedStateHandle.get(USER) ?: ""
-    val idBrandAsInt = idBrand.toIntOrNull() ?: -1
+    val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
 
     // Stateless
     var nextAction: () -> Unit = {}
@@ -294,5 +294,6 @@ class SmartViewModel @Inject constructor(
     companion object {
         const val SMART_TOTAL_STEPS = 6
         const val SMART_INDICATOR_TOTAL_STEPS = 5
+        const val DEFAULT_ID_BRAND_ERROR = -1
     }
 }

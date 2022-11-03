@@ -8,8 +8,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaVi
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnCrGoPageOne
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnCrGoPageTwo
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsActivityOfArt15Change
-import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsPEPChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsUSCitizenChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsUSTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnValidateForm
@@ -49,8 +49,8 @@ class FactaViewModel @Inject constructor() : BaseViewModel(true) {
             is OnIsActivityOfArt15Change -> onIsActivityOfArt15Change(event.condition, event.idBrand)
             is OnIsTaxPayerChange -> onIsTaxPayerChange(event.condition, event.idBrand)
             is OnIsUSTaxPayerChange -> onIsUSTaxPayerChange(event.condition, event.idBrand)
-            is OnCrGoPageOne -> onCrGoPageTwo()
-            is OnCrGoPageTwo -> onCrGoPageOne()
+            is OnCrGoPageOne -> onCrGoPageOne()
+            is OnCrGoPageTwo -> onCrGoPageTwo()
             is OnValidateForm -> onValidateForm(event.idBrand)
         }
     }
@@ -81,7 +81,7 @@ class FactaViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun onCrGoPageTwo() {
-        uiState = uiState.copy(crPage = CR_PAGE_ONE)
+        uiState = uiState.copy(crPage = CR_PAGE_TWO)
     }
     private fun onCrGoPageOne() {
         uiState = uiState.copy(crPage = CR_PAGE_ONE)

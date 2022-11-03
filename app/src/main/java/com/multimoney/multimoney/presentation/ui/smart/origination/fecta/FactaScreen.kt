@@ -34,7 +34,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaVi
 import com.multimoney.multimoney.presentation.ui.smart.origination.fecta.FactaViewModel.UIEvent.OnIsUSTaxPayerChange
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
-import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonVertical
+import com.multimoney.multimoney.presentation.uielement.CustomOnlyRadioButtons
 
 @Composable
 fun FactaScreen(
@@ -43,13 +43,20 @@ fun FactaScreen(
 ) {
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(sharedViewModel.idBrandAsInt)))
+        if (sharedViewModel.idBrandAsInt == 5) viewModel.onUiEvent(OnCrGoPageOne)
 
         sharedViewModel.onUIEvent(
             OnSetNavigation(
                 nextAction = {
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
-                            accountSmartData = sharedViewModel.accountSmartData?.copy()
+                            accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                isPEP = viewModel.uiState.isPEP,
+                                isUSCitizen = viewModel.uiState.isPEP,
+                                isActivityOfArt15 = viewModel.uiState.isPEP,
+                                isUSTaxPayer = viewModel.uiState.isPEP,
+                                isTaxPayer = viewModel.uiState.isPEP
+                            )
                         )
                     )
                 },
@@ -77,7 +84,7 @@ fun FactaScreen(
                     ContentTwoCR(viewModel, Modifier.padding(16.dp))
                     sharedViewModel.onUIEvent(OnContinueVisible(true))
                     BackHandler {
-                        viewModel.onUiEvent(OnCrGoPageTwo)
+                        viewModel.onUiEvent(OnCrGoPageOne)
                     }
                 }
             }
@@ -96,33 +103,33 @@ fun ContentSV(
 ) {
     Column(modifier) {
         Text(
-            text = "¿Sos ciudadano o residente de los Estados Unidos?",
+            text = stringResource(R.string.facta_screen_are_you_us_citizen),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp
             ),
             color = WhiteTransparency90
         )
-        CustomRadioButtonVertical(
+        CustomOnlyRadioButtons(
             condition = viewModel.uiState.isUSCitizen,
-            optionsOne = Triple("Si, lo soy", true, { viewModel.onUiEvent(OnIsUSCitizenChange(true, 7)) }),
-            optionsTwo = Triple("No, no lo soy", false, { viewModel.onUiEvent(OnIsUSCitizenChange(false, 7)) })
+            optionsOne = Triple(stringResource(R.string.facta_screen_yes_i_am), true, { viewModel.onUiEvent(OnIsUSCitizenChange(true, 7)) }),
+            optionsTwo = Triple(stringResource(R.string.facta_screen_no_i_am_not), false, { viewModel.onUiEvent(OnIsUSCitizenChange(false, 7)) })
         )
 
         Spacer(modifier = Modifier.fillMaxWidth().height(40.dp))
 
         Text(
-            text = "¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?",
+            text = stringResource(R.string.facta_screen_are_you_or_family_pep),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp
             ),
             color = WhiteTransparency90
         )
-        CustomRadioButtonVertical(
+        CustomOnlyRadioButtons(
             condition = viewModel.uiState.isPEP,
-            optionsOne = Triple("Si, si califican", true, { viewModel.onUiEvent(OnIsPEPChange(true, 7)) }),
-            optionsTwo = Triple("No, no califican", false, { viewModel.onUiEvent(OnIsPEPChange(false, 7)) })
+            optionsOne = Triple(stringResource(R.string.facta_screen_yes_they_qualify), true, { viewModel.onUiEvent(OnIsPEPChange(true, 7)) }),
+            optionsTwo = Triple(stringResource(R.string.facta_screen_no_they_do_not_qualify), false, { viewModel.onUiEvent(OnIsPEPChange(false, 7)) })
         )
     }
 }
@@ -132,45 +139,45 @@ fun ContentOneCR(
     viewModel: FactaViewModel,
     modifier: Modifier
 ) {
-    viewModel.onUiEvent(OnCrGoPageTwo)
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
             Text(
-                text = "¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?",
+                text = stringResource(R.string.facta_screen_activities_according_to_article_15),
                 style = Typography.body1.copy(
                     fontSize = 17.sp,
-                    letterSpacing = (-0.41).sp
+                    letterSpacing = (-0.41).sp,
+                    lineHeight = 22.sp
                 ),
                 color = WhiteTransparency90
             )
         }
-        CustomRadioButtonVertical(
+        CustomOnlyRadioButtons(
             condition = viewModel.uiState.isActivityOfArt15,
-            optionsOne = Triple("Si", true, { viewModel.onUiEvent(OnIsActivityOfArt15Change(true, 5)) }),
-            optionsTwo = Triple("No", false, { viewModel.onUiEvent(OnIsActivityOfArt15Change(false, 5)) })
+            optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsActivityOfArt15Change(true, 5)) }),
+            optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsActivityOfArt15Change(false, 5)) })
         )
 
         Spacer(modifier = Modifier.fillMaxWidth().height(40.dp))
 
         Text(
-            text = "¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?",
+            text = stringResource(R.string.facta_screen_are_you_or_family_pep),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp
             ),
             color = WhiteTransparency90
         )
-        CustomRadioButtonVertical(
+        CustomOnlyRadioButtons(
             condition = viewModel.uiState.isPEP,
-            optionsOne = Triple("Si, si califican", true, { viewModel.onUiEvent(OnIsPEPChange(true, 5)) }),
-            optionsTwo = Triple("No, no califican", false, { viewModel.onUiEvent(OnIsPEPChange(false, 5)) })
+            optionsOne = Triple(stringResource(R.string.facta_screen_yes_they_qualify), true, { viewModel.onUiEvent(OnIsPEPChange(true, 5)) }),
+            optionsTwo = Triple(stringResource(R.string.facta_screen_no_they_do_not_qualify), false, { viewModel.onUiEvent(OnIsPEPChange(false, 5)) })
         )
     }
     CustomButton(
-        onClick = { viewModel.onUiEvent(OnCrGoPageOne) },
+        onClick = { viewModel.onUiEvent(OnCrGoPageTwo) },
         text = stringResource(id = R.string.button_continue),
         modifier = Modifier
             .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
@@ -189,35 +196,34 @@ fun ContentTwoCR(
     Column(
         modifier = modifier
     ) {
-        viewModel.onUiEvent(OnCrGoPageTwo)
         Text(
-            text = "¿Sos contribuyente al pago de impuestos en Estados Unidos?",
+            text = stringResource(R.string.facta_screen_are_you_us_tax_payer),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp
             ),
             color = WhiteTransparency90
         )
-        CustomRadioButtonVertical(
+        CustomOnlyRadioButtons(
             condition = viewModel.uiState.isUSTaxPayer,
-            optionsOne = Triple("Si", true, { viewModel.onUiEvent(OnIsUSTaxPayerChange(true, 5)) }),
-            optionsTwo = Triple("No", false, { viewModel.onUiEvent(OnIsUSTaxPayerChange(false, 5)) })
+            optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsUSTaxPayerChange(true, 5)) }),
+            optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsUSTaxPayerChange(false, 5)) })
         )
 
         Spacer(modifier = Modifier.fillMaxWidth().height(40.dp))
 
         Text(
-            text = "¿Sos contribuyente al pago de impuestos en otro país diferente de Costa Rica?",
+            text = stringResource(R.string.facta_screen_are_you_other_country_tax_payer),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp
             ),
             color = WhiteTransparency90
         )
-        CustomRadioButtonVertical(
+        CustomOnlyRadioButtons(
             condition = viewModel.uiState.isTaxPayer,
-            optionsOne = Triple("Si", true, { viewModel.onUiEvent(OnIsTaxPayerChange(true, 5)) }),
-            optionsTwo = Triple("No", false, { viewModel.onUiEvent(OnIsTaxPayerChange(false, 5)) })
+            optionsOne = Triple(stringResource(R.string.yes), true, { viewModel.onUiEvent(OnIsTaxPayerChange(true, 5)) }),
+            optionsTwo = Triple(stringResource(R.string.no), false, { viewModel.onUiEvent(OnIsTaxPayerChange(false, 5)) })
         )
     }
 }

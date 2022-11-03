@@ -5,11 +5,12 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SmartAccountRepository
 import kotlinx.coroutines.flow.Flow
 
-class QueryAddressLevelTwoUseCaseImpl(val repository: SmartAccountRepository) : QueryAddressLevelTwoUseCase {
+class QueryAddressLevelThreeUseCaseImpl(val repository: SmartAccountRepository) : QueryAddressLevelThreeUseCase {
     override suspend fun invoke(
         user: String,
         idBrand: Int,
         idAddressLevelOne: String,
+        idAddressLevelTwo: String,
     ): Flow<MultimoneyResult<AddressesLevel?>> =
-        repository.queryAddressLevelTwo(user, idBrand, idAddressLevelOne)
+        repository.queryAddressLevelThree(user, idBrand, idAddressLevelOne, idAddressLevelTwo)
 }

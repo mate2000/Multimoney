@@ -27,7 +27,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps.Four
-import com.multimoney.data.util.catalog.SmartSteps.Three
+import com.multimoney.data.util.catalog.SmartSteps.Two
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -62,8 +62,12 @@ fun SmartCrSalaryScreen(
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(OnContinueVisible(true))
-        viewModel.onUIEvent(OnCallQueryProfessionUseCase(sharedViewModel.user,
-            sharedViewModel.idBrand.toInt()))
+        viewModel.onUIEvent(
+            OnCallQueryProfessionUseCase(
+                sharedViewModel.user,
+                sharedViewModel.idBrand.toInt()
+            )
+        )
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.onValidateForm()))
         viewModel.onUIEvent(OnValidateForm)
 
@@ -81,7 +85,7 @@ fun SmartCrSalaryScreen(
                     )
                 },
                 nextStep = Four.id,
-                previousStep = Three.id
+                previousStep = Two.id
             )
         )
 
@@ -104,9 +108,11 @@ fun SmartCrSalaryScreen(
 
     ShowCustomDialog(viewModel.uiState)
 
-    Column(modifier = Modifier
-        .padding(vertical = 16.dp, horizontal = 16.dp)
-        .verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -139,8 +145,12 @@ fun SmartCrSalaryScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = string.smart_account_formal_placeholder),
-            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrand.toInt()
-                .getCurrencySymbol()))
+            customTransformation = formatMoney(
+                stringResource(
+                    id = sharedViewModel.idBrand.toInt()
+                        .getCurrencySymbol()
+                )
+            )
         )
 
         CustomDropdown(

@@ -30,7 +30,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyDescriptionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyNameChange
@@ -69,6 +68,7 @@ fun SmartOwnBusinessSvScreen(
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = SmartSteps.Four.id,
                 previousStep = SmartSteps.Three.id
             )
@@ -85,13 +85,7 @@ fun SmartOwnBusinessSvScreen(
     SmartOwnBusinessSvContent(viewModel, sharedViewModel)
 
     // return to the main options screen whenever tapping on native back button from the device
-    BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent(
-            (OnNavigateToSelectedSourceOfIncomeOption(
-                SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            ))
-        )
-    }
+    BackHandler { sourceIncomeSharedViewModel.goBackToMainOptions() }
 }
 
 @Composable

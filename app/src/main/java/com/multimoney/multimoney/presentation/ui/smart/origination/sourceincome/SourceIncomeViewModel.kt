@@ -15,6 +15,18 @@ class SourceIncomeViewModel @Inject constructor() : BaseViewModel(false) {
     var uiState by mutableStateOf(UIState())
         private set
 
+    /**
+     * call this function on any internal screen from the step three in order to return to the
+     * desired screen. In this case, the economical activity options one.
+     */
+    fun goBackToMainOptions() {
+        onUIEvent(
+            (UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
+                SourceIncomeOptionType.MainSourceIncomeScreenType.id
+            ))
+        )
+    }
+
     data class UIState(
         // Interactions
         val selectedOption: Int = SourceIncomeOptionType.MainSourceIncomeScreenType.id

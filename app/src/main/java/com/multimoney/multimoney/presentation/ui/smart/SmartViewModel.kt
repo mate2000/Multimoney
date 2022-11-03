@@ -46,13 +46,14 @@ class SmartViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     // bundle parameters
-    val pkUser = savedStateHandle.get(PK_USER) ?: ""
-    val idBrand = savedStateHandle.get(ID_BRAND) ?: ""
-    val user = savedStateHandle.get(USER) ?: ""
+    val pkUser = savedStateHandle[PK_USER] ?: ""
+    val idBrand = savedStateHandle[ID_BRAND] ?: ""
+    val user = savedStateHandle[USER] ?: ""
 
     // Stateless
     var nextAction: () -> Unit = {}
-    var closeDialogDescription: String = ""
+    private var overridePreviousAction: (() -> Unit)? = null
+    private var closeDialogDescription: String = ""
     var accountSmartData: AccountSmartData? = null
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
@@ -180,17 +181,27 @@ class SmartViewModel @Inject constructor(
         nextAction.invoke()
     }
 
+    /**
+     * due to the internal navigation present on the step tree (economical activity options)
+     * we need to override the previous back button action on each of the internal screens in order to
+     * return to this main options, the "overridePreviousAction" MUST not come null in that case,
+     * otherwise, the normal step navigation logic will be executed.
+     */
     private fun previousStep() {
-        if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
-            uiState = uiState.copy(
-                currentStep = previousStep,
-                isCloseVisible = previousStep > SmartSteps.One.id
-            )
+        if (overridePreviousAction != null) {
+            overridePreviousAction?.invoke()
         } else {
-            popAndNavigateTo(
-                route = Screen.HomeScreen.route,
-                popTo = Screen.SmartScreen.route
-            )
+            if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
+                uiState = uiState.copy(
+                    currentStep = previousStep,
+                    isCloseVisible = previousStep > SmartSteps.One.id
+                )
+            } else {
+                popAndNavigateTo(
+                    route = Screen.HomeScreen.route,
+                    popTo = Screen.SmartScreen.route
+                )
+            }
         }
     }
 
@@ -203,8 +214,14 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun onSetNavigation(nextAction: () -> Unit, nextStep: Int, previousStep: Int) {
+    private fun onSetNavigation(
+        nextAction: () -> Unit,
+        overridePreviousAction: (() -> Unit)?,
+        nextStep: Int,
+        previousStep: Int,
+    ) {
         this.nextAction = nextAction
+        this.overridePreviousAction = overridePreviousAction
         this.nextStep = nextStep
         this.previousStep = previousStep
     }
@@ -243,8 +260,9 @@ class SmartViewModel @Inject constructor(
         when (event) {
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
+                event.overridePreviousAction,
                 event.nextStep,
-                event.previousStep
+                event.previousStep,
             )
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
@@ -275,6 +293,7 @@ class SmartViewModel @Inject constructor(
 
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
+            val overridePreviousAction: (() -> Unit)? = null,
             val nextStep: Int,
             val previousStep: Int
         ) : UIEvent()

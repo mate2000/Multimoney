@@ -35,6 +35,8 @@
     <string name="colon_symbol" translatable="false">₡</string>
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
+    <string name="yes" translatable="false">Si</string>
+    <string name="no" translatable="false">No</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -531,5 +533,16 @@
     <string name="payment_points_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
+
+    <!--Facta pep screen-->
+    <string name="facta_screen_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>
+    <string name="facta_screen_yes_i_am" translatable="false">Si, lo soy</string>
+    <string name="facta_screen_no_i_am_not" translatable="false">No, no lo soy</string>
+    <string name="facta_screen_are_you_or_family_pep" translatable="false">¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?</string>
+    <string name="facta_screen_yes_they_qualify" translatable="false">Si, si califican</string>
+    <string name="facta_screen_no_they_do_not_qualify" translatable="false">No, no califican</string>
+    <string name="facta_screen_activities_according_to_article_15" translatable="false">¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
+    <string name="facta_screen_are_you_us_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en Estados Unidos?</string>
+    <string name="facta_screen_are_you_other_country_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en otro país diferente de Costa Rica?</string>
 
 </resources>

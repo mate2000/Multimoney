@@ -49,6 +49,7 @@ class SmartViewModel @Inject constructor(
     val pkUser = savedStateHandle.get(PK_USER) ?: ""
     val idBrand = savedStateHandle.get(ID_BRAND) ?: ""
     val user = savedStateHandle.get(USER) ?: ""
+    val idBrandAsInt = idBrand.toIntOrNull() ?: -1
 
     // Stateless
     var nextAction: () -> Unit = {}
@@ -64,7 +65,7 @@ class SmartViewModel @Inject constructor(
     init {
         accountSmartData = AccountSmartData(
             pkUser = pkUser,
-            idBrand = idBrand.toInt(),
+            idBrand = idBrandAsInt,
             user = user
         )
     }

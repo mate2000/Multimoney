@@ -78,7 +78,7 @@ fun OwnBusinessOnPersonalBasisScreen(
         }
     }
 
-    OwnBusinessOnPersonalBasisContent(viewModel, sharedViewModel.idBrand, sharedViewModel.user)
+    OwnBusinessOnPersonalBasisContent(viewModel, sharedViewModel.idBrandAsInt, sharedViewModel.user)
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
@@ -92,12 +92,11 @@ fun OwnBusinessOnPersonalBasisScreen(
 @Composable
 fun OwnBusinessOnPersonalBasisContent(
     viewModel: OwnBusinessOnPersonalBasisViewModel,
-    idBrand: String,
+    idBrand: Int,
     user: String
 ) {
     val focusManager = LocalFocusManager.current
-    val currencySymbol = idBrand.toIntOrNull()?.getCurrencySymbol()
-        ?.let { stringResource(it) } ?: stringResource(R.string.empty)
+    val currencySymbol = stringResource(idBrand.getCurrencySymbol())
 
     Column(
         modifier = Modifier

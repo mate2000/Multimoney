@@ -63,7 +63,7 @@ fun SmartCrSalaryScreen(
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(OnContinueVisible(true))
         viewModel.onUIEvent(OnCallQueryProfessionUseCase(sharedViewModel.user,
-            sharedViewModel.idBrand.toInt()))
+            sharedViewModel.idBrandAsInt))
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.onValidateForm()))
         viewModel.onUIEvent(OnValidateForm)
 
@@ -139,7 +139,7 @@ fun SmartCrSalaryScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = string.smart_account_formal_placeholder),
-            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrand.toInt()
+            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrandAsInt
                 .getCurrencySymbol()))
         )
 

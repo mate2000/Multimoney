@@ -11,11 +11,11 @@ import com.multimoney.domain.model.accountsmart.Address
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnGetUserData
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnDivisionOneValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnDivisionTwoValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnDivisionThreeValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnAddressValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnDivisionOneValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnDivisionThreeValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnDivisionTwoValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnNotApplicable
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,15 +33,15 @@ class SmartLivAddressViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    // ViewModel vars
-    var _user = ""
-    var _idBrand = 0
+    // Stateless 
+    var user = ""
+    var idBrand = 0
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnGetUserData -> {
-                _user = uiEvent.pkUser
-                _idBrand = uiEvent.idBrand
+                user = uiEvent.pkUser
+                idBrand = uiEvent.idBrand
                 setInitialQuery()
             }
             is OnDivisionOneValueChange -> {
@@ -75,11 +75,11 @@ class SmartLivAddressViewModel @Inject constructor(
     }
 
     private fun setInitialQuery() {
-        when(_idBrand){
+        when (idBrand) {
             Brand.CostaRica.id -> {
                 getDivisionOne(
-                    _idBrand,
-                    _user
+                    idBrand,
+                    user
                 )
             }
             Brand.ElSalvador.id -> {
@@ -107,8 +107,8 @@ class SmartLivAddressViewModel @Inject constructor(
         executeUseCase {
             uiState.divisionOneSelected?.code?.let {
                 addressLevelTwoUseCase(
-                    _user,
-                    _idBrand,
+                    user,
+                    idBrand,
                     it
                 ).collectLatest {
                     it.onSuccess { addressList ->
@@ -126,8 +126,8 @@ class SmartLivAddressViewModel @Inject constructor(
             uiState.divisionOneSelected?.code?.let { divOne ->
                 uiState.divisionTwoSelected?.code?.let { divTwo ->
                     addressLevelThreeUseCase(
-                        user = _user,
-                        idBrand = _idBrand,
+                        user = user,
+                        idBrand = idBrand,
                         idAddressLevelOne = divOne,
                         idAddressLevelTwo = divTwo
                     ).collectLatest {
@@ -142,10 +142,10 @@ class SmartLivAddressViewModel @Inject constructor(
         }
     }
 
-    private fun onDivisionOneValueChange(divisionOne: Address?) {
+    private fun onDivisionOneValueChange(divisionOne: String?) {
         // reset selection of division two and three
         uiState = uiState.copy(
-            divisionOneSelected = divisionOne,
+            divisionOneSelected = uiState.divisionOneList?.find { it?.name == divisionOne },
             divisionTwoSelected = null,
             divisionTwoList = listOf(),
             divisionThreeSelected = null,
@@ -154,20 +154,20 @@ class SmartLivAddressViewModel @Inject constructor(
         getDivisionTwo()
     }
 
-    private fun onDivisionTwoValueChange(divisionTwo: Address?) {
+    private fun onDivisionTwoValueChange(divisionTwo: String?) {
         // reset selection of division three
         uiState = uiState.copy(
-            divisionTwoSelected = divisionTwo,
+            divisionTwoSelected = uiState.divisionTwoList?.find { it?.name == divisionTwo },
             divisionThreeSelected = null,
             divisionThreeList = listOf()
         )
         getDivisionThree()
     }
 
-    private fun onDivisionThreeValueChange(divisionThree: Address?) {
+    private fun onDivisionThreeValueChange(divisionThree: String?) {
         // reset selection of division two and three
         uiState = uiState.copy(
-            divisionThreeSelected = divisionThree
+            divisionThreeSelected = uiState.divisionThreeList?.find { it?.name == divisionThree }
         )
         validate()
     }
@@ -176,7 +176,12 @@ class SmartLivAddressViewModel @Inject constructor(
         uiState = if (address.length < ADDRESS_MAX_LENGHT) {
             uiState.copy(address = address)
         } else {
-            uiState.copy(addressError = Pair(true, R.string.smart_own_business_description_max_char_error))
+            uiState.copy(
+                addressError = Pair(
+                    true,
+                    R.string.smart_own_business_description_max_char_error
+                )
+            )
         }
         validate()
     }
@@ -198,22 +203,27 @@ class SmartLivAddressViewModel @Inject constructor(
             val user: String,
             val idBrand: Int
         ) : UIEvent()
+
         data class OnDivisionOneValueChange(
-            val divisionOne: Address?,
+            val divisionOne: String?,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
+
         data class OnDivisionTwoValueChange(
-            val divisionTwo: Address?,
+            val divisionTwo: String?,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
+
         data class OnDivisionThreeValueChange(
-            val divisionThree: Address?,
+            val divisionThree: String?,
         ) : UIEvent()
+
         data class OnAddressValueChange(
             val address: String,
         ) : UIEvent()
+
         data class OnNotApplicable(
-            val value : String
+            val value: String
         ) : UIEvent()
     }
 
@@ -230,8 +240,11 @@ class SmartLivAddressViewModel @Inject constructor(
         val divisionTwoSelected: Address? = null,
         val divisionThreeSelected: Address? = null,
         val address: String = "",
-        val addressError: Pair<Boolean, Int> = Pair(false, R.string.credit_company_address_accurate_address_error)
+        val addressError: Pair<Boolean, Int> = Pair(
+            false,
+            R.string.credit_company_address_accurate_address_error
         )
+    )
 
     companion object {
         const val ADDRESS_MAX_LENGHT = 150

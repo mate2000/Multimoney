@@ -172,7 +172,7 @@ fun OwnBusinessOnPersonalBasisContent(
                 viewModel.onUIEvent(
                     OnIdentificationChange(
                         it,
-                        idBrand.toInt(),
+                        idBrand,
                         user
                     )
                 )
@@ -195,7 +195,7 @@ fun OwnBusinessOnPersonalBasisContent(
             isRequiredMessage = stringResource(R.string.smart_business_personal_basis_identification_required_message)
         )
         Text(
-            text = viewModel.uiState.companyName,
+            text = viewModel.uiState.companyName ?: stringResource(R.string.smart_business_personal_basis_company_name_not_found),
             color = MultimoneyTheme.colors.text,
             modifier = Modifier
                 .padding(start = 5.dp)

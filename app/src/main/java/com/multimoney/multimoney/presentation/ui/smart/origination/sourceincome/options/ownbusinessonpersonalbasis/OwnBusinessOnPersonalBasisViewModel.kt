@@ -37,7 +37,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
         var identificationLoading: Pair<Boolean, Int> = Pair(false, R.string.empty),
         var identificationError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         var identificationValidationError: String? = null,
-        var companyName: String = ""
+        var companyName: String? = null
     )
 
     sealed class UIEvent {
@@ -122,7 +122,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
                             true,
                             R.string.smart_business_personal_basis_identification_success
                         ),
-                        companyName = it?.name ?: "Company name not found"
+                        companyName = it?.name
                     )
                 }
                 result.onLoading {
@@ -138,7 +138,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
                     clearIdentificationStatus()
                     uiState = uiState.copy(
                         identificationError = Pair(true, R.string.empty),
-                        identificationValidationError = it.getError() ?: "Error trying to validate"
+                        identificationValidationError = it.getError()
                     )
                 }
             }

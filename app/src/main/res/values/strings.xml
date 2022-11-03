@@ -499,6 +499,7 @@
     <string name="smart_business_personal_basis_activity_required_message" translatable="false">Actividad requerida</string>
     <string name="smart_business_personal_basis_income_required_message" translatable="false">Ingresos requeridos</string>
     <string name="smart_business_personal_basis_identification_required_message" translatable="false">Cedula juridica requerida</string>
+    <string name="smart_business_personal_basis_company_name_not_found" translatable="false">No se encontro el nombre de la compañia</string>
 
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>

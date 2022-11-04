@@ -101,7 +101,6 @@ fun OwnBusinessOnPersonalBasisContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
@@ -194,13 +193,15 @@ fun OwnBusinessOnPersonalBasisContent(
             successMessage = stringResource(viewModel.uiState.identificationSuccess.second),
             isRequiredMessage = stringResource(R.string.smart_business_personal_basis_identification_required_message)
         )
-        Text(
-            text = viewModel.uiState.companyName ?: stringResource(R.string.smart_business_personal_basis_company_name_not_found),
-            color = MultimoneyTheme.colors.text,
-            modifier = Modifier
-                .padding(start = 5.dp)
-                .wrapContentSize(),
-            style = Typography.caption
-        )
+        if (viewModel.uiState.identificationSuccess.first) {
+            Text(
+                text = viewModel.uiState.companyName ?: stringResource(R.string.smart_business_personal_basis_company_name_not_found),
+                color = MultimoneyTheme.colors.text,
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .wrapContentSize(),
+                style = Typography.caption
+            )
+        }
     }
 }

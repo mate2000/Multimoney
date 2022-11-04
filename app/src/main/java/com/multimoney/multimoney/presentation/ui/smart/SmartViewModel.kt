@@ -234,6 +234,7 @@ class SmartViewModel @Inject constructor(
         val currentStep: Int = SmartSteps.One.id,
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
+        val buttonTextRes: Int = R.string.button_continue,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
         val openDialog: DialogParameters = DialogParameters()
@@ -257,7 +258,7 @@ class SmartViewModel @Inject constructor(
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
             is UIEvent.OnContinueVisible -> uiState =
-                uiState.copy(isContinueVisible = event.visible)
+                uiState.copy(isContinueVisible = event.visible, buttonTextRes = event.textResId)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }
@@ -281,7 +282,7 @@ class SmartViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
-        data class OnContinueVisible(val visible: Boolean) : UIEvent()
+        data class OnContinueVisible(val visible: Boolean, val textResId: Int = R.string.button_continue) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
     }

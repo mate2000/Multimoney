@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo
 
-import android.app.DatePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,15 +37,14 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobI
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
-import java.util.Calendar
-import java.util.Date
 
 @Composable
-fun JobPlaceScreen(
+fun JobInfoScreen(
     sharedViewModel: CreditViewModel,
     viewModel: JobInfoViewModel = hiltViewModel()
 ) {
@@ -67,7 +65,6 @@ fun JobPlaceScreen(
                         saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                     )
                 )
-
             }, nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id)
         )
         viewModel.baseEvent.collect { event ->
@@ -119,48 +116,34 @@ fun JobPlaceScreen(
             }
         )
 
-        CustomOutlinedTextField(
-            leadingIcon = R.drawable.ic_calendar,
-            modifier = Modifier
-                .padding(top = 32.dp),
+        CustomDatePicker(
+            context = context,
+            modifier = Modifier.padding(top = 32.dp),
             labelText = stringResource(id = R.string.credit_job_joined_date),
             placeHolder = stringResource(id = R.string.credit_job_date_placeholder),
             value = viewModel.uiState.date,
+            minYear = JOB_DATE_MIN_YEAR,
+            minMonth = JOB_DATE_MIN_MONTH,
+            minDay = JOB_DATE_MIN_DAY,
+            leadingIcon = R.drawable.ic_calendar_voucher,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.clearFocus()
             }),
-            isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.credit_job_date_required),
-            onClick = {
-                focusManager.clearFocus()
-                val calendar = Calendar.getInstance()
-                val datePicker = DatePickerDialog(
-                    context,
-                    { _, year, month, day ->
-                        viewModel.onUIEvent(
-                            OnDateValueChange(
-                                getPickedDateAsString(
-                                    year,
-                                    month,
-                                    day,
-                                    DATE_FORMAT
-                                )
-                            )
+            onValueChange = { _, year, month, dayOfMonth ->
+                viewModel.onUIEvent(
+                    OnDateValueChange(
+                        getPickedDateAsString(
+                            year,
+                            month,
+                            dayOfMonth,
+                            DATE_FORMAT
                         )
-                    },
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
+                    )
                 )
-                calendar.set(JOB_DATE_MIN_YEAR, JOB_DATE_MIN_MONTH, JOB_DATE_MIN_DAY)
-                datePicker.datePicker.minDate = calendar.timeInMillis
-                datePicker.datePicker.maxDate = Date().time
-                datePicker.show()
-            },
-            isClickable = true
+            }
         )
 
         val phonePlaceHolder = when (sharedViewModel.idBrand.toInt()) {

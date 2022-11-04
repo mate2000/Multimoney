@@ -48,6 +48,12 @@ fun SmartScreen(
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
     }
 
+    viewModel.onUIEvent(
+        SmartViewModel.UIEvent.OnInitializeText(
+            stringResource(string.smart_close_origination_dialog_description)
+        )
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()

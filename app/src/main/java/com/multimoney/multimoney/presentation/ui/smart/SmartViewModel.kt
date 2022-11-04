@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
@@ -161,14 +162,14 @@ class SmartViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.general_close_dialog_title,
+                titleResource = R.string.smart_close_origination_dialog_title,
                 description = closeDialogDescription,
-                positiveResource = R.string.sign_up_close_dialog_positive_button_text,
-                negativeResource = R.string.sign_up_close_dialog_negative_button_text,
+                positiveResource = R.string.common_leave,
+                negativeResource = R.string.button_continue,
                 positiveAction = {
                     popAndNavigateTo(
-                        route = Screen.SignInScreen.route,
-                        popTo = Screen.SignUpScreen.route
+                        route = Screen.HomeScreen.route,
+                        popTo = Screen.SmartScreen.route
                     )
                 },
                 isActive = mutableStateOf(true)
@@ -194,7 +195,7 @@ class SmartViewModel @Inject constructor(
             if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
                 uiState = uiState.copy(
                     currentStep = previousStep,
-                    isCloseVisible = previousStep > SmartSteps.One.id
+                    isCloseVisible = previousStep >= SmartSteps.One.id
                 )
             } else {
                 popAndNavigateTo(
@@ -209,7 +210,7 @@ class SmartViewModel @Inject constructor(
         if (nextStep <= SMART_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep > SmartSteps.One.id
+                isCloseVisible = nextStep >= SmartSteps.One.id
             )
         }
     }
@@ -246,10 +247,14 @@ class SmartViewModel @Inject constructor(
         callMutationGlobalRequestUseCase()
     }
 
+    private fun onInitializeTexts(description: String) {
+        closeDialogDescription = description
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SmartSteps.One.id,
-        val isCloseVisible: Boolean = false,
+        val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
@@ -264,6 +269,7 @@ class SmartViewModel @Inject constructor(
                 event.nextStep,
                 event.previousStep,
             )
+            is UIEvent.OnInitializeText -> onInitializeTexts(event.description)
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
@@ -281,7 +287,7 @@ class SmartViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-
+        data class OnInitializeText(val description: String) : UIEvent()
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()

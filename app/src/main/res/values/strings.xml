@@ -36,6 +36,7 @@
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
+    <string name="common_leave" translatable="false">Abandonar</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -471,6 +472,9 @@
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
 
+    <!-- Smart - Close origin flow -->
+    <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
+    <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
 
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>

@@ -4,10 +4,9 @@ import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
-interface QueryAddressLevelTwoUseCase {
+interface QueryAddressLevelOneUseCase {
     suspend operator fun invoke(
         user: String,
-        idBrand: Int,
-        idAddressLevelOne: String
+        idBrand: Int
     ): Flow<MultimoneyResult<AddressesLevel?>>
 }

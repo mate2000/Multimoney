@@ -8,7 +8,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCas
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
-import com.multimoney.domain.model.accountsmart.AddressLevelTwo
+import com.multimoney.domain.model.accountsmart.Address
 import com.multimoney.domain.model.accountsmart.CivilStatus
 import com.multimoney.domain.model.accountsmart.Nationality
 import com.multimoney.domain.model.accountsmart.ProfessionSmart
@@ -219,7 +219,7 @@ class SmartDocumentViewModel @Inject constructor(
         val professionId: Int = 0,
         val openDialog: DialogParameters = DialogParameters(),
         val nationalitiesList: List<Nationality?> = listOf(),
-        val addressLevelTwoList: List<AddressLevelTwo?> = listOf(),
+        val addressLevelTwoList: List<Address?> = listOf(),
         val civilStatusList: List<CivilStatus?> = listOf(),
         val professionSmartList: List<ProfessionSmart?> = listOf()
     )

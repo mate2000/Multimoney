@@ -1,6 +1,6 @@
 package com.multimoney.domain.repository
 
-import com.multimoney.domain.model.accountsmart.AddressesLevelTwo
+import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
@@ -19,11 +19,23 @@ interface SmartAccountRepository {
 
     suspend fun queryProfessionsSmart(pkUser: String, idBrand: Int): Flow<MultimoneyResult<Professions?>>
 
+    suspend fun queryAddressLevelOne(
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<AddressesLevel?>>
+
     suspend fun queryAddressLevelTwo(
         user: String,
         idBrand: Int,
         idAddressLevel1: String
-    ): Flow<MultimoneyResult<AddressesLevelTwo?>>
+    ): Flow<MultimoneyResult<AddressesLevel?>>
+
+    suspend fun queryAddressLevelThree(
+        user: String,
+        idBrand: Int,
+        idAddressLevel1: String,
+        idAddressLevel2: String
+    ): Flow<MultimoneyResult<AddressesLevel?>>
 
     suspend fun queryNationality(
         user: String,

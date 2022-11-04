@@ -27,7 +27,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps.Four
-import com.multimoney.data.util.catalog.SmartSteps.Three
+import com.multimoney.data.util.catalog.SmartSteps.Two
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -85,7 +85,7 @@ fun SmartCrSalaryScreen(
                     )
                 },
                 nextStep = Four.id,
-                previousStep = Three.id
+                previousStep = Two.id
             )
         )
 

@@ -35,6 +35,7 @@
     <string name="colon_symbol" translatable="false">₡</string>
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
+    <string name="not_applicable" translatable="false">NA</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -490,6 +491,12 @@
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+
+    <!-- Smart Living Address -->
+    <string name="smart_liv_address_title" translatable="false">¿Dónde vivís?</string>
+    <string name="smart_liv_address_province" translatable="false">Provincia</string>
+    <string name="smart_liv_address_town" translatable="false">Cantón</string>
+    <string name="smart_liv_address_district" translatable="false">Distrito</string>
 
     <!-- Payment Options Transfer -->
     <string name="payment_options_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>

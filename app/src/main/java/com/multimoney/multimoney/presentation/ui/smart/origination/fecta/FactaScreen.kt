@@ -121,11 +121,11 @@ fun ContentSV(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isUSCitizen,
-            optionsOne = Triple(
+            buttonOne = Triple(
                 stringResource(R.string.facta_screen_yes_i_am),
                 true
             ) { viewModel.onUiEvent(OnIsUSCitizenChange(true, ID_BRAND_SV)) },
-            optionsTwo = Triple(
+            buttonTwo = Triple(
                 stringResource(R.string.facta_screen_no_i_am_not),
                 false
             ) { viewModel.onUiEvent(OnIsUSCitizenChange(false, ID_BRAND_SV)) }
@@ -147,11 +147,11 @@ fun ContentSV(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isPEP,
-            optionsOne = Triple(
+            buttonOne = Triple(
                 stringResource(R.string.facta_screen_yes_they_qualify),
                 true
             ) { viewModel.onUiEvent(OnIsPEPChange(true, ID_BRAND_SV)) },
-            optionsTwo = Triple(
+            buttonTwo = Triple(
                 stringResource(R.string.facta_screen_no_they_do_not_qualify),
                 false
             ) { viewModel.onUiEvent(OnIsPEPChange(false, ID_BRAND_SV)) }
@@ -197,11 +197,11 @@ fun ContentOneCR(
         }
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isActivityOfArt15,
-            optionsOne = Triple(
+            buttonOne = Triple(
                 stringResource(R.string.yes),
                 true
             ) { viewModel.onUiEvent(OnIsActivityOfArt15Change(true, ID_BRAND_CR)) },
-            optionsTwo = Triple(
+            buttonTwo = Triple(
                 stringResource(R.string.no),
                 false
             ) { viewModel.onUiEvent(OnIsActivityOfArt15Change(false, ID_BRAND_CR)) }
@@ -223,11 +223,11 @@ fun ContentOneCR(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isPEP,
-            optionsOne = Triple(
+            buttonOne = Triple(
                 stringResource(R.string.yes),
                 true
             ) { viewModel.onUiEvent(OnIsPEPChange(true, ID_BRAND_CR)) },
-            optionsTwo = Triple(
+            buttonTwo = Triple(
                 stringResource(R.string.no),
                 false
             ) { viewModel.onUiEvent(OnIsPEPChange(false, ID_BRAND_CR)) }
@@ -263,11 +263,11 @@ fun ContentTwoCR(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isUSTaxPayer,
-            optionsOne = Triple(
+            buttonOne = Triple(
                 stringResource(R.string.yes),
                 true
             ) { viewModel.onUiEvent(OnIsUSTaxPayerChange(true, ID_BRAND_CR)) },
-            optionsTwo = Triple(
+            buttonTwo = Triple(
                 stringResource(R.string.no),
                 false
             ) { viewModel.onUiEvent(OnIsUSTaxPayerChange(false, ID_BRAND_CR)) }
@@ -289,11 +289,11 @@ fun ContentTwoCR(
         )
         CustomOnlyRadioButtons(
             condition = viewModel.uiState.isTaxPayer,
-            optionsOne = Triple(
+            buttonOne = Triple(
                 stringResource(R.string.yes),
                 true
             ) { viewModel.onUiEvent(OnIsTaxPayerChange(true, ID_BRAND_CR)) },
-            optionsTwo = Triple(
+            buttonTwo = Triple(
                 stringResource(R.string.no),
                 false
             ) { viewModel.onUiEvent(OnIsTaxPayerChange(false, ID_BRAND_CR)) }

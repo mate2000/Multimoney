@@ -8,17 +8,35 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 
+/**
+ * CustomButton: Button to match design style across the whole app, in order to use it.
+ *
+ * Parameters:
+ * @param modifier: Apply style.
+ * @param condition: The condition that the buttons are going to change.
+ * @param buttonOne: The options for the first button
+ *        First value: Label text next to button
+ *        Second value: Condition indicating if this button is currently selected
+ *        Third value: OnClick lambda action
+ * @param buttonTwo: The options for the first button
+ *        First value: Label text next to button
+ *        Second value: Condition indicating if this button is currently selected
+ *        Third value: OnClick lambda action
+ */
+
 @Composable
 fun CustomOnlyRadioButtons(
     condition: Boolean?,
-    optionsOne: Triple<String, Boolean, () -> Unit>,
-    optionsTwo: Triple<String, Boolean, () -> Unit>
+    buttonOne: Triple<String, Boolean, () -> Unit>,
+    buttonTwo: Triple<String, Boolean, () -> Unit>,
+    modifier: Modifier = Modifier
 ) {
     val radioSelectedColor: Color
     val radioUnSelectedColor: Color
@@ -34,32 +52,32 @@ fun CustomOnlyRadioButtons(
         textColor = GrayScale800
     }
 
-    Column {
+    Column(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
-                selected = condition?.equals(optionsOne.second) ?: false,
-                onClick = optionsOne.third,
+                selected = condition?.equals(buttonOne.second) ?: false,
+                onClick = buttonOne.third,
                 colors = RadioButtonDefaults.colors(
                     selectedColor = radioSelectedColor,
                     unselectedColor = radioUnSelectedColor
                 )
             )
             Text(
-                text = optionsOne.first,
+                text = buttonOne.first,
                 color = textColor
             )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             RadioButton(
-                selected = condition?.equals(optionsTwo.second) ?: false,
-                onClick = optionsTwo.third,
+                selected = condition?.equals(buttonTwo.second) ?: false,
+                onClick = buttonTwo.third,
                 colors = RadioButtonDefaults.colors(
                     selectedColor = radioSelectedColor,
                     unselectedColor = radioUnSelectedColor
                 )
             )
             Text(
-                text = optionsTwo.first,
+                text = buttonTwo.first,
                 color = textColor
             )
         }

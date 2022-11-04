@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -111,15 +110,8 @@ fun ContentSV(
     modifier: Modifier
 ) {
     Column(modifier) {
-        Text(
-            text = stringResource(R.string.facta_screen_are_you_us_citizen),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp
-            ),
-            color = WhiteTransparency90
-        )
         CustomOnlyRadioButtons(
+            text = stringResource(R.string.facta_screen_are_you_us_citizen),
             condition = viewModel.uiState.isUSCitizen,
             buttonOne = Triple(
                 stringResource(R.string.facta_screen_yes_i_am),
@@ -137,15 +129,8 @@ fun ContentSV(
                 .height(40.dp)
         )
 
-        Text(
-            text = stringResource(R.string.facta_screen_are_you_or_family_pep),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp
-            ),
-            color = WhiteTransparency90
-        )
         CustomOnlyRadioButtons(
+            text = stringResource(R.string.facta_screen_are_you_or_family_pep),
             condition = viewModel.uiState.isPEP,
             buttonOne = Triple(
                 stringResource(R.string.facta_screen_yes_they_qualify),
@@ -213,15 +198,8 @@ fun ContentOneCR(
                 .height(40.dp)
         )
 
-        Text(
-            text = stringResource(R.string.facta_screen_are_you_or_family_pep),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp
-            ),
-            color = WhiteTransparency90
-        )
         CustomOnlyRadioButtons(
+            text = stringResource(R.string.facta_screen_are_you_or_family_pep),
             condition = viewModel.uiState.isPEP,
             buttonOne = Triple(
                 stringResource(R.string.yes),
@@ -253,15 +231,8 @@ fun ContentTwoCR(
     Column(
         modifier = modifier
     ) {
-        Text(
-            text = stringResource(R.string.facta_screen_are_you_us_tax_payer),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp
-            ),
-            color = WhiteTransparency90
-        )
         CustomOnlyRadioButtons(
+            text = stringResource(R.string.facta_screen_are_you_us_tax_payer),
             condition = viewModel.uiState.isUSTaxPayer,
             buttonOne = Triple(
                 stringResource(R.string.yes),
@@ -279,15 +250,8 @@ fun ContentTwoCR(
                 .height(40.dp)
         )
 
-        Text(
-            text = stringResource(R.string.facta_screen_are_you_other_country_tax_payer),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp
-            ),
-            color = WhiteTransparency90
-        )
         CustomOnlyRadioButtons(
+            text = stringResource(R.string.facta_screen_are_you_other_country_tax_payer),
             condition = viewModel.uiState.isTaxPayer,
             buttonOne = Triple(
                 stringResource(R.string.yes),

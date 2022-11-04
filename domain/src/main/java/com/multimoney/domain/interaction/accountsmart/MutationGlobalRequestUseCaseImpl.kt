@@ -1,5 +1,6 @@
 package com.multimoney.domain.interaction.accountsmart
 
+import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SmartAccountRepository
@@ -28,7 +29,8 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         idBrand: Int,
         currentStep: String,
         institutionPension: String,
-        specifiesIncomeSource: String
+        specifiesIncomeSource: String,
+        beneficiaries: List<Beneficiary>
     ): Flow<MultimoneyResult<GlobalRequest?>> = repository.mutationGlobalRequest(
         pkUser,
         status,
@@ -50,6 +52,7 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         idBrand,
         currentStep,
         institutionPension,
-        specifiesIncomeSource
+        specifiesIncomeSource,
+        beneficiaries
     )
 }

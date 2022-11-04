@@ -4,11 +4,13 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.networking.SmartAccountApi
 import com.multimoney.domain.model.accountsmart.AddressesLevelTwo
+import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
+import com.multimoney.domain.model.accountsmart.RelationshipData
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -89,7 +91,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idBrand: Int,
         currentStep: String,
         institutionPension: String,
-        specifiesIncomeSource: String
+        specifiesIncomeSource: String,
+        beneficiaries: List<Beneficiary>
     ): Flow<MultimoneyResult<GlobalRequest?>> =
         fetchData(apolloCall = smartApi.mutationGlobalRequest(
             pkUser,
@@ -112,7 +115,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
             idBrand,
             currentStep,
             institutionPension,
-            specifiesIncomeSource
+            specifiesIncomeSource,
+            beneficiaries
         ), apolloCallMapper = { data -> Success(data.mapToDomain()) })
 
     /**
@@ -120,10 +124,21 @@ class SmartAccountRepositoryImpl @Inject constructor(
      */
     override suspend fun queryGeneralEconomicActivity(
         user: String,
-        idBrand: Int
+        idBrand: Int,
     ): Flow<MultimoneyResult<GeneralEconomicActivityResult?>> {
         return fetchData(
             apolloCall = smartApi.queryGeneralEconomicActivity(user, idBrand),
+            apolloCallMapper = { data -> Success(data.mapToDomain()) }
+        )
+    }
+
+    override suspend fun queryRelationship(
+        user: String,
+        idBrand: Int,
+        option: Int,
+    ): Flow<MultimoneyResult<RelationshipData>> {
+        return fetchData(
+            apolloCall = smartApi.queryRelationship(user, idBrand, option),
             apolloCallMapper = { data -> Success(data.mapToDomain()) }
         )
     }

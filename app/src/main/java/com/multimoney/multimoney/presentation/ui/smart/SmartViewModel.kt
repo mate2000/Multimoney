@@ -119,7 +119,8 @@ class SmartViewModel @Inject constructor(
             companyName = accountSmartData?.companyName.orEmpty(),
             aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
             institutionPension = accountSmartData?.institutionPension.orEmpty(),
-            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: ""
+            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
+            beneficiaries = accountSmartData?.listBeneficiaries ?: listOf()
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))

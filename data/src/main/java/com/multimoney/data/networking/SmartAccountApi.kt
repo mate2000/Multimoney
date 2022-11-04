@@ -2,6 +2,7 @@ package com.multimoney.data.networking
 
 import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.networking.accountsmart.apollomodel.AddressLevel2Query
@@ -10,7 +11,10 @@ import com.multimoney.data.networking.accountsmart.apollomodel.GeneralEconomicAc
 import com.multimoney.data.networking.accountsmart.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.accountsmart.apollomodel.NationalityQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.ProfessionQuery
+import com.multimoney.data.networking.accountsmart.apollomodel.RelationshipQuery
 import com.multimoney.data.networking.accountsmart.apollomodel.StepByStepQuery
+import com.multimoney.data.networking.accountsmart.apollomodel.type.BeneficiarieList
+import com.multimoney.domain.model.accountsmart.Beneficiary
 import javax.inject.Inject
 
 class SmartAccountApi @Inject constructor(
@@ -71,7 +75,8 @@ class SmartAccountApi @Inject constructor(
         idBrand: Int,
         currentStep: String,
         institutionPension: String,
-        specifiesIncomeSource: String
+        specifiesIncomeSource: String,
+        beneficiaries: List<Beneficiary>,
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloClient.mutation(
             GlobalRequestMutation(
@@ -95,7 +100,12 @@ class SmartAccountApi @Inject constructor(
                 user,
                 idBrand,
                 currentStep,
-                specifiesIncomeSource
+                specifiesIncomeSource,
+                beneficiaries.map { beneficiary ->
+                    BeneficiarieList(Optional.presentIfNotNull(beneficiary.fullName),
+                        Optional.presentIfNotNull(beneficiary.relationship.toString()),
+                        Optional.presentIfNotNull(beneficiary.allocationPercentage))
+                }
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -104,5 +114,13 @@ class SmartAccountApi @Inject constructor(
         idBrand: Int,
     ): ApolloCall<GeneralEconomicActivityQuery.Data> =
         apolloClient.query(GeneralEconomicActivityQuery(user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryRelationship(
+        user: String,
+        idBrand: Int,
+        option: Int,
+    ): ApolloCall<RelationshipQuery.Data> =
+        apolloClient.query(RelationshipQuery(user, idBrand, option))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 }

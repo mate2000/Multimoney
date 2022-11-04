@@ -38,14 +38,15 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration.DUMMY_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -53,7 +54,7 @@ class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    val queryScreenConfigUseCase: QueryScreenConfigUseCase,
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -117,6 +118,14 @@ class CreditViewModel @Inject constructor(
     private fun onContinueClick(focusManager: FocusManager) {
         focusManager.clearFocus()
         nextAction.invoke()
+    }
+
+    fun onHideBottomSheet() {
+        emitBaseEvent(BaseEvent.OnHideBottomSheet)
+    }
+
+    fun onShowBottomSheet() {
+        emitBaseEvent(BaseEvent.OnShowBottomSheet)
     }
 
     private fun moveToStep(step: Int) {
@@ -222,7 +231,7 @@ class CreditViewModel @Inject constructor(
         val isCurrentLocationButtonVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var lastStep: Int = 1,
-        var loadContent: Boolean = false,
+        var loadContent: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -256,6 +265,7 @@ class CreditViewModel @Inject constructor(
                 saveCreditStepsHelper.start(event.screenConfigData)
             }
             is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
+            is OnShowBottomSheet -> onShowBottomSheet()
         }
     }
 
@@ -274,7 +284,7 @@ class CreditViewModel @Inject constructor(
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
-            val previousStep: Int,
+            val previousStep: Int
         ) : UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
@@ -294,11 +304,17 @@ class CreditViewModel @Inject constructor(
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
         object OnCallMutationSaveCreditFlowStep : UIEvent()
+        object OnShowBottomSheet : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object OnShowBottomSheet : BaseEvent()
+        object OnHideBottomSheet : BaseEvent()
     }
 
     companion object {
-        const val CREDIT_TOTAL_STEPS = 7
-        const val CREDIT_INDICATOR_TOTAL_STEPS = 5
+        const val CREDIT_TOTAL_STEPS = 8
+        const val CREDIT_INDICATOR_TOTAL_STEPS = 6
         const val BANNER_TIME = 3000L
     }
 }

@@ -10,7 +10,7 @@ class QueryAddressLevelThreeUseCaseImpl(val repository: SmartAccountRepository) 
         user: String,
         idBrand: Int,
         idAddressLevelOne: String,
-        idAddressLevelTwo: String,
+        idAddressLevelTwo: String
     ): Flow<MultimoneyResult<AddressesLevel?>> =
         repository.queryAddressLevelThree(user, idBrand, idAddressLevelOne, idAddressLevelTwo)
 }

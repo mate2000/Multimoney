@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.credit
 
-import com.multimoney.data.networking.credit.apollomodel.ScreenConfigQuery
+import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.domain.model.credit.CreditCatalog
 
 private fun ScreenConfigQuery.ScreenConfigText.mapToDomainModel() = CreditCatalog(
@@ -19,4 +19,4 @@ private fun ScreenConfigQuery.ScreenConfigText.mapToDomainModel() = CreditCatalo
     subOptions = null
 )
 
-fun ScreenConfigQuery.Data.mapToDomainModel() = screenConfigText?.map { it?.mapToDomainModel() }
+fun ScreenConfigQuery.Data.mapToDomainModel() = screenConfigText.map { it.mapToDomainModel() }

@@ -2,6 +2,10 @@ package com.multimoney.domain.di
 
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
@@ -93,7 +97,6 @@ import javax.inject.Singleton
 class InteractionModule {
 
     // Security
-
     @Provides
     @Singleton
     fun provideQueryValidationUserExistsUseCase(securityRepository: SecurityRepository): QueryValidateUserExistsUseCase =
@@ -279,6 +282,16 @@ class InteractionModule {
     @Singleton
     fun provideMutationGlobalRequestUseCase(smartAccountRepository: SmartAccountRepository): MutationGlobalRequestUseCase =
         MutationGlobalRequestUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryAddressLevelOneUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelOneUseCase =
+        QueryAddressLevelOneUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryAddressLevelThreeUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelThreeUseCase =
+        QueryAddressLevelThreeUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

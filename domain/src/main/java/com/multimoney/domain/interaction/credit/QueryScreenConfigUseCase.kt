@@ -9,6 +9,6 @@ interface QueryScreenConfigUseCase {
         pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 }

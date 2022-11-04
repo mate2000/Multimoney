@@ -7,6 +7,6 @@ class QueryHomeProvinceUseCaseImpl(private val creditRepository: CreditRepositor
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest:String
+        idUserRequest: Int
     ) = creditRepository.queryHomeProvince(pkUser, user, idBrand, idUserRequest)
 }

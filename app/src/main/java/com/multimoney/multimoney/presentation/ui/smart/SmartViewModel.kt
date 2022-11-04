@@ -106,7 +106,7 @@ class SmartViewModel @Inject constructor(
             idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
             idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
             idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
-            income = accountSmartData?.income?.toInt() ?: 0,
+            income = accountSmartData?.income?.toDouble() ?: 0.0,
             addressDetail = accountSmartData?.addressDetail ?: "",
             isPEP = accountSmartData?.isPEP ?: false,
             user = accountSmartData?.user ?: "",
@@ -252,12 +252,14 @@ class SmartViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
-            is UIEvent.OnContinueVisible -> uiState =
-                uiState.copy(isContinueVisible = event.visible)
+            is UIEvent.OnContinueVisible ->
+                uiState =
+                    uiState.copy(isContinueVisible = event.visible)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }

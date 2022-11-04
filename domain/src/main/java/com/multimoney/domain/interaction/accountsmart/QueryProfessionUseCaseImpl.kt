@@ -9,7 +9,7 @@ class QueryProfessionUseCaseImpl(private val smartAccountRepository: SmartAccoun
     QueryProfessionUseCase {
     override suspend fun invoke(
         user: String,
-        idBrand: Int,
+        idBrand: Int
     ): Flow<MultimoneyResult<Professions?>> =
-        smartAccountRepository.queryProfessions(user, idBrand)
+        smartAccountRepository.queryProfessionsSmart(user, idBrand)
 }

@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.ValidateUserExistsQuery
+import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
 import com.multimoney.domain.model.security.UserData
 
 private fun ValidateUserExistsQuery.ValidateUserExists.mapToDomainModel() = UserData(
@@ -25,4 +25,4 @@ private fun ValidateUserExistsQuery.ValidateUserExists.mapToDomainModel() = User
     detail = detail
 )
 
-fun ValidateUserExistsQuery.Data.mapToDomainModel() = validateUserExists?.mapToDomainModel()
+fun ValidateUserExistsQuery.Data.mapToDomainModel() = validateUserExists.mapToDomainModel()

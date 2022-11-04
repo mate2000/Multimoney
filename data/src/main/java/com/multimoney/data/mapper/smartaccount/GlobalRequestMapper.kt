@@ -1,12 +1,14 @@
 package com.multimoney.data.mapper.smartaccount
 
-import com.multimoney.data.networking.accountsmart.apollomodel.GlobalRequestMutation
+import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 
-private fun GlobalRequestMutation.Result.mapToDomain() = GlobalRequest(idGlobalRequest.toString().toInt(),
+private fun GlobalRequestMutation.Result.mapToDomainModel() = GlobalRequest(
+    idGlobalRequest.toString().toInt(),
     accountExists,
-    idSysdeRequest.toString().toInt())
+    idSysdeRequest.toString().toInt()
+)
 
-private fun GlobalRequestMutation.GlobalRequest.mapToDomain() = this.result?.mapToDomain()
+private fun GlobalRequestMutation.GlobalRequest.mapToDomainModel() = this.result.mapToDomainModel()
 
-fun GlobalRequestMutation.Data.mapToDomain() = this.globalRequest?.mapToDomain()
+fun GlobalRequestMutation.Data.mapToDomainModel() = this.globalRequest?.mapToDomainModel()

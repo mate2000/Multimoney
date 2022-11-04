@@ -9,6 +9,6 @@ interface QueryBanksAndRegularExpressionUseCase {
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<BanksAndRegularExpression>>
 }

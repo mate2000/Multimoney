@@ -14,26 +14,26 @@ interface SmartAccountRepository {
 
     suspend fun queryCivilStatus(
         pkUser: String,
-        idBrand: Int,
+        idBrand: Int
     ): Flow<MultimoneyResult<CivilStatusResult?>>
 
-    suspend fun queryProfessions(pkUser: String, idBrand: Int): Flow<MultimoneyResult<Professions?>>
+    suspend fun queryProfessionsSmart(pkUser: String, idBrand: Int): Flow<MultimoneyResult<Professions?>>
 
     suspend fun queryAddressLevelTwo(
         user: String,
         idBrand: Int,
-        idAddressLevel1: String,
+        idAddressLevel1: String
     ): Flow<MultimoneyResult<AddressesLevelTwo?>>
 
     suspend fun queryNationality(
         user: String,
-        idBrand: Int,
+        idBrand: Int
     ): Flow<MultimoneyResult<Nationalities?>>
 
     suspend fun queryStepByStep(
         user: String,
         idBrand: Int,
-        idRequest: Int,
+        idRequest: Int
     ): Flow<MultimoneyResult<StepByStep?>>
 
     suspend fun mutationGlobalRequest(
@@ -50,7 +50,7 @@ interface SmartAccountRepository {
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Int,
+        income: Double,
         addressDetail: String,
         isPEP: Boolean,
         user: String,
@@ -62,6 +62,6 @@ interface SmartAccountRepository {
 
     suspend fun queryGeneralEconomicActivity(
         user: String,
-        idBrand: Int,
+        idBrand: Int
     ): Flow<MultimoneyResult<GeneralEconomicActivityResult?>>
 }

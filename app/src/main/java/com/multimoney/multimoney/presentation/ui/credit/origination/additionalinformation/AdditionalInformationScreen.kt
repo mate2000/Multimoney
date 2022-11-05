@@ -108,7 +108,6 @@ fun GetCRQuestions(viewModel: AdditionalInformationViewModel, sharedViewModel: C
         shouldHaveDisclaimer = false,
         firstButtonIsSelected = viewModel.uiState.questionTwoValue,
         secondButtonIsSelected = viewModel.uiState.questionTwoValue.not(),
-        onDisclaimerClick = {},
         onFirstButtonOnClick = { viewModel.onUIEvent(OnQuestionTwoValueChange(true)) },
         onSecondButtonOnClick = { viewModel.onUIEvent(OnQuestionTwoValueChange(false)) }
     )
@@ -119,7 +118,6 @@ fun GetCRQuestions(viewModel: AdditionalInformationViewModel, sharedViewModel: C
         shouldHaveDisclaimer = false,
         firstButtonIsSelected = viewModel.uiState.questionThreeValue,
         secondButtonIsSelected = viewModel.uiState.questionThreeValue.not(),
-        onDisclaimerClick = {},
         onFirstButtonOnClick = { viewModel.onUIEvent(OnQuestionThreeValueChange(true)) },
         onSecondButtonOnClick = { viewModel.onUIEvent(OnQuestionThreeValueChange(false)) }
     )
@@ -130,7 +128,6 @@ fun GetCRQuestions(viewModel: AdditionalInformationViewModel, sharedViewModel: C
         shouldHaveDisclaimer = false,
         firstButtonIsSelected = viewModel.uiState.questionFourValue,
         secondButtonIsSelected = viewModel.uiState.questionFourValue.not(),
-        onDisclaimerClick = {},
         onFirstButtonOnClick = { viewModel.onUIEvent(OnQuestionFourValueChange(true)) },
         onSecondButtonOnClick = { viewModel.onUIEvent(OnQuestionFourValueChange(false)) }
     )
@@ -145,7 +142,6 @@ fun GetSVQuestions(viewModel: AdditionalInformationViewModel) {
         shouldHaveDisclaimer = false,
         firstButtonIsSelected = viewModel.uiState.questionOneValue,
         secondButtonIsSelected = viewModel.uiState.questionOneValue.not(),
-        onDisclaimerClick = {},
         onFirstButtonOnClick = { viewModel.onUIEvent(OnQuestionOneValueChange(true)) },
         onSecondButtonOnClick = { viewModel.onUIEvent(OnQuestionOneValueChange(false)) }
     )
@@ -160,7 +156,6 @@ fun GetGTQuestions(viewModel: AdditionalInformationViewModel) {
         shouldHaveDisclaimer = false,
         firstButtonIsSelected = viewModel.uiState.questionOneValue,
         secondButtonIsSelected = viewModel.uiState.questionOneValue.not(),
-        onDisclaimerClick = {},
         onFirstButtonOnClick = { viewModel.onUIEvent(OnQuestionOneValueChange(true)) },
         onSecondButtonOnClick = { viewModel.onUIEvent(OnQuestionOneValueChange(false)) }
     )

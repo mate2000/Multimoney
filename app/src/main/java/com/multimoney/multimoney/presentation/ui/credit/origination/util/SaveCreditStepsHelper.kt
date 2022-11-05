@@ -169,16 +169,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomeAddress))
     }
 
-    fun saveStepSixGT(
-        user: String?,
-        pep: String
-    ) {
-        val pepQuestion = getScreenConfigQuestion(POLITICALLY_EXPOSED_PERSON, pep)
-        val creditInfoQuestionPEP = textQuestion(user, pep, pepQuestion)
-        saveScreenQuestionData(creditInfoQuestionPEP)
-    }
-
-    fun saveStepSixSV(
+    fun saveStepSix(
         user: String?,
         pep: String
     ) {

@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -20,8 +22,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 
 /**
  * CustomDialog: This Dialog is used to match design system
@@ -53,10 +57,23 @@ fun RadioButtonQuestion(
     onFirstButtonOnClick: () -> Unit = {},
     onSecondButtonOnClick: () -> Unit = {}
 ) {
+    val backgroundColor: Color
+    val disclaimerColor: Color
+    val labelColor: Color
+    if (isSystemInDarkTheme()) {
+        backgroundColor = GrayScale800
+        disclaimerColor = SemanticInformative400
+        labelColor = WhiteTransparency90
+    } else {
+        backgroundColor = GrayScale800
+        disclaimerColor = SemanticInformative400
+        labelColor = WhiteTransparency90
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MultimoneyTheme.colors.background),
+            .background(backgroundColor),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
@@ -69,7 +86,7 @@ fun RadioButtonQuestion(
                     val text = stringResource(id = questionTextResource)
                     withStyle(
                         style = Typography.body1.copy(
-                            color = MultimoneyTheme.colors.labelText
+                            color = labelColor
                         ).toSpanStyle()
                     ) {
                         append(text)
@@ -79,7 +96,7 @@ fun RadioButtonQuestion(
                     val startIndex = text.indexOf(disclaimerText)
                     val endIndex = startIndex + disclaimerText.length
                     addStyle(
-                        style = Typography.body1.copy(color = MultimoneyTheme.colors.textInformation).toSpanStyle(),
+                        style = Typography.body1.copy(color = disclaimerColor).toSpanStyle(),
                         start = startIndex,
                         end = endIndex
                     )
@@ -108,7 +125,7 @@ fun RadioButtonQuestion(
                     modifier = Modifier,
                     text = stringResource(id = questionTextResource),
                     style = Typography.body1,
-                    color = MultimoneyTheme.colors.labelText,
+                    color = labelColor,
                     textAlign = TextAlign.Start
                 )
             }

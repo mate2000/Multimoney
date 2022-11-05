@@ -58,7 +58,7 @@ class AdditionalInformationViewModel @Inject constructor() : BaseViewModel(true)
     ) {
         when (idBrand) {
             Brand.ElSalvador.id -> {
-                saveCreditStepsHelper.saveStepSixSV(
+                saveCreditStepsHelper.saveStepSix(
                     user,
                     if (uiState.questionOneValue) {
                         questionTopAnswer
@@ -68,7 +68,7 @@ class AdditionalInformationViewModel @Inject constructor() : BaseViewModel(true)
                 )
             }
             Brand.Guatemala.id -> {
-                saveCreditStepsHelper.saveStepSixGT(
+                saveCreditStepsHelper.saveStepSix(
                     user,
                     if (uiState.questionOneValue) {
                         questionTopAnswer

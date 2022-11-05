@@ -31,6 +31,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavG
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
+import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
+import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer.OnCountDownTimerFinish
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
 
@@ -39,6 +41,8 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
+    mmTimer: LifecycleCountDownTimer?,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val innerNavController = rememberNavController()
@@ -48,26 +52,32 @@ fun HomeScreen(
     val activity = (LocalContext.current as? Activity)
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onInnerNavigate = onInnerNavigate)
+        viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
+        mmTimer?.subscribe(object : OnCountDownTimerFinish {
+            override fun onFinished() {
+                viewModel.onUIEvent(HomeViewModel.UIEvent.OnSignOut)
+            }
+        })
         viewModel.baseEvent.collect { event ->
             when (event) {
-                HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
+                is HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
                     coroutineScope.launch {
                         quickActionsModalBottomSheetState.show()
                     }
                 }
-                HomeViewModel.BaseEvent.OnOpenMyProductsBottomSheet -> {
+                is HomeViewModel.BaseEvent.OnOpenMyProductsBottomSheet -> {
                     coroutineScope.launch {
                         myProductsModalBottomSheetState.show()
                     }
                 }
+                is HomeViewModel.BaseEvent.OnCallStartTimer -> mmTimer?.startTimer(event.timerInFuture)
             }
         }
     }
 
     Scaffold(bottomBar = { MMBottomNavigation(navController = innerNavController, viewModel) }) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            HomeInsideNavGraph(navController = navController, innerNavController = innerNavController)
+            HomeInsideNavGraph(navController = navController, innerNavController = innerNavController, viewModel)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.util
+package com.multimoney.multimoney.presentation.uielement
 
 import android.content.Context
 import android.webkit.WebView

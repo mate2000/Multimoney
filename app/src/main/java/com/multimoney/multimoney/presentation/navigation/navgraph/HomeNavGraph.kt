@@ -7,8 +7,12 @@ import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.HOME_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.HomeScreen
+import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
 
-fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.homeNavGraph(
+    navController: NavHostController,
+    mmTimer: LifecycleCountDownTimer?
+) {
     navigation(
         startDestination = Screen.HomeScreen.route,
         route = HOME_ROUTE
@@ -26,7 +30,13 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
                         launchSingleTop = true
                         restoreState = false
                     }
-                }
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                mmTimer
             )
         }
     }

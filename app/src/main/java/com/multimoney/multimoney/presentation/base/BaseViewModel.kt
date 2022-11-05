@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
 import kotlinx.coroutines.Dispatchers

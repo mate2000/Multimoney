@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.credit
 
-import com.multimoney.data.networking.credit.apollomodel.ProccessPaymentListMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.domain.model.credit.ProcessPaymentList
 
 fun ProccessPaymentListMutation.Data.mapToDomainModel() = proccessPaymentList?.mapToDomainModel()

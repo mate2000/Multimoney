@@ -19,7 +19,7 @@ interface MutationGlobalRequestUseCase {
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Int,
+        income: Double,
         addressDetail: String,
         user: String,
         idBrand: Int,

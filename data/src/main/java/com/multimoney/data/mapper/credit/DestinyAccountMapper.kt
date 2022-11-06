@@ -1,9 +1,9 @@
 package com.multimoney.data.mapper.credit
 
-import com.multimoney.data.networking.credit.apollomodel.type.CuentaDestino
+import com.multimoney.data.networking.graphql.apollomodel.type.PaymentAccountsInput
 import com.multimoney.domain.model.credit.DestinyAccount
 
-fun DestinyAccount.mapToApolloModel() = CuentaDestino(
+fun DestinyAccount.mapToApolloModel() = PaymentAccountsInput(
     numeroCuentaDestino = destinyAccountNumber,
     idMonedaDestino = destinyCurrencyId,
     montoDestino = destinyAmount ?: 0.0

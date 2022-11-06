@@ -56,7 +56,7 @@ import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 fun SmartCrSalaryScreen(
     viewModel: SmartCrSalaryViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel,
-    sourceIncomeSharedViewModel: SourceIncomeViewModel,
+    sourceIncomeSharedViewModel: SourceIncomeViewModel
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -78,7 +78,7 @@ fun SmartCrSalaryScreen(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
                                 idEconomicActivity = SourceIncomeOptionType.FormalSalaried.id.toLong(),
-                                idProfessionType = viewModel.uiState.professionList.find { it?.name == viewModel.uiState.profession }?.id,
+                                idProfessionType = viewModel.uiState.professionSmartList.find { it?.name == viewModel.uiState.profession }?.id,
                                 income = viewModel.uiState.paymentAmount.toInt().toFloat()
                             )
                         )
@@ -100,9 +100,11 @@ fun SmartCrSalaryScreen(
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
-            (OnNavigateToSelectedSourceOfIncomeOption(
-                MainSourceIncomeScreenType.id
-            ))
+            (
+                OnNavigateToSelectedSourceOfIncomeOption(
+                    MainSourceIncomeScreenType.id
+                )
+                )
         )
     }
 
@@ -158,7 +160,7 @@ fun SmartCrSalaryScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.professionList.map { professionStatus ->
+            items = viewModel.uiState.professionSmartList.map { professionStatus ->
                 professionStatus?.name ?: ""
             },
             value = viewModel.uiState.profession,

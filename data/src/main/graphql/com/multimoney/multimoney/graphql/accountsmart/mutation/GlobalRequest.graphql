@@ -1,0 +1,61 @@
+mutation GlobalRequest(
+    $pkUser: Long!,
+    $status: Int!,
+    $idProfessionType: Int!,
+    $idAddressLevel1: Long!,
+    $idAddressLevel2: Long!,
+    $birthdate: DateTime!,
+    $expirationDate: DateTime!,
+    $idGenre: Long!,
+    $idMaritalStatus: Long!,
+    $nameCompany: String,
+    $aboutCompany: String!,
+    $institutionPension: String!,
+    $idAddressLevel3: Long!,
+    $idEconomicActivity: Long!,
+    $income: Float!,
+    $addressDetail: String!,
+    $user: String!,
+    $idBrand: Int!,
+    $currentStep: String!,
+    $specifiesIncomeSource: String!,
+    $isActivityOfArt15: Boolean!
+    $isUSCitizen: Boolean!
+    $isPEP: Boolean!
+    $isUSTaxPayer: Boolean!
+    $isTaxPayer: Boolean!
+) {
+    globalRequest(globalRequestInput: {
+        pkUser: $pkUser
+        status: $status
+        idProfessionType: $idProfessionType,
+        birthdate:$birthdate,
+        expirationDate:$expirationDate,
+        idGenre:$idGenre,
+        idMaritalStatus: $idMaritalStatus,
+        institutionPesion: $institutionPension,
+        nameCompany: $nameCompany,
+        aboutCompany : $aboutCompany,
+        idAddressLevel1 : $idAddressLevel1
+        idAddressLevel2 : $idAddressLevel2
+        idAddressLevel3 : $idAddressLevel3
+        idEconomicActivity : $idEconomicActivity
+        income : $income
+        addressDetail: $addressDetail
+        user: $user
+        idBrand: $idBrand
+        currentStep: $currentStep
+        specifiesIncomeSource: $specifiesIncomeSource
+        isActivityOfArt15: $isActivityOfArt15
+        isUSCitizen: $isUSCitizen
+        isPEP: $isPEP
+        isUSTaxPayer: $isUSTaxPayer
+        isTaxPayer: $isTaxPayer
+    }) {
+        result {
+            idGlobalRequest
+            accountExists
+            idSysdeRequest
+        }
+    }
+}

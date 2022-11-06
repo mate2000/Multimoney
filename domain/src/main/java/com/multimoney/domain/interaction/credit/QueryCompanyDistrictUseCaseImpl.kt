@@ -8,6 +8,6 @@ class QueryCompanyDistrictUseCaseImpl(private val creditRepository: CreditReposi
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest:String
+        idUserRequest: Int
     ) = creditRepository.queryCompanyDistrict(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
 }

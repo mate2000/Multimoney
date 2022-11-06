@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -25,6 +27,8 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaBottomSheet
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -35,13 +39,15 @@ import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SmartScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SmartViewModel = hiltViewModel(),
+    viewModel: SmartViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
+    val coroutineScope = rememberCoroutineScope()
 
     // Navigation
     LaunchedEffect(true) {
@@ -58,7 +64,8 @@ fun SmartScreen(
                 isLeftButtonVisible = viewModel.uiState.currentStep != Six.id,
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
+                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
+            )
             if (viewModel.uiState.currentStep != Five.id) {
                 StepProgressBar(
                     steps = SMART_INDICATOR_TOTAL_STEPS,
@@ -74,7 +81,7 @@ fun SmartScreen(
             GetStepContent(
                 step = viewModel.uiState.currentStep,
                 viewModel = viewModel,
-                onPopAndNavigate
+                onPopAndNavigate,
             )
         }
         CustomButton(
@@ -105,13 +112,18 @@ fun SmartScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
+    FactaBottomSheet(
+        coroutineScope = coroutineScope,
+        modalBottomSheetState = viewModel.uiState.bottomModalSheet,
+        viewModel = viewModel
+    )
 }
 
 @Composable
 fun GetStepContent(
     step: Int,
     viewModel: SmartViewModel,
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)

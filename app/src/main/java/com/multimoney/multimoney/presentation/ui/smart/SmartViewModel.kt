@@ -1,5 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,6 +25,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
@@ -37,6 +41,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
+@OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class SmartViewModel @Inject constructor(
     private val queryStepByStepUseCase: QueryStepByStepUseCase,
@@ -46,9 +51,9 @@ class SmartViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     // bundle parameters
-    val pkUser = savedStateHandle.get(PK_USER) ?: ""
-    val idBrand = savedStateHandle.get(ID_BRAND) ?: ""
-    val user = savedStateHandle.get(USER) ?: ""
+    val pkUser = savedStateHandle[PK_USER] ?: ""
+    val idBrand = savedStateHandle[ID_BRAND] ?: ""
+    val user = savedStateHandle[USER] ?: ""
     val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
 
     // Stateless
@@ -224,6 +229,18 @@ class SmartViewModel @Inject constructor(
         )
     }
 
+    private fun onClickBottomSheet() {
+        uiState = if (uiState.bottomModalSheet.isVisible) {
+            uiState.copy(
+                bottomModalSheet = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+            )
+        } else {
+            uiState.copy(
+                bottomModalSheet = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+            )
+        }
+    }
+
     /**
      * this function will update the accountSmartData object with the new data coming from
      * the child screen after tapping on the "continue" button, also it will trigger the
@@ -241,11 +258,13 @@ class SmartViewModel @Inject constructor(
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var bottomModalSheet: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
+            is OnClickBottomSheet -> onClickBottomSheet()
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
                 event.nextStep,
@@ -289,6 +308,8 @@ class SmartViewModel @Inject constructor(
         data class OnContinueVisible(val visible: Boolean) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
+
+        object OnClickBottomSheet : UIEvent()
     }
 
     companion object {

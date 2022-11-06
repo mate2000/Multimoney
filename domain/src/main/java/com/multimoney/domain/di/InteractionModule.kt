@@ -265,11 +265,6 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryAddressLevelTwoUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelTwoUseCase =
-        QueryAddressLevelTwoUseCaseImpl(smartAccountRepository)
-
-    @Provides
-    @Singleton
     fun provideQueryNationalitiesUseCase(smartAccountRepository: SmartAccountRepository): QueryNationalitiesUseCase =
         QueryNationalitiesUseCaseImpl(smartAccountRepository)
 
@@ -287,6 +282,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryAddressLevelOneUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelOneUseCase =
         QueryAddressLevelOneUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryAddressLevelTwoUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelTwoUseCase =
+        QueryAddressLevelTwoUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

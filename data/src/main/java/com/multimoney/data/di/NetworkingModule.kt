@@ -8,10 +8,7 @@ import com.apollographql.apollo3.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo3.network.okHttpClient
 import com.multimoney.data.BuildConfig
 import com.multimoney.data.R
-import com.multimoney.data.networking.BalanceApi
-import com.multimoney.data.networking.CreditApi
-import com.multimoney.data.networking.SecurityApi
-import com.multimoney.data.networking.SmartAccountApi
+import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.util.CertificateUtil
 import com.multimoney.data.util.DataStorePreferences
 import dagger.Module
@@ -58,15 +55,14 @@ class NetworkingModule {
 
     private fun apolloAuthorizedClientProvider(
         @ApplicationContext context: Context,
-        schema: String,
         certificateUtil: CertificateUtil,
         dataStorePreferences: DataStorePreferences
     ): ApolloClient {
         val sqlNormalizedCacheFactory =
-            SqlNormalizedCacheFactory(context, APOLLO_PREFIX_DB + schema + APOLLO_SUFFIX_DB)
+            SqlNormalizedCacheFactory(context, APOLLO_DB)
 
         return ApolloClient.Builder()
-            .serverUrl(BuildConfig.API_URL + schema)
+            .serverUrl(BuildConfig.API_URL + SCHEMA_GRAPHQL)
             .addHttpInterceptor(AuthorizationInterceptor(dataStorePreferences))
             .normalizedCache(sqlNormalizedCacheFactory)
             .okHttpClient(
@@ -79,56 +75,22 @@ class NetworkingModule {
 
     @Singleton
     @Provides
-    fun securityApi(
+    fun graphqlApi(
         @ApplicationContext context: Context,
         util: CertificateUtil,
         preferences: DataStorePreferences
-    ): SecurityApi =
-        SecurityApi(
+    ): GraphqlApi =
+        GraphqlApi(
             apolloAuthorizedClient = apolloAuthorizedClientProvider(
                 context,
-                SCHEMA_SECURITY,
                 util,
                 preferences
             )
         )
 
-    @Singleton
-    @Provides
-    fun balanceApi(
-        @ApplicationContext context: Context,
-        util: CertificateUtil,
-        preferences: DataStorePreferences
-    ): BalanceApi =
-        BalanceApi(apolloAuthorizedClientProvider(context, SCHEMA_BALANCES, util, preferences))
-
-    @Singleton
-    @Provides
-    fun creditApi(
-        @ApplicationContext context: Context,
-        util: CertificateUtil,
-        preferences: DataStorePreferences
-    ): CreditApi =
-        CreditApi(apolloAuthorizedClientProvider(context, SCHEMA_CREDIT, util, preferences))
-
-    @Singleton
-    @Provides
-    fun smartApi(
-        @ApplicationContext context: Context,
-        util: CertificateUtil,
-        preferences: DataStorePreferences
-    ): SmartAccountApi =
-        SmartAccountApi(apolloAuthorizedClientProvider(context, SCHEMA_SMART, util, preferences))
-
     companion object {
         const val TIMEOUT = 120L
-        const val APOLLO_PREFIX_DB = "multimoney_apollo_"
-        const val APOLLO_SUFFIX_DB = "_db"
-        const val SCHEMA_SECURITY = "security"
-        const val SCHEMA_BALANCES = "balances"
-        const val SCHEMA_CREDIT = "credit"
-        const val SCHEMA_SMART = "accountsmart"
+        const val APOLLO_DB = "multimoney_apollo_graphql_db"
+        const val SCHEMA_GRAPHQL = "graphql"
     }
 }
-
-

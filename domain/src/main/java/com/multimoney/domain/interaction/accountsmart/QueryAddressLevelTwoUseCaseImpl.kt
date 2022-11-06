@@ -9,7 +9,7 @@ class QueryAddressLevelTwoUseCaseImpl(val repository: SmartAccountRepository) : 
     override suspend fun invoke(
         user: String,
         idBrand: Int,
-        idAddressLevelOne: String,
+        idAddressLevelOne: String
     ): Flow<MultimoneyResult<AddressesLevel?>> =
         repository.queryAddressLevelTwo(user, idBrand, idAddressLevelOne)
 }

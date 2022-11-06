@@ -1,10 +1,11 @@
 package com.multimoney.data.mapper.smartaccount
 
-import com.multimoney.data.networking.accountsmart.apollomodel.StepByStepQuery
+import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.StepByStep
 
-private fun StepByStepQuery.StepbyStep.mapToDomain() = StepByStep(knownFor,
+private fun StepByStepQuery.StepbyStep.mapToDomainModel() = StepByStep(
+    knownFor,
     birthdate.toString(),
     idGenre.toString().toInt(),
     strGenre,
@@ -35,7 +36,7 @@ private fun StepByStepQuery.StepbyStep.mapToDomain() = StepByStep(knownFor,
     income.toString().toFloat(),
     fullJobAddress,
     entrepreneurship,
-    beneficiary?.map { it?.mapToDomain() },
+    beneficiary?.map { it.mapToDomainModel() },
     isActivityOfArt15,
     isUSCitizen,
     isPEP,
@@ -53,7 +54,7 @@ private fun StepByStepQuery.StepbyStep.mapToDomain() = StepByStep(knownFor,
     idRequestSys = idRequestSysde.toString().toInt()
 )
 
-private fun StepByStepQuery.Beneficiary.mapToDomain() =
+private fun StepByStepQuery.Beneficiary.mapToDomainModel() =
     Beneficiary(fullName, relationship.toString().toInt(), strRelationship, allocationPercentage)
 
-fun StepByStepQuery.Data.mapToDomain() = stepbyStep?.mapToDomain()
+fun StepByStepQuery.Data.mapToDomainModel() = stepbyStep.mapToDomainModel()

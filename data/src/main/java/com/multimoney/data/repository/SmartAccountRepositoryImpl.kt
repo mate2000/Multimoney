@@ -137,7 +137,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             isPEP,
             isUSTaxPayer,
             isTaxPayer
-        ), apolloCallMapper = { data -> Success(data.mapToDomain()) })
+        ), apolloCallMapper = { data -> Success(data.mapToDomainModel()) })
 
     /**
      * fetch the list of the source of income catalog for the account smart flow

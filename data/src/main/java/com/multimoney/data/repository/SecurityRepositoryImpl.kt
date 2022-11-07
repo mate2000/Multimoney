@@ -32,7 +32,7 @@ class SecurityRepositoryImpl @Inject constructor(
         user: String
     ): Flow<MultimoneyResult<Company?>> =
         fetchData(
-            apolloCall = securityApi.queryGetCompanyNameByIdentification(
+            apolloCall = graphqlApi.queryGetCompanyNameByIdentification(
                 identification,
                 idBrand,
                 user

@@ -17,15 +17,15 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnResetAccountNumber
+import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnOpenInformativeDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import com.multimoney.multimoney.presentation.util.capitalized
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class IbanAccountViewModel @Inject constructor(
@@ -144,12 +144,13 @@ class IbanAccountViewModel @Inject constructor(
         )
     }
 
-    private fun onResetAccountNumber() {
+    private fun resetAccountNumber() {
         uiState = uiState.copy(
             accountNumber = "",
             accountError = Pair(false, R.string.empty),
             ibanSuccess = false
         )
+        onValidForm(false)
     }
 
     private fun onLoadStep(
@@ -175,7 +176,8 @@ class IbanAccountViewModel @Inject constructor(
         val accountNumber: String = "",
         val accountError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val validationError: String? = null,
-        val ibanSuccess: Boolean = false
+        val ibanSuccess: Boolean = false,
+        val dialogParameters: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -195,7 +197,13 @@ class IbanAccountViewModel @Inject constructor(
                 uiEvent.email,
                 uiEvent.idBrand
             )
-            is OnResetAccountNumber -> onResetAccountNumber()
+            is OnOpenInformativeDialog -> uiState = uiState.copy(
+                dialogParameters = DialogParameters(
+                    descriptionResource = R.string.iban_dialog_message,
+                    positiveAction = { resetAccountNumber() },
+                    isActive = mutableStateOf(true)
+                )
+            )
             is OnLoadCreditSteps -> onLoadStep(uiEvent.list, uiEvent.onFailureWithDialog)
         }
     }
@@ -219,7 +227,7 @@ class IbanAccountViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnValidForm : UIEvent()
-        object OnResetAccountNumber : UIEvent()
+        object OnOpenInformativeDialog : UIEvent()
         data class OnLoadCreditSteps(
             val list: List<CreditCatalog?>?,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit

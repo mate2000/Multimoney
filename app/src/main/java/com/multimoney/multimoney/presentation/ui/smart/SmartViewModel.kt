@@ -42,13 +42,14 @@ class SmartViewModel @Inject constructor(
     private val queryStepByStepUseCase: QueryStepByStepUseCase,
     private val mutationGlobalRequestUseCase: MutationGlobalRequestUseCase,
     private val dataStorePreferences: DataStorePreferences,
-    savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     // bundle parameters
-    val pkUser = savedStateHandle.get(PK_USER) ?: ""
-    val idBrand = savedStateHandle.get(ID_BRAND) ?: ""
-    val user = savedStateHandle.get(USER) ?: ""
+    val pkUser = savedStateHandle[PK_USER] ?: ""
+    val idBrand = savedStateHandle[ID_BRAND] ?: ""
+    val user = savedStateHandle[USER] ?: ""
+    val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
 
     // Stateless
     var nextAction: () -> Unit = {}
@@ -64,7 +65,7 @@ class SmartViewModel @Inject constructor(
     init {
         accountSmartData = AccountSmartData(
             pkUser = pkUser,
-            idBrand = idBrand.toInt(),
+            idBrand = idBrandAsInt,
             user = user
         )
     }
@@ -106,7 +107,7 @@ class SmartViewModel @Inject constructor(
             idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
             idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
             idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
-            income = accountSmartData?.income?.toInt() ?: 0,
+            income = accountSmartData?.income?.toDouble() ?: 0.0,
             addressDetail = accountSmartData?.addressDetail ?: "",
             isPEP = accountSmartData?.isPEP ?: false,
             user = accountSmartData?.user ?: "",
@@ -115,7 +116,13 @@ class SmartViewModel @Inject constructor(
             idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
             birthday = accountSmartData?.birthday ?: "",
             expirationDate = accountSmartData?.expirationDate ?: "",
-            idGender = accountSmartData?.idGender ?: 0
+            idGender = accountSmartData?.idGender ?: 0,
+            companyName = accountSmartData?.companyName.orEmpty(),
+            aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
+            institutionPension = accountSmartData?.institutionPension.orEmpty(),
+            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
+            entrepreneurship = accountSmartData?.entrepreneurship ?: "",
+            legalID = accountSmartData?.legalID ?: ""
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -231,7 +238,8 @@ class SmartViewModel @Inject constructor(
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters(),
+        val isContinueVisible: Boolean = true,
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -247,10 +255,14 @@ class SmartViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
+            is UIEvent.OnContinueVisible ->
+                uiState =
+                    uiState.copy(isContinueVisible = event.visible)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }
@@ -269,11 +281,12 @@ class SmartViewModel @Inject constructor(
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
-            val previousStep: Int,
+            val previousStep: Int
         ) : UIEvent()
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
+        data class OnContinueVisible(val visible: Boolean) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
     }
@@ -281,5 +294,6 @@ class SmartViewModel @Inject constructor(
     companion object {
         const val SMART_TOTAL_STEPS = 6
         const val SMART_INDICATOR_TOTAL_STEPS = 5
+        const val DEFAULT_ID_BRAND_ERROR = -1
     }
 }

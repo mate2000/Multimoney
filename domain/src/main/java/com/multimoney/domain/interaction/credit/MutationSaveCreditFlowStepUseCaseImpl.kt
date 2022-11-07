@@ -6,11 +6,12 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.CreditRepository
 import kotlinx.coroutines.flow.Flow
 
-class MutationSaveCreditFlowStepUseCaseImpl(val creditRepository: CreditRepository) : MutationSaveCreditFlowStepUseCase {
+class MutationSaveCreditFlowStepUseCaseImpl(val creditRepository: CreditRepository) :
+    MutationSaveCreditFlowStepUseCase {
     override suspend fun invoke(
         user: String,
         idBrand: Int,
-        infoQuestion: List<CreditInfoQuestion?>,
+        infoQuestion: List<CreditInfoQuestion>,
         idLogUserRequest: Int,
         idUser: Int,
         currentStep: String

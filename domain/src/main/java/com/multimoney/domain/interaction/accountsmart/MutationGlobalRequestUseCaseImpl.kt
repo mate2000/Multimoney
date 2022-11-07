@@ -4,7 +4,6 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.repository.SmartAccountRepository
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
 class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
     MutationGlobalRequestUseCase {
@@ -16,16 +15,22 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         birthday: String,
         expirationDate: String,
         idGender: Long,
+        companyName: String,
+        aboutCompany: String,
         idAddressLevel1: Long,
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Int,
+        income: Double,
         addressDetail: String,
         isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
+        institutionPension: String,
+        specifiesIncomeSource: String,
+        entrepreneurship: String,
+        legalID: String
     ): Flow<MultimoneyResult<GlobalRequest?>> = repository.mutationGlobalRequest(
         pkUser,
         status,
@@ -34,6 +39,8 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         birthday,
         expirationDate,
         idGender,
+        companyName,
+        aboutCompany,
         idAddressLevel1,
         idAddressLevel2,
         idAddressLevel3,
@@ -43,6 +50,10 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         isPEP,
         user,
         idBrand,
-        currentStep
+        currentStep,
+        institutionPension,
+        specifiesIncomeSource,
+        entrepreneurship,
+        legalID
     )
 }

@@ -2,7 +2,7 @@ package com.multimoney.data.repository
 
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.balances.mapToDomainModel
-import com.multimoney.data.networking.BalanceApi
+import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class BalanceRepositoryImpl @Inject constructor(
-    private val balanceApi: BalanceApi
+    private val graphqlApi: GraphqlApi
 ) : BaseRepository(),
     BalanceRepository {
 
@@ -26,8 +26,12 @@ class BalanceRepositoryImpl @Inject constructor(
         cryptoStatus: Int,
         cardStatus: Int
     ): Flow<MultimoneyResult<Balance?>> = fetchData(
-        apolloCall = balanceApi.queryBalance(
-            user, identification, idBrand, idClient, idLoanClient,
+        apolloCall = graphqlApi.queryBalance(
+            user,
+            identification,
+            idBrand,
+            idClient,
+            idLoanClient,
             creditStatus,
             accountStatus,
             cryptoStatus,

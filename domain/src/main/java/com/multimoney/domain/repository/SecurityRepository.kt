@@ -3,6 +3,7 @@ package com.multimoney.domain.repository
 import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.ConfigurationVersion
+import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
@@ -15,6 +16,12 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
 interface SecurityRepository {
+
+    suspend fun queryGetCompanyNameByIdentification(
+        identification: String,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<Company?>>
 
     suspend fun queryValidateUserExists(
         email: String

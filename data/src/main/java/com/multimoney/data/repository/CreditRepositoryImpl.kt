@@ -2,14 +2,18 @@ package com.multimoney.data.repository
 
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
-import com.multimoney.data.networking.CreditApi
+import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
+import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
@@ -19,11 +23,11 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CreditRepositoryImpl @Inject constructor(
-    private val creditApi: CreditApi
+    private val graphqlApi: GraphqlApi
 ) : BaseRepository(),
     CreditRepository {
     override suspend fun queryCreditOffer(pkUser: Int, idBrand: Int): Flow<MultimoneyResult<CreditOffer?>> = fetchData(
-        apolloCall = creditApi.queryCreditOffer(pkUser, idBrand),
+        apolloCall = graphqlApi.queryCreditOffer(pkUser, idBrand),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -37,7 +41,7 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<PaymentAmount?>> = fetchData(
-        apolloCall = creditApi.queryPaymentAmount(amount, months, idProduct, currencySymbol, user, idBrand),
+        apolloCall = graphqlApi.queryPaymentAmount(amount, months, idProduct, currencySymbol, user, idBrand),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -64,7 +68,7 @@ class CreditRepositoryImpl @Inject constructor(
         tractAmount: Double,
         currentStep: String
     ): Flow<MultimoneyResult<CreditApplication?>> = fetchData(
-        apolloCall = creditApi.mutationSaveCreditApplication(
+        apolloCall = graphqlApi.mutationSaveCreditApplication(
             idUserRequest,
             pkUser,
             descPromotion,
@@ -86,7 +90,7 @@ class CreditRepositoryImpl @Inject constructor(
             currentStep
         ),
         apolloCallMapper = { data ->
-            if (data.saveCreditApplication?.status == null || data.saveCreditApplication.status == 0) {
+            if (data.saveCreditApplication.status == null || data.saveCreditApplication.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())
@@ -98,9 +102,9 @@ class CreditRepositoryImpl @Inject constructor(
         pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryScreenConfig(pkUser.toInt(), user, idBrand, idUserRequest),
+        apolloCall = graphqlApi.queryScreenConfig(pkUser.toInt(), user, idBrand, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -110,9 +114,9 @@ class CreditRepositoryImpl @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryHomeProvince(pkUser, user, idBrand, idUserRequest),
+        apolloCall = graphqlApi.queryHomeProvince(pkUser, user, idBrand, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -123,9 +127,9 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryHomeCanton(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
+        apolloCall = graphqlApi.queryHomeCanton(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -136,9 +140,9 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryHomeDistrict(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
+        apolloCall = graphqlApi.queryHomeDistrict(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -148,9 +152,9 @@ class CreditRepositoryImpl @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyProvince(pkUser, user, idBrand, idUserRequest),
+        apolloCall = graphqlApi.queryCompanyProvince(pkUser, user, idBrand, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -161,9 +165,9 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyCanton(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
+        apolloCall = graphqlApi.queryCompanyCanton(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -174,9 +178,9 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
-        apolloCall = creditApi.queryCompanyDistrict(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
+        apolloCall = graphqlApi.queryCompanyDistrict(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -185,12 +189,12 @@ class CreditRepositoryImpl @Inject constructor(
     override suspend fun mutationSaveCreditFlowStep(
         user: String,
         idBrand: Int,
-        infoQuestion: List<CreditInfoQuestion?>,
+        infoQuestion: List<CreditInfoQuestion>,
         idLogUserRequest: Int,
         idUser: Int,
         currentStep: String
     ): Flow<MultimoneyResult<SaveCreditFlowStep?>> = fetchData(
-        apolloCall = creditApi.mutationSaveCreditFlowStep(
+        apolloCall = graphqlApi.mutationSaveCreditFlowStep(
             user,
             idBrand,
             infoQuestion,
@@ -208,13 +212,13 @@ class CreditRepositoryImpl @Inject constructor(
         idBrand: Int,
         systemInDarkTheme: Boolean
     ): Flow<MultimoneyResult<String>> = fetchData(
-        apolloCall = creditApi.mutationTermsAndConditions(
+        apolloCall = graphqlApi.mutationTermsAndConditions(
             user,
             idBrand,
             systemInDarkTheme
         ),
         apolloCallMapper = { data ->
-            Success(data.terminsAndConditions?.terminsAndConditionsHtml ?: "")
+            Success(data.terminsAndConditions.terminsAndConditionsHtml ?: "")
         }
     )
 
@@ -222,13 +226,13 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         idClient: Int,
-        idLoan: Int
+        idLoanClient: Int
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>> = fetchData(
-        apolloCall = creditApi.queryGetClientBankAccount(
+        apolloCall = graphqlApi.queryGetClientBankAccount(
             user,
             idBrand,
             idClient,
-            idLoan
+            idLoanClient
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
@@ -239,9 +243,9 @@ class CreditRepositoryImpl @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<BanksAndRegularExpression>> = fetchData(
-        apolloCall = creditApi.queryBanksAndRegularExpression(
+        apolloCall = graphqlApi.queryBanksAndRegularExpression(
             pkUser,
             user,
             idBrand,
@@ -249,6 +253,73 @@ class CreditRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetPaymentPoints(
+        idBrand: Int
+    ): Flow<MultimoneyResult<List<PaymentPoint?>?>> = fetchData(
+        apolloCall = graphqlApi.queryGetPaymentPoints(
+            idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetExchangeRateCredit(
+        idBrand: Int,
+        user: String,
+        identification: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String,
+        amount: Double
+    ): Flow<MultimoneyResult<ExchangeRate?>> = fetchData(
+        apolloCall = graphqlApi.queryGetExchangeCreditRate(
+            idBrand,
+            user,
+            identification,
+            idOriginCurrency,
+            idDestinationCurrency,
+            amount
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationProcessPaymentList(
+        user: String,
+        idBrand: Int,
+        customerId: Int,
+        identification: String,
+        originAccountNumber: String,
+        destinyAccountNumber: String,
+        currencyId: String,
+        customerName: String,
+        description: String,
+        destinyAccount: List<DestinyAccount>,
+        amount: Any
+    ): Flow<MultimoneyResult<ProcessPaymentList?>> = fetchData(
+        apolloCall = graphqlApi.mutationProcessPaymentList(
+            user = user,
+            idBrand = idBrand,
+            customerId = customerId,
+            identification = identification,
+            originAccountNumber = originAccountNumber,
+            destinyAccountNumber = destinyAccountNumber,
+            currencyId = currencyId,
+            customerName = customerName,
+            description = description,
+            destinyAccount = destinyAccount,
+            amount = amount
+        ),
+        apolloCallMapper = { data ->
+            if (data.proccessPaymentList?.status == null || data.proccessPaymentList.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
         }
     )
 }

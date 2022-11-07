@@ -1,0 +1,17 @@
+query GetClientBankAccount($user: String!, $idBrand: Int!, $idClient: Long!, $idLoanClient: Long! ){
+    getClientBankAccount(
+        getClientBankAccountInput: {
+            user: $user
+            idBrand: $idBrand
+            idClient: $idClient
+            idLoanClient: $idLoanClient
+        }
+    ) {
+        id
+        id_Banco
+        descripcion_banco
+        numeroCuenta
+        id_Moneda
+        id_Moneda_Destino
+    }
+}

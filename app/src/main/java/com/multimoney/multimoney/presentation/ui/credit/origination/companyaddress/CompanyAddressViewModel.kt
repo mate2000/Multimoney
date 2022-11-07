@@ -44,7 +44,7 @@ class CompanyAddressViewModel @Inject constructor(
     var pkUser = ""
     var user = ""
     var idBrand = Brand.ElSalvador.id
-    var idUserRequest: String = ""
+    var idUserRequest: Int = 0
     private var companyProvince: CreditCatalog? = null
     private var companyCanton: CreditCatalog? = null
     private var companyDistrict: CreditCatalog? = null
@@ -124,7 +124,7 @@ class CompanyAddressViewModel @Inject constructor(
         pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest: String,
+        idUserRequest: Int,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
@@ -395,7 +395,7 @@ class CompanyAddressViewModel @Inject constructor(
             val pkUser: String,
             val user: String,
             val idBrand: Int,
-            val idUserRequest: String,
+            val idUserRequest: Int,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()

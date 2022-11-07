@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.ValidateUserStatusQuery
+import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.domain.model.security.InfoBankAccount
 import com.multimoney.domain.model.security.InfoCredit
 import com.multimoney.domain.model.security.InfoCrypto
@@ -11,11 +11,11 @@ import com.multimoney.domain.model.security.Product
 import com.multimoney.domain.model.security.ValidateUserStatus
 
 private fun ValidateUserStatusQuery.ValidateUserStatus.mapToDomainModel() = ValidateUserStatus(
-    infoUser = infoUser?.mapToDomainModel(),
-    infoCredit = infoCredit?.mapToDomainModel(),
-    infoBankAccount = infoBankAccount?.mapToDomainModel(),
-    infoCrypto = infoCrypto?.mapToDomainModel(),
-    infoVirtualCard = infoVirtualCard?.mapToDomainModel()
+    infoUser = infoUser.mapToDomainModel(),
+    infoCredit = infoCredit.mapToDomainModel(),
+    infoBankAccount = infoBankAccount.mapToDomainModel(),
+    infoCrypto = infoCrypto.mapToDomainModel(),
+    infoVirtualCard = infoVirtualCard.mapToDomainModel()
 )
 
 private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
@@ -35,14 +35,14 @@ private fun ValidateUserStatusQuery.InfoCredit.mapToDomainModel() = InfoCredit(
 private fun ValidateUserStatusQuery.InfoPreApprove.mapToDomainModel() = InfoPreApprove(
     idUserRequest = idUserRequest.toString().toInt(),
     status = status,
-    selectedAmount = selectedAmount?.toString()?.toFloat(),
+    selectedAmount = selectedAmount.toString().toFloat(),
     statusFirm = statusFirm,
     currentStep = currentStep,
-    infoProducts = infoProducts?.map { it?.mapToDomainModel() }
+    infoProducts = infoProducts.map { it.mapToDomainModel() }
 )
 
 private fun ValidateUserStatusQuery.InfoProduct.mapToDomainModel() =
-    Product(idProduct, amountAvailable.toString(), symbolCurrency)
+    Product(idProduct, amountAvailable.toString(), amountAvailableFormat, symbolCurrency)
 
 private fun ValidateUserStatusQuery.InfoBankAccount.mapToDomainModel() = InfoBankAccount(
     statusFirm = statusFirm,
@@ -53,4 +53,4 @@ private fun ValidateUserStatusQuery.InfoCrypto.mapToDomainModel() = InfoCrypto(s
 
 private fun ValidateUserStatusQuery.InfoVirtualCard.mapToDomainModel() = InfoVirtualCard(status = status)
 
-fun ValidateUserStatusQuery.Data.mapToDomainModel() = validateUserStatus?.mapToDomainModel()
+fun ValidateUserStatusQuery.Data.mapToDomainModel() = validateUserStatus.mapToDomainModel()

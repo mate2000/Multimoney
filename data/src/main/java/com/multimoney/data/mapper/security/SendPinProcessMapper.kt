@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.SendPinProcessMutation
+import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.util.error.MessageError
 
@@ -24,4 +24,4 @@ private fun SendPinProcessMutation.SendPinProccess.mapToDomainModel() = SendPinP
     messageError = mapMessageToDomainModel()
 )
 
-fun SendPinProcessMutation.Data.mapToDomainModel() = sendPinProccess?.mapToDomainModel()
+fun SendPinProcessMutation.Data.mapToDomainModel() = sendPinProccess.mapToDomainModel()

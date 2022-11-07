@@ -3,7 +3,10 @@ package com.multimoney.multimoney.presentation.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
+import kotlin.time.Duration
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -15,7 +18,6 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Tra
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import kotlin.time.Duration
 
 fun Context.openWhatsAppDeepLink(link: String) {
     val intent = Intent(Intent.ACTION_VIEW)
@@ -28,21 +30,6 @@ fun Context.openMapsLink(latitude: String, longitude: String) {
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
     mapIntent.setPackage("com.google.android.apps.maps")
     this.startActivity(mapIntent)
-}
-
-fun Context.sendAccount(client: String, accountNumber: String) {
-    val clientStringLabel = getString(R.string.credit_detail_client)
-    val ibanAccountLabel = getString(R.string.credit_detail_iban_number)
-    val intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(
-            Intent.EXTRA_TEXT,
-            "$clientStringLabel: ${client.uppercase()}\n$ibanAccountLabel: $accountNumber"
-        )
-        type = "text/plain"
-    }
-    val chooser = Intent.createChooser(intent, "")
-    this.startActivity(chooser)
 }
 
 fun tickerFlow(
@@ -59,8 +46,23 @@ fun tickerFlow(
     }
 }
 
-// Currency
+/**
+ * return the proper icon from the local drawable resources depending on the iconId,
+ * either for CR or SV
+ */
+fun Int.getSourceIncomeIconDrawable() = when (this) {
+    SourceIncomeType.Salaried.iconId,
+    SourceIncomeType.FormalSalaried.iconId -> R.drawable.ic_salaried
+    SourceIncomeType.FreeLancer.iconId,
+    SourceIncomeType.OwnBusinessOnPersonalBasis.iconId -> R.drawable.ic_freelancer
+    SourceIncomeType.OwnBusiness.iconId,
+    SourceIncomeType.OwnBusinessInPartnership.iconId -> R.drawable.ic_own_business
+    SourceIncomeType.Retired.iconId -> R.drawable.ic_retired
+    SourceIncomeType.Other.iconId -> R.drawable.ic_other
+    else -> R.drawable.ic_other
+}
 
+// Currency
 fun Int.getCurrency(): CurrencyType {
     return when (this) {
         Colon.id -> Colon
@@ -70,8 +72,28 @@ fun Int.getCurrency(): CurrencyType {
     }
 }
 
-// Payment
+/**
+ * get currency symbol by idBrand
+ */
+fun Int.getCurrencySymbol(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.dollar_symbol
+        Brand.CostaRica.id -> R.string.colon_symbol
+        Brand.Guatemala.id -> R.string.quetzal_symbol
+        else -> R.string.empty
+    }
+}
 
+fun Int.getCurrencySymbolValue(): Int {
+    return when (this) {
+        Brand.ElSalvador.id -> R.string.dollar_symbol_value
+        Brand.CostaRica.id -> R.string.colon_symbol_value
+        Brand.Guatemala.id -> R.string.quetzal_symbol_value
+        else -> R.string.empty
+    }
+}
+
+// Payment
 fun String.getPaymentMethodType(): PaymentMethodType {
     return when (this) {
         VisaDirect.value -> VisaDirect
@@ -79,3 +101,9 @@ fun String.getPaymentMethodType(): PaymentMethodType {
         else -> CashPaymentPoint
     }
 }
+
+fun String.getMaskedText(
+    maskSymbol: String,
+    firstDigits: Int,
+    lastDigits: Int
+) = take(firstDigits).plus(maskSymbol).plus(takeLast(lastDigits))

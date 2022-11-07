@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ButtonElevation
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -57,6 +59,8 @@ fun CustomButton(
     buttonType: CustomButtonType = CustomButtonType.PrimaryPrimary,
     text: String = stringResource(id = R.string.button_continue),
     enable: Boolean = true,
+    visible: Boolean = true,
+    elevation: ButtonElevation = ButtonDefaults.elevation(),
     enableArrowIcon: Boolean = false,
     trailingIcon: Int? = null,
     onClick: () -> Unit = {}
@@ -71,7 +75,7 @@ fun CustomButton(
     var borderStroke: BorderStroke? = null
 
     val textColor: Color
-    var underLined: Boolean = false
+    var underLined = false
 
     when (buttonType) {
         CustomButtonType.PrimaryPrimary -> {
@@ -154,9 +158,9 @@ fun CustomButton(
                     backgroundColor = if (isPressed) {
                         WhiteTransparency12
                     } else {
-                        GrayScale800
+                        Transparent
                     },
-                    disabledBackgroundColor = DefaultBlack,
+                    disabledBackgroundColor = Transparent,
                     disabledContentColor = GrayScale400
                 )
                 textColor = Primary400
@@ -190,9 +194,9 @@ fun CustomButton(
                     backgroundColor = if (isPressed) {
                         WhiteTransparency12
                     } else {
-                        GrayScale800
+                        Transparent
                     },
-                    disabledBackgroundColor = DefaultBlack,
+                    disabledBackgroundColor = Transparent,
                     disabledContentColor = GrayScale400
                 )
                 textColor = Primary400
@@ -256,40 +260,43 @@ fun CustomButton(
         }
     }
 
-    Button(
-        modifier = modifier,
-        onClick = onClick,
-        colors = buttonColor,
-        shape = RoundedCornerShape(50),
-        border = borderStroke,
-        enabled = enable,
-        interactionSource = interactionSource
-    ) {
-        Text(
-            text = text,
-            style = if (underLined) {
-                Typography.button.copy(textDecoration = TextDecoration.Underline)
-            } else {
-                Typography.button
-            },
-            color = textColor
-        )
-        if (enableArrowIcon) {
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_right),
-                contentDescription = "",
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                tint = arrowIconTint
+    if (visible) {
+        Button(
+            modifier = modifier,
+            onClick = onClick,
+            colors = buttonColor,
+            shape = RoundedCornerShape(50),
+            border = borderStroke,
+            elevation = elevation,
+            enabled = enable,
+            interactionSource = interactionSource
+        ) {
+            Text(
+                text = text,
+                style = if (underLined) {
+                    Typography.button.copy(textDecoration = TextDecoration.Underline)
+                } else {
+                    Typography.button
+                },
+                color = textColor
             )
-        } else if (trailingIcon != null) {
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Icon(
-                painter = painterResource(id = trailingIcon),
-                contentDescription = "",
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                tint = arrowIconTint
-            )
+            if (enableArrowIcon) {
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    contentDescription = "",
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                    tint = arrowIconTint
+                )
+            } else if (trailingIcon != null) {
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Icon(
+                    painter = painterResource(id = trailingIcon),
+                    contentDescription = "",
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                    tint = arrowIconTint
+                )
+            }
         }
     }
 }

@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnNextStep
@@ -186,6 +187,15 @@ class SmartViewModel @Inject constructor(
         nextAction.invoke()
     }
 
+    /**
+     * close the alert screen after tapping on the cta button and
+     * re-execute the OnContinueClick action from the current step
+     */
+    private fun onCtaAlertClick(focusManager: FocusManager) {
+        uiState = uiState.copy(isAlertResultVisible = false)
+        onUIEvent(OnContinueClick(focusManager))
+    }
+
     private fun previousStep() {
         if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
             uiState = uiState.copy(
@@ -256,8 +266,9 @@ class SmartViewModel @Inject constructor(
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
-            is OnCloseAlertClick -> uiState = uiState.copy(isAlertResultVisible = false)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
+            is OnCloseAlertClick -> uiState = uiState.copy(isAlertResultVisible = false)
+            is OnCtaAlertClick -> onCtaAlertClick(event.focusManager)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
             is OnFailureWithDialog -> uiState =
@@ -276,7 +287,8 @@ class SmartViewModel @Inject constructor(
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
-        data class OnCloseAlertClick(val focusManager: FocusManager) : UIEvent()
+        data class OnCtaAlertClick(val focusManager: FocusManager) : UIEvent()
+        object OnCloseAlertClick : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :

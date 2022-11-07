@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
@@ -98,18 +97,13 @@ fun SmartScreen(
     }
 
     if (viewModel.uiState.isAlertResultVisible) {
-        val context = LocalContext.current
         AlertResult(
             titleResource = string.error_no_internet_title,
             descriptionResource = string.smart_account_no_internet_error_description,
             buttonTextResource = string.common_try_again,
             isLeftButtonVisible = false,
-            onRightButtonClick = {
-                viewModel.onUIEvent(OnCloseAlertClick(focusManager))
-            },
-            onButtonClick = {
-                Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
-            }
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseAlertClick) },
+            onButtonClick = { viewModel.onUIEvent(OnCtaAlertClick(focusManager)) }
         )
     }
 }

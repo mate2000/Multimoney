@@ -4,21 +4,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnCrGoPageOne
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnCrGoPageTwo
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsActivityOfArt15Change
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsPEPChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsTaxPayerChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsUSCitizenChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsUSTaxPayerChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnCrGoPageOne
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnCrGoPageTwo
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsActivityOfArt15Change
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsPEPChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsTaxPayerChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSCitizenChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSTaxPayerChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class FactaViewModel @Inject constructor() : BaseViewModel(true) {
+class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set

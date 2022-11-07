@@ -32,22 +32,22 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnCrGoPageOne
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnCrGoPageTwo
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsActivityOfArt15Change
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsPEPChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsTaxPayerChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsUSCitizenChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.FactaViewModel.UIEvent.OnIsUSTaxPayerChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnCrGoPageOne
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnCrGoPageTwo
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsActivityOfArt15Change
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsPEPChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsTaxPayerChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSCitizenChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSTaxPayerChange
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonsLayout
 
 @Composable
-fun FactaScreen(
+fun SmartFactaScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
-    viewModel: FactaViewModel = hiltViewModel()
+    viewModel: SmartFactaViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(sharedViewModel.idBrandAsInt)))
@@ -93,9 +93,6 @@ fun FactaScreen(
                 CR_PAGE_TWO -> {
                     ContentTwoCR(viewModel, Modifier.padding(16.dp))
                     sharedViewModel.onUIEvent(OnContinueVisible(true))
-                    BackHandler {
-                        viewModel.onUiEvent(OnCrGoPageOne)
-                    }
                 }
             }
         }
@@ -108,7 +105,7 @@ fun FactaScreen(
 
 @Composable
 fun ContentSV(
-    viewModel: FactaViewModel,
+    viewModel: SmartFactaViewModel,
     modifier: Modifier = Modifier
 ) {
     val optionsCitizen = stringArrayResource(R.array.facta_is_us_citizen_options).toList()
@@ -155,7 +152,7 @@ fun ContentSV(
 
 @Composable
 fun ContentOneCR(
-    viewModel: FactaViewModel,
+    viewModel: SmartFactaViewModel,
     sharedViewModel: SmartViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -233,7 +230,7 @@ fun ContentOneCR(
 
 @Composable
 fun ContentTwoCR(
-    viewModel: FactaViewModel,
+    viewModel: SmartFactaViewModel,
     modifier: Modifier = Modifier
 ) {
     val options = stringArrayResource(R.array.yes_no).toList()
@@ -275,6 +272,9 @@ fun ContentTwoCR(
                 viewModel.onUiEvent(OnIsTaxPayerChange(it == options[0], ID_BRAND_CR))
             }
         )
+    }
+    BackHandler {
+        viewModel.onUiEvent(OnCrGoPageOne)
     }
 }
 

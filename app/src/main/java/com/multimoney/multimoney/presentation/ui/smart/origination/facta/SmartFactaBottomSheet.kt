@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.facta
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +29,7 @@ import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FactaBottomSheet(
+fun SmartFactaBottomSheet(
     coroutineScope: CoroutineScope,
     modalBottomSheetState: ModalBottomSheetState,
     viewModel: SmartViewModel
@@ -39,9 +40,9 @@ fun FactaBottomSheet(
         modalBottomSheetState = modalBottomSheetState,
         coroutineScope = coroutineScope
     ) {
-        Column() {
+        Column {
             Row(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(8.dp),
                 verticalAlignment = Alignment.Top
             ) {
                 Icon(
@@ -65,6 +66,9 @@ fun FactaBottomSheet(
                     .height(48.dp),
                 buttonType = PrimaryPrimary
             )
+        }
+        BackHandler {
+            viewModel.onUIEvent(OnClickBottomSheet)
         }
     }
 }

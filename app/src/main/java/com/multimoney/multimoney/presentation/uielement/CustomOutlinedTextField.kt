@@ -344,12 +344,12 @@ fun CustomOutlinedTextField(
                     tint = errorIndicatorColor
                 )
                 HtmlText(
-                    text = if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
-                        errorMessage ?: ""
-                    } else if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
+                    text = if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
                         isRequiredMessage ?: ""
                     } else if (emptyError) {
                         stringResource(id = R.string.error_empty_field)
+                    } else if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
+                        errorMessage ?: ""
                     } else {
                         ""
                     },

@@ -66,7 +66,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private var onSuccessCatalogDocumentType: CatalogType? = null
     private var onSuccessCountry: CountryList? = null
 
-    // Stateless
+    // Stateless1
     var documentLength = 0
 
     // Event
@@ -457,14 +457,18 @@ class SignUpPersonalDataViewModel @Inject constructor(
 
     private fun validateDocument(email: String?) {
         uiState = uiState.copy(
-            personalIdError = when (uiState.nationalityValue) {
-                CostaRicaId.country -> validateCrDocument(email ?: "")
-                ElSalvador.country -> validDui(uiState.personalDocumentValue)
-                else -> validId(
-                    Guatemala.documentSize,
-                    R.string.sign_up_personal_data_dpi_gt_not_valid,
-                    uiState.personalDocumentValue.length
-                )
+            personalIdError = if (uiState.personalDocumentValue.isNotBlank()) {
+                when (uiState.nationalityValue) {
+                    CostaRicaId.country -> validateCrDocument(email ?: "")
+                    ElSalvador.country -> validDui(uiState.personalDocumentValue)
+                    else -> validId(
+                        Guatemala.documentSize,
+                        R.string.sign_up_personal_data_dpi_gt_not_valid,
+                        uiState.personalDocumentValue.length
+                    )
+                }
+            } else {
+                Pair(false, R.string.error_empty)
             }
         )
         isFormValid()

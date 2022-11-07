@@ -215,7 +215,32 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPaymentScreen() {
-        navigateTo("${Screen.SmartScreen.baseRoute}/${userName}/${uiState.idBrand}/${pkUser}")
+        val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
+        val infoCredit = uiState.userStatus?.infoCredit
+        val route = if ((
+            creditSummary?.size
+                ?: 0
+            ) > 1 && validateQuotas(creditSummary) && uiState.idBrand.toInt() == Brand.CostaRica.id
+        ) {
+            "${Screen.PaymentFeeScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+            encodeData(
+                creditSummary
+            )
+            }/$identification/$userName"
+        } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+            "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+            encodeData(
+                listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
+            )
+            }/$identification/$userName"
+        } else {
+            "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
+            encodeData(
+                configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true }
+            )
+            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}"
+        }
+        navigateTo(route)
     }
 
     private fun validateQuotas(summaryList: List<Summary>?): Boolean {

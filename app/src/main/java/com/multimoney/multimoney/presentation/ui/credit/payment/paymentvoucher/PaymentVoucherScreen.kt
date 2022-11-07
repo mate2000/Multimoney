@@ -134,9 +134,36 @@ fun PaymentVoucherScreen(
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text
                         )
+                        CustomButton(
+                            onClick = {
+                                capturingViewBounds?.let { bounds ->
+                                    viewModel.onUIEvent(
+                                        OnSharedVoucherImage(
+                                            view,
+                                            bounds
+                                        )
+                                    )
+                                }
+                            },
+                            text = stringResource(string.payment_voucher_shared_button),
+                            modifier = Modifier
+                                .padding(
+                                    start = 24.dp,
+                                    end = 24.dp,
+                                    top = 12.dp
+                                )
+                                .fillMaxWidth(),
+                            elevation = ButtonDefaults.elevation(
+                                defaultElevation = 0.dp,
+                                pressedElevation = 0.dp,
+                                disabledElevation = 0.dp
+                            ),
+                            trailingIcon = R.drawable.ic_icon_share,
+                            buttonType = CustomButtonType.PrimaryTertiary
+                        )
                         Text(
                             text = stringResource(string.payment_voucher_you_have_paid),
-                            modifier = Modifier.padding(top = 32.dp),
+                            modifier = Modifier.padding(top = 12.dp),
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
                         )
@@ -242,38 +269,7 @@ fun PaymentVoucherScreen(
                         )
                     }
                 }
-                CustomButton(
-                    onClick = {
-                        capturingViewBounds?.let { bounds ->
-                            viewModel.onUIEvent(
-                                OnSharedVoucherImage(
-                                    view,
-                                    bounds
-                                )
-                            )
-                        }
-                    },
-                    text = stringResource(string.payment_voucher_shared_button),
-                    modifier = Modifier
-                        .padding(
-                            start = 24.dp,
-                            end = 24.dp,
-                            bottom = 24.dp,
-                            top = 18.dp
-                        )
-                        .fillMaxWidth()
-                        .height(48.dp).constrainAs(shareButtonId) {
-                            top.linkTo(contentId.bottom)
-                            bottom.linkTo(parent.bottom)
-                        },
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 0.dp,
-                        pressedElevation = 0.dp,
-                        disabledElevation = 0.dp
-                    ),
-                    trailingIcon = R.drawable.ic_icon_share,
-                    buttonType = CustomButtonType.PrimaryTertiary
-                )
+
             }
             if (viewModel.uiState.showScheduleAutomaticPaymentProcess) {
                 CustomButton(

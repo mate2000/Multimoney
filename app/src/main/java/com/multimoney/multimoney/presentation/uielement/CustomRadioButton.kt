@@ -2,22 +2,17 @@ package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
+import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary500
-import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 
 /**
  * CustomRadioButton: Selector that forces the user to only pick one option
@@ -46,8 +41,8 @@ fun CustomRadioButton(
         var textColor = GrayScale800
         if (isSystemInDarkTheme()) {
             radioSelectedColor = DefaultWhite
-            radioUnSelectedColor = WhiteTransparency70
-            textColor = WhiteTransparency70
+            radioUnSelectedColor = GrayScale400
+            textColor = DefaultWhite
         }
         RadioButton(
             colors = RadioButtonDefaults.colors(radioSelectedColor, radioUnSelectedColor),
@@ -57,11 +52,8 @@ fun CustomRadioButton(
                 onOptionSelected()
             }
         )
-        Spacer(modifier = Modifier.width(18.dp))
         Text(
-            modifier = Modifier.padding(top = 2.dp),
             text = text,
-            style = Typography.subtitle2,
             color = textColor
         )
     }

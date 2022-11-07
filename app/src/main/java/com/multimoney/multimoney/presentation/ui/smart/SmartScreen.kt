@@ -18,14 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
-import com.multimoney.data.util.catalog.SmartSteps.Five
-import com.multimoney.data.util.catalog.SmartSteps.Six
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.SMART_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
@@ -125,8 +124,9 @@ fun GetStepContent(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
     when (step) {
-        SmartSteps.One.id -> SmartFactaScreen(sharedViewModel = viewModel)
+        SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SmartLivAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Three.id -> SourceIncomeScreen(sharedViewModel = viewModel)
+        SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
     }
 }

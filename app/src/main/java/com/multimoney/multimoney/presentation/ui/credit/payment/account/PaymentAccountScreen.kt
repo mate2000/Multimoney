@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
-import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -56,7 +55,6 @@ fun PaymentAccountScreen(
         DisposableEffect(isOnRestart) {
             if (isOnRestart) {
                 executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-                onUIEvent(OnGetTextResources)
                 onUIEvent(OnCallQueryGetClientBankAccount)
             }
             onDispose {
@@ -82,39 +80,17 @@ fun PaymentAccountContent(
             onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackHome) }
         )
         Text(
-            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp, bottom = 20.dp),
             text = stringResource(id = viewModel.uiState.titleResource),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-        viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
-            LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
-                items(clientBankAccountList) { clientBankAccount ->
-                    CustomInfoButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        startIcon = clientBankAccount?.idCurrency?.getCurrency()?.accountIcon ?: 0,
-                        title = clientBankAccount?.bankDescription ?: "",
-                        subtitle = getMaskedAccount(
-                            clientBankAccount?.accountNumber ?: "",
-                            stringResource(id = R.string.payment_account_masked_text)
-                        ),
-                        onClick = {
-                            viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount))
-                        }
-                    )
-                }
-            }
-            if (viewModel.uiState.isClientBankAccountListEmpty) {
-                PaymentAccountEmptyState(viewModel)
-            } else {
-                PaymentAccountList(viewModel)
-            }
+        if (viewModel.uiState.isClientBankAccountListEmpty) {
+            PaymentAccountEmptyState(viewModel)
+        } else {
+            PaymentAccountList(viewModel)
         }
-
-        LoadingIndicator(viewModel.uiState.isLoading)
 
         if (viewModel.uiState.openDialog.isActive.value) {
             CustomDialog(
@@ -126,6 +102,7 @@ fun PaymentAccountContent(
             )
         }
     }
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable

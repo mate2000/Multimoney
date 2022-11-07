@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
@@ -33,9 +34,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartViewModel @Inject constructor(
@@ -143,13 +144,7 @@ class SmartViewModel @Inject constructor(
             }
         },
         noInternetAction = {
-            uiState = uiState.copy(
-                isLoading = false,
-                openDialog = DialogParameters(
-                    description = "No Internet Error",
-                    isActive = mutableStateOf(true)
-                )
-            )
+            uiState = uiState.copy(isAlertResultVisible = true)
         }
     )
 
@@ -247,6 +242,7 @@ class SmartViewModel @Inject constructor(
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
+        val isAlertResultVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )
 
@@ -260,6 +256,7 @@ class SmartViewModel @Inject constructor(
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
+            is OnCloseAlertClick -> uiState = uiState.copy(isAlertResultVisible = false)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
@@ -279,6 +276,7 @@ class SmartViewModel @Inject constructor(
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
+        data class OnCloseAlertClick(val focusManager: FocusManager) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :

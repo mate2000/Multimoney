@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -22,14 +24,15 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.SMART_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -73,8 +76,7 @@ fun SmartScreen(
         ) {
             GetStepContent(
                 step = viewModel.uiState.currentStep,
-                viewModel = viewModel,
-                onPopAndNavigate
+                viewModel = viewModel
             )
         }
         CustomButton(
@@ -95,14 +97,19 @@ fun SmartScreen(
         viewModel.onUIEvent(OnBackClick(focusManager))
     }
 
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description,
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+    if (viewModel.uiState.isAlertResultVisible) {
+        val context = LocalContext.current
+        AlertResult(
+            titleResource = string.error_no_internet_title,
+            descriptionResource = string.smart_account_no_internet_error_description,
+            buttonTextResource = string.common_try_again,
+            isLeftButtonVisible = false,
+            onRightButtonClick = {
+                viewModel.onUIEvent(OnCloseAlertClick(focusManager))
+            },
+            onButtonClick = {
+                Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
+            }
         )
     }
 }
@@ -110,8 +117,7 @@ fun SmartScreen(
 @Composable
 fun GetStepContent(
     step: Int,
-    viewModel: SmartViewModel,
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    viewModel: SmartViewModel
 ) {
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)

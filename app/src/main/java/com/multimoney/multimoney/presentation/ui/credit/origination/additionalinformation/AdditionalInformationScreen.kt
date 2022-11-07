@@ -67,6 +67,7 @@ fun AdditionalInformationScreen(
     }
 
     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Spacer(Modifier.height(16.dp))
         Text(
             text = stringResource(id = R.string.credit_additional_information_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),

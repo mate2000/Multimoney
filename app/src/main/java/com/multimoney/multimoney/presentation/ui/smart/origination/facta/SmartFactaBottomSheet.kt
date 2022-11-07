@@ -35,7 +35,7 @@ fun SmartFactaBottomSheet(
     viewModel: SmartViewModel
 ) {
     CustomModalBottomSheet(
-        title = R.string.facta_article_15_info_title,
+        title = R.string.smart_facta_article_15_info_title,
         closeIcon = R.drawable.ic_close_bottom_sheet,
         modalBottomSheetState = modalBottomSheetState,
         coroutineScope = coroutineScope
@@ -52,7 +52,7 @@ fun SmartFactaBottomSheet(
                     modifier = Modifier.padding(end = 8.dp, top = 16.dp)
                 )
                 Text(
-                    text = stringResource(R.string.facta_article_15_info),
+                    text = stringResource(R.string.smart_facta_article_15_info),
                     color = GrayScale500,
                     style = Typography.subtitle1,
                     modifier = Modifier.padding(vertical = 16.dp)

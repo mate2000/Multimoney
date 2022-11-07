@@ -13,7 +13,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -24,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
@@ -51,8 +51,6 @@ fun SmartFactaScreen(
 ) {
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(sharedViewModel.idBrandAsInt)))
-        if (sharedViewModel.idBrandAsInt == ID_BRAND_CR) viewModel.onUiEvent(OnCrGoPageOne)
-
         sharedViewModel.onUIEvent(
             OnSetNavigation(
                 nextAction = {
@@ -60,10 +58,10 @@ fun SmartFactaScreen(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
                                 isPEP = viewModel.uiState.isPEP,
-                                isUSCitizen = viewModel.uiState.isPEP,
-                                isActivityOfArt15 = viewModel.uiState.isPEP,
-                                isUSTaxPayer = viewModel.uiState.isPEP,
-                                isTaxPayer = viewModel.uiState.isPEP
+                                isUSCitizen = viewModel.uiState.isUSCitizen,
+                                isActivityOfArt15 = viewModel.uiState.isActivityOfArt15,
+                                isUSTaxPayer = viewModel.uiState.isUSTaxPayer,
+                                isTaxPayer = viewModel.uiState.isTaxPayer
                             )
                         )
                     )
@@ -108,12 +106,12 @@ fun ContentSV(
     viewModel: SmartFactaViewModel,
     modifier: Modifier = Modifier
 ) {
-    val optionsCitizen = stringArrayResource(R.array.facta_is_us_citizen_options).toList()
-    val optionsPep = stringArrayResource(R.array.facta_is_pep_options).toList()
+    val optionsCitizen = stringArrayResource(R.array.smart_facta_is_us_citizen_options).toList()
+    val optionsPep = stringArrayResource(R.array.smart_facta_is_pep_options).toList()
 
     Column(modifier) {
         Text(
-            text = stringResource(R.string.facta_are_you_us_citizen),
+            text = stringResource(R.string.smart_facta_are_you_us_citizen),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp,
@@ -134,7 +132,7 @@ fun ContentSV(
         )
 
         Text(
-            text = stringResource(R.string.facta_are_you_or_family_pep),
+            text = stringResource(R.string.smart_facta_are_you_or_family_pep),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp,
@@ -156,12 +154,14 @@ fun ContentOneCR(
     sharedViewModel: SmartViewModel,
     modifier: Modifier = Modifier
 ) {
-    val options = stringArrayResource(R.array.yes_no).toList()
+    val optionsYesNo = stringArrayResource(R.array.options_yes_no).toList()
+    val optionsPep = stringArrayResource(R.array.smart_facta_is_pep_options).toList()
+
     val annotatedText = buildAnnotatedString {
-        append(stringResource(R.string.facta_activities_according_to_article_15) + " ")
+        append(stringResource(R.string.smart_facta_activities_according_to_article_15) + " ")
         pushStringAnnotation(INFO_TAG, INFO_TAG)
-        withStyle(style = SpanStyle(Color.Blue)) {
-            append(stringResource(R.string.facta_learn_more))
+        withStyle(style = SpanStyle(MultimoneyTheme.colors.textInformation)) {
+            append(stringResource(R.string.smart_facta_learn_more))
         }
     }
     Column(
@@ -188,9 +188,9 @@ fun ContentOneCR(
             )
 
             CustomRadioButtonsLayout(
-                options = options,
+                options = optionsYesNo,
                 onOptionSelected = {
-                    viewModel.onUiEvent(OnIsActivityOfArt15Change(it == options[0], ID_BRAND_CR))
+                    viewModel.onUiEvent(OnIsActivityOfArt15Change(it == optionsYesNo[0], ID_BRAND_CR))
                 }
             )
 
@@ -201,7 +201,7 @@ fun ContentOneCR(
             )
 
             Text(
-                text = stringResource(R.string.facta_are_you_or_family_pep),
+                text = stringResource(R.string.smart_facta_are_you_or_family_pep),
                 style = Typography.body1.copy(
                     fontSize = 17.sp,
                     letterSpacing = (-0.41).sp,
@@ -209,9 +209,9 @@ fun ContentOneCR(
                 )
             )
             CustomRadioButtonsLayout(
-                options = options,
+                options = optionsPep,
                 onOptionSelected = {
-                    viewModel.onUiEvent(OnIsPEPChange(it == options[0], ID_BRAND_CR))
+                    viewModel.onUiEvent(OnIsPEPChange(it == optionsPep[0], ID_BRAND_CR))
                 }
             )
         }
@@ -233,12 +233,12 @@ fun ContentTwoCR(
     viewModel: SmartFactaViewModel,
     modifier: Modifier = Modifier
 ) {
-    val options = stringArrayResource(R.array.yes_no).toList()
+    val options = stringArrayResource(R.array.options_yes_no).toList()
     Column(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.facta_are_you_us_tax_payer),
+            text = stringResource(R.string.smart_facta_are_you_us_tax_payer),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp,
@@ -259,7 +259,7 @@ fun ContentTwoCR(
         )
 
         Text(
-            text = stringResource(R.string.facta_are_you_other_country_tax_payer),
+            text = stringResource(R.string.smart_facta_are_you_other_country_tax_payer),
             style = Typography.body1.copy(
                 fontSize = 17.sp,
                 letterSpacing = (-0.41).sp,

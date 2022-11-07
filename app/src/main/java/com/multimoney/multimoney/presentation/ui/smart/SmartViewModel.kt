@@ -310,7 +310,6 @@ class SmartViewModel @Inject constructor(
         data class OnContinueVisible(val visible: Boolean) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
-
         object OnClickBottomSheet : UIEvent()
     }
 

@@ -8,10 +8,10 @@ import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCas
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
-import com.multimoney.domain.model.accountsmart.AddressLevelTwo
+import com.multimoney.domain.model.accountsmart.Address
 import com.multimoney.domain.model.accountsmart.CivilStatus
 import com.multimoney.domain.model.accountsmart.Nationality
-import com.multimoney.domain.model.accountsmart.Profession
+import com.multimoney.domain.model.accountsmart.ProfessionSmart
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -31,15 +31,15 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
     private val queryCivilStatusUseCase: QueryCivilStatusUseCase,
     private val queryProfessionUseCase: QueryProfessionUseCase,
     private val queryNationalitiesUseCase: QueryNationalitiesUseCase,
-    private val queryAddressLevelTwoUseCase: QueryAddressLevelTwoUseCase,
+    private val queryAddressLevelTwoUseCase: QueryAddressLevelTwoUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -78,7 +78,7 @@ class SmartDocumentViewModel @Inject constructor(
     private fun callQueryAddressLevelTwoUseCase(
         user: String,
         idBrand: Int,
-        idAddressLevelOne: String,
+        idAddressLevelOne: String
     ) = executeUseCase {
         queryAddressLevelTwoUseCase.invoke(
             user = user,
@@ -86,7 +86,7 @@ class SmartDocumentViewModel @Inject constructor(
             idAddressLevelOne = idAddressLevelOne
         ).collectLatest { result ->
             result.onSuccess { addresses ->
-                uiState = uiState.copy(addressLevelTwoList = addresses?.addresses ?: emptyList(),)
+                uiState = uiState.copy(addressLevelTwoList = addresses?.addresses ?: emptyList())
                 onUIEvent(OnLoadingValueChange(false))
             }
             result.onFailure {
@@ -140,7 +140,7 @@ class SmartDocumentViewModel @Inject constructor(
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { successfulResult ->
-                    uiState = uiState.copy(professionList = successfulResult?.status ?: emptyList())
+                    uiState = uiState.copy(professionSmartList = successfulResult?.status ?: emptyList())
                     onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
@@ -186,7 +186,7 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     private fun onProfessionChange(profession: String) {
-        val professionId = uiState.professionList.find { it?.name == profession }?.id
+        val professionId = uiState.professionSmartList.find { it?.name == profession }?.id
         uiState = uiState.copy(profession = profession, professionId = professionId ?: 0)
         validateForm()
     }
@@ -195,10 +195,10 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 isFormValid = uiState.gender.isNotBlank() &&
-                        uiState.birthdate.isNotBlank() &&
-                        uiState.civilState.isNotBlank() &&
-                        uiState.profession.isNotBlank() &&
-                        uiState.expirationDate.isNotBlank()
+                    uiState.birthdate.isNotBlank() &&
+                    uiState.civilState.isNotBlank() &&
+                    uiState.profession.isNotBlank() &&
+                    uiState.expirationDate.isNotBlank()
             )
         )
     }
@@ -219,9 +219,9 @@ class SmartDocumentViewModel @Inject constructor(
         val professionId: Int = 0,
         val openDialog: DialogParameters = DialogParameters(),
         val nationalitiesList: List<Nationality?> = listOf(),
-        val addressLevelTwoList: List<AddressLevelTwo?> = listOf(),
+        val addressLevelTwoList: List<Address?> = listOf(),
         val civilStatusList: List<CivilStatus?> = listOf(),
-        val professionList: List<Profession?> = listOf(),
+        val professionSmartList: List<ProfessionSmart?> = listOf()
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -254,7 +254,7 @@ class SmartDocumentViewModel @Inject constructor(
         data class OnStart(
             val userCompletedDialogDescription: String,
             val linkWhatsapp: String,
-            val blockedMessage: String,
+            val blockedMessage: String
         ) : UIEvent()
 
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
@@ -271,7 +271,7 @@ class SmartDocumentViewModel @Inject constructor(
         data class OnCallQueryAddressLevelTwoUseCase(
             val user: String,
             val pkUser: String,
-            val idBrand: Int,
+            val idBrand: Int
         ) : UIEvent()
 
         data class OnCallQueryCivilStatusUseCase(val user: String, val idBrand: Int) : UIEvent()

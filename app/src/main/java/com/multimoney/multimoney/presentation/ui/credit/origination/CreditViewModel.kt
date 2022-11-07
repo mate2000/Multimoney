@@ -72,14 +72,14 @@ class CreditViewModel @Inject constructor(
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
-    var idUserRequest: String = ""
+    var idUserRequest: Int = 0
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
         pkUser = savedStateHandle[PK_USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         email = savedStateHandle[EMAIL] ?: ""
-        idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: ""
+        idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         uiState = uiState.copy(
             lastStep = savedStateHandle[CREDIT_STEP] ?: CreditStep.One.id,
             loadContent = true

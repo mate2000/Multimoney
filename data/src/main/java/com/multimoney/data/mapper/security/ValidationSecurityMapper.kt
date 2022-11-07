@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.ValidationSecurityQuery
+import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.error.MessageError
 
@@ -14,4 +14,4 @@ private fun ValidationSecurityQuery.ValidateSecurity.mapToDomainModel() = Valida
     messageError = mapMessageToDomainModel()
 )
 
-fun ValidationSecurityQuery.Data.mapToDomainModel() = validateSecurity?.mapToDomainModel()
+fun ValidationSecurityQuery.Data.mapToDomainModel() = validateSecurity.mapToDomainModel()

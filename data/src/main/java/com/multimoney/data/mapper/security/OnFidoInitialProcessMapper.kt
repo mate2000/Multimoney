@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.OnfidoIntialProcessMutation
+import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.domain.model.security.OnfidoToken
 
 private fun OnfidoIntialProcessMutation.OnfidoInitialProcess.mapToDomainModel() = OnfidoToken(
@@ -8,4 +8,4 @@ private fun OnfidoIntialProcessMutation.OnfidoInitialProcess.mapToDomainModel() 
     sdkToken = sdkToken
 )
 
-fun OnfidoIntialProcessMutation.Data.mapToDomainModel() = onfidoInitialProcess?.mapToDomainModel()
+fun OnfidoIntialProcessMutation.Data.mapToDomainModel() = onfidoInitialProcess.mapToDomainModel()

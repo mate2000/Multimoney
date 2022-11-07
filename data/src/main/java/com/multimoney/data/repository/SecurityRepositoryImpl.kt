@@ -2,7 +2,7 @@ package com.multimoney.data.repository
 
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
-import com.multimoney.data.networking.SecurityApi
+import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.ConfigurationVersion
@@ -22,15 +22,15 @@ import java.io.Serializable
 import javax.inject.Inject
 
 class SecurityRepositoryImpl @Inject constructor(
-    private val securityApi: SecurityApi
+    private val graphqlApi: GraphqlApi
 ) : BaseRepository(), SecurityRepository, Serializable {
 
     override suspend fun queryValidateUserExists(
         email: String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
-        apolloCall = securityApi.queryValidateUserExists(email),
+        apolloCall = graphqlApi.queryValidateUserExists(email),
         apolloCallMapper = { data ->
-            if (data.validateUserExists?.status == null || data.validateUserExists.status == 0) {
+            if (data.validateUserExists.status == null || data.validateUserExists.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())
@@ -49,7 +49,7 @@ class SecurityRepositoryImpl @Inject constructor(
         firstSurname: String,
         secondSurname: String
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
-        apolloCall = securityApi.mutationUserValidation(
+        apolloCall = graphqlApi.mutationUserValidation(
             email,
             currentStep,
             idBrand,
@@ -61,7 +61,7 @@ class SecurityRepositoryImpl @Inject constructor(
             secondSurname
         ),
         apolloCallMapper = { data ->
-            if (data.userValidation?.status == null || data.userValidation.status == 0) {
+            if (data.userValidation.status == null || data.userValidation.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())
@@ -85,7 +85,7 @@ class SecurityRepositoryImpl @Inject constructor(
         currentStep: String,
         idBrand: Int
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
-        apolloCall = securityApi.mutationUpdateUserRegister(
+        apolloCall = graphqlApi.mutationUpdateUserRegister(
             pkUser,
             user,
             email,
@@ -112,9 +112,9 @@ class SecurityRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<ValidateSecurity?>> = fetchData(
-        apolloCall = securityApi.queryValidationSecurity(pkIUser.toInt(), password, user, idBrand),
+        apolloCall = graphqlApi.queryValidationSecurity(pkIUser.toInt(), password, user, idBrand),
         apolloCallMapper = { data ->
-            if (data.validateSecurity?.status == null || data.validateSecurity.status == 0) {
+            if (data.validateSecurity.status == null || data.validateSecurity.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())
@@ -127,7 +127,7 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<ClientInfoCr?>> = fetchData(
-        apolloCall = securityApi.queryDataInformationClient(identification, idBrand, user),
+        apolloCall = graphqlApi.queryDataInformationClient(identification, idBrand, user),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -140,7 +140,7 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<ValidateUserStatus?>> =
         fetchData(
-            apolloCall = securityApi.queryValidateUserStatus(
+            apolloCall = graphqlApi.queryValidateUserStatus(
                 pkUser,
                 identification,
                 email,
@@ -161,7 +161,7 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<SendPinProcess?>> = fetchData(
-        apolloCall = securityApi.mutationSendPinProcess(
+        apolloCall = graphqlApi.mutationSendPinProcess(
             identification,
             firstName,
             email,
@@ -172,7 +172,7 @@ class SecurityRepositoryImpl @Inject constructor(
             user
         ),
         apolloCallMapper = { data ->
-            if (data.sendPinProccess?.status == null || data.sendPinProccess.status == 0) {
+            if (data.sendPinProccess.status == null || data.sendPinProccess.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())
@@ -188,7 +188,7 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<OnfidoToken?>> = fetchData(
-        apolloCall = securityApi.mutationOnFidoInitialProcess(
+        apolloCall = graphqlApi.mutationOnFidoInitialProcess(
             names,
             lastNames,
             identification,
@@ -212,7 +212,7 @@ class SecurityRepositoryImpl @Inject constructor(
         flowOrigination: String,
         userCreate: String
     ): Flow<MultimoneyResult<ValidatePin?>> = fetchData(
-        apolloCall = securityApi.queryValidationPin(
+        apolloCall = graphqlApi.queryValidationPin(
             idBrand,
             appSource,
             pkUser,
@@ -224,7 +224,7 @@ class SecurityRepositoryImpl @Inject constructor(
             userCreate
         ),
         apolloCallMapper = { data ->
-            if (data.validatePin?.status == null || data.validatePin.status == 0) {
+            if (data.validatePin.status == null || data.validatePin.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())
@@ -236,7 +236,7 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<CatalogType?>> = fetchData(
-        apolloCall = securityApi.queryCatalogIdentification(idBrand, user),
+        apolloCall = graphqlApi.queryCatalogIdentification(idBrand, user),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -244,7 +244,7 @@ class SecurityRepositoryImpl @Inject constructor(
 
     override suspend fun queryGetCountry(user: String): Flow<MultimoneyResult<CountryList?>> =
         fetchData(
-            apolloCall = securityApi.queryGetCountry(user),
+            apolloCall = graphqlApi.queryGetCountry(user),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
@@ -256,7 +256,7 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<ConfigurationVersion?>> =
         fetchData(
-            apolloCall = securityApi.queryGetConfigurationVersion(platform, appVersion, idBrand),
+            apolloCall = graphqlApi.queryGetConfigurationVersion(platform, appVersion, idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
@@ -268,7 +268,7 @@ class SecurityRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int
     ) = fetchData(
-        apolloCall = securityApi.queryValidateAccount(account, identification, user, idBrand),
+        apolloCall = graphqlApi.queryValidateAccount(account, identification, user, idBrand),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }

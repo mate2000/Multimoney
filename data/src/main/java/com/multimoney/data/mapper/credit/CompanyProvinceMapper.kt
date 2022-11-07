@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.credit
 
-import com.multimoney.data.networking.credit.apollomodel.CompanyProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.CompanyProvinceQuery
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
 
@@ -17,7 +17,7 @@ private fun CompanyProvinceQuery.CompanyProvince.mapToDomainModel() = CreditCata
     valueCatalog = valor_Catalogo,
     maximumAmount = monto_Maximo,
     value = valor,
-    subOptions = subOpciones?.map { it?.mapToDomainModel() }
+    subOptions = subOpciones?.map { it.mapToDomainModel() }
 )
 
 private fun CompanyProvinceQuery.SubOpcione.mapToDomainModel() = CreditCatalogOption(
@@ -26,4 +26,4 @@ private fun CompanyProvinceQuery.SubOpcione.mapToDomainModel() = CreditCatalogOp
     fkCatalog = fk_Identificador_Catalogo
 )
 
-fun CompanyProvinceQuery.Data.mapToDomainModel() = companyProvince?.map { it?.mapToDomainModel() }
+fun CompanyProvinceQuery.Data.mapToDomainModel() = companyProvince.map { it.mapToDomainModel() }

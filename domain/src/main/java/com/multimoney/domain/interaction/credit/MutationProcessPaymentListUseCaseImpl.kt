@@ -18,7 +18,7 @@ class MutationProcessPaymentListUseCaseImpl(private val creditRepository: Credit
         currencyId: String,
         customerName: String,
         description: String,
-        destinyAccount: List<DestinyAccount?>,
+        destinyAccount: List<DestinyAccount>,
         amount: Any
     ): Flow<MultimoneyResult<ProcessPaymentList?>> = creditRepository.mutationProcessPaymentList(
         user = user,

@@ -167,11 +167,11 @@ fun SmartOwnBusinessSvContent(
             leadingIcon = R.drawable.ic_money_gray,
             placeHolder = stringResource(
                 id = R.string.smart_own_business_monthly_income_placeholder,
-                stringResource(sharedViewModel.idBrand.toInt().getCurrencySymbol())
+                stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
             ),
             customTransformation = formatMoney(
                 stringResource(
-                    sharedViewModel.idBrand.toInt().getCurrencySymbol()
+                    sharedViewModel.idBrandAsInt.getCurrencySymbol()
                 )
             ),
             modifier = Modifier.padding(top = 16.dp)

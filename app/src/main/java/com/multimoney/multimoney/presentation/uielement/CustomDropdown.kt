@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
@@ -45,7 +46,6 @@ import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.util.findActivity
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 @Composable
@@ -165,7 +165,7 @@ fun CustomDropdown(
                 .background(backgroundColor)
                 .pointerInput(Unit) {
                     detectTapAndPressUnconsumed(onTap = {
-                        activity.onUserInteraction()
+                        activity?.onUserInteraction()
                     })
                 }
         ) {

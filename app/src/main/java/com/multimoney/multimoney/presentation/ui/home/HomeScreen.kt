@@ -31,7 +31,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavG
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
-import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
 import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer.OnCountDownTimerFinish
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
@@ -42,7 +41,6 @@ fun HomeScreen(
     navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    mmTimer: LifecycleCountDownTimer?,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val innerNavController = rememberNavController()
@@ -53,7 +51,7 @@ fun HomeScreen(
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
-        mmTimer?.subscribe(object : OnCountDownTimerFinish {
+        viewModel.countDownTimer.subscribe(object : OnCountDownTimerFinish {
             override fun onFinished() {
                 viewModel.onUIEvent(HomeViewModel.UIEvent.OnSignOut)
             }
@@ -70,14 +68,13 @@ fun HomeScreen(
                         myProductsModalBottomSheetState.show()
                     }
                 }
-                is HomeViewModel.BaseEvent.OnCallStartTimer -> mmTimer?.startTimer(event.timerInFuture)
             }
         }
     }
 
     Scaffold(bottomBar = { MMBottomNavigation(navController = innerNavController, viewModel) }) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            HomeInsideNavGraph(navController = navController, innerNavController = innerNavController, viewModel)
+            HomeInsideNavGraph(navController = navController, innerNavController = innerNavController)
         }
     }
 

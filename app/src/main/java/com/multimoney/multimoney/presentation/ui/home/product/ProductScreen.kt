@@ -50,8 +50,6 @@ import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnCallStartTimer
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INFO_INCOMPLETE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INITIAL_CARD
@@ -94,7 +92,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 fun ProductScreen(
     isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    sharedViewModel: HomeViewModel,
     viewModel: ProductViewModel = hiltViewModel()
 ) {
     viewModel.apply {
@@ -113,7 +110,7 @@ fun ProductScreen(
     LaunchedEffect(true) {
         viewModel.baseEvent.collect { event ->
             when (event) {
-                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> sharedViewModel.emitBaseEvent(OnCallStartTimer(event.millisInFuture))
+                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(event.millisInFuture)
             }
         }
     }

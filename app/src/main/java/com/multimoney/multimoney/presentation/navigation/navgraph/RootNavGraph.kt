@@ -7,14 +7,14 @@ import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
 
 @Composable
-fun Navigation(mmTimer: LifecycleCountDownTimer?) {
+fun Navigation() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = LOGIN_ROUTE
     ) {
         loginNavGraph(navController = navController)
-        homeNavGraph(navController = navController, mmTimer)
+        homeNavGraph(navController = navController)
         creditNavGraph(navController = navController)
         visaNavGraph(navController = navController)
         paymentNavGraph(navController = navController)

@@ -12,8 +12,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductScreen
 @Composable
 fun HomeInsideNavGraph(
     navController: NavHostController,
-    innerNavController: NavHostController,
-    homeViewModel: HomeViewModel
+    innerNavController: NavHostController
 ) {
     NavHost(navController = innerNavController, startDestination = Screen.HomeBNScreen.route) {
         composable(route = Screen.HomeBNScreen.route) {
@@ -21,8 +20,7 @@ fun HomeInsideNavGraph(
                 isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = {
                     navController.navigate(it.route)
-                },
-                homeViewModel
+                }
             )
         }
     }

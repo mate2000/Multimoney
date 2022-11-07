@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
@@ -49,7 +50,6 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import com.multimoney.multimoney.presentation.util.findActivity
 import java.util.Calendar
 import java.util.Date
 import kotlinx.coroutines.launch
@@ -169,7 +169,7 @@ fun CustomDatePicker(
                     val datePicker = DatePickerDialog(
                         context,
                         { view, year, month, day ->
-                            activity.onUserInteraction()
+                            activity?.onUserInteraction()
                             onValueChange(view, year, month, day)
                         },
                         calendar.get(Calendar.YEAR),

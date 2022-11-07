@@ -3,8 +3,11 @@ package com.multimoney.multimoney.presentation.util
 import android.os.CountDownTimer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LifecycleCountDownTimer() : DefaultLifecycleObserver {
+@Singleton
+class LifecycleCountDownTimer @Inject constructor() : DefaultLifecycleObserver {
 
     private var timer: CountDownTimer? = null
     private var milliInFuture: Long? = null

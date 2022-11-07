@@ -97,50 +97,61 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun callMutationGlobalRequestUseCase() = executeUseCase {
-        mutationGlobalRequestUseCase.invoke(
-            pkUser = accountSmartData?.pkUser?.toInt() ?: 0,
-            status = accountSmartData?.status ?: 0,
-            idProfessionType = accountSmartData?.idProfessionType ?: 0,
-            idAddressLevel1 = accountSmartData?.idAddressLevel1 ?: 0,
-            idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
-            idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
-            idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
-            income = accountSmartData?.income?.toInt() ?: 0,
-            addressDetail = accountSmartData?.addressDetail ?: "",
-            isPEP = accountSmartData?.isPEP ?: false,
-            user = accountSmartData?.user ?: "",
-            idBrand = accountSmartData?.idBrand ?: 0,
-            currentStep = accountSmartData?.currentStep ?: "",
-            idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
-            birthday = accountSmartData?.birthday ?: "",
-            expirationDate = accountSmartData?.expirationDate ?: "",
-            idGender = accountSmartData?.idGender ?: 0,
-            companyName = accountSmartData?.companyName.orEmpty(),
-            aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
-            institutionPension = accountSmartData?.institutionPension.orEmpty(),
-            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: ""
-        ).collectLatest { result ->
-            result.onSuccess {
-                onUIEvent(OnLoadingValueChange(false))
-                onUIEvent(OnNextStep)
-            }
-            result.onFailure {
-                onUIEvent(
-                    OnFailureWithDialog(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = it.getError() ?: "",
-                            isActive = mutableStateOf(true)
+    private fun callMutationGlobalRequestUseCase() = executeUseCase(
+        action = {
+            mutationGlobalRequestUseCase.invoke(
+                pkUser = accountSmartData?.pkUser?.toInt() ?: 0,
+                status = accountSmartData?.status ?: 0,
+                idProfessionType = accountSmartData?.idProfessionType ?: 0,
+                idAddressLevel1 = accountSmartData?.idAddressLevel1 ?: 0,
+                idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
+                idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
+                idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
+                income = accountSmartData?.income?.toInt() ?: 0,
+                addressDetail = accountSmartData?.addressDetail ?: "",
+                isPEP = accountSmartData?.isPEP ?: false,
+                user = accountSmartData?.user ?: "",
+                idBrand = accountSmartData?.idBrand ?: 0,
+                currentStep = accountSmartData?.currentStep ?: "",
+                idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
+                birthday = accountSmartData?.birthday ?: "",
+                expirationDate = accountSmartData?.expirationDate ?: "",
+                idGender = accountSmartData?.idGender ?: 0,
+                companyName = accountSmartData?.companyName.orEmpty(),
+                aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
+                institutionPension = accountSmartData?.institutionPension.orEmpty(),
+                specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: ""
+            ).collectLatest { result ->
+                result.onSuccess {
+                    onUIEvent(OnLoadingValueChange(false))
+                    onUIEvent(OnNextStep)
+                }
+                result.onFailure {
+                    onUIEvent(
+                        OnFailureWithDialog(
+                            isLoading = false,
+                            openDialog = DialogParameters(
+                                description = it.getError() ?: "",
+                                isActive = mutableStateOf(true)
+                            )
                         )
                     )
+                }
+                result.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
+            }
+        },
+        noInternetAction = {
+            uiState = uiState.copy(
+                isLoading = false,
+                openDialog = DialogParameters(
+                    description = "No Internet Error",
+                    isActive = mutableStateOf(true)
                 )
-            }
-            result.onLoading {
-                onUIEvent(OnLoadingValueChange(true))
-            }
+            )
         }
-    }
+    )
 
     private fun moveToStep(step: Int) {
         if (step <= SMART_TOTAL_STEPS) {

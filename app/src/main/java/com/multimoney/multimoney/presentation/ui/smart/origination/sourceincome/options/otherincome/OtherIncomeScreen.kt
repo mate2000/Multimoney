@@ -54,8 +54,12 @@ fun OtherIncomeScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                idEconomicActivity = if (sharedViewModel.idBrandAsInt == ID_BRAND_CR) {
+                                    SourceIncomeOptionType.OtherCR.id.toLong()
+                                } else SourceIncomeOptionType.OtherSV.id.toLong(),
                                 income = viewModel.uiState.incomeAmount.toFloat(),
-                                specifiesIncomeSource = viewModel.uiState.incomeSource
+                                specifiesIncomeSource = viewModel.uiState.incomeSource,
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
@@ -140,3 +144,5 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
         )
     }
 }
+
+const val ID_BRAND_CR = 5

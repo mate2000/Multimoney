@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIdentificationChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatBusinessIdentification
@@ -57,9 +58,11 @@ fun OwnBusinessOnPersonalBasisScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                idEconomicActivity = SourceIncomeOptionType.OwnBusinessOnPersonalBasis.id.toLong(),
                                 income = viewModel.uiState.businessIncome.toFloat(),
                                 legalID = viewModel.uiState.businessIdentification,
-                                entrepreneurship = viewModel.uiState.businessActivity
+                                entrepreneurship = viewModel.uiState.businessActivity,
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
 
                         )

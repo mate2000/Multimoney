@@ -313,14 +313,10 @@
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
-    <string name="credit_monthly_income_profession_label" translatable="false">Selecciona tu profesión</string>
-    <string name="credit_monthly_income_profession_hint" translatable="false">Selecciona tu profesión</string>
-    <string-array name="credit_monthly_income_professions" translatable="false">
-        <item>Administración</item>
-        <item>Construcción</item>
-        <item>Seguridad</item>
-        <item>Informatica</item>
-    </string-array>
+    <string name="credit_monthly_income_profession_label" translatable="false">Seleccioná tu profesión</string>
+    <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
+    <string name="credit_monthly_income_occupation_label" translatable="false">Seleccioná tu ocupación</string>
+    <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Contanos de la empresa en la que trabajás</string>

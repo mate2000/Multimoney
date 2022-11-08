@@ -35,6 +35,7 @@ const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
 const val PAYMENT_AMOUNT =  "payment_amount"
 const val PAYMENT_ID =  "payment_id"
+const val IS_FROM_HOME = "is_from_home"
 
 // Payment maps location parameters
 const val LOCATION_NAME =  "location_name"
@@ -105,6 +106,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(NAME_CLIENT) {
                     type = NavType.StringType
+                },
+                navArgument(IS_FROM_HOME) {
+                    type = NavType.BoolType
                 }
             )
         ) {

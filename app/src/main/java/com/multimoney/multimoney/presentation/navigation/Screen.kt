@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LATIT
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_OPENING_TIME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_FROM_HOME
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
@@ -87,7 +88,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object PaymentAccountScreen :
         Screen(
-            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}",
+            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$IS_FROM_HOME}",
             "payment_account_screen"
         )
 

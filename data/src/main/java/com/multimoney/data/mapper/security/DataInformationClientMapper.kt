@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.DataInformationClientQuery
+import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.domain.model.security.ClientInfoCr
 
 private fun DataInformationClientQuery.DataInformationClient.mapToDomainModel() = ClientInfoCr(
@@ -13,4 +13,4 @@ private fun DataInformationClientQuery.DataInformationClient.mapToDomainModel() 
     message = message
 )
 
-fun DataInformationClientQuery.Data.mapToDomainModel() = dataInformationClient?.mapToDomainModel()
+fun DataInformationClientQuery.Data.mapToDomainModel() = dataInformationClient.mapToDomainModel()

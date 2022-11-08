@@ -145,7 +145,7 @@ fun SmartRetiredScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_amount_placeholder),
-            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrand.toInt()
+            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrandAsInt
                 .getCurrencySymbol()))
         )
     }

@@ -9,7 +9,7 @@ interface MutationSaveCreditFlowStepUseCase {
     suspend operator fun invoke(
         user: String,
         idBrand: Int,
-        infoQuestion: List<CreditInfoQuestion?>,
+        infoQuestion: List<CreditInfoQuestion>,
         idLogUserRequest: Int,
         idUser: Int,
         currentStep: String

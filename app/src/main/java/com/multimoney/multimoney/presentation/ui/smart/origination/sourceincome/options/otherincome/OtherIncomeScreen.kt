@@ -54,8 +54,12 @@ fun OtherIncomeScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                idEconomicActivity = if (sharedViewModel.idBrandAsInt == ID_BRAND_CR) {
+                                    SourceIncomeOptionType.OtherCR.id.toLong()
+                                } else SourceIncomeOptionType.OtherSV.id.toLong(),
                                 income = viewModel.uiState.incomeAmount.toFloat(),
-                                specifiesIncomeSource = viewModel.uiState.incomeSource
+                                specifiesIncomeSource = viewModel.uiState.incomeSource,
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
@@ -74,7 +78,7 @@ fun OtherIncomeScreen(
         }
     }
 
-    OtherIncomeContent(viewModel, sharedViewModel.idBrand)
+    OtherIncomeContent(viewModel, sharedViewModel.idBrandAsInt)
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
@@ -86,9 +90,9 @@ fun OtherIncomeScreen(
 }
 
 @Composable
-fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: String) {
+fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
     val focusManager = LocalFocusManager.current
-    val currencySymbol = stringResource(idBrand.toInt().getCurrencySymbol())
+    val currencySymbol = stringResource(idBrand.getCurrencySymbol())
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,3 +145,5 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: String) {
         )
     }
 }
+
+const val ID_BRAND_CR = 5

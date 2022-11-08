@@ -17,10 +17,10 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnNotApplicable
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartLivAddressViewModel @Inject constructor(
@@ -33,7 +33,7 @@ class SmartLivAddressViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    // Stateless 
+    // Stateless
     var user = ""
     var idBrand = 0
 
@@ -193,9 +193,9 @@ class SmartLivAddressViewModel @Inject constructor(
     }
 
     fun isFormValid() = uiState.divisionOneSelected != null &&
-            uiState.divisionTwoSelected != null &&
-            uiState.divisionThreeSelected != null &&
-            uiState.address.isNotEmpty()
+        uiState.divisionTwoSelected != null &&
+        uiState.divisionThreeSelected != null &&
+        uiState.address.isNotEmpty()
 
     sealed class UIEvent {
         data class OnGetUserData(
@@ -215,11 +215,11 @@ class SmartLivAddressViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnDivisionThreeValueChange(
-            val divisionThree: String?,
+            val divisionThree: String?
         ) : UIEvent()
 
         data class OnAddressValueChange(
-            val address: String,
+            val address: String
         ) : UIEvent()
 
         data class OnNotApplicable(

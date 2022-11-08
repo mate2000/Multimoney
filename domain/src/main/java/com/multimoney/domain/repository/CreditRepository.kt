@@ -56,14 +56,14 @@ interface CreditRepository {
         pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryHomeProvince(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryHomeCanton(
@@ -71,7 +71,7 @@ interface CreditRepository {
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryHomeDistrict(
@@ -79,14 +79,14 @@ interface CreditRepository {
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryCompanyProvince(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryCompanyCanton(
@@ -94,7 +94,7 @@ interface CreditRepository {
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun queryCompanyDistrict(
@@ -102,13 +102,13 @@ interface CreditRepository {
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
     suspend fun mutationSaveCreditFlowStep(
         user: String,
         idBrand: Int,
-        infoQuestion: List<CreditInfoQuestion?>,
+        infoQuestion: List<CreditInfoQuestion>,
         idLogUserRequest: Int,
         idUser: Int,
         currentStep: String
@@ -124,14 +124,14 @@ interface CreditRepository {
         user: String,
         idBrand: Int,
         idClient: Int,
-        idLoan: Int
+        idLoanClient: Int
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
 
     suspend fun queryBanksAndRegularExpression(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<BanksAndRegularExpression>>
 
     suspend fun queryGetPaymentPoints(
@@ -157,7 +157,7 @@ interface CreditRepository {
         currencyId: String,
         customerName: String,
         description: String,
-        destinyAccount: List<DestinyAccount?>,
+        destinyAccount: List<DestinyAccount>,
         amount: Any
     ): Flow<MultimoneyResult<ProcessPaymentList?>>
 }

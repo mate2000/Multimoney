@@ -12,7 +12,7 @@ class QueryBanksAndRegularExpressionUseCaseImpl @Inject constructor(val creditRe
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<BanksAndRegularExpression>> =
         creditRepository.queryBanksAndRegularExpression(pkUser, user, idBrand, idUserRequest)
 }

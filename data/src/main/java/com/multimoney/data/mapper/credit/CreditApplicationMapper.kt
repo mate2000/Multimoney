@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.credit
 
-import com.multimoney.data.networking.credit.apollomodel.SaveCreditApplicationMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.util.error.MessageError
 
@@ -14,4 +14,4 @@ private fun SaveCreditApplicationMutation.SaveCreditApplication.mapToDomainModel
     messageError = mapMessageToDomainModel()
 )
 
-fun SaveCreditApplicationMutation.Data.mapToDomainModel() = saveCreditApplication?.mapToDomainModel()
+fun SaveCreditApplicationMutation.Data.mapToDomainModel() = saveCreditApplication.mapToDomainModel()

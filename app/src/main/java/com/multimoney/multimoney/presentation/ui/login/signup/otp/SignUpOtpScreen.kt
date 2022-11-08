@@ -36,6 +36,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -50,9 +51,10 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DURATION
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNavigateToSignIn
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
@@ -189,13 +191,13 @@ fun SignUpOtpScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            titleResource = R.string.sign_up_email_blocked_dialog_title,
+                            titleResource = string.sign_up_email_blocked_dialog_title,
                             description = viewModel.userBlockedForMaxAttend,
                             isActive = mutableStateOf(true),
-                            positiveResource = R.string.contact,
-                            negativeResource = R.string.cancel,
+                            positiveResource = string.contact,
+                            negativeResource = string.cancel,
                             negativeAction = {
-                                viewModel.onUIEvent(SignUpOtpViewModel.UIEvent.OnNavigateToSignIn)
+                                viewModel.onUIEvent(OnNavigateToSignIn)
                             }
                         )
                     )

@@ -36,6 +36,7 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
     var idLoanClient: Int? = null
     var identification: String? = null
     var userName: String? = null
+    val isFromHome = false
 
     init {
         user = savedStateHandle[USER]
@@ -58,7 +59,7 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
             encodeData(
                 summaryList
             )
-            }/$identification/$userName"
+            }/$identification/$userName/$isFromHome"
         )
     }
 

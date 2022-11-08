@@ -1,0 +1,27 @@
+package com.multimoney.multimoney.presentation.uielement
+
+import android.content.Context
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.viewinterop.AndroidView
+
+@Composable
+fun MmWebView(url: String, context: Context) {
+    AndroidView(factory = {
+        WebView(context).apply {
+            webViewClient = WebViewClient()
+            loadUrl(url)
+        }
+    })
+}
+
+@Composable
+fun MmWebViewHtml(html: String, context: Context) {
+    AndroidView(factory = {
+        WebView(context).apply {
+            webViewClient = WebViewClient()
+            loadData(html, "text/html", "UTF-8")
+        }
+    })
+}

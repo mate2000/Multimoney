@@ -1,9 +1,6 @@
 package com.multimoney.data.di
 
-import com.multimoney.data.networking.BalanceApi
-import com.multimoney.data.networking.CreditApi
-import com.multimoney.data.networking.SecurityApi
-import com.multimoney.data.networking.SmartAccountApi
+import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.repository.BalanceRepositoryImpl
 import com.multimoney.data.repository.CreditRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
@@ -19,21 +16,21 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Provides
     @Singleton
-    fun provideSecurityRepository(securityApi: SecurityApi) =
-        SecurityRepositoryImpl(securityApi)
+    fun provideSecurityRepository(graphqlApi: GraphqlApi) =
+        SecurityRepositoryImpl(graphqlApi)
 
     @Provides
     @Singleton
-    fun provideBalanceRepository(balanceApi: BalanceApi) =
-        BalanceRepositoryImpl(balanceApi)
+    fun provideBalanceRepository(graphqlApi: GraphqlApi) =
+        BalanceRepositoryImpl(graphqlApi)
 
     @Provides
     @Singleton
-    fun provideCreditRepository(creditApi: CreditApi) =
-        CreditRepositoryImpl(creditApi)
+    fun provideCreditRepository(graphqlApi: GraphqlApi) =
+        CreditRepositoryImpl(graphqlApi)
 
     @Provides
     @Singleton
-    fun provideAccountSmartRepository(smartApi: SmartAccountApi) =
-        SmartAccountRepositoryImpl(smartApi)
+    fun provideAccountSmartRepository(graphqlApi: GraphqlApi) =
+        SmartAccountRepositoryImpl(graphqlApi)
 }

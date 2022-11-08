@@ -77,7 +77,6 @@ fun SignUpPersonalDataGtScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_gt_id_required),
             isError = viewModel.uiState.personalIdError.first,
             errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
             customTransformation = if (viewModel.uiState.documentFormat != "") MaskVisualTransformation(

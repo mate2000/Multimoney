@@ -15,9 +15,11 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.HomeScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -41,11 +43,11 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration.DUMMY_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -53,7 +55,7 @@ class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    val queryScreenConfigUseCase: QueryScreenConfigUseCase,
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -71,14 +73,14 @@ class CreditViewModel @Inject constructor(
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
-    var idUserRequest: String = ""
+    var idUserRequest: Int = 0
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
         pkUser = savedStateHandle[PK_USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         email = savedStateHandle[EMAIL] ?: ""
-        idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: ""
+        idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         uiState = uiState.copy(
             lastStep = savedStateHandle[CREDIT_STEP] ?: CreditStep.One.id,
             loadContent = true
@@ -101,11 +103,11 @@ class CreditViewModel @Inject constructor(
             openDialog = DialogParameters(
                 titleResource = closeDialogTitle,
                 description = closeDialogDescription,
-                positiveResource = R.string.credit_close_dialog_positive_button_text,
-                negativeResource = R.string.credit_close_dialog_negative_button_text,
+                positiveResource = string.credit_close_dialog_positive_button_text,
+                negativeResource = string.credit_close_dialog_negative_button_text,
                 positiveAction = {
                     popAndNavigateTo(
-                        route = Screen.HomeScreen.route,
+                        route = HomeScreen.route,
                         popTo = Screen.CreditScreen.route
                     )
                 },
@@ -222,7 +224,7 @@ class CreditViewModel @Inject constructor(
         val isCurrentLocationButtonVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var lastStep: Int = 1,
-        var loadContent: Boolean = false,
+        var loadContent: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -274,7 +276,7 @@ class CreditViewModel @Inject constructor(
         data class OnSetNavigation(
             val nextAction: () -> Unit = {},
             val nextStep: Int,
-            val previousStep: Int,
+            val previousStep: Int
         ) : UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()

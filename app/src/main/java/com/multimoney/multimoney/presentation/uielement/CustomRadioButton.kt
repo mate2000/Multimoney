@@ -44,7 +44,7 @@ fun CustomRadioButton(
         var radioUnSelectedColor = GrayScale500
         var textColor = GrayScale800
         if (isSystemInDarkTheme()) {
-            radioSelectedColor = DefaultWhite
+            radioSelectedColor = Primary500
             radioUnSelectedColor = GrayScale400
             textColor = DefaultWhite
         }

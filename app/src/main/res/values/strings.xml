@@ -36,8 +36,6 @@
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
-    <string name="yes" translatable="false">Si</string>
-    <string name="no" translatable="false">No</string>
     <string name="info" translatable="false">Información</string>
     <string-array name="options_yes_no" translatable="false">
         <item>Si</item>
@@ -559,6 +557,10 @@
     <string name="payment_points_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
+
+    <!-- Smart beneficiary -->
+    <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
+    <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
 
     <!--Smart Facta screen-->
     <string name="smart_facta_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>

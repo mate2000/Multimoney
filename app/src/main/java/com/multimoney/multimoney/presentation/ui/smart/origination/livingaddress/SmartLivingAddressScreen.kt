@@ -53,9 +53,12 @@ fun SmartLivAddressScreen(
                     sharedViewModel.onUIEvent(
                         SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idAddressLevel1 = viewModel.uiState.divisionOneSelected?.id?.toLong() ?: 0,
-                                idAddressLevel2 = viewModel.uiState.divisionTwoSelected?.id?.toLong() ?: 0,
-                                idAddressLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong() ?: 0
+                                idAddressLevel1 = viewModel.uiState.divisionOneSelected?.id?.toLong()
+                                    ?: 0,
+                                idAddressLevel2 = viewModel.uiState.divisionTwoSelected?.id?.toLong()
+                                    ?: 0,
+                                idAddressLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong()
+                                    ?: 0
                             )
                         )
                     )
@@ -89,7 +92,9 @@ fun SmartLivAddressScreen(
         }
     }
 
-    Column(modifier = Modifier.padding(horizontal = 16.dp).verticalScroll(scrollState)) {
+    Column(modifier = Modifier
+        .padding(horizontal = 16.dp)
+        .verticalScroll(scrollState)) {
         Text(
             text = stringResource(id = R.string.smart_liv_address_title),
             modifier = Modifier.padding(top = 16.dp),
@@ -172,7 +177,13 @@ fun SmartLivAddressScreen(
             modifier = Modifier.padding(top = 16.dp),
             labelText = stringResource(id = R.string.credit_address_accurate_address),
             value = viewModel.uiState.address,
-            onValueChange = { viewModel.onUIEvent(SmartLivAddressViewModel.UIEvent.OnAddressValueChange(it)) },
+            onValueChange = {
+                viewModel.onUIEvent(
+                    SmartLivAddressViewModel.UIEvent.OnAddressValueChange(
+                        it
+                    )
+                )
+            },
             keyboardOptions = if (sharedViewModel.idBrand.toInt() != Brand.CostaRica.id) KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next

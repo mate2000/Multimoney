@@ -9,6 +9,6 @@ interface QueryAddressLevelThreeUseCase {
         user: String,
         idBrand: Int,
         idAddressLevelOne: String,
-        idAddressLevelTwo: String,
+        idAddressLevelTwo: String
     ): Flow<MultimoneyResult<AddressesLevel?>>
 }

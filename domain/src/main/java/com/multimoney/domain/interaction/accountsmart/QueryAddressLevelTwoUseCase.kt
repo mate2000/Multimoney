@@ -8,6 +8,6 @@ interface QueryAddressLevelTwoUseCase {
     suspend operator fun invoke(
         user: String,
         idBrand: Int,
-        idAddressLevelOne: String,
+        idAddressLevelOne: String
     ): Flow<MultimoneyResult<AddressesLevel?>>
 }

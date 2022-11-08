@@ -16,7 +16,7 @@ interface MutationProcessPaymentListUseCase {
         currencyId: String,
         customerName: String,
         description: String,
-        destinyAccount: List<DestinyAccount?>,
+        destinyAccount: List<DestinyAccount>,
         amount: Any
     ): Flow<MultimoneyResult<ProcessPaymentList?>>
 }

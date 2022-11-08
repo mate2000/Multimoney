@@ -1,0 +1,12 @@
+query ProfessionSmart($pkUser:String!, $idBrand: Int!){
+    professionSmart(
+        professionInput: {
+            user: $pkUser, idBrand: $idBrand
+        }
+    ) {
+        result {
+            id
+            name
+        }
+    }
+}

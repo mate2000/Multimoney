@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.UpdateUserRegisterMutation
+import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.domain.model.security.UserData
 
 private fun UpdateUserRegisterMutation.UpdateUserRegister.mapToDomainModel() = UserData(
@@ -20,4 +20,4 @@ private fun UpdateUserRegisterMutation.UpdateUserRegister.mapToDomainModel() = U
     userStatus = userStatus
 )
 
-fun UpdateUserRegisterMutation.Data.mapToDomainModel() = updateUserRegister?.mapToDomainModel()
+fun UpdateUserRegisterMutation.Data.mapToDomainModel() = updateUserRegister.mapToDomainModel()

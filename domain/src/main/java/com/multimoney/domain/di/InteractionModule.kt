@@ -64,6 +64,8 @@ import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseCase
+import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
 import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
@@ -154,6 +156,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetConfigurationVersion(securityRepository: SecurityRepository): QueryGetConfigurationVersionUseCase =
         QueryGetConfigurationVersionUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryCompanyNameByIdentityUseCase(securityRepository: SecurityRepository): QueryCompanyNameByIdentityUseCase =
+        QueryCompanyNameByIdentityUseCaseImpl(securityRepository)
 
     // Balance
 
@@ -258,11 +265,6 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryAddressLevelTwoUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelTwoUseCase =
-        QueryAddressLevelTwoUseCaseImpl(smartAccountRepository)
-
-    @Provides
-    @Singleton
     fun provideQueryNationalitiesUseCase(smartAccountRepository: SmartAccountRepository): QueryNationalitiesUseCase =
         QueryNationalitiesUseCaseImpl(smartAccountRepository)
 
@@ -280,6 +282,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryAddressLevelOneUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelOneUseCase =
         QueryAddressLevelOneUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryAddressLevelTwoUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelTwoUseCase =
+        QueryAddressLevelTwoUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

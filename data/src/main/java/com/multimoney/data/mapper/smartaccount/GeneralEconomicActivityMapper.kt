@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.smartaccount
 
-import com.multimoney.data.networking.accountsmart.apollomodel.GeneralEconomicActivityQuery
+import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 
@@ -9,16 +9,16 @@ import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
  * "GeneralEconomicActivityQuery" to the domain model that will be used in the
  * UI components from the presentation layer.
  */
-private fun GeneralEconomicActivityQuery.Result.mapToDomain() =
+private fun GeneralEconomicActivityQuery.Result.mapToDomainModel() =
     GeneralEconomicActivity(
-        id = id,
-        iconCode = iconCode.toInt(),
+        id = id ?: 0,
+        iconCode = iconCode?.toInt(),
         description = descripcion
     )
 
-private fun GeneralEconomicActivityQuery.GeneralEconomicActivity.mapToDomain() =
+private fun GeneralEconomicActivityQuery.GeneralEconomicActivity.mapToDomainModel() =
     GeneralEconomicActivityResult(
-        resultList = result?.map { it?.mapToDomain() } ?: listOf()
+        resultList = result.map { it.mapToDomainModel() }
     )
 
-fun GeneralEconomicActivityQuery.Data.mapToDomain() = generalEconomicActivity?.mapToDomain()
+fun GeneralEconomicActivityQuery.Data.mapToDomainModel() = generalEconomicActivity?.mapToDomainModel()

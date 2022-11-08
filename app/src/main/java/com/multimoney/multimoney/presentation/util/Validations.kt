@@ -145,3 +145,4 @@ fun noMoreThanThreeEqualConsecutiveLetterOrNumber(value: String): Boolean {
 const val INVALID_CHARACTERS_CHUNKS = 4
 const val CHARACTER_NEED_TO_VALIDATE = 3
 const val EIGHT_MINIMUM_CHARACTERS = 8
+const val DESCRIPTION_MAX_LENGTH = 150

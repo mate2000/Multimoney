@@ -309,7 +309,8 @@
 
     <!-- Location   -->
     <string name="payment_location_maps_address_button" translatable="false">Ver dirección en Maps</string>
-    <string name="payment_location_maps_info" translatable="false">Podés pagar utilizando el código de barras.</string>
+    <string name="payment_location_maps_info_sv" translatable="false">Podés mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_info_gt" translatable="false">Puedes mostrar el código de barras de tu Estado de Cuenta.</string>
     <string name="payment_location_maps_address" translatable="false">Dirección</string>
     <string name="payment_location_maps_opening_time" translatable="false">Horario</string>
     <string name="payment_location_maps_payment_amount" translatable="false">Monto a pagar:</string>

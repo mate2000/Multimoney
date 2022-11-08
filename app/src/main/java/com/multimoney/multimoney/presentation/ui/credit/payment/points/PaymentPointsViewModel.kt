@@ -37,7 +37,7 @@ class PaymentPointsViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var idBrand: Int? = null
+    var idBrand: Int? = null
     private var paymentAmount: String? = ""
     private var paymentId: String? = ""
 
@@ -69,10 +69,11 @@ class PaymentPointsViewModel @Inject constructor(
         paymentAmount: String,
         paymentId: String,
         latitude: String,
-        longitude: String
+        longitude: String,
+        idBrand: String
     ) {
         val route =
-            "${Screen.PaymentLocationDetailsScreen.baseRoute}/$name/$address/$openingTime/$paymentAmount/$paymentId/$latitude/$longitude"
+            "${Screen.PaymentLocationDetailsScreen.baseRoute}/$name/$address/$openingTime/$paymentAmount/$paymentId/$latitude/$longitude/$idBrand"
         navigateTo(route = route)
     }
 
@@ -139,7 +140,8 @@ class PaymentPointsViewModel @Inject constructor(
                 uiEvent.paymentAmount,
                 uiEvent.paymentId,
                 uiEvent.latitude,
-                uiEvent.longitude
+                uiEvent.longitude,
+                uiEvent.idBrand
             )
         }
     }
@@ -159,7 +161,8 @@ class PaymentPointsViewModel @Inject constructor(
             val paymentAmount: String,
             val paymentId: String,
             val latitude: String,
-            val longitude: String
+            val longitude: String,
+            val idBrand: String
         ) : UIEvent()
     }
 }

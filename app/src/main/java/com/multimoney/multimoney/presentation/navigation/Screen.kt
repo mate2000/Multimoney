@@ -120,7 +120,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentLocationDetailsScreen : Screen(
-        "payment_location_details_screen/{$LOCATION_NAME}/{$LOCATION_ADDRESS}/{$LOCATION_OPENING_TIME}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$LOCATION_LATITUDE}/{$LOCATION_LONGITUDE}",
+        "payment_location_details_screen/{$LOCATION_NAME}/{$LOCATION_ADDRESS}/{$LOCATION_OPENING_TIME}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$LOCATION_LATITUDE}/{$LOCATION_LONGITUDE}/{$ID_BRAND}",
         "payment_location_details_screen"
     )
 

@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.credit
 
-import com.multimoney.data.networking.credit.apollomodel.CreditOfferQuery
+import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.Product
 
@@ -28,6 +28,6 @@ private fun CreditOfferQuery.Product.mapToDomainModel() = Product(
 )
 
 private fun CreditOfferQuery.CreditOffer.mapToDomainModel() =
-    CreditOffer(idUserRequest = idUserRequest as Int, products = products?.map { it?.mapToDomainModel() } ?: listOf())
+    CreditOffer(idUserRequest = idUserRequest as Int, products = products?.map { it.mapToDomainModel() } ?: listOf())
 
-fun CreditOfferQuery.Data.mapToDomainModel() = creditOffer?.mapToDomainModel()
+fun CreditOfferQuery.Data.mapToDomainModel() = creditOffer.mapToDomainModel()

@@ -17,13 +17,13 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_FROM_HOME
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
-import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.util.DialogParameters
@@ -52,6 +52,7 @@ class PaymentAccountViewModel @Inject constructor(
     private var idCurrency: Int? = 0
     private var identification: String? = null
     private var userName: String? = null
+    private var isFromHome = false
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -61,11 +62,13 @@ class PaymentAccountViewModel @Inject constructor(
         summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         userName = savedStateHandle[NAME_CLIENT] ?: ""
+        isFromHome = savedStateHandle[IS_FROM_HOME] ?: false
         idCurrency = if ((summaryList?.count() ?: 0) > 1) {
             CurrencyType.All.id
         } else {
-            idCurrency
+            summaryList?.firstOrNull()?.idCurrency
         }
+        getTextResources()
     }
 
     private fun getTextResources() {
@@ -132,10 +135,10 @@ class PaymentAccountViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateBack() = if ((summaryList?.count() ?: 0) > 1) {
-        navigateBack(popTo = Screen.PaymentFeeScreen.route, isRestart = false)
-    } else {
+    private fun onNavigateBack() = if (isFromHome) {
         onNavigateBackHome()
+    } else {
+        navigateBack(popTo = Screen.PaymentFeeScreen.route, isRestart = false)
     }
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
@@ -153,7 +156,6 @@ class PaymentAccountViewModel @Inject constructor(
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
             is OnNavigateBackHome -> onNavigateBackHome()
-            is OnGetTextResources -> getTextResources()
             is OnCallQueryGetClientBankAccount -> onCallQueryGetClientBankAccountUseCase()
             is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount)
         }
@@ -163,7 +165,6 @@ class PaymentAccountViewModel @Inject constructor(
         object OnCallQueryGetClientBankAccount : UIEvent()
 
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
-        object OnGetTextResources : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigateBackHome : UIEvent()
     }

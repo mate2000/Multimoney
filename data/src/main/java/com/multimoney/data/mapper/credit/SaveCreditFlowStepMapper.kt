@@ -1,27 +1,26 @@
 package com.multimoney.data.mapper.credit
 
-import com.apollographql.apollo3.api.Optional
-import com.multimoney.data.networking.credit.apollomodel.SaveCreditFlowInputMutation
-import com.multimoney.data.networking.credit.apollomodel.type.QuestionsDataListInput
+import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
+import com.multimoney.data.networking.graphql.apollomodel.type.QuestionsDataInput
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 
-fun CreditInfoQuestion.mapToApolloModel() = QuestionsDataListInput(
+fun CreditInfoQuestion.mapToApolloModel() = QuestionsDataInput(
     idQuestionRequestCredit = idQuestionRequestCredit ?: 0,
-    idOptionQuestionRequestCredit = Optional.Present(idOptionQuestionRequestCredit),
-    createUser = Optional.Present(createUser),
-    updateUser = Optional.Present(updateUser),
-    identificator = Optional.Present(identificator),
-    value = Optional.Present(value),
-    active = Optional.Present(active),
-    controlType = Optional.Present(controlType),
-    isCoreCatalogue = Optional.Present(isCoreCatalogue),
-    isBranchOfficeCatalogue = Optional.Present(isBranchOfficeCatalogue),
-    useValue = Optional.Present(useValue),
-    maximumAmount = Optional.Present(maximumAmount),
-    description = Optional.Present(description),
-    valueCatalogue = Optional.Present(valueCatalogue),
-    idIdentificatorCatalogue = Optional.Present(idIdentificatorCatalogue),
+    idOptionQuestionRequestCredit = idOptionQuestionRequestCredit ?: 0,
+    createUser = createUser ?: "",
+    updateUser = updateUser ?: "",
+    identificator = identificator ?: "",
+    value = value,
+    active = active,
+    controlType = controlType ?: "",
+    isCoreCatalogue = isCoreCatalogue ?: false,
+    isBranchOfficeCatalogue = isBranchOfficeCatalogue ?: false,
+    useValue = useValue ?: false,
+    maximumAmount = maximumAmount ?: "",
+    description = description ?: "",
+    valueCatalogue = valueCatalogue ?: "",
+    idIdentificatorCatalogue = idIdentificatorCatalogue ?: ""
 )
 
 private fun SaveCreditFlowInputMutation.SaveCreditFlowStep.mapToDomainModel() = SaveCreditFlowStep(
@@ -30,4 +29,4 @@ private fun SaveCreditFlowInputMutation.SaveCreditFlowStep.mapToDomainModel() = 
     result = result
 )
 
-fun SaveCreditFlowInputMutation.Data.mapToDomainModel() = saveCreditFlowStep?.mapToDomainModel()
+fun SaveCreditFlowInputMutation.Data.mapToDomainModel() = saveCreditFlowStep.mapToDomainModel()

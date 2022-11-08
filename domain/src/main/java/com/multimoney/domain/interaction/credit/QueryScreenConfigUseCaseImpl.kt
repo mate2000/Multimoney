@@ -10,7 +10,7 @@ class QueryScreenConfigUseCaseImpl(val creditRepository: CreditRepository) : Que
         pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest: String
+        idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>> =
         creditRepository.queryScreenConfig(pkUser, user, idBrand, idUserRequest)
 }

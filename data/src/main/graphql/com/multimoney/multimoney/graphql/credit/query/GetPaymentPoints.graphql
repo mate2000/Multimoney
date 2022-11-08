@@ -1,0 +1,16 @@
+query GetPaymentPoints(
+  $idBrand: Int!
+){
+  getPaymentPoints(
+    paymentPointsInput:
+    {
+      idBrand: $idBrand
+    }
+  ) {
+      name
+      description
+      address
+      addressDescription
+      schedule
+  }
+}

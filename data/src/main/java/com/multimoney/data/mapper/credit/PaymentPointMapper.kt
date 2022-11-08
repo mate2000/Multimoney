@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.credit
 
-import com.multimoney.data.networking.credit.apollomodel.GetPaymentPointsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.domain.model.credit.PaymentPoint
 
 private fun GetPaymentPointsQuery.GetPaymentPoint.mapToDomainModel() = PaymentPoint(
@@ -11,4 +11,4 @@ private fun GetPaymentPointsQuery.GetPaymentPoint.mapToDomainModel() = PaymentPo
     schedule = schedule
 )
 
-fun GetPaymentPointsQuery.Data.mapToDomainModel() = getPaymentPoints?.map { it?.mapToDomainModel() } ?: listOf()
+fun GetPaymentPointsQuery.Data.mapToDomainModel() = getPaymentPoints.map { it.mapToDomainModel() }

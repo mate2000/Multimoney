@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.credit
 
-import com.multimoney.data.networking.credit.apollomodel.BanksAndRegularExpressionQuery
+import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
@@ -19,7 +19,7 @@ private fun BanksAndRegularExpressionQuery.Bank.mapToDomainModel() = CreditCatal
     valueCatalog = valor_Catalogo,
     maximumAmount = monto_Maximo,
     value = valor,
-    subOptions = subOpciones?.map { it?.mapToDomainModel() }
+    subOptions = subOpciones?.map { it.mapToDomainModel() }
 )
 
 private fun BanksAndRegularExpressionQuery.RegularExpression.mapToDomainModel() = RegularExpression(
@@ -38,8 +38,6 @@ private fun BanksAndRegularExpressionQuery.SubOpcione.mapToDomainModel() = Credi
 )
 
 fun BanksAndRegularExpressionQuery.Data.mapToDomainModel() = BanksAndRegularExpression(
-    banks = banks?.map { it?.mapToDomainModel() },
-    regularExpression = regularExpression?.map { it?.mapToDomainModel() }
+    banks = banks.map { it.mapToDomainModel() },
+    regularExpression = regularExpression.map { it.mapToDomainModel() }
 )
-
-

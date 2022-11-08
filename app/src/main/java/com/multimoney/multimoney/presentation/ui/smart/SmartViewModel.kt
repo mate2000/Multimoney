@@ -46,9 +46,10 @@ class SmartViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     // bundle parameters
-    val pkUser = savedStateHandle.get(PK_USER) ?: ""
-    val idBrand = savedStateHandle.get(ID_BRAND) ?: ""
-    val user = savedStateHandle.get(USER) ?: ""
+    val pkUser = savedStateHandle[PK_USER] ?: ""
+    val idBrand = savedStateHandle[ID_BRAND] ?: ""
+    val user = savedStateHandle[USER] ?: ""
+    val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
 
     // Stateless
     var nextAction: () -> Unit = {}
@@ -64,7 +65,7 @@ class SmartViewModel @Inject constructor(
     init {
         accountSmartData = AccountSmartData(
             pkUser = pkUser,
-            idBrand = idBrand.toInt(),
+            idBrand = idBrandAsInt,
             user = user
         )
     }
@@ -106,7 +107,7 @@ class SmartViewModel @Inject constructor(
             idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
             idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
             idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
-            income = accountSmartData?.income?.toInt() ?: 0,
+            income = accountSmartData?.income?.toDouble() ?: 0.0,
             addressDetail = accountSmartData?.addressDetail ?: "",
             isPEP = accountSmartData?.isPEP ?: false,
             user = accountSmartData?.user ?: "",
@@ -119,7 +120,9 @@ class SmartViewModel @Inject constructor(
             companyName = accountSmartData?.companyName.orEmpty(),
             aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
             institutionPension = accountSmartData?.institutionPension.orEmpty(),
-            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: ""
+            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
+            entrepreneurship = accountSmartData?.entrepreneurship ?: "",
+            legalID = accountSmartData?.legalID ?: ""
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -253,8 +256,9 @@ class SmartViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
             is UIEvent.OnContinueVisible -> uiState =
@@ -290,5 +294,6 @@ class SmartViewModel @Inject constructor(
     companion object {
         const val SMART_TOTAL_STEPS = 6
         const val SMART_INDICATOR_TOTAL_STEPS = 5
+        const val DEFAULT_ID_BRAND_ERROR = -1
     }
 }

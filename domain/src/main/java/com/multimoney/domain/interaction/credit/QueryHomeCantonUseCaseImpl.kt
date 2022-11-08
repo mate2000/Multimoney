@@ -8,6 +8,6 @@ class QueryHomeCantonUseCaseImpl(private val creditRepository: CreditRepository)
         user: String,
         idBrand: Int,
         fkCatalogIdentifier: String,
-        idUserRequest:String
+        idUserRequest: Int
     ) = creditRepository.queryHomeCanton(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
 }

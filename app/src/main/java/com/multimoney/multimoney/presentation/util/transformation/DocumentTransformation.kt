@@ -92,6 +92,36 @@ fun formatDpi(): VisualTransformation =
         }
     }
 
+fun formatBusinessIdentification(): VisualTransformation =
+    object : VisualTransformation {
+        override fun filter(text: AnnotatedString): TransformedText {
+            val offset = object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int {
+                    if (offset <= 1) return offset
+                    if (offset <= 4) return offset + 1
+                    if (offset <= 10) return offset + 2
+                    return 11
+                }
+
+                override fun transformedToOriginal(offset: Int): Int {
+                    if (offset <= 1) return offset
+                    if (offset <= 4) return offset - 1
+                    if (offset <= 9) return offset - 2
+                    return 10
+                }
+            }
+
+            var formattedText = ""
+            val trimmed = if (text.text.length >= 11) text.text.substring(0..10) else text.text
+            for (i in trimmed.indices) {
+                if (i == 1 || i == 4) formattedText += "-"
+                formattedText += trimmed[i]
+            }
+
+            return TransformedText(AnnotatedString(formattedText), offset)
+        }
+    }
+
 fun formatMoney(currencySymbol: String): VisualTransformation =
     object : VisualTransformation {
         override fun filter(text: AnnotatedString): TransformedText {
@@ -169,7 +199,8 @@ fun Long?.formatWithComma(): String {
     }
 }
 
-class MaskVisualTransformation(private val mask: String, val maskChar: Char) : VisualTransformation {
+class MaskVisualTransformation(private val mask: String, val maskChar: Char) :
+    VisualTransformation {
 
     private val specialSymbolsIndices = mask.indices.filter { mask[it] != maskChar }
 

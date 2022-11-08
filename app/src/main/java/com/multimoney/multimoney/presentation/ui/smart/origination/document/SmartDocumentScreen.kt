@@ -51,7 +51,7 @@ import java.util.Date
 @Composable
 fun SmartDocumentScreen(
     viewModel: SmartDocumentViewModel = hiltViewModel(),
-    sharedViewModel: SmartViewModel = hiltViewModel(),
+    sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
@@ -74,16 +74,17 @@ fun SmartDocumentScreen(
         // call as well, with the data passed as parameter.
 
         sharedViewModel.onUIEvent(
-                SmartViewModel.UIEvent.OnSetNavigation(
-                    nextAction = {
-                        viewModel.onUIEvent(UIEvent.OnNextActionClick(
+            SmartViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(
+                        UIEvent.OnNextActionClick(
                             nextStepAction = {
                                 sharedViewModel.onUIEvent(
                                     SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
                                         accountSmartData = sharedViewModel.accountSmartData?.copy(
                                             status = 1,
                                             idProfessionType = viewModel.uiState.professionId,
-                                            idGender= viewModel.uiState.genderId,
+                                            idGender = viewModel.uiState.genderId,
                                             expirationDate = viewModel.uiState.expirationDate,
                                             birthday = viewModel.uiState.birthdate,
                                             idCivilStatusType = viewModel.uiState.civilStateId,
@@ -92,12 +93,13 @@ fun SmartDocumentScreen(
                                     )
                                 )
                             }
-                        ))
-                    },
-                    nextStep = SmartSteps.Two.id,
-                    previousStep = SmartSteps.One.id
-                )
+                        )
+                    )
+                },
+                nextStep = SmartSteps.Two.id,
+                previousStep = SmartSteps.One.id
             )
+        )
 
         viewModel.onUIEvent(
             OnCallQueryNationalitiesUseCase(
@@ -158,7 +160,8 @@ fun SmartDocumentScreen(
             value = viewModel.uiState.birthdate,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
-            ), keyboardActions = KeyboardActions(onNext = {
+            ),
+            keyboardActions = KeyboardActions(onNext = {
                 focusManager.clearFocus()
             }),
             isRequired = true,
@@ -167,7 +170,8 @@ fun SmartDocumentScreen(
                 focusManager.clearFocus()
                 val calendar = Calendar.getInstance()
                 val datePicker = DatePickerDialog(
-                    context, { _, year, month, day ->
+                    context,
+                    { _, year, month, day ->
                         val date = getPickedDateAsString(
                             year,
                             month,
@@ -221,7 +225,7 @@ fun SmartDocumentScreen(
                 .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = viewModel.uiState.professionList.map { it?.name.orEmpty() },
+            items = viewModel.uiState.professionSmartList.map { it?.name.orEmpty() },
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUIEvent(OnProfessionChange(it)) },
             labelText = stringResource(id = R.string.profession),
@@ -237,7 +241,8 @@ fun SmartDocumentScreen(
             value = viewModel.uiState.expirationDate,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
-            ), keyboardActions = KeyboardActions(onNext = {
+            ),
+            keyboardActions = KeyboardActions(onNext = {
                 focusManager.clearFocus()
             }),
             isRequired = true,
@@ -246,7 +251,8 @@ fun SmartDocumentScreen(
                 focusManager.clearFocus()
                 val calendar = Calendar.getInstance()
                 val datePicker = DatePickerDialog(
-                    context, { _, year, month, day ->
+                    context,
+                    { _, year, month, day ->
                         val date = getPickedDateAsString(
                             year,
                             month,

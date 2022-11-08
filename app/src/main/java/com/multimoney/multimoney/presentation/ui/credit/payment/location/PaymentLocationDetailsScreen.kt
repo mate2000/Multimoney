@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.payment.location
+package com.multimoney.multimoney.presentation.ui.credit.payment.location
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,25 +21,31 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-fun LocationDetailsScreen(
+fun PaymentLocationDetailsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: LocationDetailsViewModel = hiltViewModel()
 ) {
-
-//    val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
+    }
+    LaunchedEffect(true) {
+        viewModel.apply {
+            viewModel.executeNavigation(onPopBackStack = onPopBackStack)
+        }
     }
 
     Column(
@@ -47,7 +53,10 @@ fun LocationDetailsScreen(
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
     ) {
-        TopNavBar()
+        TopNavBar(
+            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
+            onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnCloseScreenClick) }
+        )
 
         Column(
             modifier = Modifier
@@ -112,7 +121,8 @@ fun LocationDetailsScreen(
         }
 
         CustomButton(
-            onClick = {viewModel.onUIEvent(LocationDetailsViewModel.UIEvent.OnNavigateMapsClick(
+            onClick = {viewModel.onUIEvent(
+                UIEvent.OnNavigateMapsClick(
                 context = context,
                 latitude = viewModel.latitude,
                 longitude = viewModel.longitude
@@ -123,6 +133,18 @@ fun LocationDetailsScreen(
                 .fillMaxWidth()
                 .height(48.dp),
             buttonType = CustomButtonType.PrimaryPrimary,
+        )
+    }
+
+    if (viewModel.uiState.dialogParameters.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.dialogParameters.titleResource),
+            message = stringResource(id = viewModel.uiState.dialogParameters.descriptionResource),
+            positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
+            openDialogCustom = viewModel.uiState.dialogParameters.isActive,
+            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction,
+            onNegativeAction = viewModel.uiState.dialogParameters.negativeAction
         )
     }
 }

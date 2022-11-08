@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -19,7 +17,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
-import com.multimoney.multimoney.presentation.uielement.CustomRadioButton
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonsLayout
 
 @Composable
@@ -27,7 +24,7 @@ fun SmartBeneficiaryScreen(
     sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
 
-    LaunchedEffect(true){
+    LaunchedEffect(true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(false))
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(false))
     }
@@ -47,10 +44,18 @@ fun SmartBeneficiaryScreen(
             style = Typography.subtitle1.copy(fontSize = 17.sp, letterSpacing = (-0.41).sp),
             color = MultimoneyTheme.colors.labelText
         )
-        CustomRadioButtonsLayout(modifier = Modifier.padding(top = 24.dp), radioOptions.toList()) { optionSelected ->
-            sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true, R.string.accept))
+        CustomRadioButtonsLayout(
+            modifier = Modifier.padding(top = 24.dp),
+            radioOptions.toList()
+        ) { optionSelected ->
+            sharedViewModel.onUIEvent(
+                SmartViewModel.UIEvent.OnContinueVisible(
+                    true,
+                    R.string.accept
+                )
+            )
             sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(true))
-            if (optionSelected == "Si"){
+            if (optionSelected == radioOptions.firstOrNull()) {
                 // todo show add beneficiary screen flow
             } else {
                 sharedViewModel.onUIEvent(
@@ -63,23 +68,3 @@ fun SmartBeneficiaryScreen(
         }
     }
 }
-
-/*
-@Composable
-fun OptionsRadioButtons(modifier: Modifier, onOptionSelected: (String) -> Unit) {
-    val radioOptions = stringArrayResource(id = R.array.options_yes_no)
-    val selectedOption = remember { mutableStateOf("") }
-    Column(modifier = modifier) {
-        radioOptions.forEach { text ->
-            CustomRadioButton(
-                modifier = Modifier,
-                radioModifier = Modifier,
-                text = text,
-                selected = (text == selectedOption.value),
-                onOptionSelected = {
-                    onOptionSelected(text)
-                }
-            )
-        }
-    }
-}*/

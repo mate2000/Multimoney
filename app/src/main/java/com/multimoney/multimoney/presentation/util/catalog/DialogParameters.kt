@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.util
+package com.multimoney.multimoney.presentation.util.catalog
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

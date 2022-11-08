@@ -22,7 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
@@ -43,6 +46,7 @@ import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
 
 @Composable
 fun CustomDropdown(
@@ -53,8 +57,11 @@ fun CustomDropdown(
     labelText: String,
     placeHolder: String?,
     isError: Boolean = false,
-    enabled: Boolean = true,
+    enabled: Boolean = true
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
+
     val labelColor: Color
     var backgroundColor: Color
     val iconTintColor: Color
@@ -138,7 +145,8 @@ fun CustomDropdown(
                     painter = painterResource(id = icon),
                     contentDescription = "",
                     tint = iconTintColor,
-                    modifier = Modifier.clickable { expanded = !expanded })
+                    modifier = Modifier.clickable { expanded = !expanded }
+                )
             },
             placeholder = {
                 Text(
@@ -147,7 +155,7 @@ fun CustomDropdown(
                     style = Typography.body2
                 )
             },
-            enabled = false,
+            enabled = false
         )
         DropdownMenu(
             expanded = expanded,
@@ -155,6 +163,11 @@ fun CustomDropdown(
             modifier = Modifier
                 .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
                 .background(backgroundColor)
+                .pointerInput(Unit) {
+                    detectTapAndPressUnconsumed(onTap = {
+                        activity?.onUserInteraction()
+                    })
+                }
         ) {
             items.forEach { label ->
                 DropdownMenuItem(onClick = {
@@ -162,7 +175,8 @@ fun CustomDropdown(
                     onValueChange(label)
                 }) {
                     Text(
-                        text = label, style = Typography.body2.copy(
+                        text = label,
+                        style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.Normal
                         )
@@ -182,7 +196,7 @@ fun CustomDropdown(
     labelText: String,
     placeHolder: String?,
     isError: Boolean = false,
-    enabled: Boolean = true,
+    enabled: Boolean = true
 ) {
     CustomDropdown(
         modifier = modifier,

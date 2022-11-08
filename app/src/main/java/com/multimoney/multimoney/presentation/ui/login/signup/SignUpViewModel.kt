@@ -11,9 +11,10 @@ import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
@@ -40,7 +41,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnSharedIdentificationValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -195,13 +196,13 @@ class SignUpViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.general_close_dialog_title,
+                titleResource = string.general_close_dialog_title,
                 description = closeDialogDescription,
-                positiveResource = R.string.sign_up_close_dialog_positive_button_text,
-                negativeResource = R.string.sign_up_close_dialog_negative_button_text,
+                positiveResource = string.sign_up_close_dialog_positive_button_text,
+                negativeResource = string.sign_up_close_dialog_negative_button_text,
                 positiveAction = {
                     popAndNavigateTo(
-                        route = Screen.SignInScreen.route,
+                        route = SignInScreen.route,
                         popTo = Screen.SignUpScreen.route
                     )
                 },

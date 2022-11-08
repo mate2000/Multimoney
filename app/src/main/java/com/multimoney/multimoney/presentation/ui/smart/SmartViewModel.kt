@@ -129,14 +129,10 @@ class SmartViewModel @Inject constructor(
                     onUIEvent(OnNextStep)
                 }
                 result.onFailure {
-                    onUIEvent(
-                        OnFailureWithDialog(
-                            isLoading = false,
-                            openDialog = DialogParameters(
-                                description = it.getError() ?: "",
-                                isActive = mutableStateOf(true)
-                            )
-                        )
+                    onUIEvent(OnLoadingValueChange(false))
+                    uiState = uiState.copy(
+                        isAlertResultVisible = true,
+                        alertResultDescription = it.getError()
                     )
                 }
                 result.onLoading {
@@ -145,7 +141,11 @@ class SmartViewModel @Inject constructor(
             }
         },
         noInternetAction = {
-            uiState = uiState.copy(isAlertResultVisible = true)
+            uiState = uiState.copy(
+                isAlertResultVisible = true,
+                alertResultTitle = null,
+                alertResultDescription = null
+            )
         }
     )
 
@@ -171,12 +171,7 @@ class SmartViewModel @Inject constructor(
                 description = closeDialogDescription,
                 positiveResource = R.string.sign_up_close_dialog_positive_button_text,
                 negativeResource = R.string.sign_up_close_dialog_negative_button_text,
-                positiveAction = {
-                    popAndNavigateTo(
-                        route = Screen.SignInScreen.route,
-                        popTo = Screen.SignUpScreen.route
-                    )
-                },
+                positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
         )
@@ -196,6 +191,14 @@ class SmartViewModel @Inject constructor(
         onUIEvent(OnContinueClick(focusManager))
     }
 
+    /**
+     * send the user to the home screen, without saving the actual step
+     */
+    private fun onCloseAlertClick() {
+        uiState = uiState.copy(isAlertResultVisible = false)
+        navigateBackToHome()
+    }
+
     private fun previousStep() {
         if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
             uiState = uiState.copy(
@@ -203,11 +206,15 @@ class SmartViewModel @Inject constructor(
                 isCloseVisible = previousStep > SmartSteps.One.id
             )
         } else {
-            popAndNavigateTo(
-                route = Screen.SignInScreen.route,
-                popTo = Screen.SignUpScreen.route
-            )
+            navigateBackToHome()
         }
+    }
+
+    private fun navigateBackToHome() {
+        popAndNavigateTo(
+            route = Screen.HomeScreen.route,
+            popTo = Screen.SmartScreen.route
+        )
     }
 
     private fun nextStep() {
@@ -253,6 +260,8 @@ class SmartViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
         val isAlertResultVisible: Boolean = false,
+        val alertResultTitle: String? = null,
+        val alertResultDescription: String? = null,
         val openDialog: DialogParameters = DialogParameters()
     )
 
@@ -267,7 +276,7 @@ class SmartViewModel @Inject constructor(
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
-            is OnCloseAlertClick -> uiState = uiState.copy(isAlertResultVisible = false)
+            is OnCloseAlertClick -> onCloseAlertClick()
             is OnCtaAlertClick -> onCtaAlertClick(event.focusManager)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)

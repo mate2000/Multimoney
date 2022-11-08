@@ -98,8 +98,10 @@ fun SmartScreen(
 
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
-            titleResource = string.error_no_internet_title,
-            descriptionResource = string.smart_account_no_internet_error_description,
+            titleString = viewModel.uiState.alertResultTitle
+                ?: stringResource(string.error_no_internet_title),
+            descriptionString = viewModel.uiState.alertResultDescription
+                ?: stringResource(string.smart_account_no_internet_error_description),
             buttonTextResource = string.common_try_again,
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onUIEvent(OnCloseAlertClick) },

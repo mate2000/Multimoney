@@ -25,7 +25,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiary.SmartBeneficiaryScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
@@ -130,7 +129,7 @@ fun GetStepContent(
             if (viewModel.idBrandAsInt == Brand.ElSalvador.id) {
                 SmartBeneficiaryScreen(sharedViewModel = viewModel)
             } else {
-                viewModel.onUIEvent(OnNextStep)
+                SmartFactaScreen(sharedViewModel = viewModel)
             }
         }
         SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)

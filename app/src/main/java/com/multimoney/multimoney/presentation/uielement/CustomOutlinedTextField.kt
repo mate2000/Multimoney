@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
@@ -124,6 +126,8 @@ fun CustomOutlinedTextField(
     showInfo: Boolean = false,
     infoMessage: String? = null
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
     var emptyError by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
@@ -302,6 +306,7 @@ fun CustomOutlinedTextField(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             onValueChange = {
+                activity?.onUserInteraction()
                 onValueChange(it)
                 textDebounce.value = it
                 if (isRequired) emptyError = it.isEmpty()
@@ -353,14 +358,12 @@ fun CustomOutlinedTextField(
                     tint = errorIndicatorColor
                 )
                 HtmlText(
-                    text = if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank()
-                        .not()
-                    ) {
-                        errorMessage ?: ""
-                    } else if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
+                    text = if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
                         isRequiredMessage ?: ""
                     } else if (emptyError) {
                         stringResource(id = R.string.error_empty_field)
+                    } else if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
+                        errorMessage ?: ""
                     } else {
                         ""
                     },

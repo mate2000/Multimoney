@@ -67,7 +67,7 @@ fun SmartFactaBottomSheet(
                 buttonType = PrimaryPrimary
             )
         }
-        if (viewModel.uiState.bottomModalSheet.isVisible) {
+        if (viewModel.uiState.bottomSheetState.isVisible) {
             BackHandler {
                 viewModel.onUIEvent(OnClickBottomSheet)
             }

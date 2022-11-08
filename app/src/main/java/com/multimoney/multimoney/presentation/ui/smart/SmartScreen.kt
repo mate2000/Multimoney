@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -27,7 +26,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
-import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
@@ -47,7 +45,6 @@ fun SmartScreen(
     viewModel: SmartViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
-    val coroutineScope = rememberCoroutineScope()
 
     // Navigation
     LaunchedEffect(true) {
@@ -81,7 +78,7 @@ fun SmartScreen(
             GetStepContent(
                 step = viewModel.uiState.currentStep,
                 viewModel = viewModel,
-                onPopAndNavigate,
+                onPopAndNavigate
             )
         }
         CustomButton(
@@ -112,11 +109,9 @@ fun SmartScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
-    SmartFactaBottomSheet(
-        coroutineScope = coroutineScope,
-        modalBottomSheetState = viewModel.uiState.bottomModalSheet,
-        viewModel = viewModel
-    )
+    if (viewModel.uiState.bottomSheetState.isVisible) {
+        viewModel.uiState.bottomSheet()
+    }
 }
 
 @Composable

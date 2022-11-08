@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -232,13 +233,13 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun onClickBottomSheet() {
-        uiState = if (uiState.bottomModalSheet.isVisible) {
+        uiState = if (uiState.bottomSheetState.isVisible) {
             uiState.copy(
-                bottomModalSheet = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
             )
         } else {
             uiState.copy(
-                bottomModalSheet = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
             )
         }
     }
@@ -261,7 +262,8 @@ class SmartViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
         val openDialog: DialogParameters = DialogParameters(),
-        var bottomModalSheet: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+        var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+        var bottomSheet: (@Composable () -> Unit) = {}
     )
 
     fun onUIEvent(event: UIEvent) {

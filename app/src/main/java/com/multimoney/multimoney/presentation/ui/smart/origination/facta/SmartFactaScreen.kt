@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -61,7 +63,8 @@ fun SmartFactaScreen(
                                 isUSCitizen = viewModel.uiState.isUSCitizen,
                                 isActivityOfArt15 = viewModel.uiState.isActivityOfArt15,
                                 isUSTaxPayer = viewModel.uiState.isUSTaxPayer,
-                                isTaxPayer = viewModel.uiState.isTaxPayer
+                                isTaxPayer = viewModel.uiState.isTaxPayer,
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
@@ -148,6 +151,7 @@ fun ContentSV(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ContentOneCR(
     viewModel: SmartFactaViewModel,
@@ -183,6 +187,13 @@ fun ContentOneCR(
                         end = offset
                     )[0].let {
                         sharedViewModel.onUIEvent(OnClickBottomSheet)
+                        sharedViewModel.uiState.bottomSheet = {
+                            SmartFactaBottomSheet(
+                                coroutineScope = rememberCoroutineScope(),
+                                modalBottomSheetState = sharedViewModel.uiState.bottomSheetState,
+                                viewModel = sharedViewModel
+                            )
+                        }
                     }
                 }
             )

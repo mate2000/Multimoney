@@ -44,7 +44,7 @@ class CreditBankViewModel @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String,
+        idUserRequest: Int,
         list: List<CreditCatalog?>?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
@@ -191,7 +191,7 @@ class CreditBankViewModel @Inject constructor(
             val pkUser: Int,
             val user: String,
             val idBrand: Int,
-            val idUserRequest: String,
+            val idUserRequest: Int,
             val list: List<CreditCatalog?>?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit

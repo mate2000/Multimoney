@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -78,9 +79,5 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
-    }
-
-    companion object {
-        const val DESCRIPTION_MAX_LENGTH = 150
     }
 }

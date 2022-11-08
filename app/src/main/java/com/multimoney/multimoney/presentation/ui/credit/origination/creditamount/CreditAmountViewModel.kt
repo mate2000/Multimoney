@@ -222,7 +222,7 @@ class CreditAmountViewModel @Inject constructor(
                     pkUser = pkUser,
                     user = user,
                     idBrand = idBrand,
-                    idUserRequest = idUserRequest.toString(),
+                    idUserRequest = idUserRequest,
                     onSuccess = onSuccess,
                     onLoadingValueChange = onLoadingValueChange,
                     onFailureWithDialog = onFailureWithDialog
@@ -414,7 +414,7 @@ class CreditAmountViewModel @Inject constructor(
         pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest: String,
+        idUserRequest: Int,
         onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit

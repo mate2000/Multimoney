@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.UserValidationMutation
+import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.domain.model.security.UserData
 
 private fun UserValidationMutation.UserValidation.mapToDomainModel() = UserData(
@@ -22,4 +22,4 @@ private fun UserValidationMutation.UserValidation.mapToDomainModel() = UserData(
     status = status
 )
 
-fun UserValidationMutation.Data.mapToDomainModel() = userValidation?.mapToDomainModel()
+fun UserValidationMutation.Data.mapToDomainModel() = userValidation.mapToDomainModel()

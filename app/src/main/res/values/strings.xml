@@ -36,6 +36,10 @@
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
+    <string-array name="options_yes_no">
+        <item>Si</item>
+        <item>No</item>
+    </string-array>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -488,6 +492,20 @@
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
 
+    <!--Smart Account - Own Business On Personal basis-->
+    <string name="smart_business_personal_basis_title" translatable="false">Negocio propio en sociedad</string>
+    <string name="smart_business_personal_basis_identification_placeholder" translatable="false">0-000-000000</string>
+    <string name="smart_business_personal_basis_identification_label" translatable="false">Cédula jurídica</string>
+    <string name="smart_business_personal_basis_identification_format_error" translatable="false">Revisar formato Debe tener 10 digitos</string>
+    <string name="smart_business_personal_basis_identification_loading" translatable="false">Un momento, estamos verificando tu numero de identificatión...</string>
+    <string name="smart_business_personal_basis_identification_success" translatable="false">Nombre empresa</string>
+    <string name="smart_business_personal_basis_activity_label" translatable="false">¿A qué se dedica tu sociedad?</string>
+    <string name="smart_business_personal_basis_activity_error" translatable="false">Has alcanzado el maximo de caracteres permitidos</string>
+    <string name="smart_business_personal_basis_activity_required_message" translatable="false">Actividad requerida</string>
+    <string name="smart_business_personal_basis_income_required_message" translatable="false">Ingresos requeridos</string>
+    <string name="smart_business_personal_basis_identification_required_message" translatable="false">Cedula juridica requerida</string>
+    <string name="smart_business_personal_basis_company_name_not_found" translatable="false">No se encontro el nombre de la compañia</string>
+
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
@@ -539,4 +557,7 @@
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
 
+    <!-- Smart beneficiary -->
+    <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
+    <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
 </resources>

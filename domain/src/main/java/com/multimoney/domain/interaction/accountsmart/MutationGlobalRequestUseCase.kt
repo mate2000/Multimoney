@@ -19,13 +19,15 @@ interface MutationGlobalRequestUseCase {
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Int,
+        income: Double,
         addressDetail: String,
         isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
         institutionPension: String,
-        specifiesIncomeSource: String
+        specifiesIncomeSource: String,
+        entrepreneurship: String,
+        legalID: String
     ): Flow<MultimoneyResult<GlobalRequest?>>
 }

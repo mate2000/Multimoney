@@ -74,6 +74,7 @@ class ProductViewModel @Inject constructor(
     var userName: String = ""
     var productProgress = 0F
     var isExpiredTitle = R.string.home_product_expiration
+    val isFromHome = true
 
     private fun onGetUserData() {
         viewModelScope.launch {
@@ -232,7 +233,7 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
             )
-            }/$identification/$userName"
+            }/$identification/$userName/$isFromHome"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
             encodeData(

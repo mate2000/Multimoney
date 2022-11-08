@@ -56,24 +56,9 @@ android {
 }
 
 apollo {
-    service("security") {
-        sourceFolder.set("com/multimoney/multimoney/security")
-        packageName.set("com.multimoney.data.networking.security.apollomodel")
-        generateOptionalOperationVariables.set(false)
-    }
-    service("balances") {
-        sourceFolder.set("com/multimoney/multimoney/balances")
-        packageName.set("com.multimoney.data.networking.balances.apollomodel")
-        generateOptionalOperationVariables.set(false)
-    }
-    service("credit") {
-        sourceFolder.set("com/multimoney/multimoney/credit")
-        packageName.set("com.multimoney.data.networking.credit.apollomodel")
-        generateOptionalOperationVariables.set(false)
-    }
-    service("accountsmart") {
-        sourceFolder.set("com/multimoney/multimoney/accountsmart")
-        packageName.set("com.multimoney.data.networking.accountsmart.apollomodel")
+    service("graphql") {
+        sourceFolder.set("com/multimoney/multimoney/graphql")
+        packageName.set("com.multimoney.data.networking.graphql.apollomodel")
         generateOptionalOperationVariables.set(false)
     }
 }

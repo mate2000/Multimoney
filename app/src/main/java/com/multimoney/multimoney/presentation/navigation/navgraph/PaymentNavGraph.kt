@@ -45,7 +45,7 @@ const val LOCATION_LONGITUDE =  "longitude"
 
 fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
     navigation(
-        startDestination = Screen.PaymentPointsScreen.route,
+        startDestination = Screen.PaymentFeeScreen.route,
         route = PAYMENT_CREDIT_ROUTE
     ) {
         composable(

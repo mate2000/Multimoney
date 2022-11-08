@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.facta
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnCrGoPageOne
@@ -14,8 +15,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFa
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.DialogParameters
-import com.multimoney.multimoney.presentation.util.ID_BRAND_CR
-import com.multimoney.multimoney.presentation.util.ID_BRAND_SV
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -90,7 +89,7 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
             isUSTaxPayer = null,
             isTaxPayer = null
         )
-        onValidateForm(ID_BRAND_CR)
+        onValidateForm(Brand.CostaRica.id)
     }
 
     private fun onCrGoPageOne() {
@@ -103,13 +102,13 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun isFormValid(idBrand: Int): Boolean {
         return when (idBrand) {
-            ID_BRAND_CR -> {
+            Brand.CostaRica.id -> {
                 uiState.isPEP != null &&
                     uiState.isUSTaxPayer != null &&
                     uiState.isActivityOfArt15 != null &&
                     uiState.isTaxPayer != null
             }
-            ID_BRAND_SV -> {
+            Brand.ElSalvador.id -> {
                 uiState.isPEP != null && uiState.isUSCitizen != null
             }
             else -> {

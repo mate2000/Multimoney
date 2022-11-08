@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -33,7 +34,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent.OnIncomeSourceChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.ID_BRAND_CR
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
@@ -55,7 +55,7 @@ fun OtherIncomeScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = if (sharedViewModel.idBrandAsInt == ID_BRAND_CR) {
+                                idEconomicActivity = if (sharedViewModel.idBrandAsInt == Brand.CostaRica.id) {
                                     SourceIncomeOptionType.OtherCR.id.toLong()
                                 } else SourceIncomeOptionType.OtherSV.id.toLong(),
                                 income = viewModel.uiState.incomeAmount.toFloat(),

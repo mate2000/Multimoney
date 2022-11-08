@@ -21,8 +21,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -45,8 +45,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFa
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonsLayout
-import com.multimoney.multimoney.presentation.util.ID_BRAND_CR
-import com.multimoney.multimoney.presentation.util.ID_BRAND_SV
 
 @Composable
 fun SmartFactaScreen(
@@ -85,7 +83,7 @@ fun SmartFactaScreen(
     }
 
     when (sharedViewModel.idBrandAsInt) {
-        ID_BRAND_CR -> {
+        Brand.CostaRica.id -> {
             when (viewModel.uiState.crPage) {
                 CR_PAGE_ONE -> {
                     Column {
@@ -99,7 +97,7 @@ fun SmartFactaScreen(
                 }
             }
         }
-        ID_BRAND_SV -> {
+        Brand.ElSalvador.id -> {
             ContentSV(viewModel, Modifier.padding(16.dp))
             sharedViewModel.onUIEvent(OnContinueVisible(true))
         }
@@ -117,16 +115,18 @@ fun ContentSV(
     Column(modifier) {
         Text(
             text = stringResource(R.string.smart_facta_are_you_us_citizen),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp,
-                color = WhiteTransparency90
-            )
+            style = Typography.body1,
+            color = WhiteTransparency90
         )
         CustomRadioButtonsLayout(
             options = optionsCitizen,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsUSCitizenChange(it == optionsCitizen.first(), ID_BRAND_SV))
+                viewModel.onUiEvent(
+                    OnIsUSCitizenChange(
+                        it == optionsCitizen.first(),
+                        Brand.ElSalvador.id
+                    )
+                )
             }
         )
 
@@ -138,16 +138,13 @@ fun ContentSV(
 
         Text(
             text = stringResource(R.string.smart_facta_are_you_or_family_pep),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp,
-                color = WhiteTransparency90
-            )
+            style = Typography.body1,
+            color = WhiteTransparency90
         )
         CustomRadioButtonsLayout(
             options = optionsPep,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), ID_BRAND_SV))
+                viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), Brand.ElSalvador.id))
             }
         )
     }
@@ -177,11 +174,7 @@ fun ContentOneCR(
         Column(modifier = modifier) {
             ClickableText(
                 text = annotatedText,
-                style = Typography.body1.copy(
-                    fontSize = 17.sp,
-                    letterSpacing = (-0.41).sp,
-                    color = WhiteTransparency90
-                ),
+                style = Typography.body1.copy(color = WhiteTransparency90),
                 onClick = { offset ->
                     annotatedText.getStringAnnotations(
                         tag = INFO_TAG,
@@ -203,7 +196,12 @@ fun ContentOneCR(
             CustomRadioButtonsLayout(
                 options = optionsYesNo,
                 onOptionSelected = {
-                    viewModel.onUiEvent(OnIsActivityOfArt15Change(it == optionsYesNo.first(), ID_BRAND_CR))
+                    viewModel.onUiEvent(
+                        OnIsActivityOfArt15Change(
+                            it == optionsYesNo.first(),
+                            Brand.CostaRica.id
+                        )
+                    )
                 }
             )
 
@@ -215,16 +213,13 @@ fun ContentOneCR(
 
             Text(
                 text = stringResource(R.string.smart_facta_are_you_or_family_pep),
-                style = Typography.body1.copy(
-                    fontSize = 17.sp,
-                    letterSpacing = (-0.41).sp,
-                    color = WhiteTransparency90
-                )
+                style = Typography.body1,
+                color = WhiteTransparency90
             )
             CustomRadioButtonsLayout(
                 options = optionsPep,
                 onOptionSelected = {
-                    viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), ID_BRAND_CR))
+                    viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), Brand.CostaRica.id))
                 }
             )
         }
@@ -252,16 +247,13 @@ fun ContentTwoCR(
     ) {
         Text(
             text = stringResource(R.string.smart_facta_are_you_us_tax_payer),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp,
-                color = WhiteTransparency90
-            )
+            style = Typography.body1,
+            color = WhiteTransparency90
         )
         CustomRadioButtonsLayout(
             options = options,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsUSTaxPayerChange(it == options.first(), ID_BRAND_CR))
+                viewModel.onUiEvent(OnIsUSTaxPayerChange(it == options.first(), Brand.CostaRica.id))
             }
         )
 
@@ -273,16 +265,13 @@ fun ContentTwoCR(
 
         Text(
             text = stringResource(R.string.smart_facta_are_you_other_country_tax_payer),
-            style = Typography.body1.copy(
-                fontSize = 17.sp,
-                letterSpacing = (-0.41).sp,
-                color = WhiteTransparency90
-            )
+            style = Typography.body1,
+            color = WhiteTransparency90
         )
         CustomRadioButtonsLayout(
             options = options,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsTaxPayerChange(it == options.first(), ID_BRAND_CR))
+                viewModel.onUiEvent(OnIsTaxPayerChange(it == options.first(), Brand.CostaRica.id))
             }
         )
     }

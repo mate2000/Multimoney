@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -109,7 +110,12 @@ fun PaymentLocationDetailsScreen(
 
             // Information chip
             CustomInformativeChip(
-                text = stringResource(id = R.string.payment_location_maps_info),
+                text = stringResource(
+                    id = when (viewModel.idBrand.toInt()) {
+                        Brand.ElSalvador.id -> R.string.payment_location_maps_info_sv
+                        else -> R.string.payment_location_maps_info_gt
+                    }
+                ),
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
                 modifier = Modifier.padding(top = 16.dp),
                 shape = RoundedCornerShape(24.dp),
@@ -121,12 +127,15 @@ fun PaymentLocationDetailsScreen(
         }
 
         CustomButton(
-            onClick = {viewModel.onUIEvent(
-                UIEvent.OnNavigateMapsClick(
-                context = context,
-                latitude = viewModel.latitude,
-                longitude = viewModel.longitude
-            ))},
+            onClick = {
+                viewModel.onUIEvent(
+                    UIEvent.OnNavigateMapsClick(
+                        context = context,
+                        latitude = viewModel.latitude,
+                        longitude = viewModel.longitude
+                    )
+                )
+            },
             text = stringResource(id = R.string.payment_location_maps_address_button),
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)

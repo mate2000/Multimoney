@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LATITUDE
@@ -40,15 +41,17 @@ class LocationDetailsViewModel @Inject constructor(
     var paymentId: String = ""
     var latitude: String = ""
     var longitude: String = ""
+    var idBrand: String = ""
 
     init {
         locationName = savedStateHandle[LOCATION_NAME] ?: ""
         locationAddress = savedStateHandle[LOCATION_ADDRESS] ?: ""
         locationOpeningTime = savedStateHandle[LOCATION_OPENING_TIME] ?: ""
-        paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: "4"
-        paymentId = savedStateHandle[PAYMENT_ID] ?: "5"
-        latitude = savedStateHandle[LOCATION_LATITUDE] ?: "6"
-        longitude = savedStateHandle[LOCATION_LONGITUDE] ?: "7"
+        paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
+        paymentId = savedStateHandle[PAYMENT_ID] ?: ""
+        latitude = savedStateHandle[LOCATION_LATITUDE] ?: ""
+        longitude = savedStateHandle[LOCATION_LONGITUDE] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: ""
     }
 
     private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)

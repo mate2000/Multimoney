@@ -11,13 +11,14 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.HomeScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferViewModel.BaseEvent.OnCopyTextToClipboardEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferViewModel.UIEvent.OnCopyTextToClipboard
 import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferViewModel.UIEvent.OnNavigateBackHome
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -60,11 +61,11 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
         if (showDialog) {
             uiState = uiState.copy(
                 openDialog = DialogParameters(
-                    titleResource = R.string.payment_options_transfer_close_dialog_title,
-                    descriptionResource = R.string.payment_options_transfer_close_dialog_description,
+                    titleResource = string.payment_options_transfer_close_dialog_title,
+                    descriptionResource = string.payment_options_transfer_close_dialog_description,
                     negativeResource = string.credit_close_dialog_negative_button_text,
                     positiveAction = {
-                        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+                        navigateBack(popTo = HomeScreen.route, isRestart = false)
                     },
                     isActive = mutableStateOf(true)
                 )

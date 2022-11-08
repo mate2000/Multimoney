@@ -13,11 +13,14 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateLocation
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,9 +38,13 @@ class PaymentPointsViewModel @Inject constructor(
 
     // Stateless
     private var idBrand: Int? = null
+    private var paymentAmount: String? = ""
+    private var paymentId: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
+        paymentId = savedStateHandle[PAYMENT_ID] ?: ""
     }
 
     private fun onItemPointClick() {
@@ -50,9 +57,24 @@ class PaymentPointsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
+    private fun onNavigateBack() =
+        navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
 
     private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+
+    private fun onNavigateLocation(
+        name: String,
+        address: String,
+        openingTime: String,
+        paymentAmount: String,
+        paymentId: String,
+        latitude: String,
+        longitude: String
+    ) {
+        val route =
+            "${Screen.PaymentLocationDetailsScreen.baseRoute}/$name/$address/$openingTime/$paymentAmount/$paymentId/$latitude/$longitude"
+        navigateTo(route = route)
+    }
 
     private fun onCloseScreen() {
         uiState = uiState.copy(
@@ -110,6 +132,15 @@ class PaymentPointsViewModel @Inject constructor(
             is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is OnGetPaymentPoints -> onGetPaymentPoints()
             is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
+            is OnNavigateLocation -> onNavigateLocation(
+                uiEvent.name,
+                uiEvent.address,
+                uiEvent.openingTime,
+                uiEvent.paymentAmount,
+                uiEvent.paymentId,
+                uiEvent.latitude,
+                uiEvent.longitude
+            )
         }
     }
 
@@ -121,5 +152,14 @@ class PaymentPointsViewModel @Inject constructor(
         object OnItemPointClick : UIEvent()
         object OnDialogPositiveButtonClick : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        data class OnNavigateLocation(
+            val name: String,
+            val address: String,
+            val openingTime: String,
+            val paymentAmount: String,
+            val paymentId: String,
+            val latitude: String,
+            val longitude: String
+        ) : UIEvent()
     }
 }

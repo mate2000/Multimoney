@@ -38,9 +38,15 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun PaymentPointsScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PaymentPointsViewModel = hiltViewModel()
 ) {
+    // Navigation
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onNavigate = onNavigate)
+    }
+
     LaunchedEffect(true) {
         viewModel.apply {
             viewModel.executeNavigation(onPopBackStack = onPopBackStack)
@@ -59,6 +65,7 @@ fun PaymentPointsContent(
     viewModel: PaymentPointsViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -108,7 +115,17 @@ fun PaymentPointsContent(
                             title = point.name ?: "",
                             subtitle = point.description ?: "",
                             onClick = {
-                                // TODO navigate to screen passing parameters
+                                viewModel.onUIEvent(
+                                    UIEvent.OnNavigateLocation(
+                                        point.name ?: "",
+                                        point.description ?: "",
+                                        point.schedule ?: "",
+                                        "", // TODO - BALANCE -> PAGO MINIMO
+                                        "", // TODO - BALANCE -> PAGARÉ
+                                        "", // TODO - BACKEND
+                                        "" // TODO - BACKEND
+                                    )
+                                )
                             }
                         )
                     }

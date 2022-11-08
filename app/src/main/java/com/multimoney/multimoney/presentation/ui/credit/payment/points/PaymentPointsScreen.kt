@@ -123,7 +123,8 @@ fun PaymentPointsContent(
                                         "", // TODO - BALANCE -> PAGO MINIMO
                                         "", // TODO - BALANCE -> PAGARÉ
                                         "", // TODO - BACKEND
-                                        "" // TODO - BACKEND
+                                        "", // TODO - BACKEND
+                                        viewModel.idBrand.toString() // TODO
                                     )
                                 )
                             }

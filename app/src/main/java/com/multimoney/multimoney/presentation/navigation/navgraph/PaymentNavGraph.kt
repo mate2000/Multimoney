@@ -267,6 +267,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(LOCATION_LONGITUDE) {
                     type = NavType.StringType
+                },
+                navArgument(ID_BRAND) {
+                    type = NavType.StringType
                 }
             )
         ) {

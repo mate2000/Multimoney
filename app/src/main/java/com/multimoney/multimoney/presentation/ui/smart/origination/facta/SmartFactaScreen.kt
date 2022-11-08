@@ -45,6 +45,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFa
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonsLayout
+import com.multimoney.multimoney.presentation.util.ID_BRAND_CR
+import com.multimoney.multimoney.presentation.util.ID_BRAND_SV
 
 @Composable
 fun SmartFactaScreen(
@@ -124,7 +126,7 @@ fun ContentSV(
         CustomRadioButtonsLayout(
             options = optionsCitizen,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsUSCitizenChange(it == optionsCitizen[0], ID_BRAND_SV))
+                viewModel.onUiEvent(OnIsUSCitizenChange(it == optionsCitizen.first(), ID_BRAND_SV))
             }
         )
 
@@ -145,7 +147,7 @@ fun ContentSV(
         CustomRadioButtonsLayout(
             options = optionsPep,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsPEPChange(it == optionsPep[0], ID_BRAND_SV))
+                viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), ID_BRAND_SV))
             }
         )
     }
@@ -201,7 +203,7 @@ fun ContentOneCR(
             CustomRadioButtonsLayout(
                 options = optionsYesNo,
                 onOptionSelected = {
-                    viewModel.onUiEvent(OnIsActivityOfArt15Change(it == optionsYesNo[0], ID_BRAND_CR))
+                    viewModel.onUiEvent(OnIsActivityOfArt15Change(it == optionsYesNo.first(), ID_BRAND_CR))
                 }
             )
 
@@ -222,7 +224,7 @@ fun ContentOneCR(
             CustomRadioButtonsLayout(
                 options = optionsPep,
                 onOptionSelected = {
-                    viewModel.onUiEvent(OnIsPEPChange(it == optionsPep[0], ID_BRAND_CR))
+                    viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), ID_BRAND_CR))
                 }
             )
         }
@@ -259,7 +261,7 @@ fun ContentTwoCR(
         CustomRadioButtonsLayout(
             options = options,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsUSTaxPayerChange(it == options[0], ID_BRAND_CR))
+                viewModel.onUiEvent(OnIsUSTaxPayerChange(it == options.first(), ID_BRAND_CR))
             }
         )
 
@@ -280,7 +282,7 @@ fun ContentTwoCR(
         CustomRadioButtonsLayout(
             options = options,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsTaxPayerChange(it == options[0], ID_BRAND_CR))
+                viewModel.onUiEvent(OnIsTaxPayerChange(it == options.first(), ID_BRAND_CR))
             }
         )
     }
@@ -288,7 +290,4 @@ fun ContentTwoCR(
         viewModel.onUiEvent(OnCrGoPageOne)
     }
 }
-
-const val ID_BRAND_CR = 5
-const val ID_BRAND_SV = 7
 const val INFO_TAG = "info"

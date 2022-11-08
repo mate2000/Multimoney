@@ -105,13 +105,15 @@ class SmartAccountRepositoryImpl @Inject constructor(
         currentStep: String,
         institutionPension: String,
         specifiesIncomeSource: String,
+        entrepreneurship: String,
+        legalID: String,
         isActivityOfArt15: Boolean,
         isUSCitizen: Boolean,
         isPEP: Boolean,
         isUSTaxPayer: Boolean,
         isTaxPayer: Boolean
-    ): Flow<MultimoneyResult<GlobalRequest?>> =
-        fetchData(apolloCall = graphqlApi.mutationGlobalRequest(
+    ): Flow<MultimoneyResult<GlobalRequest?>> = fetchData(
+        apolloCall = graphqlApi.mutationGlobalRequest(
             pkUser,
             status,
             idProfessionType,
@@ -132,12 +134,16 @@ class SmartAccountRepositoryImpl @Inject constructor(
             currentStep,
             institutionPension,
             specifiesIncomeSource,
+            entrepreneurship,
+            legalID,
             isActivityOfArt15,
             isUSCitizen,
             isPEP,
             isUSTaxPayer,
             isTaxPayer
-        ), apolloCallMapper = { data -> Success(data.mapToDomainModel()) })
+        ),
+        apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+    )
 
     /**
      * fetch the list of the source of income catalog for the account smart flow

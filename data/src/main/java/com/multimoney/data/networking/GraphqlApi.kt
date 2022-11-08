@@ -45,6 +45,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.DestinyAccount
 import javax.inject.Inject
@@ -514,6 +515,14 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.query(ValidateBankAccountQuery(account, identification, user, idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun queryGetCompanyNameByIdentification(
+        identification: String,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<GetCompanyNameByIdentificationQuery.Data> =
+        apolloAuthorizedClient.query(GetCompanyNameByIdentificationQuery(identification, idBrand, user)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     // SmartAccount
     fun queryCivilStatus(
         pkUser: String,
@@ -586,6 +595,8 @@ class GraphqlApi @Inject constructor(
         currentStep: String,
         institutionPension: String,
         specifiesIncomeSource: String,
+        entrepreneurship: String,
+        legalID: String,
         isActivityOfArt15: Boolean,
         isUsCitizen: Boolean,
         isPEP: Boolean,
@@ -614,6 +625,8 @@ class GraphqlApi @Inject constructor(
                 idBrand,
                 currentStep,
                 specifiesIncomeSource,
+                entrepreneurship,
+                legalID,
                 isActivityOfArt15,
                 isUsCitizen,
                 isPEP,

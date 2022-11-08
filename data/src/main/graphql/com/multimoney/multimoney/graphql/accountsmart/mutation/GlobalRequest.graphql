@@ -19,6 +19,8 @@ mutation GlobalRequest(
     $idBrand: Int!,
     $currentStep: String!,
     $specifiesIncomeSource: String!,
+    $entrepreneurship: String!,
+    $legalID: String!
     $isActivityOfArt15: Boolean!
     $isUSCitizen: Boolean!
     $isPEP: Boolean!
@@ -46,6 +48,8 @@ mutation GlobalRequest(
         idBrand: $idBrand
         currentStep: $currentStep
         specifiesIncomeSource: $specifiesIncomeSource
+        entrepreneurship: $entrepreneurship
+        legalID: $legalID
         isActivityOfArt15: $isActivityOfArt15
         isUSCitizen: $isUSCitizen
         isPEP: $isPEP

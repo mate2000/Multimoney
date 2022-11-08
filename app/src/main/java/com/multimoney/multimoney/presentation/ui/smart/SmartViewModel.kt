@@ -70,7 +70,7 @@ class SmartViewModel @Inject constructor(
     init {
         accountSmartData = AccountSmartData(
             pkUser = pkUser,
-            idBrand = idBrand.toInt(),
+            idBrand = idBrandAsInt,
             user = user
         )
     }
@@ -125,6 +125,8 @@ class SmartViewModel @Inject constructor(
             aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
             institutionPension = accountSmartData?.institutionPension.orEmpty(),
             specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
+            entrepreneurship = accountSmartData?.entrepreneurship ?: "",
+            legalID = accountSmartData?.legalID ?: "",
             isActivityOfArt15 = accountSmartData?.isActivityOfArt15 ?: false,
             isUSCitizen = accountSmartData?.isUSCitizen ?: false,
             isPEP = accountSmartData?.isPEP ?: false,

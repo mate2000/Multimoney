@@ -69,6 +69,8 @@ interface SmartAccountRepository {
         currentStep: String,
         institutionPension: String,
         specifiesIncomeSource: String,
+        entrepreneurship: String,
+        legalID: String,
         isActivityOfArt15: Boolean,
         isUSCitizen: Boolean,
         isPEP: Boolean,

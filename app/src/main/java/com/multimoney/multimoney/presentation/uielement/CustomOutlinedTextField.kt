@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
@@ -117,7 +118,11 @@ fun CustomOutlinedTextField(
     customTransformation: VisualTransformation? = null,
     onDebounceValidation: (newText: String) -> Unit = {},
     onClick: () -> Unit = {},
-    isClickable: Boolean = false
+    isClickable: Boolean = false,
+    isSuccess: Boolean = false,
+    successMessage: String? = null,
+    showInfo: Boolean = false,
+    infoMessage: String? = null
 ) {
     var emptyError by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -331,7 +336,11 @@ fun CustomOutlinedTextField(
         val passwordDebounceFlowValue by passwordVisibleFlow.collectAsState(false)
 
         // Display error message
-        if (((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) || emptyError) {
+        if ((
+            (isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank()
+                .not()
+            ) || emptyError
+        ) {
             Row(
                 modifier = Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -344,7 +353,9 @@ fun CustomOutlinedTextField(
                     tint = errorIndicatorColor
                 )
                 HtmlText(
-                    text = if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) {
+                    text = if ((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank()
+                        .not()
+                    ) {
                         errorMessage ?: ""
                     } else if (emptyError && isRequiredMessage.isNullOrBlank().not()) {
                         isRequiredMessage ?: ""
@@ -357,6 +368,64 @@ fun CustomOutlinedTextField(
                         .padding(start = 5.dp)
                         .wrapContentSize(),
                     style = Typography.caption.copy(color = errorIndicatorColor)
+                )
+            }
+        }
+
+        // Display loading msg
+        if (showInfo && infoMessage.isNullOrBlank().not()) {
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_information),
+                    modifier = Modifier
+                        .size(width = 11.dp, height = 11.dp),
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.textInformation
+                )
+                Text(
+                    text =
+                    if (showInfo && infoMessage.isNullOrBlank().not()) {
+                        infoMessage ?: ""
+                    } else {
+                        ""
+                    },
+                    color = MultimoneyTheme.colors.textInformation,
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .wrapContentSize(),
+                    style = Typography.caption
+                )
+            }
+        }
+
+        // Display success msg
+        if (isSuccess && successMessage.isNullOrBlank().not()) {
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_check),
+                    modifier = Modifier
+                        .size(width = 11.dp, height = 11.dp),
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.textSuccess
+                )
+                Text(
+                    text =
+                    if (isSuccess && successMessage.isNullOrBlank().not()) {
+                        successMessage ?: ""
+                    } else {
+                        ""
+                    },
+                    color = MultimoneyTheme.colors.textSuccess,
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .wrapContentSize(),
+                    style = Typography.caption
                 )
             }
         }

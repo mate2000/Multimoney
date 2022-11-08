@@ -15,6 +15,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -33,7 +34,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -170,10 +171,10 @@ class SmartViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.general_close_dialog_title,
+                titleResource = string.general_close_dialog_title,
                 description = closeDialogDescription,
-                positiveResource = R.string.sign_up_close_dialog_positive_button_text,
-                negativeResource = R.string.sign_up_close_dialog_negative_button_text,
+                positiveResource = string.sign_up_close_dialog_positive_button_text,
+                negativeResource = string.sign_up_close_dialog_negative_button_text,
                 positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
@@ -260,6 +261,7 @@ class SmartViewModel @Inject constructor(
         val currentStep: Int = SmartSteps.One.id,
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
+        val buttonTextRes: Int = R.string.button_continue,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
         val isAlertResultVisible: Boolean = false,
@@ -288,7 +290,7 @@ class SmartViewModel @Inject constructor(
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
             is UIEvent.OnContinueVisible -> uiState =
-                uiState.copy(isContinueVisible = event.visible)
+                uiState.copy(isContinueVisible = event.visible, buttonTextRes = event.textResId)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
         }
     }
@@ -314,7 +316,7 @@ class SmartViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
-        data class OnContinueVisible(val visible: Boolean) : UIEvent()
+        data class OnContinueVisible(val visible: Boolean, val textResId: Int = R.string.button_continue) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
     }

@@ -38,6 +38,11 @@
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
 
+    <string-array name="options_yes_no">
+        <item>Si</item>
+        <item>No</item>
+    </string-array>
+
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
@@ -438,6 +443,7 @@
     <string name="iban_account_cr" translatable="false">CR</string>
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
+    <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
 
     <!-- Payment Voucher -->
     <string name="payment_voucher_title_chooser" translatable="false">Voucher</string>
@@ -556,4 +562,7 @@
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
 
+    <!-- Smart beneficiary -->
+    <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
+    <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
 </resources>

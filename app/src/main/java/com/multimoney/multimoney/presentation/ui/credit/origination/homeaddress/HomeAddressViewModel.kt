@@ -15,7 +15,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.BaseEvent.IsFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnAddressValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnCallCatalogs
@@ -27,7 +26,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject

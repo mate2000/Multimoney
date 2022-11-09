@@ -590,14 +590,18 @@ class GraphqlApi @Inject constructor(
         idEconomicActivity: Long,
         income: Double,
         addressDetail: String,
-        isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
         institutionPension: String,
         specifiesIncomeSource: String,
         entrepreneurship: String,
-        legalID: String
+        legalID: String,
+        isActivityOfArt15: Boolean,
+        isUsCitizen: Boolean,
+        isPEP: Boolean,
+        isUSTaxPayer: Boolean,
+        isTaxPayer: Boolean
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloAuthorizedClient.mutation(
             GlobalRequestMutation(
@@ -617,13 +621,17 @@ class GraphqlApi @Inject constructor(
                 idEconomicActivity,
                 income,
                 addressDetail,
-                isPEP,
                 user,
                 idBrand,
                 currentStep,
                 specifiesIncomeSource,
                 entrepreneurship,
-                legalID
+                legalID,
+                isActivityOfArt15,
+                isUsCitizen,
+                isPEP,
+                isUSTaxPayer,
+                isTaxPayer
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

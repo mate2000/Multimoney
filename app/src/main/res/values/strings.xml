@@ -37,7 +37,7 @@
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
-
+    <string name="info" translatable="false">Información</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -565,4 +565,24 @@
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
+
+    <!--Smart Facta screen-->
+    <string name="smart_facta_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>
+    <string name="smart_facta_are_you_or_family_pep" translatable="false">¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?</string>
+    <string name="smart_facta_activities_according_to_article_15" translatable="false">¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
+    <string name="smart_facta_are_you_us_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en Estados Unidos?</string>
+    <string name="smart_facta_are_you_other_country_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en otro país diferente de Costa Rica?</string>
+    <string name="smart_facta_article_15_info" translatable="false">
+        Prestamistas, casas de empeño, comercio de metales y piedras preciosas, tarjetas y operadores de tarjetas de crédito, organizaciones sin fines de lucro, proveedores de servicios fiduciarios, compra y venta de bienes inmuebles, facilidad crediticia, administración de recursos de terceros.
+    </string>
+    <string name="smart_facta_article_15_info_title" translatable="false">Art 15 o 15 bis de la ley 8204</string>
+    <string name="smart_facta_learn_more" translatable="false">¿De qué se trata?</string>
+    <string-array name="smart_facta_is_pep_options">
+        <item>Si, si califican</item>
+        <item>No, no califican</item>
+    </string-array>
+    <string-array name="smart_facta_is_us_citizen_options">
+        <item>Si, lo soy</item>
+        <item>No, no lo soy</item>
+    </string-array>
 </resources>

@@ -180,7 +180,7 @@ fun ContentOneCR(
                         tag = INFO_TAG,
                         start = offset,
                         end = offset
-                    ).first().let {
+                    ).firstOrNull()?.let {
                         sharedViewModel.onUIEvent(OnClickBottomSheet)
                         sharedViewModel.uiState.bottomSheet = {
                             SmartFactaBottomSheet(

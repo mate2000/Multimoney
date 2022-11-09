@@ -250,6 +250,7 @@ class PaymentAmountViewModel @Inject constructor(
                     )
                 }.onFailure {
                     onLoadingValueChange(false)
+                    onUIEvent(OnHidePaymentBottomSheet)
                     uiState = uiState.copy(
                         alertResultTitle = it.getError() ?: "",
                         isAlertResultVisible = true

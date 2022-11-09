@@ -47,7 +47,7 @@ fun PaymentAmountBottomSheetScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .padding(vertical = 24.dp)
         ) {
             if (viewModel.isMultiCurrency()) {
                 Text(
@@ -93,26 +93,26 @@ fun PaymentAmountBottomSheetScreen(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp),
+                    .height(72.dp),
                 startIcon = viewModel.uiState.clientBankAccount?.idCurrency?.getCurrency()?.accountIcon ?: 0,
                 title = viewModel.uiState.clientBankAccount?.bankDescription ?: "",
                 subtitle = getMaskedAccount(
                     viewModel.uiState.clientBankAccount?.accountNumber ?: "",
                     stringResource(id = R.string.payment_account_masked_text)
-                )
+                ),
+                endIcon = null,
+                enable = false
             )
             if (viewModel.shouldDisplayExchangeRate()) {
                 Spacer(modifier = Modifier.height(32.dp))
                 CurrencyExchangeRow(viewModel)
             }
-            if (viewModel.isMultiCurrency()) {
-                Spacer(modifier = Modifier.height(32.dp))
-                CustomCheckBox(
-                    checked = viewModel.uiState.isAutomaticProgrammedPaymentChecked,
-                    onCheckedChange = { viewModel.onUIEvent(UIEvent.OnAutomaticProgrammedPaymentCheckedChanged(it)) },
-                    text = stringResource(id = R.string.payment_amount_bottom_sheet_enable_automatic_payment)
-                )
-            }
+            Spacer(modifier = Modifier.height(32.dp))
+            CustomCheckBox(
+                checked = viewModel.uiState.isAutomaticProgrammedPaymentChecked,
+                onCheckedChange = { viewModel.onUIEvent(UIEvent.OnAutomaticProgrammedPaymentCheckedChanged(it)) },
+                text = stringResource(id = R.string.payment_amount_bottom_sheet_enable_automatic_payment)
+            )
 
             Spacer(modifier = Modifier.height(40.dp))
             CustomButton(

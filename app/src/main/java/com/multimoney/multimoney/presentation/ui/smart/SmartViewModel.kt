@@ -14,19 +14,20 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
-import com.multimoney.multimoney.presentation.navigation.Screen.SignUpScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnNextStep
@@ -35,9 +36,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartViewModel @Inject constructor(
@@ -100,52 +101,57 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun callMutationGlobalRequestUseCase() = executeUseCase {
-        mutationGlobalRequestUseCase.invoke(
-            pkUser = accountSmartData?.pkUser?.toInt() ?: 0,
-            status = accountSmartData?.status ?: 0,
-            idProfessionType = accountSmartData?.idProfessionType ?: 0,
-            idAddressLevel1 = accountSmartData?.idAddressLevel1 ?: 0,
-            idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
-            idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
-            idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
-            income = accountSmartData?.income?.toDouble() ?: 0.0,
-            addressDetail = accountSmartData?.addressDetail ?: "",
-            isPEP = accountSmartData?.isPEP ?: false,
-            user = accountSmartData?.user ?: "",
-            idBrand = accountSmartData?.idBrand ?: 0,
-            currentStep = accountSmartData?.currentStep ?: "",
-            idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
-            birthday = accountSmartData?.birthday ?: "",
-            expirationDate = accountSmartData?.expirationDate ?: "",
-            idGender = accountSmartData?.idGender ?: 0,
-            companyName = accountSmartData?.companyName.orEmpty(),
-            aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
-            institutionPension = accountSmartData?.institutionPension.orEmpty(),
-            specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
-            entrepreneurship = accountSmartData?.entrepreneurship ?: "",
-            legalID = accountSmartData?.legalID ?: ""
-        ).collectLatest { result ->
-            result.onSuccess {
-                onUIEvent(OnLoadingValueChange(false))
-                onUIEvent(OnNextStep)
-            }
-            result.onFailure {
-                onUIEvent(
-                    OnFailureWithDialog(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = it.getError() ?: "",
-                            isActive = mutableStateOf(true)
-                        )
+    private fun callMutationGlobalRequestUseCase() = executeUseCase(
+        action = {
+            mutationGlobalRequestUseCase.invoke(
+                pkUser = accountSmartData?.pkUser?.toInt() ?: 0,
+                status = accountSmartData?.status ?: 0,
+                idProfessionType = accountSmartData?.idProfessionType ?: 0,
+                idAddressLevel1 = accountSmartData?.idAddressLevel1 ?: 0,
+                idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
+                idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
+                idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
+                income = accountSmartData?.income?.toDouble() ?: 0.0,
+                addressDetail = accountSmartData?.addressDetail ?: "",
+                isPEP = accountSmartData?.isPEP ?: false,
+                user = accountSmartData?.user ?: "",
+                idBrand = accountSmartData?.idBrand ?: 0,
+                currentStep = accountSmartData?.currentStep ?: "",
+                idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
+                birthday = accountSmartData?.birthday ?: "",
+                expirationDate = accountSmartData?.expirationDate ?: "",
+                idGender = accountSmartData?.idGender ?: 0,
+                companyName = accountSmartData?.companyName.orEmpty(),
+                aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
+                institutionPension = accountSmartData?.institutionPension.orEmpty(),
+                specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
+                entrepreneurship = accountSmartData?.entrepreneurship ?: "",
+                legalID = accountSmartData?.legalID ?: ""
+            ).collectLatest { result ->
+                result.onSuccess {
+                    onUIEvent(OnLoadingValueChange(false))
+                    onUIEvent(OnNextStep)
+                }
+                result.onFailure {
+                    onUIEvent(OnLoadingValueChange(false))
+                    uiState = uiState.copy(
+                        isAlertResultVisible = true,
+                        alertResultDescription = it.getError()
                     )
-                )
+                }
+                result.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
             }
-            result.onLoading {
-                onUIEvent(OnLoadingValueChange(true))
-            }
+        },
+        noInternetAction = {
+            uiState = uiState.copy(
+                isAlertResultVisible = true,
+                alertResultTitle = null,
+                alertResultDescription = null
+            )
         }
-    }
+    )
 
     private fun moveToStep(step: Int) {
         if (step <= SMART_TOTAL_STEPS) {
@@ -169,12 +175,7 @@ class SmartViewModel @Inject constructor(
                 description = closeDialogDescription,
                 positiveResource = string.sign_up_close_dialog_positive_button_text,
                 negativeResource = string.sign_up_close_dialog_negative_button_text,
-                positiveAction = {
-                    popAndNavigateTo(
-                        route = SignInScreen.route,
-                        popTo = SignUpScreen.route
-                    )
-                },
+                positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
         )
@@ -185,6 +186,23 @@ class SmartViewModel @Inject constructor(
         nextAction.invoke()
     }
 
+    /**
+     * close the alert screen after tapping on the cta button and
+     * re-execute the OnContinueClick action from the current step
+     */
+    private fun onCtaAlertClick(focusManager: FocusManager) {
+        uiState = uiState.copy(isAlertResultVisible = false)
+        onUIEvent(OnContinueClick(focusManager))
+    }
+
+    /**
+     * send the user to the home screen, without saving the actual step
+     */
+    private fun onCloseAlertClick() {
+        uiState = uiState.copy(isAlertResultVisible = false)
+        navigateBackToHome()
+    }
+
     private fun previousStep() {
         if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
             uiState = uiState.copy(
@@ -192,11 +210,15 @@ class SmartViewModel @Inject constructor(
                 isCloseVisible = previousStep > SmartSteps.One.id
             )
         } else {
-            popAndNavigateTo(
-                route = Screen.SignInScreen.route,
-                popTo = Screen.SignUpScreen.route
-            )
+            navigateBackToHome()
         }
+    }
+
+    private fun navigateBackToHome() {
+        popAndNavigateTo(
+            route = Screen.HomeScreen.route,
+            popTo = Screen.SmartScreen.route
+        )
     }
 
     private fun nextStep() {
@@ -242,6 +264,9 @@ class SmartViewModel @Inject constructor(
         val buttonTextRes: Int = R.string.button_continue,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultTitle: String? = null,
+        val alertResultDescription: String? = null,
         val openDialog: DialogParameters = DialogParameters()
     )
 
@@ -256,11 +281,12 @@ class SmartViewModel @Inject constructor(
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
+            is OnCloseAlertClick -> onCloseAlertClick()
+            is OnCtaAlertClick -> onCtaAlertClick(event.focusManager)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog ->
-                uiState =
-                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState =
+                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
             is UIEvent.OnContinueVisible -> uiState =
@@ -275,6 +301,8 @@ class SmartViewModel @Inject constructor(
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
+        data class OnCtaAlertClick(val focusManager: FocusManager) : UIEvent()
+        object OnCloseAlertClick : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :

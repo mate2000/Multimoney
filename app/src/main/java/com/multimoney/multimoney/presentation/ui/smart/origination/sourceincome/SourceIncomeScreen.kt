@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.SourceIncomeOptionsScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.independentprofessional.IndProfessionalScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.SmartOwnBusinessSvScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryScreen
@@ -42,15 +43,23 @@ fun ShowSelectedSourceIncomeOption(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
-        SourceIncomeOptionType.FormalSalaried.id -> SmartCrSalaryScreen(sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel)
-        SourceIncomeOptionType.Retired.id -> SmartRetiredScreen(sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel)
+        SourceIncomeOptionType.FormalSalaried.id -> SmartCrSalaryScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
+        SourceIncomeOptionType.Retired.id -> SmartRetiredScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
         SourceIncomeOptionType.OtherSV.id, SourceIncomeOptionType.OtherCR.id -> OtherIncomeScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
         SourceIncomeOptionType.OwnBusinessOnPersonalBasis.id -> OwnBusinessOnPersonalBasisScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
+        SourceIncomeOptionType.FreeLancer.id -> IndProfessionalScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )

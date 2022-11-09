@@ -474,7 +474,7 @@
     <string name="smart_account_formal_title" translatable="false">Asalariado Formal</string>
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
-    <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+    <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
 
 
     <!-- Smart Account - Own Business -->
@@ -561,4 +561,10 @@
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
+
+    <!-- Smart Independent Professional -->
+    <string name="smart_ind_professional_title" translatable="false">Profesional independiente</string>
+    <string name="smart_ind_professional_job_address" translatable="false">Dirección Laboral</string>
+    <string name="smart_ind_professional_address_required" translatable="false">Dirección laboral requerido</string>
+    <string name="smart_ind_professional_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
 </resources>

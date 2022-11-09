@@ -54,8 +54,9 @@ fun SmartRetiredScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
-        viewModel.onUIEvent(OnValidateForm)
+
         sharedViewModel.onUIEvent(
             OnSetNavigation(
                 nextAction = {

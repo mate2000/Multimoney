@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAmountValueChange
@@ -173,7 +174,10 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
-    private fun onNavigateToVoucher() = navigateTo(Screen.PaymentVoucherScreen.route)
+    private fun onNavigateToVoucher(clientBankAccount: ClientBankAccount?, paidAmount: String, referenceNumber: String) =
+        navigateTo(
+            route = "${Screen.PaymentVoucherScreen.baseRoute}/${encodeData(clientBankAccount)}/$paidAmount/$referenceNumber"
+        )
 
     fun getFormattedCurrency() =
         if (uiState.currentAmountValueString.isNotEmpty() && uiState.currentAmountValueString.toInt() > maximumPayment) {
@@ -239,7 +243,7 @@ class PaymentAmountViewModel @Inject constructor(
                 result.onSuccess {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
-                    onUIEvent(OnNavigateToVoucher)
+                    onUIEvent(OnNavigateToVoucher(uiState.clientBankAccount,uiState.currentAmountValueString,it?.internReferenceNumber ?: ""))
                 }.onMessage {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
@@ -323,7 +327,7 @@ class PaymentAmountViewModel @Inject constructor(
             is OnCallQueryGetExchangeRateCredit -> onCallQueryGetExchangeRate()
             is OnShowPaymentBottomSheet -> onShowPaymentBottomSheet()
             is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
-            is OnNavigateToVoucher -> onNavigateToVoucher()
+            is OnNavigateToVoucher -> onNavigateToVoucher(uiEvent.clientBankAccount,uiEvent.paidAmount,uiEvent.referenceNumber)
         }
     }
 
@@ -341,7 +345,10 @@ class PaymentAmountViewModel @Inject constructor(
         object OnCallQueryGetExchangeRateCredit : UIEvent()
         object OnShowPaymentBottomSheet : UIEvent()
         object OnHidePaymentBottomSheet : UIEvent()
-        object OnNavigateToVoucher : UIEvent()
+        data class OnNavigateToVoucher(
+            val clientBankAccount: ClientBankAccount?,
+            val paidAmount: String,
+            val referenceNumber: String): UIEvent()
     }
 
     companion object {

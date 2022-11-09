@@ -32,6 +32,9 @@ const val CLIENT_BANK_ACCOUNT = "client_bank_account"
 const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
+const val REFERENCE_NUMBER = "reference_number"
+const val PAID_AMOUNT = "paid_amount"
+
 
 fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
     navigation(
@@ -153,7 +156,20 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.PaymentVoucherScreen.route) {
+        composable(
+            route = Screen.PaymentVoucherScreen.route,
+            arguments = listOf(
+                navArgument(CLIENT_BANK_ACCOUNT) {
+                    type = ClientBankAccountNavType()
+                },
+                navArgument(PAID_AMOUNT) {
+                    type = NavType.StringType
+                },
+                navArgument(REFERENCE_NUMBER) {
+                    type = NavType.StringType
+                },
+            )
+        ) {
             PaymentVoucherScreen(
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)

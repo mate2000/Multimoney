@@ -1,21 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
-import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
-import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
-import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
-import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
-import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.*
 
 // Route
 const val LOGIN_ROUTE = "log_in_route"
@@ -95,7 +80,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
             "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
             "smart_screen"
         )
-    object PaymentVoucherScreen : Screen(route = "payment_voucher_screen")
+    object PaymentVoucherScreen :
+        Screen(
+            "payment_voucher_screen/{$CLIENT_BANK_ACCOUNT}/{$PAID_AMOUNT}/{$REFERENCE_NUMBER}",
+            "payment_voucher_screen"
+        )
 
     object PaymentOptionsScreen : Screen(
         "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}",

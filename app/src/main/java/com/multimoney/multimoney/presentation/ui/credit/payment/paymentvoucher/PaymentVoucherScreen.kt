@@ -1,20 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,15 +39,14 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
-import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.*
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
-import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @OptIn(ExperimentalTextApi::class)
@@ -195,29 +186,21 @@ fun PaymentVoucherScreen(
                         style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.labelText
                     )
-                    CustomInfoButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 24.dp, end = 24.dp),
-                        startIcon = R.drawable.ic_payment_dollar,
-                        title = "Banco Dummy",
-                        subtitle = "0000",
-                        enable = false
-                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    
+                    if (viewModel.shouldDisplayExchangeRate()) {
+                        Spacer(modifier = Modifier.height(32.dp))
+                        CurrencyExchangeRow(viewModel)
+                    }
+
                     InfoItem(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
                         tintIcon = MultimoneyTheme.colors.iconTintVoucher,
                         title = stringResource(string.payment_voucher_reference_number_label),
-                        subTitle = "0000000"
+                        subTitle = viewModel.referenceNumber ?: ""
                     )
-                    InfoItem(
-                        modifier = Modifier.padding(start = 27.dp, top = 32.dp),
-                        icon = drawable.ic_receipt,
-                        tintIcon = MultimoneyTheme.colors.iconTintVoucher,
-                        title = stringResource(string.payment_voucher_reference_number_label),
-                        subTitle = "0000000"
-                    )
+
                     Row(
                         modifier = Modifier
                             .height(IntrinsicSize.Min)
@@ -255,14 +238,15 @@ fun PaymentVoucherScreen(
                                 contentDescription = ""
                             )
                             Text(
-                                text = "12 | 06 | 2022",
+                                text = viewModel.currentDate,
                                 modifier = Modifier.padding(start = 15.dp),
                                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                                 color = MultimoneyTheme.colors.labelText
                             )
+
                         }
                         Text(
-                            text = "08:12 am",
+                            text = viewModel.currentTime,
                             modifier = Modifier.padding(bottom = 16.dp),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
@@ -287,6 +271,51 @@ fun PaymentVoucherScreen(
                     buttonType = PrimaryPrimary
                 )
             }
+        }
+    }
+}
+
+
+@Composable
+fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column {
+            Text(
+                text = stringResource(id = R.string.payment_amount_bottom_sheet_exchange_type),
+                style = Typography.body2.copy(fontWeight = FontWeight.W600),
+                color = MultimoneyTheme.colors.text,
+                textAlign = TextAlign.Start
+            )
+            Text(
+                text = viewModel.uiState.exchangeRateLabel.toString(),
+                style = Typography.body2,
+                color = MultimoneyTheme.colors.text,
+                textAlign = TextAlign.Start
+            )
+        }
+        Spacer(modifier = Modifier.width(40.dp))
+        Divider(
+            modifier = Modifier
+                .height(44.dp)
+                .width(1.dp),
+            color = MultimoneyTheme.colors.bottomNavigationDividerColor
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+            Text(
+                text = stringResource(id = R.string.payment_amount_bottom_sheet_amount_to_debit),
+                style = Typography.body2.copy(fontWeight = FontWeight.W600),
+                color = MultimoneyTheme.colors.text,
+                textAlign = TextAlign.Start
+            )
+            Text(
+                text = viewModel.uiState.exchangeConvertedAmount.toString(),
+                style = Typography.body2,
+                color = MultimoneyTheme.colors.text,
+                textAlign = TextAlign.Start
+            )
         }
     }
 }

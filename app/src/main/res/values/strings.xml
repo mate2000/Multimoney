@@ -443,7 +443,7 @@
     <string name="payment_voucher_shared_button" translatable="false">Compartir</string>
     <string name="payment_voucher_amount_to_pay_label" translatable="false">Monto debitado</string>
     <string name="payment_voucher_exchange_rate_label" translatable="false">Tipo de cambio</string>
-    <string name="payment_voucher_reference_number_label" translatable="false">N° de referencia | %s:</string>
+    <string name="payment_voucher_reference_number_label" translatable="false">N° de referencia</string>
     <string name="payment_voucher_from_your_account_label" translatable="false">Desde tu cuenta</string>
     <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
     <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>

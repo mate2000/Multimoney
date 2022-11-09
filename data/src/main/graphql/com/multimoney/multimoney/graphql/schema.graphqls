@@ -4238,6 +4238,8 @@ input SecurityOnfidoCheckProcessDtoInput {
 
   pkUser: Long!
 
+  userRequestId: Long!
+
   idBrand: Int
 
   user: String
@@ -5092,12 +5094,6 @@ input fileDocumentinfowrkInput {
 }
 
 input BeneficiaryRequestDtoInput {
-  idRequest: Long
-
-  idBeneficiary: Long
-
-  status: Int
-
   firstName: String
 
   secondName: String
@@ -5112,13 +5108,7 @@ input BeneficiaryRequestDtoInput {
 
   allocationPercentage: String
 
-  createSysde: Boolean
-
   authorizationSysde: String
-
-  idGlobalRequest: Long
-
-  callBack: Int
 
   fullName: String
 }

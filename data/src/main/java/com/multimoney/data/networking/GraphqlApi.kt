@@ -3,6 +3,7 @@ package com.multimoney.data.networking
 import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
+import com.apollographql.apollo3.cache.normalized.FetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
@@ -29,6 +30,7 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
+import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
@@ -124,7 +126,7 @@ class GraphqlApi @Inject constructor(
                 idUserRequest,
                 pkUser,
                 descPromotion,
-                interestRate?:"",
+                interestRate ?: "",
                 symbolCurrency,
                 descCurrency,
                 idProduct,
@@ -634,4 +636,25 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<GeneralEconomicActivityQuery.Data> =
         apolloAuthorizedClient.query(GeneralEconomicActivityQuery(user, idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationOnfidoCheckProcess(
+        identification: String,
+        applicantId: String,
+        currentFlow: String,
+        pkUser: Long,
+        userRequestId: Long,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<OnfidoCheckProcessMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            OnfidoCheckProcessMutation(
+                identification,
+                applicantId,
+                currentFlow,
+                pkUser,
+                userRequestId,
+                idBrand,
+                user
+            )
+        ).fetchPolicy(NetworkOnly)
 }

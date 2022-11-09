@@ -23,7 +23,7 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
-    data class UIState constructor(
+    data class UIState(
         var isPEP: Boolean? = null,
         var isUSCitizen: Boolean? = null,
         var isActivityOfArt15: Boolean? = null,

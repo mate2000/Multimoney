@@ -36,8 +36,9 @@
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
+    <string name="common_try_again" translatable="false">Volver a intentar</string>
     <string name="info" translatable="false">Información</string>
-    <string-array name="options_yes_no" translatable="false">
+    <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
     </string-array>
@@ -45,6 +46,7 @@
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
+    <string name="error_no_internet_title" translatable="false">¡Oh no! Error de conexión</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
@@ -476,6 +478,7 @@
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+    <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
 
 
     <!-- Smart Account - Own Business -->

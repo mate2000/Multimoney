@@ -28,11 +28,10 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         private set
 
     private fun validateForm() {
-        emitBaseEvent(OnFormValidateCompleted(onValidateForm()))
+        emitBaseEvent(OnFormValidateCompleted(isFormValid()))
     }
 
-    fun onValidateForm() = uiState.profession.isNotBlank() &&
-        uiState.paymentAmount.isNotBlank()
+    fun isFormValid() = uiState.profession.isNotBlank() && uiState.paymentAmount.isNotBlank()
 
     private fun onAmountValueChange(paymentAmount: String) {
         uiState = uiState.copy(paymentAmount = paymentAmount)

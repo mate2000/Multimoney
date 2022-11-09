@@ -65,8 +65,9 @@ fun OtherIncomeScreen(
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Three.id
+                previousStep = SmartSteps.Two.id
             )
         )
         viewModel.baseEvent.collect { event ->

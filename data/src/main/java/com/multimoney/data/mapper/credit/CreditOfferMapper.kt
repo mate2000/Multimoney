@@ -7,7 +7,7 @@ import com.multimoney.domain.model.credit.Product
 private fun CreditOfferQuery.Product.mapToDomainModel() = Product(
     id = iD_PRODUCTO,
     creditLimit = lIMITE_CREDITO,
-    progressFactor = tRACTO.toDouble(),
+    progressFactor = tRACTO?.toDouble(),
     minimumDisbursement = mINIMO_DESEMBOLSO,
     minimumDisbursementLabel = sTR_MINIMO_DESEMBOLSO,
     maximumDisbursement = mAXIMO_DESEMBOLSO,

@@ -25,10 +25,10 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditDocumentViewModel @Inject constructor(
@@ -134,8 +134,8 @@ class CreditDocumentViewModel @Inject constructor(
             )
 
             is OnCallInFidoToken -> callMutationOnFidoInitialProcess(
-                "${event.userData?.firstName} ${event.userData?.secondName}",
-                "${event.userData?.firstLastName} ${event.userData?.secondLastName}",
+                "${event.userData?.firstName}",
+                "${event.userData?.firstLastName}",
                 event.userData?.identification ?: "",
                 event.applicationId,
                 event.userData?.email ?: ""
@@ -176,5 +176,9 @@ class CreditDocumentViewModel @Inject constructor(
 
     sealed class BaseEvent {
         data class OnFormCompleted(val isFormCompleted: Boolean) : BaseEvent()
+    }
+
+    companion object {
+        const val PACKAGE_NAME = "com.multimoney.multimoney"
     }
 }

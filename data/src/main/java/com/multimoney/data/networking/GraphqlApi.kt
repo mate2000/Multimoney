@@ -19,6 +19,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
@@ -45,7 +46,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.DestinyAccount
 import javax.inject.Inject
@@ -89,20 +89,20 @@ class GraphqlApi @Inject constructor(
 
     fun queryPaymentAmount(
         amount: Int,
-        months: String,
+        months: String?,
         idProduct: String,
         currencySymbol: String,
         user: String,
         idBrand: Int
     ): ApolloCall<PaymentAmountQuery.Data> =
-        apolloAuthorizedClient.query(PaymentAmountQuery(amount, months, idProduct, currencySymbol, user, idBrand))
+        apolloAuthorizedClient.query(PaymentAmountQuery(amount, months ?: "", idProduct, currencySymbol, user, idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditApplication(
         idUserRequest: Int,
         pkUser: Int,
         descPromotion: String,
-        interestRate: String,
+        interestRate: String?,
         symbolCurrency: String,
         descCurrency: String,
         idProduct: Int,
@@ -124,7 +124,7 @@ class GraphqlApi @Inject constructor(
                 idUserRequest,
                 pkUser,
                 descPromotion,
-                interestRate,
+                interestRate?:"",
                 symbolCurrency,
                 descCurrency,
                 idProduct,
@@ -520,7 +520,8 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         user: String
     ): ApolloCall<GetCompanyNameByIdentificationQuery.Data> =
-        apolloAuthorizedClient.query(GetCompanyNameByIdentificationQuery(identification, idBrand, user)
+        apolloAuthorizedClient.query(
+            GetCompanyNameByIdentificationQuery(identification, idBrand, user)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // SmartAccount

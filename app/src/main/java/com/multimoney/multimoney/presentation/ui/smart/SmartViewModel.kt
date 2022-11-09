@@ -14,6 +14,7 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -239,7 +240,7 @@ class SmartViewModel @Inject constructor(
         val currentStep: Int = SmartSteps.One.id,
         val isCloseVisible: Boolean = false,
         val isContinueEnabled: Boolean = false,
-        val buttonTextRes: Int = R.string.button_continue,
+        val buttonTextRes: Int = string.button_continue,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
         val openDialog: DialogParameters = DialogParameters()
@@ -288,7 +289,7 @@ class SmartViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
-        data class OnContinueVisible(val visible: Boolean, val textResId: Int = R.string.button_continue) : UIEvent()
+        data class OnContinueVisible(val visible: Boolean, val textResId: Int = string.button_continue) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
     }

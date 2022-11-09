@@ -18,6 +18,9 @@ const val IDENTIFICATION = "identification"
 const val EMAIL = "email"
 const val CREDIT_STEP = "credit_step"
 const val ID_USER_REQUEST = "id_user_request"
+const val FIRST_NAME = "name"
+const val LAST_NAME = "last_name"
+const val SECOND_LAST_NAME = "second_last_name"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -28,7 +31,7 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             route = Screen.CreditScreen.route,
             arguments = listOf(
                 navArgument(CREDIT_STEP) { type = NavType.IntType },
-                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType },
             )
         ) { navBackStackEntry ->
             CreditScreen(

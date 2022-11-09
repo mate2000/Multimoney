@@ -7,6 +7,9 @@ import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow.CreditOriginationFlow
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow.SignUpFlow
 import com.onfido.android.sdk.capture.DocumentType
+import com.onfido.android.sdk.capture.DocumentType.DRIVING_LICENCE
+import com.onfido.android.sdk.capture.DocumentType.NATIONAL_IDENTITY_CARD
+import com.onfido.android.sdk.capture.DocumentType.PASSPORT
 import com.onfido.android.sdk.capture.OnfidoConfig
 import com.onfido.android.sdk.capture.OnfidoFactory
 import com.onfido.android.sdk.capture.ui.options.FlowStep
@@ -20,26 +23,53 @@ class OnFidoHelper @Inject constructor(
 ) {
     var onRefreshToken: (injectNewToken: (String?) -> Unit) -> Unit = {}
 
-    private fun getOnFidoConfig(
-        idBrand: Int,
-        appFlow: AppFlow,
+    private fun getOnFidoConfigForNationalIdentity(
+        idBrand: Int?,
         onFidoSDKToken: String
     ) = OnfidoConfig.builder(context).withSDKToken(
         onFidoSDKToken,
         OnFidoExpirationHandler(onRefresh = onRefresh())
-    ).withCustomFlow(createFlowStepOptions(idBrand, appFlow)).build()
+    ).withCustomFlow(
+        createFlowStepOptions(
+            DocumentCaptureStepBuilder.forNationalIdentity().withCountry(getCountryCode(idBrand)).build()
+        )
+    ).build()
+
+    private fun getOnFidoConfigForSeveralDocuments(
+        idBrand: Int?,
+        documentsAccept: List<DocumentType>,
+        onFidoSDKToken: String
+    ) = OnfidoConfig.builder(context).withSDKToken(
+        onFidoSDKToken,
+        OnFidoExpirationHandler(onRefresh = onRefresh())
+    ).withAllowedDocumentTypes(documentsAccept).withCustomFlow(
+        createFlowStepOptions(
+            DocumentCaptureStepBuilder.forGenericDocument().withCountry(getCountryCode(idBrand)).build()
+        )
+    ).build()
 
     fun getOnFidoClient() = OnfidoFactory.create(context).client
 
     fun getOnFidoIntent(
-        idBrand: Int,
+        idBrand: Int?,
         appFlow: AppFlow,
         onFidoSDKToken: String,
         onRefreshToke: (injectNewToken: (String?) -> Unit) -> Unit
     ): Intent {
         onRefreshToken = onRefreshToke
         return getOnFidoClient().createIntent(
-            getOnFidoConfig(idBrand, appFlow, onFidoSDKToken)
+            when (appFlow) {
+                is CreditOriginationFlow -> {
+                    getOnFidoConfigForNationalIdentity(idBrand, onFidoSDKToken)
+                }
+                is SignUpFlow -> {
+                    getOnFidoConfigForSeveralDocuments(
+                        idBrand,
+                        listOf(NATIONAL_IDENTITY_CARD, PASSPORT, DRIVING_LICENCE),
+                        onFidoSDKToken
+                    )
+                }
+            }
         )
     }
 
@@ -49,26 +79,18 @@ class OnFidoHelper @Inject constructor(
         }
     }
 
-    private fun getConfigurationByCountryAndFlow(idBrand: Int, appFlow: AppFlow): FlowStep {
-        val countryCode = when (idBrand) {
+    private fun getCountryCode(idBrand: Int?): CountryCode {
+        return when (idBrand) {
             Brand.ElSalvador.id -> CountryCode.SV
             Brand.Guatemala.id -> CountryCode.GT
             Brand.CostaRica.id -> CountryCode.CR
             else -> CountryCode.CR
         }
-        return when (appFlow) {
-            is CreditOriginationFlow -> {
-                DocumentCaptureStepBuilder.forNationalIdentity().withCountry(countryCode).build()
-            }
-            is SignUpFlow -> {
-                DocumentCaptureStepBuilder.forGenericDocument().build()
-            }
-        }
     }
 
-    private fun createFlowStepOptions(idBrand: Int, appFlow: AppFlow): Array<FlowStep> {
+    private fun createFlowStepOptions(stepFlow: FlowStep): Array<FlowStep> {
         return arrayOf(
-            getConfigurationByCountryAndFlow(idBrand, appFlow),
+            stepFlow,
             FlowStep.CAPTURE_FACE,
             FlowStep.FINAL
         )

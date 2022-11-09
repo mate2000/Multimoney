@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface QueryPaymentAmountUseCase {
     suspend operator fun invoke(
         amount: Int,
-        months: String,
+        months: String?,
         idProduct: String,
         currencySymbol: String,
         user: String,

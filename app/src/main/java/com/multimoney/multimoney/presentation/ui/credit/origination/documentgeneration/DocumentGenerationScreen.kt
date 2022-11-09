@@ -107,7 +107,6 @@ fun DocumentGenerationScreen(
             )
         }
     }
-
     // this is require to block the onBack event
     BackHandler(onBack = {})
 

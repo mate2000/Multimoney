@@ -19,8 +19,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CreditRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class CreditRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -35,7 +35,7 @@ class CreditRepositoryImpl @Inject constructor(
 
     override suspend fun queryPaymentAmount(
         amount: Int,
-        months: String,
+        months: String?,
         idProduct: String,
         currencySymbol: String,
         user: String,
@@ -51,21 +51,21 @@ class CreditRepositoryImpl @Inject constructor(
         idUserRequest: Int,
         pkUser: Int,
         descPromotion: String,
-        interestRate: String,
+        interestRate: String?,
         symbolCurrency: String,
         descCurrency: String,
         idProduct: Int,
         idPromotion: Int,
-        months: String,
-        commissionPercentage: String,
+        months: String?,
+        commissionPercentage: String?,
         paymentDate: String,
         paymentAmount: String,
         user: String,
         idBrand: Int,
         selectedAmount: Double,
-        minimumAmount: Double,
-        creditLimit: Double,
-        tractAmount: Double,
+        minimumAmount: Double?,
+        creditLimit: Double?,
+        tractAmount: Double?,
         currentStep: String
     ): Flow<MultimoneyResult<CreditApplication?>> = fetchData(
         apolloCall = graphqlApi.mutationSaveCreditApplication(
@@ -77,16 +77,16 @@ class CreditRepositoryImpl @Inject constructor(
             descCurrency,
             idProduct,
             idPromotion,
-            months,
-            commissionPercentage,
+            months ?: "",
+            commissionPercentage ?: "",
             paymentDate,
             paymentAmount,
             user,
             idBrand,
             selectedAmount,
-            minimumAmount,
-            creditLimit,
-            tractAmount,
+            minimumAmount ?: 0.0,
+            creditLimit ?: 0.0,
+            tractAmount ?: 0.0,
             currentStep
         ),
         apolloCallMapper = { data ->

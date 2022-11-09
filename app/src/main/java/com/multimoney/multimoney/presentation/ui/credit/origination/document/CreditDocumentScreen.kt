@@ -31,10 +31,12 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.Companion.PACKAGE_NAME
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
@@ -82,21 +84,22 @@ fun CreditDocumentScreen(
                         CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
                             launchOnFidoActivityResult.launch(
                                 viewModel.onFidoHelper.getOnFidoIntent(
+                                    sharedViewModel.idBrand.toInt(),
+                                    AppFlow.CreditOriginationFlow,
                                     it?.sdkToken ?: "",
                                     onRefreshToke = { refreshToken ->
                                         viewModel.onUIEvent(
                                             RefreshOnFidoToken(
                                                 // TODO Change when userDataImplemented
                                                 UserData(
-                                                    pkUser = "229913",
-                                                    identification = "192656",
-                                                    userName = "ECRURZ",
-                                                    firstName = "Elmer",
-                                                    firstLastName = "Cruz",
-                                                    secondLastName = "Suárez",
-                                                    email = "popics93@gmail.com"
+                                                    pkUser = sharedViewModel.pkUser,
+                                                    identification = sharedViewModel.identification,
+                                                    userName = sharedViewModel.email,
+                                                    firstName = sharedViewModel.firstName,
+                                                    firstLastName = sharedViewModel.lastName,
+                                                    email = sharedViewModel.email
                                                 ),
-                                                context.packageName,
+                                                PACKAGE_NAME,
                                                 refreshToken
                                             )
                                         )
@@ -127,17 +130,15 @@ fun CreditDocumentScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(
             OnCallInFidoToken(
-                // TODO Change when userDataImplemented
                 UserData(
-                    pkUser = "229913",
-                    identification = "192656",
-                    userName = "ECRURZ",
-                    firstName = "Elmer",
-                    firstLastName = "Cruz",
-                    secondLastName = "Suárez",
-                    email = "popics93@gmail.com"
+                    pkUser = sharedViewModel.pkUser,
+                    identification = sharedViewModel.identification,
+                    userName = sharedViewModel.email,
+                    firstName = sharedViewModel.firstName,
+                    firstLastName = sharedViewModel.lastName,
+                    email = sharedViewModel.email
                 ),
-                context.packageName
+                PACKAGE_NAME
             )
         )
     }

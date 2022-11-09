@@ -207,7 +207,7 @@ fun CreditAmountScreen(
                 errorMessage = stringResource(
                     id = viewModel.uiState.disbursementError.second,
                     viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
-                    viewModel.uiState.progressFactor
+                    viewModel.uiState.progressFactor ?: 0.0
                 ),
                 customTransformation = CurrencyIntegerTransformation(
                     viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
@@ -297,7 +297,7 @@ fun CreditAmountScreen(
             CreditInfo(
                 iconId = drawable.ic_calendar,
                 textId = string.credit_amount_term,
-                value = stringResource(id = string.credit_amount_term_value, viewModel.uiState.termLabel)
+                value = stringResource(id = string.credit_amount_term_value, viewModel.uiState.termLabel ?: "")
             )
             CreditInfo(
                 iconId = drawable.ic_percentage,
@@ -359,7 +359,7 @@ fun CreditAmountScreen(
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-fun CreditInfo(iconId: Int, textId: Int, value: String) {
+fun CreditInfo(iconId: Int, textId: Int, value: String?) {
     Row(modifier = Modifier.padding(top = 12.dp), verticalAlignment = CenterVertically) {
         Icon(
             painter = painterResource(id = iconId),
@@ -378,7 +378,7 @@ fun CreditInfo(iconId: Int, textId: Int, value: String) {
             color = MultimoneyTheme.colors.labelText
         )
         Text(
-            text = value,
+            text = value ?: "",
             style = Typography.subtitle1.copy(
                 fontWeight = FontWeight.SemiBold,
                 platformStyle = PlatformTextStyle(

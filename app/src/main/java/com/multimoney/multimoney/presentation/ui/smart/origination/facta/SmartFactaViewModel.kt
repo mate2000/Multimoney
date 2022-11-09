@@ -14,7 +14,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFa
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSCitizenChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -30,8 +29,7 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
         var isActivityOfArt15: Boolean? = null,
         var isUSTaxPayer: Boolean? = null,
         var isTaxPayer: Boolean? = null,
-        var crPage: Int = CR_PAGE_ONE,
-        var openDialog: DialogParameters = DialogParameters()
+        var crPage: Int = CR_PAGE_ONE
     )
 
     sealed class UIEvent {

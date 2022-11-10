@@ -4,18 +4,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
+import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.Relationship
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChance
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnBeneficiaryFullNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnCallQueryRelationshipUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnPercentageValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.BaseEvent
+import com.multimoney.multimoney.presentation.util.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -38,10 +40,52 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
             }
         }
 
-    fun onRelationShipValueChange(relationShip: String) {
-        uiState =
-            uiState.copy(relationship = relationShip)
+    private fun onFullNameValueChange(name: String) {
+        uiState = uiState.copy(beneficiaryFullName = name)
         validateForm()
+    }
+
+    private fun onRelationShipValueChange(relationShip: String) {
+        uiState = uiState.copy(relationship = relationShip)
+        validateForm()
+    }
+
+    private fun onPercentageValueChange(percentage: String) {
+        if (percentage.length <= 3) {
+            uiState = uiState.copy(percentage = percentage)
+        }
+        validateForm()
+    }
+
+    private fun onAddBeneficiaryStateChange(status: Boolean, beneficiary: Beneficiary?) {
+        val totalPercentage =
+            uiState.totalPercentage.plus(beneficiary?.allocationPercentage?.toInt() ?: 0)
+        val beneficiariesList = uiState.beneficiaryList.toMutableList()
+        if (beneficiary != null && totalPercentage <= MAX_PERCENTAGE) {
+            beneficiariesList.add(beneficiary)
+            uiState = uiState.copy(
+                addBeneficiaryState = status,
+                beneficiaryList = beneficiariesList,
+                totalPercentage = totalPercentage,
+            )
+            cleanUI()
+        } else if (beneficiary == null) {
+            uiState = uiState.copy(addBeneficiaryState = status)
+        } else {
+            uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    titleResource = R.string.smart_account_beneficiary_max_percentage_dialog_title,
+                    descriptionResource = R.string.smart_account_beneficiary_max_percentage_dialog_subtitle,
+                    positiveResource = R.string.understood,
+                    isActive = mutableStateOf(true)
+                )
+            )
+        }
+        validatePercentage()
+    }
+
+    private fun cleanUI() {
+        uiState = uiState.copy(relationship = "", percentage = "", beneficiaryFullName = "")
     }
 
     private fun validateForm() {
@@ -52,6 +96,10 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         )
     }
 
+    private fun validatePercentage() {
+        emitBaseEvent(OnFormValidateCompleted(isFormValid = uiState.addBeneficiaryState || uiState.totalPercentage == MAX_PERCENTAGE))
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnCallQueryRelationshipUseCase -> callQueryRelationshipUseCase(
@@ -59,23 +107,27 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
                 event.idBrand,
                 event.option
             )
-            is OnRelationshipValueChange -> uiState =
-                uiState.copy(relationship = event.relationship)
-            is OnBeneficiaryFullNameValueChange -> uiState =
-                uiState.copy(beneficiaryFullName = event.fullName)
-            is OnPercentageValueChange -> uiState = uiState.copy(percentage = event.percentage)
+            is OnRelationshipValueChange -> onRelationShipValueChange(event.relationship)
+            is OnBeneficiaryFullNameValueChange -> onFullNameValueChange(event.fullName)
+            is OnPercentageValueChange -> onPercentageValueChange(event.percentage)
             is OnNextActionClick -> event.nextStepAction()
             is OnValidateForm -> validateForm()
-            is OnAddBeneficiaryStateChance -> uiState = uiState.copy(addBeneficiaryState = event.status)
+            is OnAddBeneficiaryStateChange -> onAddBeneficiaryStateChange(
+                event.status,
+                event.beneficiary
+            )
         }
     }
 
     data class UIState(
         val relationshipList: List<Relationship?> = listOf(),
+        val beneficiaryList: List<Beneficiary> = listOf(),
         val beneficiaryFullName: String = "",
         val relationship: String = "",
         val percentage: String = "",
-        val addBeneficiaryState: Boolean = true
+        val addBeneficiaryState: Boolean = true,
+        val totalPercentage: Int = 0,
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     sealed class UIEvent {
@@ -89,11 +141,19 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         data class OnRelationshipValueChange(val relationship: String) : UIEvent()
         data class OnPercentageValueChange(val percentage: String) : UIEvent()
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
-        data class OnAddBeneficiaryStateChance(val status: Boolean) : UIEvent()
+        data class OnAddBeneficiaryStateChange(
+            val status: Boolean,
+            val beneficiary: Beneficiary? = null
+        ) : UIEvent()
+
         object OnValidateForm : UIEvent()
     }
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+    }
+
+    companion object {
+        const val MAX_PERCENTAGE = 100
     }
 }

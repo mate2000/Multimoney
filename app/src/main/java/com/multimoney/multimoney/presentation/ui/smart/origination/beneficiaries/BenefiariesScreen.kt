@@ -29,24 +29,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartSteps.Five
 import com.multimoney.data.util.catalog.SmartSteps.One
-import com.multimoney.data.util.catalog.SmartSteps.Two
+import com.multimoney.data.util.catalog.SmartSteps.Three
+import com.multimoney.domain.model.accountsmart.Beneficiary
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChance
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.Companion.MAX_PERCENTAGE
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnBeneficiaryFullNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnCallQueryRelationshipUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnPercentageValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -80,34 +87,56 @@ fun BeneficiariesScreen(
             OnSetNavigation(
                 nextAction = {
                     if (viewModel.uiState.addBeneficiaryState) {
-                        viewModel.onUIEvent(OnAddBeneficiaryStateChance(false))
-                    }
-                    /*viewModel.onUIEvent(OnNextActionClick(
-                        nextStepAction = {
-                            val beneficiaries = arrayListOf<Beneficiary>()
-                            sharedViewModel.accountSmartData?.listBeneficiaries
-                            sharedViewModel.onUIEvent(
-                                OnCallMutationUpdateGlobalRequestUseCase(
-                                    accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                        listBeneficiaries = beneficiaries.toList()
-                                    )
+                        viewModel.onUIEvent(
+                            OnAddBeneficiaryStateChange(
+                                false, Beneficiary(
+                                    viewModel.uiState.beneficiaryFullName,
+                                    viewModel.uiState.relationshipList.find { it?.description == viewModel.uiState.relationship }?.relationshipId,
+                                    viewModel.uiState.relationship,
+                                    viewModel.uiState.percentage
                                 )
                             )
-                        }
-                    ))*/
+                        )
+                    } else {
+                        viewModel.onUIEvent(
+                            UIEvent.OnNextActionClick(
+                                nextStepAction = {
+                                    sharedViewModel.onUIEvent(
+                                        OnCallMutationUpdateGlobalRequestUseCase(
+                                            accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                                listBeneficiaries = viewModel.uiState.beneficiaryList,
+                                                currentStep = SmartSteps.Search.getNameById(
+                                                    sharedViewModel.uiState.currentStep
+                                                )
+                                            )
+                                        )
+                                    )
+                                }
+                            ))
+                    }
                 },
-                nextStep = Two.id,
-                previousStep = One.id
+                nextStep = Five.id,
+                previousStep = Three.id
             )
         )
         viewModel.onUIEvent(OnValidateForm)
     }
 
-    Column(
-        modifier = Modifier
+    val generalModifier = if (viewModel.uiState.addBeneficiaryState) {
+        Modifier
             .padding(vertical = 16.dp, horizontal = 16.dp)
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    } else {
+        Modifier
+            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .background(MultimoneyTheme.colors.background)
+            .fillMaxSize()
+    }
+
+    Column(
+        modifier = generalModifier
     ) {
         Text(
             text = buildAnnotatedString {
@@ -125,7 +154,7 @@ fun BeneficiariesScreen(
             modifier = Modifier.fillMaxWidth()
         )
         if (viewModel.uiState.addBeneficiaryState) BeneficiaryForm(viewModel)
-        else BeneficiaryList(sharedViewModel)
+        else BeneficiaryList(viewModel)
     }
 }
 
@@ -177,34 +206,57 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
             focusManager.clearFocus()
         }),
         labelText = stringResource(id = string.smart_account_beneficiaries_percentage),
-        modifier = Modifier.padding(top = 44.dp),
+        modifier = Modifier.padding(top = 16.dp),
     )
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource),
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
 }
 
 @Composable
-fun BeneficiaryList(sharedViewModel: SmartViewModel) {
+fun BeneficiaryList(
+    viewModel: BeneficiariesViewModel = hiltViewModel()
+) {
     OnContinueEnable(true)
-    sharedViewModel.accountSmartData?.listBeneficiaries?.let { beneficiaries ->
+    viewModel.uiState.beneficiaryList.let { beneficiaries ->
         LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
-            items(beneficiaries) { movement ->
+            items(beneficiaries) { beneficiary ->
                 CustomInfoButton(
+                    title = beneficiary.fullName ?: "",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
                     subtitle = stringResource(
                         id = string.smart_account_beneficiary_content,
-                        movement.fullName ?: "",
-                        movement.allocationPercentage ?: ""
-                    )
+                        beneficiary.strRelationship ?: "",
+                        beneficiary.allocationPercentage ?: ""
+                    ),
+                    endIcon = R.drawable.ic_options,
+                    startIcon = R.drawable.ic_beneficiary,
+                    onEndIconClick = {
+                        // TODO Implement bottom sheet
+                    }
                 )
             }
         }
     }
-    CustomButton(
-        modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-            .fillMaxWidth()
-            .height(48.dp), buttonType = CustomButtonType.PrimaryTertiary,
-        text = stringResource(id = string.smart_account_add_beneficiaries)
-    )
+    if (viewModel.uiState.totalPercentage < MAX_PERCENTAGE) {
+        CustomButton(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .fillMaxWidth()
+                .height(48.dp), buttonType = CustomButtonType.PrimaryTertiary,
+            text = stringResource(id = string.smart_account_add_beneficiaries),
+            onClick = {
+                viewModel.onUIEvent(OnAddBeneficiaryStateChange(true))
+            }
+        )
+    }
 }

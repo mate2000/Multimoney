@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
@@ -160,4 +161,21 @@ interface CreditRepository {
         destinyAccount: List<DestinyAccount>,
         amount: Any
     ): Flow<MultimoneyResult<ProcessPaymentList?>>
+
+    suspend fun mutationActivateClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long,
+        idCurrency: Int
+    ): Flow<MultimoneyResult<AutomaticDebit?>>
+
+    suspend fun queryGetClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int
+    ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
 }

@@ -107,7 +107,7 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                 )
                 CustomInformativeText(
                     modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                    drawableResource = R.drawable.ic_information,
+                    leadingIcon = R.drawable.ic_information,
                     text = stringResource(id = R.string.payment_options_transfer_disclaimer),
                     textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text)
                 )

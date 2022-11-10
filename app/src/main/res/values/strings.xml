@@ -539,4 +539,15 @@
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
 
+    <!-- Payment Schedule -->
+    <string name="payment_schedule_title" translatable="false">Configurá tu pago \nautomático</string>
+    <string name="payment_schedule_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_label_origin" translatable="false">Desde tu cuenta</string>
+    <string name="payment_schedule_label_date" translatable="false">Día del mes que se hará el pago</string>
+    <string name="payment_schedule_label_date_description" translatable="false">%s de cada mes</string>
+    <string name="payment_schedule_button" translatable="false">Programar</string>
+
+    <!-- Payment Schedule Account-->
+    <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
+
 </resources>

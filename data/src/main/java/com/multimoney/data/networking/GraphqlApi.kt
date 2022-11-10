@@ -5,6 +5,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
@@ -18,6 +19,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CompanyProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
@@ -333,6 +335,42 @@ class GraphqlApi @Inject constructor(
                 description,
                 destinyAccount.map { it.mapToApolloModel() },
                 amount
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationActivatedClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long,
+        idCurrency: Int
+    ): ApolloCall<ActivatedClientAutomaticDebitMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ActivatedClientAutomaticDebitMutation(
+                user,
+                idBrand,
+                idClient,
+                idLoanClient,
+                origin,
+                idAccount,
+                idCurrency
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int
+    ): ApolloCall<GetClientAutomaticDebitQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetClientAutomaticDebitQuery(
+                user,
+                idBrand,
+                idClient,
+                idLoanClient
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

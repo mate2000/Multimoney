@@ -4,6 +4,7 @@ import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
@@ -160,4 +161,9 @@ interface CreditRepository {
         destinyAccount: List<DestinyAccount>,
         amount: Any
     ): Flow<MultimoneyResult<ProcessPaymentList?>>
+
+    suspend fun subscriptionCreditContractEvent(
+        idPrint: Long,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CreditContractEvent?>>
 }

@@ -3,7 +3,6 @@ package com.multimoney.data.networking
 import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
-import com.apollographql.apollo3.cache.normalized.FetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
@@ -16,6 +15,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.CreditContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
@@ -339,6 +339,16 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun subscriptionCreditContractEvent(
+        idPrint: Long,
+        idBrand: Int
+    ): ApolloCall<CreditContractEventSubscription.Data> = apolloAuthorizedClient.subscription(
+        CreditContractEventSubscription(
+            idPrint,
+            idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     // Security
     fun queryValidateUserExists(
         email: String
@@ -526,6 +536,27 @@ class GraphqlApi @Inject constructor(
             GetCompanyNameByIdentificationQuery(identification, idBrand, user)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationOnfidoCheckProcess(
+        identification: String,
+        applicantId: String,
+        currentFlow: String,
+        pkUser: Long,
+        userRequestId: Long,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<OnfidoCheckProcessMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            OnfidoCheckProcessMutation(
+                identification,
+                applicantId,
+                currentFlow,
+                pkUser,
+                userRequestId,
+                idBrand,
+                user
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     // SmartAccount
     fun queryCivilStatus(
         pkUser: String,
@@ -636,25 +667,4 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<GeneralEconomicActivityQuery.Data> =
         apolloAuthorizedClient.query(GeneralEconomicActivityQuery(user, idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
-
-    fun mutationOnfidoCheckProcess(
-        identification: String,
-        applicantId: String,
-        currentFlow: String,
-        pkUser: Long,
-        userRequestId: Long,
-        idBrand: Int,
-        user: String
-    ): ApolloCall<OnfidoCheckProcessMutation.Data> =
-        apolloAuthorizedClient.mutation(
-            OnfidoCheckProcessMutation(
-                identification,
-                applicantId,
-                currentFlow,
-                pkUser,
-                userRequestId,
-                idBrand,
-                user
-            )
-        ).fetchPolicy(NetworkOnly)
 }

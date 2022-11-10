@@ -7,6 +7,7 @@ import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
@@ -19,8 +20,8 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.CreditRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class CreditRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -320,6 +321,16 @@ class CreditRepositoryImpl @Inject constructor(
             } else {
                 Message(data.mapToDomainModel())
             }
+        }
+    )
+
+    override suspend fun subscriptionCreditContractEvent(
+        idPrint: Long,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CreditContractEvent?>> = fetchSubscription(
+        apolloCall = graphqlApi.subscriptionCreditContractEvent(idPrint, idBrand),
+        apolloCallMapper = { data ->
+            Success(data?.mapToDomainModel())
         }
     )
 }

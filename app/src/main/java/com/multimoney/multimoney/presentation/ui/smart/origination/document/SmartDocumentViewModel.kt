@@ -8,10 +8,10 @@ import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCas
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
-import com.multimoney.domain.model.accountsmart.AddressLevelTwo
+import com.multimoney.domain.model.accountsmart.Address
 import com.multimoney.domain.model.accountsmart.CivilStatus
 import com.multimoney.domain.model.accountsmart.Nationality
-import com.multimoney.domain.model.accountsmart.Profession
+import com.multimoney.domain.model.accountsmart.ProfessionSmart
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -39,14 +39,14 @@ class SmartDocumentViewModel @Inject constructor(
     private val queryCivilStatusUseCase: QueryCivilStatusUseCase,
     private val queryProfessionUseCase: QueryProfessionUseCase,
     private val queryNationalitiesUseCase: QueryNationalitiesUseCase,
-    private val queryAddressLevelTwoUseCase: QueryAddressLevelTwoUseCase,
+    private val queryAddressLevelTwoUseCase: QueryAddressLevelTwoUseCase
 ) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun callQueryNationalitiesUseCase(user: String = "401920903", idBrand: Int = 5) =
+    private fun callQueryNationalitiesUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryNationalitiesUseCase.invoke(
                 user = user,
@@ -76,9 +76,9 @@ class SmartDocumentViewModel @Inject constructor(
         }
 
     private fun callQueryAddressLevelTwoUseCase(
-        user: String = "401920903",
-        idBrand: Int = 5,
-        idAddressLevelOne: String = "1",
+        user: String,
+        idBrand: Int,
+        idAddressLevelOne: String
     ) = executeUseCase {
         queryAddressLevelTwoUseCase.invoke(
             user = user,
@@ -86,13 +86,7 @@ class SmartDocumentViewModel @Inject constructor(
             idAddressLevelOne = idAddressLevelOne
         ).collectLatest { result ->
             result.onSuccess { addresses ->
-                addresses?.let {
-                    val addressesString = it.addresses.map { address -> address?.name ?: "" }
-                    uiState = uiState.copy(
-                        addressLevelTwoList = it.addresses,
-                        addressLevelTwoStringList = addressesString
-                    )
-                }
+                uiState = uiState.copy(addressLevelTwoList = addresses?.addresses ?: emptyList())
                 onUIEvent(OnLoadingValueChange(false))
             }
             result.onFailure {
@@ -112,21 +106,14 @@ class SmartDocumentViewModel @Inject constructor(
         }
     }
 
-    private fun callQueryCivilStatusUseCase(user: String = "401920903", idBrand: Int = 5) =
+    private fun callQueryCivilStatusUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryCivilStatusUseCase.invoke(
                 user = user,
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { civilStatus ->
-                    civilStatus?.let {
-                        val civilStatusStrings =
-                            it.status.map { status -> status?.maritalStatusDescription ?: "" }
-                        uiState = uiState.copy(
-                            civilStatusList = it.status,
-                            civilStatusStringList = civilStatusStrings
-                        )
-                    }
+                    uiState = uiState.copy(civilStatusList = civilStatus?.status ?: emptyList())
                     onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
@@ -146,20 +133,14 @@ class SmartDocumentViewModel @Inject constructor(
             }
         }
 
-    private fun callQueryProfessionUseCase(user: String = "40192", idBrand: Int = 5) =
+    private fun callQueryProfessionUseCase(user: String, idBrand: Int) =
         executeUseCase {
             queryProfessionUseCase.invoke(
                 user = user,
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { successfulResult ->
-                    successfulResult?.let {
-                        val professionList = it.status.map { professionStatus -> professionStatus?.name ?: "" }
-                        uiState = uiState.copy(
-                            professionList = it.status,
-                            professionStringList = professionList
-                        )
-                    }
+                    uiState = uiState.copy(professionSmartList = successfulResult?.status ?: emptyList())
                     onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
@@ -205,7 +186,7 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     private fun onProfessionChange(profession: String) {
-        val professionId = uiState.professionList.find { it?.name == profession }?.id
+        val professionId = uiState.professionSmartList.find { it?.name == profession }?.id
         uiState = uiState.copy(profession = profession, professionId = professionId ?: 0)
         validateForm()
     }
@@ -214,10 +195,10 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 isFormValid = uiState.gender.isNotBlank() &&
-                        uiState.birthdate.isNotBlank() &&
-                        uiState.civilState.isNotBlank() &&
-                        uiState.profession.isNotBlank() &&
-                        uiState.expirationDate.isNotBlank()
+                    uiState.birthdate.isNotBlank() &&
+                    uiState.civilState.isNotBlank() &&
+                    uiState.profession.isNotBlank() &&
+                    uiState.expirationDate.isNotBlank()
             )
         )
     }
@@ -238,13 +219,9 @@ class SmartDocumentViewModel @Inject constructor(
         val professionId: Int = 0,
         val openDialog: DialogParameters = DialogParameters(),
         val nationalitiesList: List<Nationality?> = listOf(),
-        val addressLevelTwoList: List<AddressLevelTwo?> = listOf(),
+        val addressLevelTwoList: List<Address?> = listOf(),
         val civilStatusList: List<CivilStatus?> = listOf(),
-        val professionList: List<Profession?> = listOf(),
-        val nationalitiesStringList: List<String> = listOf(),
-        val addressLevelTwoStringList: List<String> = listOf(),
-        val civilStatusStringList: List<String> = listOf(),
-        val professionStringList: List<String> = listOf(),
+        val professionSmartList: List<ProfessionSmart?> = listOf()
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -277,7 +254,7 @@ class SmartDocumentViewModel @Inject constructor(
         data class OnStart(
             val userCompletedDialogDescription: String,
             val linkWhatsapp: String,
-            val blockedMessage: String,
+            val blockedMessage: String
         ) : UIEvent()
 
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
@@ -294,7 +271,7 @@ class SmartDocumentViewModel @Inject constructor(
         data class OnCallQueryAddressLevelTwoUseCase(
             val user: String,
             val pkUser: String,
-            val idBrand: Int,
+            val idBrand: Int
         ) : UIEvent()
 
         data class OnCallQueryCivilStatusUseCase(val user: String, val idBrand: Int) : UIEvent()

@@ -17,6 +17,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
@@ -33,7 +34,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -222,7 +223,7 @@ class CreditAmountViewModel @Inject constructor(
                     pkUser = pkUser,
                     user = user,
                     idBrand = idBrand,
-                    idUserRequest = idUserRequest.toString(),
+                    idUserRequest = idUserRequest,
                     onSuccess = onSuccess,
                     onLoadingValueChange = onLoadingValueChange,
                     onFailureWithDialog = onFailureWithDialog
@@ -253,10 +254,10 @@ class CreditAmountViewModel @Inject constructor(
         emitBaseEvent(
             OnOpenConditionOfCreditDialog(
                 DialogParameters(
-                    titleResource = R.string.credit_amount_condition_of_credit_info,
+                    titleResource = string.credit_amount_condition_of_credit_info,
                     description = conditionModalDescription,
                     isActive = mutableStateOf(true),
-                    positiveResource = R.string.accept
+                    positiveResource = string.accept
                 )
             )
         )
@@ -414,7 +415,7 @@ class CreditAmountViewModel @Inject constructor(
         pkUser: String,
         user: String,
         idBrand: Int,
-        idUserRequest: String,
+        idUserRequest: Int,
         onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit

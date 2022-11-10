@@ -35,13 +35,13 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.document.Cre
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
 @Preview
 fun CreditDocumentScreen(
     viewModel: CreditDocumentViewModel = hiltViewModel(),
-    sharedViewModel: CreditViewModel = hiltViewModel(),
+    sharedViewModel: CreditViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val launchOnFidoActivityResult =
@@ -103,7 +103,7 @@ fun CreditDocumentScreen(
                                     }
                                 )
                             )
-                        }, nextStep = CreditStep.Eight.id, previousStep = CreditStep.Six.id)
+                        }, nextStep = CreditStep.Nine.id, previousStep = CreditStep.Seven.id)
                     )
                 }
             }.onLoading {

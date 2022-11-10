@@ -22,15 +22,21 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         idAddressLevel2: Long,
         idAddressLevel3: Long,
         idEconomicActivity: Long,
-        income: Int,
+        income: Double,
         addressDetail: String,
-        isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
         institutionPension: String,
         specifiesIncomeSource: String,
-        beneficiaries: List<Beneficiary>
+        beneficiaries: List<Beneficiary>,
+        entrepreneurship: String,
+        legalID: String,
+        isActivityOfArt15: Boolean,
+        isUSCitizen: Boolean,
+        isPEP: Boolean,
+        isUSTaxPayer: Boolean,
+        isTaxPayer: Boolean
     ): Flow<MultimoneyResult<GlobalRequest?>> = repository.mutationGlobalRequest(
         pkUser,
         status,
@@ -47,12 +53,18 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         idEconomicActivity,
         income,
         addressDetail,
-        isPEP,
         user,
         idBrand,
         currentStep,
         institutionPension,
         specifiesIncomeSource,
-        beneficiaries
+        beneficiaries,
+        entrepreneurship,
+        legalID,
+        isActivityOfArt15,
+        isUSCitizen,
+        isPEP,
+        isUSTaxPayer,
+        isTaxPayer
     )
 }

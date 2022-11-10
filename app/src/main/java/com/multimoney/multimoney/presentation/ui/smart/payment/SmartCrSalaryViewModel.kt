@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
-import com.multimoney.domain.model.accountsmart.Profession
+import com.multimoney.domain.model.accountsmart.ProfessionSmart
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -15,7 +15,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryView
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -28,11 +28,10 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         private set
 
     private fun validateForm() {
-        emitBaseEvent(OnFormValidateCompleted(onValidateForm()))
+        emitBaseEvent(OnFormValidateCompleted(isFormValid()))
     }
 
-    fun onValidateForm() = uiState.profession.isNotBlank()
-            && uiState.paymentAmount.isNotBlank()
+    fun isFormValid() = uiState.profession.isNotBlank() && uiState.paymentAmount.isNotBlank()
 
     private fun onAmountValueChange(paymentAmount: String) {
         uiState = uiState.copy(paymentAmount = paymentAmount)
@@ -40,7 +39,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
     }
 
     private fun onProfessionValueChange(
-        profession: String,
+        profession: String
     ) {
         uiState = uiState.copy(profession = profession)
         validateForm()
@@ -54,7 +53,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
             ).collectLatest { result ->
                 result.onSuccess { successfulResult ->
                     successfulResult?.let {
-                        uiState = uiState.copy(professionList = it.status)
+                        uiState = uiState.copy(professionSmartList = it.status)
                     }
                     uiState = uiState.copy(isLoading = false)
                 }
@@ -70,7 +69,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
                     )
                 }
                 result.onLoading {
-                    uiState = uiState.copy(isLoading =true)
+                    uiState = uiState.copy(isLoading = true)
                 }
             }
         }
@@ -79,9 +78,9 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         // Fields
         val profession: String = "",
         val paymentAmount: String = "",
-        val professionList: List<Profession?> = listOf(),
+        val professionSmartList: List<ProfessionSmart?> = listOf(),
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters(),
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -89,8 +88,9 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
             is OnValidateForm -> validateForm()
             is OnPaymentAmountChange -> onAmountValueChange(event.paymentAmount)
             is OnProfessionChange -> onProfessionValueChange(event.profession)
-            is OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
         }
     }

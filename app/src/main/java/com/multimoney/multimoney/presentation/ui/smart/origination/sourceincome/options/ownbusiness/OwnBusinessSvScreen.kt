@@ -30,13 +30,10 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyDescriptionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnCompanyNameChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnMonthlyIncomeChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIState
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
@@ -65,13 +62,15 @@ fun SmartOwnBusinessSvScreen(
                                 idEconomicActivity = SourceIncomeOptionType.OwnBusiness.id.toLong(),
                                 companyName = viewModel.uiState.companyNameValue,
                                 aboutCompany = viewModel.uiState.companyDescriptionValue,
-                                income = viewModel.uiState.monthlyIncomeValue.toFloat()
+                                income = viewModel.uiState.monthlyIncomeValue.toFloat(),
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Three.id
+                previousStep = SmartSteps.Two.id
             )
         )
 
@@ -84,16 +83,9 @@ fun SmartOwnBusinessSvScreen(
         }
     }
     SmartOwnBusinessSvContent(viewModel, sharedViewModel)
-    ShowCustomDialog(uiState = viewModel.uiState)
 
     // return to the main options screen whenever tapping on native back button from the device
-    BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent(
-            (OnNavigateToSelectedSourceOfIncomeOption(
-                SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            ))
-        )
-    }
+    BackHandler { sourceIncomeSharedViewModel.goBackToMainOptions() }
 }
 
 @Composable
@@ -147,6 +139,8 @@ fun SmartOwnBusinessSvContent(
             isRequired = true,
             isRequiredMessage = stringResource(R.string.smart_own_business_description_required),
             isTextArea = true,
+            isError = viewModel.uiState.companyDescriptionError.first,
+            errorMessage = stringResource(viewModel.uiState.companyDescriptionError.second),
             modifier = Modifier.padding(top = 16.dp)
         )
         CustomOutlinedTextField(
@@ -167,27 +161,14 @@ fun SmartOwnBusinessSvContent(
             leadingIcon = R.drawable.ic_money_gray,
             placeHolder = stringResource(
                 id = R.string.smart_own_business_monthly_income_placeholder,
-                stringResource(sharedViewModel.idBrand.toInt().getCurrencySymbol())
+                stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
             ),
             customTransformation = formatMoney(
                 stringResource(
-                    sharedViewModel.idBrand.toInt().getCurrencySymbol()
+                    sharedViewModel.idBrandAsInt.getCurrencySymbol()
                 )
             ),
             modifier = Modifier.padding(top = 16.dp)
-        )
-    }
-}
-
-@Composable
-fun ShowCustomDialog(uiState: UIState) {
-    if (uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(uiState.openDialog.titleResource),
-            message = stringResource(uiState.openDialog.descriptionResource),
-            positiveButtonText = stringResource(uiState.openDialog.positiveResource),
-            openDialogCustom = uiState.openDialog.isActive,
-            onPositiveAction = uiState.openDialog.positiveAction
         )
     }
 }

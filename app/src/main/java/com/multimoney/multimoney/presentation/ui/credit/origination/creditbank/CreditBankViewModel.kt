@@ -20,7 +20,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.C
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getRegex
 import com.multimoney.multimoney.presentation.util.matchRegex
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,7 +44,7 @@ class CreditBankViewModel @Inject constructor(
         pkUser: Int,
         user: String,
         idBrand: Int,
-        idUserRequest: String,
+        idUserRequest: Int,
         list: List<CreditCatalog?>?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
@@ -191,7 +191,7 @@ class CreditBankViewModel @Inject constructor(
             val pkUser: Int,
             val user: String,
             val idBrand: Int,
-            val idUserRequest: String,
+            val idUserRequest: Int,
             val list: List<CreditCatalog?>?,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit

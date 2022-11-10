@@ -1,6 +1,6 @@
 package com.multimoney.data.mapper.security
 
-import com.multimoney.data.networking.security.apollomodel.GetConfigurationVersionQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
 import com.multimoney.domain.model.security.AccountSmart
 import com.multimoney.domain.model.security.Configuration
 import com.multimoney.domain.model.security.ConfigurationVersion
@@ -29,8 +29,8 @@ private fun GetConfigurationVersionQuery.MetodoTransferencium.mapToDomainModel()
 
 private fun GetConfigurationVersionQuery.AccountSmart.mapToDomainModel() = AccountSmart(
     active = activo,
-    paymentMethod = metodoAbono?.map { it?.mapToDomainModel() },
-    transferMethod = metodoTransferencia?.map { it?.mapToDomainModel() }
+    paymentMethod = metodoAbono.map { it.mapToDomainModel() },
+    transferMethod = metodoTransferencia.map { it.mapToDomainModel() }
 )
 
 private fun GetConfigurationVersionQuery.MetodoPago.mapToDomainModel() = PaymentMethod(
@@ -49,8 +49,8 @@ private fun GetConfigurationVersionQuery.CuentaTransferencia.mapToDomainModel() 
 
 private fun GetConfigurationVersionQuery.Credit.mapToDomainModel() = Credit(
     active = activo,
-    paymentMethod = metodoPago?.map { it?.mapToDomainModel() },
-    transferAccount = cuentaTransferencia?.mapToDomainModel()
+    paymentMethod = metodoPago.map { it.mapToDomainModel() },
+    transferAccount = cuentaTransferencia.mapToDomainModel()
 )
 
 private fun GetConfigurationVersionQuery.Crypto.mapToDomainModel() = Crypto(
@@ -65,11 +65,11 @@ private fun GetConfigurationVersionQuery.VirtualCard.mapToDomainModel() = Virtua
 
 private fun GetConfigurationVersionQuery.ConfiguracionVersion.mapToDomainModel() = Configuration(
     timeSession = timeSesion,
-    currency = moneda?.map { it?.mapToDomainModel() },
-    accountSmart = accountSmart?.mapToDomainModel(),
-    credit = credit?.mapToDomainModel(),
-    crypto = crypto?.mapToDomainModel(),
-    virtualCard = virtualCard?.mapToDomainModel()
+    currency = moneda.map { it.mapToDomainModel() },
+    accountSmart = accountSmart.mapToDomainModel(),
+    credit = credit.mapToDomainModel(),
+    crypto = crypto.mapToDomainModel(),
+    virtualCard = virtualCard.mapToDomainModel()
 )
 
 private fun GetConfigurationVersionQuery.GetConfigurationVersion.mapToDomainModel() = ConfigurationVersion(
@@ -77,4 +77,4 @@ private fun GetConfigurationVersionQuery.GetConfigurationVersion.mapToDomainMode
     configuration = configuracionVersion?.mapToDomainModel()
 )
 
-fun GetConfigurationVersionQuery.Data.mapToDomainModel() = getConfigurationVersion?.mapToDomainModel()
+fun GetConfigurationVersionQuery.Data.mapToDomainModel() = getConfigurationVersion.mapToDomainModel()

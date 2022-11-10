@@ -26,7 +26,10 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     ) {
         composable(
             route = Screen.CreditScreen.route,
-            arguments = listOf(navArgument(CREDIT_STEP) { type = NavType.IntType })
+            arguments = listOf(
+                navArgument(CREDIT_STEP) { type = NavType.IntType },
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+            )
         ) { navBackStackEntry ->
             CreditScreen(
                 onNavigate = {

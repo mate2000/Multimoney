@@ -11,22 +11,25 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.PaymentAmountScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
-import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBackHome
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,6 +55,8 @@ class PaymentAccountViewModel @Inject constructor(
     private var idCurrency: Int? = 0
     private var identification: String? = null
     private var userName: String? = null
+    private var paymentDate: String? = null
+    private var previousScreen = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -61,11 +66,14 @@ class PaymentAccountViewModel @Inject constructor(
         summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         userName = savedStateHandle[NAME_CLIENT] ?: ""
+        paymentDate = savedStateHandle[PAYMENT_DATE]
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         idCurrency = if ((summaryList?.count() ?: 0) > 1) {
             CurrencyType.All.id
         } else {
-            idCurrency
+            summaryList?.firstOrNull()?.idCurrency
         }
+        getTextResources()
     }
 
     private fun getTextResources() {
@@ -107,16 +115,16 @@ class PaymentAccountViewModel @Inject constructor(
         if (idCurrency != clientBankAccount?.idCurrency) {
             uiState = uiState.copy(
                 openDialog = DialogParameters(
-                    titleResource = R.string.payment_account_different_currency_dialog_title,
-                    descriptionResource = R.string.payment_account_different_currency_dialog_description,
+                    titleResource = string.payment_account_different_currency_dialog_title,
+                    descriptionResource = string.payment_account_different_currency_dialog_description,
                     isActive = mutableStateOf(true),
                     positiveAction = {
                         navigateTo(
-                            route = "${Screen.PaymentAmountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+                            route = "${PaymentAmountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
                             encodeData(
                                 summaryList
                             )
-                            }/${encodeData(clientBankAccount)}/$identification/$userName"
+                            }/${encodeData(clientBankAccount)}/$identification/$userName/$paymentDate"
                         )
                     }
                 )
@@ -127,15 +135,14 @@ class PaymentAccountViewModel @Inject constructor(
                 encodeData(
                     summaryList
                 )
-                }/${encodeData(clientBankAccount)}/$identification/$userName"
+                }/${encodeData(clientBankAccount)}/$identification/$userName/$paymentDate"
             )
         }
     }
 
-    private fun onNavigateBack() = if ((summaryList?.count() ?: 0) > 1) {
-        navigateBack(popTo = Screen.PaymentFeeScreen.route, isRestart = false)
-    } else {
-        onNavigateBackHome()
+    private fun onNavigateBack() = when (previousScreen) {
+        Screen.PaymentFeeScreen.baseRoute -> navigateBack(popTo = Screen.PaymentFeeScreen.route, isRestart = false)
+        else -> onNavigateBackHome()
     }
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
@@ -153,7 +160,6 @@ class PaymentAccountViewModel @Inject constructor(
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
             is OnNavigateBackHome -> onNavigateBackHome()
-            is OnGetTextResources -> getTextResources()
             is OnCallQueryGetClientBankAccount -> onCallQueryGetClientBankAccountUseCase()
             is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount)
         }
@@ -163,7 +169,6 @@ class PaymentAccountViewModel @Inject constructor(
         object OnCallQueryGetClientBankAccount : UIEvent()
 
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
-        object OnGetTextResources : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigateBackHome : UIEvent()
     }

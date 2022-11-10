@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
+import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -60,8 +61,4 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun isFormValid(): Boolean =
         uiState.incomeSource.isNotBlank() && uiState.incomeAmount.isNotBlank()
-
-    companion object {
-        const val DESCRIPTION_MAX_LENGTH = 150
-    }
 }

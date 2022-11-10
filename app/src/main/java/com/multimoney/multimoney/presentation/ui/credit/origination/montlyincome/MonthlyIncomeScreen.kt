@@ -3,7 +3,9 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.montlyincom
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardActions
@@ -14,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -29,10 +31,12 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.BaseEvent.OnFormCompleted
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnCallCatalogs
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionOccupationValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnDivisionProfessionValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnProfessionValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
@@ -72,6 +76,29 @@ fun MonthlyIncomeScreen(
                     )
                 )
             }, nextStep = CreditStep.Four.id, previousStep = CreditStep.Two.id)
+        )
+        viewModel.onUIEvent(OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList))
+    }
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(
+            OnCallCatalogs(
+                sharedViewModel.pkUser,
+                sharedViewModel.email,
+                sharedViewModel.idBrand.toInt(),
+                idUserRequest = sharedViewModel.idUserRequest,
+                onLoadingValueChange = { isLoading ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                },
+                onFailureWithDialog = { isLoading, dialogParameters ->
+                    sharedViewModel.onUIEvent(
+                        CreditViewModel.UIEvent.OnFailureWithDialog(
+                            isLoading,
+                            dialogParameters
+                        )
+                    )
+                }
+            )
         )
         viewModel.onUIEvent(OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList))
     }
@@ -122,16 +149,29 @@ fun MonthlyIncomeScreen(
                 }
             )
         )
+        Spacer(modifier = Modifier.height(16.dp))
         CustomDropdown(
             modifier = Modifier
-                .padding(top = 16.dp)
                 .wrapContentSize(Alignment.TopStart)
                 .focusable(false),
-            items = stringArrayResource(id = R.array.credit_monthly_income_professions).toList(),
-            value = viewModel.uiState.profession,
-            onValueChange = { viewModel.onUIEvent(OnProfessionValueChange(it)) },
+            items = viewModel.uiState.divisionProfessionList,
+            value = viewModel.uiState.divisionProfessionSelected,
+            onValueChange = { viewModel.onUIEvent(OnDivisionProfessionValueChange(it)) },
             labelText = stringResource(id = R.string.credit_monthly_income_profession_label),
-            placeHolder = stringResource(id = R.string.select)
+            placeHolder = stringResource(id = R.string.credit_monthly_income_profession_hint)
         )
+        if (viewModel.idBrand == Brand.CostaRica.id) {
+            Spacer(modifier = Modifier.height(16.dp))
+            CustomDropdown(
+                modifier = Modifier
+                    .wrapContentSize(Alignment.TopStart)
+                    .focusable(false),
+                items = viewModel.uiState.divisionOccupationList,
+                value = viewModel.uiState.divisionOccupationSelected,
+                onValueChange = { viewModel.onUIEvent(OnDivisionOccupationValueChange(it)) },
+                labelText = stringResource(id = R.string.credit_monthly_income_occupation_label),
+                placeHolder = stringResource(id = R.string.credit_monthly_income_occupation_hint)
+            )
+        }
     }
 }

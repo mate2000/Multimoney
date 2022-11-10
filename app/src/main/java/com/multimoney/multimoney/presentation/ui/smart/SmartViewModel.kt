@@ -185,12 +185,7 @@ class SmartViewModel @Inject constructor(
                 description = closeDialogDescription,
                 positiveResource = string.common_leave,
                 negativeResource = string.button_continue,
-                positiveAction = {
-                    popAndNavigateTo(
-                        route = Screen.HomeScreen.route,
-                        popTo = Screen.SmartScreen.route
-                    )
-                },
+                positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
         )

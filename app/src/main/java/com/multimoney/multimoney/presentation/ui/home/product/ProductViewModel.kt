@@ -312,14 +312,14 @@ class ProductViewModel @Inject constructor(
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
                         CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Seven.id
+                        ) == CreditStep.Eight.id
                         )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
                         CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Seven.id
+                        ) < CreditStep.Eight.id
                         )
                 }
                 CREDIT_REJECTED -> {

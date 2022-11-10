@@ -37,6 +37,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMut
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
@@ -345,6 +346,20 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<CreditContractEventSubscription.Data> = apolloAuthorizedClient.subscription(
         CreditContractEventSubscription(
             idPrint,
+            idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveCreditOperation(
+        idUserRequest: Long,
+        pkUser: Long,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<SaveCreditOperationMutation.Data> = apolloAuthorizedClient.mutation(
+        SaveCreditOperationMutation(
+            idUserRequest,
+            pkUser,
+            user,
             idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)

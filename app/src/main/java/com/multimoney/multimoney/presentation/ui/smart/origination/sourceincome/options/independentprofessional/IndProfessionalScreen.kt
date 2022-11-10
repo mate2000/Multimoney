@@ -4,8 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +35,7 @@ fun IndProfessionalScreen(
     viewModel: IndProfessionalViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
-    ) {
+) {
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(viewModel.isFormValid()))
@@ -45,7 +47,10 @@ fun IndProfessionalScreen(
                     sharedViewModel.onUIEvent(
                         SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-
+                                idEconomicActivity = SourceIncomeOptionType.FreeLancer.id.toLong(),
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep),
+                                income = viewModel.uiState.incomeAmount.toFloat(),
+                                addressDetail = viewModel.uiState.address
                             )
                         )
                     )
@@ -54,6 +59,15 @@ fun IndProfessionalScreen(
                 previousStep = SmartSteps.Three.id
             )
         )
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is IndProfessionalViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    SmartViewModel.UIEvent.OnContinueEnable(
+                        event.isFormValid
+                    )
+                )
+            }
+        }
     }
 
     // return to the main options screen whenever tapping on native back button from the device
@@ -72,6 +86,7 @@ fun IndProfessionalScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
             text = stringResource(R.string.smart_ind_professional_title),
@@ -81,6 +96,7 @@ fun IndProfessionalScreen(
             )
         )
         CustomOutlinedTextField(
+            modifier = Modifier.padding(top = 24.dp),
             value = viewModel.uiState.incomeAmount,
             onValueChange = {
                 viewModel.onUIEvent(IndProfessionalViewModel.UIEvent.OnIncomeAmountChange(it))
@@ -100,6 +116,7 @@ fun IndProfessionalScreen(
             errorMessage = stringResource(viewModel.uiState.amountError.second)
         )
         CustomOutlinedTextField(
+            modifier = Modifier.padding(top = 16.dp),
             value = viewModel.uiState.address,
             onValueChange = {
                 viewModel.onUIEvent(IndProfessionalViewModel.UIEvent.OnJobAddressValueChange(it))

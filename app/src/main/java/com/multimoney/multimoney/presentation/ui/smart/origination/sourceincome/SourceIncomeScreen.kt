@@ -51,7 +51,8 @@ fun ShowSelectedSourceIncomeOption(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
-        SourceIncomeOptionType.OtherSV.id, SourceIncomeOptionType.OtherCR.id -> OtherIncomeScreen(
+        SourceIncomeOptionType.OtherSV.id,
+        SourceIncomeOptionType.OtherCR.id -> OtherIncomeScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )

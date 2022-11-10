@@ -224,12 +224,8 @@ class SmartViewModel @Inject constructor(
                     isCloseVisible = previousStep >= SmartSteps.One.id
                 )
             } else {
-                popAndNavigateTo(
-                    route = Screen.HomeScreen.route,
-                    popTo = Screen.SmartScreen.route
-                )
+                navigateBackToHome()
             }
-            navigateBackToHome()
         }
     }
 

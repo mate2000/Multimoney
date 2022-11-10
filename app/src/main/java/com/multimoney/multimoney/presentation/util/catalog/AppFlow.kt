@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.util.catalog
 
-sealed class AppFlow {
-    object CreditOriginationFlow : AppFlow()
-    object SignUpFlow : AppFlow()
+enum class AppFlow(val flow: String) {
+    CREDIT_ORIGINATION(flow = "CREDITO"),
+    SIGN_OUT(flow = "USUARIO"),
+    SMART(flow = "AHORRO")
 }

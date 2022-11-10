@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
-import com.multimoney.multimoney.presentation.util.catalog.AppFlow.CreditOriginationFlow
-import com.multimoney.multimoney.presentation.util.catalog.AppFlow.SignUpFlow
 import com.onfido.android.sdk.capture.DocumentType
 import com.onfido.android.sdk.capture.DocumentType.DRIVING_LICENCE
 import com.onfido.android.sdk.capture.DocumentType.NATIONAL_IDENTITY_CARD
@@ -59,15 +57,18 @@ class OnFidoHelper @Inject constructor(
         onRefreshToken = onRefreshToke
         return getOnFidoClient().createIntent(
             when (appFlow) {
-                is CreditOriginationFlow -> {
+                AppFlow.CREDIT_ORIGINATION -> {
                     getOnFidoConfigForNationalIdentity(idBrand, onFidoSDKToken)
                 }
-                is SignUpFlow -> {
+                AppFlow.SIGN_OUT -> {
                     getOnFidoConfigForSeveralDocuments(
                         idBrand,
                         listOf(NATIONAL_IDENTITY_CARD, PASSPORT, DRIVING_LICENCE),
                         onFidoSDKToken
                     )
+                }
+                AppFlow.SMART -> {
+                    getOnFidoConfigForNationalIdentity(idBrand, onFidoSDKToken)
                 }
             }
         )

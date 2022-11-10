@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
+package com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,9 +8,9 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument.SignDocumentViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument.SignDocumentViewModel.UIEvent.OnInitializeText
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument.SignDocumentViewModel.UIEvent.OnRejectClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument.SignDocumentViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument.SignDocumentViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument.SignDocumentViewModel.UIEvent.OnRejectClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

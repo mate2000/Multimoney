@@ -1,8 +1,8 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration
+package com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.documentgeneration
 
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration.DocumentGenerationViewModel.UIEvent.OnOpenSignDocument
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.documentgeneration.DocumentGenerationViewModel.UIEvent.OnOpenSignDocument
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

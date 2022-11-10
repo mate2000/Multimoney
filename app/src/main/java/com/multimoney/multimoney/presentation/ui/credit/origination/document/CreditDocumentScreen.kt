@@ -28,7 +28,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.Companion.PACKAGE_NAME
@@ -43,7 +42,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 @Preview
 fun CreditDocumentScreen(
     viewModel: CreditDocumentViewModel = hiltViewModel(),
-    sharedViewModel: CreditViewModel = hiltViewModel(),
+    sharedViewModel: CreditViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val launchOnFidoActivityResult =
@@ -65,7 +64,7 @@ fun CreditDocumentScreen(
                     },
                     onContinueEnable = {
                         sharedViewModel.onUIEvent(
-                            OnContinueEnable(
+                            CreditViewModel.UIEvent.OnContinueEnable(
                                 it
                             )
                         )
@@ -85,12 +84,11 @@ fun CreditDocumentScreen(
                             launchOnFidoActivityResult.launch(
                                 viewModel.onFidoHelper.getOnFidoIntent(
                                     sharedViewModel.idBrand.toInt(),
-                                    AppFlow.CreditOriginationFlow,
+                                    AppFlow.CREDIT_ORIGINATION,
                                     it?.sdkToken ?: "",
                                     onRefreshToke = { refreshToken ->
                                         viewModel.onUIEvent(
                                             RefreshOnFidoToken(
-                                                // TODO Change when userDataImplemented
                                                 UserData(
                                                     pkUser = sharedViewModel.pkUser,
                                                     identification = sharedViewModel.identification,

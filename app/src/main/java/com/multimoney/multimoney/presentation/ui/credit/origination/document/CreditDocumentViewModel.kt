@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
+import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -18,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.document.Cre
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIState
+import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.onfido.android.sdk.capture.ExitCode
@@ -33,7 +35,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class CreditDocumentViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
-    private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase
+    private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
+    private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -122,6 +125,32 @@ class CreditDocumentViewModel @Inject constructor(
                 }
             }
         )
+    }
+
+    private fun onCallOnfidoCheckProcess(
+        names: String,
+        pkUser: Long,
+        identification: String,
+        idBrand: Int,
+        idUserRequest: Long,
+        user: String
+    ) {
+        executeUseCase {
+            mutationOnfidoCheckProcessUseCase.invoke(
+                identification,
+                PACKAGE_NAME,
+                AppFlow.CREDIT_ORIGINATION.flow,
+                pkUser,
+                idUserRequest,
+                idBrand,
+                user
+            ).collectLatest { result ->
+                result.onSuccess {
+                }
+                result.onFailure {
+                }
+            }
+        }
     }
 
     fun onUIEvent(event: UIEvent) {

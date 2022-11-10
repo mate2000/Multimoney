@@ -9,8 +9,8 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration.DocumentGenerationScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument.SignDocumentScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.documentgeneration.DocumentGenerationScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument.SignDocumentScreen
 
 const val SIGN_DOCUMENT_LINK = "sign_document_link"
 const val PK_USER = "pk_user"

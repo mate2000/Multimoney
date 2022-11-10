@@ -89,7 +89,7 @@ fun SignUpIdVerificationScreen(
                             launchOnFidoActivityResult.launch(
                                 viewModel.onFidoHelper.getOnFidoIntent(
                                     sharedViewModel.idBrand,
-                                    AppFlow.SignUpFlow,
+                                    AppFlow.SIGN_OUT,
                                     it?.sdkToken ?: "",
                                     onRefreshToke = { refreshToken ->
                                         viewModel.onUIEvent(

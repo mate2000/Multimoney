@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration
+package com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.documentgeneration
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextAlign.Companion
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,7 +30,7 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration.DocumentGenerationViewModel.UIEvent.OnOpenSignDocument
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.documentgeneration.DocumentGenerationViewModel.UIEvent.OnOpenSignDocument
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.FlowPreview
@@ -39,7 +40,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 
-@OptIn(FlowPreview::class)
 @Composable
 fun DocumentGenerationScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -50,7 +50,12 @@ fun DocumentGenerationScreen(
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
         }
     }
+}
 
+@OptIn(FlowPreview::class)
+@Composable
+@Preview
+fun DocumentGenerationContent(viewModel: DocumentGenerationViewModel = hiltViewModel()) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
         openStepDebounce.debounce(TIME_TO_WAIT_IN_MILLI_SECOND)

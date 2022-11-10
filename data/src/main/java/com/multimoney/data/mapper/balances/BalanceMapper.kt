@@ -18,6 +18,7 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             currentBalanceLabel = it.saldo_Actual_Label,
             availableBalance = it.saldo_Disponible.toString().toDouble(),
             availableBalanceLabel = it.saldo_Disponible_Label,
+            paymentDate = it.fec_Pago.toString(),
             paymentDateLabel = it.fecha_Pago_Label,
             monthlyQuotaLabel = it.cuota_Mensual_Label,
             minPayment = it.pago_Minimo.toString().toDouble(),

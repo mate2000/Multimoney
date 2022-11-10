@@ -19,8 +19,9 @@ import com.multimoney.multimoney.presentation.navigation.Screen.PaymentAmountScr
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_FROM_HOME
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -54,7 +55,8 @@ class PaymentAccountViewModel @Inject constructor(
     private var idCurrency: Int? = 0
     private var identification: String? = null
     private var userName: String? = null
-    private var isFromHome = false
+    private var paymentDate: String? = null
+    private var previousScreen = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -64,7 +66,8 @@ class PaymentAccountViewModel @Inject constructor(
         summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         userName = savedStateHandle[NAME_CLIENT] ?: ""
-        isFromHome = savedStateHandle[IS_FROM_HOME] ?: false
+        paymentDate = savedStateHandle[PAYMENT_DATE]
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         idCurrency = if ((summaryList?.count() ?: 0) > 1) {
             CurrencyType.All.id
         } else {
@@ -121,7 +124,7 @@ class PaymentAccountViewModel @Inject constructor(
                             encodeData(
                                 summaryList
                             )
-                            }/${encodeData(clientBankAccount)}/$identification/$userName"
+                            }/${encodeData(clientBankAccount)}/$identification/$userName/$paymentDate"
                         )
                     }
                 )
@@ -132,15 +135,14 @@ class PaymentAccountViewModel @Inject constructor(
                 encodeData(
                     summaryList
                 )
-                }/${encodeData(clientBankAccount)}/$identification/$userName"
+                }/${encodeData(clientBankAccount)}/$identification/$userName/$paymentDate"
             )
         }
     }
 
-    private fun onNavigateBack() = if (isFromHome) {
-        onNavigateBackHome()
-    } else {
-        navigateBack(popTo = Screen.PaymentFeeScreen.route, isRestart = false)
+    private fun onNavigateBack() = when (previousScreen) {
+        Screen.PaymentFeeScreen.baseRoute -> navigateBack(popTo = Screen.PaymentFeeScreen.route, isRestart = false)
+        else -> onNavigateBackHome()
     }
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)

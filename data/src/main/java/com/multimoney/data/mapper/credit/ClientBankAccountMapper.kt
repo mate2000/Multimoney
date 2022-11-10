@@ -6,6 +6,7 @@ import com.multimoney.domain.model.credit.ClientBankAccount
 private fun GetClientBankAccountQuery.GetClientBankAccount.mapToDomainModel() = ClientBankAccount(
     id = id.toString().toInt(),
     idBank = id_Banco,
+    origin = origen,
     bankDescription = descripcion_banco,
     accountNumber = numeroCuenta,
     idCurrency = id_Moneda,

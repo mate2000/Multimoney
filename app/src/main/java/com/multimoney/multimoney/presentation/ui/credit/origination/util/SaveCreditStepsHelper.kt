@@ -176,6 +176,40 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(textQuestion(user, homeAddressValue, creditInfoQuestionHomeAddress))
     }
 
+    fun saveStepSix(
+        user: String?,
+        pep: String
+    ) {
+        val pepQuestion = getScreenConfigQuestion(POLITICALLY_EXPOSED_PERSON, pep)
+        val creditInfoQuestionPEP = textQuestion(user, pep, pepQuestion)
+        saveScreenQuestionData(creditInfoQuestionPEP)
+    }
+
+    fun saveStepSixCR(
+        user: String?,
+        article15: String,
+        pep: String,
+        taxPayerUSA: String,
+        taxPayerExternal: String
+    ) {
+        val article15Question = getScreenConfigQuestion(ARTICLE_15, article15)
+        val pepQuestion = getScreenConfigQuestion(POLITICALLY_EXPOSED_PERSON, pep)
+        val taxPayerUSAQuestion = getScreenConfigQuestion(TAX_PAYER_USA, taxPayerUSA)
+        val taxPayerExternalQuestion = getScreenConfigQuestion(TAX_PAYER_EXTERNAL, taxPayerExternal)
+
+        val creditInfoQuestionArticle15 = textQuestion(user, article15, article15Question)
+        saveScreenQuestionData(creditInfoQuestionArticle15)
+
+        val creditInfoQuestionPEP = textQuestion(user, pep, pepQuestion)
+        saveScreenQuestionData(creditInfoQuestionPEP)
+
+        val creditInfoQuestionTaxPayerUSA = textQuestion(user, taxPayerUSA, taxPayerUSAQuestion)
+        saveScreenQuestionData(creditInfoQuestionTaxPayerUSA)
+
+        val creditInfoQuestionTaxPayerExternal = textQuestion(user, taxPayerExternal, taxPayerExternalQuestion)
+        saveScreenQuestionData(creditInfoQuestionTaxPayerExternal)
+    }
+
     /**
      * This function is use to save all the questions that the value will be got from a textField
      */
@@ -262,5 +296,9 @@ class SaveCreditStepsHelper @Inject constructor() {
         const val COMPANY_ADDRESS = "Detalle Dirección Empresa"
         const val HOME_ADDRESS = "Detalle Dirección Casa"
         const val HOME_PHONE = "HOME_PHONE"
+        const val ARTICLE_15 = "ART15"
+        const val POLITICALLY_EXPOSED_PERSON = "PEP"
+        const val TAX_PAYER_USA = "TAX_PAYER_USA"
+        const val TAX_PAYER_EXTERNAL = "TAX_PAYER_EXTERNAL"
     }
 }

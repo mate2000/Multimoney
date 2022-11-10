@@ -7,7 +7,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.Relationship
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChange
@@ -17,7 +17,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnPercentageValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -74,9 +74,9 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         } else {
             uiState = uiState.copy(
                 openDialog = DialogParameters(
-                    titleResource = R.string.smart_account_beneficiary_max_percentage_dialog_title,
-                    descriptionResource = R.string.smart_account_beneficiary_max_percentage_dialog_subtitle,
-                    positiveResource = R.string.understood,
+                    titleResource = string.smart_account_beneficiary_max_percentage_dialog_title,
+                    descriptionResource = string.smart_account_beneficiary_max_percentage_dialog_subtitle,
+                    positiveResource = string.understood,
                     isActive = mutableStateOf(true)
                 )
             )

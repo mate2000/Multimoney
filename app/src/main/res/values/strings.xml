@@ -36,10 +36,17 @@
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
+    <string name="common_try_again" translatable="false">Volver a intentar</string>
+
+    <string-array name="options_yes_no">
+        <item>Si</item>
+        <item>No</item>
+    </string-array>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
+    <string name="error_no_internet_title" translatable="false">¡Oh no! Error de conexión</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
@@ -436,6 +443,7 @@
     <string name="iban_account_cr" translatable="false">CR</string>
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
     <string name="iban_account_error" translatable="false">Revisa formato. Debe tener 20 dígitos</string>
+    <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
 
     <!-- Payment Voucher -->
     <string name="payment_voucher_title_chooser" translatable="false">Voucher</string>
@@ -444,7 +452,8 @@
     <string name="payment_voucher_amount_to_pay_label" translatable="false">Monto debitado</string>
     <string name="payment_voucher_exchange_rate_label" translatable="false">Tipo de cambio</string>
     <string name="payment_voucher_reference_number_label" translatable="false">N° de referencia</string>
-    <string name="payment_voucher_from_your_account_label" translatable="false">Desde tu cuenta</string>
+    <string name="payment_voucher_from_label" translatable="false">Desde</string>
+    <string name="payment_voucher_origin_account_label" translatable="false">Cuenta de origen</string>
     <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
     <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
 
@@ -470,6 +479,7 @@
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+    <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
 
 
     <!-- Smart Account - Own Business -->
@@ -487,6 +497,20 @@
     <string name="smart_other_title" translatable="false">Otros</string>
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
+
+    <!--Smart Account - Own Business On Personal basis-->
+    <string name="smart_business_personal_basis_title" translatable="false">Negocio propio en sociedad</string>
+    <string name="smart_business_personal_basis_identification_placeholder" translatable="false">0-000-000000</string>
+    <string name="smart_business_personal_basis_identification_label" translatable="false">Cédula jurídica</string>
+    <string name="smart_business_personal_basis_identification_format_error" translatable="false">Revisar formato Debe tener 10 digitos</string>
+    <string name="smart_business_personal_basis_identification_loading" translatable="false">Un momento, estamos verificando tu numero de identificatión...</string>
+    <string name="smart_business_personal_basis_identification_success" translatable="false">Nombre empresa</string>
+    <string name="smart_business_personal_basis_activity_label" translatable="false">¿A qué se dedica tu sociedad?</string>
+    <string name="smart_business_personal_basis_activity_error" translatable="false">Has alcanzado el maximo de caracteres permitidos</string>
+    <string name="smart_business_personal_basis_activity_required_message" translatable="false">Actividad requerida</string>
+    <string name="smart_business_personal_basis_income_required_message" translatable="false">Ingresos requeridos</string>
+    <string name="smart_business_personal_basis_identification_required_message" translatable="false">Cedula juridica requerida</string>
+    <string name="smart_business_personal_basis_company_name_not_found" translatable="false">No se encontro el nombre de la compañia</string>
 
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
@@ -539,4 +563,7 @@
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
 
+    <!-- Smart beneficiary -->
+    <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
+    <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
 </resources>

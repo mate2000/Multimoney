@@ -34,7 +34,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
                 navController.navigate(it.route) {
-                    popUpTo(it.popTo.toInt()) { inclusive = true }
+                    popUpTo(it.popTo) { inclusive = true }
                 }
             })
         }

@@ -12,9 +12,7 @@ import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.*
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.util.ShareHelper
@@ -38,6 +36,8 @@ class PaymentVoucherViewModel @Inject constructor(
 
     // Stateless
     var referenceNumber: String? = null
+    var currentAmountValueString: String? = null
+    var currency : String? = null
     var summaryList: List<Summary>? = null
     var clientBankAccount: ClientBankAccount? = null
     var currentDate : String = ""
@@ -49,6 +49,8 @@ class PaymentVoucherViewModel @Inject constructor(
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
         clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
+        currentAmountValueString = savedStateHandle[CURRENT_AMOUNT_VALUE]
+        currency = savedStateHandle[CURRENCY]
         val time = Calendar.getInstance().time
         currentDate = dateFormatter.format(time)
         currentTime = timeFormatter.format(time)
@@ -66,7 +68,6 @@ class PaymentVoucherViewModel @Inject constructor(
         val isAutomaticProgrammedPaymentChecked: Boolean = false,
         val exchangeRateLabel: Double = 0.0,
         val exchangeConvertedAmount: Double = 0.0,
-        val clientBankAccount: ClientBankAccount? = null,
         val isAlertResultVisible: Boolean = false,
         val alertResultTitle: String = "",
         val alertResultDescription: String = "",
@@ -85,7 +86,7 @@ class PaymentVoucherViewModel @Inject constructor(
     }
     fun shouldDisplayExchangeRate() =
         isMultiCurrency() ||
-                uiState.clientBankAccount?.idCurrency?.toString() != summaryList?.first()?.idCurrency?.toString()
+                clientBankAccount?.idCurrency?.toString() != summaryList?.first()?.idCurrency?.toString()
 
     fun isMultiCurrency() = (summaryList?.count() ?: 1) > 1
 

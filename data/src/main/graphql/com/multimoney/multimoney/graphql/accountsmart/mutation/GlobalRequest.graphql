@@ -8,7 +8,9 @@ mutation GlobalRequest($pkUser: Long!, $status: Int!, $idProfessionType: Int!, $
     $aboutCompany: String!,
     $institutionPension: String!,
     $idAddressLevel3: Long!, $idEconomicActivity: Long!, $income: Float!, $addressDetail: String!
-    $isPEP: Boolean!, $user: String!, $idBrand: Int!, $currentStep: String!, $specifiesIncomeSource: String!) {
+    $isPEP: Boolean!, $user: String!, $idBrand: Int!, $currentStep: String!, $specifiesIncomeSource: String!,
+    $entrepreneurship: String!,
+    $legalID: String!) {
     globalRequest(globalRequestInput: {
         pkUser: $pkUser
         status: $status
@@ -31,6 +33,8 @@ mutation GlobalRequest($pkUser: Long!, $status: Int!, $idProfessionType: Int!, $
         idBrand: $idBrand
         currentStep: $currentStep
         specifiesIncomeSource: $specifiesIncomeSource
+        entrepreneurship: $entrepreneurship
+        legalID: $legalID
     }) {
         result {
             idGlobalRequest

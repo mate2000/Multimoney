@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -39,14 +40,13 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.uielement.*
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
-import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getCurrency
-import com.multimoney.multimoney.presentation.util.getMaskedAccount
+import com.multimoney.multimoney.presentation.util.*
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @OptIn(ExperimentalTextApi::class)
@@ -115,10 +115,7 @@ fun PaymentVoucherScreen(
                             .padding(bottom = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        CustomImage(
-                            modifier = Modifier.padding(top = 48.dp),
-                            drawableResource = R.drawable.ic_success_symbol
-                        )
+
                         Text(
                             text = stringResource(string.payment_voucher_transaction_success),
                             modifier = Modifier.padding(top = 16.dp),
@@ -159,7 +156,8 @@ fun PaymentVoucherScreen(
                             color = MultimoneyTheme.colors.text
                         )
                         Text(
-                            text = "₡60,920",
+                            text ="${viewModel.currency}${viewModel.currentAmountValueString?.stringToIntegerFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())}"
+                            ,
                             style = Typography.h4.copy(
                                 fontWeight = FontWeight.SemiBold,
                                 platformStyle = PlatformTextStyle(
@@ -181,17 +179,29 @@ fun PaymentVoucherScreen(
                             .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 10.dp))
                     )
                     Text(
-                        text = stringResource(string.payment_voucher_from_your_account_label),
+                        text = stringResource(string.payment_voucher_from_label),
                         modifier = Modifier.padding(top = 16.dp, start = 24.dp),
                         style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.labelText
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    
-                    if (viewModel.shouldDisplayExchangeRate()) {
-                        Spacer(modifier = Modifier.height(32.dp))
-                        CurrencyExchangeRow(viewModel)
-                    }
+
+                    InfoItemAccount(
+                        modifier = Modifier.padding(start = 27.dp, top = 24.dp),
+                        icon = drawable.ic_bank,
+                        tintIcon = MultimoneyTheme.colors.iconTintVoucher,
+                        title = stringResource(string.payment_voucher_origin_account_label),
+                        subTitle =getMaskedAccount(
+                            viewModel.clientBankAccount?.accountNumber ?: "",
+                            stringResource(id = R.string.payment_account_masked_text)
+                        )
+                    )
+
+
+//                    if (viewModel.shouldDisplayExchangeRate()) {
+//                        Spacer(modifier = Modifier.height(32.dp))
+//                        CurrencyExchangeRow(viewModel)
+//                    }
+
 
                     InfoItem(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
@@ -346,3 +356,36 @@ fun InfoItem(
         }
     }
 }
+
+
+@Composable
+fun InfoItemAccount(
+    modifier: Modifier = Modifier,
+    icon: Int? = null,
+    tintIcon: Color = Color.Transparent,
+    title: String,
+    subTitle: String
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        icon?.let {
+            Icon(painter = painterResource(id = it), contentDescription = "", tint = tintIcon,
+                modifier = Modifier.height(24.dp).width(24.dp).alpha(0.4f),)
+        }
+        Column(modifier = Modifier.padding(start = 13.5.dp)) {
+            Text(
+                text = title,
+                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+            Text(
+                text = subTitle,
+                style = Typography.body2,
+                color = MultimoneyTheme.colors.labelText
+            )
+        }
+    }
+}
+

@@ -33,8 +33,9 @@ const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
 const val REFERENCE_NUMBER = "reference_number"
-const val PAID_AMOUNT = "paid_amount"
-
+const val CURRENT_AMOUNT_VALUE = "current_amount_value"
+const val CURRENCY = "currency"
+const val IS_FROM_HOME = "is_from_home"
 
 fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
     navigation(
@@ -98,6 +99,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(NAME_CLIENT) {
                     type = NavType.StringType
+                },
+                navArgument(IS_FROM_HOME) {
+                    type = NavType.BoolType
                 }
             )
         ) {
@@ -162,7 +166,10 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(CLIENT_BANK_ACCOUNT) {
                     type = ClientBankAccountNavType()
                 },
-                navArgument(PAID_AMOUNT) {
+                navArgument(CURRENT_AMOUNT_VALUE) {
+                    type = NavType.StringType
+                },
+                navArgument(CURRENCY) {
                     type = NavType.StringType
                 },
                 navArgument(REFERENCE_NUMBER) {

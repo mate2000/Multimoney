@@ -174,9 +174,14 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
-    private fun onNavigateToVoucher(clientBankAccount: ClientBankAccount?, paidAmount: String, referenceNumber: String) =
+    private fun onNavigateToVoucher(
+        clientBankAccount: ClientBankAccount?,
+        currentAmountValue: String,
+        currency : String,
+        referenceNumber: String
+    ) =
         navigateTo(
-            route = "${Screen.PaymentVoucherScreen.baseRoute}/${encodeData(clientBankAccount)}/$paidAmount/$referenceNumber"
+            route = "${Screen.PaymentVoucherScreen.baseRoute}/${encodeData(clientBankAccount)}/$currentAmountValue/$currency/$referenceNumber"
         )
 
     fun getFormattedCurrency() =
@@ -243,7 +248,12 @@ class PaymentAmountViewModel @Inject constructor(
                 result.onSuccess {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
-                    onUIEvent(OnNavigateToVoucher(uiState.clientBankAccount,uiState.currentAmountValueString,it?.internReferenceNumber ?: ""))
+                    onUIEvent(OnNavigateToVoucher(
+                        uiState.clientBankAccount,
+                        uiState.currentAmountValueString,
+                        uiState.currency,
+                        it?.internReferenceNumber ?: "")
+                    )
                 }.onMessage {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
@@ -327,7 +337,12 @@ class PaymentAmountViewModel @Inject constructor(
             is OnCallQueryGetExchangeRateCredit -> onCallQueryGetExchangeRate()
             is OnShowPaymentBottomSheet -> onShowPaymentBottomSheet()
             is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
-            is OnNavigateToVoucher -> onNavigateToVoucher(uiEvent.clientBankAccount,uiEvent.paidAmount,uiEvent.referenceNumber)
+            is OnNavigateToVoucher -> onNavigateToVoucher(
+                uiEvent.clientBankAccount,
+                uiEvent.currentAmountValueString,
+                uiEvent.currency,
+                uiEvent.referenceNumber
+            )
         }
     }
 
@@ -347,7 +362,8 @@ class PaymentAmountViewModel @Inject constructor(
         object OnHidePaymentBottomSheet : UIEvent()
         data class OnNavigateToVoucher(
             val clientBankAccount: ClientBankAccount?,
-            val paidAmount: String,
+            val currentAmountValueString: String,
+            val currency: String,
             val referenceNumber: String): UIEvent()
     }
 

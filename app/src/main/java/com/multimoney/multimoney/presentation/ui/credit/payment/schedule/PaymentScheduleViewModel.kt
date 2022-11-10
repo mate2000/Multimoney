@@ -26,7 +26,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.Payment
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnProgramClick
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDayFromString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest

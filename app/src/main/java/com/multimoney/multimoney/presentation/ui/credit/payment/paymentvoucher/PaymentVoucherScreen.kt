@@ -18,6 +18,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,11 +63,16 @@ import com.multimoney.multimoney.presentation.util.shape.DottedShape
 @Composable
 @Preview
 fun PaymentVoucherScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PaymentVoucherViewModel = hiltViewModel()
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
+
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+    }
 
     Column(
         modifier = Modifier

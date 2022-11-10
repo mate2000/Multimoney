@@ -570,4 +570,11 @@
     <string name="smart_ind_professional_job_address" translatable="false">Dirección Laboral</string>
     <string name="smart_ind_professional_address_required" translatable="false">Dirección laboral requerido</string>
     <string name="smart_ind_professional_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
+
+    <!-- Smart Own Business Personal Title -->
+    <string name="smart_business_personal_title" translatable="false">Negocio propio a título personal</string>
+    <string name="smart_business_personal_name" translatable="false">Nombre del emprendimiento</string>
+    <string name="smart_business_personal_name_required" translatable="false">Nombre del emprendimiento requerido</string>
+    <string name="smart_business_personal_income_label" translatable="false">Ingreso mensual</string>
+    <string name="smart_business_personal_income_label_required" translatable="false">Ingreso mensual requerido</string>
 </resources>

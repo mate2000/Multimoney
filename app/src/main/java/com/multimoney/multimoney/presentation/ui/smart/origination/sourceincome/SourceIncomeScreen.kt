@@ -8,6 +8,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.independentprofessional.IndProfessionalScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.SmartOwnBusinessSvScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredScreen
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
@@ -61,6 +62,10 @@ fun ShowSelectedSourceIncomeOption(
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
         SourceIncomeOptionType.FreeLancer.id -> IndProfessionalScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
+        SourceIncomeOptionType.OwnBusinessInPartnership.id -> OwnBusinessTitleScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )

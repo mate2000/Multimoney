@@ -14,13 +14,10 @@ class SmartRetiredViewModel : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun validateForm() {
-        emitBaseEvent(
-            BaseEvent.OnFormValidateCompleted(
-                uiState.institution.isNotBlank()
-                        && uiState.paymentAmount.isNotBlank())
-        )
-    }
+    private fun validateForm() =
+        emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
+
+    fun isFormValid() = uiState.institution.isNotBlank() && uiState.paymentAmount.isNotBlank()
 
     private fun onInstitutionValueChange(institution: String) {
         if (institution.length <= INSTITUTION_MAX_LENGTH) {

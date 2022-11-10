@@ -27,6 +27,13 @@ fun SmartBeneficiaryScreen(
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(false))
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(false))
+
+        sharedViewModel.onUIEvent(
+            SmartViewModel.UIEvent.OnSetNavigation(
+                nextStep = SmartSteps.Five.id,
+                previousStep = SmartSteps.Three.id
+            )
+        )
     }
 
     val radioOptions = stringArrayResource(id = R.array.options_yes_no)

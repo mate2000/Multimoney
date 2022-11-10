@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination.util
 
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.domain.model.credit.CreditInfoQuestion
@@ -50,14 +51,20 @@ class SaveCreditStepsHelper @Inject constructor() {
 
     fun saveStepTwo(
         user: String?,
+        idBrand: Int,
         monthlyIncomeValue: String,
+        profession: CreditCatalog?,
+        professionSelected: CreditCatalogOption?,
         occupation: CreditCatalog?,
         occupationSelected: CreditCatalogOption?
     ) {
         val monthlyIncomeQuestion = getScreenConfigQuestion(SALARY, monthlyIncomeValue)
         saveScreenQuestionData(textQuestion(user, monthlyIncomeValue, monthlyIncomeQuestion))
 
-        saveScreenQuestionData(selectionQuestion(user, occupation, occupationSelected))
+        saveScreenQuestionData(selectionQuestion(user, profession, professionSelected))
+        if (idBrand == Brand.CostaRica.id) {
+            saveScreenQuestionData(selectionQuestion(user, occupation, occupationSelected))
+        }
     }
 
     fun saveStepThree(user: String?, companyName: String, startedJobDate: String, companyPhone: String) {

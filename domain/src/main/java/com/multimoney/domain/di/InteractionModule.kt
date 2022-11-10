@@ -48,8 +48,12 @@ import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryOccupationUseCase
+import com.multimoney.domain.interaction.credit.QueryOccupationUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryProfessionsUseCase
+import com.multimoney.domain.interaction.credit.QueryProfessionsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
@@ -225,6 +229,16 @@ class InteractionModule {
     @Singleton
     fun provideQueryHomeProvinceUseCase(creditRepository: CreditRepository): QueryHomeProvinceUseCase =
         QueryHomeProvinceUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryProfessionsUseCase(creditRepository: CreditRepository): QueryProfessionsUseCase =
+        QueryProfessionsUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryOccupationUseCase(creditRepository: CreditRepository): QueryOccupationUseCase =
+        QueryOccupationUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton

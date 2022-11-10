@@ -105,6 +105,20 @@ interface CreditRepository {
         idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
+    suspend fun queryProfession(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
+    suspend fun queryOccupation(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
     suspend fun mutationSaveCreditFlowStep(
         user: String,
         idBrand: Int,

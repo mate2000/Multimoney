@@ -186,6 +186,30 @@ class CreditRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun queryProfession(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
+        apolloCall = graphqlApi.queryProfession(pkUser, user, idBrand, idUserRequest),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryOccupation(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
+        apolloCall = graphqlApi.queryOccupation(pkUser, user, idBrand, idUserRequest),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
     override suspend fun mutationSaveCreditFlowStep(
         user: String,
         idBrand: Int,

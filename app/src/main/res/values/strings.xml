@@ -36,6 +36,8 @@
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
+    <string name="common_try_again" translatable="false">Volver a intentar</string>
+    <string name="info" translatable="false">Información</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -44,6 +46,7 @@
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
+    <string name="error_no_internet_title" translatable="false">¡Oh no! Error de conexión</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
@@ -317,14 +320,10 @@
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
-    <string name="credit_monthly_income_profession_label" translatable="false">Selecciona tu profesión</string>
-    <string name="credit_monthly_income_profession_hint" translatable="false">Selecciona tu profesión</string>
-    <string-array name="credit_monthly_income_professions" translatable="false">
-        <item>Administración</item>
-        <item>Construcción</item>
-        <item>Seguridad</item>
-        <item>Informatica</item>
-    </string-array>
+    <string name="credit_monthly_income_profession_label" translatable="false">Seleccioná tu profesión</string>
+    <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
+    <string name="credit_monthly_income_occupation_label" translatable="false">Seleccioná tu ocupación</string>
+    <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Contanos de la empresa en la que trabajás</string>
@@ -475,6 +474,7 @@
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+    <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
 
 
     <!-- Smart Account - Own Business -->
@@ -561,4 +561,24 @@
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
+
+    <!--Smart Facta screen-->
+    <string name="smart_facta_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>
+    <string name="smart_facta_are_you_or_family_pep" translatable="false">¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?</string>
+    <string name="smart_facta_activities_according_to_article_15" translatable="false">¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
+    <string name="smart_facta_are_you_us_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en Estados Unidos?</string>
+    <string name="smart_facta_are_you_other_country_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en otro país diferente de Costa Rica?</string>
+    <string name="smart_facta_article_15_info" translatable="false">
+        Prestamistas, casas de empeño, comercio de metales y piedras preciosas, tarjetas y operadores de tarjetas de crédito, organizaciones sin fines de lucro, proveedores de servicios fiduciarios, compra y venta de bienes inmuebles, facilidad crediticia, administración de recursos de terceros.
+    </string>
+    <string name="smart_facta_article_15_info_title" translatable="false">Art 15 o 15 bis de la ley 8204</string>
+    <string name="smart_facta_learn_more" translatable="false">¿De qué se trata?</string>
+    <string-array name="smart_facta_is_pep_options">
+        <item>Si, si califican</item>
+        <item>No, no califican</item>
+    </string-array>
+    <string-array name="smart_facta_is_us_citizen_options">
+        <item>Si, lo soy</item>
+        <item>No, no lo soy</item>
+    </string-array>
 </resources>

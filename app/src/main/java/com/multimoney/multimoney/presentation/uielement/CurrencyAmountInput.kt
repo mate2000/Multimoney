@@ -29,12 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
@@ -97,6 +99,8 @@ fun CurrencyAmountInput(
     customTransformation: VisualTransformation? = null,
     onDebounceValidation: (newText: String) -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
     var emptyError by rememberSaveable { mutableStateOf(false) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
@@ -186,6 +190,7 @@ fun CurrencyAmountInput(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             onValueChange = {
+                activity?.onUserInteraction()
                 if (it.isValidAmountLength()) {
                     onValueChange(it)
                     textDebounce.value = it

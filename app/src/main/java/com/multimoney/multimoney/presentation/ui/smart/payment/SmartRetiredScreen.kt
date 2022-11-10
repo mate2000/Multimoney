@@ -24,7 +24,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps.Four
-import com.multimoney.data.util.catalog.SmartSteps.Three
+import com.multimoney.data.util.catalog.SmartSteps.Two
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -54,8 +54,9 @@ fun SmartRetiredScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
-        viewModel.onUIEvent(OnValidateForm)
+
         sharedViewModel.onUIEvent(
             OnSetNavigation(
                 nextAction = {
@@ -69,8 +70,9 @@ fun SmartRetiredScreen(
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = Four.id,
-                previousStep = Three.id
+                previousStep = Two.id
             )
         )
 
@@ -144,7 +146,7 @@ fun SmartRetiredScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_amount_placeholder),
-            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrand.toInt()
+            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrandAsInt
                 .getCurrencySymbol()))
         )
     }

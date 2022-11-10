@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -40,12 +41,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
@@ -117,8 +120,14 @@ fun CustomOutlinedTextField(
     customTransformation: VisualTransformation? = null,
     onDebounceValidation: (newText: String) -> Unit = {},
     onClick: () -> Unit = {},
-    isClickable: Boolean = false
+    isClickable: Boolean = false,
+    isSuccess: Boolean = false,
+    successMessage: String? = null,
+    showInfo: Boolean = false,
+    infoMessage: String? = null
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
     var emptyError by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
@@ -297,6 +306,7 @@ fun CustomOutlinedTextField(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             onValueChange = {
+                activity?.onUserInteraction()
                 onValueChange(it)
                 textDebounce.value = it
                 if (isRequired) emptyError = it.isEmpty()
@@ -331,7 +341,11 @@ fun CustomOutlinedTextField(
         val passwordDebounceFlowValue by passwordVisibleFlow.collectAsState(false)
 
         // Display error message
-        if (((isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank().not()) || emptyError) {
+        if ((
+            (isError || canShowNonErrorMessage) && errorMessage.isNullOrBlank()
+                .not()
+            ) || emptyError
+        ) {
             Row(
                 modifier = Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -357,6 +371,64 @@ fun CustomOutlinedTextField(
                         .padding(start = 5.dp)
                         .wrapContentSize(),
                     style = Typography.caption.copy(color = errorIndicatorColor)
+                )
+            }
+        }
+
+        // Display loading msg
+        if (showInfo && infoMessage.isNullOrBlank().not()) {
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_information),
+                    modifier = Modifier
+                        .size(width = 11.dp, height = 11.dp),
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.textInformation
+                )
+                Text(
+                    text =
+                    if (showInfo && infoMessage.isNullOrBlank().not()) {
+                        infoMessage ?: ""
+                    } else {
+                        ""
+                    },
+                    color = MultimoneyTheme.colors.textInformation,
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .wrapContentSize(),
+                    style = Typography.caption
+                )
+            }
+        }
+
+        // Display success msg
+        if (isSuccess && successMessage.isNullOrBlank().not()) {
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_check),
+                    modifier = Modifier
+                        .size(width = 11.dp, height = 11.dp),
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.textSuccess
+                )
+                Text(
+                    text =
+                    if (isSuccess && successMessage.isNullOrBlank().not()) {
+                        successMessage ?: ""
+                    } else {
+                        ""
+                    },
+                    color = MultimoneyTheme.colors.textSuccess,
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .wrapContentSize(),
+                    style = Typography.caption
                 )
             }
         }

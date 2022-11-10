@@ -11,9 +11,11 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.PaymentAmountScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
@@ -27,7 +29,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentA
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBackHome
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -113,12 +115,12 @@ class PaymentAccountViewModel @Inject constructor(
         if (idCurrency != clientBankAccount?.idCurrency) {
             uiState = uiState.copy(
                 openDialog = DialogParameters(
-                    titleResource = R.string.payment_account_different_currency_dialog_title,
-                    descriptionResource = R.string.payment_account_different_currency_dialog_description,
+                    titleResource = string.payment_account_different_currency_dialog_title,
+                    descriptionResource = string.payment_account_different_currency_dialog_description,
                     isActive = mutableStateOf(true),
                     positiveAction = {
                         navigateTo(
-                            route = "${Screen.PaymentAmountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+                            route = "${PaymentAmountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
                             encodeData(
                                 summaryList
                             )

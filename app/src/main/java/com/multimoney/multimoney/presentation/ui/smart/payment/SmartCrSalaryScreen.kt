@@ -42,7 +42,6 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryView
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
@@ -61,15 +60,15 @@ fun SmartCrSalaryScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
+
         viewModel.onUIEvent(
             OnCallQueryProfessionUseCase(
                 sharedViewModel.user,
-                sharedViewModel.idBrand.toInt()
+                sharedViewModel.idBrandAsInt
             )
         )
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.onValidateForm()))
-        viewModel.onUIEvent(OnValidateForm)
 
         sharedViewModel.onUIEvent(
             OnSetNavigation(
@@ -84,6 +83,7 @@ fun SmartCrSalaryScreen(
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = Four.id,
                 previousStep = Two.id
             )
@@ -149,7 +149,7 @@ fun SmartCrSalaryScreen(
             placeHolder = stringResource(id = string.smart_account_formal_placeholder),
             customTransformation = formatMoney(
                 stringResource(
-                    id = sharedViewModel.idBrand.toInt()
+                    id = sharedViewModel.idBrandAsInt
                         .getCurrencySymbol()
                 )
             )

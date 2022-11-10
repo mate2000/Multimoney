@@ -15,6 +15,7 @@ import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallPasswordSave
@@ -26,7 +27,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnPasswordValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnValidForm
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeLettersOrNumbers
@@ -144,11 +145,11 @@ class SignUpPasswordViewModel @Inject constructor(
         uiState = uiState.copy(
             isFingerprintChecked = value,
             openDialogCustom = DialogParameters(
-                titleResource = R.string.active_biometric_title,
+                titleResource = string.active_biometric_title,
                 description = biometricDialogDescription,
                 isActive = mutableStateOf(showDialog),
-                positiveResource = R.string.active_biometric_positive_button_label,
-                negativeResource = R.string.active_biometric_negative_button_label,
+                positiveResource = string.active_biometric_positive_button_label,
+                negativeResource = string.active_biometric_negative_button_label,
                 positiveAction = {
                     onFingerprintCheckedChanged(value = true, showDialog = false)
                 },
@@ -216,9 +217,9 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun showBiometricSuccess(onNextStep: () -> Unit) {
         uiState = uiState.copy(
             openDialogCustom = DialogParameters(
-                titleResource = R.string.dialog_success_biometric_title,
+                titleResource = string.dialog_success_biometric_title,
                 description = biometricDialogSuccessDescription,
-                positiveResource = R.string.dialog_success_biometric_positive_text,
+                positiveResource = string.dialog_success_biometric_positive_text,
                 isActive = mutableStateOf(true),
                 positiveAction = {
                     onNextStep()
@@ -233,9 +234,9 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun showBiometricsFailed(onNextStep: () -> Unit) {
         uiState = uiState.copy(
             openDialogCustom = DialogParameters(
-                titleResource = R.string.dialog_failure_biometric_title,
+                titleResource = string.dialog_failure_biometric_title,
                 description = biometricDialogFailureDescription,
-                positiveResource = R.string.dialog_failure_biometric_positive_text,
+                positiveResource = string.dialog_failure_biometric_positive_text,
                 isActive = mutableStateOf(true),
                 positiveAction = {
                     onNextStep()

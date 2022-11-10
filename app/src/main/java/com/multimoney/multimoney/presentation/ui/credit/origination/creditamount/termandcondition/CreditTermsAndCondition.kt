@@ -26,7 +26,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.MmWebViewHtml
+import com.multimoney.multimoney.presentation.uielement.MmWebViewHtml
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

@@ -36,7 +36,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable

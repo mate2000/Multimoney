@@ -21,9 +21,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.VisualTransformation
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
 import com.multimoney.multimoney.presentation.theme.GrayScale300
 import com.multimoney.multimoney.presentation.theme.GrayScale400
@@ -57,6 +59,9 @@ fun CustomSearchBar(
     customTransformation: VisualTransformation? = null,
     onDebounceValidation: (newText: String) -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val activity = context.findActivity()
+
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
 
@@ -132,6 +137,7 @@ fun CustomSearchBar(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             onValueChange = {
+                activity?.onUserInteraction()
                 onValueChange(it)
                 textDebounce.value = it
             },

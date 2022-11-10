@@ -11,7 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument.SignDocumentViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument.SignDocumentViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument.SignDocumentViewModel.UIEvent.OnRejectClick
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

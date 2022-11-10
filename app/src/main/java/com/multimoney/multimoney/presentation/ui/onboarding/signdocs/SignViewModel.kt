@@ -3,9 +3,9 @@ package com.multimoney.multimoney.presentation.ui.onboarding.signdocs
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 class SignViewModel : BaseViewModel(false) {
     // uiState
@@ -16,9 +16,9 @@ class SignViewModel : BaseViewModel(false) {
     fun createDialog() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
-                titleResource = R.string.sign_credit_dialog_title,
+                titleResource = string.sign_credit_dialog_title,
                 description = dialogDescription,
-                positiveResource = R.string.sign_credit_dialog_continue,
+                positiveResource = string.sign_credit_dialog_continue,
                 isActive = mutableStateOf(true)
             )
         )

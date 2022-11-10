@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -54,14 +55,19 @@ fun OtherIncomeScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                idEconomicActivity = if (sharedViewModel.idBrandAsInt == Brand.CostaRica.id) {
+                                    SourceIncomeOptionType.OtherCR.id.toLong()
+                                } else SourceIncomeOptionType.OtherSV.id.toLong(),
                                 income = viewModel.uiState.incomeAmount.toFloat(),
-                                specifiesIncomeSource = viewModel.uiState.incomeSource
+                                specifiesIncomeSource = viewModel.uiState.incomeSource,
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Three.id
+                previousStep = SmartSteps.Two.id
             )
         )
         viewModel.baseEvent.collect { event ->
@@ -73,7 +79,7 @@ fun OtherIncomeScreen(
         }
     }
 
-    OtherIncomeContent(viewModel, sharedViewModel.idBrand)
+    OtherIncomeContent(viewModel, sharedViewModel.idBrandAsInt)
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
@@ -85,9 +91,9 @@ fun OtherIncomeScreen(
 }
 
 @Composable
-fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: String) {
+fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
     val focusManager = LocalFocusManager.current
-    val currencySymbol = stringResource(idBrand.toInt().getCurrencySymbol())
+    val currencySymbol = stringResource(idBrand.getCurrencySymbol())
     Column(
         modifier = Modifier
             .fillMaxSize()

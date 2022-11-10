@@ -35,7 +35,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.document.Cre
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
 @Preview

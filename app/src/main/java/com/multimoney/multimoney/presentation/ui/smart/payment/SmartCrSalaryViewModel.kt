@@ -15,7 +15,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryView
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -28,11 +28,10 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
         private set
 
     private fun validateForm() {
-        emitBaseEvent(OnFormValidateCompleted(onValidateForm()))
+        emitBaseEvent(OnFormValidateCompleted(isFormValid()))
     }
 
-    fun onValidateForm() = uiState.profession.isNotBlank() &&
-        uiState.paymentAmount.isNotBlank()
+    fun isFormValid() = uiState.profession.isNotBlank() && uiState.paymentAmount.isNotBlank()
 
     private fun onAmountValueChange(paymentAmount: String) {
         uiState = uiState.copy(paymentAmount = paymentAmount)

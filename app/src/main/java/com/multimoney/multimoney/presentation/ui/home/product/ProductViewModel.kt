@@ -77,7 +77,6 @@ class ProductViewModel @Inject constructor(
     var userName: String = ""
     var productProgress = 0F
     var isExpiredTitle = R.string.home_product_expiration
-    val isFromHome = true
 
     private fun onGetUserData() {
         viewModelScope.launch {
@@ -231,13 +230,13 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 creditSummary
             )
-            }/$identification/$userName"
+            }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}"
         } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
             encodeData(
                 listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
             )
-            }/$identification/$userName/$isFromHome"
+            }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeBNScreen.baseRoute}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
             encodeData(
@@ -246,6 +245,13 @@ class ProductViewModel @Inject constructor(
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}"
         }
         navigateTo(route)
+    }
+
+    private fun onNavigateToPaymentSchedule() {
+        val infoCredit = uiState.userStatus?.infoCredit
+        navigateTo(
+            route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeBNScreen.baseRoute}"
+        )
     }
 
     private fun validateQuotas(summaryList: List<Summary>?): Boolean {
@@ -312,14 +318,14 @@ class ProductViewModel @Inject constructor(
                     (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
                         CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Seven.id
+                        ) == CreditStep.Eight.id
                         )
                 }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
                         CreditStep.Search.getIdByName(
                             infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Seven.id
+                        ) < CreditStep.Eight.id
                         )
                 }
                 CREDIT_REJECTED -> {

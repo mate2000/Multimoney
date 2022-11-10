@@ -7,6 +7,8 @@ import kotlinx.parcelize.Parcelize
 data class ClientBankAccount(
     val id: Int?,
     val idBank: Int?,
+    val origin: String?,
+    val debitDate: String? = null,
     val bankDescription: String?,
     val accountNumber: String?,
     val idCurrency: Int?,

@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
+import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -18,13 +19,15 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnEditBankAccount
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnProgramClick
@@ -39,7 +42,8 @@ import javax.inject.Inject
 class PaymentScheduleViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
     private val mutationActivateClientAutomaticDebitUseCase: MutationActivateClientAutomaticDebitUseCase,
-    private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase
+    private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
+    private val queryGetClientBankAccountUseCase: QueryGetClientBankAccountUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -51,9 +55,11 @@ class PaymentScheduleViewModel @Inject constructor(
     private var idBrand: Int = 0
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
-    private var isEdit: Boolean = false
+    private var isEditBankAccount: Boolean = false
+    private var isEditPaymentSchedule: Boolean = false
     private var paymentDate: String? = null
     private var previousScreen = ""
+    private var getBankAccountAttempts = 0
     private var getPaymentScheduleAttempts = 0
     private var setPaymentScheduleAttempts = 0
 
@@ -63,19 +69,41 @@ class PaymentScheduleViewModel @Inject constructor(
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         paymentDate = savedStateHandle[PAYMENT_DATE]
-        isEdit = savedStateHandle[IS_EDIT] ?: false
+        isEditBankAccount = savedStateHandle[IS_EDIT_BANK_ACCOUNT] ?: false
+        isEditPaymentSchedule = savedStateHandle[IS_EDIT_PAYMENT_SCHEDULE] ?: false
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         uiState = uiState.copy(day = getDayFromString(paymentDate, API_DATE_FORMAT))
-        getClientBankAccount()
     }
 
     private fun getClientBankAccount() = when {
-        isEdit || previousScreen == Screen.HomeScreen.route || previousScreen == Screen.PaymentVoucherScreen.baseRoute ->
+        isEditBankAccount || previousScreen == Screen.PaymentVoucherScreen.baseRoute ->
             uiState =
                 uiState.copy(
                     clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
                 )
+        previousScreen == Screen.HomeScreen.route && isEditPaymentSchedule.not() -> onCallQueryGetClientBankAccountUseCase()
         else -> onCallGetClientAutomaticDebitUseCase()
+    }
+
+    private fun onCallQueryGetClientBankAccountUseCase() = executeUseCase {
+        queryGetClientBankAccountUseCase.invoke(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoan = idLoanClient
+        ).collectLatest { result ->
+            getBankAccountAttempts++
+            result.onSuccess { clientBankAccountList ->
+                uiState = uiState.copy(
+                    clientBankAccount = clientBankAccountList?.first(),
+                    isLoading = false
+                )
+            }.onFailure {
+                setErrorAlertResult(attempts = getBankAccountAttempts)
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
     }
 
     private fun onCallGetClientAutomaticDebitUseCase() = executeUseCase {
@@ -221,6 +249,7 @@ class PaymentScheduleViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnGetClientBankAccount -> getClientBankAccount()
             is OnAlertButtonClick -> onAlertButtonClick()
             is OnAlertCloseClick -> onAlertCloseClick()
             is OnProgramClick -> onCallMutationActivateClientAutomaticDebitUseCase()
@@ -231,6 +260,7 @@ class PaymentScheduleViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
+        object OnGetClientBankAccount : UIEvent()
         object OnAlertButtonClick : UIEvent()
         object OnAlertCloseClick : UIEvent()
         object OnProgramClick : UIEvent()

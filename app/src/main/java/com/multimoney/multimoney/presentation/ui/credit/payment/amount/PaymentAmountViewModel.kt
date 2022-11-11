@@ -256,7 +256,7 @@ class PaymentAmountViewModel @Inject constructor(
                         destinyAmount = it.currentBalance?.formattedTwoDecimalsNumber()
                     )
                 } ?: listOf(),
-                amount = if (isMultiCurrency()) { // Si la moneda es diferente hay que mandarle exchangeRate si el multi currency
+                amount = if (isMultiCurrency()) {
                     getMultiCurrencyAmountIncludingExchangeValue()
                 } else if (shouldDisplayExchangeRate()) {
                     getConvertedAmountValue()

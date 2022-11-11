@@ -13,8 +13,9 @@ sealed class SourceIncomeOptionType(val id: Int, val name: String) {
     object OwnBusiness : SourceIncomeOptionType(4, "own_business_option")
     object Retired : SourceIncomeOptionType(5, "retired_option")
     object OtherSV : SourceIncomeOptionType(6, "other_sv_option")
-    object FormalSalaried : SourceIncomeOptionType(7, "formal_salaried_option")
+    object FormalSalariedCr : SourceIncomeOptionType(7, "formal_salaried_cr_option")
     object OwnBusinessInPartnership : SourceIncomeOptionType(8, "own_business_in_partnership_option")
     object OwnBusinessOnPersonalBasis : SourceIncomeOptionType(9, "own_business_on_personal_basis_option")
     object OtherCR : SourceIncomeOptionType(10, "other_cr_option")
+    object FormalSalariedSv : SourceIncomeOptionType(11, "formal_salaried_sv_option")
 }

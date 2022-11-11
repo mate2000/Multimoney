@@ -160,7 +160,11 @@ fun CurrencyExchangeRow(viewModel: PaymentAmountViewModel) {
                 textAlign = TextAlign.Start
             )
             Text(
-                text = viewModel.getConvertedAmountFormatted(),
+                text = if (viewModel.isMultiCurrency()) {
+                    viewModel.getMultiCurrencyAmountIncludingExchangeFormatted()
+                } else {
+                    viewModel.getConvertedAmountFormatted()
+                },
                 style = Typography.body2,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start

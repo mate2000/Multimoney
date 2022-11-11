@@ -218,7 +218,11 @@ class PaymentAmountViewModel @Inject constructor(
             uiState.clientBankAccount?.idCurrency?.toString() ?: "",
             if (isMultiCurrency()) {
                 summaryList?.find { it.idCurrency != uiState.clientBankAccount?.idCurrency }?.let {
-                    it.currentBalance?.formattedTwoDecimalsNumber()
+                    if (uiState.isMinimumSelected) {
+                        it.minPayment?.formattedTwoDecimalsNumber()
+                    } else {
+                        it.currentBalance?.formattedTwoDecimalsNumber()
+                    }
                 } ?: 0.0
             } else {
                 uiState.currentAmountValueString.toDouble()

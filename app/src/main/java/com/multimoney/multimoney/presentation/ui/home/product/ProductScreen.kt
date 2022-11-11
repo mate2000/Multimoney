@@ -423,6 +423,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                         }
                         viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {
                             CardCreditMaxAttempts(
+                                viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(
                                         ProductViewModel.UIEvent.OnMaxAttemptsCardClick(

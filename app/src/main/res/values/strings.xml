@@ -373,7 +373,7 @@
     <string name="credit_additional_information_bottom_sheet_button_" translatable="false">Aceptar</string>
 
     <string name="save_credit_operation_error_subtitle_gt" translatable="false">Contáctanos para brindarte más información</string>
-    <string name="save_credit_operation_error_action_gt" translatable="false">Escríbenos por whatsApp</string>
+    <string name="save_credit_operation_error_action_gt" translatable="false">Escríbenos por whatsAppfv</string>
     <string name="save_credit_operation_error_title" translatable="false">¡Oh no! Hubo un error</string>
     <string name="save_credit_operation_error_subtitle" translatable="false">Contactanos para brindarte más información</string>
     <string name="save_credit_operation_error_action" translatable="false">Escríbinos por whatsApp</string>
@@ -393,12 +393,14 @@
 
     <!-- Sign Documents limit reached -->
     <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
-    <string name="sign_credit_max_attempts_message" translatable="false">Comunícate con nosotros para activar tu crédito</string>
+    <string name="sign_credit_max_attempts_message" translatable="false">Comunicate con nosotros para activar tu crédito</string>
+    <string name="sign_credit_max_attempts_message_gt" translatable="false">Comunícate con nosotros para activar tu crédito</string>
     <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
 
     <!-- Sign Document Reject -->
     <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
     <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
+    <string name="sign_document_reject_description_gt" translatable="false">Si quieres finalizar la solicitud de tu crédito debés firmar el contrato</string>
 
     <!-- Visa -->
     <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>

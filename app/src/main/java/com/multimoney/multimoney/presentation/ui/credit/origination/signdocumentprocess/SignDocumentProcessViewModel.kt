@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
@@ -19,13 +20,12 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnRejectClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -87,15 +87,23 @@ class SignDocumentProcessViewModel @Inject constructor(
                 }
             }
             SIGN_DOCUMENTS_STEP.value -> {
-                if (creditContractEvent?.statusOnfido != STATUS_FIRM_PENDING) {
-                } else {
+                when (creditContractEvent?.statusEvicertia?.lowercase()) {
+                    CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+                        if (CreditOnFidoOrFirmStatus.PENDING.status.lowercase() == creditContractEvent.statusOnfido?.lowercase()) {
+
+                        }
+                    }
+                    CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+                    }
+                    CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+                    }
                 }
             }
         }
     }
 
-    private fun onRejectClick() {
-        uiState = uiState.copy(isAlertResultVisible = true)
+    private fun handleOnfidoStatus(creditContractEvent: CreditContractEvent?) {
+
     }
 
     private fun onNavigateToHome() {
@@ -109,7 +117,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         // Interactions
         val signDocumentProcessStep: String = GENERATE_DOCUMENT_STEP.value,
         val dialogParameters: DialogParameters = DialogParameters(),
-        val isAlertResultVisible: Boolean = false,
         val signDocumentUrl: String = ""
     )
 
@@ -117,7 +124,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         when (uiEvent) {
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
-            is OnRejectClick -> onRejectClick()
             is OnCloseClick -> onNavigateToHome()
             is OnNavigateToHome -> onNavigateToHome()
         }
@@ -126,13 +132,11 @@ class SignDocumentProcessViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
         data class OnInitializeText(val dialogDescription: String) : UIEvent()
-        object OnRejectClick : UIEvent()
         object OnCloseClick : UIEvent()
         object OnNavigateToHome : UIEvent()
     }
 
     companion object {
         private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        private const val STATUS_FIRM_PENDING = "Pendiente"
     }
 }

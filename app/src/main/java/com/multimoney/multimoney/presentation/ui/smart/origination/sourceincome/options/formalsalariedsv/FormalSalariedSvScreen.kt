@@ -161,10 +161,10 @@ fun FormalSalariedSvContent(viewModel: FormalSalariedSvViewModel, idBrand: Int) 
             labelText = stringResource(R.string.smart_salaried_working_address),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(onNext = {
-                focusManager.moveFocus(FocusDirection.Down)
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
             }),
             isTextArea = true,
             isError = viewModel.uiState.workingAddressError.first,

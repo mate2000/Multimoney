@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAlertResultButtonClick
-import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnHidePaymentBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMaximumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMinimumPaymentButtonClick
@@ -64,9 +63,6 @@ fun PaymentAmountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
-            if (shouldDisplayExchangeRate()) {
-                onUIEvent(OnCallQueryGetExchangeRateCredit)
-            }
         }
     }
     BackHandler {

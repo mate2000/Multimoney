@@ -52,24 +52,19 @@ fun PaymentAmountBottomSheetScreen(
             if (viewModel.isMultiCurrency()) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = viewModel.getMultiCurrencyAmountIncludingExchange(),
+                    text = viewModel.getMultiCurrencyAmountIncludingExchangeFormatted(),
                     style = Typography.h4.copy(fontWeight = FontWeight.W600),
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = viewModel.uiState.currentAmountValueString,
+                    text = if (viewModel.uiState.isMinimumSelected) {
+                        viewModel.uiState.minimumPaymentLabel
+                    } else {
+                        viewModel.uiState.maximumPaymentLabel
+                    },
                     style = Typography.body2.copy(fontWeight = FontWeight.W600),
-                    color = MultimoneyTheme.colors.text,
-                    textAlign = TextAlign.Center
-                )
-            } else if (viewModel.shouldDisplayExchangeRate()) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = viewModel.getConvertedAmountFormatted(),
-                    style = Typography.h4.copy(fontWeight = FontWeight.W600),
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Center
                 )
@@ -143,7 +138,7 @@ fun CurrencyExchangeRow(viewModel: PaymentAmountViewModel) {
                 textAlign = TextAlign.Start
             )
             Text(
-                text = viewModel.uiState.exchangeRateLabel.toString(),
+                text = viewModel.getExchangeRateFormatted(),
                 style = Typography.body2,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -165,7 +160,7 @@ fun CurrencyExchangeRow(viewModel: PaymentAmountViewModel) {
                 textAlign = TextAlign.Start
             )
             Text(
-                text = viewModel.uiState.exchangeConvertedAmount.toString(),
+                text = viewModel.getConvertedAmountFormatted(),
                 style = Typography.body2,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start

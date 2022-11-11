@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.document
+package com.multimoney.multimoney.presentation.ui.credit.origination.onfido
 
 import androidx.activity.result.ActivityResult
 import androidx.compose.runtime.getValue
@@ -14,10 +14,10 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnOpenDialogValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIState
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters

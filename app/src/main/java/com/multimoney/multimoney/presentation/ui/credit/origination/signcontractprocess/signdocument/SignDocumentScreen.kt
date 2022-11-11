@@ -1,32 +1,21 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument.SignDocumentViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument.SignDocumentViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.MmWebView
-import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SignDocumentScreen(
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SignDocumentViewModel = hiltViewModel()
+    viewModel: SignDocumentProcessViewModel
 ) {
-    LaunchedEffect(true) {
-        viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate)
-            createDialog()
-        }
-    }
-
     viewModel.onUIEvent(
         OnInitializeText(
             stringResource(id = string.sign_credit_dialog_description)
@@ -36,8 +25,7 @@ fun SignDocumentScreen(
 }
 
 @Composable
-@Preview
-fun SignDocumentContent(viewModel: SignDocumentViewModel = hiltViewModel()) {
+fun SignDocumentContent(viewModel: SignDocumentProcessViewModel = hiltViewModel()) {
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
             iconResource = R.drawable.ic_alert,
@@ -45,16 +33,14 @@ fun SignDocumentContent(viewModel: SignDocumentViewModel = hiltViewModel()) {
             descriptionResource = R.string.sign_document_reject_description,
             buttonTextResource = R.string.understood,
             isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) },
-            onButtonClick = { viewModel.onUIEvent(OnCloseClick) }
+            onRightButtonClick = { viewModel.onUIEvent(SignDocumentProcessViewModel.UIEvent.OnCloseClick) },
+            onButtonClick = { viewModel.onUIEvent(SignDocumentProcessViewModel.UIEvent.OnCloseClick) }
         )
     } else {
         MmWebView(
-            viewModel.uiState.signDocumentLink,
+            viewModel.uiState.signDocumentUrl,
             LocalContext.current
         )
-
-        // TODO: Remove this button when all functionalities are implemented
 
         if (viewModel.uiState.dialogParameters.isActive.value) {
             CustomDialog(

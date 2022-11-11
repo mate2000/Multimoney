@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.document
+package com.multimoney.multimoney.presentation.ui.credit.origination.onfido
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -30,10 +30,10 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnOpenDialogValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.Companion.PACKAGE_NAME
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.Companion.PACKAGE_NAME
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters

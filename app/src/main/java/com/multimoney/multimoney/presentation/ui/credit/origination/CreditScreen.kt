@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen

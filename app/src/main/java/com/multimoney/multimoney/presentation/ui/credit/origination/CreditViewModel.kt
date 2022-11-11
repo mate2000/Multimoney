@@ -43,13 +43,13 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.documentgeneration.DUMMY_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -135,10 +135,7 @@ class CreditViewModel @Inject constructor(
                 lastStep = CreditStep.One.id
             )
         } else {
-            popAndNavigateTo(
-                route = "${Screen.SignDocumentScreen.baseRoute}/".plus(DUMMY_URL),
-                popTo = Screen.DocumentGenerationScreen.route
-            )
+            navigateToSignDocumentProcess()
         }
     }
 
@@ -149,7 +146,7 @@ class CreditViewModel @Inject constructor(
                 isCloseVisible = nextStep >= CreditStep.One.id
             )
         } else {
-            documentGenerationProcess()
+            navigateToSignDocumentProcess()
         }
     }
 
@@ -167,9 +164,9 @@ class CreditViewModel @Inject constructor(
         }
     }
 
-    private fun documentGenerationProcess() {
+    private fun navigateToSignDocumentProcess() {
         popAndNavigateTo(
-            Screen.DocumentGenerationScreen.route,
+            "${Screen.SignDocumentProcess.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${URL_EMPTY}",
             Screen.CreditScreen.route
         )
     }
@@ -308,5 +305,6 @@ class CreditViewModel @Inject constructor(
         const val CREDIT_TOTAL_STEPS = 7
         const val CREDIT_INDICATOR_TOTAL_STEPS = 5
         const val BANNER_TIME = 3000L
+        const val URL_EMPTY = "url"
     }
 }

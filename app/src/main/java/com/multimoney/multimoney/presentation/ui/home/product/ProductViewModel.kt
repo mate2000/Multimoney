@@ -218,6 +218,10 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToSmartFlow() {
+        navigateTo("${Screen.SmartScreen.baseRoute}/${userName}/${uiState.idBrand}/${pkUser}")
+    }
+
     private fun onNavigateToPaymentScreen() {
         val creditSummary = balanceCredit?.balanceCredit?.first()?.summary
         val infoCredit = uiState.userStatus?.infoCredit
@@ -350,6 +354,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
+            is UIEvent.OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
@@ -380,17 +385,17 @@ class ProductViewModel @Inject constructor(
                 ""
             ),
             CreditOfferAndTip(
-                "1",
-                "Ahorra Smart",
-                "La mejor tasa del 3.5% anual",
+                "2",
+                "Solicitar Credito",
+                "4,000",
                 "Solicitar",
                 "",
                 ""
             ),
             CreditOfferAndTip(
-                "1",
-                "Ahorra Smart",
-                "La mejor tasa del 3.5% anual",
+                "3",
+                "Solicitar Credito",
+                "4,000",
                 "Solicitar",
                 "",
                 ""
@@ -449,6 +454,7 @@ class ProductViewModel @Inject constructor(
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
+        object OnNavigateToSmartOriginationFlow : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
         object OnProgressCalculation : UIEvent()

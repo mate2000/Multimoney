@@ -1,6 +1,6 @@
-query GetClientBankAccount($user: String!, $idBrand: Int!, $idClient: Long!, $idLoanClient: Long! ){
-    getClientBankAccount(
-        getClientBankAccountInput: {
+query GetClientAutomaticDebit($user: String!, $idBrand: Int!, $idClient: Long!, $idLoanClient: Long! ){
+    getClientAutomaticDebit(
+        getClientAutomaticDebitInput: {
             user: $user
             idBrand: $idBrand
             idClient: $idClient
@@ -12,6 +12,7 @@ query GetClientBankAccount($user: String!, $idBrand: Int!, $idClient: Long!, $id
         origen
         descripcion_banco
         numeroCuenta
+        fechaDebito
         id_Moneda
         id_Moneda_Destino
     }

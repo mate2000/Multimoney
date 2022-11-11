@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -54,6 +55,12 @@ fun SmartScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
     }
+
+    viewModel.onUIEvent(
+        SmartViewModel.UIEvent.OnInitializeText(
+            stringResource(R.string.smart_close_origination_dialog_description)
+        )
+    )
 
     Column(
         modifier = Modifier
@@ -114,6 +121,18 @@ fun SmartScreen(
             onButtonClick = { viewModel.onUIEvent(OnCtaAlertClick(focusManager)) }
         )
     }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
+
     if (viewModel.uiState.bottomSheetState.isVisible) {
         viewModel.uiState.bottomSheet()
     }
@@ -135,6 +154,6 @@ fun GetStepContent(
                 SmartFactaScreen(sharedViewModel = viewModel)
             }
         }
-        SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
+        Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
     }
 }

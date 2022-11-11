@@ -16,6 +16,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
@@ -70,7 +71,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // HomeNavGraph Screens
     object SignDocumentProcess :
-        Screen("sign_document_process_screen/{$SIGN_DOCUMENT_STEP}/{$SIGN_DOCUMENT_URL}", "sign_document_process_screen")
+        Screen("sign_document_process_screen/{$SIGN_DOCUMENT_STEP}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}", "sign_document_process_screen")
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")

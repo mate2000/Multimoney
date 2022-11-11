@@ -50,9 +50,9 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCre
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class CreditViewModel @Inject constructor(
@@ -81,6 +81,7 @@ class CreditViewModel @Inject constructor(
     var idUserRequest: Int = 0
     var firstName: String = ""
     var lastName: String = ""
+    var idPrint: Long = 0
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -181,7 +182,7 @@ class CreditViewModel @Inject constructor(
 
     private fun navigateToSignDocumentProcess() {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcess.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY",
+            "${Screen.SignDocumentProcess.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/$idPrint/$idBrand",
             Screen.CreditScreen.route
         )
     }

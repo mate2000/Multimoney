@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
@@ -20,6 +21,7 @@ const val FIRST_NAME = "name"
 const val LAST_NAME = "last_name"
 const val SIGN_DOCUMENT_STEP = "sign_document_step"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
+const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -45,7 +47,11 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            route = Screen.SignDocumentProcess.route
+            route = Screen.SignDocumentProcess.route,
+            arguments = listOf(
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
+                navArgument(ID_BRAND) { type = NavType.IntType }
+            )
         ) {
             SignDocumentProcessScreen(
                 onPopAndNavigate = {

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument
+package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -6,8 +6,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.MmWebView

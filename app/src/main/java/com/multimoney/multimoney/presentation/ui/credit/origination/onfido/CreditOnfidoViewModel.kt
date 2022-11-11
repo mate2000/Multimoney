@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.model.security.OnfidoToken
@@ -14,11 +15,10 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnOpenDialogValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIState
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenDialogValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnFidoSdk
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
@@ -27,16 +27,17 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class CreditDocumentViewModel @Inject constructor(
+class CreditOnfidoViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
-    private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase
+    private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
+    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -128,7 +129,6 @@ class CreditDocumentViewModel @Inject constructor(
     }
 
     private fun onCallOnfidoCheckProcess(
-        names: String,
         pkUser: Long,
         identification: String,
         idBrand: Int,
@@ -144,6 +144,29 @@ class CreditDocumentViewModel @Inject constructor(
                 idUserRequest,
                 idBrand,
                 user
+            ).collectLatest { result ->
+                result.onSuccess {
+                    // nothing to do here
+                }
+                result.onFailure {
+                    // nothing to do here
+                }
+            }
+        }
+    }
+
+    private fun onCallSaveCreditOperation(
+        idUserRequest: Long,
+        pkUser: Long,
+        user: String,
+        idBrand: Int
+    ) {
+        executeUseCase {
+            mutationSaveCreditOperationUseCase.invoke(
+                idUserRequest,
+                pkUser,
+                user,
+                idBrand
             ).collectLatest { result ->
                 result.onSuccess {
                 }
@@ -181,6 +204,11 @@ class CreditDocumentViewModel @Inject constructor(
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
         }
     }
+
+    data class UIState(
+        val isAlertVisible: Boolean = false,
+        val openDialog: DialogParameters = DialogParameters()
+    )
 
     sealed class UIEvent {
         data class OnCallInFidoToken(

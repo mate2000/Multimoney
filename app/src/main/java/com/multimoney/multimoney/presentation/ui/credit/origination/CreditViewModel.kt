@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackVisibilityValueChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueClick
@@ -166,7 +167,7 @@ class CreditViewModel @Inject constructor(
 
     private fun navigateToSignDocumentProcess() {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcess.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/${URL_EMPTY}",
+            "${Screen.SignDocumentProcess.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY",
             Screen.CreditScreen.route
         )
     }
@@ -183,7 +184,7 @@ class CreditViewModel @Inject constructor(
                 user = email,
                 idBrand = idBrand.toInt(),
                 infoQuestion = saveCreditStepsHelper.creditFlowData,
-                idLogUserRequest = idUserRequest.toInt(),
+                idLogUserRequest = idUserRequest,
                 idUser = pkUser.toInt(),
                 currentStep = CreditStep.Search.getNameById(nextStep)
             ).collectLatest { result ->
@@ -222,6 +223,7 @@ class CreditViewModel @Inject constructor(
         // Interactions
         val currentStep: Int = CreditStep.One.id,
         val isCloseVisible: Boolean = true,
+        val isBackVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
         val isLoading: Boolean = false,
         val isCurrentLocationButtonVisible: Boolean = false,
@@ -261,6 +263,7 @@ class CreditViewModel @Inject constructor(
                 saveCreditStepsHelper.start(event.screenConfigData)
             }
             is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
+            is OnBackVisibilityValueChanged -> uiState = uiState.copy(isBackVisible = event.isVisible)
         }
     }
 
@@ -299,6 +302,7 @@ class CreditViewModel @Inject constructor(
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
         object OnCallMutationSaveCreditFlowStep : UIEvent()
+        data class OnBackVisibilityValueChanged(val isVisible: Boolean) : UIEvent()
     }
 
     companion object {

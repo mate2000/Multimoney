@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
 
 const val PK_USER = "pk_user"
 const val IDENTIFICATION = "identification"

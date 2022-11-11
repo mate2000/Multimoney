@@ -30,10 +30,11 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnOpenDialogValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.Companion.PACKAGE_NAME
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnCallInFidoToken
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.OnOpenOnFidoSdk
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.Companion.PACKAGE_NAME
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnFidoSdk
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -41,7 +42,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 @Composable
 @Preview
 fun CreditDocumentScreen(
-    viewModel: CreditDocumentViewModel = hiltViewModel(),
+    viewModel: CreditOnfidoViewModel = hiltViewModel(),
     sharedViewModel: CreditViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -141,78 +142,91 @@ fun CreditDocumentScreen(
         )
     }
 
-    Column(
-        Modifier.padding(end = 16.dp, start = 16.dp, top = 28.dp)
-    ) {
-        Text(
-            text = stringResource(id = string.sign_up_id_validation_title),
-            style = Typography.h5.copy(
-                color = MultimoneyTheme.colors.text,
-                fontWeight = FontWeight.SemiBold
-            )
+    if (viewModel.uiState.isAlertVisible) {
+        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnBackVisibilityValueChanged(false))
+        AlertResult(
+            iconResource = drawable.ic_alert,
+            titleResource = string.sign_document_reject_title,
+            descriptionResource = string.sign_document_reject_description,
+            buttonTextResource = string.understood,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { },
+            onButtonClick = { }
         )
-        Text(
-            modifier = Modifier.padding(top = 16.dp),
-            text = stringResource(id = string.sign_up_id_validation_subtitle),
-            style = Typography.body2.copy(
-                color = MultimoneyTheme.colors.text,
-                fontWeight = FontWeight.SemiBold
+    } else {
+        Column(
+            Modifier.padding(end = 16.dp, start = 16.dp, top = 28.dp)
+        ) {
+            Text(
+                text = stringResource(id = string.sign_up_id_validation_title),
+                style = Typography.h5.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.SemiBold
+                )
             )
-        )
+            Text(
+                modifier = Modifier.padding(top = 16.dp),
+                text = stringResource(id = string.sign_up_id_validation_subtitle),
+                style = Typography.body2.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
 
-        Row(
-            Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth()
-        ) {
-            CustomImage(
-                drawableResource = drawable.ic_validation,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-            Text(
-                modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = string.sign_up_id_validation_one),
-                style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.text,
-                    fontWeight = FontWeight.SemiBold
+            Row(
+                Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth()
+            ) {
+                CustomImage(
+                    drawableResource = drawable.ic_validation,
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
-            )
-        }
-        Row(
-            Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth()
-        ) {
-            CustomImage(
-                drawableResource = drawable.ic_validation,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-            Text(
-                modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = string.sign_up_id_validation_two),
-                style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.text,
-                    fontWeight = FontWeight.SemiBold
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = string.sign_up_id_validation_one),
+                    style = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
-            )
-        }
-        Row(
-            Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth()
-        ) {
-            CustomImage(
-                drawableResource = drawable.ic_validation,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-            Text(
-                modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = string.sign_up_id_validation_three),
-                style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.text,
-                    fontWeight = FontWeight.SemiBold
+            }
+            Row(
+                Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth()
+            ) {
+                CustomImage(
+                    drawableResource = drawable.ic_validation,
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
-            )
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = string.sign_up_id_validation_two),
+                    style = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            }
+            Row(
+                Modifier
+                    .padding(top = 32.dp)
+                    .fillMaxWidth()
+            ) {
+                CustomImage(
+                    drawableResource = drawable.ic_validation,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = string.sign_up_id_validation_three),
+                    style = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            }
         }
     }
 }

@@ -1,12 +1,12 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess
+package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.documentgeneration.DocumentGenerationScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.signdocument.SignDocumentScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.validateidentity.ValidateIdentityScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.validateidentity.ValidateIdentityScreen
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP

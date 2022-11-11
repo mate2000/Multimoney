@@ -29,11 +29,11 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
@@ -90,7 +90,7 @@ fun CreditScreen(
             ) {
                 Column {
                     TopNavBar(
-                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id,
+                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.isBackVisible,
                         isRightButtonVisible = viewModel.uiState.isCloseVisible,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }

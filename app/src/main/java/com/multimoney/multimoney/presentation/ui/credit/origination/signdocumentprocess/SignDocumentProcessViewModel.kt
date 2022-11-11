@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess
+package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,10 +9,10 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
-import com.multimoney.multimoney.presentation.ui.credit.origination.signcontractprocess.SignDocumentProcessViewModel.UIEvent.OnRejectClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnRejectClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import dagger.hilt.android.lifecycle.HiltViewModel

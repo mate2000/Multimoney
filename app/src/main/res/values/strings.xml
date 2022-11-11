@@ -586,6 +586,14 @@
     <string name="payment_schedule_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_label_date_description" translatable="false">%s de cada mes</string>
     <string name="payment_schedule_button" translatable="false">Programar</string>
+    <string name="payment_schedule_success_alert_title" translatable="false">Tu pago ha sido \nprogramado</string>
+    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago</string>
+    <string name="payment_schedule_success_alert_button" translatable="false">Ver mi crédito</string>
+    <string name="payment_schedule_error_alert_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="payment_schedule_error_alert_subtitle_one" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo de nuevo.</string>
+    <string name="payment_schedule_error_alert_subtitle_two" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo más tarde.</string>
+    <string name="payment_schedule_error_alert_button_one" translatable="false">Intentar</string>
+    <string name="payment_schedule_error_alert_button_two" translatable="false">Ir al inicio</string>
 
     <!-- Payment Schedule Account-->
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>

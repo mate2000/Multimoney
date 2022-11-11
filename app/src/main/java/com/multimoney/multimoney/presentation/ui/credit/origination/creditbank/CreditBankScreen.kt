@@ -119,7 +119,7 @@ fun CreditBankScreen(
 
         CustomInformativeText(
             modifier = Modifier.padding(top = 24.dp),
-            drawableResource = drawable.ic_information,
+            leadingIcon = drawable.ic_information,
             text = stringResource(id = string.credit_bank_condition),
             textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
         )

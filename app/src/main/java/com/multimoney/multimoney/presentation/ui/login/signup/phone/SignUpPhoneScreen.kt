@@ -38,7 +38,6 @@ fun SignUpPhoneScreen(
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
-    val context = LocalContext.current
     val getDefaultCountryCode = getDefaultLangCode()
     val getDefaultPhoneCode = getDefaultPhoneCode()
     val selectedCountry =
@@ -132,7 +131,7 @@ fun SignUpPhoneScreen(
 
         CustomInformativeText(
             modifier = Modifier.padding(top = 12.dp),
-            drawableResource = drawable.ic_information,
+            leadingIcon = drawable.ic_information,
             text = stringResource(id = string.sign_up_phone_information),
             textStyle = Typography.subtitle2.copy(color = MultimoneyTheme.colors.textInformation)
         )

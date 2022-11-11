@@ -73,7 +73,7 @@ fun CustomRadioButton(
  */
 @Composable
 fun CustomRadioButtonsLayout(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     options: List<String>,
     orientation: Orientation = Orientation.Vertical,
     onOptionSelected: (String) -> Unit

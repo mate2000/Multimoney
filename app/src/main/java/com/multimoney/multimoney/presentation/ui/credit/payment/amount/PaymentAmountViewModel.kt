@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -70,6 +71,7 @@ class PaymentAmountViewModel @Inject constructor(
     private var maximumPayment: Int = 0
     private var identification: String? = null
     private var userName: String? = null
+    private var paymentDate: String? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -79,6 +81,7 @@ class PaymentAmountViewModel @Inject constructor(
         summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         userName = savedStateHandle[NAME_CLIENT] ?: ""
+        paymentDate = savedStateHandle[PAYMENT_DATE]
 
         onInitializeInteractionValues()
     }
@@ -183,6 +186,9 @@ class PaymentAmountViewModel @Inject constructor(
         navigateTo(
             route = "${Screen.PaymentVoucherScreen.baseRoute}/${encodeData(clientBankAccount)}/$currentAmountValue/$currency/$referenceNumber"
         )
+    private fun onNavigateToVoucher() = navigateTo(
+        route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(uiState.clientBankAccount)}/$paymentDate"
+    )
 
     fun getFormattedCurrency() =
         if (uiState.currentAmountValueString.isNotEmpty() && uiState.currentAmountValueString.toInt() > maximumPayment) {
@@ -197,8 +203,12 @@ class PaymentAmountViewModel @Inject constructor(
             user ?: "",
             identification ?: "",
             summaryList?.first()?.idCurrency?.toString() ?: "",
-            uiState.clientBankAccount?.idCurrency?.toString() ?: "", // According to figma, conversions should be based on the customer's account
-            uiState.currentAmountValueString.amountToDoubleFormat(uiState.currency, CreditAmountViewModel.CURRENCY_SEPARATOR)
+            uiState.clientBankAccount?.idCurrency?.toString()
+                ?: "", // According to figma, conversions should be based on the customer's account
+            uiState.currentAmountValueString.amountToDoubleFormat(
+                uiState.currency,
+                CreditAmountViewModel.CURRENCY_SEPARATOR
+            )
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(
@@ -288,13 +298,17 @@ class PaymentAmountViewModel @Inject constructor(
     }
 
     fun getConvertedAmountFormatted() =
-        "${uiState.currency}${uiState.exchangeConvertedAmount.toString().stringToIntegerFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())}"
+        "${uiState.currency}${
+        uiState.exchangeConvertedAmount.toString()
+            .stringToIntegerFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        }"
 
     fun getCurrentAmountFormatted() =
         "${uiState.currency}${uiState.currentAmountValueString.stringToIntegerFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())}"
 
     fun getMultiCurrencyAmountIncludingExchange(): String {
-        val balance = summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
+        val balance =
+            summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
         val exchangedAmount = uiState.exchangeConvertedAmount
         val total = balance + exchangedAmount
         return uiState.currency + total

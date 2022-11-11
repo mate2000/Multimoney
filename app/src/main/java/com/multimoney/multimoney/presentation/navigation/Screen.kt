@@ -10,10 +10,12 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_FROM_HOME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
@@ -78,30 +80,37 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Payment Credit
     object PaymentFeeScreen : Screen(
-        "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}",
+        "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}",
         "payment_fee_screen"
     )
 
     object PaymentAccountScreen :
         Screen(
-            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$IS_FROM_HOME}",
+            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}",
             "payment_account_screen"
         )
 
     object PaymentAmountScreen : Screen(
-        "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}/{$IDENTIFICATION}/{$NAME_CLIENT}",
+        "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}",
         "payment_amount_screen"
     )
 
-    // Smart
-    object SmartScreen : Screen(
-            "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
-            "smart_screen"
-        )
     object PaymentVoucherScreen :
         Screen(
-            "payment_voucher_screen/{$CLIENT_BANK_ACCOUNT}/{$CURRENT_AMOUNT_VALUE}/{$CURRENCY}/{$REFERENCE_NUMBER}",
+            route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CLIENT_BANK_ACCOUNT}/{$CURRENT_AMOUNT_VALUE}/{$CURRENCY}/{$REFERENCE_NUMBER}",
             "payment_voucher_screen"
+        )
+
+    object PaymentScheduleScreen :
+        Screen(
+            "payment_schedule_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$IS_EDIT}/{$PREVIOUS_SCREEN}",
+            "payment_schedule_screen"
+        )
+
+    object PaymentScheduleAccountScreen :
+        Screen(
+            "payment_schedule_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}",
+            "payment_schedule_account_screen"
         )
 
     object PaymentOptionsScreen : Screen(
@@ -118,6 +127,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_points_screen/{$ID_BRAND}",
         "payment_points_screen"
     )
+
+    // Smart
+    object SmartScreen :
+        Screen(
+            "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
+            "smart_screen"
+        )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

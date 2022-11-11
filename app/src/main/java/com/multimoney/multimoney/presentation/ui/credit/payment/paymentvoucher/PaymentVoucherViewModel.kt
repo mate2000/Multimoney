@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher
 
 import android.view.View
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,7 +10,10 @@ import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.*
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.util.ShareHelper
@@ -38,24 +39,51 @@ class PaymentVoucherViewModel @Inject constructor(
     var referenceNumber: String? = null
     var currentAmountValueString: String? = null
     var currency : String? = null
-    var summaryList: List<Summary>? = null
     var clientBankAccount: ClientBankAccount? = null
     var currentDate : String = ""
     var currentTime : String = ""
-
-
-
+    private var user: String = ""
+    private var idBrand: Int = 0
+    private var idClient: Int = 0
+    private var idLoanClient: Int = 0
+    private var summaryList: List<Summary>? = null
+    private var identification: String? = null
+    private var userName: String? = null
+    private var paymentDate: String? = null
 
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
-        clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
         currentAmountValueString = savedStateHandle[CURRENT_AMOUNT_VALUE]
         currency = savedStateHandle[CURRENCY]
+        user = savedStateHandle[USER] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        idClient = savedStateHandle[ID_CLIENT] ?: 0
+        idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
+        summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        userName = savedStateHandle[NAME_CLIENT] ?: ""
+        clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
+        paymentDate = savedStateHandle[PAYMENT_DATE]
         val time = Calendar.getInstance().time
         currentDate = dateFormatter.format(time)
         currentTime = timeFormatter.format(time)
-
     }
+
+    private fun onShareVoucherImage(
+        view: View,
+        capturingBounds: Rect
+    ) {
+        shareHelper.sharedScreenShot(view, capturingBounds)
+    }
+
+
+    private fun onScheduleAutomaticPayment() = navigateTo(
+        route = "${Screen.PaymentScheduleScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+        encodeData(
+            clientBankAccount
+        )
+        }/$paymentDate/${false}/${Screen.PaymentVoucherScreen.baseRoute}"
+    )
 
     data class UIState(
         val test: String = "",
@@ -72,23 +100,8 @@ class PaymentVoucherViewModel @Inject constructor(
         val alertResultTitle: String = "",
         val alertResultDescription: String = "",
         val isLoading: Boolean = false,
+        )
 
-    )
-
-    private fun onShareVoucherImage(
-        view: View,
-        capturingBounds: Rect
-    ) {
-        shareHelper.sharedScreenShot(view, capturingBounds)
-    }
-
-    private fun onScheduleAutomaticPayment() {
-    }
-    fun shouldDisplayExchangeRate() =
-        isMultiCurrency() ||
-                clientBankAccount?.idCurrency?.toString() != summaryList?.first()?.idCurrency?.toString()
-
-    fun isMultiCurrency() = (summaryList?.count() ?: 1) > 1
 
     fun onUIEvent(event: UIEvent) {
         when (event) {

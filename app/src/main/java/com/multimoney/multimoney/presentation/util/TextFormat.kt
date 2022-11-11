@@ -44,12 +44,12 @@ fun String.stringToDoubleFormat(separator: String? = null): String =
         this
     }
 
+fun Double.formattedTwoDecimalsNumber(): Double =
+    String.format(TWO_DECIMALS_FORMAT, this).toDouble()
+
 fun String.isValidAmount() = isNotBlank() && isValidAmountLength()
 
 fun String.isValidAmountLength() = length <= 12
-
-fun String.amountToDoubleFormat(currency: String, separator: Char) =
-    replace(currency, "").replace(separator.toString(), "").toDouble()
 
 fun String.capitalized(): String {
     return this.lowercase().replaceFirstChar {
@@ -64,3 +64,4 @@ fun getMaskedAccount(accountNumber: String, maskedText: String) =
 
 const val ACCOUNT_FIRST_DIGITS = 2
 const val ACCOUNT_LAST_DIGITS = 4
+const val TWO_DECIMALS_FORMAT = "%.2f"

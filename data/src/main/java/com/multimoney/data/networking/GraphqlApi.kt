@@ -749,7 +749,7 @@ class GraphqlApi @Inject constructor(
                 isTaxPayer,
                 beneficiaries.map { beneficiary ->
                     BeneficiaryRequestDtoInput(
-                        firstName = Optional.presentIfNotNull(beneficiary.fullName),
+                        fullName = Optional.presentIfNotNull(beneficiary.fullName),
                         relationship = Optional.presentIfNotNull(beneficiary.relationship.toString()),
                         allocationPercentage = Optional.presentIfNotNull(beneficiary.allocationPercentage)
                     )

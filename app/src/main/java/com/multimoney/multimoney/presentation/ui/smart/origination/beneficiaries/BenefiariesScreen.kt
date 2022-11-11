@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.data.util.catalog.SmartSteps.Five
-import com.multimoney.data.util.catalog.SmartSteps.One
 import com.multimoney.data.util.catalog.SmartSteps.Three
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.multimoney.R
@@ -60,13 +59,13 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 
 @Composable
 fun BeneficiariesScreen(
-    viewModel: BeneficiariesViewModel = hiltViewModel(),
+    beneficiaryViewModel: BeneficiariesViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
 ) {
 
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
-        viewModel.baseEvent.collect { event ->
+        beneficiaryViewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
                     OnContinueEnable(event.isFormValid)
@@ -76,7 +75,7 @@ fun BeneficiariesScreen(
     }
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(
+        beneficiaryViewModel.onUIEvent(
             OnCallQueryRelationshipUseCase(
                 sharedViewModel.user,
                 sharedViewModel.idBrand.toInt(),
@@ -86,25 +85,25 @@ fun BeneficiariesScreen(
         sharedViewModel.onUIEvent(
             OnSetNavigation(
                 nextAction = {
-                    if (viewModel.uiState.addBeneficiaryState) {
-                        viewModel.onUIEvent(
+                    if (beneficiaryViewModel.uiState.addBeneficiaryState) {
+                        beneficiaryViewModel.onUIEvent(
                             OnAddBeneficiaryStateChange(
                                 false, Beneficiary(
-                                    viewModel.uiState.beneficiaryFullName,
-                                    viewModel.uiState.relationshipList.find { it?.description == viewModel.uiState.relationship }?.relationshipId,
-                                    viewModel.uiState.relationship,
-                                    viewModel.uiState.percentage
+                                    beneficiaryViewModel.uiState.beneficiaryFullName,
+                                    beneficiaryViewModel.uiState.relationshipList.find { it?.description == beneficiaryViewModel.uiState.relationship }?.relationshipId,
+                                    beneficiaryViewModel.uiState.relationship,
+                                    beneficiaryViewModel.uiState.percentage
                                 )
                             )
                         )
                     } else {
-                        viewModel.onUIEvent(
+                        beneficiaryViewModel.onUIEvent(
                             UIEvent.OnNextActionClick(
                                 nextStepAction = {
                                     sharedViewModel.onUIEvent(
                                         OnCallMutationUpdateGlobalRequestUseCase(
                                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                                listBeneficiaries = viewModel.uiState.beneficiaryList,
+                                                listBeneficiaries = beneficiaryViewModel.uiState.beneficiaryList,
                                                 currentStep = SmartSteps.Search.getNameById(
                                                     sharedViewModel.uiState.currentStep
                                                 )
@@ -119,10 +118,10 @@ fun BeneficiariesScreen(
                 previousStep = Three.id
             )
         )
-        viewModel.onUIEvent(OnValidateForm)
+        beneficiaryViewModel.onUIEvent(OnValidateForm)
     }
 
-    val generalModifier = if (viewModel.uiState.addBeneficiaryState) {
+    val generalModifier = if (beneficiaryViewModel.uiState.addBeneficiaryState) {
         Modifier
             .padding(vertical = 16.dp, horizontal = 16.dp)
             .background(MultimoneyTheme.colors.background)
@@ -153,8 +152,8 @@ fun BeneficiariesScreen(
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth()
         )
-        if (viewModel.uiState.addBeneficiaryState) BeneficiaryForm(viewModel)
-        else BeneficiaryList(viewModel)
+        if (beneficiaryViewModel.uiState.addBeneficiaryState) BeneficiaryForm(beneficiaryViewModel)
+        else BeneficiaryList(beneficiaryViewModel)
     }
 }
 

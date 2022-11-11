@@ -6,10 +6,12 @@ import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.Relationship
+import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryOptionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnBeneficiaryFullNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnCallQueryRelationshipUseCase
@@ -36,6 +38,14 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
                     success?.data?.let {
                         uiState = uiState.copy(relationshipList = it)
                     }
+                }
+                result.onFailure {
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
                 }
             }
         }
@@ -116,6 +126,8 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
                 event.status,
                 event.beneficiary
             )
+            is OnAddBeneficiaryOptionChange -> uiState =
+                uiState.copy(addBeneficiaryOption = event.option)
         }
     }
 
@@ -127,7 +139,8 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         val percentage: String = "",
         val addBeneficiaryState: Boolean = true,
         val totalPercentage: Int = 0,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        val addBeneficiaryOption: Boolean = false
     )
 
     sealed class UIEvent {
@@ -145,6 +158,8 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
             val status: Boolean,
             val beneficiary: Beneficiary? = null
         ) : UIEvent()
+
+        data class OnAddBeneficiaryOptionChange(val option: Boolean) : UIEvent()
 
         object OnValidateForm : UIEvent()
     }

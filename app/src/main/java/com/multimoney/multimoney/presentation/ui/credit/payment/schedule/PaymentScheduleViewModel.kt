@@ -9,6 +9,7 @@ import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseC
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -21,6 +22,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnAlertButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnEditBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnOpenDisclaimerDialog
@@ -51,6 +54,8 @@ class PaymentScheduleViewModel @Inject constructor(
     private var isEdit: Boolean = false
     private var paymentDate: String? = null
     private var previousScreen = ""
+    private var getPaymentScheduleAttempts = 0
+    private var setPaymentScheduleAttempts = 0
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -60,15 +65,15 @@ class PaymentScheduleViewModel @Inject constructor(
         paymentDate = savedStateHandle[PAYMENT_DATE]
         isEdit = savedStateHandle[IS_EDIT] ?: false
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
+        uiState = uiState.copy(day = getDayFromString(paymentDate, API_DATE_FORMAT))
         getClientBankAccount()
     }
 
     private fun getClientBankAccount() = when {
-        isEdit || previousScreen == Screen.HomeBNScreen.baseRoute || previousScreen == Screen.PaymentVoucherScreen.baseRoute ->
+        isEdit || previousScreen == Screen.HomeScreen.route || previousScreen == Screen.PaymentVoucherScreen.baseRoute ->
             uiState =
                 uiState.copy(
-                    clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT],
-                    day = getDayFromString(paymentDate, API_DATE_FORMAT)
+                    clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
                 )
         else -> onCallGetClientAutomaticDebitUseCase()
     }
@@ -80,19 +85,14 @@ class PaymentScheduleViewModel @Inject constructor(
             idClient = idClient,
             idLoanClient = idLoanClient
         ).collectLatest { result ->
+            getPaymentScheduleAttempts++
             result.onSuccess {
                 uiState = uiState.copy(
                     clientBankAccount = it?.first(),
                     isLoading = false
                 )
             }.onFailure {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    openDialog = DialogParameters(
-                        description = it.getError() ?: "",
-                        isActive = mutableStateOf(true)
-                    )
-                )
+                setErrorAlertResult(attempts = getPaymentScheduleAttempts)
             }.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }
@@ -109,22 +109,59 @@ class PaymentScheduleViewModel @Inject constructor(
             idAccount = uiState.clientBankAccount?.id?.toLong() ?: 0,
             idCurrency = uiState.clientBankAccount?.idCurrency ?: 0
         ).collectLatest { result ->
+            setPaymentScheduleAttempts++
             result.onSuccess {
-                uiState = uiState.copy(
-                    isLoading = false
+                setSuccessAlertResult()
+            }.onMessage {
+                setErrorAlertResult(
+                    alertResultDescription = it?.messageError?.message ?: "",
+                    attempts = setPaymentScheduleAttempts
                 )
             }.onFailure {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    openDialog = DialogParameters(
-                        description = it.getError() ?: "",
-                        isActive = mutableStateOf(true)
-                    )
-                )
+                setErrorAlertResult(attempts = setPaymentScheduleAttempts)
             }.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }
         }
+    }
+
+    private fun setSuccessAlertResult() {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultSuccess = true,
+            alertResultIconResource = R.drawable.ic_success_symbol,
+            alertResultTitleResource = R.string.payment_schedule_success_alert_title,
+            alertResultDescription = "",
+            alertResultDescriptionResource = R.string.payment_schedule_success_alert_subtitle,
+            alertResultButtonResource = R.string.payment_schedule_success_alert_button,
+            isLoading = false
+        )
+    }
+
+    private fun setErrorAlertResult(
+        alertResultDescription: String = "",
+        attempts: Int
+    ) {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultSuccess = false,
+            alertResultIconResource = R.drawable.ic_error_symbol,
+            alertResultTitleResource = R.string.payment_schedule_error_alert_title,
+            alertResultDescription = alertResultDescription,
+            alertResultDescriptionResource = if (attempts == ATTEMPT_ONE && alertResultDescription.isEmpty()) {
+                R.string.payment_schedule_error_alert_subtitle_one
+            } else if (alertResultDescription.isEmpty()) {
+                R.string.payment_schedule_error_alert_subtitle_two
+            } else {
+                R.string.empty
+            },
+            alertResultButtonResource = if (attempts == ATTEMPT_ONE) {
+                R.string.payment_schedule_error_alert_button_one
+            } else {
+                R.string.payment_schedule_error_alert_button_two
+            },
+            isLoading = false
+        )
     }
 
     private fun onEditBankAccount() = navigateTo(
@@ -153,16 +190,39 @@ class PaymentScheduleViewModel @Inject constructor(
     private fun onNavigateBackHome(isRestart: Boolean) =
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = isRestart)
 
+    private fun onAlertButtonClick() = when {
+        uiState.isAlertResultSuccess -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
+        uiState.isAlertResultSuccess.not() && (getPaymentScheduleAttempts == ATTEMPT_ONE || setPaymentScheduleAttempts == ATTEMPT_ONE) ->
+            uiState =
+                uiState.copy(isAlertResultVisible = false)
+        else -> navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+    }
+
+    private fun onAlertCloseClick() = if (uiState.isAlertResultSuccess) {
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
+    } else {
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+    }
+
     data class UIState(
         // Interactions
         val clientBankAccount: ClientBankAccount? = null,
         val day: String = "",
+        val isAlertResultSuccess: Boolean = true,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = 0,
+        val alertResultTitleResource: Int = R.string.empty,
+        val alertResultDescription: String = "",
+        val alertResultDescriptionResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnAlertButtonClick -> onAlertButtonClick()
+            is OnAlertCloseClick -> onAlertCloseClick()
             is OnProgramClick -> onCallMutationActivateClientAutomaticDebitUseCase()
             is OnEditBankAccount -> onEditBankAccount()
             is OnOpenDisclaimerDialog -> onOpenDisclaimerDialog()
@@ -171,9 +231,15 @@ class PaymentScheduleViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
+        object OnAlertButtonClick : UIEvent()
+        object OnAlertCloseClick : UIEvent()
         object OnProgramClick : UIEvent()
         object OnEditBankAccount : UIEvent()
         object OnOpenDisclaimerDialog : UIEvent()
         object OnNavigateBack : UIEvent()
+    }
+
+    companion object {
+        const val ATTEMPT_ONE = 1
     }
 }

@@ -48,10 +48,10 @@ import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -198,7 +198,8 @@ class ProductViewModel @Inject constructor(
             creditStatus = uiState.userStatus?.infoCredit?.status ?: 0,
             accountStatus = uiState.userStatus?.infoBankAccount?.status ?: 0,
             cryptoStatus = uiState.userStatus?.infoCrypto?.status ?: 0,
-            cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0
+            //cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0
+            cardStatus = 0 // TODO, the API doesn't support this yet
         )
     }
 

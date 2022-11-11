@@ -347,11 +347,11 @@ fun Products(
             ),
             color = MultimoneyTheme.colors.labelText
         )
+
         if (pages == 1) {
             CreditProduct(viewModel = viewModel)
         } else {
-            val pagesSize = (viewModel.balanceCredit?.balanceCredit?.size
-                ?: 0) + (viewModel.balanceCredit?.balanceAccountSmart?.size ?: 0)
+            val pagesSize = (viewModel.balanceCredit?.balanceCredit?.size ?: 0) + (viewModel.balanceCredit?.balanceAccountSmart?.size ?: 0)
             HorizontalPager(
                 count = pagesSize,
                 modifier = Modifier.padding(top = 8.dp),
@@ -363,17 +363,15 @@ fun Products(
                 } else {
                     viewModel.balanceCredit?.balanceAccountSmart?.let {
                         if (it.isNotEmpty()) {
-                            it.forEach {
-                                CustomProductBackground(
-                                    modifier = Modifier.padding(horizontal = 16.dp),
-                                    type = Primary
-                                ) {
-                                    CardSmartProduct(
-                                        brandId = viewModel.uiState.idBrand.toInt(),
-                                        profitMonthly = it?.gainedInterest.toString(),
-                                        profitTotal = it?.totalBalance.toString()
-                                    )
-                                }
+                            CustomProductBackground(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                type = ProductBackGroundType.Secondary
+                            ) {
+                                CardSmartProduct(
+                                    currency = it[currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)]?.currencyCode ?: "",
+                                    profitMonthly = it[currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)]?.gainedInterest.toString(),
+                                    profitTotal = it[currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)]?.totalBalance.toString()
+                                )
                             }
                         }
                     }
@@ -382,9 +380,9 @@ fun Products(
 
             Spacer(modifier = Modifier.padding(4.dp))
 
-            Row(Modifier.padding(horizontal = 180.dp)) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 CustomDotsIndicator(
-                    totalDots = pages,
+                    totalDots = pagesSize,
                     selectedIndex = state.currentPage,
                     selectedColor = GrayScale200,
                     unSelectedColor = GrayScale600,

@@ -24,7 +24,7 @@ sealed class CurrencyType(
     object Dollar : CurrencyType(
         2,
         "02",
-        "DOLARES",
+        "DÓLARES",
         R.drawable.ic_account_dollar,
         R.string.payment_account_title_dollar,
         R.drawable.ic_payment_dollar,

@@ -38,6 +38,7 @@
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
+    <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
     <string name="info" translatable="false">Información</string>
     <string-array name="options_yes_no">
@@ -500,6 +501,10 @@
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
 
+    <!-- Smart - Close origin flow -->
+    <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
+    <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
+    
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
     <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>
@@ -588,6 +593,14 @@
     <string name="payment_schedule_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_label_date_description" translatable="false">%s de cada mes</string>
     <string name="payment_schedule_button" translatable="false">Programar</string>
+    <string name="payment_schedule_success_alert_title" translatable="false">Tu pago ha sido \nprogramado</string>
+    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago</string>
+    <string name="payment_schedule_success_alert_button" translatable="false">Ver mi crédito</string>
+    <string name="payment_schedule_error_alert_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="payment_schedule_error_alert_subtitle_one" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo de nuevo.</string>
+    <string name="payment_schedule_error_alert_subtitle_two" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo más tarde.</string>
+    <string name="payment_schedule_error_alert_button_one" translatable="false">Intentar</string>
+    <string name="payment_schedule_error_alert_button_two" translatable="false">Ir al inicio</string>
 
     <!-- Payment Schedule Account-->
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>

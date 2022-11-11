@@ -18,7 +18,6 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -183,10 +182,10 @@ class SmartViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = string.general_close_dialog_title,
+                titleResource = string.smart_close_origination_dialog_title,
                 description = closeDialogDescription,
-                positiveResource = string.sign_up_close_dialog_positive_button_text,
-                negativeResource = string.sign_up_close_dialog_negative_button_text,
+                positiveResource = string.common_leave,
+                negativeResource = string.button_continue,
                 positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
@@ -228,15 +227,11 @@ class SmartViewModel @Inject constructor(
             if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
                 uiState = uiState.copy(
                     currentStep = previousStep,
-                    isCloseVisible = previousStep > SmartSteps.One.id
+                    isCloseVisible = previousStep >= SmartSteps.One.id
                 )
             } else {
-                popAndNavigateTo(
-                    route = Screen.HomeScreen.route,
-                    popTo = Screen.SmartScreen.route
-                )
+                navigateBackToHome()
             }
-            navigateBackToHome()
         }
     }
 
@@ -251,7 +246,7 @@ class SmartViewModel @Inject constructor(
         if (nextStep <= SMART_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep > SmartSteps.One.id
+                isCloseVisible = nextStep >= SmartSteps.One.id
             )
         }
     }
@@ -300,12 +295,16 @@ class SmartViewModel @Inject constructor(
         callMutationGlobalRequestUseCase()
     }
 
+    private fun onInitializeTexts(description: String) {
+        closeDialogDescription = description
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SmartSteps.One.id,
-        val isCloseVisible: Boolean = false,
+        val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
-        val buttonTextRes: Int = R.string.button_continue,
+        val buttonTextRes: Int = string.button_continue,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
         val isAlertResultVisible: Boolean = false,
@@ -325,6 +324,7 @@ class SmartViewModel @Inject constructor(
                 event.nextStep,
                 event.previousStep
             )
+            is UIEvent.OnInitializeText -> onInitializeTexts(event.description)
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
@@ -344,7 +344,7 @@ class SmartViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-
+        data class OnInitializeText(val description: String) : UIEvent()
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
@@ -367,7 +367,7 @@ class SmartViewModel @Inject constructor(
         object OnPreviousStep : UIEvent()
         data class OnContinueVisible(
             val visible: Boolean,
-            val textResId: Int = R.string.button_continue
+            val textResId: Int = string.button_continue
         ) : UIEvent()
 
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :

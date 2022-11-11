@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
 import com.multimoney.multimoney.presentation.util.ShareHelper
@@ -236,7 +237,7 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO })
             )
-            }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeBNScreen.baseRoute}"
+            }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
             encodeData(
@@ -250,7 +251,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToPaymentSchedule() {
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
-            route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeBNScreen.baseRoute}"
+            route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}"
         )
     }
 
@@ -342,28 +343,9 @@ class ProductViewModel @Inject constructor(
         var userStatus: ValidateUserStatus? = null,
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        var hasBalance: Boolean = false
+        val isExpanded: Boolean = false,
+        val hasBalance: Boolean = false
     )
-
-    fun onUIEvent(uiEvent: UIEvent) {
-        when (uiEvent) {
-            is OnBalanceSuccess -> balanceCredit = uiEvent.balance
-            is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
-            is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
-            is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
-            is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
-            is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
-            is OnGetIdBrand -> onGetUserData()
-            is OnMaxAttemptsCardClick -> openWhatsAppLink(
-                uiEvent.context,
-                uiEvent.whatsAppLink
-            )
-            is OnLastStepChange -> lastStep = uiEvent.lastStep
-            is OnShareIbanAccount -> shareIbanAccount(uiEvent.clientLabel, uiEvent.accountLabel, uiEvent.ibanAccount)
-            is OnProgressCalculation -> getProgress()
-            is IsPaymentExpired -> isExpired()
-        }
-    }
 
     private fun shareIbanAccount(clientLabel: String, accountLabel: String, ibanAccount: String) {
         helper.shareTextPlain("$clientLabel: ${userName.uppercase()}\n$accountLabel: $ibanAccount")
@@ -439,7 +421,29 @@ class ProductViewModel @Inject constructor(
         return amount
     }
 
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is OnUpdateIsExpanded -> uiState = uiState.copy(isExpanded = uiEvent.isExpanded)
+            is OnBalanceSuccess -> balanceCredit = uiEvent.balance
+            is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
+            is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
+            is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
+            is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
+            is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
+            is OnGetIdBrand -> onGetUserData()
+            is OnMaxAttemptsCardClick -> openWhatsAppLink(
+                uiEvent.context,
+                uiEvent.whatsAppLink
+            )
+            is OnLastStepChange -> lastStep = uiEvent.lastStep
+            is OnShareIbanAccount -> shareIbanAccount(uiEvent.clientLabel, uiEvent.accountLabel, uiEvent.ibanAccount)
+            is OnProgressCalculation -> getProgress()
+            is IsPaymentExpired -> isExpired()
+        }
+    }
+
     sealed class UIEvent {
+        data class OnUpdateIsExpanded(val isExpanded: Boolean) : UIEvent()
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
         data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
         data class OnMaxAttemptsCardClick(

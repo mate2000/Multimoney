@@ -257,7 +257,15 @@ class PaymentAmountViewModel @Inject constructor(
                     DestinyAccount(
                         destinyAccountNumber = it.ibanAccount ?: "",
                         destinyCurrencyId = it.idCurrency?.toString() ?: NO_SELECT.toString(),
-                        destinyAmount = it.currentBalance?.formattedTwoDecimalsNumber()
+                        destinyAmount = if (isMultiCurrency()) {
+                            if (uiState.isMinimumSelected) {
+                                it.minPayment?.formattedTwoDecimalsNumber()
+                            } else {
+                                it.currentBalance?.formattedTwoDecimalsNumber()
+                            }
+                        } else {
+                            uiState.currentAmountValueString.toDouble()
+                        }
                     )
                 } ?: listOf(),
                 amount = if (isMultiCurrency()) {
@@ -328,16 +336,22 @@ class PaymentAmountViewModel @Inject constructor(
         }"
 
     private fun getMultiCurrencyAmountIncludingExchangeValue(): Double {
-        val balance =
+        val balance = if (uiState.isMinimumSelected) {
+            summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.minPayment ?: 0.0
+        } else {
             summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
+        }
         val exchangedAmount = uiState.exchangeConvertedAmount
         val total = balance + exchangedAmount
         return total.formattedTwoDecimalsNumber()
     }
 
     fun getMultiCurrencyAmountIncludingExchangeFormatted(): String {
-        val balance =
+        val balance = if (uiState.isMinimumSelected) {
+            summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.minPayment ?: 0.0
+        } else {
             summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
+        }
         val exchangedAmount = uiState.exchangeConvertedAmount
         val total = balance + exchangedAmount
         return "${uiState.accountCurrency}${

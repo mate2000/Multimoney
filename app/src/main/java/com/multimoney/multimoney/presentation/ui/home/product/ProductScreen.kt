@@ -362,9 +362,9 @@ fun Products(
             count = pagesSize,
             modifier = Modifier.padding(top = 8.dp),
             state = state
-        ) {
+        ) { page ->
             // todo add the logic for the others pages
-            if (currentPage <= (viewModel.balanceCredit?.balanceCredit?.lastIndex ?: 0)) {
+            if (page <= (viewModel.balanceCredit?.balanceCredit?.lastIndex ?: 0)) {
                 CreditProduct(viewModel = viewModel)
             } else {
                 viewModel.balanceCredit?.balanceAccountSmart?.let {
@@ -485,7 +485,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             )
                         }
                         else -> {
-                            // Intentional Empty
+                            // no show card
                         }
                     }
                 }

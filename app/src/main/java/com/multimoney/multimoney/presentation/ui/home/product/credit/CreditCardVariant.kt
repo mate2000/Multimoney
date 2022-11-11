@@ -83,7 +83,7 @@ fun CardOfferSmartProduct(action: () -> Unit = {}) {
         )
         CustomImage(
             modifier = Modifier
-                .padding(top = 32.dp)
+                .padding(top = 44.dp)
                 .align(Alignment.CenterHorizontally),
             drawableResource = R.drawable.ic_chevron_up
         )

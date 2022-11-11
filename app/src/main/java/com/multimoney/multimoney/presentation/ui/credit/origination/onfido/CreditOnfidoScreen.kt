@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
@@ -46,33 +47,27 @@ fun CreditDocumentScreen(
     sharedViewModel: CreditViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val launchOnFidoActivityResult =
-        rememberLauncherForActivityResult(StartActivityForResult()) { result ->
-            viewModel.onUIEvent(
-                OnOpenOnFidoSdk(
-                    result,
-                    onOnFidoCompleted = {
-                        sharedViewModel.onUIEvent(
-                            OnNextStep
-                        )
-                    },
-                    onOnFidoError = {
-                        sharedViewModel.onUIEvent(
-                            OnOpenDialogValueChange(
-                                it
-                            )
-                        )
-                    },
-                    onContinueEnable = {
-                        sharedViewModel.onUIEvent(
-                            CreditViewModel.UIEvent.OnContinueEnable(
-                                it
-                            )
-                        )
-                    }
+    val launchOnFidoActivityResult = rememberLauncherForActivityResult(StartActivityForResult()) { result ->
+        viewModel.onUIEvent(
+            OnOpenOnFidoSdk(result, onOnFidoCompleted = {
+                sharedViewModel.onUIEvent(
+                    OnNextStep
                 )
-            )
-        }
+            }, onOnFidoError = {
+                    sharedViewModel.onUIEvent(
+                        OnOpenDialogValueChange(
+                            it
+                        )
+                    )
+                }, onContinueEnable = {
+                    sharedViewModel.onUIEvent(
+                        CreditViewModel.UIEvent.OnContinueEnable(
+                            it
+                        )
+                    )
+                })
+        )
+    }
 
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
@@ -144,14 +139,33 @@ fun CreditDocumentScreen(
 
     if (viewModel.uiState.isAlertVisible) {
         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnBackVisibilityValueChanged(false))
+        var title: Int = string.empty
+        var subtitle: Int = string.empty
+        var action: Int = string.empty
+        if (sharedViewModel.idBrand.isNotEmpty()) {
+            when (sharedViewModel.idBrand.toInt()) {
+                Brand.Guatemala.id -> {
+                    title = string.save_credit_operation_error_title
+                    subtitle = string.save_credit_operation_error_subtitle_gt
+                    action = string.save_credit_operation_error_action_gt
+                }
+                else -> {
+                    title = string.save_credit_operation_error_title
+                    subtitle = string.save_credit_operation_error_subtitle
+                    action = string.save_credit_operation_error_action
+                }
+            }
+        }
         AlertResult(
-            iconResource = drawable.ic_alert,
-            titleResource = string.sign_document_reject_title,
-            descriptionResource = string.sign_document_reject_description,
-            buttonTextResource = string.understood,
+            iconResource = drawable.ic_error_symbol,
+            titleResource = title,
+            descriptionResource = subtitle,
+            buttonTextResource = action,
             isLeftButtonVisible = false,
-            onRightButtonClick = { },
-            onButtonClick = { }
+            onRightButtonClick = { sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNavigateToHome) },
+            onButtonClick = {
+                // todo open whatsapp
+            }
         )
     } else {
         Column(
@@ -174,9 +188,7 @@ fun CreditDocumentScreen(
             )
 
             Row(
-                Modifier
-                    .padding(top = 32.dp)
-                    .fillMaxWidth()
+                Modifier.padding(top = 32.dp).fillMaxWidth()
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
@@ -192,9 +204,7 @@ fun CreditDocumentScreen(
                 )
             }
             Row(
-                Modifier
-                    .padding(top = 32.dp)
-                    .fillMaxWidth()
+                Modifier.padding(top = 32.dp).fillMaxWidth()
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
@@ -210,9 +220,7 @@ fun CreditDocumentScreen(
                 )
             }
             Row(
-                Modifier
-                    .padding(top = 32.dp)
-                    .fillMaxWidth()
+                Modifier.padding(top = 32.dp).fillMaxWidth()
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,

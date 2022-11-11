@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnRejectClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
@@ -49,6 +50,13 @@ class SignDocumentProcessViewModel @Inject constructor(
         uiState = uiState.copy(isAlertResultVisible = true)
     }
 
+    private fun onNavigateToHome() {
+        popAndNavigateTo(
+            route = Screen.HomeScreen.route,
+            popTo = Screen.SignDocumentProcess.route
+        )
+    }
+
     data class UIState(
         // Interactions
         val signDocumentProcessStep: String = GENERATE_DOCUMENT_STEP.value,
@@ -62,10 +70,8 @@ class SignDocumentProcessViewModel @Inject constructor(
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnRejectClick -> onRejectClick()
-            is OnCloseClick -> popAndNavigateTo(
-                route = Screen.HomeScreen.route,
-                popTo = Screen.SignDocumentProcess.route
-            )
+            is OnCloseClick -> onNavigateToHome()
+            is OnNavigateToHome -> onNavigateToHome()
         }
     }
 
@@ -74,5 +80,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         data class OnInitializeText(val dialogDescription: String) : UIEvent()
         object OnRejectClick : UIEvent()
         object OnCloseClick : UIEvent()
+        object OnNavigateToHome : UIEvent()
     }
 }

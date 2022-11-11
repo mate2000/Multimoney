@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnMoveToStep
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNextStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnPreviousStep
@@ -114,13 +115,17 @@ class CreditViewModel @Inject constructor(
                 positiveResource = string.credit_close_dialog_positive_button_text,
                 negativeResource = string.credit_close_dialog_negative_button_text,
                 positiveAction = {
-                    popAndNavigateTo(
-                        route = HomeScreen.route,
-                        popTo = Screen.CreditScreen.route
-                    )
+                    onNavigateToHome()
                 },
                 isActive = mutableStateOf(true)
             )
+        )
+    }
+
+    private fun onNavigateToHome() {
+        popAndNavigateTo(
+            route = HomeScreen.route,
+            popTo = Screen.CreditScreen.route
         )
     }
 
@@ -228,6 +233,16 @@ class CreditViewModel @Inject constructor(
         }
     }
 
+    fun getLoadingString(): Int =
+        if (idBrand.isNotEmpty()) {
+            when (idBrand.toInt()) {
+                Brand.Guatemala.id -> R.string.credit_glad_to_see_you_gt
+                else -> R.string.credit_glad_to_see_you
+            }
+        } else {
+            R.string.empty
+        }
+
     data class UIState(
         // Interactions
         val currentStep: Int = CreditStep.One.id,
@@ -274,18 +289,9 @@ class CreditViewModel @Inject constructor(
             is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
             is OnBackVisibilityValueChanged -> uiState = uiState.copy(isBackVisible = event.isVisible)
             is OnShowBottomSheet -> onShowBottomSheet()
+            is OnNavigateToHome -> onNavigateToHome()
         }
     }
-
-    fun getLoadingString(): Int =
-        if (idBrand.isNotEmpty()) {
-            when (idBrand.toInt()) {
-                Brand.Guatemala.id -> R.string.credit_glad_to_see_you_gt
-                else -> R.string.credit_glad_to_see_you
-            }
-        } else {
-            R.string.empty
-        }
 
     sealed class UIEvent {
         data class OnSetCloseDialogTexts(val title: Int, val description: String) : UIEvent()
@@ -314,6 +320,7 @@ class CreditViewModel @Inject constructor(
         object OnCallMutationSaveCreditFlowStep : UIEvent()
         data class OnBackVisibilityValueChanged(val isVisible: Boolean) : UIEvent()
         object OnShowBottomSheet : UIEvent()
+        object OnNavigateToHome : UIEvent()
     }
 
     sealed class BaseEvent {

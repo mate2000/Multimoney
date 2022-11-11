@@ -9,6 +9,7 @@ query GetClientBankAccount($user: String!, $idBrand: Int!, $idClient: Long!, $id
     ) {
         id
         id_Banco
+        origen
         descripcion_banco
         numeroCuenta
         id_Moneda

@@ -5,6 +5,7 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
@@ -19,6 +20,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CreditContractEventSub
 import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
@@ -31,10 +33,12 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
+import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
+import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
@@ -239,6 +243,24 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun queryProfession(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): ApolloCall<ProfessionsQuery.Data> =
+        apolloAuthorizedClient.query(ProfessionsQuery(pkUser, user, idBrand, idUserRequest))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryOccupation(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): ApolloCall<OcupationsQuery.Data> =
+        apolloAuthorizedClient.query(OcupationsQuery(pkUser, user, idBrand, idUserRequest))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun mutationTermsAndConditions(
         user: String,
         idBrand: Int,
@@ -363,6 +385,42 @@ class GraphqlApi @Inject constructor(
             idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationActivatedClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long,
+        idCurrency: Int
+    ): ApolloCall<ActivatedClientAutomaticDebitMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ActivatedClientAutomaticDebitMutation(
+                user,
+                idBrand,
+                idClient,
+                idLoanClient,
+                origin,
+                idAccount,
+                idCurrency
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int
+    ): ApolloCall<GetClientAutomaticDebitQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetClientAutomaticDebitQuery(
+                user,
+                idBrand,
+                idClient,
+                idLoanClient
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // Security
     fun queryValidateUserExists(
@@ -639,14 +697,18 @@ class GraphqlApi @Inject constructor(
         idEconomicActivity: Long,
         income: Double,
         addressDetail: String,
-        isPEP: Boolean,
         user: String,
         idBrand: Int,
         currentStep: String,
         institutionPension: String,
         specifiesIncomeSource: String,
         entrepreneurship: String,
-        legalID: String
+        legalID: String,
+        isActivityOfArt15: Boolean,
+        isUsCitizen: Boolean,
+        isPEP: Boolean,
+        isUSTaxPayer: Boolean,
+        isTaxPayer: Boolean
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloAuthorizedClient.mutation(
             GlobalRequestMutation(
@@ -666,13 +728,17 @@ class GraphqlApi @Inject constructor(
                 idEconomicActivity,
                 income,
                 addressDetail,
-                isPEP,
                 user,
                 idBrand,
                 currentStep,
                 specifiesIncomeSource,
                 entrepreneurship,
-                legalID
+                legalID,
+                isActivityOfArt15,
+                isUsCitizen,
+                isPEP,
+                isUSTaxPayer,
+                isTaxPayer
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

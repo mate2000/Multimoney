@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -30,13 +31,13 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
         private set
 
     // Stateless
-    var user: String? = ""
-    var idBrand: Int? = null
-    var idClient: Int? = null
-    var idLoanClient: Int? = null
-    var identification: String? = null
-    var userName: String? = null
-    val isFromHome = false
+    private var user: String? = ""
+    private var idBrand: Int? = null
+    private var idClient: Int? = null
+    private var idLoanClient: Int? = null
+    private var identification: String? = null
+    private var userName: String? = null
+    private var paymentDate: String? = null
 
     init {
         user = savedStateHandle[USER]
@@ -45,6 +46,7 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
         identification = savedStateHandle[IDENTIFICATION]
         userName = savedStateHandle[NAME_CLIENT]
+        paymentDate = savedStateHandle[PAYMENT_DATE]
         uiState = uiState.copy(summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList())
     }
 
@@ -59,7 +61,7 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
             encodeData(
                 summaryList
             )
-            }/$identification/$userName/$isFromHome"
+            }/$identification/$userName/$paymentDate/${Screen.PaymentFeeScreen.baseRoute}"
         )
     }
 

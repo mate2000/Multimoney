@@ -105,7 +105,7 @@ fun CreditDocumentScreen(
                                     }
                                 )
                             )
-                        }, nextStep = CreditStep.Eight.id, previousStep = CreditStep.Six.id)
+                        }, nextStep = CreditStep.Nine.id, previousStep = CreditStep.Seven.id)
                     )
                 }
             }.onLoading {

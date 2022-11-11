@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -26,6 +30,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
+import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankScreen
@@ -43,7 +49,9 @@ import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CreditScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
@@ -51,7 +59,25 @@ fun CreditScreen(
     viewModel: CreditViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is CreditViewModel.BaseEvent.OnShowBottomSheet -> {
+                    coroutineScope.launch {
+                        bottomSheetState.show()
+                    }
+                }
+                is CreditViewModel.BaseEvent.OnHideBottomSheet -> {
+                    coroutineScope.launch {
+                        bottomSheetState.hide()
+                    }
+                }
+            }
+        }
+    }
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
@@ -95,7 +121,7 @@ fun CreditScreen(
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
                     )
-                    if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Seven.id) {
+                    if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id) {
                         StepProgressBar(
                             steps = CREDIT_INDICATOR_TOTAL_STEPS,
                             currentStep = viewModel.uiState.currentStep - 1,
@@ -161,6 +187,9 @@ fun CreditScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
+    AdditionalInformationBottomSheet(coroutineScope = coroutineScope, modalBottomSheetState = bottomSheetState) {
+        viewModel.onHideBottomSheet()
+    }
 }
 
 @Composable
@@ -180,6 +209,7 @@ fun GetStepContent(
         CreditStep.Four.id -> JobInfoScreen(sharedViewModel = viewModel)
         CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
         CreditStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Seven.id -> AdditionalInformationScreen(sharedViewModel = viewModel)
         else -> CreditDocumentScreen(sharedViewModel = viewModel)
     }
 }

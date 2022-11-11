@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -19,15 +20,20 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.data.util.catalog.SmartSteps.Five
 import com.multimoney.data.util.catalog.SmartSteps.Six
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.SMART_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiary.SmartBeneficiaryScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -36,11 +42,12 @@ import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SmartScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SmartViewModel = hiltViewModel(),
+    viewModel: SmartViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -48,6 +55,12 @@ fun SmartScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
     }
+
+    viewModel.onUIEvent(
+        SmartViewModel.UIEvent.OnInitializeText(
+            stringResource(R.string.smart_close_origination_dialog_description)
+        )
+    )
 
     Column(
         modifier = Modifier
@@ -59,7 +72,8 @@ fun SmartScreen(
                 isLeftButtonVisible = viewModel.uiState.currentStep != Six.id,
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) })
+                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
+            )
             if (viewModel.uiState.currentStep != Five.id) {
                 StepProgressBar(
                     steps = SMART_INDICATOR_TOTAL_STEPS,
@@ -74,8 +88,7 @@ fun SmartScreen(
         ) {
             GetStepContent(
                 step = viewModel.uiState.currentStep,
-                viewModel = viewModel,
-                onPopAndNavigate
+                viewModel = viewModel
             )
         }
         CustomButton(
@@ -96,6 +109,19 @@ fun SmartScreen(
         viewModel.onUIEvent(OnBackClick(focusManager))
     }
 
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = viewModel.uiState.alertResultTitle
+                ?: stringResource(R.string.error_no_internet_title),
+            descriptionString = viewModel.uiState.alertResultDescription
+                ?: stringResource(R.string.smart_account_no_internet_error_description),
+            buttonTextResource = R.string.common_try_again,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseAlertClick) },
+            onButtonClick = { viewModel.onUIEvent(OnCtaAlertClick(focusManager)) }
+        )
+    }
+
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
@@ -106,22 +132,28 @@ fun SmartScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
+
+    if (viewModel.uiState.bottomSheetState.isVisible) {
+        viewModel.uiState.bottomSheet()
+    }
 }
 
 @Composable
 fun GetStepContent(
     step: Int,
-    viewModel: SmartViewModel,
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    viewModel: SmartViewModel
 ) {
     when (step) {
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SmartLivAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Three.id -> SourceIncomeScreen(sharedViewModel = viewModel)
         SmartSteps.Four.id -> {
-            if (viewModel.idBrand == Brand.ElSalvador.id.toString()){
+            if (viewModel.idBrandAsInt == Brand.ElSalvador.id) {
                 SmartBeneficiaryScreen(sharedViewModel = viewModel)
+            } else {
+                SmartFactaScreen(sharedViewModel = viewModel)
             }
         }
+        Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
     }
 }

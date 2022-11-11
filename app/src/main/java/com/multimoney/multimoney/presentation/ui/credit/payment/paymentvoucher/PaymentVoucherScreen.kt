@@ -161,22 +161,32 @@ fun PaymentVoucherScreen(
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
                         )
-                        Text(
-                            text ="${viewModel.currency}${viewModel.currentAmountValueString?.stringToIntegerFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())}"
-                            ,
-                            style = Typography.h4.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                platformStyle = PlatformTextStyle(
-                                    includeFontPadding = false
-                                )
-                            ),
-                            color = MultimoneyTheme.colors.text
-                        )
-                        Text(
-                            text = "₡5,000 + $80",
-                            style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold, fontSize = 15.sp),
-                            color = MultimoneyTheme.colors.text
-                        )
+
+
+                        if (viewModel.isMultiCurrency == true) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = viewModel.currentAmountValueString ?: "",
+                                style = Typography.h4.copy(fontWeight = FontWeight.W600),
+                                color = MultimoneyTheme.colors.text,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = viewModel.paymentLabel ?: "x",
+                                style = Typography.body2.copy(fontWeight = FontWeight.W600),
+                                color = MultimoneyTheme.colors.text,
+                                textAlign = TextAlign.Center
+                            )
+                        } else {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = viewModel.currentAmountValueString ?: "",
+                                style = Typography.h4.copy(fontWeight = FontWeight.W600),
+                                color = MultimoneyTheme.colors.text,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                     Box(
                         Modifier
@@ -202,13 +212,6 @@ fun PaymentVoucherScreen(
                         )
                     )
 
-
-//                    if (viewModel.shouldDisplayExchangeRate()) {
-//                        Spacer(modifier = Modifier.height(32.dp))
-//                        CurrencyExchangeRow(viewModel)
-//                    }
-
-
                     InfoItem(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
@@ -217,28 +220,10 @@ fun PaymentVoucherScreen(
                         subTitle = viewModel.referenceNumber ?: ""
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .height(IntrinsicSize.Min)
-                            .padding(start = 27.dp, top = 32.dp)
-                    ) {
-                        InfoItem(
-                            modifier = Modifier.padding(end = 15.dp),
-                            icon = drawable.ic_money_voucher,
-                            tintIcon = MultimoneyTheme.colors.iconTintVoucher,
-                            title = stringResource(string.payment_voucher_exchange_rate_label),
-                            subTitle = "₡699.00"
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .fillMaxHeight()
-                                .background(MultimoneyTheme.colors.bottomNavigationDividerColor)
-                        )
-                        InfoItem(
-                            modifier = Modifier.padding(start = 12.dp),
-                            title = stringResource(string.payment_voucher_amount_to_pay_label),
-                            subTitle = "₡699.00"
+                    if (viewModel.shouldDisplayExchangeRate == true) {
+                        Spacer(modifier = Modifier.height(32.dp))
+                        CurrencyExchangeRow(
+                            viewModel
                         )
                     }
                     Row(
@@ -271,7 +256,7 @@ fun PaymentVoucherScreen(
                 }
 
             }
-            if (viewModel.uiState.showScheduleAutomaticPaymentProcess) {
+            if ( viewModel.isAutomaticProgrammedPaymentChecked != true) {
                 CustomButton(
                     onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
                     text = stringResource(string.payment_voucher_schedule_payment),
@@ -295,9 +280,16 @@ fun PaymentVoucherScreen(
 @Composable
 fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(start = 27.dp)
     ) {
-        Column {
+        Icon(
+
+            painter = painterResource(id = R.drawable.ic_money_gray),
+            tint = MultimoneyTheme.colors.iconTintVoucher,
+            contentDescription = "",
+            modifier = Modifier.height(24.dp).width(24.dp)
+        )
+        Column (modifier = Modifier.padding(start = 13.5.dp)){
             Text(
                 text = stringResource(id = R.string.payment_amount_bottom_sheet_exchange_type),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
@@ -305,13 +297,13 @@ fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
                 textAlign = TextAlign.Start
             )
             Text(
-                text = viewModel.uiState.exchangeRateLabel.toString(),
+                text = viewModel.exchangeRateLabel.toString(),
                 style = Typography.body2,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
             )
         }
-        Spacer(modifier = Modifier.width(40.dp))
+        Spacer(modifier = Modifier.width(20.dp))
         Divider(
             modifier = Modifier
                 .height(44.dp)
@@ -319,7 +311,7 @@ fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
             color = MultimoneyTheme.colors.bottomNavigationDividerColor
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Column {
+        Column (modifier = Modifier.padding(start = 13.5.dp)){
             Text(
                 text = stringResource(id = R.string.payment_amount_bottom_sheet_amount_to_debit),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
@@ -384,7 +376,7 @@ fun InfoItemAccount(
             Text(
                 text = title,
                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text
+                color = MultimoneyTheme.colors.labelText
             )
             Text(
                 text = subTitle,

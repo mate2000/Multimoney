@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher
 
+import android.util.Log
 import android.view.View
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,9 +15,13 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.*
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.util.ShareHelper
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
+import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,8 +33,6 @@ class PaymentVoucherViewModel @Inject constructor(
     private val shareHelper: ShareHelper
 ) : BaseViewModel(true) {
 
-    private val dateFormatter = SimpleDateFormat("dd | MM | yyyy")
-    private val timeFormatter = SimpleDateFormat("hh:mm a")
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -42,31 +45,41 @@ class PaymentVoucherViewModel @Inject constructor(
     var clientBankAccount: ClientBankAccount? = null
     var currentDate : String = ""
     var currentTime : String = ""
+    var exchangeRateLabel: String? = null
+    var paymentLabel: String? = null
+    var shouldDisplayExchangeRate : Boolean? = null
+    var isMultiCurrency : Boolean? = null
+    var isAutomaticProgrammedPaymentChecked: Boolean? = false
     private var user: String = ""
     private var idBrand: Int = 0
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
-    private var summaryList: List<Summary>? = null
     private var identification: String? = null
     private var userName: String? = null
     private var paymentDate: String? = null
 
+
+
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
         currentAmountValueString = savedStateHandle[CURRENT_AMOUNT_VALUE]
-        currency = savedStateHandle[CURRENCY]
+        currency = savedStateHandle[PAYMENT_LABEL]
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
-        summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         userName = savedStateHandle[NAME_CLIENT] ?: ""
         clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
         paymentDate = savedStateHandle[PAYMENT_DATE]
+        exchangeRateLabel = savedStateHandle[EXCHANGE_RATE_LABEL]
+        paymentLabel = savedStateHandle[PAYMENT_LABEL]
+        shouldDisplayExchangeRate = savedStateHandle[SHOULD_DISPLAY_EXCHANGE_RATE]
+        isMultiCurrency = savedStateHandle[SHOULD_DISPLAY_EXCHANGE_RATE]
+        isAutomaticProgrammedPaymentChecked = savedStateHandle[IS_AUTOMATIC_PAYMENT_CHECKED]
         val time = Calendar.getInstance().time
-        currentDate = dateFormatter.format(time)
-        currentTime = timeFormatter.format(time)
+        currentDate = getCurrentDate(time)
+        currentTime = getCurrentTime(time)
     }
 
     private fun onShareVoucherImage(
@@ -75,7 +88,6 @@ class PaymentVoucherViewModel @Inject constructor(
     ) {
         shareHelper.sharedScreenShot(view, capturingBounds)
     }
-
 
     private fun onScheduleAutomaticPayment() = navigateTo(
         route = "${Screen.PaymentScheduleScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
@@ -88,13 +100,11 @@ class PaymentVoucherViewModel @Inject constructor(
     data class UIState(
         val test: String = "",
         val showScheduleAutomaticPaymentProcess: Boolean = true,
-        val currency: String = "$",
+        val accountCurrency: String = "$",
         val currentAmountValueString: String = "0",
         val currentAmountError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
         val enableButton: Boolean = false,
         val isAmountVisible: Boolean = true,
-        val isAutomaticProgrammedPaymentChecked: Boolean = false,
-        val exchangeRateLabel: Double = 0.0,
         val exchangeConvertedAmount: Double = 0.0,
         val isAlertResultVisible: Boolean = false,
         val alertResultTitle: String = "",

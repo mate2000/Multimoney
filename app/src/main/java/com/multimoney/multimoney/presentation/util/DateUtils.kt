@@ -1,8 +1,7 @@
 package com.multimoney.multimoney.presentation.util
 
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.util.*
 
 fun getPickedDateAsString(year: Int, month: Int, day: Int, dateFormat: String): String {
     val calendar = Calendar.getInstance()
@@ -47,7 +46,17 @@ fun getDayFromString(date: String?, format: SimpleDateFormat): String {
     }
 }
 
+fun getCurrentDate(time : Date) : String{
+    return BAR_DIVIDER_FORMAT.format(time)
+}
+
+fun getCurrentTime(time : Date) : String{
+    return SHORT_TIME_FORMAT.format(time)
+}
+
 val DAY_FORMAT = SimpleDateFormat("dd", Locale.getDefault())
 val API_DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
 val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
+val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
+

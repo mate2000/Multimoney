@@ -97,7 +97,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object PaymentVoucherScreen :
         Screen(
-            route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CLIENT_BANK_ACCOUNT}/{$CURRENT_AMOUNT_VALUE}/{$CURRENCY}/{$REFERENCE_NUMBER}",
+            route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$IS_MULTI_CURRENCY}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
             "payment_voucher_screen"
         )
 

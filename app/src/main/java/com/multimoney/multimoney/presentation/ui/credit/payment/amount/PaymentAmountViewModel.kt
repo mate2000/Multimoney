@@ -74,6 +74,7 @@ class PaymentAmountViewModel @Inject constructor(
     private var identification: String? = null
     private var userName: String? = null
     private var paymentDate: String? = null
+    private var referenceNumber : String? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -198,18 +199,13 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
+
     private fun onNavigateToVoucher(
-        clientBankAccount: ClientBankAccount?,
-        currentAmountValue: String,
-        currency : String,
-        referenceNumber: String
-    ) =
-        navigateTo(
-            route = "${Screen.PaymentVoucherScreen.baseRoute}/${encodeData(clientBankAccount)}/$currentAmountValue/$currency/$referenceNumber"
-        )
-    private fun onNavigateToVoucher() = navigateTo(
-        route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(uiState.clientBankAccount)}/$paymentDate"
+    ) = navigateTo(
+        route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(uiState.clientBankAccount)}/$paymentDate/${ if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber"
     )
+
+    private fun formattedExchangeRateLabel() = uiState.exchangeRateLabel.formattedTwoDecimalsNumber().toString()
 
     fun getFormattedCurrency() =
         if (uiState.currentAmountValueString.isNotEmpty() && uiState.currentAmountValueString.toInt() > maximumPayment) {
@@ -286,14 +282,10 @@ class PaymentAmountViewModel @Inject constructor(
                 }
             ).collectLatest { result ->
                 result.onSuccess {
+                    referenceNumber = it?.referenceNumberSinpe
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
-                    onUIEvent(OnNavigateToVoucher(
-                        uiState.clientBankAccount,
-                        uiState.currentAmountValueString,
-                        uiState.currency,
-                        it?.internReferenceNumber ?: "")
-                    )
+                    onUIEvent(OnNavigateToVoucher)
                 }.onMessage {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
@@ -412,12 +404,7 @@ class PaymentAmountViewModel @Inject constructor(
             is OnCallQueryGetExchangeRateCredit -> onCallQueryGetExchangeRate()
             is OnShowPaymentBottomSheet -> onShowPaymentBottomSheet()
             is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
-            is OnNavigateToVoucher -> onNavigateToVoucher(
-                uiEvent.clientBankAccount,
-                uiEvent.currentAmountValueString,
-                uiEvent.currency,
-                uiEvent.referenceNumber
-            )
+            is OnNavigateToVoucher -> onNavigateToVoucher()
         }
     }
 
@@ -435,11 +422,8 @@ class PaymentAmountViewModel @Inject constructor(
         object OnCallQueryGetExchangeRateCredit : UIEvent()
         object OnShowPaymentBottomSheet : UIEvent()
         object OnHidePaymentBottomSheet : UIEvent()
-        data class OnNavigateToVoucher(
-            val clientBankAccount: ClientBankAccount?,
-            val currentAmountValueString: String,
-            val currency: String,
-            val referenceNumber: String): UIEvent()
+        object OnNavigateToVoucher : UIEvent()
+
     }
 
     companion object {

@@ -45,6 +45,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStatus
+import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale200
@@ -112,7 +113,9 @@ fun ProductScreen(
     LaunchedEffect(true) {
         viewModel.baseEvent.collect { event ->
             when (event) {
-                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(event.millisInFuture)
+                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
+                    event.millisInFuture
+                )
             }
         }
     }
@@ -347,48 +350,63 @@ fun Products(
             ),
             color = MultimoneyTheme.colors.labelText
         )
+        var pagesSize = 0
 
-        if (pages == 1) {
-            CreditProduct(viewModel = viewModel)
-        } else {
-            val pagesSize = (viewModel.balanceCredit?.balanceCredit?.size ?: 0) + (viewModel.balanceCredit?.balanceAccountSmart?.size ?: 0)
-            HorizontalPager(
-                count = pagesSize,
-                modifier = Modifier.padding(top = 8.dp),
-                state = state
-            ) {
-                // todo add the logic for the others pages
-                if (currentPage <= (viewModel.balanceCredit?.balanceCredit?.lastIndex ?: 0)) {
-                    CreditProduct(viewModel = viewModel)
-                } else {
-                    viewModel.balanceCredit?.balanceAccountSmart?.let {
-                        if (it.isNotEmpty()) {
-                            CustomProductBackground(
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                type = ProductBackGroundType.Secondary
-                            ) {
-                                CardSmartProduct(
-                                    currency = it[currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)]?.currencyCode ?: "",
-                                    profitMonthly = it[currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)]?.gainedInterest.toString(),
-                                    profitTotal = it[currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)]?.totalBalance.toString()
-                                )
-                            }
+        pagesSize += (viewModel.balanceCredit?.balanceCredit?.size
+            ?: 0) + (viewModel.balanceCredit?.balanceAccountSmart?.size ?: 0)
+
+        pagesSize += if (viewModel.uiState.userStatus?.infoBankAccount?.status == SmartAccountStatus.NO_EXIST.status) 1 else 0
+        pagesSize += if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.NO_EXIST.status) 1 else 0
+
+        HorizontalPager(
+            count = pagesSize,
+            modifier = Modifier.padding(top = 8.dp),
+            state = state
+        ) {
+            // todo add the logic for the others pages
+            if (currentPage <= (viewModel.balanceCredit?.balanceCredit?.lastIndex ?: 0)) {
+                CreditProduct(viewModel = viewModel)
+            } else {
+                viewModel.balanceCredit?.balanceAccountSmart?.let {
+                    if (it.isNotEmpty()) {
+                        CustomProductBackground(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            type = ProductBackGroundType.Secondary
+                        ) {
+                            CardSmartProduct(
+                                currency = it[currentPage.minus(
+                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                )]?.currencyCode ?: "",
+                                profitMonthly = it[currentPage.minus(
+                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                )]?.gainedInterest.toString(),
+                                profitTotal = it[currentPage.minus(
+                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                )]?.totalBalance.toString()
+                            )
+                        }
+                    } else {
+                        CustomProductBackground(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            type = ProductBackGroundType.Secondary
+                        ) {
+                            CardOfferSmartProduct()
                         }
                     }
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.padding(4.dp))
+        Spacer(modifier = Modifier.padding(4.dp))
 
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                CustomDotsIndicator(
-                    totalDots = pagesSize,
-                    selectedIndex = state.currentPage,
-                    selectedColor = GrayScale200,
-                    unSelectedColor = GrayScale600,
-                    modifier = Modifier.size(10.dp)
-                )
-            }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            CustomDotsIndicator(
+                totalDots = pagesSize,
+                selectedIndex = state.currentPage,
+                selectedColor = GrayScale200,
+                unSelectedColor = GrayScale600,
+                modifier = Modifier.size(10.dp)
+            )
         }
     }
 }
@@ -467,7 +485,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             )
                         }
                         else -> {
-                            CardOfferSmartProduct()
+                            // Intentional Empty
                         }
                     }
                 }

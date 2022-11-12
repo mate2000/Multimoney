@@ -374,13 +374,13 @@ fun Products(
                             type = ProductBackGroundType.Secondary
                         ) {
                             CardSmartProduct(
-                                currency = it[currentPage.minus(
+                                currency = it[page.minus(
                                     viewModel.balanceCredit?.balanceCredit?.size ?: 0
                                 )]?.currencyCode ?: "",
-                                profitMonthly = it[currentPage.minus(
+                                profitMonthly = it[page.minus(
                                     viewModel.balanceCredit?.balanceCredit?.size ?: 0
                                 )]?.gainedInterest.toString(),
-                                profitTotal = it[currentPage.minus(
+                                profitTotal = it[page.minus(
                                     viewModel.balanceCredit?.balanceCredit?.size ?: 0
                                 )]?.totalBalance.toString()
                             )

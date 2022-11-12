@@ -383,6 +383,15 @@
     <string name="document_generation_subtitle" translatable="false">Al firmar tu solicitud podrás utilizar tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
 
+    <!-- Onfido errors -->
+    <string name="onfido_rejected_first_time_title" translatable="false">Hubo un error al validar tu identidad</string>
+    <string name="onfido_rejected_first_time_subtitle" translatable="false">Intentá de nuevo</string>
+    <string name="onfido_rejected_first_time_subtitle_gt" translatable="false">Intenta de nuevo</string>
+    <string name="onfido_rejected_second_time_title" translatable="false">¡Oh no! Hubo un error al validar tu identidad</string>
+    <string name="onfido_rejected_second_time_subtitle" translatable="false">No fue posible verificar tu identidad, por favor intentá de nuevo</string>
+    <string name="onfido_rejected_second_time_subtitle_gt" translatable="false">No fue posible verificar tu identidad, por favor intenta de nuevo</string>
+    <string name="onfido_rejected_action" translatable="false">Confirmar mi identidad</string>
+
     <!-- Sign Credit Web View -->
     <string name="sign_credit_dialog_title" translatable="false">Necesitamos tu firma en la siguiente pantalla</string>
     <string name="sign_credit_dialog_description" translatable="false">Por favor, realizala según las indicaciones.</string>

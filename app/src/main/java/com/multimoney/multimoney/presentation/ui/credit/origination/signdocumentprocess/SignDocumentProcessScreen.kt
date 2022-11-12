@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
@@ -71,10 +70,10 @@ fun SignDocumentProcessScreen(
         }
         ONFIDO_REJECTED_FIRST_TIME.value -> {
             AlertResult(
-                iconResource = drawable.ic_onfido_continue,
-                titleResource = string.continue_validating_identity_title,
-                descriptionResource = string.continue_validating_identity_subtitle,
-                buttonTextResource = string.understood,
+                iconResource = drawable.ic_error_symbol,
+                titleResource = string.onfido_rejected_first_time_title,
+                descriptionResource = if (viewModel.idBrand == Brand.Guatemala.id) string.onfido_rejected_first_time_subtitle_gt else string.onfido_rejected_second_time_title,
+                buttonTextResource = string.onfido_rejected_action,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
                 onButtonClick = { viewModel.onUIEvent(OnNavigateToHome) }
@@ -82,10 +81,10 @@ fun SignDocumentProcessScreen(
         }
         ONFIDO_REJECTED_SECOND_TIME.value -> {
             AlertResult(
-                iconResource = drawable.ic_onfido_continue,
-                titleResource = string.continue_validating_identity_title,
-                descriptionResource = string.continue_validating_identity_subtitle,
-                buttonTextResource = string.understood,
+                iconResource = drawable.ic_error_symbol,
+                titleResource = string.onfido_rejected_second_time_title,
+                descriptionResource = if (viewModel.idBrand == Brand.Guatemala.id) string.onfido_rejected_second_time_subtitle_gt else string.onfido_rejected_second_time_subtitle,
+                buttonTextResource = string.onfido_rejected_action,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
                 onButtonClick = { viewModel.onUIEvent(OnNavigateToHome) }

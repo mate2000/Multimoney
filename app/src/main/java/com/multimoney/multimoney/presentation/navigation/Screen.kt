@@ -12,12 +12,13 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
@@ -65,13 +66,21 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "credit_screen"
     )
 
+    object SignDocumentProcessScreen : Screen(
+        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}",
+        "sign_document_process_screen"
+    )
+
+    object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
+    object ProcessingTransactionScreen : Screen("processing_transaction_screen")
+    object OnfidoAndEvicertiaErrorsScreen : Screen(
+        "onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}",
+        "onfido_and_evicertia_errors_screen"
+    )
+
     // VisaNavGraph
     object VisaIssuanceScreen : Screen("visa_issuance_screen/{$ID_BRAND}", "visa_issuance_screen")
     object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}", "visa_card_screen")
-
-    // HomeNavGraph Screens
-    object SignDocumentProcess :
-        Screen("sign_document_process_screen/{$SIGN_DOCUMENT_STEP}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}", "sign_document_process_screen")
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")

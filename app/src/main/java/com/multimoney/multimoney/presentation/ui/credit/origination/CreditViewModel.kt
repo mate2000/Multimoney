@@ -182,7 +182,7 @@ class CreditViewModel @Inject constructor(
 
     private fun navigateToSignDocumentProcess() {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcess.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/$idPrint/$idBrand",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/$idPrint/$idBrand",
             Screen.CreditScreen.route
         )
     }

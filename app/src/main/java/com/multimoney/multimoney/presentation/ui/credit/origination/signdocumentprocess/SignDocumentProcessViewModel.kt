@@ -13,16 +13,22 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
+import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_SECOND_TIME
+import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.ONFIDO_REJECTED_FIRST_TIME
+import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.ONFIDO_REJECTED_SECOND_TIME
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -44,7 +50,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
         uiState = uiState.copy(
-            signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP] ?: "",
+            signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: "",
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         )
         onListenCreditContractEventSubscription(idPrint, idBrand)
@@ -81,7 +87,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             GENERATE_DOCUMENT_STEP.value -> {
                 if (creditContractEvent?.link.isNullOrEmpty().not()) {
                     uiState = uiState.copy(
-                        signDocumentProcessStep = SIGN_DOCUMENT_STEP,
+                        signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
                         signDocumentUrl = creditContractEvent?.link ?: ""
                     )
                 }
@@ -89,27 +95,62 @@ class SignDocumentProcessViewModel @Inject constructor(
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
                     CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
-                        if (CreditOnFidoOrFirmStatus.PENDING.status.lowercase() == creditContractEvent.statusOnfido?.lowercase()) {
-
-                        }
+                        handleOnfidoStatus(creditContractEvent)
                     }
                     CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+                        onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                     }
                     CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+                        onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                     }
                 }
+            }
+            VALIDATE_IDENTITY.value -> {
+                handleOnfidoStatus(creditContractEvent, true)
             }
         }
     }
 
-    private fun handleOnfidoStatus(creditContractEvent: CreditContractEvent?) {
+    private fun handleOnfidoStatus(creditContractEvent: CreditContractEvent?, wasValidateIdentityShow: Boolean = false) {
+        when (creditContractEvent?.statusOnfido?.lowercase()) {
+            CreditOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
+                if (wasValidateIdentityShow) {
+                    uiState = uiState.copy(
+                        signDocumentProcessStep = VALIDATE_IDENTITY.value
+                    )
+                } else {
+                    popAndNavigateTo(
+                        route = ContinueValidatingOnfidoScreen.route,
+                        popTo = Screen.SignDocumentProcessScreen.route
+                    )
+                }
+            }
+            CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+                popAndNavigateTo(
+                    route = Screen.ProcessingTransactionScreen.route,
+                    popTo = Screen.SignDocumentProcessScreen.route
+                )
+            }
+            CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value)
+            }
+            CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+                onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value)
+            }
+        }
+    }
 
+    private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
+        popAndNavigateTo(
+            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand",
+            popTo = Screen.SignDocumentProcessScreen.route
+        )
     }
 
     private fun onNavigateToHome() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
-            popTo = Screen.SignDocumentProcess.route
+            popTo = Screen.SignDocumentProcessScreen.route
         )
     }
 

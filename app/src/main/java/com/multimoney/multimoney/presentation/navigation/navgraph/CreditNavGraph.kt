@@ -11,6 +11,9 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.continuevalidatingonfido.ContinueValidatingOnfidoScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors.OnfidoAndEvisertiaErrorsScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction.ProcessingTransactionScreen
 
 const val PK_USER = "pk_user"
 const val IDENTIFICATION = "identification"
@@ -19,9 +22,10 @@ const val CREDIT_STEP = "credit_step"
 const val ID_USER_REQUEST = "id_user_request"
 const val FIRST_NAME = "name"
 const val LAST_NAME = "last_name"
-const val SIGN_DOCUMENT_STEP = "sign_document_step"
+const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
+const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -35,25 +39,52 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ID_USER_REQUEST) { type = NavType.IntType }
             )
         ) { navBackStackEntry ->
-            CreditScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopAndNavigate = {
+            CreditScreen(onNavigate = {
+                navController.navigate(it.route)
+            }, onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
-                }
-            )
+                })
         }
         composable(
-            route = Screen.SignDocumentProcess.route,
+            route = Screen.SignDocumentProcessScreen.route,
             arguments = listOf(
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
                 navArgument(ID_BRAND) { type = NavType.IntType }
             )
         ) {
-            SignDocumentProcessScreen(
+            SignDocumentProcessScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
+        }
+        composable(
+            route = Screen.ContinueValidatingOnfidoScreen.route
+        ) {
+            ContinueValidatingOnfidoScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
+        }
+        composable(
+            route = Screen.ProcessingTransactionScreen.route
+        ) {
+            ProcessingTransactionScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
+        }
+        composable(
+            route = Screen.OnfidoAndEvicertiaErrorsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType }
+            )
+        ) {
+            OnfidoAndEvisertiaErrorsScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

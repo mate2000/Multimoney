@@ -3,11 +3,19 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
-fun ProcessingTransactionScreen(viewModel: SignDocumentProcessViewModel) {
+fun ProcessingTransactionScreen(
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    viewModel: ProcessingTransactionViewModel = hiltViewModel()
+) {
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+    }
     Column {
-        Text(text = "Continue Validating")
+        Text(text = "Processing Transaction Screen")
     }
 }

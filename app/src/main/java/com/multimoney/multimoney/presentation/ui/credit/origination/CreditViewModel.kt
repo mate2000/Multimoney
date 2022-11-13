@@ -7,6 +7,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
@@ -22,10 +23,12 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.HomeScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackVisibilityValueChanged
@@ -49,6 +52,9 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -82,6 +88,9 @@ class CreditViewModel @Inject constructor(
     var firstName: String = ""
     var lastName: String = ""
     var idPrint: Long = 0
+    var statusOnfido: String = ""
+    var statusEvicertia: String = ""
+    var linkEvicertia: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -91,6 +100,8 @@ class CreditViewModel @Inject constructor(
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
+        statusOnfido = savedStateHandle[ONFIDO_STATUS] ?: ""
+        statusEvicertia = savedStateHandle[EVICERTIA_STATUS] ?: ""
         uiState = uiState.copy(
             lastStep = savedStateHandle[CREDIT_STEP] ?: CreditStep.One.id,
             loadContent = true
@@ -151,7 +162,26 @@ class CreditViewModel @Inject constructor(
                 lastStep = CreditStep.One.id
             )
         } else {
-            navigateToSignDocumentProcess()
+            moveToCorrectStep()
+        }
+    }
+
+    private fun moveToCorrectStep() {
+        when {
+            statusOnfido.lowercase() != CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+                // move to onfido
+                uiState = uiState.copy(currentStep = CreditStep.Eight.id, lastStep = CreditStep.One.id)
+            }
+            statusEvicertia.lowercase() != CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+                // move to evicertia
+                navigateToSignDocumentProcess(
+                    if (linkEvicertia == URL_EMPTY) {
+                        GENERATE_DOCUMENT_STEP.value
+                    } else {
+                        SIGN_DOCUMENTS_STEP.value
+                    }
+                )
+            }
         }
     }
 
@@ -162,7 +192,12 @@ class CreditViewModel @Inject constructor(
                 isCloseVisible = nextStep >= CreditStep.One.id
             )
         } else {
-            navigateToSignDocumentProcess()
+            val signDocumentStep = if (idBrand.toInt() == Brand.ElSalvador.id) {
+                VALIDATE_IDENTITY.value
+            } else {
+                GENERATE_DOCUMENT_STEP.value
+            }
+            navigateToSignDocumentProcess(signDocumentStep)
         }
     }
 
@@ -180,7 +215,7 @@ class CreditViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToSignDocumentProcess() {
+    private fun navigateToSignDocumentProcess(signDocumentStep: String) {
         popAndNavigateTo(
             "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/$idPrint/$idBrand",
             Screen.CreditScreen.route
@@ -234,15 +269,14 @@ class CreditViewModel @Inject constructor(
         }
     }
 
-    fun getLoadingString(): Int =
-        if (idBrand.isNotEmpty()) {
-            when (idBrand.toInt()) {
-                Brand.Guatemala.id -> R.string.credit_glad_to_see_you_gt
-                else -> R.string.credit_glad_to_see_you
-            }
-        } else {
-            R.string.empty
+    fun getLoadingString(): Int = if (idBrand.isNotEmpty()) {
+        when (idBrand.toInt()) {
+            Brand.Guatemala.id -> R.string.credit_glad_to_see_you_gt
+            else -> R.string.credit_glad_to_see_you
         }
+    } else {
+        R.string.empty
+    }
 
     data class UIState(
         // Interactions
@@ -274,9 +308,7 @@ class CreditViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnFailureWithDialog ->
-                uiState =
-                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState = uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnCurrentLocationButtonValueChange ->
                 uiState =
                     uiState.copy(isCurrentLocationButtonVisible = event.isVisible)
@@ -308,8 +340,7 @@ class CreditViewModel @Inject constructor(
         data class OnContinueEnable(val enable: Boolean) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()
-        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
-            UIEvent()
+        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
 
         data class OnCurrentLocationButtonValueChange(val isVisible: Boolean) : UIEvent()
         object OnNextStep : UIEvent()

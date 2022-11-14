@@ -42,7 +42,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
@@ -279,7 +278,7 @@ fun CreditAmountScreen(
                 modifier = Modifier.padding(top = 16.dp),
                 onClick = { viewModel.onUIEvent(CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog) },
                 shape = RoundedCornerShape(24.dp),
-                background = WhiteTransparency10,
+                background = MultimoneyTheme.colors.backgroundInformativeChip,
                 startIcon = R.drawable.ic_information,
                 startIconTint = MultimoneyTheme.colors.textInformation,
                 size = Large

@@ -37,7 +37,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
-import com.multimoney.multimoney.presentation.uielement.CustomLabelDescriptionText
+import com.multimoney.multimoney.presentation.uielement.CustomLabelDescRow
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent.Navigate
 import com.multimoney.multimoney.presentation.util.NavEvent.PopBackStack
@@ -112,30 +112,30 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                     textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text)
                 )
                 if (viewModel.uiState.isAccountNumberVisible) {
-                    CustomLabelDescriptionText(
+                    CustomLabelDescRow(
                         modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
                         labelText = stringResource(id = R.string.payment_options_transfer_account),
                         descriptionText = viewModel.uiState.transferAccount?.account ?: ""
                     )
                 }
-                CustomLabelDescriptionText(
+                CustomLabelDescRow(
                     modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
                     labelText = stringResource(id = R.string.payment_options_transfer_bank),
                     descriptionText = viewModel.uiState.transferAccount?.bank ?: ""
                 )
-                CustomLabelDescriptionText(
+                CustomLabelDescRow(
                     modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
                     labelText = stringResource(id = R.string.payment_options_transfer_type_transfer),
                     descriptionText = viewModel.uiState.transferAccount?.typeTransfer ?: ""
                 )
-                CustomLabelDescriptionText(
+                CustomLabelDescRow(
                     modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
                     labelText = stringResource(id = R.string.payment_options_transfer_credit_number),
                     descriptionText = viewModel.uiState.creditNumber ?: "",
                     endIcon = R.drawable.ic_copy,
                     endIconClick = { viewModel.onUIEvent(OnCopyTextToClipboard(viewModel.uiState.creditNumber ?: "")) }
                 )
-                CustomLabelDescriptionText(
+                CustomLabelDescRow(
                     modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
                     labelText = stringResource(id = R.string.payment_options_transfer_beneficiary_name),
                     descriptionText = viewModel.uiState.transferAccount?.beneficiaryName ?: ""

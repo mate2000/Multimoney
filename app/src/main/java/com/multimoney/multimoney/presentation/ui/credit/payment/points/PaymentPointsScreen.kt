@@ -44,13 +44,9 @@ fun PaymentPointsScreen(
 ) {
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate)
-    }
-
-    LaunchedEffect(true) {
         viewModel.apply {
-            viewModel.executeNavigation(onPopBackStack = onPopBackStack)
-            viewModel.onUIEvent(OnGetPaymentPoints)
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnGetPaymentPoints)
         }
     }
     BackHandler {
@@ -120,11 +116,9 @@ fun PaymentPointsContent(
                                         point.name ?: "",
                                         point.description ?: "",
                                         point.schedule ?: "",
-                                        "", // TODO - BALANCE -> PAGO MINIMO
-                                        "", // TODO - BALANCE -> PAGARÉ
                                         "", // TODO - BACKEND
                                         "", // TODO - BACKEND
-                                        viewModel.idBrand.toString() // TODO
+                                        viewModel.idBrand.toString()
                                     )
                                 )
                             }

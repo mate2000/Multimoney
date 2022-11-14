@@ -17,11 +17,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -41,12 +39,7 @@ fun PaymentLocationDetailsScreen(
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate)
-    }
-    LaunchedEffect(true) {
-        viewModel.apply {
-            viewModel.executeNavigation(onPopBackStack = onPopBackStack)
-        }
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -70,7 +63,7 @@ fun PaymentLocationDetailsScreen(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 54.dp, bottom = 24.dp),
+                    .padding(top = 36.dp, bottom = 24.dp),
                 text = viewModel.locationName,
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,
@@ -93,33 +86,27 @@ fun PaymentLocationDetailsScreen(
             // Payment details
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Payment Amount
-                Column(modifier = Modifier.fillMaxWidth(0.5f)) {
-                    LocationInfo(
-                        title = stringResource(id = R.string.payment_location_maps_payment_amount),
-                        text = viewModel.paymentAmount
-                    )
-                }
+                LocationInfo(
+                    modifier = Modifier.fillMaxWidth(0.5f),
+                    title = stringResource(id = R.string.payment_location_maps_payment_amount),
+                    text = viewModel.paymentAmount
+                )
                 // Payment ID
-                Column(modifier = Modifier.fillMaxWidth(0.5f)) {
-                    LocationInfo(
-                        title = stringResource(id = R.string.payment_location_maps_payment_id),
-                        text = viewModel.paymentId
-                    )
-                }
+                LocationInfo(
+                    modifier = Modifier.fillMaxWidth(0.5f),
+                    title = stringResource(id = R.string.payment_location_maps_payment_id),
+                    text = viewModel.paymentId
+                )
             }
 
             // Information chip
             CustomInformativeChip(
                 text = stringResource(
-                    id = when (viewModel.idBrand.toInt()) {
-                        Brand.ElSalvador.id -> R.string.payment_location_maps_info_sv
-                        else -> R.string.payment_location_maps_info_gt
-                    }
+                    id = viewModel.getChipText()
                 ),
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
                 modifier = Modifier.padding(top = 16.dp),
                 shape = RoundedCornerShape(24.dp),
-                background = WhiteTransparency10,
                 startIcon = R.drawable.ic_information,
                 startIconTint = MultimoneyTheme.colors.textInformation,
                 size = Size.Large
@@ -141,7 +128,7 @@ fun PaymentLocationDetailsScreen(
                 .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                 .fillMaxWidth()
                 .height(48.dp),
-            buttonType = CustomButtonType.PrimaryPrimary,
+            buttonType = CustomButtonType.PrimaryPrimary
         )
     }
 
@@ -159,22 +146,24 @@ fun PaymentLocationDetailsScreen(
 }
 
 @Composable
-fun LocationInfo(title: String = "", text: String = "") {
-    Text(
-        text = title,
-        style = Typography.body1.copy(
-            color = MultimoneyTheme.colors.text,
-            fontWeight = FontWeight.SemiBold
-        ),
-        color = MultimoneyTheme.colors.quickActionLabelColor
-    )
-    Text(
-        text = text,
-        modifier = Modifier.padding(bottom = 16.dp),
-        style = Typography.body1.copy(
-            fontWeight = FontWeight.SemiBold,
-            color = MultimoneyTheme.colors.text,
-        ),
-        color = MultimoneyTheme.colors.labelText
-    )
+fun LocationInfo(modifier: Modifier = Modifier, title: String = "", text: String = "") {
+    Column(modifier = modifier) {
+        Text(
+            text = title,
+            style = Typography.body1.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.SemiBold
+            ),
+            color = MultimoneyTheme.colors.quickActionLabelColor
+        )
+        Text(
+            text = text,
+            modifier = Modifier.padding(bottom = 16.dp),
+            style = Typography.body1.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            color = MultimoneyTheme.colors.labelText
+        )
+    }
 }

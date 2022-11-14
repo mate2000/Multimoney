@@ -236,10 +236,9 @@ class ProductViewModel @Inject constructor(
             }/$identification/$userName/$isFromHome"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-            encodeData(
-                configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true }
-            )
-            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}"
+            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}" +
+                "/${balanceCredit?.getFirstSummary()?.minPaymentLabel}"
         }
         navigateTo(route)
     }

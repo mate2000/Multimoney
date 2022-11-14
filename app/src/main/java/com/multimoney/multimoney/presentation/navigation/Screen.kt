@@ -8,15 +8,14 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_FROM_HOME
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LATITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_OPENING_TIME
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_FROM_HOME
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
@@ -103,10 +102,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
             "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
             "smart_screen"
         )
+
     object PaymentVoucherScreen : Screen(route = "payment_voucher_screen")
 
     object PaymentOptionsScreen : Screen(
-        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}",
+        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/$PAYMENT_AMOUNT}",
         "payment_options_screen"
     )
 
@@ -116,12 +116,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentPointsScreen : Screen(
-        "payment_points_screen/{$ID_BRAND}",
+        "payment_points_screen/{$ID_BRAND}/$CREDIT_ROUTE/{$PAYMENT_AMOUNT}",
         "payment_points_screen"
     )
 
     object PaymentLocationDetailsScreen : Screen(
-        "payment_location_details_screen/{$LOCATION_NAME}/{$LOCATION_ADDRESS}/{$LOCATION_OPENING_TIME}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$LOCATION_LATITUDE}/{$LOCATION_LONGITUDE}/{$ID_BRAND}",
+        "payment_location_details_screen/{$LOCATION_NAME}/{$LOCATION_ADDRESS}/{$LOCATION_OPENING_TIME}/{$PAYMENT_AMOUNT}/{$CREDIT_NUMBER}/{$LOCATION_LATITUDE}/{$LOCATION_LONGITUDE}/{$ID_BRAND}",
         "payment_location_details_screen"
     )
 

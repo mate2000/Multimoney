@@ -1,22 +1,22 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.location
 
-
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LATITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_OPENING_TIME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnNavigateBack
@@ -41,17 +41,17 @@ class LocationDetailsViewModel @Inject constructor(
     var paymentId: String = ""
     var latitude: String = ""
     var longitude: String = ""
-    var idBrand: String = ""
+    var idBrand: Int = 0
 
     init {
         locationName = savedStateHandle[LOCATION_NAME] ?: ""
         locationAddress = savedStateHandle[LOCATION_ADDRESS] ?: ""
         locationOpeningTime = savedStateHandle[LOCATION_OPENING_TIME] ?: ""
         paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
-        paymentId = savedStateHandle[PAYMENT_ID] ?: ""
+        paymentId = savedStateHandle[CREDIT_NUMBER] ?: ""
         latitude = savedStateHandle[LOCATION_LATITUDE] ?: ""
         longitude = savedStateHandle[LOCATION_LONGITUDE] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
     }
 
     private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
@@ -70,6 +70,13 @@ class LocationDetailsViewModel @Inject constructor(
                 positiveAction = { onUIEvent(OnDialogPositiveButtonClick) }
             )
         )
+    }
+
+    fun getChipText(): Int {
+        return when (idBrand) {
+            Brand.ElSalvador.id -> R.string.payment_location_maps_info_sv
+            else -> R.string.payment_location_maps_info_gt
+        }
     }
 
     data class UIState(

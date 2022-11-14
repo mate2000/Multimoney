@@ -5,8 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
-import kotlin.time.Duration
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -16,8 +14,10 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.CashPaymentPoint
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
+import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import kotlin.time.Duration
 
 fun Context.openWhatsAppDeepLink(link: String) {
     val intent = Intent(Intent.ACTION_VIEW)
@@ -28,7 +28,7 @@ fun Context.openWhatsAppDeepLink(link: String) {
 fun Context.openMapsLink(latitude: String, longitude: String) {
     val mapsIntentUri = Uri.parse(String.format("geo:%s,%s", latitude, longitude))
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
-    mapIntent.setPackage("com.google.android.apps.maps")
+    mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)
 }
 

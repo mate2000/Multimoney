@@ -13,8 +13,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
@@ -39,12 +39,12 @@ class PaymentPointsViewModel @Inject constructor(
     // Stateless
     var idBrand: Int? = null
     private var paymentAmount: String? = ""
-    private var paymentId: String? = ""
+    private var creditNumber: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
-        paymentId = savedStateHandle[PAYMENT_ID] ?: ""
+        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
     }
 
     private fun onItemPointClick() {
@@ -66,14 +66,12 @@ class PaymentPointsViewModel @Inject constructor(
         name: String,
         address: String,
         openingTime: String,
-        paymentAmount: String,
-        paymentId: String,
         latitude: String,
         longitude: String,
         idBrand: String
     ) {
         val route =
-            "${Screen.PaymentLocationDetailsScreen.baseRoute}/$name/$address/$openingTime/$paymentAmount/$paymentId/$latitude/$longitude/$idBrand"
+            "${Screen.PaymentLocationDetailsScreen.baseRoute}/$name/$address/$openingTime/$paymentAmount/$creditNumber/$latitude/$longitude/$idBrand"
         navigateTo(route = route)
     }
 
@@ -137,8 +135,6 @@ class PaymentPointsViewModel @Inject constructor(
                 uiEvent.name,
                 uiEvent.address,
                 uiEvent.openingTime,
-                uiEvent.paymentAmount,
-                uiEvent.paymentId,
                 uiEvent.latitude,
                 uiEvent.longitude,
                 uiEvent.idBrand
@@ -151,15 +147,12 @@ class PaymentPointsViewModel @Inject constructor(
         object OnCloseScreenClick : UIEvent()
         data class OnQueryValueChange(val value: String) : UIEvent()
         object OnGetPaymentPoints : UIEvent()
-        object OnItemPointClick : UIEvent()
         object OnDialogPositiveButtonClick : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnNavigateLocation(
             val name: String,
             val address: String,
             val openingTime: String,
-            val paymentAmount: String,
-            val paymentId: String,
             val latitude: String,
             val longitude: String,
             val idBrand: String

@@ -327,13 +327,14 @@
     <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
 
     <!-- Credit Job-->
-    <string name="credit_job_title" translatable="false">Contanos de la empresa en la que trabajás</string>
+    <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
     <string name="credit_job_title_gt" translatable="false">Cuéntanos de la empresa en la que trabajas</string>
     <string name="credit_job_workplace_label" translatable="false">Nombre de la empresa</string>
     <string name="credit_job_workplace_required" translatable="false">Nombre de la empresa requerido</string>
     <string name="credit_job_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="credit_job_date_required" translatable="false">Fecha de ingreso requerida</string>
     <string name="credit_job_joined_date" translatable="false">Fecha en la que ingresaste</string>
+    <string name="credit_job_joined_date_first_job" translatable="false">Fecha en que ingresaste a tu primer trabajo</string>
     <string name="credit_job_phone_number" translatable="false">Número de teléfono</string>
     <string name="credit_job_phone_placeholder_sv" translatable="false">0000 0000</string>
     <string name="credit_job_phone_placeholder_cr" translatable="false">0000 0000</string>

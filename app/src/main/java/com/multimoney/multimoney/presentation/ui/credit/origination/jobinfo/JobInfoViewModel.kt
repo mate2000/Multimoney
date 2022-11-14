@@ -3,11 +3,14 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.BaseEvent.OnFormCompleted
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnCompanyNameValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnDateFirstJobValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnInitData
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnPhoneNumberValueChange
@@ -22,17 +25,31 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set
+    var idBrand = Brand.ElSalvador.id
+
+    private fun onInitData(idBrand: Int) {
+        this.idBrand = idBrand
+    }
 
     private fun onValidForm() {
         emitBaseEvent(
             OnFormCompleted(
-                uiState.companyName.isNotEmpty() && uiState.date.isNotEmpty() && uiState.phoneNumber.isNotEmpty() && uiState.phoneNumber.length == PHONE_NUMBER_MAX_LENGTH
+                if (idBrand == Brand.CostaRica.id) {
+                    uiState.companyName.isNotEmpty() && uiState.date.isNotEmpty() && uiState.phoneNumber.isNotEmpty() && uiState.phoneNumber.length == PHONE_NUMBER_MAX_LENGTH && uiState.dateFirstJob.isNotEmpty()
+                } else {
+                    uiState.companyName.isNotEmpty() && uiState.date.isNotEmpty() && uiState.phoneNumber.isNotEmpty() && uiState.phoneNumber.length == PHONE_NUMBER_MAX_LENGTH
+                }
             )
         )
     }
 
     private fun onDateValueChange(date: String) {
         uiState = uiState.copy(date = date.replace(DASH_SYMBOL, VISUAL_DATE_SYMBOL))
+        onValidForm()
+    }
+
+    private fun onDateFirstJobValueChange(date: String) {
+        uiState = uiState.copy(dateFirstJob = date.replace(DASH_SYMBOL, VISUAL_DATE_SYMBOL))
         onValidForm()
     }
 
@@ -69,6 +86,16 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
             uiState = uiState.copy(phoneNumber = phoneNumber.value ?: "")
             onPhoneNumberValueChange(it)
         }
+
+        val dateFirstJob = list?.find { it?.description == SaveCreditStepsHelper.STARTED_FIRST_JOB_DATE }
+        dateFirstJob?.value?.let {
+            val dateFirstJobParsed = getFormatDateByString(
+                it,
+                BACKEND_DATE_FORMAT,
+                DATE_FORMAT
+            )
+            onDateFirstJobValueChange(dateFirstJobParsed)
+        }
     }
 
     private fun onNexActionClick(
@@ -77,6 +104,7 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
         saveCreditStepsHelper.saveStepThree(
+            idBrand,
             user,
             uiState.companyName,
             getFormatDateByString(
@@ -84,7 +112,12 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
                 DATE_FORMAT,
                 BACKEND_DATE_FORMAT
             ),
-            uiState.phoneNumber
+            uiState.phoneNumber,
+            getFormatDateByString(
+                uiState.dateFirstJob.replace(VISUAL_DATE_SYMBOL, DASH_SYMBOL),
+                DATE_FORMAT,
+                BACKEND_DATE_FORMAT
+            )
         )
         nextStepAction()
     }
@@ -92,13 +125,16 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
     data class UIState(
         val companyName: String = "",
         val date: String = "",
+        val dateFirstJob: String = "",
         val phoneNumber: String = ""
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnValidForm -> onValidForm()
+            is OnInitData -> onInitData(uiEvent.idBrand)
             is OnDateValueChange -> onDateValueChange(uiEvent.date)
+            is OnDateFirstJobValueChange -> onDateFirstJobValueChange(uiEvent.date)
             is OnCompanyNameValueChange -> onCompanyNameValueChange(uiEvent.companyName)
             is OnPhoneNumberValueChange -> onPhoneNumberValueChange(uiEvent.phoneNumber)
             is OnNextActionClick -> onNexActionClick(
@@ -119,8 +155,10 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
 
         data class OnCompanyNameValueChange(val companyName: String) : UIEvent()
         data class OnDateValueChange(val date: String) : UIEvent()
+        data class OnDateFirstJobValueChange(val date: String) : UIEvent()
         data class OnPhoneNumberValueChange(val phoneNumber: String) : UIEvent()
         object OnValidForm : UIEvent()
+        data class OnInitData(val idBrand: Int) : UIEvent()
         data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()
     }
 

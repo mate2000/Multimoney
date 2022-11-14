@@ -55,6 +55,7 @@ fun OwnBusinessTitleScreen(
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = SmartSteps.Four.id,
                 previousStep = SmartSteps.Three.id
             )

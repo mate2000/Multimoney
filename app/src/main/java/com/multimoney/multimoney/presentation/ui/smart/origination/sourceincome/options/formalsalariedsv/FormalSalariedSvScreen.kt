@@ -69,6 +69,7 @@ fun FormalSalariedSvScreen(
                         )
                     )
                 },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
                 nextStep = Four.id,
                 previousStep = Three.id
             )

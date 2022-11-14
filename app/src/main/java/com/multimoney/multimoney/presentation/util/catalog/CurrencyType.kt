@@ -10,17 +10,19 @@ sealed class CurrencyType(
     val accountIcon: Int,
     val accountTitle: Int,
     val feeIcon: Int,
-    val feeInfoButtonTitle: Int
+    val feeInfoButtonTitle: Int,
+    val symbol: String
 ) {
     object Colon : CurrencyType(
         1,
         "01",
         "COLONES",
         R.string.colons,
-        R.drawable.ic_account_colon,
+        R.drawable.ic_bank_account_colon,
         R.string.payment_account_title_colon,
         R.drawable.ic_payment_colon,
-        R.string.payment_fee_one_option
+        R.string.payment_fee_one_option,
+        "₡"
     )
 
     object Dollar : CurrencyType(
@@ -28,10 +30,11 @@ sealed class CurrencyType(
         "02",
         "DOLARES",
         R.string.dollars,
-        R.drawable.ic_account_dollar,
+        R.drawable.ic_bank_account_dollar,
         R.string.payment_account_title_dollar,
         R.drawable.ic_payment_dollar,
-        R.string.payment_fee_one_option
+        R.string.payment_fee_one_option,
+        "$"
     )
 
     object Quetzal : CurrencyType(
@@ -39,10 +42,11 @@ sealed class CurrencyType(
         "03",
         "QUETZALES",
         R.string.quetzales,
-        R.drawable.ic_account_dollar,
+        R.drawable.ic_bank_account_dollar,
         R.string.payment_account_title_dollar,
         R.drawable.ic_payment_fee_icon,
-        R.string.empty
+        R.string.empty,
+        "$"
     )
 
     object All : CurrencyType(
@@ -50,9 +54,10 @@ sealed class CurrencyType(
         "",
         "",
         0,
-        R.drawable.ic_account_dollar,
+        R.drawable.ic_bank_account_dollar,
         R.string.payment_account_title_all,
         R.drawable.ic_payment_fee_icon,
-        R.string.payment_fee_both_options
+        R.string.payment_fee_both_options,
+        "$"
     )
 }

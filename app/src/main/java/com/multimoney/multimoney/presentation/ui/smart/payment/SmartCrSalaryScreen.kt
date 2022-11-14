@@ -76,7 +76,7 @@ fun SmartCrSalaryScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = SourceIncomeOptionType.FormalSalaried.id.toLong(),
+                                idEconomicActivity = SourceIncomeOptionType.FormalSalariedCr.id.toLong(),
                                 idProfessionType = viewModel.uiState.professionSmartList.find { it?.name == viewModel.uiState.profession }?.id,
                                 income = viewModel.uiState.paymentAmount.toInt().toFloat()
                             )

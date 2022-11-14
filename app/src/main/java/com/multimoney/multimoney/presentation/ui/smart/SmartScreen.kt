@@ -26,7 +26,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
-import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiary.SmartBeneficiaryScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
@@ -154,6 +153,6 @@ fun GetStepContent(
                 SmartFactaScreen(sharedViewModel = viewModel)
             }
         }
-        Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
+        SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
     }
 }

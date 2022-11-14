@@ -61,7 +61,7 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
     }
 
     private fun onPercentageValueChange(percentage: String) {
-        if (percentage.length <= 3) {
+        if (percentage.toInt() <= 100) {
             uiState = uiState.copy(percentage = percentage)
         }
         validateForm()

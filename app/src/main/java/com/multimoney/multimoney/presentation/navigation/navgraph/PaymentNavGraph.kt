@@ -41,7 +41,6 @@ const val SHOULD_DISPLAY_EXCHANGE_RATE = "should_display_exchange_rate"
 const val IS_AUTOMATIC_PAYMENT_CHECKED = "is_automated_payment_checked"
 const val IS_MULTI_CURRENCY = "is_multi_currency"
 const val EXCHANGE_RATE_LABEL = "exchange_rate_label"
-const val IS_FROM_HOME = "is_from_home"
 const val PAYMENT_DATE = "payment_date"
 const val IS_EDIT = "is_edit"
 const val PREVIOUS_SCREEN = "previous_screen"
@@ -228,7 +227,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             route = Screen.PaymentVoucherScreen.route,
             arguments = listOf(
                 navArgument(USER) {
-                    type = NavType.StringType
                 },
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -243,16 +241,12 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = ClientBankAccountNavType()
                 },
                 navArgument(PAYMENT_DATE) {
-                    type = NavType.StringType
                 },
                 navArgument(CURRENT_AMOUNT_VALUE) {
-                    type = NavType.StringType
                 },
                 navArgument(PAYMENT_LABEL) {
-                    type = NavType.StringType
                 },
                 navArgument(EXCHANGE_RATE_LABEL) {
-                    type = NavType.StringType
                 },
                 navArgument(SHOULD_DISPLAY_EXCHANGE_RATE) {
                     type = NavType.BoolType
@@ -264,7 +258,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = NavType.BoolType
                 },
                 navArgument(REFERENCE_NUMBER) {
-                    type = NavType.StringType
                 },
 
             )

@@ -11,9 +11,16 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
@@ -112,7 +119,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         )
 
     object PaymentOptionsScreen : Screen(
-        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}",
+        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/{$PAYMENT_AMOUNT}",
         "payment_options_screen"
     )
 
@@ -122,8 +129,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentPointsScreen : Screen(
-        "payment_points_screen/{$ID_BRAND}",
+        "payment_points_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_AMOUNT}",
         "payment_points_screen"
+    )
+
+    object PaymentLocationDetailsScreen : Screen(
+        "payment_location_details_screen/{$POINT_NAME}/{$POINT_ADDRESS}/{$POINT_SCHEDULE}/{$POINT_LATITUDE}/{$POINT_LONGITUDE}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$ID_BRAND}",
+        "payment_location_details_screen"
     )
 
     // Smart

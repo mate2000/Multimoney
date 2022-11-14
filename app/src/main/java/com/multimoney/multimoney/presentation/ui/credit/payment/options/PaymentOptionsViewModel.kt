@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -34,11 +35,13 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
     private var idBrand: Int = 0
     private var creditNumber: String? = null
     private var transferAccount: TransferAccount? = null
+    private var paymentAmount: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         creditNumber = savedStateHandle[CREDIT_NUMBER]
         transferAccount = savedStateHandle[TRANSFER_ACCOUNT]
+        paymentAmount = savedStateHandle[PAYMENT_AMOUNT]
         uiState = uiState.copy(paymentMethodList = savedStateHandle.get<Array<PaymentMethod>>(PAYMENT_METHOD)?.toList())
     }
 
@@ -60,7 +63,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
                 "${Screen.PaymentPointsScreen.baseRoute}/$idBrand"
             }
             else -> {
-                "${Screen.PaymentPointsScreen.baseRoute}/$idBrand"
+                "${Screen.PaymentPointsScreen.baseRoute}/$idBrand/$creditNumber/$paymentAmount"
             }
         }
         navigateTo(route = route)

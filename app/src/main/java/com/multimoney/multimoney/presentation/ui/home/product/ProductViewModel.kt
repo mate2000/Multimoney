@@ -150,7 +150,11 @@ class ProductViewModel @Inject constructor(
                 balanceCredit?.let { uiState = uiState.copy(isLoading = false) }
                 configurationVersion?.let {
                     this.configurationVersion = it
-                    emitBaseEvent(OnStartCountDownTimer(it.configuration?.timeSession?.toLong() ?: 0))
+                    emitBaseEvent(
+                        OnStartCountDownTimer(
+                            it.configuration?.timeSession?.toLong() ?: 0
+                        )
+                    )
                 }
             }
             result.onFailure {
@@ -252,7 +256,11 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToPaymentSchedule() {
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
-            route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${encodeData(ClientBankAccount())}/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/${false}"
+            route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+                encodeData(
+                    ClientBankAccount()
+                )
+            }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/${false}"
         )
     }
 
@@ -437,7 +445,11 @@ class ProductViewModel @Inject constructor(
                 uiEvent.whatsAppLink
             )
             is OnLastStepChange -> lastStep = uiEvent.lastStep
-            is OnShareIbanAccount -> shareIbanAccount(uiEvent.clientLabel, uiEvent.accountLabel, uiEvent.ibanAccount)
+            is OnShareIbanAccount -> shareIbanAccount(
+                uiEvent.clientLabel,
+                uiEvent.accountLabel,
+                uiEvent.ibanAccount
+            )
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
         }

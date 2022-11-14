@@ -218,8 +218,9 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToCreditScreen() {
-        navigateTo("${Screen.SmartScreen.baseRoute}/${userName}/${uiState.idBrand}/${pkUser}")
-
+        navigateTo(
+            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
+        )
     }
 
     private fun onNavigateToPaymentScreen() {

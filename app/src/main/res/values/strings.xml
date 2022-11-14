@@ -43,6 +43,9 @@
         <item>Si</item>
         <item>No</item>
     </string-array>
+    <string name="colons" translatable="false">Colenes</string>
+    <string name="dollars" translatable="false">Doláres</string>
+    <string name="quetzales" translatable="false">Quetzales</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>

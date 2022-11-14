@@ -87,7 +87,7 @@ class CreditViewModel @Inject constructor(
     var idUserRequest: Int = 0
     var firstName: String = ""
     var lastName: String = ""
-    var idPrint: Long = 0
+    var idPrint: Long = 123
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
     var linkEvicertia: String = ""
@@ -217,7 +217,7 @@ class CreditViewModel @Inject constructor(
 
     private fun navigateToSignDocumentProcess(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/${SignDocumentStep.GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/$idPrint/$idBrand",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/${GENERATE_DOCUMENT_STEP.value}/$URL_EMPTY/$idPrint/$idBrand",
             Screen.CreditScreen.route
         )
     }

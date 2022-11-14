@@ -62,6 +62,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardOfferSmartProduct
@@ -75,7 +76,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCredit
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.CreditCard
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
@@ -86,7 +86,10 @@ import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
+import com.multimoney.multimoney.presentation.uielement.TOTAL_PAGES
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -129,7 +132,7 @@ fun ProductScreen(
     }
 
     // todo we have to send the pages to the view pager when the back return
-    if (viewModel.uiState.isLoading) {
+    if (viewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
         Column(
@@ -137,84 +140,94 @@ fun ProductScreen(
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
         ) {
-            MotionLayoutMM(mainHeader = {
-                TipsAndOffer(
-                    modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-                    viewModel = viewModel
-                )
-            }, secondaryHeader = { backPressed ->
-                Box(
-                    contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MultimoneyTheme.colors.background)
-                ) {
-                    TopNavBar(
-                        isRightButtonVisible = false,
-                        onLeftButtonClick = {
-                            backPressed()
-                        }
+            MotionLayoutMM(
+                mainHeader = {
+                    TipsAndOffer(
+                        modifier = Modifier.padding(start = 16.dp, top = 20.dp),
+                        viewModel = viewModel
                     )
-                }
-            }, content = { modifier, headerText ->
-                Products(
-                    modifier = modifier,
-                    pages = NUMBER_PAGES,
-                    state = productPagerState,
-                    viewModel = viewModel,
-                    headerText
-                )
-            }, footer = {
-                ProductExtras(
-                    modifier = Modifier.padding(top = 16.dp),
-                    pages = NUMBER_PAGES,
-                    state = bottomPagerState,
-                    viewModel = viewModel
-                )
-            }, secondaryFooter = {
-                ConstraintLayout(
-                    Modifier.fillMaxSize()
-                ) {
-                    val (content, buttons) = createRefs()
-
-                    Column(
-                        Modifier
-                            .verticalScroll(rememberScrollState())
-                            .constrainAs(content) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                top.linkTo(parent.top)
-                                bottom.linkTo(buttons.top)
-                                height = Dimension.fillToConstraints
-                            }
+                },
+                secondaryHeader = { backPressed ->
+                    Box(
+                        contentAlignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MultimoneyTheme.colors.background)
                     ) {
-                        Divider(color = MultimoneyTheme.colors.dividerWhite30)
-                        Spacer(modifier = Modifier.height(24.dp))
-                        CreditCardView(viewModel = viewModel)
-                        Spacer(modifier = Modifier.height(24.dp))
-                        CreditDetail(
-                            modifier = Modifier
-                                .background(MultimoneyTheme.colors.creditDetailBackground)
-                                .wrapContentSize(),
-                            viewModel = viewModel
+                        TopNavBar(
+                            isRightButtonVisible = false,
+                            onLeftButtonClick = {
+                                backPressed()
+                            }
                         )
                     }
-
-                    CtaButtons(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .constrainAs(buttons) {
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                                bottom.linkTo(parent.bottom)
-                            },
-                        onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
-                        onClickDisbursement = { viewModel.onUIEvent(OnNavigateToCreditScreen) },
-                        canDisburse = viewModel.uiState.hasBalance
+                },
+                content = { modifier, headerText ->
+                    Products(
+                        modifier = modifier,
+                        pages = NUMBER_PAGES,
+                        state = productPagerState,
+                        viewModel = viewModel,
+                        headerText
                     )
-                }
-            }, totalPages = NUMBER_PAGES)
+                },
+                footer = {
+                    ProductExtras(
+                        modifier = Modifier.padding(top = 16.dp),
+                        pages = NUMBER_PAGES,
+                        state = bottomPagerState,
+                        viewModel = viewModel
+                    )
+                },
+                secondaryFooter = {
+                    ConstraintLayout(
+                        Modifier.fillMaxSize()
+                    ) {
+                        val (content, buttons) = createRefs()
+
+                        Column(
+                            Modifier
+                                .verticalScroll(rememberScrollState())
+                                .constrainAs(content) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(buttons.top)
+                                    height = Dimension.fillToConstraints
+                                }
+                        ) {
+                            Divider(color = MultimoneyTheme.colors.dividerWhite30)
+                            Spacer(modifier = Modifier.height(24.dp))
+                            CreditCardView(viewModel = viewModel)
+                            Spacer(modifier = Modifier.height(24.dp))
+                            CreditDetail(
+                                modifier = Modifier
+                                    .background(MultimoneyTheme.colors.creditDetailBackground)
+                                    .wrapContentSize(),
+                                viewModel = viewModel
+                            )
+                        }
+                        CtaButtons(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .constrainAs(buttons) {
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                    bottom.linkTo(parent.bottom)
+                                },
+                            onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
+                            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToCreditScreen) },
+                            canDisburse = viewModel.uiState.hasBalance
+                        )
+                    }
+                }, isExpanded = viewModel.uiState.isExpanded,
+                updateIsExpanded = { isExpanded ->
+                    viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                },
+                totalPages = TOTAL_PAGES
+            )
         }
+        LoadingIndicator(viewModel.uiState.isLoading)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

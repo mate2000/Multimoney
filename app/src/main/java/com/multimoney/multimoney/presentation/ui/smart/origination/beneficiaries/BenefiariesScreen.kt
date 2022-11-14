@@ -78,7 +78,7 @@ fun BeneficiariesScreen(
         beneficiaryViewModel.onUIEvent(
             OnCallQueryRelationshipUseCase(
                 sharedViewModel.user,
-                sharedViewModel.idBrand.toInt(),
+                sharedViewModel.idBrandAsInt,
                 0
             )
         )
@@ -217,6 +217,7 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
+    viewModel.onUIEvent(OnValidateForm)
 }
 
 @Composable

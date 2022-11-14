@@ -99,16 +99,21 @@ class CreditOnfidoViewModel @Inject constructor(
 
     private fun onOpenOnFidoSDK(
         result: ActivityResult,
-        onOnFidoCompleted: () -> Unit,
+        onNextStep: () -> Unit,
         onOnFidoError: (DialogParameters) -> Unit,
-        onContinueValueChanged: (value: Boolean) -> Unit
+        onContinueValueChanged: (value: Boolean) -> Unit,
+        pkUser: Long,
+        identification: String,
+        idBrand: Int,
+        idUserRequest: Long,
+        user: String
     ) {
         onFidoHelper.getOnFidoClient().handleActivityResult(
             result.resultCode,
             result.data,
             object : OnfidoResultListener {
                 override fun userCompleted(captures: Captures) {
-                    onOnFidoCompleted()
+                    onCallOnfidoCheckProcess(pkUser, identification, idBrand, idUserRequest, user, onNextStep)
                 }
 
                 override fun userExited(exitCode: ExitCode) {
@@ -133,7 +138,8 @@ class CreditOnfidoViewModel @Inject constructor(
         identification: String,
         idBrand: Int,
         idUserRequest: Long,
-        user: String
+        user: String,
+        onNextStep: () -> Unit
     ) {
         executeUseCase {
             mutationOnfidoCheckProcessUseCase.invoke(
@@ -152,6 +158,7 @@ class CreditOnfidoViewModel @Inject constructor(
                     // nothing to do here
                 }
             }
+            onNextStep()
         }
     }
 
@@ -182,7 +189,12 @@ class CreditOnfidoViewModel @Inject constructor(
                 event.result,
                 event.onOnFidoCompleted,
                 event.onOnFidoError,
-                event.onContinueEnable
+                event.onContinueEnable,
+                event.pkUser,
+                event.identification,
+                event.idBrand,
+                event.idUserRequest,
+                event.user
             )
 
             is OnCallInFidoToken -> callMutationOnFidoInitialProcess(
@@ -220,7 +232,12 @@ class CreditOnfidoViewModel @Inject constructor(
             val result: ActivityResult,
             val onOnFidoCompleted: () -> Unit,
             val onOnFidoError: (dialogParameters: DialogParameters) -> Unit,
-            val onContinueEnable: (value: Boolean) -> Unit
+            val onContinueEnable: (value: Boolean) -> Unit,
+            val pkUser: Long,
+            val identification: String,
+            val idBrand: Int,
+            val idUserRequest: Long,
+            val user: String
         ) : UIEvent()
 
         data class OnOpenDialogValueChange(val openDialog: DialogParameters) : UIEvent()

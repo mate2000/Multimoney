@@ -19,7 +19,6 @@ data class AccountSmartData(
     var institutionPension: String = "",
     var income: Float? = 0.0f,
     var addressDetail: String? = "",
-    var isPEP: Boolean? = false,
     var user: String? = "",
     var idBrand: Int? = 0,
     val currentStep: String? = "",
@@ -27,5 +26,10 @@ data class AccountSmartData(
     val companyName: String? = "",
     var specifiesIncomeSource: String? = "",
     var entrepreneurship: String = "",
-    var legalID: String? = ""
+    var legalID: String? = "",
+    var isPEP: Boolean? = false,
+    var isUSCitizen: Boolean? = null,
+    var isActivityOfArt15: Boolean? = null,
+    var isUSTaxPayer: Boolean? = null,
+    var isTaxPayer: Boolean? = null
 )

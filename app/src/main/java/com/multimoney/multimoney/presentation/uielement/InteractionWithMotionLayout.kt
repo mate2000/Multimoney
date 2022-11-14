@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.test.motionlayout
+package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -40,6 +40,8 @@ fun MotionLayoutMM(
     secondaryHeader: @Composable (backFunction: () -> Unit) -> Unit,
     content: @Composable (modifier: Modifier, headerText: Int) -> Unit,
     footer: @Composable () -> Unit,
+    isExpanded: Boolean = false,
+    updateIsExpanded: (Boolean) -> Unit,
     secondaryFooter: @Composable () -> Unit,
     totalPages: Int = TOTAL_PAGES
 ) {
@@ -53,8 +55,7 @@ fun MotionLayoutMM(
 
     val swipeAbleState = rememberSwipeableState(initialValue = 0)
     val anchors = mapOf(0f to 0, TOTAL_PERCENTAGE to 1)
-    var isExpanded by remember { mutableStateOf(false) }
-
+    var isBackPressed by remember { mutableStateOf(false) }
     // Pager
     val headerTitlePagerState = rememberPagerState()
     val mainCardPagerState = rememberPagerState()
@@ -71,10 +72,14 @@ fun MotionLayoutMM(
         bottomEndPagerState.animateScrollToPage(mainCardPagerState.currentPage)
     }
 
-    LaunchedEffect(key1 = isExpanded) {
-        if (isExpanded) {
+    LaunchedEffect(key1 = swipeAbleState.offset.value) {
+        updateIsExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
+    }
+
+    LaunchedEffect(key1 = isBackPressed) {
+        if (isExpanded && isBackPressed) {
             swipeAbleState.animateTo(BEGINNING_ANIMATION)
-            isExpanded = false
+            isBackPressed = false
         }
     }
 
@@ -127,7 +132,7 @@ fun MotionLayoutMM(
                     }
             ) {
                 secondaryHeader {
-                    isExpanded = true
+                    isBackPressed = true
                 }
             }
         }

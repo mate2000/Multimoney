@@ -15,9 +15,11 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.HomeScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -38,10 +40,11 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnShowBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateScreenConfigData
 import com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration.DUMMY_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -101,11 +104,11 @@ class CreditViewModel @Inject constructor(
             openDialog = DialogParameters(
                 titleResource = closeDialogTitle,
                 description = closeDialogDescription,
-                positiveResource = R.string.credit_close_dialog_positive_button_text,
-                negativeResource = R.string.credit_close_dialog_negative_button_text,
+                positiveResource = string.credit_close_dialog_positive_button_text,
+                negativeResource = string.credit_close_dialog_negative_button_text,
                 positiveAction = {
                     popAndNavigateTo(
-                        route = Screen.HomeScreen.route,
+                        route = HomeScreen.route,
                         popTo = Screen.CreditScreen.route
                     )
                 },
@@ -117,6 +120,14 @@ class CreditViewModel @Inject constructor(
     private fun onContinueClick(focusManager: FocusManager) {
         focusManager.clearFocus()
         nextAction.invoke()
+    }
+
+    fun onHideBottomSheet() {
+        emitBaseEvent(BaseEvent.OnHideBottomSheet)
+    }
+
+    fun onShowBottomSheet() {
+        emitBaseEvent(BaseEvent.OnShowBottomSheet)
     }
 
     private fun moveToStep(step: Int) {
@@ -256,6 +267,7 @@ class CreditViewModel @Inject constructor(
                 saveCreditStepsHelper.start(event.screenConfigData)
             }
             is OnCallMutationSaveCreditFlowStep -> onCallMutationSaveCreditFlowStep()
+            is OnShowBottomSheet -> onShowBottomSheet()
         }
     }
 
@@ -294,11 +306,17 @@ class CreditViewModel @Inject constructor(
         data class OnCurrencySymbolValueChange(val currencySymbol: String) : UIEvent()
         data class OnUpdateScreenConfigData(val screenConfigData: List<CreditCatalog?>?) : UIEvent()
         object OnCallMutationSaveCreditFlowStep : UIEvent()
+        object OnShowBottomSheet : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object OnShowBottomSheet : BaseEvent()
+        object OnHideBottomSheet : BaseEvent()
     }
 
     companion object {
-        const val CREDIT_TOTAL_STEPS = 7
-        const val CREDIT_INDICATOR_TOTAL_STEPS = 5
+        const val CREDIT_TOTAL_STEPS = 8
+        const val CREDIT_INDICATOR_TOTAL_STEPS = 6
         const val BANNER_TIME = 3000L
     }
 }

@@ -1,11 +1,15 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -40,7 +44,7 @@ fun CustomRadioButton(
         var radioUnSelectedColor = GrayScale500
         var textColor = GrayScale800
         if (isSystemInDarkTheme()) {
-            radioSelectedColor = DefaultWhite
+            radioSelectedColor = Primary500
             radioUnSelectedColor = GrayScale400
             textColor = DefaultWhite
         }
@@ -56,5 +60,55 @@ fun CustomRadioButton(
             text = text,
             color = textColor
         )
+    }
+}
+
+/**
+ * CustomRadioButtonsLayout: Layout to show radiobutton groups depending on the orientation
+ *
+ * @param modifier: Modifier applied to container
+ * @param options: List of options to be displayed in the radio button
+ * @param orientation: Orientation of the layout
+ * @param onOptionSelected: Function that return the selected value
+ */
+@Composable
+fun CustomRadioButtonsLayout(
+    modifier: Modifier = Modifier,
+    options: List<String>,
+    orientation: Orientation = Orientation.Vertical,
+    onOptionSelected: (String) -> Unit
+) {
+    val selectedOption = remember { mutableStateOf("") }
+
+    if (orientation == Orientation.Vertical) {
+        Column(modifier = modifier) {
+            options.forEach { text ->
+                CustomRadioButton(
+                    modifier = Modifier,
+                    radioModifier = Modifier,
+                    text = text,
+                    selected = (text == selectedOption.value),
+                    onOptionSelected = {
+                        selectedOption.value = text
+                        onOptionSelected(text)
+                    }
+                )
+            }
+        }
+    } else {
+        Row(modifier = modifier) {
+            options.forEach { text ->
+                CustomRadioButton(
+                    modifier = Modifier,
+                    radioModifier = Modifier,
+                    text = text,
+                    selected = (text == selectedOption.value),
+                    onOptionSelected = {
+                        selectedOption.value = text
+                        onOptionSelected(text)
+                    }
+                )
+            }
+        }
     }
 }

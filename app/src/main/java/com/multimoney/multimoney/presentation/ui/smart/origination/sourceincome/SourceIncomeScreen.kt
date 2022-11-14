@@ -42,11 +42,16 @@ fun ShowSelectedSourceIncomeOption(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
-        SourceIncomeOptionType.FormalSalaried.id -> SmartCrSalaryScreen(sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel)
-        SourceIncomeOptionType.Retired.id -> SmartRetiredScreen(sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel)
-        SourceIncomeOptionType.OtherSV.id, SourceIncomeOptionType.OtherCR.id -> OtherIncomeScreen(
+        SourceIncomeOptionType.FormalSalaried.id -> SmartCrSalaryScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
+        SourceIncomeOptionType.Retired.id -> SmartRetiredScreen(
+            sharedViewModel = sharedViewModel,
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+        )
+        SourceIncomeOptionType.OtherSV.id,
+        SourceIncomeOptionType.OtherCR.id -> OtherIncomeScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )

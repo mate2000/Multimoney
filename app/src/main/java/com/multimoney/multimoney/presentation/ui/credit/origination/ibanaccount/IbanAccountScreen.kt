@@ -34,12 +34,13 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnResetAccountNumber
+import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnOpenInformativeDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.VisualTransformationMasks
+import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
@@ -103,7 +104,10 @@ fun IbanAccountScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background).padding(horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background)
+            .padding(horizontal = 16.dp)
     ) {
         Text(
             text = stringResource(id = R.string.iban_account_tile),
@@ -114,7 +118,9 @@ fun IbanAccountScreen(
 
         if (viewModel.uiState.ibanSuccess) {
             CustomInfoButton(
-                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
                 startIcon = if (viewModel.validateAccount?.currency == CurrencyType.Dollar.currency) R.drawable.ic_account_dollar else R.drawable.ic_account_colon,
                 title = viewModel.validateAccount?.bankName ?: "",
                 subtitle = getMaskedAccount(
@@ -123,7 +129,7 @@ fun IbanAccountScreen(
                 ),
                 endIcon = R.drawable.ic_edit_green,
                 onEndIconClick = {
-                    viewModel.onUIEvent(OnResetAccountNumber)
+                    viewModel.onUIEvent(OnOpenInformativeDialog)
                 }
             )
         } else {
@@ -184,5 +190,12 @@ fun IbanAccountScreen(
                 )
             )
         }
+    }
+    if (viewModel.uiState.dialogParameters.isActive.value) {
+        CustomDialog(
+            message = viewModel.uiState.dialogParameters.description,
+            openDialogCustom = viewModel.uiState.dialogParameters.isActive,
+            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
+        )
     }
 }

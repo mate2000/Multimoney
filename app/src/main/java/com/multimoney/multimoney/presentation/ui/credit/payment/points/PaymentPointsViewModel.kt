@@ -9,7 +9,7 @@ import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -22,7 +22,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPo
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateLocation
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -116,11 +116,11 @@ class PaymentPointsViewModel @Inject constructor(
         val queryValue: String = "",
         val pointsItemsList: List<PaymentPoint?> = listOf(),
         val dialogParameters: DialogParameters = DialogParameters(
-            titleResource = R.string.payment_points_dialog_title,
-            descriptionResource = R.string.payment_points_dialog_description,
+            titleResource = string.payment_points_dialog_title,
+            descriptionResource = string.payment_points_dialog_description,
             isActive = mutableStateOf(false),
-            positiveResource = R.string.payment_points_dialog_positive_button,
-            negativeResource = R.string.payment_points_dialog_negative_button
+            positiveResource = string.payment_points_dialog_positive_button,
+            negativeResource = string.payment_points_dialog_negative_button
         ),
         val isLoading: Boolean = false
     )

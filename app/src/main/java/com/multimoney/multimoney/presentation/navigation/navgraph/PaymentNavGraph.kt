@@ -226,8 +226,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         composable(
             route = Screen.PaymentVoucherScreen.route,
             arguments = listOf(
-                navArgument(USER) {
-                },
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
                 },
@@ -240,14 +238,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(CLIENT_BANK_ACCOUNT) {
                     type = ClientBankAccountNavType()
                 },
-                navArgument(PAYMENT_DATE) {
-                },
-                navArgument(CURRENT_AMOUNT_VALUE) {
-                },
-                navArgument(PAYMENT_LABEL) {
-                },
-                navArgument(EXCHANGE_RATE_LABEL) {
-                },
                 navArgument(SHOULD_DISPLAY_EXCHANGE_RATE) {
                     type = NavType.BoolType
                 },
@@ -257,9 +247,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(IS_AUTOMATIC_PAYMENT_CHECKED) {
                     type = NavType.BoolType
                 },
-                navArgument(REFERENCE_NUMBER) {
-                },
-
             )
         ) {
             PaymentVoucherScreen(

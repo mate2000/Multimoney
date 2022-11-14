@@ -67,9 +67,17 @@ class SaveCreditStepsHelper @Inject constructor() {
         }
     }
 
-    fun saveStepThree(user: String?, companyName: String, startedJobDate: String, companyPhone: String) {
+    fun saveStepThree(
+        idBrand: Int,
+        user: String?,
+        companyName: String,
+        startedJobDate: String,
+        companyPhone: String,
+        dateFirstJob: String
+    ) {
         val companyNameQuestion = getScreenConfigQuestion(COMPANY_NAME, companyName)
         val companyStartedJobDateQuestion = getScreenConfigQuestion(STARTED_JOB_DATE, startedJobDate)
+        val companyStartedFirstJobDateQuestion = getScreenConfigQuestion(STARTED_FIRST_JOB_DATE, startedJobDate)
         val companyPhoneQuestion = getScreenConfigQuestion(COMPANY_PHONE, companyPhone)
 
         val creditInfoQuestionCompanyName = textQuestion(user, companyName, companyNameQuestion)
@@ -80,6 +88,11 @@ class SaveCreditStepsHelper @Inject constructor() {
 
         val creditInfoQuestionCompanyPhone = textQuestion(user, companyPhone, companyPhoneQuestion)
         saveScreenQuestionData(creditInfoQuestionCompanyPhone)
+
+        if (idBrand == Brand.CostaRica.id) {
+            val creditInfoQuestionStartedFirstJobDate = textQuestion(user, dateFirstJob, companyStartedFirstJobDateQuestion)
+            saveScreenQuestionData(creditInfoQuestionStartedFirstJobDate)
+        }
     }
 
     fun saveStepFour(
@@ -292,6 +305,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         const val SALARY = "Ingreso Mensual"
         const val COMPANY_NAME = "Nombre Empresa"
         const val STARTED_JOB_DATE = "Fecha Ingreso Laboral Actual"
+        const val STARTED_FIRST_JOB_DATE = "Fecha Inicio Actividad Laboral"
         const val COMPANY_PHONE = "Teléfono del trabajo"
         const val COMPANY_ADDRESS = "Detalle Dirección Empresa"
         const val HOME_ADDRESS = "Detalle Dirección Casa"

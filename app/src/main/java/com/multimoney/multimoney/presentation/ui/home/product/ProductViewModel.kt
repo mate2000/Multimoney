@@ -51,10 +51,10 @@ import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -247,10 +247,9 @@ class ProductViewModel @Inject constructor(
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-            encodeData(
-                configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true }
-            )
-            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}"
+            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}" +
+                "/${balanceCredit?.getFirstSummary()?.minPaymentLabel}"
         }
         navigateTo(route)
     }

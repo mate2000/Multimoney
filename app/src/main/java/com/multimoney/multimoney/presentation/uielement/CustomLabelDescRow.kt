@@ -25,7 +25,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency50
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 
 /**
- * CustomInformativeText: Label description text to match design style across the whole app, in order to use it.
+ * CustomLabelDescRow: Label description text to match design style across the whole app, in order to use it.
  *
  * Parameters:
  * @param modifier: Apply style.
@@ -37,7 +37,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 
 @Composable
 @Preview
-fun CustomLabelDescriptionText(
+fun CustomLabelDescRow(
     modifier: Modifier = Modifier,
     labelText: String = "",
     descriptionText: String = "",

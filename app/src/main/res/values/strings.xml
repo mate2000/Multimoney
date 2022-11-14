@@ -317,6 +317,17 @@
     <string name="credit_bank_account_number_error" translatable="false">&lt;b>Revisar formato,&lt;/b> la cuenta no es válida</string>
     <string name="credit_bank_validate_account_number" translatable="false">Validar cuenta</string>
 
+    <!-- Location   -->
+    <string name="payment_location_maps_address_button" translatable="false">Ver dirección en Maps</string>
+    <string name="payment_location_maps_info_sv" translatable="false">Podés mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_info_gt" translatable="false">Puedes mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_address" translatable="false">Dirección</string>
+    <string name="payment_location_maps_opening_time" translatable="false">Horario</string>
+    <string name="payment_location_maps_payment_amount" translatable="false">Monto a pagar:</string>
+    <string name="payment_location_maps_payment_id" translatable="false">Nº de pagaré:</string>
+    <string name="payment_location_intent_uri_format" translatable="false">geo:%s,%s</string>
+    <string name="payment_location_intent_package" translatable="false">com.google.android.apps.maps</string>
+
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>
     <string name="credit_monthly_income_income_label" translatable="false">Ingreso mensual</string>
@@ -329,13 +340,14 @@
     <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
 
     <!-- Credit Job-->
-    <string name="credit_job_title" translatable="false">Contanos de la empresa en la que trabajás</string>
+    <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
     <string name="credit_job_title_gt" translatable="false">Cuéntanos de la empresa en la que trabajas</string>
     <string name="credit_job_workplace_label" translatable="false">Nombre de la empresa</string>
     <string name="credit_job_workplace_required" translatable="false">Nombre de la empresa requerido</string>
     <string name="credit_job_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="credit_job_date_required" translatable="false">Fecha de ingreso requerida</string>
     <string name="credit_job_joined_date" translatable="false">Fecha en la que ingresaste</string>
+    <string name="credit_job_joined_date_first_job" translatable="false">Fecha en que ingresaste a tu primer trabajo</string>
     <string name="credit_job_phone_number" translatable="false">Número de teléfono</string>
     <string name="credit_job_phone_placeholder_sv" translatable="false">0000 0000</string>
     <string name="credit_job_phone_placeholder_cr" translatable="false">0000 0000</string>
@@ -625,6 +637,13 @@
     <string name="smart_ind_professional_job_address" translatable="false">Dirección Laboral</string>
     <string name="smart_ind_professional_address_required" translatable="false">Dirección laboral requerido</string>
     <string name="smart_ind_professional_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
+
+    <!-- Smart Own Business Personal Title -->
+    <string name="smart_business_personal_title" translatable="false">Negocio propio a título personal</string>
+    <string name="smart_business_personal_name" translatable="false">Nombre del emprendimiento</string>
+    <string name="smart_business_personal_name_required" translatable="false">Nombre del emprendimiento requerido</string>
+    <string name="smart_business_personal_income_label" translatable="false">Ingreso mensual</string>
+    <string name="smart_business_personal_income_label_required" translatable="false">Ingreso mensual requerido</string>
 
     <!--Smart Facta screen-->
     <string name="smart_facta_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>

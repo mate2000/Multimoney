@@ -17,6 +17,7 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.Transfe
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.location.PaymentLocationDetailsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
@@ -34,10 +35,19 @@ const val CLIENT_BANK_ACCOUNT = "client_bank_account"
 const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
+const val PAYMENT_AMOUNT = "payment_amount"
+const val PAYMENT_ID = "payment_id"
 const val PAYMENT_DATE = "payment_date"
 const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
 const val IS_EDIT_PAYMENT_SCHEDULE = "is_edit_payment_schedule"
 const val PREVIOUS_SCREEN = "previous_screen"
+
+// Payment maps location parameters
+const val POINT_NAME = "point_name"
+const val POINT_ADDRESS = "point_address"
+const val POINT_SCHEDULE = "point_schedule"
+const val POINT_LATITUDE = "point_latitude"
+const val POINT_LONGITUDE = "point_longitude"
 
 fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
     navigation(
@@ -309,6 +319,27 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         ) {
             PaymentPointsScreen(
+                onNavigate = { navController.navigate(it.route) },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.PaymentLocationDetailsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            PaymentLocationDetailsScreen(
+                onNavigate = { navController.navigate(it.route) },
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(

@@ -20,7 +20,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButtonBig
@@ -81,7 +80,7 @@ fun VisaCardScreen(
                     viewModel.onUIEvent(UIEvent.OnAvailableAmountClick)
                 },
                 shape = RoundedCornerShape(24.dp),
-                background = WhiteTransparency10,
+                background = MultimoneyTheme.colors.backgroundInformativeChip,
                 startIcon = R.drawable.ic_information,
                 startIconTint = MultimoneyTheme.colors.textInformation,
                 size = Large

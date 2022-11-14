@@ -631,4 +631,8 @@
         <item>Si, lo soy</item>
         <item>No, no lo soy</item>
     </string-array>
+
+    <!-- Validate identity -->
+    <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
+    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
 </resources>

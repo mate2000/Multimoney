@@ -36,20 +36,10 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 
-@OptIn(FlowPreview::class)
 @Composable
 fun DocumentGenerationScreen(
     viewModel: SignDocumentProcessViewModel
 ) {
-    val openStepDebounce = remember { MutableStateFlow(true) }
-    val openStepFlow: Flow<Boolean> = remember {
-        openStepDebounce.debounce(TIME_TO_WAIT_IN_MILLI_SECOND)
-            .onEach { status ->
-                viewModel.onUIEvent(SignDocumentProcessViewModel.UIEvent.OnChangeScreen(SIGN_DOCUMENTS_STEP.value))
-                flowOf(status)
-            }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -97,10 +87,4 @@ fun DocumentGenerationScreen(
             )
         }
     }
-
-    // this is required to execute the debounce
-    val openStepFlowValue by openStepFlow.collectAsState(false)
 }
-
-const val DUMMY_URL = "www.google.com"
-const val TIME_TO_WAIT_IN_MILLI_SECOND = 30000L

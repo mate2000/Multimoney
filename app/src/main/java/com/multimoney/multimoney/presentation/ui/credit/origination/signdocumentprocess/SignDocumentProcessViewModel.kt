@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -30,8 +31,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -106,24 +107,19 @@ class SignDocumentProcessViewModel @Inject constructor(
                 }
             }
             VALIDATE_IDENTITY.value -> {
-                handleOnfidoStatus(creditContractEvent, true)
+                handleOnfidoStatus(creditContractEvent)
             }
         }
     }
 
-    private fun handleOnfidoStatus(creditContractEvent: CreditContractEvent?, wasValidateIdentityShow: Boolean = false) {
+    private fun handleOnfidoStatus(
+        creditContractEvent: CreditContractEvent?
+    ) {
         when (creditContractEvent?.statusOnfido?.lowercase()) {
             CreditOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
-                if (wasValidateIdentityShow) {
-                    uiState = uiState.copy(
-                        signDocumentProcessStep = VALIDATE_IDENTITY.value
-                    )
-                } else {
-                    popAndNavigateTo(
-                        route = ContinueValidatingOnfidoScreen.route,
-                        popTo = Screen.SignDocumentProcessScreen.route
-                    )
-                }
+                uiState = uiState.copy(
+                    signDocumentProcessStep = VALIDATE_IDENTITY.value
+                )
             }
             CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
                 popAndNavigateTo(
@@ -138,6 +134,13 @@ class SignDocumentProcessViewModel @Inject constructor(
                 onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value)
             }
         }
+    }
+
+    private fun onNavigateToContinueValidatingIdentity() {
+        popAndNavigateTo(
+            route = ContinueValidatingOnfidoScreen.route,
+            popTo = Screen.SignDocumentProcessScreen.route
+        )
     }
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
@@ -167,6 +170,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnNavigateToHome -> onNavigateToHome()
+            is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
         }
     }
 
@@ -175,9 +179,11 @@ class SignDocumentProcessViewModel @Inject constructor(
         data class OnInitializeText(val dialogDescription: String) : UIEvent()
         object OnCloseClick : UIEvent()
         object OnNavigateToHome : UIEvent()
+        object OnNavigateToContinueValidatingIdentity : UIEvent()
     }
 
     companion object {
         private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
+        const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 10000L
     }
 }

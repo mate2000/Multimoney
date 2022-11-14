@@ -49,11 +49,8 @@ fun CreditDocumentScreen(
     val context = LocalContext.current
     val launchOnFidoActivityResult = rememberLauncherForActivityResult(StartActivityForResult()) { result ->
         viewModel.onUIEvent(
-            OnOpenOnFidoSdk(result, onOnFidoCompleted = {
-                sharedViewModel.onUIEvent(
-                    OnNextStep
-                )
-            }, onOnFidoError = {
+            OnOpenOnFidoSdk(
+                result, onOnFidoError = {
                     sharedViewModel.onUIEvent(
                         OnOpenDialogValueChange(
                             it
@@ -65,7 +62,17 @@ fun CreditDocumentScreen(
                             it
                         )
                     )
-                })
+                }, onNextStep = {
+                    sharedViewModel.onUIEvent(
+                        OnNextStep
+                    )
+                },
+                sharedViewModel.pkUser.toLong(),
+                sharedViewModel.identification,
+                sharedViewModel.idBrand.toInt(),
+                sharedViewModel.idUserRequest.toLong(),
+                sharedViewModel.email
+            )
         )
     }
 

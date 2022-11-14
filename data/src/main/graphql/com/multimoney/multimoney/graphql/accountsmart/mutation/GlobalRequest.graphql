@@ -12,6 +12,7 @@ mutation GlobalRequest(
     $aboutCompany: String!,
     $institutionPension: String!,
     $idAddressLevel3: Long!,
+    $positionJob: String!
     $idEconomicActivity: Long!,
     $income: Float!,
     $addressDetail: String!,
@@ -42,6 +43,7 @@ mutation GlobalRequest(
         idAddressLevel1 : $idAddressLevel1
         idAddressLevel2 : $idAddressLevel2
         idAddressLevel3 : $idAddressLevel3
+        positionJob : $positionJob
         idEconomicActivity : $idEconomicActivity
         income : $income
         addressDetail: $addressDetail

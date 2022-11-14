@@ -15,6 +15,7 @@ data class AccountSmartData(
     var idAddressLevel1: Long? = 0,
     var idAddressLevel2: Long? = 0,
     var idAddressLevel3: Long? = 0,
+    var positionJob: String? = "",
     var idEconomicActivity: Long? = 0,
     var institutionPension: String = "",
     var income: Float? = 0.0f,

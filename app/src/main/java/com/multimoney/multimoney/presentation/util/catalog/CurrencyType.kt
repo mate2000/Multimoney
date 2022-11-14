@@ -26,8 +26,8 @@ sealed class CurrencyType(
     object Dollar : CurrencyType(
         2,
         "02",
-        "DOLARES",
-        R.drawable.ic_bank_account_dollar,
+        "DÓLARES",
+    R.drawable.ic_bank_account_dollar,
         R.string.payment_account_title_dollar,
         R.drawable.ic_payment_dollar,
         R.string.payment_fee_one_option,

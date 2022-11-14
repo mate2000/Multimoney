@@ -47,29 +47,24 @@ fun PaymentAmountBottomSheetScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .padding(vertical = 24.dp)
         ) {
             if (viewModel.isMultiCurrency()) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = viewModel.getMultiCurrencyAmountIncludingExchange(),
+                    text = viewModel.getMultiCurrencyAmountIncludingExchangeFormatted(),
                     style = Typography.h4.copy(fontWeight = FontWeight.W600),
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = viewModel.uiState.currentAmountValueString,
+                    text = if (viewModel.uiState.isMinimumSelected) {
+                        viewModel.uiState.minimumPaymentLabel
+                    } else {
+                        viewModel.uiState.maximumPaymentLabel
+                    },
                     style = Typography.body2.copy(fontWeight = FontWeight.W600),
-                    color = MultimoneyTheme.colors.text,
-                    textAlign = TextAlign.Center
-                )
-            } else if (viewModel.shouldDisplayExchangeRate()) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = viewModel.getConvertedAmountFormatted(),
-                    style = Typography.h4.copy(fontWeight = FontWeight.W600),
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Center
                 )
@@ -93,26 +88,26 @@ fun PaymentAmountBottomSheetScreen(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp),
+                    .height(72.dp),
                 startIcon = viewModel.uiState.clientBankAccount?.idCurrency?.getCurrency()?.accountIcon ?: 0,
                 title = viewModel.uiState.clientBankAccount?.bankDescription ?: "",
                 subtitle = getMaskedAccount(
                     viewModel.uiState.clientBankAccount?.accountNumber ?: "",
                     stringResource(id = R.string.payment_account_masked_text)
-                )
+                ),
+                endIcon = null,
+                enable = false
             )
             if (viewModel.shouldDisplayExchangeRate()) {
                 Spacer(modifier = Modifier.height(32.dp))
                 CurrencyExchangeRow(viewModel)
             }
-            if (viewModel.isMultiCurrency()) {
-                Spacer(modifier = Modifier.height(32.dp))
-                CustomCheckBox(
-                    checked = viewModel.uiState.isAutomaticProgrammedPaymentChecked,
-                    onCheckedChange = { viewModel.onUIEvent(UIEvent.OnAutomaticProgrammedPaymentCheckedChanged(it)) },
-                    text = stringResource(id = R.string.payment_amount_bottom_sheet_enable_automatic_payment)
-                )
-            }
+            Spacer(modifier = Modifier.height(32.dp))
+            CustomCheckBox(
+                checked = viewModel.uiState.isAutomaticProgrammedPaymentChecked,
+                onCheckedChange = { viewModel.onUIEvent(UIEvent.OnAutomaticProgrammedPaymentCheckedChanged(it)) },
+                text = stringResource(id = R.string.payment_amount_bottom_sheet_enable_automatic_payment)
+            )
 
             Spacer(modifier = Modifier.height(40.dp))
             CustomButton(
@@ -143,7 +138,7 @@ fun CurrencyExchangeRow(viewModel: PaymentAmountViewModel) {
                 textAlign = TextAlign.Start
             )
             Text(
-                text = viewModel.uiState.exchangeRateLabel.toString(),
+                text = viewModel.getExchangeRateFormatted(),
                 style = Typography.body2,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -165,7 +160,11 @@ fun CurrencyExchangeRow(viewModel: PaymentAmountViewModel) {
                 textAlign = TextAlign.Start
             )
             Text(
-                text = viewModel.uiState.exchangeConvertedAmount.toString(),
+                text = if (viewModel.isMultiCurrency()) {
+                    viewModel.getMultiCurrencyAmountIncludingExchangeFormatted()
+                } else {
+                    viewModel.getConvertedAmountFormatted()
+                },
                 style = Typography.body2,
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start

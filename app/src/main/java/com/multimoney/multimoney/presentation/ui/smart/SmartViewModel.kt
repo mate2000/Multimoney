@@ -1,5 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +18,6 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -24,6 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
@@ -40,6 +44,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 
+@OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class SmartViewModel @Inject constructor(
     private val queryStepByStepUseCase: QueryStepByStepUseCase,
@@ -114,7 +119,6 @@ class SmartViewModel @Inject constructor(
                 idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
                 income = accountSmartData?.income?.toDouble() ?: 0.0,
                 addressDetail = accountSmartData?.addressDetail ?: "",
-                isPEP = accountSmartData?.isPEP ?: false,
                 user = accountSmartData?.user ?: "",
                 idBrand = accountSmartData?.idBrand ?: 0,
                 currentStep = accountSmartData?.currentStep ?: "",
@@ -127,7 +131,12 @@ class SmartViewModel @Inject constructor(
                 institutionPension = accountSmartData?.institutionPension.orEmpty(),
                 specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
                 entrepreneurship = accountSmartData?.entrepreneurship ?: "",
-                legalID = accountSmartData?.legalID ?: ""
+                legalID = accountSmartData?.legalID ?: "",
+                isActivityOfArt15 = accountSmartData?.isActivityOfArt15 ?: false,
+                isUSCitizen = accountSmartData?.isUSCitizen ?: false,
+                isPEP = accountSmartData?.isPEP ?: false,
+                isUSTaxPayer = accountSmartData?.isUSTaxPayer ?: false,
+                isTaxPayer = accountSmartData?.isTaxPayer ?: false
             ).collectLatest { result ->
                 result.onSuccess {
                     onUIEvent(OnLoadingValueChange(false))
@@ -172,10 +181,10 @@ class SmartViewModel @Inject constructor(
         focusManager.clearFocus()
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = string.general_close_dialog_title,
+                titleResource = string.smart_close_origination_dialog_title,
                 description = closeDialogDescription,
-                positiveResource = string.sign_up_close_dialog_positive_button_text,
-                negativeResource = string.sign_up_close_dialog_negative_button_text,
+                positiveResource = string.common_leave,
+                negativeResource = string.button_continue,
                 positiveAction = { navigateBackToHome() },
                 isActive = mutableStateOf(true)
             )
@@ -217,15 +226,11 @@ class SmartViewModel @Inject constructor(
             if (previousStep > SmartSteps.One.id || uiState.currentStep == SmartSteps.Two.id) {
                 uiState = uiState.copy(
                     currentStep = previousStep,
-                    isCloseVisible = previousStep > SmartSteps.One.id
+                    isCloseVisible = previousStep >= SmartSteps.One.id
                 )
             } else {
-                popAndNavigateTo(
-                    route = Screen.HomeScreen.route,
-                    popTo = Screen.SmartScreen.route
-                )
+                navigateBackToHome()
             }
-            navigateBackToHome()
         }
     }
 
@@ -240,7 +245,7 @@ class SmartViewModel @Inject constructor(
         if (nextStep <= SMART_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
-                isCloseVisible = nextStep > SmartSteps.One.id
+                isCloseVisible = nextStep >= SmartSteps.One.id
             )
         }
     }
@@ -267,6 +272,18 @@ class SmartViewModel @Inject constructor(
         )
     }
 
+    private fun onClickBottomSheet() {
+        uiState = if (uiState.bottomSheetState.isVisible) {
+            uiState.copy(
+                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden)
+            )
+        } else {
+            uiState.copy(
+                bottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Expanded)
+            )
+        }
+    }
+
     /**
      * this function will update the accountSmartData object with the new data coming from
      * the child screen after tapping on the "continue" button, also it will trigger the
@@ -277,28 +294,36 @@ class SmartViewModel @Inject constructor(
         callMutationGlobalRequestUseCase()
     }
 
+    private fun onInitializeTexts(description: String) {
+        closeDialogDescription = description
+    }
+
     data class UIState(
         // Interactions
         val currentStep: Int = SmartSteps.One.id,
-        val isCloseVisible: Boolean = false,
+        val isCloseVisible: Boolean = true,
         val isContinueEnabled: Boolean = false,
-        val buttonTextRes: Int = R.string.button_continue,
+        val buttonTextRes: Int = string.button_continue,
         val isLoading: Boolean = false,
         val isContinueVisible: Boolean = true,
         val isAlertResultVisible: Boolean = false,
         val alertResultTitle: String? = null,
         val alertResultDescription: String? = null,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+        var bottomSheet: (@Composable () -> Unit) = {}
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
+            is OnClickBottomSheet -> onClickBottomSheet()
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
                 event.overridePreviousAction,
                 event.nextStep,
-                event.previousStep,
+                event.previousStep
             )
+            is UIEvent.OnInitializeText -> onInitializeTexts(event.description)
             is OnBackClick -> onBackClick(event.focusManager)
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
@@ -318,7 +343,7 @@ class SmartViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-
+        data class OnInitializeText(val description: String) : UIEvent()
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
@@ -341,11 +366,12 @@ class SmartViewModel @Inject constructor(
         object OnPreviousStep : UIEvent()
         data class OnContinueVisible(
             val visible: Boolean,
-            val textResId: Int = R.string.button_continue
+            val textResId: Int = string.button_continue
         ) : UIEvent()
 
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
+        object OnClickBottomSheet : UIEvent()
     }
 
     companion object {

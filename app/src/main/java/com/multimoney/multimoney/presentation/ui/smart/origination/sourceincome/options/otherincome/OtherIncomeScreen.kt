@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -54,7 +55,7 @@ fun OtherIncomeScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = if (sharedViewModel.idBrandAsInt == ID_BRAND_CR) {
+                                idEconomicActivity = if (sharedViewModel.idBrandAsInt == Brand.CostaRica.id) {
                                     SourceIncomeOptionType.OtherCR.id.toLong()
                                 } else SourceIncomeOptionType.OtherSV.id.toLong(),
                                 income = viewModel.uiState.incomeAmount.toFloat(),
@@ -147,5 +148,3 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
         )
     }
 }
-
-const val ID_BRAND_CR = 5

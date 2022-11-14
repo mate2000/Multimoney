@@ -20,6 +20,8 @@
     <string name="gender" translatable="false">Género</string>
     <string name="civil_state" translatable="false">Estado civil</string>
     <string name="profession" translatable="false">Profesión</string>
+    <string name="relationship" translatable="false">Parentesco</string>
+    <string name="into" translatable="false">Ingresar</string>
     <string name="empty" translatable="false"></string>
     <string name="understood" translatable="false">Entendido</string>
     <string name="activate" translatable="false">Activar</string>
@@ -503,12 +505,18 @@
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+    <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>
+    <string name="smart_account_beneficiaries_percentage" translatable="false">Porcentaje a otorgar (%)</string>
+    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario</string>
+    <string name="smart_account_beneficiary_content" translatable="false">%1$s | %2$s</string>
+    <string name="smart_account_beneficiary_max_percentage_dialog_title" translatable="false">Superaste el máximo permitido</string>
+    <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
 
     <!-- Smart - Close origin flow -->
     <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
-
+    
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
     <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>

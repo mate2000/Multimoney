@@ -26,6 +26,7 @@ data class AccountSmartData(
     val aboutCompany: String? = "",
     val companyName: String? = "",
     var specifiesIncomeSource: String? = "",
+    var listBeneficiaries: List<Beneficiary>? = listOf(),
     var entrepreneurship: String = "",
     var legalID: String? = "",
     var isPEP: Boolean? = false,

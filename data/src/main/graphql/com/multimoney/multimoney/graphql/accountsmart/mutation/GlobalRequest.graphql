@@ -26,7 +26,8 @@ mutation GlobalRequest(
     $isUSCitizen: Boolean!
     $isPEP: Boolean!
     $isUSTaxPayer: Boolean!
-    $isTaxPayer: Boolean!
+    $isTaxPayer: Boolean!,
+    $listBeneficiaries: [BeneficiaryRequestDtoInput!]
 ) {
     globalRequest(globalRequestInput: {
         pkUser: $pkUser
@@ -57,6 +58,7 @@ mutation GlobalRequest(
         isPEP: $isPEP
         isUSTaxPayer: $isUSTaxPayer
         isTaxPayer: $isTaxPayer
+        listBeneficiaries: $listBeneficiaries
     }) {
         result {
             idGlobalRequest

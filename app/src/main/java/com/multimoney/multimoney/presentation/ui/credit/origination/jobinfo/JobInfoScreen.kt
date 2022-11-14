@@ -120,7 +120,7 @@ fun JobInfoScreen(
 
         CustomDatePicker(
             context = context,
-            modifier = Modifier.padding(top = 32.dp),
+            modifier = Modifier.padding(top = 16.dp),
             labelText = stringResource(id = R.string.credit_job_joined_date),
             placeHolder = stringResource(id = R.string.credit_job_date_placeholder),
             value = viewModel.uiState.date,
@@ -170,7 +170,7 @@ fun JobInfoScreen(
                 focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.credit_job_phone_number),
-            modifier = Modifier.padding(top = 44.dp),
+            modifier = Modifier.padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_job_phone_required),
             customTransformation = MaskVisualTransformation(
@@ -182,7 +182,7 @@ fun JobInfoScreen(
         if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {
             CustomDatePicker(
                 context = context,
-                modifier = Modifier.padding(top = 32.dp),
+                modifier = Modifier.padding(top = 16.dp),
                 labelText = stringResource(id = R.string.credit_job_joined_date_first_job),
                 placeHolder = stringResource(id = R.string.credit_job_date_placeholder),
                 value = viewModel.uiState.dateFirstJob,

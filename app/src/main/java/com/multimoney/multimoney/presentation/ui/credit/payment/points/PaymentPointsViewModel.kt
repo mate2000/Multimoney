@@ -13,8 +13,8 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
@@ -39,12 +39,12 @@ class PaymentPointsViewModel @Inject constructor(
     // Stateless
     var idBrand: Int? = null
     private var paymentAmount: String? = ""
-    private var paymentId: String? = ""
+    private var creditNumber: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
-        paymentId = savedStateHandle[PAYMENT_ID] ?: ""
+        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
     }
 
     private fun onItemPointClick(
@@ -54,7 +54,7 @@ class PaymentPointsViewModel @Inject constructor(
         pointLatitude: String,
         pointLongitude: String
     ) =
-        navigateTo(route = "${Screen.PaymentLocationDetailsScreen.baseRoute}/$pointName/$pointAddress/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$paymentId/$idBrand")
+        navigateTo(route = "${Screen.PaymentLocationDetailsScreen.baseRoute}/$pointName/$pointAddress/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$creditNumber/$idBrand")
 
     private fun onQueryValueChange(value: String) {
         uiState = uiState.copy(
@@ -146,7 +146,6 @@ class PaymentPointsViewModel @Inject constructor(
             val pointLatitude: String,
             val pointLongitude: String
         ) : UIEvent()
-
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
     }
 }

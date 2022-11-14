@@ -42,7 +42,6 @@ fun PaymentLocationDetailsScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-        viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
     Column(
@@ -66,7 +65,7 @@ fun PaymentLocationDetailsScreen(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 54.dp, bottom = 24.dp),
+                    .padding(top = 36.dp, bottom = 24.dp),
                 text = viewModel.pointName,
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.text,
@@ -96,7 +95,7 @@ fun PaymentLocationDetailsScreen(
                 // Payment ID
                 CustomLabelDescColumn(
                     labelText = stringResource(id = R.string.payment_location_maps_payment_id),
-                    descriptionText = viewModel.paymentId
+                    descriptionText = viewModel.creditNumber
                 )
             }
 

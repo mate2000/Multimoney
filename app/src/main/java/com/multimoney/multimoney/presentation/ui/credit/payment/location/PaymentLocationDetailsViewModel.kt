@@ -10,6 +10,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
@@ -41,23 +42,23 @@ class LocationDetailsViewModel @Inject constructor(
     var pointLatitude: String = ""
     var pointLongitude: String = ""
     var paymentAmount: String = ""
-    var paymentId: String = ""
-    var idBrand: String = ""
+    var creditNumber: String = ""
+    var idBrand: Int = 0
 
     init {
         pointName = savedStateHandle[POINT_NAME] ?: ""
         pointAddress = savedStateHandle[POINT_ADDRESS] ?: ""
         pointSchedule = savedStateHandle[POINT_SCHEDULE] ?: ""
-        paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
-        paymentId = savedStateHandle[PAYMENT_ID] ?: ""
         pointLatitude = savedStateHandle[POINT_LATITUDE] ?: ""
         pointLongitude = savedStateHandle[POINT_LONGITUDE] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: ""
+        paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
+        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
     }
 
     private fun onStart() {
         uiState = uiState.copy(
-            informativeText = when (idBrand.toInt()) {
+            informativeText = when (idBrand) {
                 Brand.ElSalvador.id -> R.string.payment_location_maps_info_sv
                 else -> R.string.payment_location_maps_info_gt
             }

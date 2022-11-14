@@ -323,6 +323,8 @@
     <string name="payment_location_maps_opening_time" translatable="false">Horario</string>
     <string name="payment_location_maps_payment_amount" translatable="false">Monto a pagar:</string>
     <string name="payment_location_maps_payment_id" translatable="false">Nº de pagaré:</string>
+    <string name="payment_location_intent_uri_format" translatable="false">geo:%s,%s</string>
+    <string name="payment_location_intent_package" translatable="false">com.google.android.apps.maps</string>
 
     <!-- Credit Monthly Income-->
     <string name="credit_monthly_income_title" translatable="false">¿Cuál es tu ingreso mensual?</string>

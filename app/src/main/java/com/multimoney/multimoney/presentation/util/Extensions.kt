@@ -19,9 +19,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Duration
 
-const val MAP_URI_FORMAT = "geo:%s,%s"
-const val MAP_PACKAGE = "com.google.android.apps.maps"
-
 fun Context.openWhatsAppDeepLink(link: String) {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(link)
@@ -29,9 +26,10 @@ fun Context.openWhatsAppDeepLink(link: String) {
 }
 
 fun Context.openMapsLink(latitude: String, longitude: String) {
-    val mapsIntentUri = Uri.parse(String.format(MAP_URI_FORMAT, latitude, longitude))
+    val mapsIntentUri =
+        Uri.parse(String.format(resources.getString(R.string.payment_location_intent_uri_format), latitude, longitude))
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
-    mapIntent.setPackage(MAP_PACKAGE)
+    mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)
 }
 

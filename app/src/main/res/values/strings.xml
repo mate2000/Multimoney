@@ -612,6 +612,12 @@
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
 
+    <!-- Smart Independent Professional -->
+    <string name="smart_ind_professional_title" translatable="false">Profesional independiente</string>
+    <string name="smart_ind_professional_job_address" translatable="false">Dirección Laboral</string>
+    <string name="smart_ind_professional_address_required" translatable="false">Dirección laboral requerido</string>
+    <string name="smart_ind_professional_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
+
     <!--Smart Facta screen-->
     <string name="smart_facta_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>
     <string name="smart_facta_are_you_or_family_pep" translatable="false">¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?</string>

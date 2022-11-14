@@ -107,6 +107,7 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
             )
         )
         CustomOutlinedTextField(
+            modifier = Modifier.padding(top = 24.dp),
             value = viewModel.uiState.incomeSource,
             onValueChange = {
                 viewModel.onUIEvent(OnIncomeSourceChange(it))
@@ -127,6 +128,7 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
         )
 
         CustomOutlinedTextField(
+            modifier = Modifier.padding(top = 16.dp),
             value = viewModel.uiState.incomeAmount,
             onValueChange = {
                 viewModel.onUIEvent(OnIncomeAmountChange(it))

@@ -89,7 +89,7 @@ class PaymentVoucherViewModel @Inject constructor(
         encodeData(
             clientBankAccount
         )
-        }/$paymentDate/${false}/${Screen.PaymentVoucherScreen.baseRoute}"
+        }/$paymentDate/${false}/${Screen.PaymentVoucherScreen.baseRoute}/${false}"
     )
 
     data class UIState(

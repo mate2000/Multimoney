@@ -64,11 +64,13 @@ import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 @Composable
 @Preview
 fun CardOfferSmartProduct(action: () -> Unit = {}) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-        .clickable { action.invoke() }) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .clickable { action.invoke() }
+    ) {
         Text(
             text = stringResource(id = R.string.home_product_not_approved_title),
             modifier = Modifier.padding(top = 20.dp),
@@ -83,7 +85,7 @@ fun CardOfferSmartProduct(action: () -> Unit = {}) {
         )
         CustomImage(
             modifier = Modifier
-                .padding(top = 32.dp)
+                .padding(top = 44.dp)
                 .align(Alignment.CenterHorizontally),
             drawableResource = R.drawable.ic_chevron_up
         )
@@ -104,41 +106,38 @@ fun CardOfferSmartProduct(action: () -> Unit = {}) {
 @Composable
 @Preview
 fun CardSmartProduct(
-    brandId: Int = 0,
+    currency: String = "",
     profitTotal: String = "",
     profitMonthly: String = "",
     currentMonth: String = "",
-    action: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 12.dp, start = 24.dp, end = 24.dp, bottom = 16.dp)
-            .clickable {
-                action()
-            }
     ) {
         Text(
             text = stringResource(id = R.string.smart_card_balance),
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(
-                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
-            ),
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            )
         )
         Text(
-            text = stringResource(id = brandId.getCurrencySymbolValue(), profitTotal),
+            text = stringResource(id = currency.getCurrencySymbolValue(), profitTotal),
             modifier = Modifier.padding(bottom = 10.dp),
             style = Typography.h4.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
-            ),
+            )
         )
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 40.dp)
+                .padding(top = 24.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(BlackTransparency16),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -153,7 +152,7 @@ fun CardSmartProduct(
                 Text(
                     text = stringResource(id = R.string.smart_card_monthly_profit),
                     modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.text),
+                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.text)
                 )
                 Row {
                     Icon(
@@ -164,7 +163,7 @@ fun CardSmartProduct(
                     Text(
                         text = stringResource(
                             id = R.string.smart_card_monthly_profit_label,
-                            stringResource(id = brandId.getCurrencySymbol()),
+                            stringResource(id = currency.getCurrencySymbol()),
                             profitMonthly,
                             currentMonth
                         ),
@@ -331,7 +330,7 @@ fun CardCreditValidationInProcess() {
             ),
             modifier = Modifier.padding(top = 42.dp),
             shape = RoundedCornerShape(12.dp),
-            background = BlackTransparency20,
+            background = MultimoneyTheme.colors.backgroundInformativeChip,
             startIcon = R.drawable.ic_warning
         )
         Text(
@@ -636,9 +635,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                    ?: 0
-                                                ) > 0
+                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                            ?: 0
+                                        ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

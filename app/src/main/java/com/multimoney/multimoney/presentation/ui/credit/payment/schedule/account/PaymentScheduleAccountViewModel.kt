@@ -86,7 +86,7 @@ class PaymentScheduleAccountViewModel @Inject constructor(
         encodeData(
             clientBankAccount
         )
-        }/$paymentDate/${true}/$previousScreen",
+        }/$paymentDate/${true}/$previousScreen/${false}",
         popTo = Screen.PaymentScheduleAccountScreen.baseRoute
     )
 

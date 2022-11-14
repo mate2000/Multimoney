@@ -40,6 +40,7 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
 private fun BalanceQuery.Account.mapToDomainModel() =
     Account(
         totalBalance = this.totalBalance.toString().toDouble(),
+        currencyCode = this.currencyCode,
         gainedInterest = this.gainedInterest.toString().toDouble()
     )
 

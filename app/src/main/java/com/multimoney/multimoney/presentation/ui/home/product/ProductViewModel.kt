@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
@@ -200,7 +201,8 @@ class ProductViewModel @Inject constructor(
             creditStatus = uiState.userStatus?.infoCredit?.status ?: 0,
             accountStatus = uiState.userStatus?.infoBankAccount?.status ?: 0,
             cryptoStatus = uiState.userStatus?.infoCrypto?.status ?: 0,
-            cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0
+            //cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0
+            cardStatus = 0 // TODO, the API doesn't support this yet
         )
     }
 
@@ -218,6 +220,10 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}"
         )
+    }
+
+    private fun onNavigateToSmartFlow() {
+        navigateTo("${Screen.SmartScreen.baseRoute}/${userName}/${uiState.idBrand}/${pkUser}")
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -363,17 +369,17 @@ class ProductViewModel @Inject constructor(
                 ""
             ),
             CreditOfferAndTip(
-                "1",
-                "Ahorra Smart",
-                "La mejor tasa del 3.5% anual",
+                "2",
+                "Solicitar Credito",
+                "4,000",
                 "Solicitar",
                 "",
                 ""
             ),
             CreditOfferAndTip(
-                "1",
-                "Ahorra Smart",
-                "La mejor tasa del 3.5% anual",
+                "3",
+                "Solicitar Credito",
+                "4,000",
                 "Solicitar",
                 "",
                 ""
@@ -428,6 +434,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
+            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
@@ -454,6 +461,7 @@ class ProductViewModel @Inject constructor(
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToCreditScreen : UIEvent()
+        object OnNavigateToSmartOriginationFlow : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
         object OnProgressCalculation : UIEvent()

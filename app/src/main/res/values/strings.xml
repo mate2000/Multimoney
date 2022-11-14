@@ -527,6 +527,17 @@
     <string name="smart_business_personal_basis_identification_required_message" translatable="false">Cedula juridica requerida</string>
     <string name="smart_business_personal_basis_company_name_not_found" translatable="false">No se encontro el nombre de la compañia</string>
 
+    <!--Smart Account - Salaried SV-->
+    <string name="smart_salaried_title" translatable="false">Asalariado</string>
+    <string name="smart_salaried_working_address" translatable="false">Dirección laboral</string>
+    <string name="smart_salaried_working_address_required" translatable="false">Dirección requerida</string>
+    <string name="smart_salaried_average_salary" translatable="false">Ingreso promedio mensual</string>
+    <string name="smart_salaried_average_salary_required" translatable="false">Ingresos requeridos</string>
+    <string name="smart_salaried_profession" translatable="false">Cargo que desempeña</string>
+    <string name="smart_salaried_profession_required" translatable="false">Cargo requerido</string>
+    <string name="smart_salaried_company_name" translatable="false">Nombre de la empresa</string>
+    <string name="smart_salaried_company_name_required" translatable="false">Nombre requerido</string>
+
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>

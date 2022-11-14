@@ -44,15 +44,12 @@ fun PaymentPointsScreen(
 ) {
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate)
-    }
-
-    LaunchedEffect(true) {
         viewModel.apply {
-            viewModel.executeNavigation(onPopBackStack = onPopBackStack)
-            viewModel.onUIEvent(OnGetPaymentPoints)
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnGetPaymentPoints)
         }
     }
+
     BackHandler {
         viewModel.onUIEvent(UIEvent.OnNavigateBack)
     }
@@ -116,15 +113,12 @@ fun PaymentPointsContent(
                             subtitle = point.description ?: "",
                             onClick = {
                                 viewModel.onUIEvent(
-                                    UIEvent.OnNavigateLocation(
+                                    UIEvent.OnItemPointClick(
                                         point.name ?: "",
-                                        point.description ?: "",
+                                        point.address ?: "",
                                         point.schedule ?: "",
-                                        "", // TODO - BALANCE -> PAGO MINIMO
-                                        "", // TODO - BALANCE -> PAGARÉ
-                                        "", // TODO - BACKEND
-                                        "", // TODO - BACKEND
-                                        viewModel.idBrand.toString() // TODO
+                                        point.latitude ?: "",
+                                        point.longitude ?: ""
                                     )
                                 )
                             }

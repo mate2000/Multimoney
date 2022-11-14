@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import com.multimoney.data.util.catalog.Brand
@@ -21,6 +19,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Duration
 
+const val MAP_URI_FORMAT = "geo:%s,%s"
+const val MAP_PACKAGE = "com.google.android.apps.maps"
+
 fun Context.openWhatsAppDeepLink(link: String) {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(link)
@@ -28,9 +29,9 @@ fun Context.openWhatsAppDeepLink(link: String) {
 }
 
 fun Context.openMapsLink(latitude: String, longitude: String) {
-    val mapsIntentUri = Uri.parse(String.format("geo:%s,%s", latitude, longitude))
+    val mapsIntentUri = Uri.parse(String.format(MAP_URI_FORMAT, latitude, longitude))
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
-    mapIntent.setPackage("com.google.android.apps.maps")
+    mapIntent.setPackage(MAP_PACKAGE)
     this.startActivity(mapIntent)
 }
 

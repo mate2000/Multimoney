@@ -1,27 +1,28 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.location
 
-
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_ADDRESS
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LATITUDE
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LONGITUDE
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_OPENING_TIME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnNavigateMapsClick
-import com.multimoney.multimoney.presentation.util.DialogParameters
+import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.openMapsLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -34,24 +35,33 @@ class LocationDetailsViewModel @Inject constructor(
         private set
 
     // Stateless
-    var locationName: String = ""
-    var locationAddress: String = ""
-    var locationOpeningTime: String = ""
+    var pointName: String = ""
+    var pointAddress: String = ""
+    var pointSchedule: String = ""
+    var pointLatitude: String = ""
+    var pointLongitude: String = ""
     var paymentAmount: String = ""
     var paymentId: String = ""
-    var latitude: String = ""
-    var longitude: String = ""
     var idBrand: String = ""
 
     init {
-        locationName = savedStateHandle[LOCATION_NAME] ?: ""
-        locationAddress = savedStateHandle[LOCATION_ADDRESS] ?: ""
-        locationOpeningTime = savedStateHandle[LOCATION_OPENING_TIME] ?: ""
+        pointName = savedStateHandle[POINT_NAME] ?: ""
+        pointAddress = savedStateHandle[POINT_ADDRESS] ?: ""
+        pointSchedule = savedStateHandle[POINT_SCHEDULE] ?: ""
         paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
         paymentId = savedStateHandle[PAYMENT_ID] ?: ""
-        latitude = savedStateHandle[LOCATION_LATITUDE] ?: ""
-        longitude = savedStateHandle[LOCATION_LONGITUDE] ?: ""
+        pointLatitude = savedStateHandle[POINT_LATITUDE] ?: ""
+        pointLongitude = savedStateHandle[POINT_LONGITUDE] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: ""
+    }
+
+    private fun onStart() {
+        uiState = uiState.copy(
+            informativeText = when (idBrand.toInt()) {
+                Brand.ElSalvador.id -> R.string.payment_location_maps_info_sv
+                else -> R.string.payment_location_maps_info_gt
+            }
+        )
     }
 
     private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
@@ -73,6 +83,7 @@ class LocationDetailsViewModel @Inject constructor(
     }
 
     data class UIState(
+        val informativeText: Int = R.string.empty,
         val dialogParameters: DialogParameters = DialogParameters(
             titleResource = R.string.payment_points_dialog_title,
             descriptionResource = R.string.payment_points_dialog_description,
@@ -84,6 +95,7 @@ class LocationDetailsViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
+            is OnStart -> onStart()
             is OnNavigateMapsClick -> onNavigateMapsClick(
                 event.context,
                 event.latitude,
@@ -96,6 +108,7 @@ class LocationDetailsViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
+        object OnStart : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnCloseScreenClick : UIEvent()
         data class OnNavigateMapsClick(

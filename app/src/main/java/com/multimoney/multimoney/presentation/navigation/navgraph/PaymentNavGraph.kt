@@ -35,19 +35,19 @@ const val CLIENT_BANK_ACCOUNT = "client_bank_account"
 const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
-const val PAYMENT_AMOUNT =  "payment_amount"
-const val PAYMENT_ID =  "payment_id"
+const val PAYMENT_AMOUNT = "payment_amount"
+const val PAYMENT_ID = "payment_id"
 const val PAYMENT_DATE = "payment_date"
 const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
 const val IS_EDIT_PAYMENT_SCHEDULE = "is_edit_payment_schedule"
 const val PREVIOUS_SCREEN = "previous_screen"
 
 // Payment maps location parameters
-const val LOCATION_NAME =  "location_name"
-const val LOCATION_ADDRESS =  "location_address"
-const val LOCATION_OPENING_TIME =  "location_opening_time"
-const val LOCATION_LATITUDE =  "latitude"
-const val LOCATION_LONGITUDE =  "longitude"
+const val POINT_NAME = "point_name"
+const val POINT_ADDRESS = "point_address"
+const val POINT_SCHEDULE = "point_schedule"
+const val POINT_LATITUDE = "point_latitude"
+const val POINT_LONGITUDE = "point_longitude"
 
 fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
     navigation(
@@ -333,29 +333,8 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         composable(
             route = Screen.PaymentLocationDetailsScreen.route,
             arguments = listOf(
-                navArgument(LOCATION_NAME) {
-                    type = NavType.StringType
-                },
-                navArgument(LOCATION_ADDRESS) {
-                    type = NavType.StringType
-                },
-                navArgument(LOCATION_OPENING_TIME) {
-                    type = NavType.StringType
-                },
-                navArgument(PAYMENT_AMOUNT) {
-                    type = NavType.StringType
-                },
-                navArgument(PAYMENT_ID) {
-                    type = NavType.StringType
-                },
-                navArgument(LOCATION_LATITUDE) {
-                    type = NavType.StringType
-                },
-                navArgument(LOCATION_LONGITUDE) {
-                    type = NavType.StringType
-                },
                 navArgument(ID_BRAND) {
-                    type = NavType.StringType
+                    type = NavType.IntType
                 }
             )
         ) {

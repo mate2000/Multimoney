@@ -10,11 +10,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_ADDRESS
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LATITUDE
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_LONGITUDE
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.LOCATION_OPENING_TIME
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
@@ -134,7 +134,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentLocationDetailsScreen : Screen(
-        "payment_location_details_screen/{$LOCATION_NAME}/{$LOCATION_ADDRESS}/{$LOCATION_OPENING_TIME}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$LOCATION_LATITUDE}/{$LOCATION_LONGITUDE}/{$ID_BRAND}",
+        "payment_location_details_screen/{$POINT_NAME}/{$POINT_ADDRESS}/{$POINT_SCHEDULE}/{$POINT_LATITUDE}/{$POINT_LONGITUDE}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$ID_BRAND}",
         "payment_location_details_screen"
     )
 

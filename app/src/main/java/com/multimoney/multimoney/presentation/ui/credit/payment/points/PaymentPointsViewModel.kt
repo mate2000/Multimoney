@@ -18,9 +18,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnItemPointClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateLocation
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,9 +47,14 @@ class PaymentPointsViewModel @Inject constructor(
         paymentId = savedStateHandle[PAYMENT_ID] ?: ""
     }
 
-    private fun onItemPointClick() {
-        // TODO Navigate to item details
-    }
+    private fun onItemPointClick(
+        pointName: String,
+        pointAddress: String,
+        pointSchedule: String,
+        pointLatitude: String,
+        pointLongitude: String
+    ) =
+        navigateTo(route = "${Screen.PaymentLocationDetailsScreen.baseRoute}/$pointName/$pointAddress/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$paymentId/$idBrand")
 
     private fun onQueryValueChange(value: String) {
         uiState = uiState.copy(
@@ -61,21 +66,6 @@ class PaymentPointsViewModel @Inject constructor(
         navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
 
     private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
-
-    private fun onNavigateLocation(
-        name: String,
-        address: String,
-        openingTime: String,
-        paymentAmount: String,
-        paymentId: String,
-        latitude: String,
-        longitude: String,
-        idBrand: String
-    ) {
-        val route =
-            "${Screen.PaymentLocationDetailsScreen.baseRoute}/$name/$address/$openingTime/$paymentAmount/$paymentId/$latitude/$longitude/$idBrand"
-        navigateTo(route = route)
-    }
 
     private fun onCloseScreen() {
         uiState = uiState.copy(
@@ -133,15 +123,12 @@ class PaymentPointsViewModel @Inject constructor(
             is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is OnGetPaymentPoints -> onGetPaymentPoints()
             is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
-            is OnNavigateLocation -> onNavigateLocation(
-                uiEvent.name,
-                uiEvent.address,
-                uiEvent.openingTime,
-                uiEvent.paymentAmount,
-                uiEvent.paymentId,
-                uiEvent.latitude,
-                uiEvent.longitude,
-                uiEvent.idBrand
+            is OnItemPointClick -> onItemPointClick(
+                uiEvent.pointName,
+                uiEvent.pointAddress,
+                uiEvent.pointSchedule,
+                uiEvent.pointLatitude,
+                uiEvent.pointLongitude
             )
         }
     }
@@ -151,18 +138,15 @@ class PaymentPointsViewModel @Inject constructor(
         object OnCloseScreenClick : UIEvent()
         data class OnQueryValueChange(val value: String) : UIEvent()
         object OnGetPaymentPoints : UIEvent()
-        object OnItemPointClick : UIEvent()
         object OnDialogPositiveButtonClick : UIEvent()
-        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-        data class OnNavigateLocation(
-            val name: String,
-            val address: String,
-            val openingTime: String,
-            val paymentAmount: String,
-            val paymentId: String,
-            val latitude: String,
-            val longitude: String,
-            val idBrand: String
+        data class OnItemPointClick(
+            val pointName: String,
+            val pointAddress: String,
+            val pointSchedule: String,
+            val pointLatitude: String,
+            val pointLongitude: String
         ) : UIEvent()
+
+        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
     }
 }

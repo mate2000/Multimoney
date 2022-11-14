@@ -64,11 +64,13 @@ import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 @Composable
 @Preview
 fun CardOfferSmartProduct(action: () -> Unit = {}) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight()
-        .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-        .clickable { action.invoke() }) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .clickable { action.invoke() }
+    ) {
         Text(
             text = stringResource(id = R.string.home_product_not_approved_title),
             modifier = Modifier.padding(top = 20.dp),
@@ -123,8 +125,9 @@ fun CardSmartProduct(
             text = stringResource(id = R.string.smart_card_balance),
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(
-                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
-            ),
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            )
         )
         Text(
             text = stringResource(id = brandId.getCurrencySymbolValue(), profitTotal),
@@ -132,7 +135,7 @@ fun CardSmartProduct(
             style = Typography.h4.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
-            ),
+            )
         )
 
         Row(
@@ -153,7 +156,7 @@ fun CardSmartProduct(
                 Text(
                     text = stringResource(id = R.string.smart_card_monthly_profit),
                     modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.text),
+                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.text)
                 )
                 Row {
                     Icon(
@@ -331,7 +334,7 @@ fun CardCreditValidationInProcess() {
             ),
             modifier = Modifier.padding(top = 42.dp),
             shape = RoundedCornerShape(12.dp),
-            background = BlackTransparency20,
+            background = MultimoneyTheme.colors.backgroundInformativeChip,
             startIcon = R.drawable.ic_warning
         )
         Text(
@@ -636,9 +639,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                    ?: 0
-                                                ) > 0
+                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                            ?: 0
+                                        ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

@@ -66,7 +66,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private var onSuccessCatalogDocumentType: CatalogType? = null
     private var onSuccessCountry: CountryList? = null
 
-    // Stateless1
+    // Stateless
     var documentLength = 0
 
     // Event

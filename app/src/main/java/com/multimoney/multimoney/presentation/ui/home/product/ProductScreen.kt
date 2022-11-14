@@ -60,6 +60,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardOfferSmartProduct
@@ -73,7 +74,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCredit
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.CreditCard
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
@@ -83,6 +83,8 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -124,7 +126,7 @@ fun ProductScreen(
     }
 
     // todo we have to send the pages to the view pager when the back return
-    if (viewModel.uiState.isLoading) {
+    if (viewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
         Column(
@@ -132,12 +134,14 @@ fun ProductScreen(
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
         ) {
-            MotionLayoutMM(mainHeader = {
-                TipsAndOffer(
-                    modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-                    viewModel = viewModel
-                )
-            }, secondaryHeader = { backPressed ->
+            MotionLayoutMM(
+                mainHeader = {
+                    TipsAndOffer(
+                        modifier = Modifier.padding(start = 16.dp, top = 20.dp),
+                        viewModel = viewModel
+                    )
+                },
+                secondaryHeader = { backPressed ->
                     Box(
                         contentAlignment = Alignment.TopCenter,
                         modifier = Modifier
@@ -151,7 +155,8 @@ fun ProductScreen(
                             }
                         )
                     }
-                }, content = { modifier, headerText ->
+                },
+                content = { modifier, headerText ->
                     Products(
                         modifier = modifier,
                         pages = NUMBER_PAGES,
@@ -159,14 +164,16 @@ fun ProductScreen(
                         viewModel = viewModel,
                         headerText
                     )
-                }, footer = {
+                },
+                footer = {
                     ProductExtras(
                         modifier = Modifier.padding(top = 16.dp),
                         pages = NUMBER_PAGES,
                         state = bottomPagerState,
                         viewModel = viewModel
                     )
-                }, secondaryFooter = {
+                },
+                secondaryFooter = {
                     ConstraintLayout(
                         Modifier.fillMaxSize()
                     ) {
@@ -208,8 +215,15 @@ fun ProductScreen(
                             canDisburse = viewModel.uiState.hasBalance
                         )
                     }
-                }, totalPages = NUMBER_PAGES)
+                },
+                isExpanded = viewModel.uiState.isExpanded,
+                updateIsExpanded = { isExpanded ->
+                    viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                },
+                totalPages = NUMBER_PAGES
+            )
         }
+        LoadingIndicator(viewModel.uiState.isLoading)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

@@ -36,8 +36,9 @@
     <string name="quetzal_symbol" translatable="false">Q</string>
     <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
+    <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
-
+    <string name="info" translatable="false">Información</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -320,14 +321,10 @@
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 000,000</string>
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
-    <string name="credit_monthly_income_profession_label" translatable="false">Selecciona tu profesión</string>
-    <string name="credit_monthly_income_profession_hint" translatable="false">Selecciona tu profesión</string>
-    <string-array name="credit_monthly_income_professions" translatable="false">
-        <item>Administración</item>
-        <item>Construcción</item>
-        <item>Seguridad</item>
-        <item>Informatica</item>
-    </string-array>
+    <string name="credit_monthly_income_profession_label" translatable="false">Seleccioná tu profesión</string>
+    <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
+    <string name="credit_monthly_income_occupation_label" translatable="false">Seleccioná tu ocupación</string>
+    <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Contanos de la empresa en la que trabajás</string>
@@ -359,6 +356,22 @@
     <!--Credit Home address -->
     <string name="credit_home_address_title" translatable="false">¿Dónde vivís?</string>
     <string name="credit_home_address_title_gt" translatable="false">¿Dónde vives?</string>
+
+    <!-- Credit Additional Information -->
+    <string name="credit_additional_information_title" translatable="false">Información adicional</string>
+    <string name="credit_additional_information_CR_q1" translatable="false">¿Desempeñás entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?  ¿De qué se trata?</string>
+    <string name="credit_additional_information_CR_q1_disclaimer" translatable="false">¿De qué se trata?</string>
+    <string name="credit_additional_information_CR_q2" translatable="false">¿Vos o alguno de tus familiares califican como persona políticamente expuesta (PEP)?</string>
+    <string name="credit_additional_information_CR_q3" translatable="false">¿Sos contribuyente al pago de impuestos en Estados Unidos?</string>
+    <string name="credit_additional_information_CR_q4" translatable="false">¿Sos contribuyente al pago de impuestos en otro país diferente de Costa Rica?</string>
+    <string name="credit_additional_information_SV_q1" translatable="false">¿Vos o alguno de tus familiares califican como persona políticamente expuesta (PEP)?</string>
+    <string name="credit_additional_information_GT_q1" translatable="false">¿Tú o alguno de tus familiares califican como persona políticamente expuesta (PEP)?</string>
+    <string name="credit_additional_information_button_yes" translatable="false">Si</string>
+    <string name="credit_additional_information_button_no" translatable="false">No</string>
+    <string name="credit_additional_information_bottom_sheet_title" translatable="false">Art 15 o 15 bis de la ley 8204</string>
+    <string name="credit_additional_information_bottom_sheet_description" translatable="false">Prestamistas, casas de empeño, comercio de metales y piedras preciosas, tarjetas y operadores de tarjetas de crédito, organizaciones sin fines de lucro, proveedores de servicios fiduciarios, compra y venta de bienes inmuebles, facilidad crediticia, administración de recursos de terceros.</string>
+    <string name="credit_additional_information_bottom_sheet_button_" translatable="false">Aceptar</string>
+
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos generando tus documentos</string>
@@ -480,6 +493,10 @@
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
 
+    <!-- Smart - Close origin flow -->
+    <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
+    <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
+
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
     <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>
@@ -561,6 +578,25 @@
     <string name="payment_points_dialog_positive_button" translatable="false">Aceptar</string>
     <string name="payment_points_dialog_negative_button" translatable="false">Cancelar</string>
 
+    <!-- Payment Schedule -->
+    <string name="payment_schedule_title" translatable="false">Configurá tu pago \nautomático</string>
+    <string name="payment_schedule_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_label_origin" translatable="false">Desde tu cuenta</string>
+    <string name="payment_schedule_label_date" translatable="false">Día del mes que se hará el pago</string>
+    <string name="payment_schedule_label_date_description" translatable="false">%s de cada mes</string>
+    <string name="payment_schedule_button" translatable="false">Programar</string>
+    <string name="payment_schedule_success_alert_title" translatable="false">Tu pago ha sido \nprogramado</string>
+    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago</string>
+    <string name="payment_schedule_success_alert_button" translatable="false">Ver mi crédito</string>
+    <string name="payment_schedule_error_alert_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="payment_schedule_error_alert_subtitle_one" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo de nuevo.</string>
+    <string name="payment_schedule_error_alert_subtitle_two" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo más tarde.</string>
+    <string name="payment_schedule_error_alert_button_one" translatable="false">Intentar</string>
+    <string name="payment_schedule_error_alert_button_two" translatable="false">Ir al inicio</string>
+
+    <!-- Payment Schedule Account-->
+    <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
+
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
@@ -577,4 +613,24 @@
     <string name="smart_business_personal_name_required" translatable="false">Nombre del emprendimiento requerido</string>
     <string name="smart_business_personal_income_label" translatable="false">Ingreso mensual</string>
     <string name="smart_business_personal_income_label_required" translatable="false">Ingreso mensual requerido</string>
+
+    <!--Smart Facta screen-->
+    <string name="smart_facta_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>
+    <string name="smart_facta_are_you_or_family_pep" translatable="false">¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?</string>
+    <string name="smart_facta_activities_according_to_article_15" translatable="false">¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
+    <string name="smart_facta_are_you_us_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en Estados Unidos?</string>
+    <string name="smart_facta_are_you_other_country_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en otro país diferente de Costa Rica?</string>
+    <string name="smart_facta_article_15_info" translatable="false">
+        Prestamistas, casas de empeño, comercio de metales y piedras preciosas, tarjetas y operadores de tarjetas de crédito, organizaciones sin fines de lucro, proveedores de servicios fiduciarios, compra y venta de bienes inmuebles, facilidad crediticia, administración de recursos de terceros.
+    </string>
+    <string name="smart_facta_article_15_info_title" translatable="false">Art 15 o 15 bis de la ley 8204</string>
+    <string name="smart_facta_learn_more" translatable="false">¿De qué se trata?</string>
+    <string-array name="smart_facta_is_pep_options">
+        <item>Si, si califican</item>
+        <item>No, no califican</item>
+    </string-array>
+    <string-array name="smart_facta_is_us_citizen_options">
+        <item>Si, lo soy</item>
+        <item>No, no lo soy</item>
+    </string-array>
 </resources>

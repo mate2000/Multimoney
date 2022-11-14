@@ -11,6 +11,7 @@ data class Summary(
     val currentBalanceLabel: String?,
     val availableBalance: Double?,
     val availableBalanceLabel: String?,
+    val paymentDate: String?,
     val paymentDateLabel: String?,
     val monthlyQuota: String?,
     val monthlyQuotaLabel: String?,

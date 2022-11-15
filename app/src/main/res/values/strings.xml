@@ -268,6 +268,9 @@
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
     <string name="home_product_amount" translatable="false">de %s</string>
 
+    <!-- My Profile -->
+    <string name="my_profile_title" translatable="false">Mi perfil</string>
+
     <!-- my products bottom sheet -->
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
 

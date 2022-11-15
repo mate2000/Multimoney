@@ -61,6 +61,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
@@ -324,9 +325,7 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
                     painter = painterResource(R.drawable.ic_profile),
                     modifier = Modifier
                         .padding(start = 16.dp, end = 2.dp)
-                        .clickable {
-                            // todo action
-                        },
+                        .clickable { viewModel.onUIEvent(OnNavigateToProfileScreen) },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )

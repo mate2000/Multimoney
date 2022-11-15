@@ -84,6 +84,7 @@ fun CreditDocumentScreen(
                     onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(true))
                     onUIEvent(
                         CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
+                            viewModel.countDownTimer.stopTimer()
                             launchOnFidoActivityResult.launch(
                                 viewModel.onFidoHelper.getOnFidoIntent(
                                     sharedViewModel.idBrand.toInt(),

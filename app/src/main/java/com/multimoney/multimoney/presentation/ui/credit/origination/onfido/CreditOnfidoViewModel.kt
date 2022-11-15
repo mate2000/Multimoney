@@ -19,7 +19,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnFidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
-import com.multimoney.multimoney.presentation.util.catalog.AppFlow
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.onfido.android.sdk.capture.ExitCode
@@ -37,7 +37,8 @@ class CreditOnfidoViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
     private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
-    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase
+    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase,
+    val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
     // UIState
@@ -114,10 +115,12 @@ class CreditOnfidoViewModel @Inject constructor(
                 result.data,
                 object : OnfidoResultListener {
                     override fun userCompleted(captures: Captures) {
+                        countDownTimer.resumeTimer()
                         onCallOnfidoCheckProcess(pkUser, identification, idBrand, idUserRequest, user, onNextStep)
                     }
 
                     override fun userExited(exitCode: ExitCode) {
+                        countDownTimer.resumeTimer()
                         // Empty on purpose
                     }
 

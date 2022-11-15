@@ -46,7 +46,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
-import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
@@ -63,7 +63,7 @@ class ProductViewModel @Inject constructor(
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
     private val dataStorePreferences: DataStorePreferences,
     private val helper: ShareHelper,
-    val countDownTimer: LifecycleCountDownTimer
+    val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
     // UIState

@@ -11,9 +11,9 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.continuevalidatingonfido.ContinueValidatingOnfidoScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors.OnfidoAndEvisertiaErrorsScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction.ProcessingTransactionScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionScreen
 
 const val PK_USER = "pk_user"
 const val IDENTIFICATION = "identification"
@@ -86,7 +86,7 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType }
             )
         ) {
-            OnfidoAndEvisertiaErrorsScreen(
+            OnfidoAndEvicertiaErrorsScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

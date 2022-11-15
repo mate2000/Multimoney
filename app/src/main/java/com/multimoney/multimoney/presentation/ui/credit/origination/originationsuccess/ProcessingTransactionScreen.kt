@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction
+package com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text

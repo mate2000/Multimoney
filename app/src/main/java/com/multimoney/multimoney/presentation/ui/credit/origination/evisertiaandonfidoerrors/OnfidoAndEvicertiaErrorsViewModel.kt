@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors
+package com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,8 +8,8 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToHome
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToOnfidoProcess
+import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToOnfidoProcess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

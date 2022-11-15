@@ -184,6 +184,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     companion object {
         private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 10000L
     }
 }

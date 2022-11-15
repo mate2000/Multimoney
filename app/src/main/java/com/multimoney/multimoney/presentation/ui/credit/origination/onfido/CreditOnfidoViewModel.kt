@@ -143,22 +143,22 @@ class CreditOnfidoViewModel @Inject constructor(
         onNextStep: () -> Unit
     ) {
         executeUseCase {
-            mutationOnfidoCheckProcessUseCase.invoke(
-                identification,
-                PACKAGE_NAME,
-                AppFlow.CREDIT_ORIGINATION.flow,
-                pkUser,
-                idUserRequest,
-                idBrand,
-                user
-            ).collectLatest { result ->
-                result.onSuccess {
-                    // nothing to do here
-                }
-                result.onFailure {
-                    // nothing to do here
-                }
-            }
+//            mutationOnfidoCheckProcessUseCase.invoke(
+//                identification,
+//                PACKAGE_NAME,
+//                AppFlow.CREDIT_ORIGINATION.flow,
+//                pkUser,
+//                idUserRequest,
+//                idBrand,
+//                user
+//            ).collectLatest { result ->
+//                result.onSuccess {
+//                    // nothing to do here
+//                }
+//                result.onFailure {
+//                    // nothing to do here
+//                }
+//            }
             onNextStep()
         }
     }
@@ -248,6 +248,6 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     companion object {
-        const val PACKAGE_NAME = "com.multimoney.multimoney"
+        const val PACKAGE_NAME = "com.multimoney.multimoney.sv"
     }
 }

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -85,9 +86,9 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.uielement.TOTAL_PAGES
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -220,7 +221,8 @@ fun ProductScreen(
                             canDisburse = viewModel.uiState.hasBalance
                         )
                     }
-                }, isExpanded = viewModel.uiState.isExpanded,
+                },
+                isExpanded = viewModel.uiState.isExpanded,
                 updateIsExpanded = { isExpanded ->
                     viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
                 },
@@ -365,11 +367,13 @@ fun Products(
         )
         var pagesSize = 0
 
-        pagesSize += (viewModel.balanceCredit?.balanceCredit?.size
-            ?: 0) + (viewModel.balanceCredit?.balanceAccountSmart?.size ?: 0)
+        pagesSize += (
+            viewModel.balanceCredit?.balanceCredit?.size
+                ?: 0
+            ) + (viewModel.balanceCredit?.balanceAccountSmart?.size ?: 0)
 
         pagesSize += if (viewModel.uiState.userStatus?.infoBankAccount?.status == SmartAccountStatus.NO_EXIST.status) 1 else 0
-        pagesSize += if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.NO_EXIST.status) 1 else 0
+        pagesSize += if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.NO_EXIST.status || viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_PRE_APPROVED.status) 1 else 0
 
         HorizontalPager(
             count = pagesSize,
@@ -387,15 +391,21 @@ fun Products(
                             type = ProductBackGroundType.Secondary
                         ) {
                             CardSmartProduct(
-                                currency = it[page.minus(
-                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                )]?.currencyCode ?: "",
-                                profitMonthly = it[page.minus(
-                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                )]?.gainedInterest.toString(),
-                                profitTotal = it[page.minus(
-                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                )]?.totalBalance.toString()
+                                currency = it[
+                                    page.minus(
+                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                    )
+                                ]?.currencyCode ?: "",
+                                profitMonthly = it[
+                                    page.minus(
+                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                    )
+                                ]?.gainedInterest.toString(),
+                                profitTotal = it[
+                                    page.minus(
+                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                    )
+                                ]?.totalBalance.toString()
                             )
                         }
                     } else {

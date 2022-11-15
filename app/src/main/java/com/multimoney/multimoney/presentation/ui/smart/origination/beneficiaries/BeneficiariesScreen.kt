@@ -25,7 +25,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.data.util.catalog.SmartSteps.Five
 import com.multimoney.data.util.catalog.SmartSteps.Three

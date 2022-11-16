@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.validateidentity.ValidateIdentityScreen
@@ -20,7 +22,10 @@ fun SignDocumentProcessScreen(
     viewModel: SignDocumentProcessViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.apply {
+            executeNavigation(onPopAndNavigate = onPopAndNavigate)
+            onUIEvent(OnCallSubscriptionCreditContractEvent)
+        }
     }
 
     when (viewModel.uiState.signDocumentProcessStep) {
@@ -29,7 +34,9 @@ fun SignDocumentProcessScreen(
         }
         SIGN_DOCUMENTS_STEP.value -> {
             SignDocumentScreen(viewModel = viewModel)
-            viewModel.createDialog()
+            LaunchedEffect(key1 = true) {
+                viewModel.onUIEvent(OnShowDialogInformation)
+            }
         }
         VALIDATE_IDENTITY.value -> {
             ValidateIdentityScreen(viewModel = viewModel)

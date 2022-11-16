@@ -382,8 +382,8 @@
     <string name="save_credit_operation_error_action" translatable="false">Escríbinos por whatsApp</string>
 
     <!-- Generate Document -->
-    <string name="document_generation_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="document_generation_subtitle" translatable="false">Al firmar tu solicitud podrás utilizar tu crédito</string>
+    <string name="document_generation_title" translatable="false">Estamos creando tu cuenta</string>
+    <string name="document_generation_subtitle" translatable="false">Firmá el contrato y recibí tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
 
     <!-- Onfido errors -->

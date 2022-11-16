@@ -23,11 +23,13 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_SECOND_TIME
@@ -42,8 +44,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
-    private val subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase
 ) : BaseViewModel(true) {
     // uiState
     var uiState by mutableStateOf(UIState())
@@ -72,10 +74,9 @@ class SignDocumentProcessViewModel @Inject constructor(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: "",
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         )
-        onListenCreditContractEventSubscription(idPrint, idBrand)
     }
 
-    fun createDialog() {
+    private fun createDialog() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
                 titleResource = string.sign_credit_dialog_title,
@@ -184,18 +185,22 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnCallSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription(idPrint, idBrand)
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
+            is OnShowDialogInformation -> createDialog()
             is OnNavigateToHome -> onNavigateToHome()
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
         }
     }
 
     sealed class UIEvent {
-        data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
+        object OnCallSubscriptionCreditContractEvent : UIEvent()
         data class OnInitializeText(val dialogDescription: String) : UIEvent()
         object OnCloseClick : UIEvent()
+        object OnShowDialogInformation : UIEvent()
+        data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
         object OnNavigateToHome : UIEvent()
         object OnNavigateToContinueValidatingIdentity : UIEvent()
     }
@@ -203,6 +208,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     companion object {
         private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
-        const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 10000L
+        const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
     }
 }

@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import com.multimoney.data.util.catalog.Brand

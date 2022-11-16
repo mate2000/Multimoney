@@ -1,10 +1,14 @@
 package com.multimoney.multimoney.presentation.ui.credit.origination.onfido
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,10 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -28,96 +32,108 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNextStep
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.Companion.PACKAGE_NAME
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnFidoSdk
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
 @Preview
-fun CreditDocumentScreen(
-    viewModel: CreditOnfidoViewModel = hiltViewModel(),
-    sharedViewModel: CreditViewModel = hiltViewModel()
+fun CreditOnfidoScreen(
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    viewModel: CreditOnfidoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+
+    val whatsAppLink = stringResource(
+        id = string.whatsapp_deep_link,
+        SignUpViewModel.PHONE_HARDCODED
+    )
+
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+    }
+
+    if (viewModel.idBrand != null) {
+        if (viewModel.idBrand == Brand.Guatemala.id) {
+            viewModel.onUIEvent(
+                OnSetCloseDialogTexts(
+                    string.credit_close_dialog_gt_title,
+                    stringResource(id = string.credit_close_dialog_gt_description)
+                )
+            )
+        } else {
+            viewModel.onUIEvent(
+                OnSetCloseDialogTexts(
+                    string.credit_close_dialog_title,
+                    stringResource(id = string.credit_close_dialog_description)
+                )
+            )
+        }
+    }
+
     val launchOnFidoActivityResult = rememberLauncherForActivityResult(StartActivityForResult()) { result ->
         viewModel.onUIEvent(
-            OnOpenOnFidoSdk(
-                result, onOnFidoError = {
-                    sharedViewModel.onUIEvent(
-                        OnOpenDialogValueChange(
-                            it
-                        )
-                    )
-                }, onContinueEnable = {
-                    sharedViewModel.onUIEvent(
-                        CreditViewModel.UIEvent.OnContinueEnable(
-                            it
-                        )
-                    )
-                }, onNextStep = {
-                    sharedViewModel.onUIEvent(
-                        OnNextStep
-                    )
-                },
-                sharedViewModel.pkUser.toLong(),
-                sharedViewModel.identification,
-                sharedViewModel.idBrand.toInt(),
-                sharedViewModel.idUserRequest.toLong(),
-                sharedViewModel.email
-            )
+            OnConfigureOnFidoSdk(result)
         )
     }
 
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
             event.onSuccess {
-                sharedViewModel.apply {
-                    onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(false))
-                    onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(true))
+                viewModel.apply {
                     onUIEvent(
-                        CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
+                        OnOpenOnfidoSdk(onOpenOnfidoSdk = {
                             viewModel.countDownTimer.stopTimer()
                             launchOnFidoActivityResult.launch(
                                 viewModel.onFidoHelper.getOnFidoIntent(
-                                    sharedViewModel.idBrand.toInt(),
+                                    viewModel.idBrand,
                                     AppFlow.CREDIT_ORIGINATION,
                                     it?.sdkToken ?: "",
                                     onRefreshToke = { refreshToken ->
                                         viewModel.onUIEvent(
                                             RefreshOnFidoToken(
-                                                UserData(
-                                                    pkUser = sharedViewModel.pkUser,
-                                                    identification = sharedViewModel.identification,
-                                                    userName = sharedViewModel.email,
-                                                    firstName = sharedViewModel.firstName,
-                                                    firstLastName = sharedViewModel.lastName,
-                                                    email = sharedViewModel.email
-                                                ),
-                                                PACKAGE_NAME,
-                                                refreshToken
+                                                firstName = viewModel.firstName,
+                                                lastName = viewModel.lastName,
+                                                identification = viewModel.identification,
+                                                applicationId = PACKAGE_NAME,
+                                                user = viewModel.email,
+                                                injectNewToken = refreshToken
                                             )
                                         )
                                     }
                                 )
                             )
-                        }, nextStep = CreditStep.Nine.id, previousStep = CreditStep.Seven.id)
+                        })
                     )
                 }
             }.onLoading {
-                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(false))
-                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(true))
+                viewModel.onUIEvent(OnContinueEnable(false))
+                viewModel.onUIEvent(OnLoadingValueChange(true))
             }.onFailure {
-                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnContinueEnable(false))
-                sharedViewModel.onUIEvent(
-                    CreditViewModel.UIEvent.OnFailureWithDialog(
+                viewModel.onUIEvent(OnContinueEnable(false))
+                viewModel.onUIEvent(
+                    OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
@@ -132,26 +148,21 @@ fun CreditDocumentScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(
             OnCallInFidoToken(
-                UserData(
-                    pkUser = sharedViewModel.pkUser,
-                    identification = sharedViewModel.identification,
-                    userName = sharedViewModel.email,
-                    firstName = sharedViewModel.firstName,
-                    firstLastName = sharedViewModel.lastName,
-                    email = sharedViewModel.email
-                ),
-                PACKAGE_NAME
+                firstName = viewModel.firstName,
+                lastName = viewModel.lastName,
+                identification = viewModel.identification,
+                PACKAGE_NAME,
+                user = viewModel.email
             )
         )
     }
 
     if (viewModel.uiState.isAlertVisible) {
-        sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnBackVisibilityValueChanged(false))
         var title: Int = string.empty
         var subtitle: Int = string.empty
         var action: Int = string.empty
-        if (sharedViewModel.idBrand.isNotEmpty()) {
-            when (sharedViewModel.idBrand.toInt()) {
+        if (viewModel.idBrand != null) {
+            when (viewModel.idBrand) {
                 Brand.Guatemala.id -> {
                     title = string.save_credit_operation_error_title
                     subtitle = string.save_credit_operation_error_subtitle_gt
@@ -170,79 +181,129 @@ fun CreditDocumentScreen(
             descriptionResource = subtitle,
             buttonTextResource = action,
             isLeftButtonVisible = false,
-            onRightButtonClick = { sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnNavigateToHome) },
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
             onButtonClick = {
-                // todo open whatsapp
+                context.openWhatsAppDeepLink(whatsAppLink)
             }
         )
     } else {
-        Column(
-            Modifier.padding(end = 16.dp, start = 16.dp, top = 28.dp)
+        ConstraintLayout(
+            modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background)
         ) {
-            Text(
-                text = stringResource(id = string.sign_up_id_validation_title),
-                style = Typography.h5.copy(
-                    color = MultimoneyTheme.colors.text,
-                    fontWeight = FontWeight.SemiBold
-                )
-            )
-            Text(
-                modifier = Modifier.padding(top = 16.dp),
-                text = stringResource(id = string.sign_up_id_validation_subtitle),
-                style = Typography.body2.copy(
-                    color = MultimoneyTheme.colors.text,
-                    fontWeight = FontWeight.SemiBold
-                )
-            )
+            val (topBar, content, button) = createRefs()
 
-            Row(
-                Modifier.padding(top = 32.dp).fillMaxWidth()
+            TopNavBar(
+                modifier = Modifier.constrainAs(topBar) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+                isLeftButtonVisible = false,
+                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
+            )
+            Column(
+                Modifier.padding(end = 16.dp, start = 16.dp, top = 24.dp).constrainAs(content) {
+                    top.linkTo(topBar.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(button.top)
+                    height = Dimension.fillToConstraints
+                }
             ) {
-                CustomImage(
-                    drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                Text(
+                    text = stringResource(id = string.sign_up_id_validation_title),
+                    style = Typography.h5.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
                 Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_one),
+                    modifier = Modifier.padding(top = 16.dp),
+                    text = stringResource(id = string.sign_up_id_validation_subtitle),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
                     )
                 )
-            }
-            Row(
-                Modifier.padding(top = 32.dp).fillMaxWidth()
-            ) {
-                CustomImage(
-                    drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_two),
-                    style = Typography.body2.copy(
-                        color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold
+
+                Row(
+                    Modifier.padding(top = 32.dp).fillMaxWidth()
+                ) {
+                    CustomImage(
+                        drawableResource = drawable.ic_validation,
+                        modifier = Modifier.align(Alignment.CenterVertically)
                     )
-                )
-            }
-            Row(
-                Modifier.padding(top = 32.dp).fillMaxWidth()
-            ) {
-                CustomImage(
-                    drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.sign_up_id_validation_three),
-                    style = Typography.body2.copy(
-                        color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = stringResource(id = string.sign_up_id_validation_one),
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     )
-                )
+                }
+                Row(
+                    Modifier.padding(top = 32.dp).fillMaxWidth()
+                ) {
+                    CustomImage(
+                        drawableResource = drawable.ic_validation,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = stringResource(id = string.sign_up_id_validation_two),
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
+                Row(
+                    Modifier.padding(top = 32.dp).fillMaxWidth()
+                ) {
+                    CustomImage(
+                        drawableResource = drawable.ic_validation,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = stringResource(id = string.sign_up_id_validation_three),
+                        style = Typography.body2.copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
             }
+            CustomButton(
+                onClick = { viewModel.onUIEvent(OnContinueClick) },
+                text = stringResource(id = string.button_continue),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
+                    .height(48.dp).constrainAs(button) {
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                buttonType = PrimaryPrimary,
+                enable = viewModel.uiState.isContinueEnabled
+            )
         }
+    }
+
+    LoadingIndicator(viewModel.uiState.isLoading)
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
+
+    BackHandler {
+        viewModel.onUIEvent(OnCloseClick)
     }
 }

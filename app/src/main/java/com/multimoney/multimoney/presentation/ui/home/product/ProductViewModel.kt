@@ -178,6 +178,7 @@ class ProductViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
                 validateUserStatus?.let {
+                    dataStorePreferences.setUserPhoneNumber(it.infoUser?.phone.orEmpty())
                     onValidateUserStatusSuccess(it)
                 }
             }

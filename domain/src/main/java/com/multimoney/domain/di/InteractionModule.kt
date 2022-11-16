@@ -30,6 +30,8 @@ import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCas
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCase
+import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
@@ -309,6 +311,11 @@ class InteractionModule {
     @Singleton
     fun provideGetClientAutomaticDebitUseCase(creditRepository: CreditRepository): QueryGetClientAutomaticDebitUseCase =
         QueryGetClientAutomaticDebitUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCreditContractEventUseCase(creditRepository: CreditRepository): MutationSendCreditContractEventUseCase =
+        MutationSendCreditContractEventUseCaseImpl(creditRepository)
 
     // Smart
 

@@ -103,8 +103,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             route = Screen.OnfidoAndEvicertiaErrorsScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(CREDIT_STEP) { type = NavType.IntType },
-                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType }
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(

@@ -101,34 +101,30 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_fee_screen"
     )
 
-    object PaymentAccountScreen :
-        Screen(
-            "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}",
-            "payment_account_screen"
-        )
+    object PaymentAccountScreen : Screen(
+        "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}",
+        "payment_account_screen"
+    )
 
     object PaymentAmountScreen : Screen(
         "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}",
         "payment_amount_screen"
     )
 
-    object PaymentVoucherScreen :
-        Screen(
-            route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}",
-            "payment_voucher_screen"
-        )
+    object PaymentVoucherScreen : Screen(
+        route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}",
+        "payment_voucher_screen"
+    )
 
-    object PaymentScheduleScreen :
-        Screen(
-            "payment_schedule_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$IS_EDIT_BANK_ACCOUNT}/{$PREVIOUS_SCREEN}/{$IS_EDIT_PAYMENT_SCHEDULE}",
-            "payment_schedule_screen"
-        )
+    object PaymentScheduleScreen : Screen(
+        "payment_schedule_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$IS_EDIT_BANK_ACCOUNT}/{$PREVIOUS_SCREEN}/{$IS_EDIT_PAYMENT_SCHEDULE}",
+        "payment_schedule_screen"
+    )
 
-    object PaymentScheduleAccountScreen :
-        Screen(
-            "payment_schedule_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}",
-            "payment_schedule_account_screen"
-        )
+    object PaymentScheduleAccountScreen : Screen(
+        "payment_schedule_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}",
+        "payment_schedule_account_screen"
+    )
 
     object PaymentOptionsScreen : Screen(
         "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}",
@@ -146,13 +142,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     // Smart
-    object SmartScreen :
-        Screen(
-            "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
-            "smart_screen"
-        )
+    object SmartScreen : Screen(
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
+        "smart_screen"
+    )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")
+    object SubscriptionScreen : Screen("subscription_screen")
 }

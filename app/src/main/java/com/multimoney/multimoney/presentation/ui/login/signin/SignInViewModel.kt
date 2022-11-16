@@ -303,6 +303,9 @@ class SignInViewModel @Inject constructor(
 
     private fun onNavigateToForgotPassword() {
         // TODO navigate to forgot screen
+        navigateTo(
+            Screen.SubscriptionScreen.route
+        )
     }
 
     private fun onShowBiometricSignInChanged(value: Boolean) {

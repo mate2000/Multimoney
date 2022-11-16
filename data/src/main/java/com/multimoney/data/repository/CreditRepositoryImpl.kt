@@ -420,4 +420,27 @@ class CreditRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
+    override suspend fun mutationSendCreditContractEvent(
+        idImpresion: Long,
+        idBrand: Int,
+        link: String,
+        active: Boolean,
+        statusEvicertia: String,
+        statusOnfido: String,
+        currentStep: String
+    ): Flow<MultimoneyResult<CreditContractEvent?>> = fetchData(
+        apolloCall = graphqlApi.mutationSendCreditContractEvent(
+            idImpresion,
+            idBrand,
+            link,
+            active,
+            statusEvicertia,
+            statusOnfido,
+            currentStep
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
 }

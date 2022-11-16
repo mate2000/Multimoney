@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
@@ -106,6 +107,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         when (uiState.signDocumentProcessStep) {
             GENERATE_DOCUMENT_STEP.value -> {
                 if (creditContractEvent?.link.isNullOrEmpty().not()) {
+                    emitBaseEvent(SimulateUserInteraction)
                     uiState = uiState.copy(
                         signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
                         signDocumentUrl = creditContractEvent?.link ?: ""
@@ -114,18 +116,21 @@ class SignDocumentProcessViewModel @Inject constructor(
             }
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
-                    CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+                    CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
                         handleOnfidoStatus(creditContractEvent)
                     }
                     CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                     }
                     CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                     }
                 }
             }
             VALIDATE_IDENTITY.value -> {
+                emitBaseEvent(SimulateUserInteraction)
                 handleOnfidoStatus(creditContractEvent)
             }
         }
@@ -134,6 +139,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     private fun handleOnfidoStatus(
         creditContractEvent: CreditContractEvent?
     ) {
+        emitBaseEvent(SimulateUserInteraction)
         when (creditContractEvent?.statusOnfido?.lowercase()) {
             CreditOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
                 uiState = uiState.copy(
@@ -170,6 +176,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() {
+        emitBaseEvent(SimulateUserInteraction)
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
             popTo = Screen.SignDocumentProcessScreen.route
@@ -205,9 +212,13 @@ class SignDocumentProcessViewModel @Inject constructor(
         object OnNavigateToContinueValidatingIdentity : UIEvent()
     }
 
+    sealed class BaseEvent {
+        object SimulateUserInteraction : BaseEvent()
+    }
+
     companion object {
         private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 120000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
     }
 }

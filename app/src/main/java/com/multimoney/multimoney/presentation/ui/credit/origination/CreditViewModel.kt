@@ -84,10 +84,10 @@ class CreditViewModel @Inject constructor(
     var idUserRequest: Int = 0
     var firstName: String = ""
     var lastName: String = ""
-    var idPrint: Long = 123
+    var idPrint: Long = 1120654
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
-    var linkEvicertia: String = ""
+    var linkEvicertia: String = URL_EMPTY
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -166,7 +166,14 @@ class CreditViewModel @Inject constructor(
     private fun moveToCorrectStep() {
         when {
             statusOnfido.lowercase() != CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
-                navigateToOnfido()
+//                navigateToOnfido()
+                navigateToSignDocumentProcess(
+                    if (linkEvicertia == URL_EMPTY) {
+                        GENERATE_DOCUMENT_STEP.value
+                    } else {
+                        SIGN_DOCUMENTS_STEP.value
+                    }
+                )
             }
             statusEvicertia.lowercase() != CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
                 navigateToSignDocumentProcess(
@@ -214,8 +221,7 @@ class CreditViewModel @Inject constructor(
 
     private fun navigateToSignDocumentProcess(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idPrint/$idBrand/$pkUser/$identification/$email/" +
-                "$idUserRequest/$firstName/$lastName/$statusOnfido/$statusEvicertia",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditScreen.route
         )
     }

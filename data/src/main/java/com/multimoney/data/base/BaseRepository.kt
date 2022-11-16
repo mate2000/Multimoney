@@ -1,5 +1,6 @@
 package com.multimoney.data.base
 
+import android.util.Log
 import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.exception.ApolloException
@@ -10,13 +11,14 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.util.MultimoneyException.APOLLO_ERROR
 import com.multimoney.domain.util.MultimoneyException.APOLLO_PARSE_EXCEPTION
 import com.multimoney.domain.util.MultimoneyException.UNKNOWN_ERROR
-import java.io.IOException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
+import java.io.IOException
 
 abstract class BaseRepository {
 
@@ -49,14 +51,14 @@ abstract class BaseRepository {
         apolloCall: ApolloCall<T>,
         apolloCallMapper: suspend (T?) -> MultimoneyResult<U?>
     ): Flow<MultimoneyResult<U?>> {
-        return flow {
+        return channelFlow {
             invokeSubscriptionProvider(apolloCall).collectLatest { multimoneyResult ->
                 when (multimoneyResult) {
                     is MultimoneyResult.Success -> {
-                        emit(apolloCallMapper(multimoneyResult.data))
+                        send(apolloCallMapper(multimoneyResult.data))
                     }
                     is MultimoneyResult.Failure -> {
-                        emit(MultimoneyResult.Failure(multimoneyResult.httpError))
+                        send(MultimoneyResult.Failure(multimoneyResult.httpError))
                     }
                     else -> {} // NO-OP
                 }
@@ -100,85 +102,23 @@ abstract class BaseRepository {
         }.onStart { emit(MultimoneyResult.Loading(true)) }
     }
 
-//    protected suspend fun <T : Operation.Data, U : Any?> fetchSubscription(
-//        apolloCall: ApolloCall<T>,
-//        apolloCallMapper: suspend (T) -> MultimoneyResult<U>,
-//        multiMoneyResult: MutableSharedFlow<MultimoneyResult<T?>>
-//    ): Flow<MultimoneyResult<U>> {
-//        return flow {
-//            apolloCall.toFlow().collectLatest { apolloResponse ->
-//                if (apolloResponse.hasErrors()) {
-//                    multiMoneyResult.emit(
-//                        MultimoneyResult.Failure(
-//                            HttpError(throwableList = apolloResponse.errors?.map { Throwable(it.message) })
-//                        )
-//                    )
-//                } else {
-//                    multiMoneyResult.emit(
-//                        apolloCallMapper(MultimoneyResult.Success(apolloResponse.data))
-//                    )
-//                }
-//            }
-//            try {
-//                withContext(Dispatchers.IO) {
-//                    apolloCall.toFlow().collectLatest { apolloResponse ->
-//                        if (apolloResponse.hasErrors()) {
-//                            multiMoneyResult.emit(
-//                                MultimoneyResult.Failure(
-//                                    HttpError(throwableList = apolloResponse.errors?.map { Throwable(it.message) })
-//                                )
-//                            )
-//                        } else {
-//                            multiMoneyResult.emit(
-//                                apolloCallMapper(MultimoneyResult.Success(apolloResponse.data))
-//                            )
-//                        }
-//                    }
-//                }
-//            } catch (apolloException: ApolloException) {
-//                MultimoneyResult.Failure(
-//                    HttpError(
-//                        Throwable(
-//                            APOLLO_ERROR.description
-//                        )
-//                    )
-//                )
-//            } catch (e: ApolloParseException) {
-//                MultimoneyResult.Failure(
-//                    HttpError(
-//                        Throwable(
-//                            APOLLO_PARSE_EXCEPTION.description
-//                        )
-//                    )
-//                )
-//            } catch (e: IOException) {
-//                MultimoneyResult.Failure(
-//                    HttpError(
-//                        Throwable(
-//                            UNKNOWN_ERROR.description
-//                        )
-//                    )
-//                )
-//            }
-//        }
-//    }
-
     private suspend fun <T : Operation.Data> invokeSubscriptionProvider(apolloCall: ApolloCall<T>): Flow<MultimoneyResult<T?>> {
-        return flow {
+        return channelFlow {
             try {
                 apolloCall.toFlow().collectLatest { apolloResponse ->
                     if (apolloResponse.hasErrors()) {
-                        emit(
+                        send(
                             MultimoneyResult.Failure(
                                 HttpError(throwableList = apolloResponse.errors?.map { Throwable(it.message) })
                             )
                         )
                     } else {
-                        emit(MultimoneyResult.Success(apolloResponse.data))
+                        Log.wtf("Subscription", apolloResponse.data.toString())
+                        send(MultimoneyResult.Success(apolloResponse.data))
                     }
                 }
             } catch (apolloException: ApolloException) {
-                emit(
+                send(
                     MultimoneyResult.Failure(
                         HttpError(
                             Throwable(
@@ -188,7 +128,7 @@ abstract class BaseRepository {
                     )
                 )
             } catch (e: ApolloParseException) {
-                emit(
+                send(
                     MultimoneyResult.Failure(
                         HttpError(
                             Throwable(
@@ -198,7 +138,7 @@ abstract class BaseRepository {
                     )
                 )
             } catch (e: IOException) {
-                emit(
+                send(
                     MultimoneyResult.Failure(
                         HttpError(
                             Throwable(

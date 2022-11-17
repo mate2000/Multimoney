@@ -27,7 +27,7 @@ fun isPhoneNumberValid(
                 Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name
             )
             if (phoneNumberType == PhoneNumberUtil.PhoneNumberType.MOBILE && PhoneNumberUtil.getInstance()
-                    .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
+                .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
                     .getNumberType(number) == phoneNumberType
             ) {
                 PhoneNumberUtil.getInstance()
@@ -43,9 +43,11 @@ fun isPhoneNumberValid(
 }
 
 fun validId(sizeRequired: Int, errorMessage: Int, personalDocumentLength: Int) =
-    if (personalDocumentLength >= sizeRequired)
-        Pair(false, R.string.error_empty) else
+    if (personalDocumentLength >= sizeRequired) {
+        Pair(false, R.string.error_empty) 
+    }else {
         Pair(true, errorMessage)
+    }
 
 fun validDui(personalDocumentValue: String) =
     if (personalDocumentValue.length == Nationalities.ElSalvador.documentSize) {
@@ -60,10 +62,10 @@ fun validDui(personalDocumentValue: String) =
             10 - verificationNumber.mod(SignUpPersonalDataViewModel.DUI_VERIFICATION_MODULE)
         Pair(
             verificationValue != 10 && verificationValue != duiSplit[duiSplit.lastIndex].toInt(),
-            R.string.sign_up_personal_data_dui_sv_not_valid
+            R.string.sign_up_personal_data_id_not_valid
         )
     } else {
-        Pair(true, R.string.sign_up_personal_data_id_sv_required)
+        Pair(true, R.string.sign_up_personal_data_id_not_valid)
     }
 
 fun passwordHasMinimumCharacters(value: String): Boolean {
@@ -112,8 +114,8 @@ fun noMoreThanThreeConsecutiveLetterOrNumber(value: String): Boolean {
             val valueSplit = valueChunked.first().lowercase().toCharArray()
             error =
                 valueSplit.first().code.plus(1) == valueSplit[1].code &&
-                        valueSplit[1].code.plus(1) == valueSplit[2].code &&
-                        valueSplit[2].code.plus(1) == valueSplit.last().code
+                valueSplit[1].code.plus(1) == valueSplit[2].code &&
+                valueSplit[2].code.plus(1) == valueSplit.last().code
         }
         if (error.not()) {
             val newValue = value.drop(1)
@@ -131,8 +133,8 @@ fun noMoreThanThreeEqualConsecutiveLetterOrNumber(value: String): Boolean {
             val valueSplit = valueChunked.first().lowercase().toCharArray()
             error =
                 valueSplit.first().code == valueSplit[1].code &&
-                        valueSplit[1].code == valueSplit[2].code &&
-                        valueSplit[2].code == valueSplit.last().code
+                valueSplit[1].code == valueSplit[2].code &&
+                valueSplit[2].code == valueSplit.last().code
         }
         if (error.not()) {
             val newValue = value.drop(1)

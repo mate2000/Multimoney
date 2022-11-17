@@ -132,7 +132,7 @@ fun ProfileOptions(
         )
         // as per requirement, this option should be available only for SV and GT.
         uiState.brandId.apply {
-            if (this == Brand.ElSalvador.id && this == Brand.Guatemala.id) {
+            if (this == Brand.ElSalvador.id || this == Brand.Guatemala.id) {
                 CustomItemRow(
                     title = stringResource(R.string.profile_my_cards),
                     startIcon = R.drawable.ic_card,

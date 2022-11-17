@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
@@ -14,19 +15,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
@@ -36,7 +32,6 @@ import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
@@ -44,6 +39,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.Companion.MAX_PERCENTAGE
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryOptionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnBeneficiaryFullNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnCallQueryRelationshipUseCase
@@ -60,9 +56,8 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 @Composable
 fun BeneficiariesScreen(
     beneficiaryViewModel: BeneficiariesViewModel = hiltViewModel(),
-    sharedViewModel: SmartViewModel = hiltViewModel(),
+    sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         beneficiaryViewModel.baseEvent.collect { event ->
@@ -88,7 +83,8 @@ fun BeneficiariesScreen(
                     if (beneficiaryViewModel.uiState.addBeneficiaryState) {
                         beneficiaryViewModel.onUIEvent(
                             OnAddBeneficiaryStateChange(
-                                false, Beneficiary(
+                                false,
+                                Beneficiary(
                                     beneficiaryViewModel.uiState.beneficiaryFullName,
                                     beneficiaryViewModel.uiState.relationshipList.find { it?.description == beneficiaryViewModel.uiState.relationship }?.relationshipId,
                                     beneficiaryViewModel.uiState.relationship,
@@ -111,7 +107,8 @@ fun BeneficiariesScreen(
                                         )
                                     )
                                 }
-                            ))
+                            )
+                        )
                     }
                 },
                 nextStep = Five.id,
@@ -123,13 +120,11 @@ fun BeneficiariesScreen(
 
     val generalModifier = if (beneficiaryViewModel.uiState.addBeneficiaryState) {
         Modifier
-            .padding(vertical = 16.dp, horizontal = 16.dp)
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     } else {
         Modifier
-            .padding(vertical = 16.dp, horizontal = 16.dp)
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     }
@@ -137,23 +132,12 @@ fun BeneficiariesScreen(
     Column(
         modifier = generalModifier
     ) {
-        Text(
-            text = buildAnnotatedString {
-                withStyle(
-                    style = Typography.h4.toSpanStyle()
-                        .copy(
-                            color = MultimoneyTheme.colors.text,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                ) {
-                    append(stringResource(id = string.smart_account_beneficiaries_title))
-                }
-            },
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
-        )
         if (beneficiaryViewModel.uiState.addBeneficiaryState) BeneficiaryForm(beneficiaryViewModel)
         else BeneficiaryList(beneficiaryViewModel)
+    }
+
+    BackHandler {
+        beneficiaryViewModel.onUIEvent(OnAddBeneficiaryOptionChange(false))
     }
 }
 
@@ -162,7 +146,6 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
     val focusManager = LocalFocusManager.current
     CustomOutlinedTextField(
         value = viewModel.uiState.beneficiaryFullName,
-        placeHolder = "",
         onValueChange = { beneficiaryName ->
             viewModel.onUIEvent(OnBeneficiaryFullNameValueChange(beneficiaryName))
         },
@@ -174,7 +157,7 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
             focusManager.clearFocus()
         }),
         labelText = stringResource(id = string.sing_up_personal_data_cr_complete_name),
-        modifier = Modifier.padding(top = 44.dp),
+        modifier = Modifier.padding(top = 24.dp)
     )
 
     CustomDropdown(
@@ -205,7 +188,7 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
             focusManager.clearFocus()
         }),
         labelText = stringResource(id = string.smart_account_beneficiaries_percentage),
-        modifier = Modifier.padding(top = 16.dp),
+        modifier = Modifier.padding(top = 16.dp)
     )
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -252,7 +235,8 @@ fun BeneficiaryList(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                 .fillMaxWidth()
-                .height(48.dp), buttonType = CustomButtonType.PrimaryTertiary,
+                .height(48.dp),
+            buttonType = CustomButtonType.PrimaryTertiary,
             text = stringResource(id = string.smart_account_add_beneficiaries),
             onClick = {
                 viewModel.onUIEvent(OnAddBeneficiaryStateChange(true))

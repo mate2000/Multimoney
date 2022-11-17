@@ -47,7 +47,7 @@ fun SmartFactaBottomSheet(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.info_blue_icon),
-                    contentDescription = stringResource(R.string.info),
+                    contentDescription = stringResource(R.string.content_description_more_info),
                     tint = MultimoneyTheme.colors.textInformation,
                     modifier = Modifier.padding(end = 8.dp, top = 16.dp)
                 )

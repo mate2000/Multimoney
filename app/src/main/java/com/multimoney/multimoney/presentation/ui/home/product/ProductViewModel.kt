@@ -407,6 +407,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToDisbursement() {
+        // TODO: Navigate to disbursement screen
     }
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {

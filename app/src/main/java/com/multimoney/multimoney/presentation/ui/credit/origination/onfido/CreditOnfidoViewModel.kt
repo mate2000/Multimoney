@@ -196,8 +196,7 @@ class CreditOnfidoViewModel @Inject constructor(
         identification: String,
         idBrand: Int,
         idUserRequest: Long,
-        user: String,
-        onNextStep: () -> Unit
+        user: String
     ) {
         executeUseCase {
             mutationOnfidoCheckProcessUseCase.invoke(

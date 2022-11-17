@@ -21,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnGetProfileInfo
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnUpdateProfileClick
@@ -68,15 +67,15 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
                     userName = uiState.userName,
                     email = uiState.userEmail,
                     phoneNumber = uiState.phoneNumber,
-                    onUpdateClick = { viewModel.onUIEvent(OnUpdateProfileClick) }
+                    onUpdateClick = { onUIEvent(OnUpdateProfileClick) }
                 )
                 ProfileOptions(
-                    uiState = viewModel.uiState,
-                    onMyAccountsClick = { viewModel.onUIEvent(OnMyAccountsClick) },
-                    onMyCardsClick = { viewModel.onUIEvent(OnMyCardsClick) },
-                    onSettingsClick = { viewModel.onUIEvent(OnSettingsClick) },
-                    onHelpClick = { viewModel.onUIEvent(OnHelpClick) },
-                    onLogoutClick = { viewModel.onUIEvent(OnLogoutClick) }
+                    uiState = uiState,
+                    onMyAccountsClick = { onUIEvent(OnMyAccountsClick) },
+                    onMyCardsClick = { onUIEvent(OnMyCardsClick) },
+                    onSettingsClick = { onUIEvent(OnSettingsClick) },
+                    onHelpClick = { onUIEvent(OnHelpClick) },
+                    onLogoutClick = { onUIEvent(OnLogoutClick) }
                 )
             }
         }
@@ -129,8 +128,8 @@ fun ProfileOptions(
             endIcon = R.drawable.ic_right_chevron,
             onClick = onMyAccountsClick
         )
-        // as per requirement, this option should be available only for SV and GT.
-        uiState.brandId.apply {
+        // As per requirement, this option should be available only for SV and GT.
+        uiState.idBrand.apply {
             if (this == Brand.ElSalvador.id || this == Brand.Guatemala.id) {
                 CustomItemRow(
                     title = stringResource(R.string.profile_my_cards),
@@ -155,7 +154,7 @@ fun ProfileOptions(
         CustomItemRow(
             title = stringResource(R.string.profile_logout),
             titleFontWeight = FontWeight.SemiBold,
-            customTitleColor = SemanticNegative400,
+            customTitleColor = MultimoneyTheme.colors.textAlertColor,
             startIcon = R.drawable.ic_logout,
             shouldShowDivider = false,
             onClick = onLogoutClick

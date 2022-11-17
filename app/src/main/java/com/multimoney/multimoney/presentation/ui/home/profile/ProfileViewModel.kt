@@ -30,7 +30,7 @@ class ProfileViewModel @Inject constructor(
             userName = dataStorePreferences.getUserName().first(),
             userEmail = dataStorePreferences.getUserEmail().first(),
             phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
-            brandId = savedStateHandle.get<String>(ID_BRAND)?.toInt() ?: 0
+            idBrand =  savedStateHandle.get<String>(ID_BRAND)?.toInt() ?: 0
         )
     }
 
@@ -39,7 +39,7 @@ class ProfileViewModel @Inject constructor(
         val userName: String = "",
         val userEmail: String = "",
         val phoneNumber: String = "",
-        val brandId: Int = 0,
+        val idBrand: Int = 0,
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

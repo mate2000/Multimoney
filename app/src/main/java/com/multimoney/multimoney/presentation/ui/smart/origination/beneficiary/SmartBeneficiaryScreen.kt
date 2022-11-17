@@ -29,7 +29,7 @@ fun SmartBeneficiaryScreen(
 ) {
 
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(false))
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(false))
 
         sharedViewModel.onUIEvent(
@@ -65,7 +65,7 @@ fun SmartBeneficiaryScreen(
                 sharedViewModel.onUIEvent(
                     SmartViewModel.UIEvent.OnContinueVisible(
                         true,
-                        R.string.accept
+                        R.string.save
                     )
                 )
                 sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(true))

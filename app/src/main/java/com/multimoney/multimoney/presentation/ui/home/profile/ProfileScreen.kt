@@ -71,7 +71,14 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
                         // TODO, handle click
                     }
                 )
-                ProfileOptions(this)
+                ProfileOptions(
+                    uiState = viewModel.uiState,
+                    onMyAccountsClick = { viewModel.onUIEvent(OnMyAccountsClick) },
+                    onMyCardsClick = { viewModel.onUIEvent(OnMyCardsClick) },
+                    onSettingsClick = { viewModel.onUIEvent(OnSettingsClick) },
+                    onHelpClick = { viewModel.onUIEvent(OnHelpClick) },
+                    onLogoutClick = { viewModel.onUIEvent(OnLogoutClick) }
+                )
             }
         }
     }
@@ -106,7 +113,14 @@ fun ProfileHeader(
 }
 
 @Composable
-fun ProfileOptions(viewModel: ProfileViewModel) {
+fun ProfileOptions(
+    uiState: ProfileViewModel.UIState,
+    onMyAccountsClick: () -> Unit,
+    onMyCardsClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onHelpClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+) {
     Column(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp)
     ) {
@@ -114,16 +128,16 @@ fun ProfileOptions(viewModel: ProfileViewModel) {
             title = stringResource(R.string.profile_my_accounts),
             startIcon = R.drawable.ic_my_accounts,
             endIcon = R.drawable.ic_right_chevron,
-            onClick = { viewModel.onUIEvent(OnMyAccountsClick) }
+            onClick = onMyAccountsClick
         )
         // as per requirement, this option should be available only for SV and GT.
-        viewModel.uiState.brandId.apply {
+        uiState.brandId.apply {
             if (this == Brand.ElSalvador.id && this == Brand.Guatemala.id) {
                 CustomItemRow(
                     title = stringResource(R.string.profile_my_cards),
                     startIcon = R.drawable.ic_card,
                     endIcon = R.drawable.ic_right_chevron,
-                    onClick = { viewModel.onUIEvent(OnMyCardsClick) }
+                    onClick = onMyCardsClick
                 )
             }
         }
@@ -131,13 +145,13 @@ fun ProfileOptions(viewModel: ProfileViewModel) {
             title = stringResource(R.string.profile_settings),
             startIcon = R.drawable.ic_settings,
             endIcon = R.drawable.ic_right_chevron,
-            onClick = { viewModel.onUIEvent(OnSettingsClick) }
+            onClick = onSettingsClick
         )
         CustomItemRow(
             title = stringResource(R.string.profile_help),
             startIcon = R.drawable.ic_help,
             endIcon = R.drawable.ic_right_chevron,
-            onClick = { viewModel.onUIEvent(OnHelpClick) }
+            onClick = onHelpClick
         )
         CustomItemRow(
             title = stringResource(R.string.profile_logout),
@@ -145,7 +159,7 @@ fun ProfileOptions(viewModel: ProfileViewModel) {
             customTitleColor = SemanticNegative400,
             startIcon = R.drawable.ic_logout,
             shouldShowDivider = false,
-            onClick = { viewModel.onUIEvent(OnLogoutClick) }
+            onClick = onLogoutClick
         )
     }
 }

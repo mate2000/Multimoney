@@ -71,6 +71,8 @@ fun FormalSalariedSvScreen(
                                 income = viewModel.uiState.salary.toFloat(),
                                 companyName = viewModel.uiState.companyName,
                                 positionJob = viewModel.uiState.profession,
+                                idJobLevel2 = viewModel.uiState.divisionTwoSelected?.id?.toLong() ?: 0,
+                                idJobLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong() ?: 0,
                                 currentStep = Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )

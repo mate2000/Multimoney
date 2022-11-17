@@ -13,10 +13,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.data.util.catalog.SmartSteps.Search
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryOptionChange
@@ -25,9 +27,8 @@ import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonsLayout
 @Composable
 fun SmartBeneficiaryScreen(
     viewModel: BeneficiariesViewModel = hiltViewModel(),
-    sharedViewModel: SmartViewModel = hiltViewModel(),
+    sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(false))
@@ -82,6 +83,18 @@ fun SmartBeneficiaryScreen(
                 } else {
                     sharedViewModel.onUIEvent(
                         SmartViewModel.UIEvent.OnSetNavigation(
+                            nextAction = {
+                                sharedViewModel.onUIEvent(
+                                    OnCallMutationUpdateGlobalRequestUseCase(
+                                        accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                            listBeneficiaries = viewModel.uiState.beneficiaryList,
+                                            currentStep = Search.getNameById(
+                                                sharedViewModel.uiState.currentStep
+                                            )
+                                        )
+                                    )
+                                )
+                            },
                             nextStep = SmartSteps.Five.id,
                             previousStep = SmartSteps.Three.id
                         )

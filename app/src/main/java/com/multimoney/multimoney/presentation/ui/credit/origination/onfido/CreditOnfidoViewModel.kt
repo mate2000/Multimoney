@@ -127,7 +127,7 @@ class CreditOnfidoViewModel @Inject constructor(
                     injectNewToken(it?.sdkToken ?: "")
                 }
                 result.onFailure {
-                    // Close the sdk
+                    // The sdk shows an error.
                 }
             }
         }
@@ -169,7 +169,6 @@ class CreditOnfidoViewModel @Inject constructor(
 
                     override fun userExited(exitCode: ExitCode) {
                         countDownTimer.resumeTimer()
-                        // Empty on purpose
                     }
 
                     override fun onError(exception: OnfidoException) {

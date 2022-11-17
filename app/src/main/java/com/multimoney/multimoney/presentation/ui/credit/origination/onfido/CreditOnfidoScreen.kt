@@ -40,12 +40,10 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnLoadingValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -55,7 +53,6 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
 @Preview
@@ -157,137 +154,106 @@ fun CreditOnfidoScreen(
         )
     }
 
-    if (viewModel.uiState.isAlertVisible) {
-        var title: Int = string.empty
-        var subtitle: Int = string.empty
-        var action: Int = string.empty
-        if (viewModel.idBrand != null) {
-            when (viewModel.idBrand) {
-                Brand.Guatemala.id -> {
-                    title = string.save_credit_operation_error_title
-                    subtitle = string.save_credit_operation_error_subtitle_gt
-                    action = string.save_credit_operation_error_action_gt
-                }
-                else -> {
-                    title = string.save_credit_operation_error_title
-                    subtitle = string.save_credit_operation_error_subtitle
-                    action = string.save_credit_operation_error_action
-                }
-            }
-        }
-        AlertResult(
-            iconResource = drawable.ic_error_symbol,
-            titleResource = title,
-            descriptionResource = subtitle,
-            buttonTextResource = action,
-            isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
-            onButtonClick = {
-                context.openWhatsAppDeepLink(whatsAppLink)
-            }
-        )
-    } else {
-        ConstraintLayout(
-            modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background)
-        ) {
-            val (topBar, content, button) = createRefs()
+    ConstraintLayout(
+        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background)
+    ) {
+        val (topBar, content, button) = createRefs()
 
-            TopNavBar(
-                modifier = Modifier.constrainAs(topBar) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
-                isLeftButtonVisible = false,
-                onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
+        TopNavBar(
+            modifier = Modifier.constrainAs(topBar) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            },
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
+        )
+        Column(
+            Modifier.padding(end = 16.dp, start = 16.dp, top = 24.dp).constrainAs(content) {
+                top.linkTo(topBar.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(button.top)
+                height = Dimension.fillToConstraints
+            }
+        ) {
+            Text(
+                text = stringResource(id = string.sign_up_id_validation_title),
+                style = Typography.h5.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.SemiBold
+                )
             )
-            Column(
-                Modifier.padding(end = 16.dp, start = 16.dp, top = 24.dp).constrainAs(content) {
-                    top.linkTo(topBar.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(button.top)
-                    height = Dimension.fillToConstraints
-                }
+            Text(
+                modifier = Modifier.padding(top = 16.dp),
+                text = stringResource(id = string.sign_up_id_validation_subtitle),
+                style = Typography.body2.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+
+            Row(
+                Modifier.padding(top = 32.dp).fillMaxWidth()
             ) {
-                Text(
-                    text = stringResource(id = string.sign_up_id_validation_title),
-                    style = Typography.h5.copy(
-                        color = MultimoneyTheme.colors.text,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                CustomImage(
+                    drawableResource = drawable.ic_validation,
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 Text(
-                    modifier = Modifier.padding(top = 16.dp),
-                    text = stringResource(id = string.sign_up_id_validation_subtitle),
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = string.sign_up_id_validation_one),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold
                     )
                 )
-
-                Row(
-                    Modifier.padding(top = 32.dp).fillMaxWidth()
-                ) {
-                    CustomImage(
-                        drawableResource = drawable.ic_validation,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(id = string.sign_up_id_validation_one),
-                        style = Typography.body2.copy(
-                            color = MultimoneyTheme.colors.text,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                }
-                Row(
-                    Modifier.padding(top = 32.dp).fillMaxWidth()
-                ) {
-                    CustomImage(
-                        drawableResource = drawable.ic_validation,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(id = string.sign_up_id_validation_two),
-                        style = Typography.body2.copy(
-                            color = MultimoneyTheme.colors.text,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                }
-                Row(
-                    Modifier.padding(top = 32.dp).fillMaxWidth()
-                ) {
-                    CustomImage(
-                        drawableResource = drawable.ic_validation,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(id = string.sign_up_id_validation_three),
-                        style = Typography.body2.copy(
-                            color = MultimoneyTheme.colors.text,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                }
             }
-            CustomButton(
-                onClick = { viewModel.onUIEvent(OnContinueClick) },
-                text = stringResource(id = string.button_continue),
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
-                    .height(48.dp).constrainAs(button) {
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    },
-                buttonType = PrimaryPrimary,
-                enable = viewModel.uiState.isContinueEnabled
-            )
+            Row(
+                Modifier.padding(top = 32.dp).fillMaxWidth()
+            ) {
+                CustomImage(
+                    drawableResource = drawable.ic_validation,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = string.sign_up_id_validation_two),
+                    style = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            }
+            Row(
+                Modifier.padding(top = 32.dp).fillMaxWidth()
+            ) {
+                CustomImage(
+                    drawableResource = drawable.ic_validation,
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                )
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = string.sign_up_id_validation_three),
+                    style = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            }
         }
+        CustomButton(
+            onClick = { viewModel.onUIEvent(OnContinueClick) },
+            text = stringResource(id = string.button_continue),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp).fillMaxWidth()
+                .height(48.dp).constrainAs(button) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+            buttonType = PrimaryPrimary,
+            enable = viewModel.uiState.isContinueEnabled
+        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)

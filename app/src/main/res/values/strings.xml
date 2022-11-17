@@ -269,7 +269,13 @@
     <string name="home_product_amount" translatable="false">de %s</string>
 
     <!-- My Profile -->
-    <string name="my_profile_title" translatable="false">Mi perfil</string>
+    <string name="profile_title" translatable="false">Mi perfil</string>
+    <string name="profile_my_accounts" translatable="false">Mis cuentas</string>
+    <string name="profile_my_cards" translatable="false">Mis tarjetas</string>
+    <string name="profile_settings" translatable="false">Configuraciones</string>
+    <string name="profile_help" translatable="false">Ayuda e información</string>
+    <string name="profile_invite_friends" translatable="false">Invitar amigos</string>
+    <string name="profile_logout" translatable="false">Cerrar Sesión</string>
 
     <!-- my products bottom sheet -->
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>

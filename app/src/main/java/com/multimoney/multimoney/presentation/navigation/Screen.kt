@@ -64,7 +64,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // HomeNavGraph Screens
     object HomeScreen : Screen("home_screen")
 
-    object ProfileScreen : Screen("profile_screen")
+    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}", "profile_screen")
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(

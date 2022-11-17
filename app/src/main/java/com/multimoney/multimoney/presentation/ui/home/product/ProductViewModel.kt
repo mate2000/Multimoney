@@ -280,7 +280,7 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
 
     private fun onNavigateToProfileScreen() {
-        navigateTo(Screen.ProfileScreen.route)
+        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
     }
 
     private fun onProductClick(context: Context, whatsAppLink: String) {

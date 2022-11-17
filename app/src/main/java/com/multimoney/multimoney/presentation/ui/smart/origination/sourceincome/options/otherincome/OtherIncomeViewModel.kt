@@ -41,7 +41,7 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
         }
     }
     private fun incomeAmountChange(income: String) {
-        if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
+        if ((Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) && income.last() != '0') {
             uiState = uiState.copy(incomeAmount = income)
         }
         onValidateForm()
@@ -58,6 +58,7 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
-    fun isFormValid(): Boolean =
-        uiState.incomeSource.isNotBlank() && uiState.incomeAmount.isNotBlank()
+    fun isFormValid() = uiState.incomeSource.isNotBlank() &&
+        uiState.incomeAmount.isNotBlank() &&
+        uiState.incomeAmount.toFloat() > 0
 }

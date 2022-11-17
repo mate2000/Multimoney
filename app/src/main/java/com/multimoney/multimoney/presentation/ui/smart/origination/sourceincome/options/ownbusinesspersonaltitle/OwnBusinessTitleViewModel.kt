@@ -11,9 +11,7 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
-class OwnBusinessTitleViewModel @Inject constructor(
-
-) : BaseViewModel(true) {
+class OwnBusinessTitleViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
@@ -49,7 +47,7 @@ class OwnBusinessTitleViewModel @Inject constructor(
     }
 
     private fun incomeAmountChange(income: String) {
-        if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
+        if ((Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) && income.last() != '0') {
             uiState = uiState.copy(incomeAmount = income)
         }
         onValidateForm()
@@ -62,6 +60,7 @@ class OwnBusinessTitleViewModel @Inject constructor(
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
-    fun isFormValid(): Boolean =
-        uiState.incomeAmount.isNotBlank() && uiState.businessName.isNotBlank()
+    fun isFormValid() = uiState.incomeAmount.isNotBlank() &&
+        uiState.businessName.isNotBlank() &&
+        uiState.incomeAmount.toFloat() > 0
 }

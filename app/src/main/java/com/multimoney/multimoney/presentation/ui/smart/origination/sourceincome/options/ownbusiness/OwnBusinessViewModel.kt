@@ -5,8 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,16 +42,19 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     }
 
     private fun onMonthlyIncomeValueChange(monthlyIncome: String) {
-        uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
+        if ((Pattern.matches(DECIMAL_REGEX, monthlyIncome) || monthlyIncome.isEmpty()) && monthlyIncome.last() != '0') {
+            uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
+        }
         onValidateForm()
     }
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
     fun isFormValid() = uiState.companyNameValue.isNotBlank() &&
-            uiState.companyDescriptionValue.isNotBlank() &&
-            !uiState.companyDescriptionError.first
-            && uiState.monthlyIncomeValue.isNotBlank()
+        uiState.companyDescriptionValue.isNotBlank() &&
+        !uiState.companyDescriptionError.first &&
+        uiState.monthlyIncomeValue.isNotBlank() &&
+        uiState.monthlyIncomeValue.toFloat() > 0
 
     data class UIState(
         // Interactions

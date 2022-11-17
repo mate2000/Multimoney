@@ -80,7 +80,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
     }
 
     private fun incomeAmountChange(income: String) {
-        if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
+        if ((Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) && income.last() != '0') {
             uiState = uiState.copy(businessIncome = income)
         }
         onValidateForm()
@@ -163,7 +163,8 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
     fun isFormValid(): Boolean = uiState.businessIncome.isNotBlank() &&
         uiState.businessActivity.isNotBlank() &&
         uiState.identificationSuccess.first &&
-        uiState.businessIdentification.length == IDENTIFICATION_LENGTH
+        uiState.businessIdentification.length == IDENTIFICATION_LENGTH &&
+        uiState.businessIncome.toFloat() > 0
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()

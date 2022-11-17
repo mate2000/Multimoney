@@ -5,18 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.Companion.ADDRESS_MAX_LENGHT
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel
 import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
-class IndProfessionalViewModel @Inject constructor(
-
-) : BaseViewModel(true) {
+class IndProfessionalViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
@@ -52,7 +48,7 @@ class IndProfessionalViewModel @Inject constructor(
     }
 
     private fun incomeAmountChange(income: String) {
-        if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
+        if ((Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) && income.last() != '0') {
             uiState = uiState.copy(incomeAmount = income)
         }
         onValidateForm()
@@ -74,6 +70,7 @@ class IndProfessionalViewModel @Inject constructor(
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
-    fun isFormValid(): Boolean =
-        uiState.incomeAmount.isNotBlank() && uiState.address.isNotBlank()
+    fun isFormValid() = uiState.incomeAmount.isNotBlank() &&
+        uiState.address.isNotBlank() &&
+        uiState.incomeAmount.toFloat() > 0
 }

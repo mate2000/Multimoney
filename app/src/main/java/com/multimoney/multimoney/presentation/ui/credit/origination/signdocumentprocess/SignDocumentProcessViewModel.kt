@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
@@ -86,6 +87,12 @@ class SignDocumentProcessViewModel @Inject constructor(
                 isActive = mutableStateOf(true)
             )
         )
+    }
+
+    private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
+        if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
+            onListenCreditContractEventSubscription(idPrint, idBrand)
+        }
     }
 
     private fun onListenCreditContractEventSubscription(idPrint: Long, idBrand: Int) {
@@ -192,7 +199,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnCallSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription(idPrint, idBrand)
+            is OnCallSubscriptionCreditContractEvent -> onShouldCallSubscription(idPrint, idBrand)
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
@@ -218,7 +225,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     companion object {
         private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 120000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
     }
 }

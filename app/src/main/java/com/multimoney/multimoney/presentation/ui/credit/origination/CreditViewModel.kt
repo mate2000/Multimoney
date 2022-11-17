@@ -10,6 +10,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.util.onFailure
@@ -63,7 +64,8 @@ class CreditViewModel @Inject constructor(
     val dataStorePreferences: DataStorePreferences,
     val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val mutationSaveCreditFlowStepUseCase: MutationSaveCreditFlowStepUseCase,
-    val queryScreenConfigUseCase: QueryScreenConfigUseCase
+    val queryScreenConfigUseCase: QueryScreenConfigUseCase,
+    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -71,7 +73,7 @@ class CreditViewModel @Inject constructor(
         private set
 
     // Stateless
-    var closeDialogTitle: Int = R.string.empty
+    var closeDialogTitle: Int = string.empty
     var closeDialogDescription: String = ""
     var nextAction: () -> Unit = {}
     private var nextStep: Int = CreditStep.One.id
@@ -166,16 +168,9 @@ class CreditViewModel @Inject constructor(
     private fun moveToCorrectStep() {
         when {
             statusOnfido.lowercase() != CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
-//                navigateToOnfido()
-                navigateToSignDocumentProcess(
-                    if (linkEvicertia == URL_EMPTY) {
-                        GENERATE_DOCUMENT_STEP.value
-                    } else {
-                        SIGN_DOCUMENTS_STEP.value
-                    }
-                )
+                navigateToOnfido()
             }
-            statusEvicertia.lowercase() != CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+            statusEvicertia.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
                 navigateToSignDocumentProcess(
                     if (linkEvicertia == URL_EMPTY) {
                         GENERATE_DOCUMENT_STEP.value
@@ -214,7 +209,7 @@ class CreditViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$URL_EMPTY",
+            "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$URL_EMPTY/$statusEvicertia",
             Screen.CreditScreen.route
         )
     }
@@ -273,13 +268,32 @@ class CreditViewModel @Inject constructor(
         }
     }
 
+    private fun onCallSaveCreditOperation(
+        idUserRequest: Long,
+        pkUser: Long,
+        user: String,
+        idBrand: Int
+    ) {
+        executeUseCase {
+            mutationSaveCreditOperationUseCase.invoke(
+                idUserRequest,
+                pkUser,
+                user,
+                idBrand
+            ).collectLatest { result ->
+                result.onSuccess {}
+                result.onFailure {}
+            }
+        }
+    }
+
     fun getLoadingString(): Int = if (idBrand.isNotEmpty()) {
         when (idBrand.toInt()) {
             Brand.Guatemala.id -> R.string.credit_glad_to_see_you_gt
             else -> R.string.credit_glad_to_see_you
         }
     } else {
-        R.string.empty
+        string.empty
     }
 
     data class UIState(

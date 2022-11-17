@@ -33,15 +33,16 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     },
     creditLimit = limite_credito,
     creditLimitLabel = limite_credito_label,
-    creditNumber = this.pagare,
-    term = this.plazo
+    creditNumber = pagare,
+    term = plazo,
+    canExpandCredit = puede_Ampliar
 )
 
 private fun BalanceQuery.Account.mapToDomainModel() =
     Account(
-        totalBalance = this.totalBalance.toString().toDouble(),
-        currencyCode = this.currencyCode,
-        gainedInterest = this.gainedInterest.toString().toDouble()
+        totalBalance = totalBalance.toString().toDouble(),
+        currencyCode = currencyCode,
+        gainedInterest = gainedInterest.toString().toDouble()
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =

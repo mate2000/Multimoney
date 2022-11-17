@@ -228,6 +228,8 @@
     <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
     <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
     <string name="home_disburse_request_button_text" translatable="false">Solicitar disponible</string>
+    <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
+    <string name="home_pay_button_text" translatable="false">Abonar</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>

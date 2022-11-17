@@ -342,7 +342,7 @@ fun ProductFooterExpanded(
         ) { currentPage ->
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditFooterExpanded(viewModel = viewModel)
-                ProductType.Smart.value -> SmartFooterExpanded()
+                ProductType.Smart.value -> SmartFooterExpanded(viewModel = viewModel)
             }
         }
     }

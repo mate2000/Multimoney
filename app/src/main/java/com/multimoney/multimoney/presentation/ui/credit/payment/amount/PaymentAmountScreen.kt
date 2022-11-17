@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAlertResultButtonClick
-import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnHidePaymentBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMaximumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnMinimumPaymentButtonClick
@@ -64,9 +63,6 @@ fun PaymentAmountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
-            if (shouldDisplayExchangeRate()) {
-                onUIEvent(OnCallQueryGetExchangeRateCredit)
-            }
         }
     }
     BackHandler {
@@ -101,90 +97,95 @@ fun PaymentAmountContent(
     } else {
         val focusManager = LocalFocusManager.current
         Column(
-            modifier = Modifier
-                .background(MultimoneyTheme.colors.background)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.background(MultimoneyTheme.colors.background)
         ) {
-            Column {
-                TopNavBar(
-                    onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
-                    onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBackHome) }
-                )
-                Text(
-                    modifier = Modifier.padding(top = 42.dp),
-                    text = stringResource(id = R.string.payment_amount_title),
-                    style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.labelText),
-                    textAlign = TextAlign.Left
-                )
-                Row(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .fillMaxWidth()
-                ) {
-                    RoundedPaymentButton(
-                        modifier = Modifier
-                            .weight(0.48f),
-                        onClick = { viewModel.onUIEvent(OnMinimumPaymentButtonClick) },
-                        strokeWidth = 1.dp,
-                        roundedShapeDp = 24.dp,
-                        mainText = viewModel.uiState.minimumPaymentLabel,
-                        secondaryText = stringResource(id = R.string.payment_amount_min_amount),
-                        isSelected = viewModel.uiState.isMinimumSelected
-                    )
-                    Spacer(modifier = Modifier.weight(0.04f))
-                    RoundedPaymentButton(
-                        modifier = Modifier
-                            .weight(0.48f),
-                        onClick = { viewModel.onUIEvent(OnMaximumPaymentButtonClick) },
-                        strokeWidth = 1.dp,
-                        roundedShapeDp = 24.dp,
-                        mainText = viewModel.uiState.maximumPaymentLabel,
-                        secondaryText = stringResource(id = R.string.payment_amount_max_amount),
-                        isSelected = viewModel.uiState.isMaximumSelected
-                    )
-                }
-                if (viewModel.uiState.isAmountVisible) {
-                    CurrencyAmountInput(
-                        modifier = Modifier.padding(top = 24.dp),
-                        value = viewModel.uiState.currentAmountValueString,
-                        placeHolder = viewModel.uiState.currentAmountValueString,
-                        onValueChange = {
-                            viewModel.onUIEvent(UIEvent.OnAmountValueChange(it))
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(onDone = {
-                            focusManager.clearFocus()
-                        }),
-                        isRequired = true,
-                        isError = viewModel.uiState.currentAmountError.first,
-                        errorMessage = stringResource(
-                            id = viewModel.uiState.currentAmountError.second,
-                            viewModel.getFormattedCurrency()
-                        ),
-                        customTransformation = CurrencyDoubleTransformation(
-                            viewModel.uiState.currency,
-                            CreditAmountViewModel.CURRENCY_SEPARATOR
-                        )
-                    )
-                }
-            }
-            CustomButton(
-                modifier = Modifier
-                    .height(48.dp)
-                    .fillMaxWidth(),
-                onClick = {
-                    viewModel.onUIEvent(UIEvent.OnPaymentButtonClick)
-                },
-                text = stringResource(id = R.string.button_continue),
-                buttonType = CustomButtonType.PrimaryPrimary,
-                enable = viewModel.uiState.enableButton
+            TopNavBar(
+                onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
+                onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBackHome) }
             )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .background(MultimoneyTheme.colors.background)
+                    .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        modifier = Modifier.padding(top = 42.dp),
+                        text = stringResource(id = R.string.payment_amount_title),
+                        style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.labelText),
+                        textAlign = TextAlign.Left
+                    )
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 24.dp)
+                            .fillMaxWidth()
+                    ) {
+                        RoundedPaymentButton(
+                            modifier = Modifier
+                                .weight(0.48f),
+                            onClick = { viewModel.onUIEvent(OnMinimumPaymentButtonClick) },
+                            strokeWidth = 1.dp,
+                            roundedShapeDp = 24.dp,
+                            mainText = viewModel.uiState.minimumPaymentLabel,
+                            secondaryText = stringResource(id = R.string.payment_amount_min_amount),
+                            isSelected = viewModel.uiState.isMinimumSelected
+                        )
+                        Spacer(modifier = Modifier.weight(0.04f))
+                        RoundedPaymentButton(
+                            modifier = Modifier
+                                .weight(0.48f),
+                            onClick = { viewModel.onUIEvent(OnMaximumPaymentButtonClick) },
+                            strokeWidth = 1.dp,
+                            roundedShapeDp = 24.dp,
+                            mainText = viewModel.uiState.maximumPaymentLabel,
+                            secondaryText = stringResource(id = R.string.payment_amount_max_amount),
+                            isSelected = viewModel.uiState.isMaximumSelected
+                        )
+                    }
+                    if (viewModel.uiState.isAmountVisible) {
+                        CurrencyAmountInput(
+                            modifier = Modifier.padding(top = 24.dp),
+                            value = viewModel.uiState.currentAmountValueString,
+                            placeHolder = viewModel.uiState.currentAmountValueString,
+                            onValueChange = {
+                                viewModel.onUIEvent(UIEvent.OnAmountValueChange(it))
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(onDone = {
+                                focusManager.clearFocus()
+                            }),
+                            isRequired = true,
+                            isError = viewModel.uiState.currentAmountError.first,
+                            errorMessage = stringResource(
+                                id = viewModel.uiState.currentAmountError.second,
+                                viewModel.getFormattedCurrency()
+                            ),
+                            customTransformation = CurrencyDoubleTransformation(
+                                viewModel.uiState.currency,
+                                CreditAmountViewModel.CURRENCY_SEPARATOR
+                            )
+                        )
+                    }
+                }
+                CustomButton(
+                    modifier = Modifier
+                        .height(48.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        focusManager.clearFocus()
+                        viewModel.onUIEvent(UIEvent.OnPaymentButtonClick)
+                    },
+                    text = stringResource(id = R.string.button_continue),
+                    buttonType = CustomButtonType.PrimaryPrimary,
+                    enable = viewModel.uiState.enableButton
+                )
+            }
         }
     }
     PaymentAmountBottomSheetScreen(

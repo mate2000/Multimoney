@@ -10,10 +10,11 @@ import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.continuevalidatingonfido.ContinueValidatingOnfidoScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors.OnfidoAndEvisertiaErrorsScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction.ProcessingTransactionScreen
 
 const val PK_USER = "pk_user"
 const val IDENTIFICATION = "identification"
@@ -49,11 +50,29 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                     }
                 })
         }
+
+        composable(
+            Screen.CreditOnfidoScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+            )
+        ) {
+            CreditOnfidoScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
+        }
         composable(
             route = Screen.SignDocumentProcessScreen.route,
             arguments = listOf(
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
-                navArgument(ID_BRAND) { type = NavType.IntType }
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType },
+                navArgument(PK_USER) { type = NavType.LongType }
             )
         ) {
             SignDocumentProcessScreen(onPopAndNavigate = {
@@ -83,10 +102,12 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
         composable(
             route = Screen.OnfidoAndEvicertiaErrorsScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType }
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType }
             )
         ) {
-            OnfidoAndEvisertiaErrorsScreen(
+            OnfidoAndEvicertiaErrorsScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

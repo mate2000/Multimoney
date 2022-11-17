@@ -35,7 +35,8 @@ const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
 const val PAYMENT_DATE = "payment_date"
-const val IS_EDIT = "is_edit"
+const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
+const val IS_EDIT_PAYMENT_SCHEDULE = "is_edit_payment_schedule"
 const val PREVIOUS_SCREEN = "previous_screen"
 
 fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
@@ -167,7 +168,10 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(CLIENT_BANK_ACCOUNT) {
                     type = ClientBankAccountNavType()
                 },
-                navArgument(IS_EDIT) {
+                navArgument(IS_EDIT_BANK_ACCOUNT) {
+                    type = NavType.BoolType
+                },
+                navArgument(IS_EDIT_PAYMENT_SCHEDULE) {
                     type = NavType.BoolType
                 }
             )

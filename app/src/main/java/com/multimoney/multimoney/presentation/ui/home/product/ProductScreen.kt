@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,8 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditStatus
+import com.multimoney.data.util.catalog.SmartAccountStatus
+import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
@@ -60,6 +63,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CardOfferSmartProduct
@@ -73,7 +77,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProce
 import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCredit
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.test.motionlayout.MotionLayoutMM
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.CreditCard
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
 import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
@@ -83,7 +86,11 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
+import com.multimoney.multimoney.presentation.uielement.TOTAL_PAGES
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -110,7 +117,9 @@ fun ProductScreen(
     LaunchedEffect(true) {
         viewModel.baseEvent.collect { event ->
             when (event) {
-                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(event.millisInFuture)
+                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
+                    event.millisInFuture
+                )
             }
         }
     }
@@ -124,7 +133,7 @@ fun ProductScreen(
     }
 
     // todo we have to send the pages to the view pager when the back return
-    if (viewModel.uiState.isLoading) {
+    if (viewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
         Column(
@@ -132,12 +141,14 @@ fun ProductScreen(
                 .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
         ) {
-            MotionLayoutMM(mainHeader = {
-                TipsAndOffer(
-                    modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-                    viewModel = viewModel
-                )
-            }, secondaryHeader = { backPressed ->
+            MotionLayoutMM(
+                mainHeader = {
+                    TipsAndOffer(
+                        modifier = Modifier.padding(start = 16.dp, top = 20.dp),
+                        viewModel = viewModel
+                    )
+                },
+                secondaryHeader = { backPressed ->
                     Box(
                         contentAlignment = Alignment.TopCenter,
                         modifier = Modifier
@@ -151,7 +162,8 @@ fun ProductScreen(
                             }
                         )
                     }
-                }, content = { modifier, headerText ->
+                },
+                content = { modifier, headerText ->
                     Products(
                         modifier = modifier,
                         pages = NUMBER_PAGES,
@@ -159,14 +171,16 @@ fun ProductScreen(
                         viewModel = viewModel,
                         headerText
                     )
-                }, footer = {
+                },
+                footer = {
                     ProductExtras(
                         modifier = Modifier.padding(top = 16.dp),
                         pages = NUMBER_PAGES,
                         state = bottomPagerState,
                         viewModel = viewModel
                     )
-                }, secondaryFooter = {
+                },
+                secondaryFooter = {
                     ConstraintLayout(
                         Modifier.fillMaxSize()
                     ) {
@@ -194,7 +208,6 @@ fun ProductScreen(
                                 viewModel = viewModel
                             )
                         }
-
                         CtaButtons(
                             modifier = Modifier
                                 .padding(16.dp)
@@ -208,8 +221,15 @@ fun ProductScreen(
                             canDisburse = viewModel.uiState.hasBalance
                         )
                     }
-                }, totalPages = NUMBER_PAGES)
+                },
+                isExpanded = viewModel.uiState.isExpanded,
+                updateIsExpanded = { isExpanded ->
+                    viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                },
+                totalPages = TOTAL_PAGES
+            )
         }
+        LoadingIndicator(viewModel.uiState.isLoading)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -320,7 +340,7 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
                 .padding(top = 8.dp)
         ) {
             items(items = viewModel.getCreditOfferAndTips(), itemContent = {
-                TipAndOfferItem(viewModel)
+                TipAndOfferItem(viewModel, it)
             })
         }
     }
@@ -345,41 +365,73 @@ fun Products(
             ),
             color = MultimoneyTheme.colors.labelText
         )
-        if (pages == 1) {
-            CreditProduct(viewModel = viewModel)
-        } else {
-            HorizontalPager(
-                count = pages,
-                modifier = Modifier.padding(top = 8.dp),
-                state = state
-            ) {
-                // todo add the logic for the others pages
-                if (currentPage == PAGE_ZERO) {
-                    CreditProduct(viewModel = viewModel)
-                } else {
-                    viewModel.balanceCredit?.balanceAccountSmart?.let {
-                        if (it.isNotEmpty()) {
+        var pagesSize = 0
+
+        pagesSize += (
+            viewModel.balanceCredit?.balanceCredit?.size
+                ?: 0
+            ) + (viewModel.balanceCredit?.balanceAccountSmart?.size ?: 0)
+
+        pagesSize += if (viewModel.uiState.userStatus?.infoBankAccount?.status == SmartAccountStatus.NO_EXIST.status) 1 else 0
+        pagesSize += if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.NO_EXIST.status || viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_PRE_APPROVED.status) 1 else 0
+
+        HorizontalPager(
+            count = pagesSize,
+            modifier = Modifier.padding(top = 8.dp),
+            state = state
+        ) { page ->
+            // todo add the logic for the others pages
+            if (page <= (viewModel.balanceCredit?.balanceCredit?.lastIndex ?: 0)) {
+                CreditProduct(viewModel = viewModel)
+            } else {
+                viewModel.balanceCredit?.balanceAccountSmart?.let {
+                    if (it.isNotEmpty()) {
+                        CustomProductBackground(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            type = ProductBackGroundType.Secondary
+                        ) {
                             CardSmartProduct(
-                                brandId = viewModel.uiState.idBrand.toInt(),
-                                profitMonthly = it.firstOrNull()?.gainedInterest.toString(),
-                                profitTotal = it.firstOrNull()?.totalBalance.toString()
+                                currency = it[
+                                    page.minus(
+                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                    )
+                                ]?.currencyCode ?: "",
+                                profitMonthly = it[
+                                    page.minus(
+                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                    )
+                                ]?.gainedInterest.toString(),
+                                profitTotal = it[
+                                    page.minus(
+                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                    )
+                                ]?.totalBalance.toString()
                             )
+                        }
+                    } else {
+                        CustomProductBackground(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            type = ProductBackGroundType.Secondary
+                        ) {
+                            CardOfferSmartProduct() {
+                                viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
+                            }
                         }
                     }
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.padding(4.dp))
+        Spacer(modifier = Modifier.padding(4.dp))
 
-            Row(Modifier.padding(horizontal = 180.dp)) {
-                CustomDotsIndicator(
-                    totalDots = pages,
-                    selectedIndex = state.currentPage,
-                    selectedColor = GrayScale200,
-                    unSelectedColor = GrayScale600,
-                    modifier = Modifier.size(10.dp)
-                )
-            }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            CustomDotsIndicator(
+                totalDots = pagesSize,
+                selectedIndex = state.currentPage,
+                selectedColor = GrayScale200,
+                unSelectedColor = GrayScale600,
+                modifier = Modifier.size(10.dp)
+            )
         }
     }
 }
@@ -459,7 +511,7 @@ fun CreditProduct(viewModel: ProductViewModel) {
                             )
                         }
                         else -> {
-                            CardOfferSmartProduct()
+                            // no show card
                         }
                     }
                 }
@@ -534,14 +586,19 @@ fun CreditCardView(viewModel: ProductViewModel) {
 }
 
 @Composable
-fun TipAndOfferItem(viewModel: ProductViewModel) {
+fun TipAndOfferItem(viewModel: ProductViewModel, creditOfferAndTip: CreditOfferAndTip) {
     TipBox {
         Box(
             Modifier
                 .fillMaxSize()
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
-                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                    // TODO, mocking the first item in order to navigate to the smart origination flow
+                    if (creditOfferAndTip.id == "1") {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
+                    } else {
+                        viewModel.onUIEvent(OnNavigateToCreditScreen)
+                    }
                 }
         ) {
             CustomImage(
@@ -552,20 +609,20 @@ fun TipAndOfferItem(viewModel: ProductViewModel) {
             )
             Column {
                 Text(
-                    text = "Ahorra Smart",
+                    text = creditOfferAndTip.title,
                     modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
                     style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
                 )
                 Text(
-                    text = "La mejor tasa del 3.5% anual",
+                    text = creditOfferAndTip.description,
                     modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
                     style = Typography.caption,
                     color = MultimoneyTheme.colors.labelText,
                     maxLines = 2
                 )
                 Text(
-                    text = "Solicitar",
+                    text = creditOfferAndTip.actionName,
                     modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
                     style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.tipActionColor

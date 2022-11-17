@@ -14,13 +14,23 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.ContinueValidatingOnfidoScreen
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_SECOND_TIME
@@ -30,13 +40,13 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
-    private val subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase
 ) : BaseViewModel(true) {
     // uiState
     var uiState by mutableStateOf(UIState())
@@ -45,18 +55,29 @@ class SignDocumentProcessViewModel @Inject constructor(
     var idBrand: Int = 0
     var idPrint: Long = 0
     var numAttemptsToStartSubscription: Int = 0
+    var pkUser: Long = 0
+    var identification: String = ""
+    var email: String = ""
+    var idUserRequest: Long = 0
+    var firstName: String = ""
+    var lastName: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
+        pkUser = savedStateHandle[PK_USER] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        email = savedStateHandle[EMAIL] ?: ""
+        idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
+        firstName = savedStateHandle[FIRST_NAME] ?: ""
+        lastName = savedStateHandle[LAST_NAME] ?: ""
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: "",
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         )
-        onListenCreditContractEventSubscription(idPrint, idBrand)
     }
 
-    fun createDialog() {
+    private fun createDialog() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
                 titleResource = string.sign_credit_dialog_title,
@@ -86,6 +107,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         when (uiState.signDocumentProcessStep) {
             GENERATE_DOCUMENT_STEP.value -> {
                 if (creditContractEvent?.link.isNullOrEmpty().not()) {
+                    emitBaseEvent(SimulateUserInteraction)
                     uiState = uiState.copy(
                         signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
                         signDocumentUrl = creditContractEvent?.link ?: ""
@@ -94,36 +116,35 @@ class SignDocumentProcessViewModel @Inject constructor(
             }
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
-                    CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+                    CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
                         handleOnfidoStatus(creditContractEvent)
                     }
                     CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                     }
                     CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                     }
                 }
             }
             VALIDATE_IDENTITY.value -> {
-                handleOnfidoStatus(creditContractEvent, true)
+                emitBaseEvent(SimulateUserInteraction)
+                handleOnfidoStatus(creditContractEvent)
             }
         }
     }
 
-    private fun handleOnfidoStatus(creditContractEvent: CreditContractEvent?, wasValidateIdentityShow: Boolean = false) {
+    private fun handleOnfidoStatus(
+        creditContractEvent: CreditContractEvent?
+    ) {
+        emitBaseEvent(SimulateUserInteraction)
         when (creditContractEvent?.statusOnfido?.lowercase()) {
             CreditOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
-                if (wasValidateIdentityShow) {
-                    uiState = uiState.copy(
-                        signDocumentProcessStep = VALIDATE_IDENTITY.value
-                    )
-                } else {
-                    popAndNavigateTo(
-                        route = ContinueValidatingOnfidoScreen.route,
-                        popTo = Screen.SignDocumentProcessScreen.route
-                    )
-                }
+                uiState = uiState.copy(
+                    signDocumentProcessStep = VALIDATE_IDENTITY.value
+                )
             }
             CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
                 popAndNavigateTo(
@@ -140,14 +161,22 @@ class SignDocumentProcessViewModel @Inject constructor(
         }
     }
 
+    private fun onNavigateToContinueValidatingIdentity() {
+        popAndNavigateTo(
+            route = ContinueValidatingOnfidoScreen.route,
+            popTo = Screen.SignDocumentProcessScreen.route
+        )
+    }
+
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
         popAndNavigateTo(
-            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand",
+            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             popTo = Screen.SignDocumentProcessScreen.route
         )
     }
 
     private fun onNavigateToHome() {
+        emitBaseEvent(SimulateUserInteraction)
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
             popTo = Screen.SignDocumentProcessScreen.route
@@ -163,21 +192,33 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnCallSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription(idPrint, idBrand)
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
+            is OnShowDialogInformation -> createDialog()
             is OnNavigateToHome -> onNavigateToHome()
+            is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
         }
     }
 
     sealed class UIEvent {
-        data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
+        object OnCallSubscriptionCreditContractEvent : UIEvent()
         data class OnInitializeText(val dialogDescription: String) : UIEvent()
         object OnCloseClick : UIEvent()
+        object OnShowDialogInformation : UIEvent()
+        data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
         object OnNavigateToHome : UIEvent()
+        object OnNavigateToContinueValidatingIdentity : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object SimulateUserInteraction : BaseEvent()
     }
 
     companion object {
         private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 120000L
+        const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
     }
 }

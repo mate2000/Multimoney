@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import com.multimoney.data.util.catalog.Brand
@@ -79,11 +77,20 @@ fun Int.getCurrencySymbol(): Int {
     }
 }
 
-fun Int.getCurrencySymbolValue(): Int {
+fun String.getCurrencySymbolValue(): Int {
     return when (this) {
-        Brand.ElSalvador.id -> R.string.dollar_symbol_value
-        Brand.CostaRica.id -> R.string.colon_symbol_value
-        Brand.Guatemala.id -> R.string.quetzal_symbol_value
+        Colon.value -> R.string.dollar_symbol_value
+        Dollar.value -> R.string.colon_symbol_value
+        Quetzal.value -> R.string.quetzal_symbol_value
+        else -> R.string.empty
+    }
+}
+
+fun String.getCurrencySymbol(): Int {
+    return when (this) {
+        Colon.value -> R.string.dollar_symbol
+        Dollar.value -> R.string.colon_symbol
+        Quetzal.value -> R.string.quetzal_symbol
         else -> R.string.empty
     }
 }

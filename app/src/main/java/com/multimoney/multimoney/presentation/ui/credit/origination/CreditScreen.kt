@@ -39,7 +39,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
@@ -116,7 +115,7 @@ fun CreditScreen(
             ) {
                 Column {
                     TopNavBar(
-                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.isBackVisible,
+                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
                         isRightButtonVisible = viewModel.uiState.isCloseVisible,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
@@ -209,7 +208,6 @@ fun GetStepContent(
         CreditStep.Four.id -> JobInfoScreen(sharedViewModel = viewModel)
         CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
         CreditStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
-        CreditStep.Seven.id -> AdditionalInformationScreen(sharedViewModel = viewModel)
-        else -> CreditDocumentScreen(sharedViewModel = viewModel)
+        else -> AdditionalInformationScreen(sharedViewModel = viewModel)
     }
 }

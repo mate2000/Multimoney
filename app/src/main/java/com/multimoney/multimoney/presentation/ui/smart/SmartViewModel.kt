@@ -116,6 +116,7 @@ class SmartViewModel @Inject constructor(
                 idAddressLevel1 = accountSmartData?.idAddressLevel1 ?: 0,
                 idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
                 idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
+                positionJob = accountSmartData?.positionJob ?: "",
                 idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
                 income = accountSmartData?.income?.toDouble() ?: 0.0,
                 addressDetail = accountSmartData?.addressDetail ?: "",

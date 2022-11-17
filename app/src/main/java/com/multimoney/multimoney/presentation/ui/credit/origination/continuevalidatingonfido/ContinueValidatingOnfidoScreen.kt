@@ -1,11 +1,11 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.continuevalidatingonfido
+package com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.continuevalidatingonfido.ContinueValidatingOnfidoViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.util.NavEvent
 

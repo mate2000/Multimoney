@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors
+package com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -6,8 +6,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand.Guatemala
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToHome
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToOnfidoProcess
+import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsViewModel.UIEvent.OnNavigateToOnfidoProcess
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -16,7 +16,7 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.ONFIDO_REJECTED_SECOND_TIME
 
 @Composable
-fun OnfidoAndEvisertiaErrorsScreen(
+fun OnfidoAndEvicertiaErrorsScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: OnfidoAndEvicertiaErrorsViewModel = hiltViewModel()
 ) {

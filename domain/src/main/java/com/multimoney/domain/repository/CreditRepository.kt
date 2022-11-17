@@ -206,4 +206,14 @@ interface CreditRepository {
         idClient: Int,
         idLoanClient: Int
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
+
+    suspend fun mutationSendCreditContractEvent(
+        idImpresion: Long,
+        idBrand: Int,
+        link: String,
+        active: Boolean,
+        statusEvicertia: String,
+        statusOnfido: String,
+        currentStep: String
+    ): Flow<MultimoneyResult<CreditContractEvent?>>
 }

@@ -19,7 +19,6 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     data class UIState(
         var incomeAmount: String = "",
-        var amountError: Pair<Boolean, Int> = Pair(false, R.string.smart_own_business_monthly_income_required),
         var incomeSource: String = "",
         var sourceError: Pair<Boolean, Int> = Pair(false, R.string.smart_other_source_of_income_required)
     )

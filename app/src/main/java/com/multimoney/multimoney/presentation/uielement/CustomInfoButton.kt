@@ -39,7 +39,7 @@ fun CustomInfoButton(
     startIcon: Int = R.drawable.ic_payment_fee_icon,
     title: String = "",
     subtitle: String = "",
-    endIcon: Int = R.drawable.ic_right_chevron,
+    endIcon: Int? = R.drawable.ic_right_chevron,
     onClick: () -> Unit = {},
     onEndIconClick: () -> Unit = {},
     enable: Boolean = true
@@ -90,18 +90,22 @@ fun CustomInfoButton(
                 painter = painterResource(id = startIcon),
                 contentDescription = "",
                 modifier = Modifier.constrainAs(startIconId) {
-                    top.linkTo(parent.top, margin = 12.dp)
-                    start.linkTo(parent.start, margin = 12.dp)
-                    bottom.linkTo(parent.bottom, margin = 12.dp)
+                    top.linkTo(parent.top, margin = 17.dp)
+                    start.linkTo(parent.start, margin = 18.dp)
+                    bottom.linkTo(parent.bottom, margin = 17.dp)
                 }
             )
             if (subtitle.isNotEmpty()) {
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-                        top.linkTo(startIconId.top, margin = 4.dp)
-                        start.linkTo(startIconId.end, margin = 16.dp)
-                        end.linkTo(endIconId.start, margin = 16.dp)
+                        top.linkTo(startIconId.top)
+                        start.linkTo(startIconId.end, margin = 22.dp)
+                        if (endIcon != null) {
+                            end.linkTo(endIconId.start, margin = 16.dp)
+                        } else {
+                            end.linkTo(parent.end, margin = 16.dp)
+                        }
                         bottom.linkTo(subTitleId.top)
                         height = Dimension.fillToConstraints
                         width = Dimension.fillToConstraints
@@ -115,7 +119,6 @@ fun CustomInfoButton(
                     text = subtitle,
                     modifier = Modifier.constrainAs(subTitleId) {
                         top.linkTo(titleId.bottom, margin = 4.dp)
-                        bottom.linkTo(startIconId.bottom)
                         start.linkTo(titleId.start)
                         height = Dimension.fillToConstraints
                     },
@@ -128,7 +131,11 @@ fun CustomInfoButton(
                     modifier = Modifier.constrainAs(titleId) {
                         top.linkTo(startIconId.top, margin = 4.dp)
                         start.linkTo(startIconId.end, margin = 16.dp)
-                        end.linkTo(endIconId.start, margin = 16.dp)
+                        if (endIcon != null) {
+                            end.linkTo(endIconId.start, margin = 16.dp)
+                        } else {
+                            end.linkTo(parent.end, margin = 16.dp)
+                        }
                         bottom.linkTo(startIconId.bottom)
                         width = Dimension.fillToConstraints
                     },
@@ -138,17 +145,19 @@ fun CustomInfoButton(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Image(
-                painter = painterResource(id = endIcon),
-                modifier = Modifier.constrainAs(endIconId) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end, margin = 12.dp)
-                    bottom.linkTo(parent.bottom)
-                }.clickable {
-                    onEndIconClick()
-                },
-                contentDescription = ""
-            )
+            if (endIcon != null) {
+                Image(
+                    painter = painterResource(id = endIcon),
+                    modifier = Modifier.constrainAs(endIconId) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end, margin = 12.dp)
+                        bottom.linkTo(parent.bottom)
+                    }.clickable {
+                        onEndIconClick()
+                    },
+                    contentDescription = ""
+                )
+            }
         }
     }
 }

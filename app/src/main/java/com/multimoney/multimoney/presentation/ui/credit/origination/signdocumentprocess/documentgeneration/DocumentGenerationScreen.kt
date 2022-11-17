@@ -27,8 +27,9 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,9 +44,9 @@ fun DocumentGenerationScreen(
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
-        openStepDebounce.debounce(TIME_TO_WAIT_IN_MILLI_SECOND)
+        openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND)
             .onEach { status ->
-                viewModel.onUIEvent(SignDocumentProcessViewModel.UIEvent.OnChangeScreen(SIGN_DOCUMENTS_STEP.value))
+                viewModel.onUIEvent(OnNavigateToHome)
                 flowOf(status)
             }
     }
@@ -101,6 +102,3 @@ fun DocumentGenerationScreen(
     // this is required to execute the debounce
     val openStepFlowValue by openStepFlow.collectAsState(false)
 }
-
-const val DUMMY_URL = "www.google.com"
-const val TIME_TO_WAIT_IN_MILLI_SECOND = 30000L

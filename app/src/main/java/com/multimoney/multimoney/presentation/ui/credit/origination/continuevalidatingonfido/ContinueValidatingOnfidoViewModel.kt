@@ -1,17 +1,18 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction
+package com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido
 
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.processingtransaction.ProcessingTransactionViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoViewModel.UIEvent.OnNavigateToHome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ProcessingTransactionViewModel @Inject constructor() : BaseViewModel(true) {
+class ContinueValidatingOnfidoViewModel @Inject constructor() : BaseViewModel(true) {
+
     private fun onNavigateToHome() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
-            popTo = Screen.ProcessingTransactionScreen.route
+            popTo = Screen.ContinueValidatingOnfidoScreen.route
         )
     }
 

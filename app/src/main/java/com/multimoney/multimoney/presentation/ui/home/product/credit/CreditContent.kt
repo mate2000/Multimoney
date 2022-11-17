@@ -98,9 +98,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 }
                             )
                         }
-                        else -> {
-                            // no show card
-                        }
+                        else -> Unit
                     }
                 }
             }
@@ -122,9 +120,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             })
                         }
                     }
-                    else -> {
-                        // no show card
-                    }
+                    else -> Unit
                 }
             }
         }

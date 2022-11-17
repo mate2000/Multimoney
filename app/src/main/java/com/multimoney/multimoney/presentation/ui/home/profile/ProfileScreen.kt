@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnGetProfileInfo
+import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnUpdateProfileClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnHelpClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnLogoutClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnMyAccountsClick
@@ -67,9 +68,7 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
                     userName = uiState.userName,
                     email = uiState.userEmail,
                     phoneNumber = uiState.phoneNumber,
-                    onUpdateClick = {
-                        // TODO, handle click
-                    }
+                    onUpdateClick = { viewModel.onUIEvent(OnUpdateProfileClick) }
                 )
                 ProfileOptions(
                     uiState = viewModel.uiState,

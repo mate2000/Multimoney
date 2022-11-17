@@ -46,6 +46,7 @@ class ProfileViewModel @Inject constructor(
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetProfileInfo -> getProfileInfo()
+            is UIEvent.OnUpdateProfileClick -> Timber.d("navigate to update profile screen")
             is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
             is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
             is UIEvent.OnSettingsClick -> Timber.d("navigate to settings screen")
@@ -58,6 +59,7 @@ class ProfileViewModel @Inject constructor(
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnGetProfileInfo : UIEvent()
+        object OnUpdateProfileClick : UIEvent()
         object OnMyAccountsClick : UIEvent()
         object OnMyCardsClick : UIEvent()
         object OnSettingsClick : UIEvent()

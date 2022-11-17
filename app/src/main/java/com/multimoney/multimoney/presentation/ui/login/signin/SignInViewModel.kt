@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.util.CognitoJWTParser
+import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.result.AuthSessionResult
@@ -33,7 +34,6 @@ import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -92,12 +92,7 @@ class SignInViewModel @Inject constructor(
                                 Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
                                     viewModelScope.launch {
                                         // If isBiometricActive false that means the userName has to be saved
-                                        if (uiState.isBiometricActive.not()) {
-                                            dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
-                                        }
-                                        val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
-                                        dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
-                                        saveUserData(payload)
+                                        saveUserData(session, authUserAttribute)
                                         uiState = uiState.copy(isLoading = false)
                                         if (uiState.isFingerprintChecked) {
                                             uiState = uiState.copy(configureBiometric = true)
@@ -125,7 +120,13 @@ class SignInViewModel @Inject constructor(
         })
     }
 
-    private suspend fun saveUserData(payload: JSONObject) {
+    private suspend fun saveUserData(session: AWSCognitoAuthSession, authUserAttribute: List<AuthUserAttribute>) {
+        val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
+        if (uiState.userEmail != biometricUserEmail) {
+            dataStorePreferences.isBiometricsEnabled(false)
+        }
+        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
+        dataStorePreferences.setAuthToken(session.userPoolTokens.value?.idToken ?: "")
         dataStorePreferences.setIdBrand(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND))
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
         dataStorePreferences.setIdentification(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_IDENTIFICATION))

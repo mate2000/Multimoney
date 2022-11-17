@@ -17,11 +17,15 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryOptionChange
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonsLayout
 
 @Composable
 fun SmartBeneficiaryScreen(
-    sharedViewModel: SmartViewModel = hiltViewModel()
+    viewModel: BeneficiariesViewModel = hiltViewModel(),
+    sharedViewModel: SmartViewModel = hiltViewModel(),
 ) {
 
     LaunchedEffect(true) {
@@ -36,41 +40,53 @@ fun SmartBeneficiaryScreen(
         )
     }
 
-    val radioOptions = stringArrayResource(id = R.array.options_yes_no)
+    if (viewModel.uiState.addBeneficiaryOption) {
+        BeneficiariesScreen(viewModel, sharedViewModel)
+    } else {
+        val radioOptions = stringArrayResource(id = R.array.options_yes_no)
 
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Text(
-            text = stringResource(id = R.string.smart_beneficiary_title),
-            modifier = Modifier.padding(top = 16.dp),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText
-        )
-        Text(
-            text = stringResource(id = R.string.smart_beneficiary_header),
-            modifier = Modifier.padding(top = 24.dp),
-            style = Typography.subtitle1.copy(fontSize = 17.sp, letterSpacing = (-0.41).sp),
-            color = MultimoneyTheme.colors.labelText
-        )
-        CustomRadioButtonsLayout(
-            modifier = Modifier.padding(top = 24.dp),
-            radioOptions.toList()
-        ) { optionSelected ->
-            sharedViewModel.onUIEvent(
-                SmartViewModel.UIEvent.OnContinueVisible(
-                    true,
-                    R.string.accept
-                )
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Text(
+                text = stringResource(id = R.string.smart_beneficiary_title),
+                modifier = Modifier.padding(top = 16.dp),
+                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.labelText
             )
-            sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(true))
-            if (optionSelected == radioOptions.firstOrNull()) {
-                // todo show add beneficiary screen flow
-            } else {
+            Text(
+                text = stringResource(id = R.string.smart_beneficiary_header),
+                modifier = Modifier.padding(top = 24.dp),
+                style = Typography.subtitle1.copy(fontSize = 17.sp, letterSpacing = (-0.41).sp),
+                color = MultimoneyTheme.colors.labelText
+            )
+            CustomRadioButtonsLayout(
+                modifier = Modifier.padding(top = 24.dp),
+                radioOptions.toList()
+            ) { optionSelected ->
                 sharedViewModel.onUIEvent(
-                    SmartViewModel.UIEvent.OnSetNavigation(
-                        nextStep = SmartSteps.Five.id,
-                        previousStep = SmartSteps.Three.id
+                    SmartViewModel.UIEvent.OnContinueVisible(
+                        true,
+                        R.string.accept
                     )
                 )
+                sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(true))
+                if (optionSelected == radioOptions.firstOrNull()) {
+                    sharedViewModel.onUIEvent(
+                        SmartViewModel.UIEvent.OnSetNavigation(
+                            nextAction = {
+                                viewModel.onUIEvent(OnAddBeneficiaryOptionChange(true))
+                            },
+                            nextStep = SmartSteps.Five.id,
+                            previousStep = SmartSteps.Three.id
+                        )
+                    )
+                } else {
+                    sharedViewModel.onUIEvent(
+                        SmartViewModel.UIEvent.OnSetNavigation(
+                            nextStep = SmartSteps.Five.id,
+                            previousStep = SmartSteps.Three.id
+                        )
+                    )
+                }
             }
         }
     }

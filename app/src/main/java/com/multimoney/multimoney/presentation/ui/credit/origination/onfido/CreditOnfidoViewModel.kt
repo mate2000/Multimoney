@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.model.security.OnfidoToken
@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
@@ -39,6 +40,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
@@ -59,7 +61,6 @@ class CreditOnfidoViewModel @Inject constructor(
     val onFidoHelper: OnFidoHelper,
     private val mutationOnFidoInitialProcessUseCase: MutationOnFidoInitialProcessUseCase,
     private val mutationOnfidoCheckProcessUseCase: MutationOnfidoCheckProcessUseCase,
-    private val mutationSaveCreditOperationUseCase: MutationSaveCreditOperationUseCase,
     val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
@@ -82,6 +83,7 @@ class CreditOnfidoViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var idPrint: Long = 0
     var evicertiaUrl: String = ""
+    var evicertiaStatus: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -93,6 +95,7 @@ class CreditOnfidoViewModel @Inject constructor(
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
         evicertiaUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
+        evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
     }
 
     // Events
@@ -197,29 +200,37 @@ class CreditOnfidoViewModel @Inject constructor(
         onNextStep: () -> Unit
     ) {
         executeUseCase {
-//            mutationOnfidoCheckProcessUseCase.invoke(
-//                identification,
-//                PACKAGE_NAME,
-//                AppFlow.CREDIT_ORIGINATION.flow,
-//                pkUser,
-//                idUserRequest,
-//                idBrand,
-//                user
-//            ).collectLatest { result ->
-//                result.onSuccess {
-//                    // nothing to do here
-//                }
-//                result.onFailure {
-//                    // nothing to do here
-//                }
-//            }
-            val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
+            mutationOnfidoCheckProcessUseCase.invoke(
+                identification,
+                PACKAGE_NAME,
+                AppFlow.CREDIT_ORIGINATION.flow,
+                pkUser,
+                idUserRequest,
+                idBrand,
+                user
+            ).collectLatest { result ->
+                result.onSuccess {
+                    // nothing to do here
+                }
+                result.onFailure {
+                    // nothing to do here
+                }
+            }
+            navigateToCorrectScreen()
+        }
+    }
+
+    private fun navigateToCorrectScreen() {
+        val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
+            VALIDATE_IDENTITY.value
+        } else {
+            if (evicertiaStatus.lowercase() == CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
                 VALIDATE_IDENTITY.value
             } else {
                 GENERATE_DOCUMENT_STEP.value
             }
-            onNavigateToSignDocumentScreen(signDocumentStep)
         }
+        onNavigateToSignDocumentScreen(signDocumentStep)
     }
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
@@ -227,25 +238,6 @@ class CreditOnfidoViewModel @Inject constructor(
             "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditOnfidoScreen.route
         )
-    }
-
-    private fun onCallSaveCreditOperation(
-        idUserRequest: Long,
-        pkUser: Long,
-        user: String,
-        idBrand: Int
-    ) {
-        executeUseCase {
-            mutationSaveCreditOperationUseCase.invoke(
-                idUserRequest,
-                pkUser,
-                user,
-                idBrand
-            ).collectLatest { result ->
-                result.onSuccess {}
-                result.onFailure {}
-            }
-        }
     }
 
     private fun onCloseClick() {

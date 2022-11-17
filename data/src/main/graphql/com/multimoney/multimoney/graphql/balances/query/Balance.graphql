@@ -17,6 +17,7 @@ query Balance(
         }
     ) {
         pagare
+        puede_Ampliar
         resumen {
             id_Moneda
             moneda

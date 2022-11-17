@@ -48,6 +48,54 @@ fun SubscriptionScreen(subscriptionViewModel: SubscriptionViewModel = hiltViewMo
                     1120654,
                     5,
                     "https://ecertia.com/Delivery/ad45b95a-f558-48fe-bf68-1c5cc2315477",
+                    "Firmado",
+                    "Aprobado",
+                    false,
+                    "LINK GENERADO"
+                )
+            )
+        }) {
+            Text(text = "Acceptar Contrato onfido Aprobado")
+        }
+
+        Button(onClick = {
+            subscriptionViewModel.sendCreditContractEvent(
+                CreditContractEvent(
+                    1120654,
+                    5,
+                    "https://ecertia.com/Delivery/ad45b95a-f558-48fe-bf68-1c5cc2315477",
+                    "Firmado",
+                    "Rechazado",
+                    false,
+                    "LINK GENERADO"
+                )
+            )
+        }) {
+            Text(text = "Acceptar Contrato Onfido rechazado")
+        }
+
+        Button(onClick = {
+            subscriptionViewModel.sendCreditContractEvent(
+                CreditContractEvent(
+                    1120654,
+                    5,
+                    "https://ecertia.com/Delivery/ad45b95a-f558-48fe-bf68-1c5cc2315477",
+                    "Firmado",
+                    "Excedio_contador",
+                    false,
+                    "LINK GENERADO"
+                )
+            )
+        }) {
+            Text(text = "Acceptar Contrato Onfido Exedio contador")
+        }
+
+        Button(onClick = {
+            subscriptionViewModel.sendCreditContractEvent(
+                CreditContractEvent(
+                    1120654,
+                    5,
+                    "https://ecertia.com/Delivery/ad45b95a-f558-48fe-bf68-1c5cc2315477",
                     "Rechazado",
                     "Pendiente",
                     false,

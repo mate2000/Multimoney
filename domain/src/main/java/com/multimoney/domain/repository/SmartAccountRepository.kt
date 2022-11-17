@@ -1,11 +1,14 @@
 package com.multimoney.domain.repository
 
+
+import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
+import com.multimoney.domain.model.accountsmart.RelationshipData
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
@@ -70,6 +73,7 @@ interface SmartAccountRepository {
         currentStep: String,
         institutionPension: String,
         specifiesIncomeSource: String,
+        beneficiaries: List<Beneficiary>,
         entrepreneurship: String,
         legalID: String,
         isActivityOfArt15: Boolean,
@@ -83,4 +87,10 @@ interface SmartAccountRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<GeneralEconomicActivityResult?>>
+
+    suspend fun queryRelationship(
+        user: String,
+        idBrand: Int,
+        option: Int,
+    ): Flow<MultimoneyResult<RelationshipData>>
 }

@@ -16,6 +16,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCaseImpl
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
@@ -363,4 +365,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryGeneralEconomicActivityUseCase(smartAccountRepository: SmartAccountRepository): QueryGeneralEconomicActivityUseCase =
         QueryGeneralEconomicActivityUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryRelationshipUseCaseImpl(smartAccountRepository: SmartAccountRepository): QueryRelationshipUseCase =
+        QueryRelationshipUseCaseImpl(smartAccountRepository)
 }

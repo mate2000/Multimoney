@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
-import com.multimoney.data.util.catalog.SmartSteps.Five
 import com.multimoney.data.util.catalog.SmartSteps.Six
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -74,10 +73,10 @@ fun SmartScreen(
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
             )
-            if (viewModel.uiState.currentStep != Five.id) {
+            if (viewModel.uiState.currentStep != SmartSteps.Five.id) {
                 StepProgressBar(
                     steps = SMART_INDICATOR_TOTAL_STEPS,
-                    currentStep = if (viewModel.uiState.currentStep == Six.id) Five.id else viewModel.uiState.currentStep,
+                    currentStep = if (viewModel.uiState.currentStep == Six.id) SmartSteps.Five.id else viewModel.uiState.currentStep,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 )
             }
@@ -154,6 +153,6 @@ fun GetStepContent(
                 SmartFactaScreen(sharedViewModel = viewModel)
             }
         }
-        Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
+        SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
     }
 }

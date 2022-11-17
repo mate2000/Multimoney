@@ -3,23 +3,37 @@ package com.multimoney.multimoney.presentation.navigation
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
@@ -70,7 +84,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object CreditOnfidoScreen : Screen(
-        "credit_onfido_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}",
+        "credit_onfido_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}/{$EVICERTIA_STATUS}",
         "credit_onfido_screen"
     )
 
@@ -111,10 +125,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_amount_screen"
     )
 
-    object PaymentVoucherScreen : Screen(
-        route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}",
-        "payment_voucher_screen"
-    )
+    object PaymentVoucherScreen :
+        Screen(
+            route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$IS_MULTI_CURRENCY}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
+            "payment_voucher_screen"
+        )
 
     object PaymentScheduleScreen : Screen(
         "payment_schedule_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$IS_EDIT_BANK_ACCOUNT}/{$PREVIOUS_SCREEN}/{$IS_EDIT_PAYMENT_SCHEDULE}",
@@ -127,7 +142,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentOptionsScreen : Screen(
-        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}",
+        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/{$PAYMENT_AMOUNT}",
         "payment_options_screen"
     )
 
@@ -137,8 +152,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentPointsScreen : Screen(
-        "payment_points_screen/{$ID_BRAND}",
+        "payment_points_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_AMOUNT}",
         "payment_points_screen"
+    )
+
+    object PaymentLocationDetailsScreen : Screen(
+        "payment_location_details_screen/{$POINT_NAME}/{$POINT_ADDRESS}/{$POINT_SCHEDULE}/{$POINT_LATITUDE}/{$POINT_LONGITUDE}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$ID_BRAND}",
+        "payment_location_details_screen"
     )
 
     // Smart

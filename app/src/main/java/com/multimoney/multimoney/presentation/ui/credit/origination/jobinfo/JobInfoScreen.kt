@@ -32,16 +32,18 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobI
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.Companion.JOB_DATE_MIN_MONTH
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.Companion.JOB_DATE_MIN_YEAR
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnCompanyNameValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnDateFirstJobValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnInitData
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnLoadCreditSteps
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
+import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
 
 @Composable
 fun JobInfoScreen(
@@ -78,12 +80,12 @@ fun JobInfoScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnValidForm)
+        viewModel.onUIEvent(
+            OnInitData(
+                idBrand = sharedViewModel.idBrand.toInt()
+            )
+        )
         viewModel.onUIEvent(OnLoadCreditSteps(sharedViewModel.saveCreditStepsHelper.inputTextInfoList))
-    }
-
-    val title = when (sharedViewModel.idBrand.toInt()) {
-        Brand.Guatemala.id -> R.string.credit_job_title_gt
-        else -> R.string.credit_job_title
     }
 
     Column(
@@ -93,14 +95,14 @@ fun JobInfoScreen(
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = stringResource(id = title),
+            text = stringResource(id = R.string.credit_job_title),
             modifier = Modifier.padding(top = 32.dp),
             style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
             color = MultimoneyTheme.colors.labelText
         )
 
         CustomOutlinedTextField(
-            modifier = Modifier.padding(top = 32.dp),
+            modifier = Modifier.padding(top = 24.dp),
             placeHolder = stringResource(id = R.string.credit_job_workplace_label),
             value = viewModel.uiState.companyName,
             keyboardOptions = KeyboardOptions(
@@ -118,7 +120,7 @@ fun JobInfoScreen(
 
         CustomDatePicker(
             context = context,
-            modifier = Modifier.padding(top = 32.dp),
+            modifier = Modifier.padding(top = 16.dp),
             labelText = stringResource(id = R.string.credit_job_joined_date),
             placeHolder = stringResource(id = R.string.credit_job_date_placeholder),
             value = viewModel.uiState.date,
@@ -168,7 +170,7 @@ fun JobInfoScreen(
                 focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.credit_job_phone_number),
-            modifier = Modifier.padding(top = 44.dp),
+            modifier = Modifier.padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_job_phone_required),
             customTransformation = MaskVisualTransformation(
@@ -176,5 +178,37 @@ fun JobInfoScreen(
                 PHONE_TRANSFORMATION_MASK.maskChar
             )
         )
+
+        if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {
+            CustomDatePicker(
+                context = context,
+                modifier = Modifier.padding(top = 16.dp),
+                labelText = stringResource(id = R.string.credit_job_joined_date_first_job),
+                placeHolder = stringResource(id = R.string.credit_job_date_placeholder),
+                value = viewModel.uiState.dateFirstJob,
+                minYear = JOB_DATE_MIN_YEAR,
+                minMonth = JOB_DATE_MIN_MONTH,
+                minDay = JOB_DATE_MIN_DAY,
+                leadingIcon = R.drawable.ic_calendar_voucher,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.clearFocus()
+                }),
+                onValueChange = { _, year, month, dayOfMonth ->
+                    viewModel.onUIEvent(
+                        OnDateFirstJobValueChange(
+                            getPickedDateAsString(
+                                year,
+                                month,
+                                dayOfMonth,
+                                DATE_FORMAT
+                            )
+                        )
+                    )
+                }
+            )
+        }
     }
 }

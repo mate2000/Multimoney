@@ -1,5 +1,6 @@
 package com.multimoney.domain.interaction.accountsmart
 
+import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,7 @@ interface MutationGlobalRequestUseCase {
         currentStep: String,
         institutionPension: String,
         specifiesIncomeSource: String,
+        beneficiaries: List<Beneficiary>,
         entrepreneurship: String,
         legalID: String,
         isActivityOfArt15: Boolean,

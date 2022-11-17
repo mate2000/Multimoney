@@ -125,12 +125,8 @@
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
-    <string name="sign_up_personal_data_dui_sv_not_valid" translatable="false">Número de DUI incorrecto</string>
-    <string name="sign_up_personal_data_id_sv_required" translatable="false">Número de DUI requerido</string>
-    <string name="sign_up_personal_data_dpi_gt_not_valid" translatable="false">Número de DPI incorrecto</string>
-    <string name="sign_up_personal_data_gt_id_required" translatable="false">Número de DPI requerido</string>
-    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de identificacion incorrecta</string>
-    <string name="sign_up_personal_data_id_required" translatable="false">Número de identificación requerido</string>
+    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s incorrecto</string>
+    <string name="sign_up_personal_data_id_required" translatable="false">Número de %s requerido</string>
     <string name="sign_up_personal_data_nationality_header" translatable="false">¿Cuáles son tus datos personales?</string>
     <string name="sign_up_personal_data_nationality" translatable="false">Nacionalidad</string>
     <string name="sign_up_personal_data_nationality_placeholder" translatable="false">Selecciona tu país</string>
@@ -221,7 +217,6 @@
     <string name="dialog_failure_biometric_positive_text" translatable="false">Activar más tarde</string>
 
     <!-- Home -->
-    <string name="home_my_products" translatable="false">Mis Productos</string>
     <string name="home_active_credit_card_label" translatable="false">Activa tu tarjeta digital</string>
     <string name="home_visa_active_digital_label" translatable="false">Digital\u0020</string>
     <string name="home_on_fido_pending_title" translatable="false">Necesitamos validar tu identidad</string>
@@ -230,9 +225,9 @@
     <string name="home_credit_sign_document_reject_title" translatable="false">Estás solo a un paso</string>
     <string name="home_credit_sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
     <string name="home_credit_sign_document_reject_action_text" translatable="false">Firmar</string>
-    <string name="home_credit_title" translatable="false">Mi Crédito</string>
     <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
     <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
+    <string name="home_disburse_request_button_text" translatable="false">Solicitar disponible</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
@@ -268,6 +263,15 @@
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
     <string name="home_product_amount" translatable="false">de %s</string>
+
+    <!-- Home Product Header -->
+    <string name="home_product_header_title" translatable="false">Mis Productos</string>
+
+    <!-- Home Credit Header Expanded-->
+    <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>
+
+    <!-- Home Smart Header Expanded-->
+    <string name="home_product_smart_header_expanded_title" translatable="false">Mi Cuenta Smart</string>
 
     <!-- my products bottom sheet -->
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
@@ -479,8 +483,9 @@
     <string name="payment_voucher_shared_button" translatable="false">Compartir</string>
     <string name="payment_voucher_amount_to_pay_label" translatable="false">Monto debitado</string>
     <string name="payment_voucher_exchange_rate_label" translatable="false">Tipo de cambio</string>
-    <string name="payment_voucher_reference_number_label" translatable="false">N° de referencia | %s:</string>
-    <string name="payment_voucher_from_your_account_label" translatable="false">Desde tu cuenta</string>
+    <string name="payment_voucher_reference_number_label" translatable="false">N° de referencia</string>
+    <string name="payment_voucher_from_label" translatable="false">Desde</string>
+    <string name="payment_voucher_origin_account_label" translatable="false">Cuenta de origen</string>
     <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
     <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
 

@@ -113,11 +113,15 @@ class JobInfoViewModel @Inject constructor() : BaseViewModel(true) {
                 BACKEND_DATE_FORMAT
             ),
             uiState.phoneNumber,
-            getFormatDateByString(
-                uiState.dateFirstJob.replace(VISUAL_DATE_SYMBOL, DASH_SYMBOL),
-                DATE_FORMAT,
-                BACKEND_DATE_FORMAT
-            )
+            if (uiState.dateFirstJob.isNotEmpty()) {
+                getFormatDateByString(
+                    uiState.dateFirstJob.replace(VISUAL_DATE_SYMBOL, DASH_SYMBOL),
+                    DATE_FORMAT,
+                    BACKEND_DATE_FORMAT
+                )
+            } else {
+                ""
+            }
         )
         nextStepAction()
     }

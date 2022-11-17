@@ -17,29 +17,6 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
-    data class UIState(
-        var incomeAmount: String = "",
-        var incomeSource: String = "",
-        var sourceError: Pair<Boolean, Int> = Pair(false, R.string.smart_other_source_of_income_required)
-    )
-
-    sealed class UIEvent {
-        data class OnIncomeAmountChange(val income: String) : UIEvent()
-        data class OnIncomeSourceChange(val income: String) : UIEvent()
-        object OnValidateForm : UIEvent()
-    }
-
-    sealed class BaseEvent {
-        data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
-    }
-
-    fun onUIEvent(uiEvent: UIEvent) {
-        when (uiEvent) {
-            is UIEvent.OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
-            is UIEvent.OnIncomeSourceChange -> incomeSourceChange(uiEvent.income)
-            is UIEvent.OnValidateForm -> onValidateForm()
-        }
-    }
     private fun incomeAmountChange(income: String) {
         if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
             uiState = uiState.copy(incomeAmount = income)
@@ -60,4 +37,28 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun isFormValid(): Boolean =
         uiState.incomeSource.isNotBlank() && uiState.incomeAmount.isNotBlank()
+
+    data class UIState(
+        var incomeAmount: String = "",
+        var incomeSource: String = "",
+        var sourceError: Pair<Boolean, Int> = Pair(false, R.string.smart_other_source_of_income_required)
+    )
+
+    sealed class UIEvent {
+        data class OnIncomeAmountChange(val income: String) : UIEvent()
+        data class OnIncomeSourceChange(val income: String) : UIEvent()
+        object OnValidateForm : UIEvent()
+    }
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is UIEvent.OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
+            is UIEvent.OnIncomeSourceChange -> incomeSourceChange(uiEvent.income)
+            is UIEvent.OnValidateForm -> onValidateForm()
+        }
+    }
+
+    sealed class BaseEvent {
+        data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+    }
 }

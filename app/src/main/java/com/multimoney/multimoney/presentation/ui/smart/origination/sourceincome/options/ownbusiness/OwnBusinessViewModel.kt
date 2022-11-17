@@ -5,8 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,7 +42,9 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     }
 
     private fun onMonthlyIncomeValueChange(monthlyIncome: String) {
-        uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
+        if (Pattern.matches(DECIMAL_REGEX, monthlyIncome) || monthlyIncome.isEmpty()) {
+            uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
+        }
         onValidateForm()
     }
 

@@ -138,7 +138,9 @@ class SmartViewModel @Inject constructor(
                 isPEP = accountSmartData?.isPEP ?: false,
                 isUSTaxPayer = accountSmartData?.isUSTaxPayer ?: false,
                 isTaxPayer = accountSmartData?.isTaxPayer ?: false,
-                beneficiaries = accountSmartData?.listBeneficiaries ?: listOf()
+                beneficiaries = accountSmartData?.listBeneficiaries ?: listOf(),
+                idJobLevel2 = accountSmartData?.idJobLevel2 ?: 0,
+                idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
                     onUIEvent(OnLoadingValueChange(false))

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,15 +9,17 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnFailureWithDialog
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartCrSalaryViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,13 +36,13 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
     fun isFormValid() = uiState.profession.isNotBlank() && uiState.paymentAmount.isNotBlank()
 
     private fun onAmountValueChange(paymentAmount: String) {
-        uiState = uiState.copy(paymentAmount = paymentAmount)
+        if (Pattern.matches(DECIMAL_REGEX, paymentAmount) || paymentAmount.isEmpty()) {
+            uiState = uiState.copy(paymentAmount = paymentAmount)
+        }
         validateForm()
     }
 
-    private fun onProfessionValueChange(
-        profession: String
-    ) {
+    private fun onProfessionValueChange(profession: String) {
         uiState = uiState.copy(profession = profession)
         validateForm()
     }

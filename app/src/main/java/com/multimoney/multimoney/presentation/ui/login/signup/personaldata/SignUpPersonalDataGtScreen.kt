@@ -57,14 +57,17 @@ fun SignUpPersonalDataGtScreen(
             value = viewModel.uiState.personalDocumentValue,
             placeHolder = if (viewModel.uiState.documentFormat != "") viewModel.uiState.documentFormat.replace(
                 viewModel.uiState.documentFormat.last(),
-                FORMAT_VALUE, false
+                FORMAT_VALUE,
+                false
             ) else "",
             onValueChange = { text ->
-                viewModel.onUIEvent(OnIdentificationValueChange(text) {
-                    sharedViewModel.onUIEvent(
-                        OnSharedIdentificationValueChange(text)
-                    )
-                })
+                viewModel.onUIEvent(
+                    OnIdentificationValueChange(text) {
+                        sharedViewModel.onUIEvent(
+                            OnSharedIdentificationValueChange(text)
+                        )
+                    }
+                )
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -78,7 +81,14 @@ fun SignUpPersonalDataGtScreen(
                 .padding(top = 44.dp),
             isRequired = true,
             isError = viewModel.uiState.personalIdError.first,
-            errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
+            isRequiredMessage = stringResource(
+                id = R.string.sign_up_personal_data_id_required,
+                viewModel.uiState.identificationValueType
+            ),
+            errorMessage = stringResource(
+                id = viewModel.uiState.personalIdError.second,
+                viewModel.uiState.identificationValueType
+            ),
             customTransformation = if (viewModel.uiState.documentFormat != "") MaskVisualTransformation(
                 viewModel.uiState.documentFormat,
                 viewModel.uiState.documentFormat.last()
@@ -121,7 +131,7 @@ fun SignUpPersonalDataGtScreen(
                         .padding(end = 4.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_name_error),
-                    isError = viewModel.uiState.nameError.first,
+                    isError = viewModel.uiState.nameError.first
                 )
 
                 CustomOutlinedTextField(
@@ -136,7 +146,8 @@ fun SignUpPersonalDataGtScreen(
                                     SignUpViewModel.UIEvent.OnSecondNameValueChange(
                                         secondName
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     keyboardOptions = KeyboardOptions(
@@ -169,7 +180,8 @@ fun SignUpPersonalDataGtScreen(
                                     SignUpViewModel.UIEvent.OnFirstLastNameValueChange(
                                         firstLastName
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     keyboardOptions = KeyboardOptions(
@@ -185,7 +197,7 @@ fun SignUpPersonalDataGtScreen(
                         .padding(top = 4.dp),
                     isRequired = true,
                     isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_lastname_error),
-                    isError = viewModel.uiState.lastNameError.first,
+                    isError = viewModel.uiState.lastNameError.first
                 )
 
                 CustomOutlinedTextField(
@@ -200,7 +212,8 @@ fun SignUpPersonalDataGtScreen(
                                     SignUpViewModel.UIEvent.OnSecondLastNameValueChange(
                                         secondLastName
                                     )
-                                })
+                                }
+                            )
                         )
                     },
                     keyboardOptions = KeyboardOptions(

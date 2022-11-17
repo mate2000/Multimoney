@@ -105,6 +105,7 @@ fun OwnBusinessOnPersonalBasisContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
@@ -115,7 +116,7 @@ fun OwnBusinessOnPersonalBasisContent(
             )
         )
         CustomOutlinedTextField(
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
             value = viewModel.uiState.businessActivity,
             onValueChange = {
                 viewModel.onUIEvent(
@@ -139,7 +140,7 @@ fun OwnBusinessOnPersonalBasisContent(
         )
 
         CustomOutlinedTextField(
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
             value = viewModel.uiState.businessIncome,
             onValueChange = {
                 viewModel.onUIEvent(
@@ -169,7 +170,7 @@ fun OwnBusinessOnPersonalBasisContent(
         )
 
         CustomOutlinedTextField(
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
             value = viewModel.uiState.businessIdentification,
             onValueChange = {
                 viewModel.onUIEvent(

@@ -52,7 +52,7 @@ class IndProfessionalViewModel @Inject constructor(
     }
 
     private fun incomeAmountChange(income: String) {
-        if (Pattern.matches(DECIMAL_REGEX, income)) {
+        if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
             uiState = uiState.copy(incomeAmount = income)
         }
         onValidateForm()

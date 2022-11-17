@@ -1,0 +1,11 @@
+query Relationship($user: String!, $idBrand: Int!,$option: Int!){
+    relationhip(relationhipInput:{
+        user: $user,
+        idBrand:$idBrand,
+        option: $option
+    }) {
+        relationshipId
+        code
+        description
+    }
+}

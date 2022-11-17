@@ -5,5 +5,7 @@ data class PaymentPoint(
     val description: String?,
     val address: String?,
     val addressDescription: String?,
-    val schedule: String?
+    val schedule: String?,
+    val latitude: String?,
+    val longitude: String?
 )

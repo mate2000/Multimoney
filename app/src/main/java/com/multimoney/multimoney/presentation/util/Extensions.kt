@@ -25,6 +25,14 @@ fun Context.openWhatsAppDeepLink(link: String) {
     this.startActivity(intent)
 }
 
+fun Context.openMapsLink(latitude: String, longitude: String) {
+    val mapsIntentUri =
+        Uri.parse(String.format(resources.getString(R.string.payment_location_intent_uri_format), latitude, longitude))
+    val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
+    mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
+    this.startActivity(mapIntent)
+}
+
 fun tickerFlow(
     period: Duration,
     initialDelay: Duration = Duration.ZERO,

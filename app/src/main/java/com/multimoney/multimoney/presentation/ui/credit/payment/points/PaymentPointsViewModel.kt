@@ -13,9 +13,12 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnItemPointClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
@@ -34,15 +37,24 @@ class PaymentPointsViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var idBrand: Int? = null
+    var idBrand: Int? = null
+    private var paymentAmount: String? = ""
+    private var creditNumber: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
+        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
     }
 
-    private fun onItemPointClick() {
-        // TODO Navigate to item details
-    }
+    private fun onItemPointClick(
+        pointName: String,
+        pointAddress: String,
+        pointSchedule: String,
+        pointLatitude: String,
+        pointLongitude: String
+    ) =
+        navigateTo(route = "${Screen.PaymentLocationDetailsScreen.baseRoute}/$pointName/$pointAddress/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$creditNumber/$idBrand")
 
     private fun onQueryValueChange(value: String) {
         uiState = uiState.copy(
@@ -50,7 +62,8 @@ class PaymentPointsViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
+    private fun onNavigateBack() =
+        navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
 
     private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
@@ -110,6 +123,13 @@ class PaymentPointsViewModel @Inject constructor(
             is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
             is OnGetPaymentPoints -> onGetPaymentPoints()
             is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
+            is OnItemPointClick -> onItemPointClick(
+                uiEvent.pointName,
+                uiEvent.pointAddress,
+                uiEvent.pointSchedule,
+                uiEvent.pointLatitude,
+                uiEvent.pointLongitude
+            )
         }
     }
 
@@ -118,8 +138,14 @@ class PaymentPointsViewModel @Inject constructor(
         object OnCloseScreenClick : UIEvent()
         data class OnQueryValueChange(val value: String) : UIEvent()
         object OnGetPaymentPoints : UIEvent()
-        object OnItemPointClick : UIEvent()
         object OnDialogPositiveButtonClick : UIEvent()
+        data class OnItemPointClick(
+            val pointName: String,
+            val pointAddress: String,
+            val pointSchedule: String,
+            val pointLatitude: String,
+            val pointLongitude: String
+        ) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
     }
 }

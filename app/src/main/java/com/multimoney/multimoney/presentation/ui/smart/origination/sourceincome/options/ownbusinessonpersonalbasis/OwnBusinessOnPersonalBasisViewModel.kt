@@ -13,11 +13,11 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIdentificationChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnNextActionClick
-import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -80,7 +80,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
     }
 
     private fun incomeAmountChange(income: String) {
-        if ((Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) && income.last() != '0') {
+        if (validateDecimalIncome(income)) {
             uiState = uiState.copy(businessIncome = income)
         }
         onValidateForm()
@@ -164,7 +164,7 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
         uiState.businessActivity.isNotBlank() &&
         uiState.identificationSuccess.first &&
         uiState.businessIdentification.length == IDENTIFICATION_LENGTH &&
-        uiState.businessIncome.toFloat() > 0
+        uiState.businessIncome.toFloat() > MIN_INCOME
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()

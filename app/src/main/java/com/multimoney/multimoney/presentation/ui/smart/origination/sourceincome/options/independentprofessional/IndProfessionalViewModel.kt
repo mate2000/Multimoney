@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.Companion.ADDRESS_MAX_LENGHT
-import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,7 +48,7 @@ class IndProfessionalViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun incomeAmountChange(income: String) {
-        if ((Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) && income.last() != '0') {
+        if (validateDecimalIncome(income)) {
             uiState = uiState.copy(incomeAmount = income)
         }
         onValidateForm()
@@ -72,5 +72,5 @@ class IndProfessionalViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun isFormValid() = uiState.incomeAmount.isNotBlank() &&
         uiState.address.isNotBlank() &&
-        uiState.incomeAmount.toFloat() > 0
+        uiState.incomeAmount.toFloat() > MIN_INCOME
 }

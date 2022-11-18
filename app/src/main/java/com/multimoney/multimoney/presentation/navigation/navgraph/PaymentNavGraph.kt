@@ -35,6 +35,13 @@ const val CLIENT_BANK_ACCOUNT = "client_bank_account"
 const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
+const val REFERENCE_NUMBER = "reference_number"
+const val CURRENT_AMOUNT_VALUE = "current_amount_value"
+const val PAYMENT_LABEL = "currency"
+const val SHOULD_DISPLAY_EXCHANGE_RATE = "should_display_exchange_rate"
+const val IS_AUTOMATIC_PAYMENT_CHECKED = "is_automated_payment_checked"
+const val IS_MULTI_CURRENCY = "is_multi_currency"
+const val EXCHANGE_RATE_LABEL = "exchange_rate_label"
 const val PAYMENT_AMOUNT = "payment_amount"
 const val PAYMENT_ID = "payment_id"
 const val PAYMENT_DATE = "payment_date"
@@ -244,7 +251,16 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(CLIENT_BANK_ACCOUNT) {
                     type = ClientBankAccountNavType()
-                }
+                },
+                navArgument(SHOULD_DISPLAY_EXCHANGE_RATE) {
+                    type = NavType.BoolType
+                },
+                navArgument(IS_MULTI_CURRENCY) {
+                    type = NavType.BoolType
+                },
+                navArgument(IS_AUTOMATIC_PAYMENT_CHECKED) {
+                    type = NavType.BoolType
+                },
             )
         ) {
             PaymentVoucherScreen(

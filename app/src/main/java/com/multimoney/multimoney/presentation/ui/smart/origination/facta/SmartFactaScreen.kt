@@ -27,7 +27,6 @@ import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
@@ -85,7 +84,7 @@ fun SmartFactaScreen(
         Text(
             text = stringResource(id = R.string.smart_facta_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText
+            color = MultimoneyTheme.colors.text
         )
 
         when (sharedViewModel.idBrandAsInt) {
@@ -123,7 +122,7 @@ fun ContentSV(
         Text(
             text = stringResource(R.string.smart_facta_are_you_us_citizen),
             style = Typography.body1,
-            color = WhiteTransparency90,
+            color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 24.dp)
         )
         CustomRadioButtonsLayout(
@@ -141,7 +140,7 @@ fun ContentSV(
         Text(
             text = stringResource(R.string.smart_facta_are_you_or_family_pep),
             style = Typography.body1,
-            color = WhiteTransparency90,
+            color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 32.dp)
         )
         CustomRadioButtonsLayout(
@@ -177,7 +176,7 @@ fun ContentOneCR(
         Column(modifier = modifier) {
             ClickableText(
                 text = annotatedText,
-                style = Typography.body1.copy(color = WhiteTransparency90),
+                style = Typography.body1.copy(color = MultimoneyTheme.colors.labelText),
                 onClick = { offset ->
                     annotatedText.getStringAnnotations(
                         tag = INFO_TAG,
@@ -211,7 +210,7 @@ fun ContentOneCR(
             Text(
                 text = stringResource(R.string.smart_facta_are_you_or_family_pep),
                 style = Typography.body1,
-                color = WhiteTransparency90,
+                color = MultimoneyTheme.colors.labelText,
                 modifier = Modifier.padding(top = 32.dp)
             )
             CustomRadioButtonsLayout(
@@ -246,7 +245,7 @@ fun ContentTwoCR(
         Text(
             text = stringResource(R.string.smart_facta_are_you_us_tax_payer),
             style = Typography.body1,
-            color = WhiteTransparency90,
+            color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 24.dp)
         )
         CustomRadioButtonsLayout(
@@ -259,7 +258,7 @@ fun ContentTwoCR(
         Text(
             text = stringResource(R.string.smart_facta_are_you_other_country_tax_payer),
             style = Typography.body1,
-            color = WhiteTransparency90,
+            color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 32.dp)
         )
         CustomRadioButtonsLayout(

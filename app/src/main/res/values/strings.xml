@@ -523,13 +523,13 @@
     <string name="smart_own_business_company_name_required" translatable="false">Nombre de la empresa requerido</string>
     <string name="smart_own_business_description_label" translatable="false">¿Qué hace la empresa?</string>
     <string name="smart_own_business_description_required" translatable="false">Descripcion de la empresa requerido</string>
-    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el maximo de caracteres permitidos</string>
+    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
     <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
     <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
 
     <!-- Smart Account - Other -->
-    <string name="smart_other_title" translatable="false">Otros</string>
+    <string name="smart_other_title" translatable="false">Otro</string>
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
 
@@ -541,7 +541,7 @@
     <string name="smart_business_personal_basis_identification_loading" translatable="false">Un momento, estamos verificando tu numero de identificatión...</string>
     <string name="smart_business_personal_basis_identification_success" translatable="false">Nombre empresa</string>
     <string name="smart_business_personal_basis_activity_label" translatable="false">¿A qué se dedica tu sociedad?</string>
-    <string name="smart_business_personal_basis_activity_error" translatable="false">Has alcanzado el maximo de caracteres permitidos</string>
+    <string name="smart_business_personal_basis_activity_error" translatable="false">Has alcanzado el máximo de caracteres permitidos</string>
     <string name="smart_business_personal_basis_activity_required_message" translatable="false">Actividad requerida</string>
     <string name="smart_business_personal_basis_income_required_message" translatable="false">Ingresos requeridos</string>
     <string name="smart_business_personal_basis_identification_required_message" translatable="false">Cedula juridica requerida</string>

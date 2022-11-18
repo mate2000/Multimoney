@@ -36,7 +36,6 @@ fun OwnBusinessTitleScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
@@ -74,9 +73,11 @@ fun OwnBusinessTitleScreen(
     // return to the main options screen whenever tapping on native back button from the device
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
-            (SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
-                SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            ))
+            (
+                SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
+                    SourceIncomeOptionType.MainSourceIncomeScreenType.id
+                )
+                )
         )
     }
 
@@ -121,9 +122,7 @@ fun OwnBusinessTitleScreenContent(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            isError = viewModel.uiState.businessNameError.first,
-            errorMessage = stringResource(viewModel.uiState.businessNameError.second),
-            isRequired = true
+            isRequiredMessage = stringResource(R.string.smart_business_personal_name_required)
         )
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 24.dp),
@@ -142,9 +141,7 @@ fun OwnBusinessTitleScreenContent(
             placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
-            isError = viewModel.uiState.amountError.first,
-            errorMessage = stringResource(viewModel.uiState.amountError.second),
-            isRequired = true
+            isRequiredMessage = stringResource(R.string.smart_business_personal_income_label_required)
         )
     }
 }

@@ -32,7 +32,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
                 companyDescriptionValue = description,
                 companyDescriptionError = Pair(
                     true,
-                    R.string.smart_own_business_description_max_char_error
+                    R.string.max_number_of_characters_reached_error
                 )
             )
         }
@@ -47,9 +47,9 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
     fun isFormValid() = uiState.companyNameValue.isNotBlank() &&
-            uiState.companyDescriptionValue.isNotBlank() &&
-            !uiState.companyDescriptionError.first
-            && uiState.monthlyIncomeValue.isNotBlank()
+        uiState.companyDescriptionValue.isNotBlank() &&
+        !uiState.companyDescriptionError.first &&
+        uiState.monthlyIncomeValue.isNotBlank()
 
     data class UIState(
         // Interactions
@@ -59,7 +59,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
         val isLoading: Boolean = false,
         var companyDescriptionError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.smart_own_business_description_max_char_error
+            R.string.max_number_of_characters_reached_error
         )
     )
 

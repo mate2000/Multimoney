@@ -20,7 +20,7 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
     data class UIState(
         var incomeAmount: String = "",
         var incomeSource: String = "",
-        var sourceError: Pair<Boolean, Int> = Pair(false, R.string.smart_other_source_of_income_required)
+        var sourceError: Pair<Boolean, Int> = Pair(false, R.string.empty)
     )
 
     sealed class UIEvent {
@@ -49,9 +49,12 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     private fun incomeSourceChange(source: String) {
         uiState = if (source.length < DESCRIPTION_MAX_LENGTH) {
-            uiState.copy(incomeSource = source)
+            uiState.copy(
+                incomeSource = source,
+                sourceError = Pair(true, R.string.empty)
+            )
         } else {
-            uiState.copy(sourceError = Pair(true, R.string.smart_own_business_description_max_char_error))
+            uiState.copy(sourceError = Pair(true, R.string.max_number_of_characters_reached_error))
         }
         onValidateForm()
     }

@@ -5,32 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.Companion.ADDRESS_MAX_LENGHT
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel
 import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
-class IndProfessionalViewModel @Inject constructor(
-
-) : BaseViewModel(true) {
+class IndProfessionalViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
     data class UIState(
         var incomeAmount: String = "",
         var address: String = "",
-        var amountError: Pair<Boolean, Int> = Pair(
-            false,
-            R.string.smart_own_business_monthly_income_required
-        ),
-        var addressError: Pair<Boolean, Int> = Pair(
-            false,
-            R.string.smart_ind_professional_address_required
-        )
+        var addressError: Pair<Boolean, Int> = Pair(false, R.string.empty)
     )
 
     sealed class UIEvent {
@@ -60,13 +49,13 @@ class IndProfessionalViewModel @Inject constructor(
 
     private fun addressValueChanged(address: String) {
         uiState = if (address.length < ADDRESS_MAX_LENGHT) {
-            uiState.copy(address = address)
+            uiState.copy(
+                address = address,
+                addressError = Pair(false, R.string.empty)
+            )
         } else {
             uiState.copy(
-                addressError = Pair(
-                    true,
-                    R.string.smart_own_business_description_max_char_error
-                )
+                addressError = Pair(true, R.string.max_number_of_characters_reached_error)
             )
         }
         onValidateForm()

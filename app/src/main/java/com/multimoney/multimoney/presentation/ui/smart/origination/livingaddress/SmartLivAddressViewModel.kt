@@ -179,7 +179,7 @@ class SmartLivAddressViewModel @Inject constructor(
             uiState.copy(
                 addressError = Pair(
                     true,
-                    R.string.smart_own_business_description_max_char_error
+                    R.string.max_number_of_characters_reached_error
                 )
             )
         }

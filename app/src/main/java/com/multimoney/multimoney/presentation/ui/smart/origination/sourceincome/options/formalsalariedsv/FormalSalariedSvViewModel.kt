@@ -73,7 +73,7 @@ class FormalSalariedSvViewModel @Inject constructor() : BaseViewModel(true) {
             )
         } else {
             uiState.copy(
-                workingAddressError = Pair(true, R.string.smart_own_business_description_max_char_error)
+                workingAddressError = Pair(true, R.string.max_number_of_characters_reached_error)
             )
         }
         onValidateForm()

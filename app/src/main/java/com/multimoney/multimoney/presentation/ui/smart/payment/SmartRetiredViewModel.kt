@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.payment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
@@ -28,7 +29,14 @@ class SmartRetiredViewModel : BaseViewModel(true) {
 
     private fun onAmountValueChange(paymentAmount: String) {
         if (paymentAmount.length <= INSTITUTION_MAX_LENGTH) {
-            uiState = uiState.copy(paymentAmount = paymentAmount)
+            uiState = uiState.copy(
+                paymentAmount = paymentAmount,
+                institutionError = Pair(false, R.string.empty)
+            )
+        } else {
+            uiState = uiState.copy(
+                institutionError = Pair(true, R.string.max_number_of_characters_reached_error)
+            )
         }
         validateForm()
     }
@@ -36,7 +44,8 @@ class SmartRetiredViewModel : BaseViewModel(true) {
     data class UIState(
         // Fields
         val institution: String = "",
-        val paymentAmount: String = "",
+        val institutionError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val paymentAmount: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {

@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
@@ -163,7 +164,7 @@ fun SmartOwnBusinessSvContent(
                 id = R.string.smart_own_business_monthly_income_placeholder,
                 stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
             ),
-            customTransformation = formatMoney(
+            customTransformation = formatDecimalMoney(
                 stringResource(
                     sharedViewModel.idBrandAsInt.getCurrencySymbol()
                 )

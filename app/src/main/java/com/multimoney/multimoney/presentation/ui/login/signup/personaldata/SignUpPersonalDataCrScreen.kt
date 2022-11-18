@@ -31,8 +31,8 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.capitalized
+import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
@@ -86,9 +86,15 @@ fun SignUpPersonalDataCrScreen(
             labelText = stringResource(id = R.string.sign_up_personal_data_document_number_label),
             modifier = Modifier.padding(top = 44.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_required),
+            isRequiredMessage = stringResource(
+                id = R.string.sign_up_personal_data_id_required,
+                viewModel.uiState.identificationValueType
+            ),
             isError = viewModel.uiState.personalIdError.first,
-            errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
+            errorMessage = stringResource(
+                id = viewModel.uiState.personalIdError.second,
+                viewModel.uiState.identificationValueType
+            ),
             customTransformation = if (viewModel.uiState.documentFormat != "") MaskVisualTransformation(
                 viewModel.uiState.documentFormat,
                 viewModel.uiState.documentFormat.last()

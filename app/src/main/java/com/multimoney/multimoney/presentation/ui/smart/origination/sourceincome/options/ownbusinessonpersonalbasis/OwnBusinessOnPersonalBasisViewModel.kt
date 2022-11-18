@@ -27,44 +27,6 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    data class UIState(
-        var businessIncome: String = "",
-        var incomeError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var businessActivity: String = "",
-        var activityError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var businessIdentification: String = "",
-        var identificationSuccess: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var identificationLoading: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var identificationError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var identificationValidationError: String? = null,
-        var companyName: String? = null
-    )
-
-    sealed class UIEvent {
-        data class OnIncomeAmountChange(val income: String) : UIEvent()
-        data class OnBusinessActivityChange(val activity: String) : UIEvent()
-        data class OnIdentificationChange(
-            val identification: String,
-            val idBrand: Int,
-            val user: String
-        ) : UIEvent()
-        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
-    }
-
-    fun onUIEvent(uiEvent: UIEvent) {
-        when (uiEvent) {
-            is OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
-            is OnBusinessActivityChange -> businessActivityChange(uiEvent.activity)
-            is OnIdentificationChange ->
-                identificationChange(
-                    uiEvent.identification,
-                    uiEvent.idBrand,
-                    uiEvent.user
-                )
-            is OnNextActionClick -> OnNextActionClick(uiEvent.nextStepAction)
-        }
-    }
-
     private fun businessActivityChange(source: String) {
         uiState = if (source.length < DESCRIPTION_MAX_LENGTH) {
             uiState.copy(businessActivity = source)
@@ -165,6 +127,44 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
         uiState.identificationSuccess.first &&
         uiState.businessIdentification.length == IDENTIFICATION_LENGTH &&
         uiState.businessIncome.toFloat() > MIN_INCOME
+
+    data class UIState(
+        var businessIncome: String = "",
+        var incomeError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        var businessActivity: String = "",
+        var activityError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        var businessIdentification: String = "",
+        var identificationSuccess: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        var identificationLoading: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        var identificationError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        var identificationValidationError: String? = null,
+        var companyName: String? = null
+    )
+
+    sealed class UIEvent {
+        data class OnIncomeAmountChange(val income: String) : UIEvent()
+        data class OnBusinessActivityChange(val activity: String) : UIEvent()
+        data class OnIdentificationChange(
+            val identification: String,
+            val idBrand: Int,
+            val user: String
+        ) : UIEvent()
+        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
+    }
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
+            is OnBusinessActivityChange -> businessActivityChange(uiEvent.activity)
+            is OnIdentificationChange ->
+                identificationChange(
+                    uiEvent.identification,
+                    uiEvent.idBrand,
+                    uiEvent.user
+                )
+            is OnNextActionClick -> OnNextActionClick(uiEvent.nextStepAction)
+        }
+    }
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()

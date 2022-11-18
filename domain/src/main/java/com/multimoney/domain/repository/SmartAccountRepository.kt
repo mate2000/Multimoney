@@ -1,8 +1,7 @@
 package com.multimoney.domain.repository
 
-
-import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.AddressesLevel
+import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
@@ -80,7 +79,9 @@ interface SmartAccountRepository {
         isUSCitizen: Boolean,
         isPEP: Boolean,
         isUSTaxPayer: Boolean,
-        isTaxPayer: Boolean
+        isTaxPayer: Boolean,
+        idJobLevel2: Long,
+        idJobLevel3: Long
     ): Flow<MultimoneyResult<GlobalRequest?>>
 
     suspend fun queryGeneralEconomicActivity(
@@ -91,6 +92,6 @@ interface SmartAccountRepository {
     suspend fun queryRelationship(
         user: String,
         idBrand: Int,
-        option: Int,
+        option: Int
     ): Flow<MultimoneyResult<RelationshipData>>
 }

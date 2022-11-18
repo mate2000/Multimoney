@@ -786,7 +786,9 @@ class GraphqlApi @Inject constructor(
         isPEP: Boolean,
         isUSTaxPayer: Boolean,
         isTaxPayer: Boolean,
-        beneficiaries: List<Beneficiary>
+        beneficiaries: List<Beneficiary>,
+        idJobLevel2: Long,
+        idJobLevel3: Long
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloAuthorizedClient.mutation(
             GlobalRequestMutation(
@@ -824,7 +826,9 @@ class GraphqlApi @Inject constructor(
                         relationship = Optional.presentIfNotNull(beneficiary.relationship.toString()),
                         allocationPercentage = Optional.presentIfNotNull(beneficiary.allocationPercentage)
                     )
-                }
+                },
+                idJobLevel2,
+                idJobLevel3
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -838,7 +842,7 @@ class GraphqlApi @Inject constructor(
     fun queryRelationship(
         user: String,
         idBrand: Int,
-        option: Int,
+        option: Int
     ): ApolloCall<RelationshipQuery.Data> =
         apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option))
             .fetchPolicy(FetchPolicy.NetworkOnly)

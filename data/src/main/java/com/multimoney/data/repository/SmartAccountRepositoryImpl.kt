@@ -31,7 +31,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.queryCivilStatus(pkUser, idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
 
     override suspend fun queryProfessionsSmart(
         pkUser: String,
@@ -41,23 +42,27 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.queryProfessionSmart(pkUser, idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
 
     override suspend fun queryAddressLevelOne(
         user: String,
-        idBrand: Int,
+        idBrand: Int
     ): Flow<MultimoneyResult<AddressesLevel?>> =
-        fetchData(apolloCall = graphqlApi.queryAddressLevelOne(user, idBrand),
+        fetchData(
+            apolloCall = graphqlApi.queryAddressLevelOne(user, idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
 
     override suspend fun queryAddressLevelTwo(
         user: String,
         idBrand: Int,
-        idAddressLevel1: String,
+        idAddressLevel1: String
     ): Flow<MultimoneyResult<AddressesLevel?>> =
-        fetchData(apolloCall = graphqlApi.queryAddressLevelTwo(user, idBrand, idAddressLevel1),
+        fetchData(
+            apolloCall = graphqlApi.queryAddressLevelTwo(user, idBrand, idAddressLevel1),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
@@ -67,17 +72,19 @@ class SmartAccountRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int,
         idAddressLevel1: String,
-        idAddressLevel2: String,
+        idAddressLevel2: String
     ): Flow<MultimoneyResult<AddressesLevel?>> =
-        fetchData(apolloCall = graphqlApi.queryAddressLevelThree(
-            user,
-            idBrand,
-            idAddressLevel1,
-            idAddressLevel2
-        ),
+        fetchData(
+            apolloCall = graphqlApi.queryAddressLevelThree(
+                user,
+                idBrand,
+                idAddressLevel1,
+                idAddressLevel2
+            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
 
     override suspend fun queryNationality(
         user: String,
@@ -87,7 +94,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.queryNationality(user, idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
 
     override suspend fun queryStepByStep(
         user: String,
@@ -98,7 +106,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.queryStepByStep(user, idBrand, idRequest),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
 
     override suspend fun mutationGlobalRequest(
         pkUser: Int,
@@ -129,7 +138,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
         isUSCitizen: Boolean,
         isPEP: Boolean,
         isUSTaxPayer: Boolean,
-        isTaxPayer: Boolean
+        isTaxPayer: Boolean,
+        idJobLevel2: Long,
+        idJobLevel3: Long
     ): Flow<MultimoneyResult<GlobalRequest?>> = fetchData(
         apolloCall = graphqlApi.mutationGlobalRequest(
             pkUser = pkUser,
@@ -144,7 +155,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             idAddressLevel1 = idAddressLevel1,
             idAddressLevel2 = idAddressLevel2,
             idAddressLevel3 = idAddressLevel3,
-            positionJob=positionJob,
+            positionJob = positionJob,
             idEconomicActivity = idEconomicActivity,
             income = income,
             addressDetail = addressDetail,
@@ -160,7 +171,9 @@ class SmartAccountRepositoryImpl @Inject constructor(
             isUsCitizen = isUSCitizen,
             isPEP = isPEP,
             isUSTaxPayer = isUSTaxPayer,
-            isTaxPayer = isTaxPayer
+            isTaxPayer = isTaxPayer,
+            idJobLevel2 = idJobLevel2,
+            idJobLevel3 = idJobLevel3
         ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
@@ -170,7 +183,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
      */
     override suspend fun queryGeneralEconomicActivity(
         user: String,
-        idBrand: Int,
+        idBrand: Int
     ): Flow<MultimoneyResult<GeneralEconomicActivityResult?>> {
         return fetchData(
             apolloCall = graphqlApi.queryGeneralEconomicActivity(user, idBrand),
@@ -181,7 +194,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
     override suspend fun queryRelationship(
         user: String,
         idBrand: Int,
-        option: Int,
+        option: Int
     ): Flow<MultimoneyResult<RelationshipData>> {
         return fetchData(
             apolloCall = graphqlApi.queryRelationship(user, idBrand, option),

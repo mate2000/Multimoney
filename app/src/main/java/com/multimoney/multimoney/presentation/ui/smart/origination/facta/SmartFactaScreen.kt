@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,25 +82,32 @@ fun SmartFactaScreen(
             }
         }
     }
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = stringResource(id = R.string.smart_facta_title),
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.labelText
+        )
 
-    when (sharedViewModel.idBrandAsInt) {
-        Brand.CostaRica.id -> {
-            when (viewModel.uiState.crPage) {
-                CR_PAGE_ONE -> {
-                    Column {
-                        ContentOneCR(viewModel, sharedViewModel, Modifier.padding(16.dp))
-                        sharedViewModel.onUIEvent(OnContinueVisible(false))
+        when (sharedViewModel.idBrandAsInt) {
+            Brand.CostaRica.id -> {
+                when (viewModel.uiState.crPage) {
+                    CR_PAGE_ONE -> {
+                        Column {
+                            ContentOneCR(viewModel, sharedViewModel)
+                            sharedViewModel.onUIEvent(OnContinueVisible(false))
+                        }
+                    }
+                    CR_PAGE_TWO -> {
+                        ContentTwoCR(viewModel)
+                        sharedViewModel.onUIEvent(OnContinueVisible(true))
                     }
                 }
-                CR_PAGE_TWO -> {
-                    ContentTwoCR(viewModel, Modifier.padding(16.dp))
-                    sharedViewModel.onUIEvent(OnContinueVisible(true))
-                }
             }
-        }
-        Brand.ElSalvador.id -> {
-            ContentSV(viewModel, Modifier.padding(16.dp))
-            sharedViewModel.onUIEvent(OnContinueVisible(true))
+            Brand.ElSalvador.id -> {
+                ContentSV(viewModel)
+                sharedViewModel.onUIEvent(OnContinueVisible(true))
+            }
         }
     }
 }
@@ -116,7 +124,8 @@ fun ContentSV(
         Text(
             text = stringResource(R.string.smart_facta_are_you_us_citizen),
             style = Typography.body1,
-            color = WhiteTransparency90
+            color = WhiteTransparency90,
+            modifier = Modifier.padding(top = 24.dp)
         )
         CustomRadioButtonsLayout(
             options = optionsCitizen,
@@ -139,7 +148,8 @@ fun ContentSV(
         Text(
             text = stringResource(R.string.smart_facta_are_you_or_family_pep),
             style = Typography.body1,
-            color = WhiteTransparency90
+            color = WhiteTransparency90,
+            modifier = Modifier.padding(top = 16.dp)
         )
         CustomRadioButtonsLayout(
             options = optionsPep,
@@ -190,7 +200,8 @@ fun ContentOneCR(
                             )
                         }
                     }
-                }
+                },
+                modifier = Modifier.padding(top = 16.dp)
             )
 
             CustomRadioButtonsLayout(
@@ -214,7 +225,8 @@ fun ContentOneCR(
             Text(
                 text = stringResource(R.string.smart_facta_are_you_or_family_pep),
                 style = Typography.body1,
-                color = WhiteTransparency90
+                color = WhiteTransparency90,
+                modifier = Modifier.padding(top = 16.dp)
             )
             CustomRadioButtonsLayout(
                 options = optionsPep,
@@ -248,7 +260,8 @@ fun ContentTwoCR(
         Text(
             text = stringResource(R.string.smart_facta_are_you_us_tax_payer),
             style = Typography.body1,
-            color = WhiteTransparency90
+            color = WhiteTransparency90,
+            modifier = Modifier.padding(top = 16.dp)
         )
         CustomRadioButtonsLayout(
             options = options,
@@ -266,7 +279,8 @@ fun ContentTwoCR(
         Text(
             text = stringResource(R.string.smart_facta_are_you_other_country_tax_payer),
             style = Typography.body1,
-            color = WhiteTransparency90
+            color = WhiteTransparency90,
+            modifier = Modifier.padding(top = 16.dp)
         )
         CustomRadioButtonsLayout(
             options = options,

@@ -646,6 +646,7 @@
     <string name="smart_business_personal_income_label_required" translatable="false">Ingreso mensual requerido</string>
 
     <!--Smart Facta screen-->
+    <string name="smart_facta_title" translatable="false">Información adicional</string>
     <string name="smart_facta_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>
     <string name="smart_facta_are_you_or_family_pep" translatable="false">¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?</string>
     <string name="smart_facta_activities_according_to_article_15" translatable="false">¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>

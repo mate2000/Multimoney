@@ -30,7 +30,7 @@ class ProfileViewModel @Inject constructor(
             userName = dataStorePreferences.getUserName().first(),
             userEmail = dataStorePreferences.getUserEmail().first(),
             phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
-            idBrand =  savedStateHandle.get<String>(ID_BRAND)?.toInt() ?: 0
+            idBrand = savedStateHandle[ID_BRAND] ?: 0
         )
     }
 

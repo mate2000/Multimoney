@@ -492,8 +492,15 @@ fun CardWithCreditInProcess(
 @Composable
 @Preview
 fun CardCreditMaxAttempts(
+    idBrand: Int = Brand.ElSalvador.id,
     action: () -> Unit = {}
 ) {
+    val description = if (idBrand == Brand.Guatemala.id) {
+        R.string.sign_credit_max_attempts_message_gt
+    } else {
+        R.string.sign_credit_max_attempts_message
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -519,7 +526,7 @@ fun CardCreditMaxAttempts(
             color = MultimoneyTheme.colors.text
         )
         Text(
-            text = stringResource(id = R.string.sign_credit_max_attempts_message),
+            text = stringResource(id = description),
             modifier = Modifier.padding(top = 8.dp),
             style = Typography.caption,
             color = MultimoneyTheme.colors.text

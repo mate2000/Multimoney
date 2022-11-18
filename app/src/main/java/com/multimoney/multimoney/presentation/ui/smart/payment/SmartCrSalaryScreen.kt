@@ -49,7 +49,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.transformation.formatMoney
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
 @Composable
 fun SmartCrSalaryScreen(
@@ -100,11 +100,9 @@ fun SmartCrSalaryScreen(
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
-            (
-                OnNavigateToSelectedSourceOfIncomeOption(
-                    MainSourceIncomeScreenType.id
-                )
-                )
+            OnNavigateToSelectedSourceOfIncomeOption(
+                MainSourceIncomeScreenType.id
+            )
         )
     }
 
@@ -147,7 +145,7 @@ fun SmartCrSalaryScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = string.smart_account_formal_placeholder),
-            customTransformation = formatMoney(
+            customTransformation = formatDecimalMoney(
                 stringResource(
                     id = sharedViewModel.idBrandAsInt
                         .getCurrencySymbol()

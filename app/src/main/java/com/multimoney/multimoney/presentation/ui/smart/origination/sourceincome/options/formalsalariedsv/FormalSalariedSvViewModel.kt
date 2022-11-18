@@ -10,10 +10,10 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnWorkingAddressChange
-import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,7 +59,7 @@ class FormalSalariedSvViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun onSalaryChange(salary: String) {
-        if (Pattern.matches(DECIMAL_REGEX, salary) || salary.isEmpty()) {
+        if (validateDecimalIncome(salary)) {
             uiState = uiState.copy(salary = salary)
         }
         onValidateForm()
@@ -89,5 +89,6 @@ class FormalSalariedSvViewModel @Inject constructor() : BaseViewModel(true) {
         uiState.profession.isNotBlank() &&
             uiState.companyName.isNotBlank() &&
             uiState.salary.isNotBlank() &&
-            uiState.workingAddress.isNotBlank()
+            uiState.workingAddress.isNotBlank() &&
+            uiState.salary.toFloat() > MIN_INCOME
 }

@@ -38,18 +38,17 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.transformation.formatMoney
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
 @Composable
 fun SmartRetiredScreen(
     viewModel: SmartRetiredViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
-    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
+    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -87,15 +86,17 @@ fun SmartRetiredScreen(
 
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
-            (OnNavigateToSelectedSourceOfIncomeOption(
+            OnNavigateToSelectedSourceOfIncomeOption(
                 MainSourceIncomeScreenType.id
-            ))
+            )
         )
     }
 
-    Column(modifier = Modifier
-        .padding(vertical = 16.dp, horizontal = 16.dp)
-        .verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -146,8 +147,9 @@ fun SmartRetiredScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_amount_placeholder),
-            customTransformation = formatMoney(stringResource(id = sharedViewModel.idBrandAsInt
-                .getCurrencySymbol()))
+            customTransformation = formatDecimalMoney(
+                stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
+            )
         )
     }
 }

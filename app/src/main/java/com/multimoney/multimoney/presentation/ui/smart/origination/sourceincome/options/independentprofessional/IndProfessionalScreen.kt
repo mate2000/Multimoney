@@ -74,9 +74,9 @@ fun IndProfessionalScreen(
     // return to the main options screen whenever tapping on native back button from the device
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
-            (SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
+            SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
                 SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            ))
+            )
         )
     }
 

@@ -1,12 +1,15 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 
 class SmartRetiredViewModel : BaseViewModel(true) {
 
@@ -15,9 +18,11 @@ class SmartRetiredViewModel : BaseViewModel(true) {
         private set
 
     private fun validateForm() =
-        emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
+        emitBaseEvent(OnFormValidateCompleted(isFormValid()))
 
-    fun isFormValid() = uiState.institution.isNotBlank() && uiState.paymentAmount.isNotBlank()
+    fun isFormValid() = uiState.institution.isNotBlank() &&
+        uiState.paymentAmount.isNotBlank() &&
+        uiState.paymentAmount.toFloat() > MIN_INCOME
 
     private fun onInstitutionValueChange(institution: String) {
         if (institution.length <= INSTITUTION_MAX_LENGTH) {
@@ -27,7 +32,7 @@ class SmartRetiredViewModel : BaseViewModel(true) {
     }
 
     private fun onAmountValueChange(paymentAmount: String) {
-        if (paymentAmount.length <= INSTITUTION_MAX_LENGTH) {
+        if (validateDecimalIncome(paymentAmount)) {
             uiState = uiState.copy(paymentAmount = paymentAmount)
         }
         validateForm()
@@ -36,7 +41,7 @@ class SmartRetiredViewModel : BaseViewModel(true) {
     data class UIState(
         // Fields
         val institution: String = "",
-        val paymentAmount: String = "",
+        val paymentAmount: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {

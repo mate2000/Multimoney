@@ -73,7 +73,7 @@ fun SmartScreen(
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
             )
-            if (viewModel.uiState.currentStep != SmartSteps.Five.id) {
+            if (viewModel.uiState.currentStep != Six.id) {
                 StepProgressBar(
                     steps = SMART_INDICATOR_TOTAL_STEPS,
                     currentStep = if (viewModel.uiState.currentStep == Six.id) SmartSteps.Five.id else viewModel.uiState.currentStep,

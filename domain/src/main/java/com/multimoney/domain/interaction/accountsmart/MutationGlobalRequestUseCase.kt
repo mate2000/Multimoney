@@ -35,6 +35,8 @@ interface MutationGlobalRequestUseCase {
         isUSCitizen: Boolean,
         isPEP: Boolean,
         isUSTaxPayer: Boolean,
-        isTaxPayer: Boolean
+        isTaxPayer: Boolean,
+        idJobLevel2: Long,
+        idJobLevel3: Long
     ): Flow<MultimoneyResult<GlobalRequest?>>
 }

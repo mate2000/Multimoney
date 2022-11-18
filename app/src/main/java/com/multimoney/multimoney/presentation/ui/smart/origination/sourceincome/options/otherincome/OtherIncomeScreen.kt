@@ -123,7 +123,7 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
             isTextArea = true,
             isError = viewModel.uiState.sourceError.first,
             errorMessage = stringResource(viewModel.uiState.sourceError.second),
-            isRequiredMessage = stringResource(R.string.smart_other_source_of_income_required),
+            isRequiredMessage = stringResource(R.string.smart_other_source_of_income_required)
         )
 
         CustomOutlinedTextField(
@@ -143,7 +143,7 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
             placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
-            isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required),
+            isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required)
         )
     }
 }

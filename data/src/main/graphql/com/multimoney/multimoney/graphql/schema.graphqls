@@ -250,11 +250,6 @@ type Query {
   accountStatement(accountStatementInput: AccountStatementDtoInput!): AccountStatement!
 
   """
-  Credit
-  """
-  getCreditContract(signature: CreditContractDtoInput!): CreditContract
-
-  """
   Crypto
   """
   cryptoCurrencyMovement(cryptoMovementInput: CryptoMovementDtoInput!): CryptoCurrencyMovement!
@@ -547,6 +542,11 @@ type Mutation {
   Credit
   """
   processCreditExtensionDetail(processCreditExtensionDetailInput: ProcessCreditExtensionDtoInput!): CreditExtensionDetail
+
+  """
+  Credit
+  """
+  saveCreditContract(creditContractInput: CreditContractDtoInput!): CreditContract
 
   """
   Crypto
@@ -1969,44 +1969,12 @@ input AccountStatementDtoInput {
   user: String
 }
 
-type CreditContract {
-  idImpresion: Long!
-
-  idBrand: Int!
-
-  link: String
-
-  statusEvicertia: String
-
-  statusOnfido: String
-
-  active: Boolean!
-
-  currentStep: String!
-}
-
-input CreditContractDtoInput {
-  idImpresion: Long!
-
-  idBrand: Int!
-
-  link: String
-
-  statusEvicertia: String
-
-  statusOnfido: String
-
-  active: Boolean!
-
-  currentStep: String!
-}
-
 type CryptoCurrencyMovement {
-  globalBalance: String!
+  globalBalance: String
 
-  investedBalance: String!
+  investedBalance: String
 
-  percentageInvested: String!
+  percentageInvested: String
 
   total_count: Int!
 
@@ -2020,13 +1988,13 @@ input CryptoMovementDtoInput {
 
   status: String
 
-  pagination_limit: Int!
+  pagination_limit: Int
 
-  pagination_offset: Int!
+  pagination_offset: Int
 
-  order_time_begin: DateTime!
+  order_time_begin: DateTime
 
-  order_time_end: DateTime!
+  order_time_end: DateTime
 
   ref_ids: [String!]
 
@@ -2124,7 +2092,7 @@ input HistoricalBalanceClientDtoInput {
 }
 
 type CryptoHistoricalPrice {
-  market: String!
+  market: String
 
   items: [CryptoHistoricalPriceItem!]!
 
@@ -2950,6 +2918,10 @@ type GlobalRequest {
 }
 
 input GlobalRequestDtoInput {
+  idGlobalRequest: Long
+
+  actualStepId: Long
+
   status: Int
 
   birthdate: DateTime
@@ -3620,23 +3592,7 @@ type CreditExtensionDetail {
 input CreditExtensionDetailDtoInput {
   pkUser: Int
 
-  idFlowControl: Long
-
-  update: Boolean
-
-  idAgent: Int
-
-  idUser: Int
-
-  idClient: Int
-
-  detail: String
-
-  comment: String
-
   accountNumber: String
-
-  idAccount: Int
 
   amount: Decimal
 
@@ -3646,15 +3602,13 @@ input CreditExtensionDetailDtoInput {
 
   nextPaymentDate: DateTime
 
-  fee: Decimal
+  monthlyPayment: Decimal
 
-  totalFee: Decimal
+  totalMonthlyPayment: Decimal
 
-  maxFee: Decimal
+  loanCharge: Decimal
 
-  outlayCharge: Decimal
-
-  interestRateOutlay: Decimal
+  interestRateLoan: Decimal
 
   regularInterestRate: Decimal
 
@@ -3666,19 +3620,11 @@ input CreditExtensionDetailDtoInput {
 
   idPromotion: Int
 
-  creationDate: DateTime
-
-  modificationDate: DateTime
-
   bankAccount: String
 
   userEmail: String
 
-  idOutlayForm: Short
-
-  outlayForm: String
-
-  origin: Boolean
+  loanForm: String
 
   idBrand: Int
 
@@ -3686,57 +3632,61 @@ input CreditExtensionDetailDtoInput {
 }
 
 input ProcessCreditExtensionDtoInput {
-  pkUser: Int
-
   idFlowControl: Long
 
   accountNumber: String
 
-  isFinalStage: Boolean
-
-  confirmationScreen: Boolean
-
   currency: String
-
-  idBank: String
 
   idBankAccount: Long
 
   bankAccount: String
 
-  idOutlayForm: Short
-
-  transferType: String
-
-  ipAddress: String
-
-  idDeliveryTime: Short
-
-  deliveryTimeFrom: String
-
-  deliveryTimeTo: String
-
-  idAddressType: Short
-
-  province: String
-
-  canton: String
-
-  district: String
-
-  addressDetail: String
+  idLoanForm: Short
 
   phoneNumber: String
 
   userEmail: String
 
-  idUser: Int
+  pkUser: Int
 
-  outlayForm: String
+  loanForm: String
 
   idCredit: Int
 
-  isApp: Boolean
+  idBrand: Int
+
+  user: String
+}
+
+type CreditContract {
+  idImpresion: Long!
+
+  idBrand: Int
+
+  link: String
+
+  statusEvicertia: String
+
+  statusOnfido: String
+
+  active: Boolean!
+
+  currentStep: String!
+}
+
+input CreditContractDtoInput {
+  idImpresion: Long!
+
+  link: String
+
+  statusEvicertia: String
+
+  statusOnfido: String
+
+  active: Boolean!
+
+  currentStep: String!
 
   idBrand: Int
 
@@ -3872,9 +3822,9 @@ input ReleaseTransactionDtoInput {
 
   userWallet: String!
 
-  amountReceivedDollars: Decimal!
+  amountReceivedDollars: Decimal
 
-  executionDate: DateTime!
+  executionDate: DateTime
 
   market: String!
 
@@ -3998,7 +3948,7 @@ type CryptoTransfer {
 }
 
 input TransfersListDtoInput {
-  seeFullStep: Boolean!
+  seeFullStep: Boolean
 
   type: String!
 
@@ -4288,8 +4238,6 @@ input SecurityOnfidoCheckProcessDtoInput {
 
   pkUser: Long!
 
-  idOnfidoDocumentSdi: String!
-
   userRequestId: Long!
 
   idBrand: Int
@@ -4450,13 +4398,9 @@ input ChangePhoneDtoInput {
 
   phone: String!
 
-  user: String!
+  idBrand: Int
 
-  idBrand: Short!
-
-  tenantId: String!
-
-  traceIdentifier: String!
+  user: String
 }
 
 type ChangeEmail {
@@ -4474,13 +4418,9 @@ input ChangeEmailDtoInput {
 
   changeUser: Boolean!
 
-  user: String!
+  idBrand: Int
 
-  idBrand: Short!
-
-  tenantId: String!
-
-  traceIdentifier: String!
+  user: String
 }
 
 type CreateCard {
@@ -4904,9 +4844,9 @@ input DeleteTokenDeviceDtoInput {
 }
 
 type CreditContractEvent {
-  idImpresion: Long!
+  idPrint: Long
 
-  idBrand: Int!
+  idBrand: Int
 
   link: String
 
@@ -4914,15 +4854,15 @@ type CreditContractEvent {
 
   statusOnfido: String
 
-  active: Boolean!
+  active: Boolean
 
-  currentStep: String!
+  currentStep: String
 }
 
 input CreditContractEventDtoInput {
-  idImpresion: Long!
+  idPrint: Long!
 
-  idBrand: Int!
+  idBrand: Int
 }
 
 type basicCardInfo {
@@ -4998,7 +4938,7 @@ type TransferOrderResult {
 
   paxosReceivedTransferId: String!
 
-  paxosIdOrder: String!
+  paxosIdOrder: String
 
   steps: String!
 
@@ -5154,12 +5094,6 @@ input fileDocumentinfowrkInput {
 }
 
 input BeneficiaryRequestDtoInput {
-  idRequest: Long
-
-  idBeneficiary: Long
-
-  status: Int
-
   firstName: String
 
   secondName: String
@@ -5174,13 +5108,7 @@ input BeneficiaryRequestDtoInput {
 
   allocationPercentage: String
 
-  createSysde: Boolean
-
   authorizationSysde: String
-
-  idGlobalRequest: Long
-
-  callBack: Int
 
   fullName: String
 }
@@ -5594,61 +5522,61 @@ type SubOpciones {
 }
 
 type PRODUCTO {
-  iD_PRODUCTO: String!
+  iD_PRODUCTO: String
 
-  lIMITE_CREDITO: String!
+  lIMITE_CREDITO: String
 
-  tRACTO: String!
+  tRACTO: String
 
-  mINIMO_DESEMBOLSO: String!
+  mINIMO_DESEMBOLSO: String
 
-  mAXIMO_DESEMBOLSO: String!
+  mAXIMO_DESEMBOLSO: String
 
-  dESCRIPCION_PROMOCION: String!
+  dESCRIPCION_PROMOCION: String
 
-  pK_PSE_CAT_PROMOCION_PLAZO: String!
+  pK_PSE_CAT_PROMOCION_PLAZO: String
 
-  pLAZO: String!
+  pLAZO: String
 
-  mONEDA: String!
+  mONEDA: String
 
-  eS_PROMOCIONAL: String!
+  eS_PROMOCIONAL: String
 
-  cICLO: String!
+  cICLO: String
 
-  tASA_INTERES_NORMAL: String!
+  tASA_INTERES_NORMAL: String
 
-  sTR_TASA_INTERES_NORMAL: String!
+  sTR_TASA_INTERES_NORMAL: String
 
-  cUOTA: String!
+  cUOTA: String
 
-  cUOTA_AUTORIZA: String!
+  cUOTA_AUTORIZA: String
 
-  cOMISION_DESEMBOLSO: String!
+  cOMISION_DESEMBOLSO: String
 
-  sTR_COMISION_DESEMBOLSO: String!
+  sTR_COMISION_DESEMBOLSO: String
 
-  fECHA_PAGO: String!
+  fECHA_PAGO: String
 
-  nOMBRE_MONEDA: String!
+  nOMBRE_MONEDA: String
 
-  sTR_MINIMO_DESEMBOLSO: String!
+  sTR_MINIMO_DESEMBOLSO: String
 
-  sTR_MAXIMO_DESEMBOLSO: String!
+  sTR_MAXIMO_DESEMBOLSO: String
 
-  cUOTA_ORIGINAL: String!
+  cUOTA_ORIGINAL: String
 
-  mensaje_Plazo: String!
+  mensaje_Plazo: String
 
-  mensaje_Condiciones: String!
+  mensaje_Condiciones: String
 
-  nombre_Usuario: String!
+  nombre_Usuario: String
 
-  cuota_Real: Decimal!
+  cuota_Real: Decimal
 
-  pLAZO_NUMERICO: Int!
+  pLAZO_NUMERICO: Int
 
-  bIT_REQUIERE_FORMALIZACION: String!
+  bIT_REQUIERE_FORMALIZACION: String
 }
 
 type CardInfo {
@@ -5860,23 +5788,23 @@ type ObjRelatedContacts {
 }
 
 type GetCoreBankMovementsResult {
-  idTransaction: Long!
+  idTransaction: Long
 
-  creationDate: DateTime!
+  creationDate: DateTime
 
-  transactionStateDescription: String!
+  transactionStateDescription: String
 
-  transactionCatalogueDescription: String!
+  transactionCatalogueDescription: String
 
-  amount: Decimal!
+  amount: Decimal
 
-  currencyDescription: String!
+  currencyDescription: String
 
-  bankAuthorization: String!
+  bankAuthorization: String
 
-  idSubTransaction: Long!
+  idSubTransaction: Long
 
-  sign: String!
+  sign: String
 }
 
 type ExchangeRateObjet {

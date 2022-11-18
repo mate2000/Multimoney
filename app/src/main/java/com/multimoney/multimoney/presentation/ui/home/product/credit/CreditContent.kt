@@ -13,12 +13,16 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardCreditMaxAttempts
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardCreditFirmedAndOnfidoPending
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditApprovedOrStarted
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditApprovedOrStartedStatus.CreditStatusApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditPreApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmIncomplete
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmMaxAttempts
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.OngoingCredit
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
@@ -53,30 +57,9 @@ fun CreditContent(viewModel: ProductViewModel) {
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_INITIAL_CARD, this) -> {
                             val infoPreApprove =
                                 viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
-                            CreditApprovedOrStarted(
-                                creditApprovedOrStartedStatus = CreditStatusApproved,
+                            CreditPreApproved(
                                 infoPreApprove?.amountAvailableFormat,
                                 viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                                }
-                            )
-                        }
-                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_MAX_ATTEMPTS, this) -> {
-                            CardCreditMaxAttempts(
-                                action = {
-                                    viewModel.onUIEvent(
-                                        OnMaxAttemptsCardClick(
-                                            whatsAppLink = whatsAppLink,
-                                            context = context
-                                        )
-                                    )
-                                }
-                            )
-                        }
-                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_IDENTITY_INCOMPLETE, this) -> {
-                            CardWithCreditInProcess(
-                                type = CreditProcessOnFidoIncomplete,
                                 action = {
                                     viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
                                 }
@@ -90,9 +73,61 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 }
                             )
                         }
-                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_REJECTED, this) -> {
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_IDENTITY_INCOMPLETE, this) -> {
                             CardWithCreditInProcess(
-                                type = CreditStartProcessIncomplete,
+                                type = CreditProcessOnFidoIncomplete,
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                }
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_INCOMPLETE, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessFirmIncomplete,
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                }
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRMED_ONFIDO_PENDING, this) -> {
+                            CardCreditFirmedAndOnfidoPending()
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_REJECTED, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessFirmReject,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                }
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_MAX_ATTEMPTS, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessFirmMaxAttempts,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(
+                                        OnMaxAttemptsCardClick(
+                                            whatsAppLink = whatsAppLink,
+                                            context = context
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_REJECTED, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessOnfidoReject,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                }
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_MAX_ATTEMPTS, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessOnfidoMaxAttempts,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
                                 }

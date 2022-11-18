@@ -38,9 +38,9 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
@@ -386,16 +386,6 @@ class ProductViewModel @Inject constructor(
                         infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
                         (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
-                CREDIT_MAX_ATTEMPTS -> {
-                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
-                }
-                CREDIT_IDENTITY_INCOMPLETE -> {
-                    (infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status) && (
-                        CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) == CreditStep.Eight.id
-                        )
-                }
                 CREDIT_INFO_INCOMPLETE -> {
                     (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
                         CreditStep.Search.getIdByName(
@@ -403,8 +393,30 @@ class ProductViewModel @Inject constructor(
                         ) < CreditStep.Eight.id
                         )
                 }
-                CREDIT_REJECTED -> {
+                CREDIT_IDENTITY_INCOMPLETE -> {
+                    infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status && (
+                        CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id
+                        )
+                }
+                CREDIT_FIRM_INCOMPLETE -> {
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
+                        infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.PENDING.status
+                }
+                CREDIT_FIRMED_ONFIDO_PENDING -> {
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.FIRMED.status &&
+                        infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
+                }
+                CREDIT_FIRM_REJECTED -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
+                }
+                CREDIT_FIRM_MAX_ATTEMPTS -> {
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
+                }
+                CREDIT_ONFIDO_REJECTED -> {
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.REJECTED.status
+                }
+                CREDIT_ONFIDO_MAX_ATTEMPTS -> {
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
                 else -> false
             }
@@ -565,10 +577,15 @@ class ProductViewModel @Inject constructor(
         const val ZERO = 0.0
         const val CREDIT_STEP_PRE_APPROVED = "CREDIT_STEP_PREAPROBADO"
         const val CREDIT_INITIAL_CARD = "CREDIT_INITIAL_CARD"
-        const val CREDIT_MAX_ATTEMPTS = "CREDIT_MAX_ATTEMPTS"
+        const val CREDIT_FIRM_MAX_ATTEMPTS = "CREDIT_MAX_ATTEMPTS"
         const val CREDIT_IDENTITY_INCOMPLETE = "CREDIT_IDENTITY_INCOMPLETE"
         const val CREDIT_INFO_INCOMPLETE = "CREDIT_INFO_INCOMPLETE"
-        const val CREDIT_REJECTED = "CREDIT_REJECTED"
+        const val CREDIT_FIRM_INCOMPLETE = "CREDIT_FIRM_INCOMPLETE"
+        const val CREDIT_FIRM_REJECTED = "CREDIT_REJECTED"
+        const val CREDIT_FIRMED_ONFIDO_PENDING = "CREDIT_FIRMED_ONFIDO_PENDING"
+        const val CREDIT_ONFIDO_REJECTED = "CREDT_ONFIFO_REJECTED"
+        const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
         const val SEPARATOR = " + "
+        const val PENDING_CONTRACT = "Pendiente Contrato"
     }
 }

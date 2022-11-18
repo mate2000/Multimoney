@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.facta
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -139,17 +138,11 @@ fun ContentSV(
             }
         )
 
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-        )
-
         Text(
             text = stringResource(R.string.smart_facta_are_you_or_family_pep),
             style = Typography.body1,
             color = WhiteTransparency90,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 32.dp)
         )
         CustomRadioButtonsLayout(
             options = optionsPep,
@@ -203,7 +196,6 @@ fun ContentOneCR(
                 },
                 modifier = Modifier.padding(top = 16.dp)
             )
-
             CustomRadioButtonsLayout(
                 options = optionsYesNo,
                 onOptionSelected = {
@@ -216,17 +208,11 @@ fun ContentOneCR(
                 }
             )
 
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-            )
-
             Text(
                 text = stringResource(R.string.smart_facta_are_you_or_family_pep),
                 style = Typography.body1,
                 color = WhiteTransparency90,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 32.dp)
             )
             CustomRadioButtonsLayout(
                 options = optionsPep,
@@ -261,7 +247,7 @@ fun ContentTwoCR(
             text = stringResource(R.string.smart_facta_are_you_us_tax_payer),
             style = Typography.body1,
             color = WhiteTransparency90,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 24.dp)
         )
         CustomRadioButtonsLayout(
             options = options,
@@ -270,17 +256,11 @@ fun ContentTwoCR(
             }
         )
 
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-        )
-
         Text(
             text = stringResource(R.string.smart_facta_are_you_other_country_tax_payer),
             style = Typography.body1,
             color = WhiteTransparency90,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 32.dp)
         )
         CustomRadioButtonsLayout(
             options = options,

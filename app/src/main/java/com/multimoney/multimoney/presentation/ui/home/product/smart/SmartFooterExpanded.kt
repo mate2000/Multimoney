@@ -15,14 +15,15 @@ import androidx.constraintlayout.compose.Dimension
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditCtaButtons
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartCtaButtons
 
 @Composable
-fun SmartFooterExpanded(viewModel: ProductViewModel) {
+fun SmartFooterExpanded(viewModel: ProductViewModel, productSmartIndex: Int?) {
+
     ConstraintLayout(
         Modifier.fillMaxSize()
     ) {
+
         val (content, buttons) = createRefs()
 
         Column(
@@ -38,7 +39,6 @@ fun SmartFooterExpanded(viewModel: ProductViewModel) {
         ) {
 
         }
-
         SmartCtaButtons(
             modifier = Modifier
                 .padding(16.dp)
@@ -47,15 +47,9 @@ fun SmartFooterExpanded(viewModel: ProductViewModel) {
                     end.linkTo(parent.end)
                     bottom.linkTo(parent.bottom)
                 },
-            onClickPay = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPaymentProcess) },
-            onClickDisbursement = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToCreditScreen) },
-            canDisburse = viewModel.uiState.canExpandCredit
+            onClickPay = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow) },
+            onClickDisbursement = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow) },
+            canDisburse = viewModel.canSendMoney(productSmartIndex)
         )
     }
-
-    Text(
-        text = "Smart Footer Expanded",
-        style = Typography.h6.copy(letterSpacing = 0.38.sp),
-        color = MultimoneyTheme.colors.labelText
-    )
 }

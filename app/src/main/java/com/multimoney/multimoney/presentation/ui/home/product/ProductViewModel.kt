@@ -31,6 +31,12 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnStartCountDownTimer
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.ShareHelper
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ProductPage
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
@@ -46,12 +52,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
-import com.multimoney.multimoney.presentation.util.MMCountDownTimer
-import com.multimoney.multimoney.presentation.util.ShareHelper
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.ProductPage
-import com.multimoney.multimoney.presentation.util.catalog.ProductType
-import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -205,7 +205,11 @@ class ProductViewModel @Inject constructor(
                 balanceCredit?.let { uiState = uiState.copy(isLoading = false) }
                 configurationVersion?.let {
                     this.configurationVersion = it
-                    emitBaseEvent(OnStartCountDownTimer(it.configuration?.timeSession?.toLong() ?: 0))
+                    emitBaseEvent(
+                        OnStartCountDownTimer(
+                            it.configuration?.timeSession?.toLong() ?: 0
+                        )
+                    )
                 }
             }
             result.onFailure {
@@ -276,6 +280,7 @@ class ProductViewModel @Inject constructor(
             CREDIT_FIRM_INCOMPLETE, CREDIT_ONFIDO_REJECTED, CREDIT_FIRM_REJECTED -> {
                 // todo call the new endpoint to get the evicertia url
             }
+
             else -> {
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
@@ -380,38 +385,45 @@ class ProductViewModel @Inject constructor(
                         infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
                         (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
+
                 CREDIT_INFO_INCOMPLETE -> {
-                    (infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status) && (
-                        CreditStep.Search.getIdByName(
-                            infoCredit?.infoPreApprove?.currentStep
-                        ) < CreditStep.Eight.id
-                        )
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
+                        (CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) < CreditStep.Eight.id)
                 }
+
                 CREDIT_IDENTITY_INCOMPLETE -> {
                     infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status && (
                         CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id
                         )
                 }
+
                 CREDIT_FIRM_INCOMPLETE -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
                         infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.PENDING.status
                 }
+
                 CREDIT_FIRMED_ONFIDO_PENDING -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.FIRMED.status &&
                         infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
                 }
+
                 CREDIT_FIRM_REJECTED -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
                 }
+
                 CREDIT_FIRM_MAX_ATTEMPTS -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
+
                 CREDIT_ONFIDO_REJECTED -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.REJECTED.status
                 }
+
                 CREDIT_ONFIDO_MAX_ATTEMPTS -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
+
                 else -> false
             }
         }
@@ -522,8 +534,14 @@ class ProductViewModel @Inject constructor(
                 uiEvent.context,
                 uiEvent.whatsAppLink
             )
+
             is OnLastStepChange -> lastStep = uiEvent.lastStep
-            is OnShareIbanAccount -> shareIbanAccount(uiEvent.clientLabel, uiEvent.accountLabel, uiEvent.ibanAccount)
+            is OnShareIbanAccount -> shareIbanAccount(
+                uiEvent.clientLabel,
+                uiEvent.accountLabel,
+                uiEvent.ibanAccount
+            )
+
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
         }

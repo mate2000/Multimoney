@@ -51,7 +51,7 @@ fun OnfidoAndEvicertiaErrorsScreen(
             AlertResult(
                 iconResource = drawable.ic_error_symbol,
                 titleResource = string.onfido_rejected_first_time_title,
-                descriptionResource = if (viewModel.idBrand == Guatemala.id) string.onfido_rejected_first_time_subtitle_gt else string.onfido_rejected_second_time_title,
+                descriptionResource = if (viewModel.idBrand == Guatemala.id) string.onfido_rejected_first_time_subtitle_gt else string.onfido_rejected_first_time_subtitle,
                 buttonTextResource = string.onfido_rejected_action,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
@@ -62,7 +62,7 @@ fun OnfidoAndEvicertiaErrorsScreen(
             AlertResult(
                 iconResource = drawable.ic_error_symbol,
                 titleResource = string.onfido_rejected_second_time_title,
-                descriptionResource = if (viewModel.idBrand == Guatemala.id) string.onfido_rejected_second_time_subtitle_gt else string.onfido_rejected_second_time_subtitle,
+                descriptionResource = string.onfido_rejected_second_time_subtitle,
                 buttonTextResource = string.onfido_rejected_action,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },

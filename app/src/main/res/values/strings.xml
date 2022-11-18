@@ -249,7 +249,7 @@
     <string name="home_product_process_description" translatable="false">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
     <string name="home_product_process_action" translatable="false">Validar identificación</string>
     <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
-    <string name="home_product_process_accept_contract_description" translatable="false">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
+    <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
@@ -424,9 +424,8 @@
     <string name="onfido_rejected_first_time_title" translatable="false">Hubo un error al validar tu identidad</string>
     <string name="onfido_rejected_first_time_subtitle" translatable="false">Intentá de nuevo</string>
     <string name="onfido_rejected_first_time_subtitle_gt" translatable="false">Intenta de nuevo</string>
-    <string name="onfido_rejected_second_time_title" translatable="false">¡Oh no! Hubo un error al validar tu identidad</string>
-    <string name="onfido_rejected_second_time_subtitle" translatable="false">No fue posible verificar tu identidad, por favor intentá de nuevo</string>
-    <string name="onfido_rejected_second_time_subtitle_gt" translatable="false">No fue posible verificar tu identidad, por favor intenta de nuevo</string>
+    <string name="onfido_rejected_second_time_title" translatable="false"> No fue posible verificar tu identidad</string>
+    <string name="onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
     <string name="onfido_rejected_action" translatable="false">Confirmar mi identidad</string>
     <string name="onfido_rejected_action_second_time" translatable="false">Contactar</string>
 

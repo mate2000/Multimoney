@@ -337,14 +337,11 @@ fun CardWithCreditInProcess(
                 R.string.onfido_rejected_first_time_subtitle
             }
             actionText = R.string.onfido_rejected_action
+            startIcon = R.drawable.ic_warning
         }
         CreditProcessOnfidoMaxAttempts -> {
             title = R.string.onfido_rejected_second_time_title
-            description = if (idBrand == Brand.Guatemala.id) {
-                R.string.onfido_rejected_second_time_subtitle_gt
-            } else {
-                R.string.onfido_rejected_second_time_subtitle
-            }
+            description = R.string.onfido_rejected_second_time_subtitle
             actionText = R.string.onfido_rejected_action_second_time
         }
         CreditProcessFirmReject -> {
@@ -369,6 +366,7 @@ fun CardWithCreditInProcess(
             title = R.string.home_product_process_title
             description = R.string.home_product_process_description
             actionText = R.string.home_product_process_action
+            startIcon = R.drawable.ic_warning
         }
     }
 

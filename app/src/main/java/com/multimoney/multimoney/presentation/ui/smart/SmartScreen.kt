@@ -124,7 +124,9 @@ fun SmartScreen(
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description,
+            message = viewModel.uiState.openDialog.description.ifBlank {
+                stringResource(viewModel.uiState.openDialog.descriptionResource)
+            },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,

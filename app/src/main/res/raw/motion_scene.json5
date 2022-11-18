@@ -2,33 +2,31 @@
   ConstraintSets: {
     start: {
       header_cards: {
-        height: 250,
+        height: 'spread',
         top: [
           'parent',
           'top'
         ],
       },
       header_title: {
-        height: 75,
+        height: 90,
         bottom: [
           'parent',
           'top'
         ],
       },
       main_card: {
-        height: '40%',
+        height: '35%',
         top: [
           'header_cards',
-          'bottom',
-          20
+          'bottom'
         ]
       },
       bottom_start: {
         height: 'spread',
         top: [
           'main_card',
-          'bottom',
-          10
+          'bottom'
         ],
         bottom: [
           'parent',
@@ -44,25 +42,24 @@
     },
     end: {
       header_cards: {
-        height: 300,
+        height: 'spread',
         bottom: [
           'parent',
           'top'
         ]
       },
       header_title: {
-        height: 50,
+        height: 90,
         top: [
           'parent',
           'top'
         ]
       },
       main_card: {
-        height: '40%',
+        height: '35%',
         top: [
           'header_title',
-          'bottom',
-          20
+          'bottom'
         ]
       },
       bottom_start: {
@@ -75,8 +72,7 @@
         height: 'spread',
         top: [
           'main_card',
-          'bottom',
-          20
+          'bottom'
         ],
         bottom: [
           'parent',

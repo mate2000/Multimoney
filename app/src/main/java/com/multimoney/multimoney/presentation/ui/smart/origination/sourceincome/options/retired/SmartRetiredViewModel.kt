@@ -1,12 +1,13 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 
@@ -17,7 +18,7 @@ class SmartRetiredViewModel : BaseViewModel(true) {
         private set
 
     private fun validateForm() =
-        emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
+        emitBaseEvent(OnFormValidateCompleted(isFormValid()))
 
     fun isFormValid() = uiState.institution.isNotBlank() &&
         uiState.paymentAmount.isNotBlank() &&

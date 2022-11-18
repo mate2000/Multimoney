@@ -5,7 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.fragment.app.FragmentActivity
 import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class MainActivity : FragmentActivity() {
 
     @Inject
-    lateinit var lifecycleCountDownTimer: LifecycleCountDownTimer
+    lateinit var mmCountDownTimer: MMCountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +26,6 @@ class MainActivity : FragmentActivity() {
 
     override fun onUserInteraction() {
         super.onUserInteraction()
-        lifecycleCountDownTimer.restartTimer()
+        mmCountDownTimer.restartTimer()
     }
 }

@@ -22,6 +22,10 @@ private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
     idBrand = idBrand.toString().toInt(),
     userName = userName,
     idClient = idClient.toString().toInt(),
+    firstName = firstName,
+    lastName = lastName,
+    secondLastName = secondLastName,
+    phone = phone,
     statusOnfido = statusOnfido
 )
 

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired
+package com.multimoney.multimoney.presentation.ui.smart.payment
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
@@ -35,9 +35,9 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
@@ -64,7 +64,7 @@ fun SmartRetiredScreen(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
                                 idEconomicActivity = SourceIncomeOptionType.Retired.id.toLong(),
                                 institutionPension = viewModel.uiState.institution,
-                                income = viewModel.uiState.paymentAmount.toFloat()
+                                income = viewModel.uiState.paymentAmount.toInt().toFloat()
                             )
                         )
                     )
@@ -148,7 +148,7 @@ fun SmartRetiredScreen(
                 .padding(top = 44.dp),
             placeHolder = stringResource(id = R.string.smart_account_retired_amount_placeholder),
             customTransformation = formatDecimalMoney(
-                stringResource(id = sharedViewModel.idBrandAsInt.getCurrencySymbol())
+                stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
             )
         )
     }

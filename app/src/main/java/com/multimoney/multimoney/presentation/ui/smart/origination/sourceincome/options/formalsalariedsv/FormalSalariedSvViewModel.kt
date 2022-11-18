@@ -19,8 +19,9 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnWorkingAddressChange
-import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -127,7 +128,7 @@ class FormalSalariedSvViewModel @Inject constructor(
     }
 
     private fun onSalaryChange(salary: String) {
-        if (Pattern.matches(DECIMAL_REGEX, salary) || salary.isEmpty()) {
+        if (validateDecimalIncome(salary)) {
             uiState = uiState.copy(salary = salary)
         }
         onValidateForm()
@@ -154,6 +155,7 @@ class FormalSalariedSvViewModel @Inject constructor(
         uiState.profession.isNotBlank() &&
             uiState.companyName.isNotBlank() &&
             uiState.salary.isNotBlank() &&
+            uiState.salary.toFloat() > MIN_INCOME &&
             uiState.workingAddress.isNotBlank() &&
             uiState.divisionTwoSelected != null &&
             uiState.divisionThreeSelected != null

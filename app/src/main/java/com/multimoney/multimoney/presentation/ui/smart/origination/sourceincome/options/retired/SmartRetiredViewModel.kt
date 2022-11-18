@@ -1,15 +1,14 @@
-package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired
+package com.multimoney.multimoney.presentation.ui.smart.payment
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
-import java.util.regex.Pattern
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.payment.SmartRetiredViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 
 class SmartRetiredViewModel : BaseViewModel(true) {
 
@@ -18,9 +17,11 @@ class SmartRetiredViewModel : BaseViewModel(true) {
         private set
 
     private fun validateForm() =
-        emitBaseEvent(OnFormValidateCompleted(isFormValid()))
+        emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
-    fun isFormValid() = uiState.institution.isNotBlank() && uiState.paymentAmount.isNotBlank()
+    fun isFormValid() = uiState.institution.isNotBlank() &&
+        uiState.paymentAmount.isNotBlank() &&
+        uiState.paymentAmount.toFloat() > MIN_INCOME
 
     private fun onInstitutionValueChange(institution: String) {
         if (institution.length <= INSTITUTION_MAX_LENGTH) {
@@ -30,7 +31,7 @@ class SmartRetiredViewModel : BaseViewModel(true) {
     }
 
     private fun onAmountValueChange(paymentAmount: String) {
-        if (Pattern.matches(DECIMAL_REGEX, paymentAmount) || paymentAmount.isEmpty()) {
+        if (validateDecimalIncome(paymentAmount)) {
             uiState = uiState.copy(paymentAmount = paymentAmount)
         }
         validateForm()

@@ -120,8 +120,11 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     documentFormat = documentCatalog.format,
                     identificationValueType = documentType
                 )
-                documentLength =
+                documentLength = if (documentCatalog.format.isNotEmpty()) {
                     documentCatalog.format.count { documentCatalog.format.last() == it }
+                } else {
+                    Int.MAX_VALUE
+                }
             }
         }
         if (isFromBackend.not()) {

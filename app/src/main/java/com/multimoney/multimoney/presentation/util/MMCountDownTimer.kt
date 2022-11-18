@@ -3,16 +3,13 @@ package com.multimoney.multimoney.presentation.util
 import android.os.CountDownTimer
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class LifecycleCountDownTimer @Inject constructor() : DefaultLifecycleObserver {
+class MMCountDownTimer : DefaultLifecycleObserver {
 
     private var timer: CountDownTimer? = null
     private var milliInFuture: Long? = null
-    private var countDownInterval: Long? = null
     private var onCountDownTimerFinish: OnCountDownTimerFinish? = null
+    private var isTimerStopped = false
 
     fun subscribe(listener: OnCountDownTimerFinish) {
         onCountDownTimerFinish = listener
@@ -26,14 +23,25 @@ class LifecycleCountDownTimer @Inject constructor() : DefaultLifecycleObserver {
         timer = object : CountDownTimer(milliInFuture ?: 0, COUNT_DOWN_INTERVAL) {
             override fun onTick(millisMainUntilFinished: Long) {}
             override fun onFinish() {
-                onCountDownTimerFinish?.onFinished()
-                discardTimer()
+                if (isTimerStopped.not()) {
+                    onCountDownTimerFinish?.onFinished()
+                    discardTimer()
+                }
             }
         }
         timer?.start()
     }
 
     fun restartTimer() {
+        if (isTimerStopped.not()) {
+            milliInFuture?.let {
+                startTimer(it)
+            }
+        }
+    }
+
+    fun resumeTimer() {
+        isTimerStopped = false
         milliInFuture?.let {
             startTimer(it)
         }
@@ -41,11 +49,12 @@ class LifecycleCountDownTimer @Inject constructor() : DefaultLifecycleObserver {
 
     fun stopTimer() {
         timer?.cancel()
+        timer = null
+        isTimerStopped = true
     }
 
     fun discardTimer() {
         milliInFuture = null
-        countDownInterval = null
         timer?.cancel()
     }
 

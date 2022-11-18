@@ -1,6 +1,5 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration
+package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,14 +22,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextAlign.Companion
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.documentgeneration.DocumentGenerationViewModel.UIEvent.OnOpenSignDocument
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,20 +40,13 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(FlowPreview::class)
 @Composable
 fun DocumentGenerationScreen(
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: DocumentGenerationViewModel = hiltViewModel()
+    viewModel: SignDocumentProcessViewModel
 ) {
-    LaunchedEffect(true) {
-        viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate)
-        }
-    }
-
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
-        openStepDebounce.debounce(TIME_TO_WAIT_IN_MILLI_SECOND)
+        openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND)
             .onEach { status ->
-                viewModel.onUIEvent(OnOpenSignDocument(DUMMY_URL))
+                viewModel.onUIEvent(OnNavigateToHome)
                 flowOf(status)
             }
     }
@@ -108,12 +99,6 @@ fun DocumentGenerationScreen(
         }
     }
 
-    // this is require to block the onBack event
-    BackHandler(onBack = {})
-
     // this is required to execute the debounce
     val openStepFlowValue by openStepFlow.collectAsState(false)
 }
-
-const val DUMMY_URL = "www.google.com"
-const val TIME_TO_WAIT_IN_MILLI_SECOND = 30000L

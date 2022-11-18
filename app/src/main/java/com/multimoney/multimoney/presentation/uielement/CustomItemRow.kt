@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,8 +35,14 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 fun CustomItemRow(
     modifier: Modifier = Modifier,
     startIcon: Int = R.drawable.ic_payment_points,
+    endIcon: Int? = null,
+    startIconColor: Color? = null,
+    endIconColor: Color? = null,
     title: String = "",
+    titleFontWeight: FontWeight = FontWeight.Normal,
+    customTitleColor: Color? = null,
     subtitle: String = "",
+    shouldShowDivider: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     val titleColor: Color
@@ -44,12 +51,12 @@ fun CustomItemRow(
     val backgroundColor: Color
 
     if (isSystemInDarkTheme()) {
-        titleColor = WhiteTransparency90
+        titleColor = customTitleColor ?: WhiteTransparency90
         subtitleColor = WhiteTransparency60
         dividerColor = WhiteTransparency50
         backgroundColor = GrayScale800
     } else {
-        titleColor = WhiteTransparency90
+        titleColor = customTitleColor ?: WhiteTransparency90
         subtitleColor = WhiteTransparency60
         dividerColor = WhiteTransparency50
         backgroundColor = GrayScale800
@@ -65,27 +72,41 @@ fun CustomItemRow(
         ) {
             Image(
                 painter = painterResource(id = startIcon),
-                contentDescription = ""
+                contentDescription = "",
+                colorFilter = if (startIconColor != null) ColorFilter.tint(startIconColor) else null
             )
             Spacer(modifier = Modifier.width(10.dp))
-            Column(modifier = Modifier.fillMaxWidth().padding(end = 16.dp)) {
+            Column {
                 Text(
                     text = title,
-                    style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
+                    style = Typography.subtitle2.copy(fontWeight = titleFontWeight),
                     color = titleColor,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = subtitle,
-                    style = Typography.caption,
-                    color = subtitleColor,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                if (subtitle.isNotEmpty()) {
+                    Text(
+                        text = subtitle,
+                        style = Typography.caption,
+                        color = subtitleColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            Spacer(modifier = modifier.weight(1f))
+            if (endIcon != null) {
+                Image(
+                    painter = painterResource(endIcon),
+                    contentDescription = "",
+                    colorFilter = if (endIconColor != null) ColorFilter.tint(endIconColor) else null
                 )
             }
+            Spacer(modifier = modifier.padding(end = 16.dp))
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Divider(modifier = Modifier.height(1.dp).fillMaxWidth(), color = dividerColor)
+        Spacer(modifier = Modifier.height(16.dp))
+        if (shouldShowDivider) {
+            Divider(modifier = Modifier.height(1.dp).fillMaxWidth(), color = dividerColor)
+        }
     }
 }

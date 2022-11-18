@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
-import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
@@ -43,7 +42,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
@@ -273,13 +271,20 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToCreditScreen() {
-        navigateTo(
-            "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
-                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}"
-        )
+    private fun onNavigateToCreditScreen(creditStep: String) {
+        when (creditStep) {
+            CREDIT_FIRM_INCOMPLETE, CREDIT_ONFIDO_REJECTED, CREDIT_FIRM_REJECTED -> {
+                // todo call the new endpoint to get the evicertia url
+            }
+            else -> {
+                navigateTo(
+                    "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
+                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}"
+                )
+            }
+        }
     }
 
     private fun onNavigateToSmartFlow() {
@@ -343,17 +348,6 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
-    }
-
-    private fun onProductClick(context: Context, whatsAppLink: String) {
-        when {
-            uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_NOT_PRE_APPROVED.status || uiState.userStatus?.infoCredit?.status == CreditStatus.CREDIT_REJECTED.status -> {
-                openWhatsAppLink(context, whatsAppLink)
-            }
-            uiState.userStatus?.infoCredit?.status == CreditStatus.APPROVED_CREDIT.status -> onNavigateToCreditScreen()
-            uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm != CreditOnFidoOrFirmStatus.APPROVED.status -> onNavigateToCreditScreen()
-            else -> onNavigateToCreditScreen()
-        }
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -517,13 +511,12 @@ class ProductViewModel @Inject constructor(
             is OnUpdateIsExpanded -> uiState = uiState.copy(isExpanded = uiEvent.isExpanded)
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> onValidateUserStatusSuccess(uiEvent.userStatus)
-            is OnNavigateToCreditScreen -> onNavigateToCreditScreen()
+            is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.creditStep)
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
-            is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
             is OnGetIdBrand -> onGetUserData()
             is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -546,7 +539,6 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
-        object OnNavigateToCreditScreen : UIEvent()
         object OnNavigateToSmartOriginationFlow : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
@@ -554,10 +546,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToDisbursement : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
-        data class OnProductClick(
-            val whatsAppLink: String,
-            val context: Context
-        ) : UIEvent()
+        data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
 
         object OnGetIdBrand : UIEvent()
         data class OnShareIbanAccount(
@@ -586,6 +575,5 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_ONFIDO_REJECTED = "CREDT_ONFIFO_REJECTED"
         const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
         const val SEPARATOR = " + "
-        const val PENDING_CONTRACT = "Pendiente Contrato"
     }
 }

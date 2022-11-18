@@ -12,7 +12,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardCreditFirmedAndOnfidoPending
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
@@ -61,7 +60,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 infoPreApprove?.amountAvailableFormat,
                                 viewModel.uiState.idBrand.toInt(),
                                 action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_INITIAL_CARD))
                                 }
                             )
                         }
@@ -69,7 +68,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             CardWithCreditInProcess(
                                 type = CreditStartProcessIncomplete,
                                 action = {
-                                    viewModel.onUIEvent(OnNavigateToCreditScreen)
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_INFO_INCOMPLETE))
                                 }
                             )
                         }
@@ -77,7 +76,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             CardWithCreditInProcess(
                                 type = CreditProcessOnFidoIncomplete,
                                 action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_IDENTITY_INCOMPLETE))
                                 }
                             )
                         }
@@ -85,7 +84,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             CardWithCreditInProcess(
                                 type = CreditProcessFirmIncomplete,
                                 action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_FIRM_INCOMPLETE))
                                 }
                             )
                         }
@@ -97,7 +96,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 type = CreditProcessFirmReject,
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_FIRM_REJECTED))
                                 }
                             )
                         }
@@ -120,7 +119,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 type = CreditProcessOnfidoReject,
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                    viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_ONFIDO_REJECTED))
                                 }
                             )
                         }
@@ -129,7 +128,12 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 type = CreditProcessOnfidoMaxAttempts,
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
+                                    viewModel.onUIEvent(
+                                        OnMaxAttemptsCardClick(
+                                            whatsAppLink = whatsAppLink,
+                                            context = context
+                                        )
+                                    )
                                 }
                             )
                         }
@@ -146,12 +150,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                             type = Primary
                         ) {
                             CardGTWithoutCredit(action = {
-                                viewModel.onUIEvent(
-                                    OnProductClick(
-                                        whatsAppLink,
-                                        context
-                                    )
-                                )
+                                // todo define de flow to open
                             })
                         }
                     }

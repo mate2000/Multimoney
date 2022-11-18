@@ -167,7 +167,8 @@ class CreditViewModel @Inject constructor(
 
     private fun moveToCorrectStep() {
         when {
-            statusOnfido.lowercase() != CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+            statusOnfido.lowercase() != CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() &&
+                statusOnfido.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
                 navigateToOnfido()
             }
             statusEvicertia.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {

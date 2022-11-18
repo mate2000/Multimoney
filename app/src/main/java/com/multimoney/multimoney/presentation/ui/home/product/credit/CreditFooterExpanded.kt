@@ -17,7 +17,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
@@ -87,7 +86,9 @@ fun CreditFooterExpanded(viewModel: ProductViewModel) {
                     bottom.linkTo(parent.bottom)
                 },
             onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
-            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToCreditScreen) },
+            onClickDisbursement = {
+                // todo navigate to disbursement process
+            },
             canDisburse = viewModel.uiState.canExpandCredit
         )
     }

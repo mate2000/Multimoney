@@ -39,7 +39,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
-import com.multimoney.multimoney.presentation.util.transformation.formatMoney
 
 @Composable
 @Preview
@@ -47,10 +46,9 @@ fun SmartOwnBusinessSvScreen(
     viewModel: OwnBusinessViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
     LaunchedEffect(true) {
-
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
 

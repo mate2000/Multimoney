@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
@@ -232,6 +233,7 @@ class ProductViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
                 validateUserStatus?.let {
+                    dataStorePreferences.setUserPhoneNumber(it.infoUser?.phone.orEmpty())
                     onValidateUserStatusSuccess(it)
                 }
             }
@@ -338,6 +340,10 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToVisaActivateScreen() =
         navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
+
+    private fun onNavigateToProfileScreen() {
+        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
+    }
 
     private fun onProductClick(context: Context, whatsAppLink: String) {
         when {
@@ -503,6 +509,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
+            is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is OnProductClick -> onProductClick(uiEvent.context, uiEvent.whatsAppLink)
             is OnGetIdBrand -> onGetUserData()
@@ -531,6 +538,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToSmartOriginationFlow : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
+        object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()

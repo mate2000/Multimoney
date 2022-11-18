@@ -7,5 +7,6 @@ data class InfoUser(
     val firstName: String,
     val lastName: String,
     val secondLastName: String,
+    val phone: String,
     val statusOnfido: String?
 )

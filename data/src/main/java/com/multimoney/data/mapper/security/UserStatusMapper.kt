@@ -25,6 +25,7 @@ private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
     firstName = firstName,
     lastName = lastName,
     secondLastName = secondLastName,
+    phone = phone,
     statusOnfido = statusOnfido
 )
 

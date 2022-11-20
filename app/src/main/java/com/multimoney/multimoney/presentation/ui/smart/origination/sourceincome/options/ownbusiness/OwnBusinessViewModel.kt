@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -40,7 +42,9 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     }
 
     private fun onMonthlyIncomeValueChange(monthlyIncome: String) {
-        uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
+        if (validateDecimalIncome(monthlyIncome)) {
+            uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
+        }
         onValidateForm()
     }
 
@@ -49,7 +53,8 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     fun isFormValid() = uiState.companyNameValue.isNotBlank() &&
         uiState.companyDescriptionValue.isNotBlank() &&
         !uiState.companyDescriptionError.first &&
-        uiState.monthlyIncomeValue.isNotBlank()
+        uiState.monthlyIncomeValue.isNotBlank() &&
+        uiState.monthlyIncomeValue.toFloat() > MIN_INCOME
 
     data class UIState(
         // Interactions

@@ -3,8 +3,8 @@ package com.multimoney.multimoney.di
 import android.content.Context
 import com.multimoney.data.util.connectivity.Connectivity
 import com.multimoney.data.util.connectivity.ConnectivityImpl
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,4 +26,8 @@ class AppModule {
     @Singleton
     @Provides
     fun provideFireBaseEventHelper(@ApplicationContext context: Context) = FireBaseEventHelper(context)
+
+    @Singleton
+    @Provides
+    fun provideCountDownTimer() = MMCountDownTimer()
 }

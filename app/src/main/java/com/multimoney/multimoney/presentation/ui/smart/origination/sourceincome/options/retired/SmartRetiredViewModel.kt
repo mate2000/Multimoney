@@ -1,0 +1,77 @@
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
+
+class SmartRetiredViewModel : BaseViewModel(true) {
+
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    private fun validateForm() =
+        emitBaseEvent(OnFormValidateCompleted(isFormValid()))
+
+    fun isFormValid() = uiState.institution.isNotBlank() &&
+        uiState.paymentAmount.isNotBlank() &&
+        uiState.paymentAmount.toFloat() > MIN_INCOME
+
+    private fun onInstitutionValueChange(institution: String) {
+        if (institution.length <= INSTITUTION_MAX_LENGTH) {
+            uiState = uiState.copy(institution = institution)
+        }
+        validateForm()
+    }
+
+    private fun onAmountValueChange(paymentAmount: String) {
+        if (validateDecimalIncome(paymentAmount)) {
+            uiState = uiState.copy(
+                paymentAmount = paymentAmount,
+                institutionError = Pair(false, R.string.empty)
+            )
+        } else {
+            uiState = uiState.copy(
+                institutionError = Pair(true, R.string.max_number_of_characters_reached_error)
+            )
+        }
+        validateForm()
+    }
+
+    data class UIState(
+        // Fields
+        val institution: String = "",
+        val institutionError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val paymentAmount: String = ""
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is OnValidateForm -> validateForm()
+            is OnInstitutionValueChange -> onInstitutionValueChange(event.institution)
+            is OnPaymentAmountValueChange -> onAmountValueChange(event.paymentAmount)
+        }
+    }
+
+    sealed class UIEvent {
+        data class OnInstitutionValueChange(val institution: String) : UIEvent()
+        data class OnPaymentAmountValueChange(val paymentAmount: String) : UIEvent()
+        object OnValidateForm : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+    }
+
+    companion object {
+        const val INSTITUTION_MAX_LENGTH = 100
+    }
+}

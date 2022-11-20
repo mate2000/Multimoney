@@ -1,5 +1,6 @@
 package com.multimoney.data.base
 
+import android.util.Log
 import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.api.Operation
 import com.apollographql.apollo3.exception.ApolloException
@@ -12,6 +13,8 @@ import com.multimoney.domain.util.MultimoneyException.APOLLO_PARSE_EXCEPTION
 import com.multimoney.domain.util.MultimoneyException.UNKNOWN_ERROR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
@@ -36,7 +39,29 @@ abstract class BaseRepository {
                 is MultimoneyResult.Failure -> {
                     emit(MultimoneyResult.Failure(apolloResponse.httpError))
                 }
-                else -> {}// NO-OP
+                else -> {} // NO-OP
+            }
+        }.onStart { emit(MultimoneyResult.Loading(true)) }
+    }
+
+    /**
+     * Use this when communicating only with the api service
+     */
+    protected suspend fun <T : Operation.Data, U : Any?> fetchSubscription(
+        apolloCall: ApolloCall<T>,
+        apolloCallMapper: suspend (T?) -> MultimoneyResult<U?>
+    ): Flow<MultimoneyResult<U?>> {
+        return channelFlow {
+            invokeSubscriptionProvider(apolloCall).collectLatest { multimoneyResult ->
+                when (multimoneyResult) {
+                    is MultimoneyResult.Success -> {
+                        send(apolloCallMapper(multimoneyResult.data))
+                    }
+                    is MultimoneyResult.Failure -> {
+                        send(MultimoneyResult.Failure(multimoneyResult.httpError))
+                    }
+                    else -> {} // NO-OP
+                }
             }
         }.onStart { emit(MultimoneyResult.Loading(true)) }
     }
@@ -71,10 +96,59 @@ abstract class BaseRepository {
                             emit(MultimoneyResult.Success(it.mapToDomainModel()))
                         } ?: emit(MultimoneyResult.Failure(apolloResponse.httpError))
                     }
-                    else -> {}// NO-OP
+                    else -> {} // NO-OP
                 }
             }
         }.onStart { emit(MultimoneyResult.Loading(true)) }
+    }
+
+    private suspend fun <T : Operation.Data> invokeSubscriptionProvider(apolloCall: ApolloCall<T>): Flow<MultimoneyResult<T?>> {
+        return channelFlow {
+            try {
+                apolloCall.toFlow().collectLatest { apolloResponse ->
+                    if (apolloResponse.hasErrors()) {
+                        send(
+                            MultimoneyResult.Failure(
+                                HttpError(throwableList = apolloResponse.errors?.map { Throwable(it.message) })
+                            )
+                        )
+                    } else {
+                        Log.wtf("Subscription", apolloResponse.data.toString())
+                        send(MultimoneyResult.Success(apolloResponse.data))
+                    }
+                }
+            } catch (apolloException: ApolloException) {
+                send(
+                    MultimoneyResult.Failure(
+                        HttpError(
+                            Throwable(
+                                APOLLO_ERROR.description
+                            )
+                        )
+                    )
+                )
+            } catch (e: ApolloParseException) {
+                send(
+                    MultimoneyResult.Failure(
+                        HttpError(
+                            Throwable(
+                                APOLLO_PARSE_EXCEPTION.description
+                            )
+                        )
+                    )
+                )
+            } catch (e: IOException) {
+                send(
+                    MultimoneyResult.Failure(
+                        HttpError(
+                            Throwable(
+                                UNKNOWN_ERROR.description
+                            )
+                        )
+                    )
+                )
+            }
+        }
     }
 
     private suspend fun <T : Operation.Data> invokeDataProvider(apolloCall: ApolloCall<T>) =

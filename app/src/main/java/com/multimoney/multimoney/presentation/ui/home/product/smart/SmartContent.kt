@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardInactiveSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartProduct
@@ -13,7 +14,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 @Composable
 fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
     when (viewModel.uiState.userStatus?.infoBankAccount?.status){
-        1 -> {
+        SmartAccountStatus.EXIST_IN_CORE.status -> {
             viewModel.balanceCredit?.balanceAccountSmart?.let {
                 if (it.isNotEmpty()) {
                     CustomProductBackground(
@@ -41,7 +42,7 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                 }
             }
         }
-        0 -> {
+        SmartAccountStatus.NO_EXIST.status -> {
             viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
                 CustomProductBackground(
                     modifier = Modifier.padding(horizontal = 16.dp),

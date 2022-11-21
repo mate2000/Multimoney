@@ -107,6 +107,7 @@ fun QuickActionBottomSheetScreen(
                         }
                     }
                 }
+                else -> Unit
             }
         }
     }

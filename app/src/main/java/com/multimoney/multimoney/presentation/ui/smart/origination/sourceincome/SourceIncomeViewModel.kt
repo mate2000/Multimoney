@@ -21,9 +21,9 @@ class SourceIncomeViewModel @Inject constructor() : BaseViewModel(false) {
      */
     fun goBackToMainOptions() {
         onUIEvent(
-            (UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
+            UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
                 SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            ))
+            )
         )
     }
 

@@ -250,6 +250,7 @@ type Query {
   accountStatement(accountStatementInput: AccountStatementDtoInput!): AccountStatement!
 
   """
+
   Credit
   """
   getInfoDeposit(infoDepositInput: InfoDepositDtoInput!): InfoDeposit!
@@ -260,6 +261,8 @@ type Query {
   getLinkCreditContract(linkCreditContractInput: LinkCreditContractDtoInput!): LinkCreditContract!
 
   """
+=======
+
   Crypto
   """
   cryptoCurrencyMovement(cryptoMovementInput: CryptoMovementDtoInput!): CryptoCurrencyMovement!
@@ -1979,6 +1982,7 @@ input AccountStatementDtoInput {
   user: String
 }
 
+
 type InfoDeposit {
   numeroCuenta: String!
 
@@ -2020,6 +2024,7 @@ input LinkCreditContractDtoInput {
 
   user: String
 }
+
 
 type CryptoCurrencyMovement {
   globalBalance: String

@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
@@ -35,7 +36,6 @@ fun SignUpIdVerificationScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel(),
     viewModel: SignUpIdVerificationViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
     val launchOnFidoActivityResult =
         rememberLauncherForActivityResult(StartActivityForResult()) { result ->
@@ -84,23 +84,27 @@ fun SignUpIdVerificationScreen(
                 sharedViewModel.apply {
                     onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
                     onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(true))
-                    onUIEvent(SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
-                        launchOnFidoActivityResult.launch(
-                            viewModel.onFidoHelper.getOnFidoIntent(
-                                it?.sdkToken ?: "",
-                                onRefreshToke = { refreshToken ->
-                                    viewModel.onUIEvent(
-                                        SignUpIdVerificationViewModel.UIEvent.RefreshOnFidoToken(
-                                            sharedViewModel.idBrand,
-                                            sharedViewModel.userData,
-                                            context.packageName,
-                                            refreshToken
+                    onUIEvent(
+                        SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
+                            launchOnFidoActivityResult.launch(
+                                viewModel.onFidoHelper.getOnFidoIntent(
+                                    sharedViewModel.idBrand,
+                                    AppFlow.SIGN_OUT,
+                                    it?.sdkToken ?: "",
+                                    onRefreshToke = { refreshToken ->
+                                        viewModel.onUIEvent(
+                                            SignUpIdVerificationViewModel.UIEvent.RefreshOnFidoToken(
+                                                sharedViewModel.idBrand,
+                                                sharedViewModel.userData,
+                                                context.packageName,
+                                                refreshToken
+                                            )
                                         )
-                                    )
-                                }
+                                    }
+                                )
                             )
-                        )
-                    }, nextStep = SignUpStep.Six.id, previousStep = SignUpStep.Three.id))
+                        }, nextStep = SignUpStep.Six.id, previousStep = SignUpStep.Three.id)
+                    )
                 }
             }.onLoading {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(false))

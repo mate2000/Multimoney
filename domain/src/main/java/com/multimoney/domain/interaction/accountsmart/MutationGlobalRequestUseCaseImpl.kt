@@ -37,7 +37,9 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         isUSCitizen: Boolean,
         isPEP: Boolean,
         isUSTaxPayer: Boolean,
-        isTaxPayer: Boolean
+        isTaxPayer: Boolean,
+        idJobLevel2: Long,
+        idJobLevel3: Long
     ): Flow<MultimoneyResult<GlobalRequest?>> = repository.mutationGlobalRequest(
         pkUser,
         status,
@@ -67,6 +69,8 @@ class MutationGlobalRequestUseCaseImpl(val repository: SmartAccountRepository) :
         isUSCitizen,
         isPEP,
         isUSTaxPayer,
-        isTaxPayer
+        isTaxPayer,
+        idJobLevel2,
+        idJobLevel3
     )
 }

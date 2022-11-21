@@ -5,7 +5,7 @@ import com.multimoney.domain.repository.CreditRepository
 class QueryPaymentAmountUseCaseImpl(private val creditRepository: CreditRepository) : QueryPaymentAmountUseCase {
     override suspend fun invoke(
         amount: Int,
-        months: String,
+        months: String?,
         idProduct: String,
         currencySymbol: String,
         user: String,

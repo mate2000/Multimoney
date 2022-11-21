@@ -24,7 +24,7 @@ private fun CreditOfferQuery.Product.mapToDomainModel() = Product(
     paymentDate = fECHA_PAGO ?: "" ,
     currencyName = nOMBRE_MONEDA ?: "" ,
     messageConditions = mensaje_Condiciones ?: "" ,
-    isFormalizationRequired = bIT_REQUIERE_FORMALIZACION
+    isFormalizationRequired = bIT_REQUIERE_FORMALIZACION ?: ""
 )
 
 private fun CreditOfferQuery.CreditOffer.mapToDomainModel() =

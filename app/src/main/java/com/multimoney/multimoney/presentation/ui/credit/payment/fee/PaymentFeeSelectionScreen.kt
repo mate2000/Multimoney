@@ -76,7 +76,11 @@ fun PaymentFeeSelectionContent(
                             .fillMaxWidth()
                             .padding(top = 12.dp),
                         startIcon = summary?.idCurrency?.getCurrency()?.feeIcon ?: 0,
-                        title = "${stringResource(id = summary?.idCurrency?.getCurrency()?.feeInfoButtonTitle ?: 0)} ${summary?.currency?.lowercase()}",
+                        title = "${stringResource(id = summary?.idCurrency?.getCurrency()?.feeInfoButtonTitle ?: 0)} ${
+                        stringResource(
+                            id = summary?.idCurrency?.getCurrency()?.currencyName ?: string.empty
+                        ).lowercase()
+                        }",
                         subtitle = summary?.monthlyQuotaLabel ?: "",
                         onClick = { viewModel.onUIEvent(OnNavigateToPaymentAccount(summary?.idCurrency?.getCurrency())) }
                     )

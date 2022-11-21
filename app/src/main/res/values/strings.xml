@@ -250,8 +250,8 @@
     <string name="home_product_process_title" translatable="false">Parece que hubo un error</string>
     <string name="home_product_process_description" translatable="false">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
     <string name="home_product_process_action" translatable="false">Validar identificación</string>
-    <string name="home_product_process_accept_contract_title" translatable="false">Ya casi tenés tu crédito</string>
-    <string name="home_product_process_accept_contract_description" translatable="false">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
+    <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
+    <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
@@ -269,6 +269,11 @@
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
     <string name="home_product_amount" translatable="false">de %s</string>
+
+    <!-- Credit in progress firm incomplete -->
+    <string name="home_firm_incomplete_title" translatable="false">¡Sólo falta tu firma!</string>
+    <string name="home_firm_incomplete_description" translatable="false">Para recibir tu dinero solo tenés que firmar el contrato</string>
+    <string name="home_firm_incomplete_action" translatable="false">Firmar!</string>
 
     <!-- My Profile -->
     <string name="profile_title" translatable="false">Mi perfil</string>
@@ -421,10 +426,10 @@
     <string name="onfido_rejected_first_time_title" translatable="false">Hubo un error al validar tu identidad</string>
     <string name="onfido_rejected_first_time_subtitle" translatable="false">Intentá de nuevo</string>
     <string name="onfido_rejected_first_time_subtitle_gt" translatable="false">Intenta de nuevo</string>
-    <string name="onfido_rejected_second_time_title" translatable="false">¡Oh no! Hubo un error al validar tu identidad</string>
-    <string name="onfido_rejected_second_time_subtitle" translatable="false">No fue posible verificar tu identidad, por favor intentá de nuevo</string>
-    <string name="onfido_rejected_second_time_subtitle_gt" translatable="false">No fue posible verificar tu identidad, por favor intenta de nuevo</string>
+    <string name="onfido_rejected_second_time_title" translatable="false"> No fue posible verificar tu identidad</string>
+    <string name="onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
     <string name="onfido_rejected_action" translatable="false">Confirmar mi identidad</string>
+    <string name="onfido_rejected_action_second_time" translatable="false">Contactar</string>
 
     <!-- Sign Credit Web View -->
     <string name="sign_credit_dialog_title" translatable="false">Necesitamos tu firma en la siguiente pantalla</string>
@@ -559,7 +564,7 @@
     <!-- Smart - Close origin flow -->
     <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
-    
+
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
     <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>

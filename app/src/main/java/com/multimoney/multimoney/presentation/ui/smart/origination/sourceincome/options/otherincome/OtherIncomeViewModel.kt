@@ -25,10 +25,14 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun incomeSourceChange(source: String) {
-        uiState = if (source.length < DESCRIPTION_MAX_LENGTH) {
-            uiState.copy(incomeSource = source)
-        } else {
-            uiState.copy(sourceError = Pair(true, R.string.smart_own_business_description_max_char_error))
+        if (source.length < DESCRIPTION_MAX_LENGTH) {
+            uiState = uiState.copy(
+                incomeSource = source,
+                sourceError = Pair(false, R.string.empty)
+            )
+        }
+        if (source.length == DESCRIPTION_MAX_LENGTH - 1) {
+            uiState = uiState.copy(sourceError = Pair(true, R.string.max_number_of_characters_reached_error))
         }
         onValidateForm()
     }

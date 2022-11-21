@@ -19,13 +19,12 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnWorkingAddressChange
-import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
-import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -135,15 +134,14 @@ class FormalSalariedSvViewModel @Inject constructor(
     }
 
     private fun onWorkingAddressChange(address: String) {
-        uiState = if (address.length < DESCRIPTION_MAX_LENGTH) {
-            uiState.copy(
+        if (address.length < ADDRESS_MAX_LENGTH) {
+            uiState = uiState.copy(
                 workingAddress = address,
                 workingAddressError = Pair(false, R.string.empty)
             )
-        } else {
-            uiState.copy(
-                workingAddressError = Pair(true, R.string.max_number_of_characters_reached_error)
-            )
+        }
+        if (address.length == ADDRESS_MAX_LENGTH - 1) {
+            uiState = uiState.copy(workingAddressError = Pair(true, R.string.max_number_of_characters_reached_error))
         }
         onValidateForm()
     }

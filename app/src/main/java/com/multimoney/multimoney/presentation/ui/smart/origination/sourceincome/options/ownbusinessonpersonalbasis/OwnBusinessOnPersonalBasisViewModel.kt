@@ -28,18 +28,14 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
         private set
 
     private fun businessActivityChange(source: String) {
-        uiState = if (source.length < DESCRIPTION_MAX_LENGTH) {
-            uiState.copy(
+        if (source.length < DESCRIPTION_MAX_LENGTH) {
+            uiState = uiState.copy(
                 businessActivity = source,
                 activityError = Pair(false, R.string.empty)
             )
-        } else {
-            uiState.copy(
-                activityError = Pair(
-                    true,
-                    R.string.max_number_of_characters_reached_error
-                )
-            )
+        }
+        if (source.length == DESCRIPTION_MAX_LENGTH - 1) {
+            uiState = uiState.copy(activityError = Pair(true, R.string.max_number_of_characters_reached_error))
         }
         onValidateForm()
     }

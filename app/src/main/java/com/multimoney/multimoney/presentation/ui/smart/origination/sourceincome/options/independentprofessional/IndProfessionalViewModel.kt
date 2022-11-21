@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.Companion.ADDRESS_MAX_LENGHT
+import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,15 +48,14 @@ class IndProfessionalViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun addressValueChanged(address: String) {
-        uiState = if (address.length < ADDRESS_MAX_LENGHT) {
-            uiState.copy(
+        if (address.length < ADDRESS_MAX_LENGTH) {
+            uiState = uiState.copy(
                 address = address,
                 addressError = Pair(false, R.string.empty)
             )
-        } else {
-            uiState.copy(
-                addressError = Pair(true, R.string.max_number_of_characters_reached_error)
-            )
+        }
+        if (address.length == ADDRESS_MAX_LENGTH - 1) {
+            uiState = uiState.copy(addressError = Pair(true, R.string.max_number_of_characters_reached_error))
         }
         onValidateForm()
     }

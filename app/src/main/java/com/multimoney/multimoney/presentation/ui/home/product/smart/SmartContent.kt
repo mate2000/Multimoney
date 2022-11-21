@@ -13,7 +13,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 
 @Composable
 fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
-    when (viewModel.uiState.userStatus?.infoBankAccount?.status){
+    when (viewModel.uiState.userStatus?.infoBankAccount?.status) {
         SmartAccountStatus.EXIST_IN_CORE.status -> {
             viewModel.balanceCredit?.balanceAccountSmart?.let {
                 if (it.isNotEmpty()) {
@@ -22,21 +22,13 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                         type = ProductBackGroundType.Secondary
                     ) {
                         CardSmartProduct(
-                            currency = it[
-                                    currentPage.minus(
-                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                    )
-                            ]?.currencyCode ?: "",
-                            profitMonthly = it[
-                                    currentPage.minus(
-                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                    )
-                            ]?.gainedInterest.toString(),
-                            profitTotal = it[
-                                    currentPage.minus(
-                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                    )
-                            ]?.totalBalance.toString()
+                            currency = it[currentPage.minus(
+                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                            )]?.currencyCode ?: "", profitMonthly = it[currentPage.minus(
+                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                            )]?.gainedInterest.toString(), profitTotal = it[currentPage.minus(
+                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                            )]?.totalBalance.toString()
                         )
                     }
                 }
@@ -48,7 +40,9 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                     modifier = Modifier.padding(horizontal = 16.dp),
                     type = ProductBackGroundType.Secondary
                 ) {
-                    CardInactiveSmartProduct(it?.textOne.toString(),it?.textTwo.toString(),it?.cTA.toString()){
+                    CardInactiveSmartProduct(
+                        it?.textOne.toString(), it?.textTwo.toString(), it?.cTA.toString()
+                    ) {
                         //TODO add navigation according to status
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
                     }

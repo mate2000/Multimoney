@@ -3,13 +3,11 @@ package com.multimoney.multimoney.presentation.ui.home.quickaction
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,9 +22,8 @@ class QuickActionsBottomSheetViewModel @Inject constructor(
     }
 
     private fun getIdBrand() = executeUseCase {
-        viewModelScope.launch {
-            quickActionUiState = quickActionUiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
-        }
+        quickActionUiState =
+            quickActionUiState.copy(idBrand = dataStorePreferences.getIdBrand().first())
     }
 
     data class QuickActionUiState(

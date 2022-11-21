@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
-import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
 
 @Composable
 fun Navigation() {
@@ -19,6 +18,7 @@ fun Navigation() {
         visaNavGraph(navController = navController)
         paymentNavGraph(navController = navController)
         smartNavGraph(navController = navController)
+        profileNavGraph(navController = navController)
         testNavGraph(navController = navController)
     }
 }

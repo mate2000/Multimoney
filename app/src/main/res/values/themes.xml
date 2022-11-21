@@ -12,4 +12,8 @@
     <style name="OnfidoToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="fontFamily">@font/poppins_regular</item>
     </style>
+
+    <style name="OnfidoShadowedScrollStyle">
+        <item name="android:scrollbars">vertical</item>
+    </style>
 </resources>

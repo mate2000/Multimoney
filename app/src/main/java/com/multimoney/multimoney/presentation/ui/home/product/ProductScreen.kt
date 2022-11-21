@@ -39,8 +39,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
@@ -208,9 +208,7 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
                     painter = painterResource(R.drawable.ic_profile),
                     modifier = Modifier
                         .padding(start = 16.dp, end = 2.dp)
-                        .clickable {
-                            // todo action
-                        },
+                        .clickable { viewModel.onUIEvent(OnNavigateToProfileScreen) },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )
@@ -342,7 +340,10 @@ fun ProductFooterExpanded(
         ) { currentPage ->
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditFooterExpanded(viewModel = viewModel)
-                ProductType.Smart.value -> SmartFooterExpanded()
+                ProductType.Smart.value -> SmartFooterExpanded(
+                    viewModel = viewModel,
+                    viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+                )
             }
         }
     }
@@ -359,8 +360,6 @@ fun TipAndOfferItem(viewModel: ProductViewModel, creditOfferAndTip: CreditOfferA
                     // TODO, mocking the first item in order to navigate to the smart origination flow
                     if (creditOfferAndTip.id == "1") {
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
-                    } else {
-                        viewModel.onUIEvent(OnNavigateToCreditScreen)
                     }
                 }
         ) {
@@ -411,6 +410,3 @@ fun TipBox(content: @Composable () -> Unit) {
         content()
     }
 }
-
-private const val NUMBER_PAGES = 2
-private const val PAGE_ZERO = 0

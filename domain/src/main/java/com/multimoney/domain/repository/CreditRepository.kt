@@ -5,6 +5,7 @@ import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
@@ -13,6 +14,7 @@ import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
+import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -24,7 +26,7 @@ interface CreditRepository {
 
     suspend fun queryPaymentAmount(
         amount: Int,
-        months: String,
+        months: String?,
         idProduct: String,
         currencySymbol: String,
         user: String,
@@ -35,21 +37,21 @@ interface CreditRepository {
         idUserRequest: Int,
         pkUser: Int,
         descPromotion: String,
-        interestRate: String,
+        interestRate: String?,
         symbolCurrency: String,
         descCurrency: String,
         idProduct: Int,
         idPromotion: Int,
-        months: String,
-        commissionPercentage: String,
+        months: String?,
+        commissionPercentage: String?,
         paymentDate: String,
         paymentAmount: String,
         user: String,
         idBrand: Int,
         selectedAmount: Double,
-        minimumAmount: Double,
-        creditLimit: Double,
-        tractAmount: Double,
+        minimumAmount: Double?,
+        creditLimit: Double?,
+        tractAmount: Double?,
         currentStep: String
     ): Flow<MultimoneyResult<CreditApplication?>>
 
@@ -176,6 +178,18 @@ interface CreditRepository {
         amount: Any
     ): Flow<MultimoneyResult<ProcessPaymentList?>>
 
+    suspend fun subscriptionCreditContractEvent(
+        idPrint: Long,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CreditContractEvent?>>
+
+    suspend fun mutationSaveCreditOperation(
+        idUserRequest: Long,
+        pkUser: Long,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveCreditOperation>>
+
     suspend fun mutationActivateClientAutomaticDebit(
         user: String,
         idBrand: Int,
@@ -192,4 +206,14 @@ interface CreditRepository {
         idClient: Int,
         idLoanClient: Int
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
+
+    suspend fun mutationSendCreditContractEvent(
+        idImpresion: Long,
+        idBrand: Int,
+        link: String,
+        active: Boolean,
+        statusEvicertia: String,
+        statusOnfido: String,
+        currentStep: String
+    ): Flow<MultimoneyResult<CreditContractEvent?>>
 }

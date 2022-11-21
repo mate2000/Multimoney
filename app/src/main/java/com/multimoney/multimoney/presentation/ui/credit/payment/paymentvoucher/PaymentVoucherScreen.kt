@@ -1,15 +1,15 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,7 +17,12 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,11 +42,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Dimension.Companion
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -73,14 +78,7 @@ fun PaymentVoucherScreen(
             .background(MultimoneyTheme.colors.background)
     ) {
         TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
-            capturingViewBounds?.let { bounds ->
-                viewModel.onUIEvent(
-                    OnSharedVoucherImage(
-                        view,
-                        bounds
-                    )
-                )
-            }
+            viewModel.onUIEvent(OnCloseClick)
         })
         Column(
             modifier = Modifier
@@ -102,7 +100,7 @@ fun PaymentVoucherScreen(
                         height = Dimension.fillToConstraints
                         width = Companion.fillToConstraints
                     },
-                    drawableResource = R.drawable.bg_confirmation_card,
+                    drawableResource = drawable.bg_confirmation_card,
                     contentScale = ContentScale.FillBounds
                 )
                 Column(
@@ -123,7 +121,6 @@ fun PaymentVoucherScreen(
                             .padding(bottom = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
                         Text(
                             text = stringResource(string.payment_voucher_transaction_success),
                             modifier = Modifier.padding(top = 16.dp),
@@ -154,7 +151,7 @@ fun PaymentVoucherScreen(
                                 pressedElevation = 0.dp,
                                 disabledElevation = 0.dp
                             ),
-                            trailingIcon = R.drawable.ic_icon_share,
+                            trailingIcon = drawable.ic_icon_share,
                             buttonType = CustomButtonType.PrimaryTertiary
                         )
                         Text(
@@ -163,7 +160,6 @@ fun PaymentVoucherScreen(
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
                         )
-
 
                         if (viewModel.isMultiCurrency == true) {
                             Text(
@@ -208,9 +204,9 @@ fun PaymentVoucherScreen(
                         icon = drawable.ic_bank,
                         tintIcon = MultimoneyTheme.colors.iconTintVoucher,
                         title = stringResource(string.payment_voucher_origin_account_label),
-                        subTitle =getMaskedAccount(
+                        subTitle = getMaskedAccount(
                             viewModel.clientBankAccount?.accountNumber ?: "",
-                            stringResource(id = R.string.payment_account_masked_text)
+                            stringResource(id = string.payment_account_masked_text)
                         )
                     )
 
@@ -236,7 +232,7 @@ fun PaymentVoucherScreen(
                     ) {
                         Row {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_calendar_voucher),
+                                painter = painterResource(id = drawable.ic_calendar_voucher),
                                 tint = MultimoneyTheme.colors.iconTintVoucher,
                                 contentDescription = ""
                             )
@@ -246,7 +242,6 @@ fun PaymentVoucherScreen(
                                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                                 color = MultimoneyTheme.colors.labelText
                             )
-
                         }
                         Text(
                             text = viewModel.currentTime,
@@ -256,9 +251,8 @@ fun PaymentVoucherScreen(
                         )
                     }
                 }
-
             }
-            if ( viewModel.isAutomaticProgrammedPaymentChecked != true) {
+            if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
                 CustomButton(
                     onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
                     text = stringResource(string.payment_voucher_schedule_payment),
@@ -278,7 +272,6 @@ fun PaymentVoucherScreen(
     }
 }
 
-
 @Composable
 fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
     Row(
@@ -286,14 +279,14 @@ fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
     ) {
         Icon(
 
-            painter = painterResource(id = R.drawable.ic_money_gray),
+            painter = painterResource(id = drawable.ic_money_gray),
             tint = MultimoneyTheme.colors.iconTintVoucher,
             contentDescription = "",
             modifier = Modifier.height(24.dp).width(24.dp)
         )
-        Column (modifier = Modifier.padding(start = 13.5.dp)){
+        Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
-                text = stringResource(id = R.string.payment_amount_bottom_sheet_exchange_type),
+                text = stringResource(id = string.payment_amount_bottom_sheet_exchange_type),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -313,9 +306,9 @@ fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
             color = MultimoneyTheme.colors.bottomNavigationDividerColor
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Column (modifier = Modifier.padding(start = 13.5.dp)){
+        Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
-                text = stringResource(id = R.string.payment_amount_bottom_sheet_amount_to_debit),
+                text = stringResource(id = string.payment_amount_bottom_sheet_amount_to_debit),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -357,7 +350,6 @@ fun InfoItem(
     }
 }
 
-
 @Composable
 fun InfoItemAccount(
     modifier: Modifier = Modifier,
@@ -368,11 +360,15 @@ fun InfoItemAccount(
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         icon?.let {
-            Icon(painter = painterResource(id = it), contentDescription = "", tint = tintIcon,
-                modifier = Modifier.height(24.dp).width(24.dp).alpha(0.4f),)
+            Icon(
+                painter = painterResource(id = it),
+                contentDescription = "",
+                tint = tintIcon,
+                modifier = Modifier.height(24.dp).width(24.dp).alpha(0.4f)
+            )
         }
         Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
@@ -388,4 +384,3 @@ fun InfoItemAccount(
         }
     }
 }
-

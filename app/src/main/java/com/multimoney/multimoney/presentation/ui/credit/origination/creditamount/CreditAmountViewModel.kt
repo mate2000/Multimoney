@@ -64,13 +64,13 @@ class CreditAmountViewModel @Inject constructor(
     // Stateless
     private var products: List<Product?>? = listOf()
     private var currencyItems: List<String>? = listOf()
-    private var minimumDisbursement = 0F
-    private var maximumDisbursement = 0F
+    private var minimumDisbursement: Float? = 0F
+    private var maximumDisbursement: Float? = 0F
     private var disbursementProgressFactorErrorMessage = 0
     private var minimumDisbursementErrorMessage = 0
     private var maximumDisbursementErrorMessage = 0
     private var conditionModalDescription: String = ""
-    private var fee: Double = 0.0
+    private var fee: Double? = 0.0
     private var sliderFactor = 0.0
     private var remainingTime: Duration = TIMER_DURATION.milliseconds
     private var isTimerRunning: Boolean = false
@@ -209,12 +209,12 @@ class CreditAmountViewModel @Inject constructor(
             months = uiState.termLabel,
             commissionPercentage = uiState.commissionDisbursementLabel,
             paymentDate = products?.get(uiState.currencyIndex)?.paymentDate ?: "",
-            paymentAmount = fee.toInt().toString(),
+            paymentAmount = fee?.toInt().toString(),
             user = user,
             idBrand = idBrand,
             selectedAmount = uiState.disbursement.toDouble(),
-            minimumAmount = minimumDisbursement.toDouble(),
-            creditLimit = maximumDisbursement.toDouble(),
+            minimumAmount = minimumDisbursement?.toDouble(),
+            creditLimit = maximumDisbursement?.toDouble(),
             tractAmount = uiState.progressFactor,
             currentStep = CreditStep.Two.name
         ).collectLatest { result ->
@@ -271,23 +271,23 @@ class CreditAmountViewModel @Inject constructor(
         // Set initial conditions
         if (products.isNullOrEmpty().not()) {
             products?.get(productIndex)?.apply {
-                this@CreditAmountViewModel.minimumDisbursement = minimumDisbursement.toFloat()
-                this@CreditAmountViewModel.maximumDisbursement = maximumDisbursement.toFloat()
+                this@CreditAmountViewModel.minimumDisbursement = minimumDisbursement?.toFloat()
+                this@CreditAmountViewModel.maximumDisbursement = maximumDisbursement?.toFloat()
                 this@CreditAmountViewModel.fee = fee
                 sliderFactor = getSliderFactor(progressFactor)
                 uiState = uiState.copy(
                     isMultipleCurrency = (products?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
                     currencyIndex = productIndex,
-                    sliderValueRangeInitial = getSliderValue(minimumDisbursement.toFloat(), progressFactor),
+                    sliderValueRangeInitial = getSliderValue(minimumDisbursement?.toFloat(), progressFactor),
                     sliderValue = if (isTimerRunning.not()) {
-                        getSliderValue(maximumDisbursement.toFloat(), progressFactor)
+                        getSliderValue(maximumDisbursement?.toFloat(), progressFactor)
                     } else {
                         uiState.sliderValue
                     },
                     progressFactor = progressFactor,
                     currencyItems = currencyItems ?: listOf(),
                     feeLabel = feeLabel,
-                    disbursement = maximumDisbursement.toDouble().toInt().toString(),
+                    disbursement = maximumDisbursement?.toDouble()?.toInt().toString(),
                     minimumDisbursementLabel = minimumDisbursementLabel,
                     maximumDisbursementLabel = maximumDisbursementLabel,
                     regularInterestRateLabel = regularInterestRateLabel,
@@ -304,21 +304,21 @@ class CreditAmountViewModel @Inject constructor(
      * Divide the maximum disbursement between the progress factor to get the amount of times that
      * progress can change. After we divide the total slider value to get the sliderFactor
      * */
-    private fun getSliderFactor(progressFactor: Double) =
-        SLIDER_TOTAL / (maximumDisbursement / progressFactor)
+    private fun getSliderFactor(progressFactor: Double?) =
+        SLIDER_TOTAL / ((maximumDisbursement ?: 0F) / (progressFactor ?: 1.0))
 
     /**
      * Verify if disbursement is multiple of progress factor for example: progressFactor is 10 then
      * we have to get module of disbursement that could be 1000 if module is equal to 0 that means
      * that is multiple of progress factor
      **/
-    private fun isDisbursementMultipleOfProgressFactor(value: Float) = (value % uiState.progressFactor).toInt() == 0
+    private fun isDisbursementMultipleOfProgressFactor(value: Float) = (value % (uiState.progressFactor ?: 1.0)).toInt() == 0
 
     /**
      * Get slider initial value to exclude the disbursement the user could not select
      **/
-    private fun getSliderValue(disbursement: Float, progressFactor: Double): Float {
-        val sliderFactorTimes = (disbursement / progressFactor.toFloat())
+    private fun getSliderValue(disbursement: Float?, progressFactor: Double?): Float {
+        val sliderFactorTimes = ((disbursement ?: 0F) / (progressFactor?.toFloat() ?: 1F))
         return sliderFactorTimes * sliderFactor.toFloat()
     }
 
@@ -330,12 +330,12 @@ class CreditAmountViewModel @Inject constructor(
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) {
         if (isTimerRunning.not()) {
-            if (value.isEmpty() || value.toFloat() < minimumDisbursement) {
+            if (value.isEmpty() || value.toFloat() < (minimumDisbursement ?: 0F)) {
                 uiState = uiState.copy(
                     disbursementError = Pair(true, minimumDisbursementErrorMessage),
                     sliderValue = uiState.sliderValueRangeInitial
                 )
-            } else if (value.toFloat() > maximumDisbursement) {
+            } else if (value.toFloat() > (maximumDisbursement ?: 1F)) {
                 uiState = uiState.copy(
                     disbursementError = Pair(true, maximumDisbursementErrorMessage),
                     sliderValue = SLIDER_TOTAL.toFloat()
@@ -376,9 +376,9 @@ class CreditAmountViewModel @Inject constructor(
         uiState = if (isTimerRunning.not()) {
             val sliderFactorTimes = (value / sliderFactor).roundToInt()
             val disbursement = if (value == 0f) {
-                minimumDisbursement.roundToInt().toString()
+                minimumDisbursement?.roundToInt().toString()
             } else if (value >= uiState.sliderValueRangeInitial) {
-                (uiState.progressFactor * sliderFactorTimes).roundToInt().toString()
+                ((uiState.progressFactor ?: 1.0) * sliderFactorTimes).roundToInt().toString()
             } else {
                 uiState.disbursement
             }
@@ -445,17 +445,17 @@ class CreditAmountViewModel @Inject constructor(
         val isMultipleCurrency: Boolean = false,
         val currencyIndex: Int = 0,
         val currencyItems: List<String> = listOf("", ""),
-        val feeLabel: String = "",
+        val feeLabel: String? = "",
         val disbursement: String = "",
         val disbursementError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
-        val minimumDisbursementLabel: String = "",
-        val maximumDisbursementLabel: String = "",
-        var progressFactor: Double = 0.0,
+        val minimumDisbursementLabel: String? = "",
+        val maximumDisbursementLabel: String? = "",
+        var progressFactor: Double? = 0.0,
         val sliderValue: Float = SLIDER_INITIAL_VALUE,
         val sliderValueRangeInitial: Float = 0F,
-        val termLabel: String = "",
-        val regularInterestRateLabel: String = "",
-        val commissionDisbursementLabel: String = "",
+        val termLabel: String? = "",
+        val regularInterestRateLabel: String? = "",
+        val commissionDisbursementLabel: String? = "",
         val isTermAndConditionChecked: Boolean = false,
         val isTermAndConditionDialogActive: MutableState<Boolean> = mutableStateOf(false),
         val isLoading: Boolean = true

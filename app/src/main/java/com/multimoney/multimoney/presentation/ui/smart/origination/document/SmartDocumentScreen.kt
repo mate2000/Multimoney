@@ -44,6 +44,9 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
+import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
+import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import java.time.LocalDate
 import java.util.Calendar
@@ -86,8 +89,16 @@ fun SmartDocumentScreen(
                                             status = 1,
                                             idProfessionType = viewModel.uiState.professionId,
                                             idGender = viewModel.uiState.genderId,
-                                            expirationDate = viewModel.uiState.expirationDate,
-                                            birthday = viewModel.uiState.birthdate,
+                                            expirationDate = getFormatDateByString(
+                                                viewModel.uiState.expirationDate,
+                                                YEAR_MONTH_DAY_PATTERN,
+                                                ISO_8601_API_FORMAT_PATTERN
+                                            ),
+                                            birthday = getFormatDateByString(
+                                                viewModel.uiState.birthdate,
+                                                YEAR_MONTH_DAY_PATTERN,
+                                                ISO_8601_API_FORMAT_PATTERN
+                                            ),
                                             idCivilStatusType = viewModel.uiState.civilStateId,
                                             currentStep = SmartSteps.Search.getNameById(
                                                 sharedViewModel.uiState.currentStep

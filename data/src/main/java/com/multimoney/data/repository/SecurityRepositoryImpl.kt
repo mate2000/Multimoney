@@ -8,6 +8,7 @@ import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
+import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
@@ -210,6 +211,29 @@ class SecurityRepositoryImpl @Inject constructor(
             lastNames,
             identification,
             applicationId,
+            idBrand,
+            user
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationOnFidoCheckProcess(
+        identification: String,
+        applicantId: String,
+        currentFlow: String,
+        pkUser: Long,
+        userRequestId: Long,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<OnfidoCheckProcess>> = fetchData(
+        apolloCall = graphqlApi.mutationOnfidoCheckProcess(
+            identification,
+            applicantId,
+            currentFlow,
+            pkUser,
+            userRequestId,
             idBrand,
             user
         ),

@@ -49,6 +49,7 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                 ) {
                     CardInactiveSmartProduct(it?.textOne.toString(),it?.textTwo.toString(),it?.cTA.toString()){
                         //TODO add navigation according to status
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
                     }
                 }
             }

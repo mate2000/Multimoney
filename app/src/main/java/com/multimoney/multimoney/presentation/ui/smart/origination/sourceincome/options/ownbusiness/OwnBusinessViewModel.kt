@@ -34,7 +34,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
                 companyDescriptionValue = description,
                 companyDescriptionError = Pair(
                     true,
-                    R.string.max_number_of_characters_reached_error
+                    R.string.smart_own_business_description_max_char_error
                 )
             )
         }

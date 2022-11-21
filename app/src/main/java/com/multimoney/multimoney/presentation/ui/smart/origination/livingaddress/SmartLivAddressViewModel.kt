@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnNotApplicable
 import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -174,14 +175,15 @@ class SmartLivAddressViewModel @Inject constructor(
     }
 
     private fun onAddressValueChange(address: String) {
-        uiState = if (address.length < ADDRESS_MAX_LENGTH) {
-            uiState.copy(address = address)
-        } else {
-            uiState.copy(
-                addressError = Pair(
-                    true,
-                    R.string.max_number_of_characters_reached_error
-                )
+        if (address.length < ADDRESS_MAX_LENGTH) {
+            uiState = uiState.copy(
+                address = address,
+                addressError = Pair(false, R.string.empty)
+            )
+        }
+        if (address.length == DESCRIPTION_MAX_LENGTH - 1) {
+            uiState = uiState.copy(
+                addressError = Pair(true, R.string.max_number_of_characters_reached_error)
             )
         }
         validate()
@@ -243,7 +245,7 @@ class SmartLivAddressViewModel @Inject constructor(
         val address: String = "",
         val addressError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.credit_company_address_accurate_address_error
+            R.string.empty
         )
     )
 }

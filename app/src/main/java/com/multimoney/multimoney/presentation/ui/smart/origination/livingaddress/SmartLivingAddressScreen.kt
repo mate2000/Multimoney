@@ -195,8 +195,9 @@ fun SmartLivAddressScreen(
                 focusManager.clearFocus()
             }),
             isRequired = true,
+            isRequiredMessage = stringResource(R.string.credit_company_address_accurate_address_error),
             isError = viewModel.uiState.addressError.first,
-            isRequiredMessage = stringResource(id = viewModel.uiState.addressError.second),
+            errorMessage = stringResource(viewModel.uiState.addressError.second),
             isTextArea = true
         )
     }

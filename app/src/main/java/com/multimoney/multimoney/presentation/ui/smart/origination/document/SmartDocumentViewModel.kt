@@ -15,6 +15,7 @@ import com.multimoney.domain.model.accountsmart.ProfessionSmart
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryAddressLevelTwoUseCase
@@ -32,6 +33,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import java.time.LocalDate
+import java.time.Period
 import javax.inject.Inject
 
 @HiltViewModel
@@ -140,7 +143,8 @@ class SmartDocumentViewModel @Inject constructor(
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { successfulResult ->
-                    uiState = uiState.copy(professionSmartList = successfulResult?.status ?: emptyList())
+                    uiState =
+                        uiState.copy(professionSmartList = successfulResult?.status ?: emptyList())
                     onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
@@ -165,8 +169,23 @@ class SmartDocumentViewModel @Inject constructor(
         validateForm()
     }
 
-    private fun onBirthDateValueChange(birthdate: String) {
-        uiState = uiState.copy(birthdate = birthdate)
+    private fun onBirthDateValueChange(birthdate: String, pickedDate: LocalDate) {
+        val actualDate = LocalDate.now()
+        val periodBetweenDates = Period.between(pickedDate, actualDate).years
+        val dateValidation = if (periodBetweenDates <= EIGHTEEN_YEARS_VALUE) {
+            Pair(true, R.string.smart_account_document_birthdate_age_error)
+        } else if (periodBetweenDates > EIGHTEEN_YEARS_VALUE && periodBetweenDates > ONE_HUNDRED_TWENTY_YEARS_VALUE
+        ) {
+            Pair(true, R.string.smart_account_document_birthdate_age_limit_error)
+        } else {
+            Pair(false, R.string.smart_account_document_birthdate_age_limit_error)
+        }
+
+        uiState = uiState.copy(
+            birthdate = birthdate,
+            birthdateErrorStatus = dateValidation.first,
+            birthdateError = dateValidation.second
+        )
         validateForm()
     }
 
@@ -195,10 +214,10 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 isFormValid = uiState.gender.isNotBlank() &&
-                    uiState.birthdate.isNotBlank() &&
-                    uiState.civilState.isNotBlank() &&
-                    uiState.profession.isNotBlank() &&
-                    uiState.expirationDate.isNotBlank()
+                        uiState.birthdate.isNotBlank() &&
+                        uiState.civilState.isNotBlank() &&
+                        uiState.profession.isNotBlank() &&
+                        uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
             )
         )
     }
@@ -211,6 +230,8 @@ class SmartDocumentViewModel @Inject constructor(
         // Fields
         val expirationDate: String = "",
         val birthdate: String = "",
+        val birthdateError: Int = R.string.smart_account_document_birthdate_age_error,
+        val birthdateErrorStatus: Boolean = false,
         val gender: String = "",
         val genderId: Long = 1,
         val civilState: String = "",
@@ -230,7 +251,7 @@ class SmartDocumentViewModel @Inject constructor(
             is OnCivilStateChange -> onCivilStateChange(event.civilState)
             is OnProfessionChange -> onProfessionChange(event.profession)
             is OnExpirationDateValueChange -> onExpirationDateValueChange(expirationDate = event.date)
-            is OnBirthDateValueChange -> onBirthDateValueChange(event.date)
+            is OnBirthDateValueChange -> onBirthDateValueChange(event.date, event.pickedDate)
             is OnCallQueryNationalitiesUseCase -> callQueryNationalitiesUseCase(
                 event.user,
                 event.idBrand
@@ -258,7 +279,7 @@ class SmartDocumentViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
-        data class OnBirthDateValueChange(val date: String) : UIEvent()
+        data class OnBirthDateValueChange(val date: String, val pickedDate: LocalDate) : UIEvent()
         data class OnExpirationDateValueChange(val date: String) : UIEvent()
         data class OnGenderChange(val gender: String) : UIEvent()
         data class OnCivilStateChange(val civilState: String) : UIEvent()
@@ -288,5 +309,7 @@ class SmartDocumentViewModel @Inject constructor(
         const val BIRTH_DATE_MIN_YEAR = 1902
         const val BIRTH_DATE_MIN_MONTH = 0
         const val BIRTH_DATE_MIN_DAY = 1
+        const val EIGHTEEN_YEARS_VALUE = 18
+        const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
     }
 }

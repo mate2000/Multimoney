@@ -45,6 +45,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
+import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 
@@ -88,7 +89,9 @@ fun SmartDocumentScreen(
                                             expirationDate = viewModel.uiState.expirationDate,
                                             birthday = viewModel.uiState.birthdate,
                                             idCivilStatusType = viewModel.uiState.civilStateId,
-                                            currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
+                                            currentStep = SmartSteps.Search.getNameById(
+                                                sharedViewModel.uiState.currentStep
+                                            )
                                         )
                                     )
                                 )
@@ -164,6 +167,8 @@ fun SmartDocumentScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.clearFocus()
             }),
+            errorMessage = stringResource(id = viewModel.uiState.birthdateError),
+            isError = viewModel.uiState.birthdateErrorStatus,
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_job_date_required),
             onClick = {
@@ -178,7 +183,10 @@ fun SmartDocumentScreen(
                             day,
                             SmartDocumentViewModel.DATE_FORMAT
                         )
-                        viewModel.onUIEvent(OnBirthDateValueChange(date))
+
+                        val calendarValidation = Calendar.getInstance()
+                        calendarValidation.set(year, month, day)
+                        viewModel.onUIEvent(OnBirthDateValueChange(date, LocalDate.of(year, month, day)))
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),

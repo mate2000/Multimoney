@@ -278,6 +278,9 @@
     <!-- quick actions bottom sheet -->
     <string name="quick_action_bottom_sheet_title" translatable="false">¿Qué querés hacer?</string>
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
+    <string name="quick_action_bottom_sheet_smart_section" translatable="false">Smart</string>
+    <string name="quick_action_bottom_sheet_smart_saving" translatable="false">Ahorrar Smart</string>
+    <string name="quick_action_bottom_sheet_smart_send_money" translatable="false">Enviar dinero</string>
 
     <!-- Credit Close Dialog-->
     <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que querés salir?</string>

@@ -507,8 +507,16 @@ class ProductViewModel @Inject constructor(
         return amount
     }
 
-    fun canSendMoney(smartAccountIndex: Int?): Boolean =
-        balanceCredit?.balanceAccountSmart?.get(smartAccountIndex!!)?.totalBalance!! > 0
+    fun canSendMoney(smartAccountIndex: Int?): Boolean {
+        val balanceSmart = balanceCredit?.balanceAccountSmart ?: emptyList()
+        val totalBalance = if (smartAccountIndex != null && balanceSmart.size > smartAccountIndex) {
+            balanceCredit?.balanceAccountSmart?.get(smartAccountIndex)?.totalBalance ?: 0.0
+        } else {
+            0.0
+        }
+        return totalBalance > 0
+    }
+
 
     data class UIState(
         // Fields

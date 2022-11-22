@@ -105,8 +105,6 @@ fun SignUpPersonalDataScreen(
             result.onSuccess { userData ->
                 viewModel.onUIEvent(
                     SignUpPersonalDataViewModel.UIEvent.OnUserDataValidationSuccess(
-                        userData = userData,
-                        idBrand = sharedViewModel.idBrand ?: 0,
                         onUseDataValueChange = {
                             sharedViewModel.strIdIdentification = viewModel.uiState.identificationValueType
                             sharedViewModel.onUIEvent(
@@ -126,21 +124,6 @@ fun SignUpPersonalDataScreen(
                         },
                         onCallMutationUpdateUserRegisterUseCase = {
                             sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase)
-                        },
-                        onLoadingValueChange = {
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnLoadingValueChange(
-                                    it
-                                )
-                            )
-                        },
-                        onFailureWithDialog = { isLoading, dialogParameters ->
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnFailureWithDialog(
-                                    isLoading = isLoading,
-                                    openDialog = dialogParameters
-                                )
-                            )
                         }
                     )
                 )

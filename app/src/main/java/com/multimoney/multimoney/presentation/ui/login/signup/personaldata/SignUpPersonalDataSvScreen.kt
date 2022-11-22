@@ -87,9 +87,15 @@ fun SignUpPersonalDataSvScreen(
             modifier = Modifier
                 .padding(top = 44.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_personal_data_id_sv_required),
+            isRequiredMessage = stringResource(
+                id = R.string.sign_up_personal_data_id_required,
+                viewModel.uiState.identificationValueType
+            ),
             isError = viewModel.uiState.personalIdError.first,
-            errorMessage = stringResource(id = viewModel.uiState.personalIdError.second),
+            errorMessage = stringResource(
+                id = viewModel.uiState.personalIdError.second,
+                viewModel.uiState.identificationValueType
+            ),
             customTransformation = if (viewModel.uiState.documentFormat != "") MaskVisualTransformation(
                 viewModel.uiState.documentFormat,
                 viewModel.uiState.documentFormat.last()

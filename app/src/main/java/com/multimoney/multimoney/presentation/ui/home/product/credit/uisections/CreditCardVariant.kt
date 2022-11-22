@@ -41,11 +41,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmMaxAttempts
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -107,8 +103,10 @@ fun CardGTWithoutCredit(action: () -> Unit = {}) {
 fun CreditPreApproved(
     amount: String? = "0.0",
     idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {}
+    action: () -> Unit = {},
+    wording: Wording? = Wording("", "", "")
 ) {
+    val notDefinedValue = stringResource(id = R.string.not_defined)
     var description = ""
 
     description = if (idBrand == Brand.Guatemala.id) {
@@ -132,13 +130,13 @@ fun CreditPreApproved(
             }
     ) {
         Text(
-            text = stringResource(id = R.string.home_product_credit_approved_card_title),
+            text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
             modifier = Modifier.padding(top = 20.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.creditNotApprovedText
         )
         Text(
-            text = description,
+            text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
             modifier = Modifier.padding(top = 4.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
@@ -150,7 +148,7 @@ fun CreditPreApproved(
             drawableResource = R.drawable.ic_chevron_up
         )
         Text(
-            text = stringResource(id = R.string.home_product_credit_approved_card_action),
+            text = wording?.cTA?.filter { wording.cTA != notDefinedValue } ?: "",
             modifier = Modifier
                 .padding(bottom = 12.dp)
                 .align(Alignment.CenterHorizontally),

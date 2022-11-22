@@ -61,7 +61,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_INITIAL_CARD))
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_INFO_INCOMPLETE, this) -> {

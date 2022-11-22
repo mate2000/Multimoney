@@ -403,7 +403,7 @@ fun Products(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             type = ProductBackGroundType.Secondary
                         ) {
-                            CardOfferSmartProduct() {
+                            CardOfferSmartProduct {
                                 viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
                             }
                         }

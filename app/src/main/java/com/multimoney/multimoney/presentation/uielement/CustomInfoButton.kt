@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 @Preview
 fun CustomInfoButton(
     modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
     startIcon: Int? = R.drawable.ic_payment_fee_icon,
     title: String = "",
     subtitle: String = "",
@@ -92,7 +93,7 @@ fun CustomInfoButton(
                 Image(
                     painter = painterResource(id = startIcon),
                     contentDescription = "",
-                    modifier = Modifier.constrainAs(startIconId) {
+                    modifier = imageModifier.constrainAs(startIconId) {
                         top.linkTo(parent.top, margin = 17.dp)
                         start.linkTo(parent.start, margin = 18.dp)
                         bottom.linkTo(parent.bottom, margin = 17.dp)
@@ -134,21 +135,22 @@ fun CustomInfoButton(
                     style = Typography.caption,
                     color = subtitleColor
                 )
-                Text(
-                    text = subtitle2,
-                    modifier = Modifier.constrainAs(subTitle2Id) {
-                        top.linkTo(subTitleId.bottom, margin = 4.dp)
-                        start.linkTo(subTitleId.start)
-                        bottom.linkTo(parent.bottom, margin = 16.dp)
-                    },
-                    style = Typography.caption,
-                    color = subtitleColor
-                )
+                if (subtitle2.isNotEmpty()) {
+                    Text(
+                        text = subtitle2,
+                        modifier = Modifier.constrainAs(subTitle2Id) {
+                            top.linkTo(subTitleId.bottom, margin = 4.dp)
+                            start.linkTo(subTitleId.start)
+                            bottom.linkTo(parent.bottom, margin = 16.dp)
+                        },
+                        style = Typography.caption,
+                        color = subtitleColor
+                    )
+                }
             } else {
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-
                         if (startIcon != null) {
                             top.linkTo(startIconId.top, margin = 4.dp)
                             start.linkTo(startIconId.end, margin = 16.dp)

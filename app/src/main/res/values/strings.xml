@@ -710,4 +710,12 @@
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+
+    <!-- Payment Cards List -->
+    <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
+    <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
+    <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+
+    <!-- Payment Amount Card -->
+    <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
 </resources>

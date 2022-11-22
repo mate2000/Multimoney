@@ -37,11 +37,12 @@ import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
@@ -63,6 +64,7 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductType
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProductScreen(
+    sharedViewModel: HomeViewModel,
     isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
@@ -71,21 +73,21 @@ fun ProductScreen(
         isOnRestart = isRestart
         DisposableEffect(isOnRestart) {
             if (isOnRestart) {
-                onUIEvent(OnGetIdBrand)
+                onUIEvent(
+                    OnSetUserData(
+                        balanceCredit = sharedViewModel.balance,
+                        pkUser = sharedViewModel.pkUser,
+                        identification = sharedViewModel.identification,
+                        email = sharedViewModel.email,
+                        userName = sharedViewModel.userName,
+                        validateUserStatus = sharedViewModel.validateUserStatus,
+                        configurationVersion = sharedViewModel.configurationVersion
+                    )
+                )
                 executeNavigation(onNavigate = onNavigate)
             }
             onDispose {
                 isOnRestart = false
-            }
-        }
-    }
-
-    LaunchedEffect(true) {
-        viewModel.baseEvent.collect { event ->
-            when (event) {
-                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
-                    event.millisInFuture
-                )
             }
         }
     }

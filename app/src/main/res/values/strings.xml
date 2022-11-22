@@ -516,7 +516,7 @@
     <!-- Smart - Close origin flow -->
     <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
-    
+
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
     <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>
@@ -664,4 +664,11 @@
         <item>Si, lo soy</item>
         <item>No, no lo soy</item>
     </string-array>
+
+    <!-- Evicertia screen -->
+    <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
+    <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
+    <string name="smart_evicertia_miss_title" translatable="false">¡Te vamos a extrañar!</string>
+    <string name="smart_evicertia_miss_subtitle" translatable="false">Si querés finalizar la solicitud de tu Multimoney Smart debés firmar el contrato.</string>
+    <string name="smart_evicertia_missing_signature_title" translatable="false">Te vamos a extrañar</string>
 </resources>

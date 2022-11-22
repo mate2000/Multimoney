@@ -39,7 +39,9 @@ fun SmartBeneficiaryScreen(
     sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
+        sharedViewModel.onUIEvent(
+            SmartViewModel.UIEvent.OnContinueVisible(true, R.string.save)
+        )
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(false))
 
         sharedViewModel.onUIEvent(

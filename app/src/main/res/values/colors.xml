@@ -16,6 +16,7 @@
     <color name="onfidoTextColorPrimary">@color/white_100</color>
     <color name="onfidoTextColorSecondary">@color/white_100</color>
     <color name="onfidoPrimaryButtonColor">@color/green</color>
+    <color name="onfidoColorAccent">@color/green</color>
     <color name="onfidoPrimaryButtonTextColor">@color/gray_800</color>
     <color name="onfidoAndroidStatusBarColor">@color/gray_800</color>
 

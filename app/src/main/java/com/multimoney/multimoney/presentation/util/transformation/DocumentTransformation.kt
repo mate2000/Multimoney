@@ -161,7 +161,9 @@ fun formatDecimalMoney(currencySymbol: String): VisualTransformation =
 fun getDecimalMoneyText(currency: String, text: AnnotatedString): String {
     return if (text.text.toDoubleOrNull().formatWithComma().isNotEmpty()) {
         val lastChars = text.text.takeLast(3)
-        return if (text.text.last() == '.') {
+        return if (lastChars == ".00") {
+            "$currency ${text.text.toDoubleOrNull().formatWithComma()}.00"
+        } else if (text.text.last() == '.') {
             "$currency ${text.text.toDoubleOrNull().formatWithComma()}."
         } else if (lastChars.takeLast(2) == ".0") {
             "$currency ${text.text.toDoubleOrNull().formatWithComma()}.0"

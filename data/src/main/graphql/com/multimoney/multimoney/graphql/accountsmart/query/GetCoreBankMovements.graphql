@@ -1,0 +1,32 @@
+query GetCoreBankMovements(
+    $user: String!,
+    $idBrand: Int!,
+    $identificationNumber: String!,
+    $accountToken: Long!,
+    $pageNumber: Int!,
+    $pageSize: Int!,
+    $monthDate: DateTime!
+){
+    getCoreBankMovements(
+        getCoreBankMovementsInput: {
+            user: $user,
+            idBrand: $idBrand,
+            identificationNumber: $identificationNumber,
+            accountToken: $accountToken,
+            pageNumber: $pageNumber,
+            pageSize: $pageSize,
+            monthDate: $monthDate
+        }
+    ) {
+        result {
+            idTransaction
+            creationDate
+            transactionCatalogueDescription
+            amount
+            currencyDescription
+            bankAuthorization
+            idSubTransaction
+            sign
+        }
+    }
+}

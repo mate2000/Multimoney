@@ -12,6 +12,7 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -22,6 +23,30 @@ import javax.inject.Inject
 class SmartAccountRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
 ) : BaseRepository(), SmartAccountRepository {
+
+    override suspend fun queryGetCoreBankMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        monthDate: String
+    ): Flow<MultimoneyResult<SmartMovementsResult?>> =
+        fetchData(
+            apolloCall = graphqlApi.queryGetCoreBankMovements(
+                user,
+                idBrand,
+                identificationNumber,
+                accountToken,
+                pageNumber,
+                pageSize,
+                monthDate
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
 
     override suspend fun queryCivilStatus(
         pkUser: String,

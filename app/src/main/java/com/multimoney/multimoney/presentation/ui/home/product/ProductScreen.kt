@@ -39,6 +39,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
@@ -78,6 +79,10 @@ fun ProductScreen(
                 isOnRestart = false
             }
         }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(OnGetSmartMovements)
     }
 
     LaunchedEffect(true) {

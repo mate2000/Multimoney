@@ -8,11 +8,22 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
 interface SmartAccountRepository {
+
+    suspend fun queryGetCoreBankMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        monthDate: String
+    ): Flow<MultimoneyResult<SmartMovementsResult?>>
 
     suspend fun queryCivilStatus(
         pkUser: String,

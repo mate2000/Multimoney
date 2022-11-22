@@ -9,9 +9,11 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
+import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
@@ -34,6 +36,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.B
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
@@ -53,16 +56,17 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
+    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
     private val dataStorePreferences: DataStorePreferences,
     private val helper: ShareHelper,
     val countDownTimer: MMCountDownTimer
@@ -99,6 +103,35 @@ class ProductViewModel @Inject constructor(
             )
 
             callQueryGetConfigurationVersion(uiState.idBrand.toInt())
+        }
+    }
+
+    private fun onGetSmartMovements(
+        pageNumber: Int = 1,
+        pageSize: Int = 3
+    ) {
+        executeUseCase {
+            queryGetCoreBankMovements.invoke(
+                user = "401920903",
+                idBrand = 5,
+                identificationNumber = "107910975",
+                accountToken = 287380645,
+                pageNumber = pageNumber,
+                pageSize = pageSize,
+                monthDate = "2022-10-01"
+            ).collectLatest { result ->
+                result.onSuccess { movements ->
+                    uiState = uiState.copy(
+                        smartMovementsList = movements?.result ?: emptyList()
+                    )
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+                result.onFailure {
+                    onFailure(it)
+                }
+            }
         }
     }
 
@@ -507,9 +540,15 @@ class ProductViewModel @Inject constructor(
         return amount
     }
 
-    fun canSendMoney(smartAccountIndex: Int?): Boolean =
-        balanceCredit?.balanceAccountSmart?.get(smartAccountIndex!!)?.totalBalance!! > 0
-
+    fun canSendMoney(smartAccountIndex: Int?): Boolean {
+        val balanceSmart = balanceCredit?.balanceAccountSmart ?: emptyList()
+        val totalBalance = if (smartAccountIndex != null && balanceSmart.size > smartAccountIndex) {
+            balanceCredit?.balanceAccountSmart?.get(smartAccountIndex)?.totalBalance ?: 0.0
+        } else {
+            0.0
+        }
+        return totalBalance > 0
+    }
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -518,7 +557,8 @@ class ProductViewModel @Inject constructor(
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
-        val canExpandCredit: Boolean = false
+        val canExpandCredit: Boolean = false,
+        val smartMovementsList: List<SmartMovement>? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -548,6 +588,7 @@ class ProductViewModel @Inject constructor(
             )
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
+            is OnGetSmartMovements -> onGetSmartMovements()
         }
     }
 
@@ -586,6 +627,7 @@ class ProductViewModel @Inject constructor(
             val accountLabel: String,
             val ibanAccount: String
         ) : UIEvent()
+        object OnGetSmartMovements : UIEvent()
     }
 
     sealed class BaseEvent {

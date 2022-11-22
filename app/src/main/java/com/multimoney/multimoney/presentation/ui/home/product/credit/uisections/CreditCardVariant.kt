@@ -17,11 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.BlackTransparency16
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -57,8 +52,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
-import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 
 /**
  * Composable to handle the status without credit GT
@@ -172,12 +165,14 @@ fun CreditPreApproved(
 fun CardWithCreditInProcess(
     type: CreditProcessStarted = CreditProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {}
+    action: () -> Unit = {},
+    wording: Wording? = Wording("","", "")
 ) {
-    val chipText = R.string.home_product_process_credit_label
-    val title: Int
-    val description: Int
-    val actionText: Int
+    val notDefinedValue = stringResource(id = R.string.not_defined)
+    var chipText = R.string.home_product_process_credit_label
+    val title: String = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: ""
+    val description: String = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: ""
+    val actionText: String? = wording?.cTA?.filter { wording.textTwo != notDefinedValue }
     var startIcon = R.drawable.ic_time
 
     val backgroundShip: Color = if (isSystemInDarkTheme()) {
@@ -187,59 +182,17 @@ fun CardWithCreditInProcess(
     }
     when (type) {
         CreditStartProcessIncomplete -> {
-            title = R.string.home_product_credit_not_completed_title
-            description = R.string.home_product_credit_not_completed_description
-            actionText = R.string.home_product_credit_not_completed_action
+            chipText = R.string.home_product_process_credit_preapproved_label
             startIcon = R.drawable.ic_warning
         }
         CreditProcessOnFidoIncomplete -> {
-            title = R.string.home_on_fido_pending_title
-            description = R.string.home_on_fido_pending_description
-            actionText = R.string.home_on_fido_pending_action_text
             startIcon = R.drawable.ic_warning
-        }
-        CreditProcessFirmIncomplete -> {
-            title = R.string.home_firm_incomplete_title
-            description = R.string.home_firm_incomplete_description
-            actionText = R.string.home_firm_incomplete_action
         }
         CreditProcessOnfidoReject -> {
-            title = R.string.onfido_rejected_first_time_title
-            description = if (idBrand == Brand.Guatemala.id) {
-                R.string.onfido_rejected_first_time_subtitle_gt
-            } else {
-                R.string.onfido_rejected_first_time_subtitle
-            }
-            actionText = R.string.onfido_rejected_action
             startIcon = R.drawable.ic_warning
         }
-        CreditProcessOnfidoMaxAttempts -> {
-            title = R.string.onfido_rejected_second_time_title
-            description = R.string.onfido_rejected_second_time_subtitle
-            actionText = R.string.onfido_rejected_action_second_time
-        }
-        CreditProcessFirmReject -> {
-            title = R.string.sign_document_reject_title
-            description = if (idBrand == Brand.Guatemala.id) {
-                R.string.sign_document_reject_description_gt
-            } else {
-                R.string.sign_document_reject_description
-            }
-            actionText = R.string.home_firm_incomplete_action
-        }
-        CreditProcessFirmMaxAttempts -> {
-            title = R.string.sign_credit_max_attempts_title
-            description = if (idBrand == Brand.Guatemala.id) {
-                R.string.sign_credit_max_attempts_message_gt
-            } else {
-                R.string.sign_credit_max_attempts_message
-            }
-            actionText = R.string.sign_credit_max_attempts_contact
-        }
+
         CreditProcessCreateAccountFailure -> {
-            title = R.string.home_product_process_title
-            description = R.string.home_product_process_description
-            actionText = R.string.home_product_process_action
             startIcon = R.drawable.ic_warning
         }
     }
@@ -266,32 +219,37 @@ fun CardWithCreditInProcess(
             startIconTint = MultimoneyTheme.colors.iconColor
         )
         Text(
-            text = stringResource(id = title),
+            text = title,
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
         Text(
-            text = stringResource(id = description),
+            text = description,
             modifier = Modifier.padding(top = 8.dp),
             style = Typography.caption,
             color = MultimoneyTheme.colors.text
         )
-        CustomImage(
-            modifier = Modifier
-                .padding(top = 21.dp)
-                .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
-        )
-        Text(
-            text = stringResource(id = actionText),
-            modifier = Modifier
-                .padding(bottom = 12.dp)
-                .align(Alignment.CenterHorizontally),
-            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text,
-            textAlign = TextAlign.Center
-        )
+        actionText?.let {
+            if (it.isNotBlank()){
+                CustomImage(
+                    modifier = Modifier
+                        .padding(top = 21.dp)
+                        .align(Alignment.CenterHorizontally),
+                    drawableResource = R.drawable.ic_chevron_up
+                )
+
+                Text(
+                    text = actionText,
+                    modifier = Modifier
+                        .padding(bottom = 12.dp)
+                        .align(Alignment.CenterHorizontally),
+                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.text,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }
 
@@ -432,9 +390,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                            ?: 0
-                                        ) > 0
+                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                    ?: 0
+                                                ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

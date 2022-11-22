@@ -41,6 +41,7 @@
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
     <string name="info" translatable="false">Información</string>
+    <string name="common_options" translatable="false">Opciones</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -561,6 +562,10 @@
     <string name="smart_account_beneficiary_max_percentage_dialog_title" translatable="false">Superaste el máximo permitido</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>
     <string name="smart_account_beneficiary_info_description" translatable="false">En caso de fallecimiento, tus beneficiarios recibirán el monto disponible de tu cuenta smart. Recuerda que debes de asignar el 100%</string>
+
+    <!-- Smart Account - Edit Beneficiary -->
+    <string name="smart_account_edit_beneficiary" translatable="false">Editar beneficiario</string>
+    <string name="smart_account_remove_beneficiary" translatable="false">Eliminar beneficiario</string>
 
     <!-- Smart - Close origin flow -->
     <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>

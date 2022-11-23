@@ -729,4 +729,12 @@
     <string name="schedule_automatic_payment_credit_multiple_payment_dialog_title" translatable="false">Tu cuota programada</string>
     <string name="schedule_automatic_payment_credit_multiple_payment_dialog_description" translatable="false">Se calcula en base al tipo de cambio del día de pago</string>
     <string name="schedule_automatic_payment_credit_multiple_payment_dialog_button" translatable="false">Entendido</string>
+
+    <!-- Payment Cards List -->
+    <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
+    <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
+    <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+
+    <!-- Payment Amount Card -->
+    <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
 </resources>

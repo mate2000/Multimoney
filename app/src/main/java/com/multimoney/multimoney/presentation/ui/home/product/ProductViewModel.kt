@@ -328,7 +328,7 @@ class ProductViewModel @Inject constructor(
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
             encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}" +
-                "/${balanceCredit?.getFirstSummary()?.minPaymentLabel}"
+                "/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/$identification/$email"
         }
         navigateTo(route)
     }

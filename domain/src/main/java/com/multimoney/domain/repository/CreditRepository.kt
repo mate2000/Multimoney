@@ -2,6 +2,7 @@ package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
+import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -143,6 +144,12 @@ interface CreditRepository {
         idClient: Int,
         idLoanClient: Int
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
+
+    suspend fun queryListCardVD(
+        user: String,
+        idBrand: Int,
+        identification: String
+    ): Flow<MultimoneyResult<List<CardVisaDirect?>?>>
 
     suspend fun queryBanksAndRegularExpression(
         pkUser: Int,

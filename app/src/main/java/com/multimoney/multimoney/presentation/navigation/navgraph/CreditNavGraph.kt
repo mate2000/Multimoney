@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.aswerquestions.AnswerQuestionsScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
@@ -108,6 +109,18 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(route = Screen.AnswerQuestionsScreen.route) {
+            AnswerQuestionsScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

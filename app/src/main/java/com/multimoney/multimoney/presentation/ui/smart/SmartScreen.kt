@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiary.SmartBeneficiaryScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.idverification.SmartIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
 import com.multimoney.multimoney.presentation.uielement.AlertResult
@@ -156,5 +157,6 @@ fun GetStepContent(
             }
         }
         SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
+        SmartSteps.Six.id  -> SmartIdVerificationScreen()
     }
 }

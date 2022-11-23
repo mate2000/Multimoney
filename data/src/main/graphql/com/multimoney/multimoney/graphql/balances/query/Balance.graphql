@@ -36,6 +36,9 @@ query Balance(
             cuenta_Iban
             saldo_Monto_Cancelar
             dias_Vencidos
+            aplica_Debito_Aut
+            debito_Aut_Activo
+            vDDebito_Aut_Activo
         }
         limite_credito
         limite_credito_label

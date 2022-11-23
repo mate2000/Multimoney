@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Typography
 
 /**
@@ -35,9 +35,9 @@ fun CustomTextButton(
     onClick: () -> Unit = {}
 ) {
     val textColor = if (isSystemInDarkTheme()) {
-        MultimoneyTheme.colors.textLink
+        Primary400
     } else {
-        MultimoneyTheme.colors.textLink
+        Primary400
     }
     Row(
         modifier = Modifier.fillMaxWidth(),

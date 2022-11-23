@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.ComplementaryBlack
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency50
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 
 /**
  * ScheduleAutomaticPaymentTextInfo: This component is used to show scheduled payment info in home*
@@ -60,16 +60,19 @@ fun ScheduleAutomaticPaymentTextInfo(
     val nextPaymentTextColor: Color
     val chipBackgroundColor: Color
     val contentChipColor: Color
+    val dateColor: Color
     if (isSystemInDarkTheme()) {
-        titleColor = MultimoneyTheme.colors.labelText
+        titleColor = WhiteTransparency90
         nextPaymentTextColor = WhiteTransparency50
         chipBackgroundColor = ComplementaryBlack
         contentChipColor = DefaultWhite
+        dateColor = DefaultWhite
     } else {
-        titleColor = MultimoneyTheme.colors.labelText
+        titleColor = WhiteTransparency90
         nextPaymentTextColor = WhiteTransparency50
         chipBackgroundColor = ComplementaryBlack
         contentChipColor = DefaultWhite
+        dateColor = DefaultWhite
     }
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         Row(
@@ -108,7 +111,7 @@ fun ScheduleAutomaticPaymentTextInfo(
                     style = Typography.body2.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
-                    color = MultimoneyTheme.colors.text
+                    color = dateColor
                 )
             }
             Row {

@@ -134,14 +134,14 @@ class FormalSalariedSvViewModel @Inject constructor(
     }
 
     private fun onWorkingAddressChange(address: String) {
-        if (address.length < ADDRESS_MAX_LENGTH) {
-            uiState = uiState.copy(
-                workingAddress = address,
-                workingAddressError = Pair(false, R.string.empty)
-            )
-        }
-        if (address.length == ADDRESS_MAX_LENGTH - 1) {
-            uiState = uiState.copy(workingAddressError = Pair(true, R.string.max_number_of_characters_reached_error))
+        if (address.length <= ADDRESS_MAX_LENGTH) {
+            uiState = uiState.copy(workingAddress = address)
+
+            uiState = if (address.length == ADDRESS_MAX_LENGTH) {
+                uiState.copy(workingAddressError = Pair(true, R.string.max_number_of_characters_reached_error))
+            } else {
+                uiState.copy(workingAddressError = Pair(false, R.string.empty))
+            }
         }
         onValidateForm()
     }

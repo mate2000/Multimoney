@@ -28,20 +28,19 @@ class SmartRetiredViewModel : BaseViewModel(true) {
     private fun onInstitutionValueChange(institution: String) {
         if (institution.length <= INSTITUTION_MAX_LENGTH) {
             uiState = uiState.copy(institution = institution)
+
+            uiState = if (institution.length == INSTITUTION_MAX_LENGTH) {
+                uiState.copy(institutionError = Pair(true, R.string.max_number_of_characters_reached_error))
+            } else {
+                uiState.copy(institutionError = Pair(false, R.string.empty))
+            }
         }
         validateForm()
     }
 
     private fun onAmountValueChange(paymentAmount: String) {
         if (validateDecimalIncome(paymentAmount)) {
-            uiState = uiState.copy(
-                paymentAmount = paymentAmount,
-                institutionError = Pair(false, R.string.empty)
-            )
-        } else {
-            uiState = uiState.copy(
-                institutionError = Pair(true, R.string.max_number_of_characters_reached_error)
-            )
+            uiState = uiState.copy(paymentAmount = paymentAmount)
         }
         validateForm()
     }

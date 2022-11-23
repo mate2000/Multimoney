@@ -174,16 +174,14 @@ class SmartLivAddressViewModel @Inject constructor(
     }
 
     private fun onAddressValueChange(address: String) {
-        if (address.length < ADDRESS_MAX_LENGTH) {
-            uiState = uiState.copy(
-                address = address,
-                addressError = Pair(false, R.string.empty)
-            )
-        }
-        if (address.length == ADDRESS_MAX_LENGTH - 1) {
-            uiState = uiState.copy(
-                addressError = Pair(true, R.string.max_number_of_characters_reached_error)
-            )
+        if (address.length <= ADDRESS_MAX_LENGTH) {
+            uiState = uiState.copy(address = address)
+
+            uiState = if (address.length == ADDRESS_MAX_LENGTH) {
+                uiState.copy(addressError = Pair(true, R.string.max_number_of_characters_reached_error))
+            } else {
+                uiState.copy(addressError = Pair(false, R.string.empty))
+            }
         }
         validate()
     }

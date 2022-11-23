@@ -31,7 +31,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavG
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
-import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer.OnCountDownTimerFinish
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerFinish
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
 

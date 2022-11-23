@@ -40,10 +40,10 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
+import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks
 
 @Composable
 fun IbanAccountScreen(
@@ -193,7 +193,7 @@ fun IbanAccountScreen(
     }
     if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(
-            message = viewModel.uiState.dialogParameters.description,
+            message = stringResource(id = viewModel.uiState.dialogParameters.descriptionResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,
             onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
         )

@@ -73,7 +73,7 @@ fun SmartScreen(
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
             )
-            if (viewModel.uiState.currentStep != SmartSteps.Five.id) {
+            if (viewModel.uiState.currentStep != Six.id) {
                 StepProgressBar(
                     steps = SMART_INDICATOR_TOTAL_STEPS,
                     currentStep = if (viewModel.uiState.currentStep == Six.id) SmartSteps.Five.id else viewModel.uiState.currentStep,
@@ -124,7 +124,9 @@ fun SmartScreen(
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description,
+            message = viewModel.uiState.openDialog.description.ifBlank {
+                stringResource(viewModel.uiState.openDialog.descriptionResource)
+            },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,

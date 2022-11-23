@@ -120,6 +120,11 @@ type Query {
   getLinkAccountSmartContract(linkAccountSmartContractInput: LinkAccountSmartContractDtoInput!): LinkAccountSmartContract!
 
   """
+  AccountSmart
+  """
+  bankList365Type(bankList365Input: BankList365DtoInput!): [BankList365!]
+
+  """
   Balance
   """
   balanceCredit(balanceCreditInput: balanceCreditInput!): [PromissoryNoteMobile!]
@@ -400,6 +405,11 @@ type Query {
   Security
   """
   getCompanyNameByIdentification(dataCompanyInformationInput: GetCompanyNameByIdentificationDtoInput!): DataCompanyInformation!
+
+  """
+  Security
+  """
+  quickActions(quickActionsInput: QuickActionsDtoInput!): [QuickActions!]!
 
   """
   VirtualCard
@@ -1469,6 +1479,18 @@ input LinkAccountSmartContractDtoInput {
 
   idRequestSysde: Long!
 
+  idBrand: Int
+
+  user: String
+}
+
+type BankList365 {
+  bankId: Long!
+
+  name: String!
+}
+
+input BankList365DtoInput {
   idBrand: Int
 
   user: String
@@ -2751,9 +2773,11 @@ type Minicard {
 
   tipo: String!
 
-  imagenUrl: String!
+  imagenUrl: String
 
-  deeplink: String!
+  deeplink: String
+
+  flujo: String
 }
 
 input MinicardDtoInput {
@@ -2795,25 +2819,25 @@ input TermsConditionsSignedDtoInput {
 type ParameterMobile {
   pk_Suv_Par_Parametro: Int!
 
-  llave_Busqueda: String!
+  llave_Busqueda: String
 
-  descripcion: String!
+  descripcion: String
 
   valor: String!
 
-  categoria: String!
+  categoria: String
 
-  editable: Boolean!
+  editable: Boolean
 
-  valor_Inicio: String!
+  valor_Inicio: String
 
-  direccion_IP: String!
+  direccion_IP: String
 
-  descripcion_Inicio: String!
+  descripcion_Inicio: String
 
-  optionAplication: String!
+  optionAplication: String
 
-  origen: Boolean!
+  origen: Boolean
 }
 
 input GetParameterMobileByCategoryDtoInput {
@@ -2852,6 +2876,30 @@ type DataCompanyInformation {
 
 input GetCompanyNameByIdentificationDtoInput {
   identification: String!
+
+  idBrand: Int
+
+  user: String
+}
+
+type QuickActions {
+  idIcono: String!
+
+  tipoProducto: String!
+
+  nombre: String!
+
+  flujo: String!
+}
+
+input QuickActionsDtoInput {
+  infoCreditStatus: Boolean!
+
+  infoVirtualCardStatus: Boolean!
+
+  infoBankAccountStatus: Boolean!
+
+  infoCripto: Boolean!
 
   idBrand: Int
 

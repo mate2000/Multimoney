@@ -45,6 +45,11 @@
         <item>Si</item>
         <item>No</item>
     </string-array>
+    <string name="colons" translatable="false">Colenes</string>
+    <string name="dollars" translatable="false">Doláres</string>
+    <string name="quetzales" translatable="false">Quetzales</string>
+
+    <string name="content_description_more_info" translatable="false">Más información</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
@@ -124,12 +129,8 @@
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
-    <string name="sign_up_personal_data_dui_sv_not_valid" translatable="false">Número de DUI incorrecto</string>
-    <string name="sign_up_personal_data_id_sv_required" translatable="false">Número de DUI requerido</string>
-    <string name="sign_up_personal_data_dpi_gt_not_valid" translatable="false">Número de DPI incorrecto</string>
-    <string name="sign_up_personal_data_gt_id_required" translatable="false">Número de DPI requerido</string>
-    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de identificacion incorrecta</string>
-    <string name="sign_up_personal_data_id_required" translatable="false">Número de identificación requerido</string>
+    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s incorrecto</string>
+    <string name="sign_up_personal_data_id_required" translatable="false">Número de %s requerido</string>
     <string name="sign_up_personal_data_nationality_header" translatable="false">¿Cuáles son tus datos personales?</string>
     <string name="sign_up_personal_data_nationality" translatable="false">Nacionalidad</string>
     <string name="sign_up_personal_data_nationality_placeholder" translatable="false">Selecciona tu país</string>
@@ -231,6 +232,8 @@
     <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
     <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
     <string name="home_disburse_request_button_text" translatable="false">Solicitar disponible</string>
+    <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
+    <string name="home_pay_button_text" translatable="false">Abonar</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
@@ -247,8 +250,8 @@
     <string name="home_product_process_title" translatable="false">Parece que hubo un error</string>
     <string name="home_product_process_description" translatable="false">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
     <string name="home_product_process_action" translatable="false">Validar identificación</string>
-    <string name="home_product_process_accept_contract_title" translatable="false">Ya casi tenés tu crédito</string>
-    <string name="home_product_process_accept_contract_description" translatable="false">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
+    <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
+    <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
@@ -266,6 +269,20 @@
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
     <string name="home_product_amount" translatable="false">de %s</string>
+
+    <!-- Credit in progress firm incomplete -->
+    <string name="home_firm_incomplete_title" translatable="false">¡Sólo falta tu firma!</string>
+    <string name="home_firm_incomplete_description" translatable="false">Para recibir tu dinero solo tenés que firmar el contrato</string>
+    <string name="home_firm_incomplete_action" translatable="false">Firmar!</string>
+
+    <!-- My Profile -->
+    <string name="profile_title" translatable="false">Mi perfil</string>
+    <string name="profile_my_accounts" translatable="false">Mis cuentas</string>
+    <string name="profile_my_cards" translatable="false">Mis tarjetas</string>
+    <string name="profile_settings" translatable="false">Configuraciones</string>
+    <string name="profile_help" translatable="false">Ayuda e información</string>
+    <string name="profile_invite_friends" translatable="false">Invitar amigos</string>
+    <string name="profile_logout" translatable="false">Cerrar Sesión</string>
 
     <!-- Home Product Header -->
     <string name="home_product_header_title" translatable="false">Mis Productos</string>
@@ -394,25 +411,44 @@
     <string name="credit_additional_information_bottom_sheet_description" translatable="false">Prestamistas, casas de empeño, comercio de metales y piedras preciosas, tarjetas y operadores de tarjetas de crédito, organizaciones sin fines de lucro, proveedores de servicios fiduciarios, compra y venta de bienes inmuebles, facilidad crediticia, administración de recursos de terceros.</string>
     <string name="credit_additional_information_bottom_sheet_button_" translatable="false">Aceptar</string>
 
+    <string name="save_credit_operation_error_subtitle_gt" translatable="false">Contáctanos para brindarte más información</string>
+    <string name="save_credit_operation_error_action_gt" translatable="false">Escríbenos por whatsAppfv</string>
+    <string name="save_credit_operation_error_title" translatable="false">¡Oh no! Hubo un error</string>
+    <string name="save_credit_operation_error_subtitle" translatable="false">Contactanos para brindarte más información</string>
+    <string name="save_credit_operation_error_action" translatable="false">Escríbinos por whatsApp</string>
 
     <!-- Generate Document -->
-    <string name="document_generation_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="document_generation_subtitle" translatable="false">Al firmar tu solicitud podrás utilizar tu crédito</string>
+    <string name="document_generation_title" translatable="false">Estamos creando tu cuenta</string>
+    <string name="document_generation_subtitle" translatable="false">Firmá el contrato y recibí tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
+
+    <!-- Onfido errors -->
+    <string name="onfido_rejected_first_time_title" translatable="false">Hubo un error al validar tu identidad</string>
+    <string name="onfido_rejected_first_time_subtitle" translatable="false">Intentá de nuevo</string>
+    <string name="onfido_rejected_first_time_subtitle_gt" translatable="false">Intenta de nuevo</string>
+    <string name="onfido_rejected_second_time_title" translatable="false"> No fue posible verificar tu identidad</string>
+    <string name="onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
+    <string name="onfido_rejected_action" translatable="false">Confirmar mi identidad</string>
+    <string name="onfido_rejected_action_second_time" translatable="false">Contactar</string>
 
     <!-- Sign Credit Web View -->
     <string name="sign_credit_dialog_title" translatable="false">Necesitamos tu firma en la siguiente pantalla</string>
     <string name="sign_credit_dialog_description" translatable="false">Por favor, realizala según las indicaciones.</string>
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
+    <string name="continue_validating_identity_title" translatable="false">Estás cerca de recibir tu crédito</string>
+    <string name="continue_validating_identity_subtitle" translatable="false">Estamos terminando de validar tus datos</string>
+
     <!-- Sign Documents limit reached -->
     <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
-    <string name="sign_credit_max_attempts_message" translatable="false">Comunícate con nosotros para activar tu crédito</string>
+    <string name="sign_credit_max_attempts_message" translatable="false">Comunicate con nosotros para activar tu crédito</string>
+    <string name="sign_credit_max_attempts_message_gt" translatable="false">Comunícate con nosotros para activar tu crédito</string>
     <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
 
     <!-- Sign Document Reject -->
     <string name="sign_document_reject_title" translatable="false">Te vamos a extrañar</string>
     <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
+    <string name="sign_document_reject_description_gt" translatable="false">Si quieres finalizar la solicitud de tu crédito debés firmar el contrato</string>
 
     <!-- Visa -->
     <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>
@@ -494,6 +530,7 @@
 
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
+    <string name="smart_card_smart_title" translatable="false">Smart</string>
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
 
@@ -514,31 +551,34 @@
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+    <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
+
+    <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_account_beneficiaries_percentage" translatable="false">Porcentaje a otorgar (%)</string>
     <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario</string>
     <string name="smart_account_beneficiary_content" translatable="false">%1$s | %2$s</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_title" translatable="false">Superaste el máximo permitido</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>
-    <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
+    <string name="smart_account_beneficiary_info_description" translatable="false">En caso de fallecimiento, tus beneficiarios recibirán el monto disponible de tu cuenta smart. Recuerda que debes de asignar el 100%</string>
 
     <!-- Smart - Close origin flow -->
     <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
-    
+
     <!-- Smart Account - Own Business -->
     <string name="smart_own_business_title" translatable="false">Comerciante o propietario</string>
     <string name="smart_own_business_company_name_label" translatable="false">Nombre de la empresa</string>
     <string name="smart_own_business_company_name_required" translatable="false">Nombre de la empresa requerido</string>
     <string name="smart_own_business_description_label" translatable="false">¿Qué hace la empresa?</string>
     <string name="smart_own_business_description_required" translatable="false">Descripcion de la empresa requerido</string>
-    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el maximo de caracteres permitidos</string>
+    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
     <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
     <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
 
     <!-- Smart Account - Other -->
-    <string name="smart_other_title" translatable="false">Otros</string>
+    <string name="smart_other_title" translatable="false">Otro</string>
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
 
@@ -550,7 +590,7 @@
     <string name="smart_business_personal_basis_identification_loading" translatable="false">Un momento, estamos verificando tu numero de identificatión...</string>
     <string name="smart_business_personal_basis_identification_success" translatable="false">Nombre empresa</string>
     <string name="smart_business_personal_basis_activity_label" translatable="false">¿A qué se dedica tu sociedad?</string>
-    <string name="smart_business_personal_basis_activity_error" translatable="false">Has alcanzado el maximo de caracteres permitidos</string>
+    <string name="smart_business_personal_basis_activity_error" translatable="false">Has alcanzado el máximo de caracteres permitidos</string>
     <string name="smart_business_personal_basis_activity_required_message" translatable="false">Actividad requerida</string>
     <string name="smart_business_personal_basis_income_required_message" translatable="false">Ingresos requeridos</string>
     <string name="smart_business_personal_basis_identification_required_message" translatable="false">Cedula juridica requerida</string>
@@ -662,6 +702,7 @@
     <string name="smart_business_personal_income_label_required" translatable="false">Ingreso mensual requerido</string>
 
     <!--Smart Facta screen-->
+    <string name="smart_facta_title" translatable="false">Información adicional</string>
     <string name="smart_facta_are_you_us_citizen" translatable="false">¿Sos ciudadano o residente de los Estados Unidos?</string>
     <string name="smart_facta_are_you_or_family_pep" translatable="false">¿Vos o alguno de tus familiares califican como persona politicamente expuesta (PEP)?</string>
     <string name="smart_facta_activities_according_to_article_15" translatable="false">¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
@@ -680,4 +721,8 @@
         <item>Si, lo soy</item>
         <item>No, no lo soy</item>
     </string-array>
+
+    <!-- Validate identity -->
+    <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
+    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
 </resources>

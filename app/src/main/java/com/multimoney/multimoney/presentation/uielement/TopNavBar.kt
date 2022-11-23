@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.theme.Primary500
 @Composable
 @Preview
 fun TopNavBar(
+    modifier: Modifier = Modifier,
     isLeftButtonVisible: Boolean = true,
     isRightButtonVisible: Boolean = true,
     isCenterContentVisible: Boolean = false,
@@ -46,7 +47,7 @@ fun TopNavBar(
     }
 
     ConstraintLayout(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
     ) {
         val (leftIconId, centerContentId, rightIconId) = createRefs()

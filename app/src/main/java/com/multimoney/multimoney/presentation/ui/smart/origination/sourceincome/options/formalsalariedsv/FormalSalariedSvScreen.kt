@@ -20,9 +20,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.SmartSteps.Four
 import com.multimoney.data.util.catalog.SmartSteps.Search
-import com.multimoney.data.util.catalog.SmartSteps.Three
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -79,8 +77,8 @@ fun FormalSalariedSvScreen(
                     )
                 },
                 overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
-                nextStep = Four.id,
-                previousStep = Three.id
+                nextStep = sourceIncomeSharedViewModel.getNextStep(sharedViewModel.idBrandAsInt),
+                previousStep = sourceIncomeSharedViewModel.getPreviousStep(sharedViewModel.idBrandAsInt)
             )
         )
 

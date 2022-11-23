@@ -25,8 +25,9 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUseCase: QueryRelationshipUseCase) :
-    BaseViewModel(true) {
+class BeneficiariesViewModel @Inject constructor(
+    private val queryRelationshipUseCase: QueryRelationshipUseCase
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

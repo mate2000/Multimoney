@@ -70,8 +70,8 @@ fun SmartFactaScreen(
                         )
                     )
                 },
-                nextStep = SmartSteps.Six.id,
-                previousStep = SmartSteps.Four.id
+                nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) SmartSteps.Six.id else SmartSteps.Four.id,
+                previousStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) SmartSteps.Four.id else SmartSteps.Two.id
             )
         )
         viewModel.baseEvent.collect { event ->

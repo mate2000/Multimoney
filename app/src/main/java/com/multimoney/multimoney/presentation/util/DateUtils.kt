@@ -22,6 +22,13 @@ fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): S
     }
 }
 
+fun getCurrentDateString() = getPickedDateAsString(
+    Calendar.getInstance().get(Calendar.YEAR),
+    Calendar.getInstance().get(Calendar.MONTH),
+    Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+    YEAR_MONTH_DAY_PATTERN
+)
+
 fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
         val dateFormatted = SHORT_DATE_FORMAT.parse(date)

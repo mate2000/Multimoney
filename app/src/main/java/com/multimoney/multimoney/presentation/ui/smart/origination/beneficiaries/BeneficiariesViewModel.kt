@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,6 +32,9 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
 
     // UIState
     var uiState by mutableStateOf(UIState())
+
+    // Stateless
+    private var beneficiaryToUpdate: Beneficiary? = null
 
     private fun callQueryRelationshipUseCase(user: String, idBrand: Int, idRequest: Int) =
         executeUseCase {
@@ -71,9 +73,16 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
     }
 
     private fun onAddBeneficiaryStateChange(status: Boolean, beneficiary: Beneficiary?) {
-        val totalPercentage =
-            uiState.totalPercentage.plus(beneficiary?.allocationPercentage?.toInt() ?: 0)
+        // if the object is not null, then remove that beneficiary from the list before
+        // adding a new beneficiary obtained from the form's data.
+        beneficiaryToUpdate?.let {
+            onRemoveBeneficiary(it)
+            beneficiaryToUpdate = null
+        }
+
+        val totalPercentage = uiState.totalPercentage.plus(beneficiary?.allocationPercentage?.toInt() ?: 0)
         val beneficiariesList = uiState.beneficiaryList.toMutableList()
+
         if (beneficiary != null && totalPercentage <= MAX_PERCENTAGE) {
             beneficiariesList.add(beneficiary)
             uiState = uiState.copy(
@@ -97,8 +106,18 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         validatePercentage()
     }
 
+    /**
+     * fulfill the form' UI components with the previous beneficiary data
+     * @param beneficiary the object that contains the data to be shown on the UI.
+     */
     private fun onEditBeneficiary(beneficiary: Beneficiary) {
-        Log.d("tellEditAction", "edit beneficiary: ${beneficiary.fullName}")
+        uiState = uiState.copy(
+            addBeneficiaryState = true,
+            beneficiaryFullName = beneficiary.fullName.orEmpty(),
+            relationship = beneficiary.strRelationship.orEmpty(),
+            percentage = beneficiary.allocationPercentage.orEmpty()
+        )
+        beneficiaryToUpdate = beneficiary
     }
 
     private fun onShowAlertBeforeRemoveBeneficiary(beneficiary: Beneficiary) {

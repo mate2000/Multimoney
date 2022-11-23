@@ -49,9 +49,26 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
         infoBankAccount {
             statusFirm
             status
+            infoRequest {
+                idRequestSysde
+                idRequestGlobal
+                currentStep
+                statusRequest
+            }
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
         infoCrypto {
             status
+            statusFirm
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
     }
 }

@@ -69,6 +69,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "credit_screen"
     )
 
+    // Disbursement Add New Account Success
+    object AddNewAccountSuccessScreen : Screen(
+        route = "add_new_account_success_screen",
+        baseRoute = "add_new_account_success_screen"
+    )
+
     // VisaNavGraph
     object VisaIssuanceScreen : Screen("visa_issuance_screen/{$ID_BRAND}", "visa_issuance_screen")
     object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}", "visa_card_screen")

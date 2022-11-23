@@ -63,7 +63,7 @@ fun SmartLivAddressScreen(
                         )
                     )
                 },
-                nextStep = SmartSteps.Three.id,
+                nextStep = if (viewModel.idBrand == Brand.ElSalvador.id) SmartSteps.Three.id else SmartSteps.Two.id,
                 previousStep = SmartSteps.One.id
             )
         )
@@ -92,9 +92,11 @@ fun SmartLivAddressScreen(
         }
     }
 
-    Column(modifier = Modifier
-        .padding(horizontal = 16.dp)
-        .verticalScroll(scrollState)) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .verticalScroll(scrollState)
+    ) {
         Text(
             text = stringResource(id = R.string.smart_liv_address_title),
             modifier = Modifier.padding(top = 16.dp),

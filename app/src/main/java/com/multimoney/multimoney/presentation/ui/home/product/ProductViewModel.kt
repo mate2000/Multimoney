@@ -53,10 +53,10 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -188,7 +188,7 @@ class ProductViewModel @Inject constructor(
             }
             uiState = uiState.copy(
                 productPageList = productPageList,
-                canExpandCredit = it.getFirstCredit()?.canExpandCredit ?: false
+                canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false
             )
         }
     }
@@ -521,7 +521,6 @@ class ProductViewModel @Inject constructor(
         }
         return totalBalance > 0
     }
-
 
     data class UIState(
         // Fields

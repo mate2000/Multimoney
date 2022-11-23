@@ -11,7 +11,12 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SummaryListNavType
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountScreen
+
+const val NEXT_PAYMENT_DATE = "next_payment_date"
+const val QUOTA_TOTAL = "quota_total"
+const val SELECTED_AMOUNT = "selected_amount"
 
 fun NavGraphBuilder.disbursementNavGraph(navController: NavHostController) {
     navigation(
@@ -27,6 +32,29 @@ fun NavGraphBuilder.disbursementNavGraph(navController: NavHostController) {
             )
         ) {
             DisbursementAmountScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+
+        composable(
+            route = Screen.DisbursementAccountScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_CLIENT) { type = NavType.IntType },
+                navArgument(SUMMARY_LIST) { type = SummaryListNavType() }
+            )
+        ) {
+            DisbursementAccountScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 },

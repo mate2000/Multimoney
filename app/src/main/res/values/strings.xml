@@ -684,6 +684,11 @@
     <string name="disbursement_amount_info_dialog_title" translatable="false">Condiciones</string>
     <string name="disbursement_amount_info_dialog_description" translatable="false">La cuota e interés pueden variar según su evaluación crediticia.</string>
 
+    <!-- Disbursement Account-->
+    <string name="disbursement_account_sv_title" translatable="false">¿Dónde querés recibir tu crédito?</string>
+    <string name="disbursement_account_gt_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
+    <string name="disbursement_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
+
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>

@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCurrencyIndexChanged
@@ -80,6 +81,7 @@ class DisbursementAmountViewModel @Inject constructor(
     private var user: String? = ""
     private var idClient: Int? = null
     private var currencyItems: List<Int>? = listOf()
+    private var summary: List<Summary>? = listOf()
     private var pkUser: Int? = null
     private var creditNumber: String? = null
     private var creditExtensionAmount: CreditExtensionAmount? = null
@@ -90,6 +92,7 @@ class DisbursementAmountViewModel @Inject constructor(
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         user = savedStateHandle[USER]
         idClient = savedStateHandle[ID_CLIENT]
+        summary = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()
         currencyItems = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()?.map { it.idCurrency ?: 0 }
         pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
         creditNumber = savedStateHandle[CREDIT_NUMBER]
@@ -260,7 +263,13 @@ class DisbursementAmountViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 creditExtensionDetail = it
-                // TODO: Navigate to next screen
+                navigateTo(
+                    route = "${Screen.DisbursementAccountScreen.baseRoute}/$idBrand/$user/$idClient/${
+                    encodeData(
+                        summary
+                    )
+                    }/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}"
+                )
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,

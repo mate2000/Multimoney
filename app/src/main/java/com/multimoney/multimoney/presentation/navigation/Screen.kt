@@ -50,6 +50,7 @@ const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
 const val PROFILE_ROUTE = "profile_route"
+const val SMART_MOVEMENTS_ROUTE = "smart_movements_route"
 const val TEST_ROUTE = "test_route"
 
 const val ID_BRAND = "id_brand"
@@ -79,6 +80,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object HomeScreen : Screen("home_screen")
 
     object ProfileScreen : Screen("profile_screen/{$ID_BRAND}", "profile_screen")
+
+    object SmartMovementsScreen : Screen(
+        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
+        "smart_movements_screen"
+    )
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(

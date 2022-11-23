@@ -18,6 +18,9 @@ private fun GetCoreBankMovementsQuery.Result.mapToDomainModel(): SmartMovement {
 }
 
 private fun GetCoreBankMovementsQuery.GetCoreBankMovements.mapToDomainModel() =
-    SmartMovementsResult(result = result.map { it.mapToDomainModel() })
+    SmartMovementsResult(
+        totalRecords = totalRecords,
+        result = result.map { it.mapToDomainModel() }
+    )
 
 fun GetCoreBankMovementsQuery.Data.mapToDomainModel() = getCoreBankMovements?.mapToDomainModel()

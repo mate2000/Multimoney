@@ -18,6 +18,7 @@ query GetCoreBankMovements(
             monthDate: $monthDate
         }
     ) {
+        totalRecords
         result {
             idTransaction
             creationDate

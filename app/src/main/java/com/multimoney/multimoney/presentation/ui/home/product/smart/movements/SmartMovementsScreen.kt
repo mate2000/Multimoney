@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product.smart.movements
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute
@@ -32,7 +31,10 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnGetMovement
+import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnNavigateBackToHome
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.API_COLONES
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
@@ -48,11 +50,18 @@ fun SmartMovementsScreen(
         viewModel.onUIEvent(OnGetMovement(viewModel.uiState.currentPage, PAGE_SIZE))
     }
 
-    TopNavBar(
-        isLeftButtonVisible = true,
-        isRightButtonVisible = false,
-        onLeftButtonClick = { onNavigate }
-    )
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description.ifBlank {
+                stringResource(viewModel.uiState.openDialog.descriptionResource)
+            },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
 
     val scrollState = rememberScrollState()
     Column(
@@ -61,7 +70,11 @@ fun SmartMovementsScreen(
             .background(MultimoneyTheme.colors.background)
             .verticalScroll(scrollState)
     ) {
-        Log.d("AAASTATE", "STATE = ${scrollState.value} - MAX = ${scrollState.maxValue}")
+        TopNavBar(
+            isLeftButtonVisible = true,
+            isRightButtonVisible = false,
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBackToHome) }
+        )
 
         if (
             scrollState.value == scrollState.maxValue &&
@@ -69,13 +82,12 @@ fun SmartMovementsScreen(
             !viewModel.uiState.isLoading &&
             viewModel.uiState.moreRecordsAvailable
         ) {
-            Log.d("AAACALL", "STATE = ${scrollState.value} - MAX = ${scrollState.maxValue} - PAGE = ${viewModel.uiState.currentPage}")
             viewModel.onUIEvent(OnGetMovement(viewModel.uiState.currentPage, PAGE_SIZE))
         }
 
         Text(
             text = stringResource(string.home_product_movement_title),
-            style = Typography.h4.copy(
+            style = Typography.h5.copy(
                 color = MultimoneyTheme.colors.text
             ),
             modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
@@ -138,5 +150,6 @@ fun SmartMovementsScreen(
             Divider(color = MultimoneyTheme.colors.dividerWhite30)
         }
     }
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 const val PAGE_SIZE = 10

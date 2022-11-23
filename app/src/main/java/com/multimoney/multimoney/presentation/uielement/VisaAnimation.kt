@@ -10,16 +10,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidView
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
+import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.util.toHexCode
 import com.visa.SensoryBrandingView
 
 @Composable
 fun VisaAnimation(
     onFinishAnimationAction: () -> Unit
 ) {
-    val backDropColor: String = if (isSystemInDarkTheme()) {
-        "#FF080808"
+    val backDropColor = if (isSystemInDarkTheme()) {
+        GrayScale800
     } else {
-        "#FF080808"
+        GrayScale800
     }
     AndroidView(
         factory = { context ->
@@ -30,7 +32,7 @@ fun VisaAnimation(
                 val sensoryBrandingComponent: SensoryBrandingView =
                     sensoryBrandingViewContainer.findViewById(R.id.sensory_branding_view_component) as SensoryBrandingView
                 sensoryBrandingComponent.isCheckMarkShown = true
-                sensoryBrandingComponent.backdropColor = Color.parseColor(backDropColor)
+                sensoryBrandingComponent.backdropColor = Color.parseColor(backDropColor.toHexCode())
                 sensoryBrandingComponent.isSoundEnabled = true
                 sensoryBrandingComponent.isHapticFeedbackEnabled = true
                 animation.show()
@@ -45,7 +47,7 @@ fun VisaAnimation(
                         animation.cancel()
                         onFinishAnimationAction()
                     }
-                }, 100)
+                }, ANIMATION_DURATION)
             }
             sensoryBrandingViewContainer // return the view
         },
@@ -53,3 +55,5 @@ fun VisaAnimation(
         }
     )
 }
+
+private const val ANIMATION_DURATION = 100L

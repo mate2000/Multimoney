@@ -64,7 +64,9 @@ class PaymentCardListViewModel @Inject constructor(
                         openDialog = DialogParameters(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
-                        )
+                        ),
+                        cardVDList = listOf(CardVisaDirect()),
+                        isCardListEmpty = false
                     )
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)
@@ -73,13 +75,12 @@ class PaymentCardListViewModel @Inject constructor(
         }
     }
 
-    private fun onCardSelected(cardSelected: CardVisaDirect?) {
+    private fun onCardSelected(cardSelected: CardVisaDirect?) =
         navigateTo(
             route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$idBrand/$identification/$user/${
             encodeData(cardSelected)
             }"
         )
-    }
 
     private fun onNavigateBack() =
         navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)

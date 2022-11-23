@@ -196,8 +196,9 @@ dependencies {
     // Slider
     implementation slider.slider
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.github.Akrostechnologies:react-native-visa-sensory-branding:master'
+    // VISA
+    implementation appcompat.appcompat
+    implementation visa.visa
 
     // Common Test
     testImplementation common_test.junit

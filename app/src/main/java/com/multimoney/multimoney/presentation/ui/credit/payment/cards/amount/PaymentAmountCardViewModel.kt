@@ -43,7 +43,6 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onFinishVisaAnimation() {
         uiState = uiState.copy(isVisaAnimationVisible = false)
-        // onUIEvent(OnNavigateToVoucher)
     }
 
     private fun onNavigateBack() =

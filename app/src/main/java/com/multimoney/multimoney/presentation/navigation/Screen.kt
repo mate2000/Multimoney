@@ -1,26 +1,24 @@
 package com.multimoney.multimoney.presentation.navigation
 
-import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
-import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
-import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
-import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
@@ -29,17 +27,19 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUD
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 
-
 // Route
 const val LOGIN_ROUTE = "log_in_route"
 const val HOME_ROUTE = "home_route"
 const val CREDIT_ROUTE = "credit_route"
+const val DISBURSEMENT_ROUTE = "disbursement_route"
 const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
@@ -75,6 +75,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object CreditScreen : Screen(
         "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}",
         "credit_screen"
+    )
+
+    // DisbursementNavGraph Screens
+    object DisbursementAmountScreen : Screen(
+        "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}",
+        "disbursement_amount_screen"
     )
 
     // VisaNavGraph

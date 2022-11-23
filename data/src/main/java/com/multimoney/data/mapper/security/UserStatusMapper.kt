@@ -38,7 +38,7 @@ private fun ValidateUserStatusQuery.InfoPreApprove.mapToDomainModel() = InfoPreA
     selectedAmount = selectedAmount.toString().toFloat(),
     statusFirm = statusFirm,
     currentStep = currentStep,
-    infoProducts = infoProducts.map { it.mapToDomainModel() }
+    infoProducts = infoProducts?.map { it.mapToDomainModel() }
 )
 
 private fun ValidateUserStatusQuery.InfoProduct.mapToDomainModel() =

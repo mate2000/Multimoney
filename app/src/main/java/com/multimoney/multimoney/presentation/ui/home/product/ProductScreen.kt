@@ -411,6 +411,3 @@ fun TipBox(content: @Composable () -> Unit) {
         content()
     }
 }
-
-private const val NUMBER_PAGES = 2
-private const val PAGE_ZERO = 0

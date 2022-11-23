@@ -406,9 +406,14 @@ class ProductViewModel @Inject constructor(
         helper.shareTextPlain("$clientLabel: ${userName.uppercase()}\n$accountLabel: $ibanAccount")
     }
 
-    private fun onNavigateToDisbursement() {
-        // TODO: Navigate to disbursement screen
-    }
+    private fun onNavigateToDisbursement() =
+        navigateTo(
+            route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
+            encodeData(
+                balanceCredit?.getFirstCredit()?.summary
+            )
+            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}"
+        )
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(

@@ -185,4 +185,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")
     object SubscriptionScreen : Screen("subscription_screen")
+
+    // Disbursement Add New Account
+    object AddNewAccountScreen : Screen(
+        "add_new_account_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}",
+        "add_new_account_screen"
+    )
+
 }

@@ -17,10 +17,10 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnBeneficiaryFullNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnCallQueryRelationshipUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnEditBeneficiaryClick
-import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRemoveBeneficiaryClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnPercentageValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRemoveBeneficiaryClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -101,8 +101,36 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         Log.d("tellEditAction", "edit beneficiary: ${beneficiary.fullName}")
     }
 
+    private fun onShowAlertBeforeRemoveBeneficiary(beneficiary: Beneficiary) {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = string.smart_account_remove_beneficiary,
+                descriptionResource = string.smart_account_remove_beneficiary_alert_description,
+                positiveResource = string.common_remove,
+                negativeResource = string.cancel,
+                isActive = mutableStateOf(true),
+                positiveAction = {
+                    onRemoveBeneficiary(beneficiary)
+                }
+            )
+        )
+    }
+
+    /**
+     * remove the beneficiary from the local list, also update the total percentage
+     * @param beneficiary the item that will be removed from the list
+     */
     private fun onRemoveBeneficiary(beneficiary: Beneficiary) {
-        Log.d("tellEditAction", "remove beneficiary: ${beneficiary.fullName}")
+        val totalPercentage = uiState.totalPercentage.minus(
+            beneficiary.allocationPercentage?.toInt() ?: 0
+        )
+        val beneficiaryList = uiState.beneficiaryList.toMutableList()
+        beneficiaryList.remove(beneficiary)
+
+        uiState = uiState.copy(
+            beneficiaryList = beneficiaryList,
+            totalPercentage = totalPercentage,
+        )
     }
 
     private fun cleanUI() {
@@ -138,7 +166,7 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
                 event.beneficiary
             )
             is OnEditBeneficiaryClick -> onEditBeneficiary(event.beneficiary)
-            is OnRemoveBeneficiaryClick -> onRemoveBeneficiary(event.beneficiary)
+            is OnRemoveBeneficiaryClick -> onShowAlertBeforeRemoveBeneficiary(event.beneficiary)
             is OnAddBeneficiaryOptionChange -> uiState =
                 uiState.copy(addBeneficiaryOption = event.option)
         }

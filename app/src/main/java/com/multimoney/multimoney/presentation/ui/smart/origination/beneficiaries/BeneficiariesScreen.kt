@@ -142,6 +142,17 @@ fun BeneficiariesScreen(
         else BeneficiaryList(beneficiaryViewModel, sharedViewModel)
     }
 
+    if (beneficiaryViewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = beneficiaryViewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = beneficiaryViewModel.uiState.openDialog.descriptionResource),
+            negativeButtonText = stringResource(id = beneficiaryViewModel.uiState.openDialog.negativeResource),
+            positiveButtonText = stringResource(id = beneficiaryViewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = beneficiaryViewModel.uiState.openDialog.isActive,
+            onPositiveAction = beneficiaryViewModel.uiState.openDialog.positiveAction,
+        )
+    }
+
     BackHandler {
         beneficiaryViewModel.onUIEvent(OnAddBeneficiaryOptionChange(false))
     }
@@ -196,16 +207,6 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
         labelText = stringResource(id = string.smart_account_beneficiaries_percentage),
         modifier = Modifier.padding(top = 16.dp)
     )
-
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource),
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
-        )
-    }
     viewModel.onUIEvent(OnValidateForm)
 }
 

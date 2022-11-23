@@ -10,6 +10,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.uielement.SimpleItemRow
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -30,12 +31,22 @@ fun EditBeneficiaryBottomSheet(
             SimpleItemRow(
                 title = stringResource(R.string.smart_account_edit_beneficiary),
                 startIcon = R.drawable.ic_edit_bg,
-                onClick = onEditClick
+                onClick = {
+                    coroutineScope.launch {
+                        onEditClick()
+                        modalBottomSheetState.hide()
+                    }
+                }
             )
             SimpleItemRow(
                 title = stringResource(R.string.smart_account_remove_beneficiary),
                 startIcon = R.drawable.ic_delete_bg,
-                onClick = onRemoveClick
+                onClick = {
+                    coroutineScope.launch {
+                        onRemoveClick()
+                        modalBottomSheetState.hide()
+                    }
+                }
             )
         }
         BackHandler { onBackClick() }

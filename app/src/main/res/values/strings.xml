@@ -42,6 +42,7 @@
     <string name="common_try_again" translatable="false">Volver a intentar</string>
     <string name="info" translatable="false">Información</string>
     <string name="common_options" translatable="false">Opciones</string>
+    <string name="common_remove" translatable="false">Eliminar</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -565,7 +566,10 @@
 
     <!-- Smart Account - Edit Beneficiary -->
     <string name="smart_account_edit_beneficiary" translatable="false">Editar beneficiario</string>
+
+    <!-- Smart Account - Remove Beneficiary -->
     <string name="smart_account_remove_beneficiary" translatable="false">Eliminar beneficiario</string>
+    <string name="smart_account_remove_beneficiary_alert_description" translatable="false">¿Deseas eliminar beneficiario?</string>
 
     <!-- Smart - Close origin flow -->
     <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>

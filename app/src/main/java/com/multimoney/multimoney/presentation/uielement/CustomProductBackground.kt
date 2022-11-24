@@ -51,7 +51,7 @@ fun CustomProductBackground(
     val startOffset = screenWidth.value * SIXTY_PERCENT
 
     val gradientOneColor: Color
-    var gradientTwoColor: Color = Primary600
+    val gradientTwoColor: Color
     val gradientThreeColor: Color
 
     when (type) {
@@ -91,18 +91,22 @@ fun CustomProductBackground(
         ComplementaryOne -> {
             if (isSystemInDarkTheme()) {
                 gradientOneColor = ComplementaryOne500
+                gradientTwoColor = ComplementaryOne500
                 gradientThreeColor = GradientComplementaryOne
             } else {
                 gradientOneColor = ComplementaryOne500
+                gradientTwoColor = ComplementaryOne500
                 gradientThreeColor = GradientComplementaryOne
             }
         }
         ComplementaryTwo -> {
             if (isSystemInDarkTheme()) {
                 gradientOneColor = ComplementaryTwo500
+                gradientTwoColor = ComplementaryTwo500
                 gradientThreeColor = GradientComplementaryTwo
             } else {
                 gradientOneColor = ComplementaryTwo500
+                gradientTwoColor = ComplementaryTwo500
                 gradientThreeColor = GradientComplementaryTwo
             }
         }

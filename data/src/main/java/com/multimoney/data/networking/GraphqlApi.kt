@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
@@ -111,7 +112,7 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.query(
             PaymentAmountQuery(
                 amount,
-                months?:"",
+                months ?: "",
                 idProduct,
                 currencySymbol,
                 user,
@@ -846,4 +847,14 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<RelationshipQuery.Data> =
         apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun subscriptionAccountSmartContractEvent(
+        idBrand: Int,
+        idRequestSys: Long
+    ): ApolloCall<AccountSmartContractEventSubscription.Data> = apolloAuthorizedClient.subscription(
+        AccountSmartContractEventSubscription(
+            idBrand,
+            idRequestSys
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

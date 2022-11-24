@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
@@ -19,7 +20,10 @@ interface SmartAccountRepository {
         idBrand: Int
     ): Flow<MultimoneyResult<CivilStatusResult?>>
 
-    suspend fun queryProfessionsSmart(pkUser: String, idBrand: Int): Flow<MultimoneyResult<Professions?>>
+    suspend fun queryProfessionsSmart(
+        pkUser: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<Professions?>>
 
     suspend fun queryAddressLevelOne(
         user: String,
@@ -94,4 +98,9 @@ interface SmartAccountRepository {
         idBrand: Int,
         option: Int
     ): Flow<MultimoneyResult<RelationshipData>>
+
+    suspend fun subscriptionAccountContractEvent(
+        idBrand: Int,
+        idRequestSys: Long
+    ): Flow<MultimoneyResult<AccountSmartContractResult?>>
 }

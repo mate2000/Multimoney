@@ -4,6 +4,7 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
@@ -200,5 +201,16 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.queryRelationship(user, idBrand, option),
             apolloCallMapper = { data -> Success(data.mapToDomain()) }
         )
+    }
+
+    override suspend fun subscriptionAccountContractEvent(
+        idBrand: Int,
+        idRequestSys: Long
+    ): Flow<MultimoneyResult<AccountSmartContractResult?>> {
+        return fetchSubscription(
+            apolloCall = graphqlApi.subscriptionAccountSmartContractEvent(
+                idBrand,
+                idRequestSys
+            ), apolloCallMapper = { data -> Success(data?.mapToDomain()) })
     }
 }

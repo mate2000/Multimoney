@@ -96,6 +96,8 @@ import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUs
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryGetQuickActionsImpl
+import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
@@ -150,6 +152,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryValidateUserStatusUseCase(securityRepository: SecurityRepository): QueryValidateUserStatusUseCase =
         QueryValidateUserStatusUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetQuickActions(securityRepository: SecurityRepository): QueryGetQuickActionsUseCase =
+        QueryGetQuickActionsImpl(securityRepository)
 
     @Provides
     @Singleton

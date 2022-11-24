@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -37,11 +39,12 @@ import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
@@ -59,36 +62,44 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProductScreen(
-    isRestart: Boolean = true,
+    sharedViewModel: HomeViewModel,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
-    viewModel.apply {
-        isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
-            if (isOnRestart) {
-                onUIEvent(OnGetIdBrand)
-                executeNavigation(onNavigate = onNavigate)
-            }
-            onDispose {
-                isOnRestart = false
+    val coroutineScope = rememberCoroutineScope()
+
+    viewModel.onUIEvent(
+        OnSetUserData(
+            balanceCredit = sharedViewModel.uiState.balance,
+            pkUser = sharedViewModel.uiState.pkUser,
+            identification = sharedViewModel.uiState.identification,
+            email = sharedViewModel.uiState.email,
+            userName = sharedViewModel.uiState.userName,
+            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+            configurationVersion = sharedViewModel.uiState.configurationVersion
+        )
+    )
+    LaunchedEffect(key1 = true){
+        viewModel.executeNavigation(onNavigate = onNavigate)
+    }
+
+    LaunchedEffect(key1 = true){
+        sharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
+                    coroutineScope.launch {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnQuickActionClicked(event.flow))
+                    }
+                }
             }
         }
     }
 
-    LaunchedEffect(true) {
-        viewModel.baseEvent.collect { event ->
-            when (event) {
-                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
-                    event.millisInFuture
-                )
-            }
-        }
-    }
 
     // Pager
     val headerExpandedPagerState = rememberPagerState()
@@ -108,7 +119,7 @@ fun ProductScreen(
     }
 
     // todo we have to send the pages to the view pager when the back return
-    if (viewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
+    if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
         Column(
@@ -157,7 +168,6 @@ fun ProductScreen(
                 }
             )
         }
-        LoadingIndicator(viewModel.uiState.isLoading)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

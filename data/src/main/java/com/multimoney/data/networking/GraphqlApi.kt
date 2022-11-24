@@ -41,6 +41,7 @@ import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
+import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
@@ -859,5 +860,17 @@ class GraphqlApi @Inject constructor(
         option: Int
     ): ApolloCall<RelationshipQuery.Data> =
         apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetQuickActions(
+        idBrand: Int,
+        pkUser: Int,
+        identification: String,
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCriptoStatus: Int
+    ): ApolloCall<QuickActionsQuery.Data> =
+        apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 }

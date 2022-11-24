@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.ui.graphics.Color
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -117,3 +118,12 @@ fun String.getMaskedText(
     firstDigits: Int,
     lastDigits: Int
 ) = take(firstDigits).plus(maskSymbol).plus(takeLast(lastDigits))
+
+fun Color.toHexCode(): String {
+    val red = this.red * 255
+    val green = this.green * 255
+    val blue = this.blue * 255
+    return String.format(HEX_FORMAT, red.toInt(), green.toInt(), blue.toInt())
+}
+
+private const val HEX_FORMAT = "#%02x%02x%02x"

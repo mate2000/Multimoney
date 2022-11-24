@@ -32,6 +32,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
@@ -111,7 +112,7 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.query(
             PaymentAmountQuery(
                 amount,
-                months?:"",
+                months ?: "",
                 idProduct,
                 currencySymbol,
                 user,
@@ -300,6 +301,19 @@ class GraphqlApi @Inject constructor(
                 idBrand,
                 idClient,
                 idLoanClient
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryListCardsVD(
+        user: String,
+        idBrand: Int,
+        identification: String
+    ): ApolloCall<ListCardVDQuery.Data> =
+        apolloAuthorizedClient.query(
+            ListCardVDQuery(
+                identification,
+                user,
+                idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

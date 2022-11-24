@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency16
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
@@ -58,133 +59,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgr
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
-
-/**
- * Composable function to show the option to active accountsmart product
- */
-@Composable
-@Preview
-fun CardOfferSmartProduct(action: () -> Unit = {}) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .clickable { action.invoke() }
-    ) {
-        Text(
-            text = stringResource(id = R.string.home_product_not_approved_title),
-            modifier = Modifier.padding(top = 20.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.creditNotApprovedText
-        )
-        Text(
-            text = stringResource(id = R.string.home_product_not_approved_description),
-            modifier = Modifier.padding(top = 4.dp),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
-        )
-        CustomImage(
-            modifier = Modifier
-                .padding(top = 44.dp)
-                .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
-        )
-        Text(
-            text = stringResource(id = R.string.home_product_not_approved_action),
-            modifier = Modifier
-                .padding(bottom = 12.dp)
-                .align(Alignment.CenterHorizontally),
-            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
-        )
-    }
-}
-
-/**
- * Composable function to show the option to active smart product
- */
-@Composable
-@Preview
-fun CardSmartProduct(
-    currency: String = "",
-    profitTotal: String = "",
-    profitMonthly: String = "",
-    currentMonth: String = ""
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(top = 12.dp, start = 24.dp, end = 24.dp, bottom = 16.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.smart_card_balance),
-            modifier = Modifier.padding(top = 14.dp),
-            style = Typography.body1.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
-            )
-        )
-        Text(
-            text = stringResource(id = currency.getCurrencySymbolValue(), profitTotal),
-            modifier = Modifier.padding(bottom = 10.dp),
-            style = Typography.h4.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
-            )
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(BlackTransparency16),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.padding(
-                    vertical = 8.dp,
-                    horizontal = 12.dp
-                )
-            ) {
-                Text(
-                    text = stringResource(id = R.string.smart_card_monthly_profit),
-                    modifier = Modifier.padding(top = 4.dp),
-                    style = Typography.subtitle2.copy(color = MultimoneyTheme.colors.text)
-                )
-                Row {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = null,
-                        tint = MultimoneyTheme.colors.smartCardPlus
-                    )
-                    Text(
-                        text = stringResource(
-                            id = R.string.smart_card_monthly_profit_label,
-                            stringResource(id = currency.getCurrencySymbol()),
-                            profitMonthly,
-                            currentMonth
-                        ),
-                        modifier = Modifier.padding(start = 4.dp),
-                        style = Typography.body2.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            color = MultimoneyTheme.colors.text
-                        )
-                    )
-                }
-            }
-            Icon(
-                modifier = Modifier.padding(end = 12.dp),
-                tint = MultimoneyTheme.colors.smartCardTrending,
-                imageVector = Icons.Filled.TrendingUp,
-                contentDescription = null
-            )
-        }
-    }
-}
 
 /**
  * Composable to handle the status without credit GT

@@ -34,7 +34,8 @@ private fun ValidateUserStatusQuery.InfoCredit.mapToDomainModel() = InfoCredit(
     idClient = idClient.toString().toInt(),
     idLoanClient = idLoanClient.toString().toInt(),
     status = status,
-    infoPreApprove = infoPreApprove?.mapToDomainModel()
+    infoPreApprove = infoPreApprove?.mapToDomainModel(),
+    wording = wording?.mapToDomainModel()
 )
 
 private fun ValidateUserStatusQuery.InfoPreApprove.mapToDomainModel() = InfoPreApprove(
@@ -57,6 +58,12 @@ private fun ValidateUserStatusQuery.InfoBankAccount.mapToDomainModel() = InfoBan
 )
 
 private fun ValidateUserStatusQuery.Wording.mapToDomainModel() = Wording(
+    textOne = textOne,
+    textTwo = textTwo,
+    cTA = cTA
+)
+
+private fun ValidateUserStatusQuery.Wording1.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
     cTA = cTA

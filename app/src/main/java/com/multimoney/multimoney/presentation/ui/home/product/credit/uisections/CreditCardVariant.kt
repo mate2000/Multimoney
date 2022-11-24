@@ -32,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -106,21 +108,10 @@ fun CardGTWithoutCredit(action: () -> Unit = {}) {
 fun CreditPreApproved(
     amount: String? = "0.0",
     idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {}
+    action: () -> Unit = {},
+    wording: Wording? = Wording("", "", "")
 ) {
-    var description = ""
-
-    description = if (idBrand == Brand.Guatemala.id) {
-        stringResource(
-            id = R.string.home_product_gt_credit_approved_card_description,
-            amount ?: "0.0"
-        )
-    } else {
-        stringResource(
-            id = R.string.home_product_credit_approved_card_description,
-            amount ?: "0.0"
-        )
-    }
+    val notDefinedValue = stringResource(id = R.string.not_defined)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,13 +122,13 @@ fun CreditPreApproved(
             }
     ) {
         Text(
-            text = stringResource(id = R.string.home_product_credit_approved_card_title),
+            text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
             modifier = Modifier.padding(top = 20.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.creditNotApprovedText
         )
         Text(
-            text = description,
+            text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
             modifier = Modifier.padding(top = 4.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
@@ -149,7 +140,7 @@ fun CreditPreApproved(
             drawableResource = R.drawable.ic_chevron_up
         )
         Text(
-            text = stringResource(id = R.string.home_product_credit_approved_card_action),
+            text = wording?.cTA?.filter { wording.cTA != notDefinedValue } ?: "",
             modifier = Modifier
                 .padding(bottom = 12.dp)
                 .align(Alignment.CenterHorizontally),
@@ -164,12 +155,14 @@ fun CreditPreApproved(
 fun CardWithCreditInProcess(
     type: CreditProcessStarted = CreditProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {}
+    action: () -> Unit = {},
+    wording: Wording? = Wording("","", "")
 ) {
-    val chipText = R.string.home_product_process_credit_label
-    val title: Int
-    val description: Int
-    val actionText: Int
+    val notDefinedValue = stringResource(id = R.string.not_defined)
+    var chipText = R.string.home_product_process_credit_label
+    val title: String = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: ""
+    val description: String = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: ""
+    val actionText: String? = wording?.cTA?.filter { wording.textTwo != notDefinedValue }
     var startIcon = R.drawable.ic_time
 
     val backgroundShip: Color = if (isSystemInDarkTheme()) {
@@ -179,65 +172,19 @@ fun CardWithCreditInProcess(
     }
     when (type) {
         CreditStartProcessIncomplete -> {
-            title = R.string.home_product_credit_not_completed_title
-            description = R.string.home_product_credit_not_completed_description
-            actionText = R.string.home_product_credit_not_completed_action
-            startIcon = R.drawable.ic_warning
+            chipText = string.home_product_process_credit_preapproved_label
+            startIcon = drawable.ic_warning
         }
         CreditProcessOnFidoIncomplete -> {
-            title = R.string.home_on_fido_pending_title
-            description = R.string.home_on_fido_pending_description
-            actionText = R.string.home_on_fido_pending_action_text
-            startIcon = R.drawable.ic_warning
-        }
-        CreditProcessFirmIncomplete -> {
-            title = R.string.home_firm_incomplete_title
-            description = R.string.home_firm_incomplete_description
-            actionText = R.string.home_firm_incomplete_action
+            startIcon = drawable.ic_warning
         }
         CreditProcessOnfidoReject -> {
-            title = R.string.onfido_rejected_first_time_title
-            description = if (idBrand == Brand.Guatemala.id) {
-                R.string.onfido_rejected_first_time_subtitle_gt
-            } else {
-                R.string.onfido_rejected_first_time_subtitle
-            }
-            actionText = R.string.onfido_rejected_action
-            startIcon = R.drawable.ic_warning
-        }
-        CreditProcessOnfidoMaxAttempts -> {
-            title = R.string.onfido_rejected_second_time_title
-            description = R.string.onfido_rejected_second_time_subtitle
-            actionText = R.string.onfido_rejected_action_second_time
-        }
-        CreditProcessFirmReject -> {
-            title = R.string.sign_document_reject_title
-            description = if (idBrand == Brand.Guatemala.id) {
-                R.string.sign_document_reject_description_gt
-            } else {
-                R.string.sign_document_reject_description
-            }
-            actionText = R.string.home_firm_incomplete_action
-        }
-        CreditProcessFirmMaxAttempts -> {
-            title = R.string.sign_credit_max_attempts_title
-            description = if (idBrand == Brand.Guatemala.id) {
-                R.string.sign_credit_max_attempts_message_gt
-            } else {
-                R.string.sign_credit_max_attempts_message
-            }
-            actionText = R.string.sign_credit_max_attempts_contact
+            startIcon = drawable.ic_warning
         }
         CreditProcessCreateAccountFailure -> {
-            title = R.string.home_save_credit_operation_error_title
-            description = if (idBrand == Brand.Guatemala.id) {
-                R.string.home_save_credit_operation_error_description_gt
-            } else {
-                R.string.home_save_credit_operation_error_description
-            }
-            actionText = R.string.contact
-            startIcon = R.drawable.ic_warning
+            startIcon = drawable.ic_warning
         }
+        else -> Unit
     }
 
     Column(
@@ -262,32 +209,37 @@ fun CardWithCreditInProcess(
             startIconTint = MultimoneyTheme.colors.iconColor
         )
         Text(
-            text = stringResource(id = title),
+            text = title,
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
         Text(
-            text = stringResource(id = description),
+            text = description,
             modifier = Modifier.padding(top = 8.dp),
             style = Typography.caption,
             color = MultimoneyTheme.colors.text
         )
-        CustomImage(
-            modifier = Modifier
-                .padding(top = 21.dp)
-                .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
-        )
-        Text(
-            text = stringResource(id = actionText),
-            modifier = Modifier
-                .padding(bottom = 12.dp)
-                .align(Alignment.CenterHorizontally),
-            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text,
-            textAlign = TextAlign.Center
-        )
+        actionText?.let {
+            if (it.isNotBlank()){
+                CustomImage(
+                    modifier = Modifier
+                        .padding(top = 21.dp)
+                        .align(Alignment.CenterHorizontally),
+                    drawableResource = R.drawable.ic_chevron_up
+                )
+
+                Text(
+                    text = actionText,
+                    modifier = Modifier
+                        .padding(bottom = 12.dp)
+                        .align(Alignment.CenterHorizontally),
+                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.text,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }
 
@@ -428,9 +380,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                            ?: 0
-                                        ) > 0
+                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                    ?: 0
+                                                ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

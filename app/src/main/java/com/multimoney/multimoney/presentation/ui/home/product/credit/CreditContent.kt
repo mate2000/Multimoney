@@ -62,7 +62,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_INITIAL_CARD))
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_INFO_INCOMPLETE, this) -> {
@@ -70,7 +71,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 type = CreditStartProcessIncomplete,
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_INFO_INCOMPLETE))
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_IDENTITY_INCOMPLETE, this) -> {
@@ -78,7 +80,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 type = CreditProcessOnFidoIncomplete,
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_IDENTITY_INCOMPLETE))
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_INCOMPLETE, this) -> {
@@ -86,7 +89,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 type = CreditProcessFirmIncomplete,
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_FIRM_INCOMPLETE))
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRMED_ONFIDO_PENDING, this) -> {
@@ -98,7 +102,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_FIRM_REJECTED))
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_MAX_ATTEMPTS, this) -> {
@@ -112,7 +117,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                             context = context
                                         )
                                     )
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_REJECTED, this) -> {
@@ -121,7 +127,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(OnNavigateToCreditScreen(ProductViewModel.CREDIT_ONFIDO_REJECTED))
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_MAX_ATTEMPTS, this) -> {
@@ -135,7 +142,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                                             context = context
                                         )
                                     )
-                                }
+                                },
+                                wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ERROR_CREATE_ACCOUNT, this) -> {

@@ -8,9 +8,11 @@ import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
+import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.security.ConfigurationVersion
+import com.multimoney.domain.model.security.QuickAction
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.catalog.ConfigurationPlatform
 import com.multimoney.domain.model.util.error.HttpError
@@ -41,41 +43,75 @@ class HomeViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
-    private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase
+    private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
+    private val querytGetQuickActionsUseCase: QueryGetQuickActionsUseCase
 ) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
-    // Stateless
-    var configurationVersion: ConfigurationVersion? = null
-    var validateUserStatus: ValidateUserStatus? = null
-    var balance: Balance? = null
-    var idBrand: String = ""
-    var pkUser: String = ""
-    var identification: String = ""
-    var email: String = ""
-    var userName: String = ""
-
     private fun onsetUserData() {
         viewModelScope.launch {
-            idBrand = dataStorePreferences.getIdBrand().first()
-            pkUser = dataStorePreferences.getPkUser().first()
-            identification = dataStorePreferences.getIdentification().first()
-            email = dataStorePreferences.getUserEmail().first()
-            userName = dataStorePreferences.getUserName().first()
-
-            callQueryValidateUserStatus(
-                pkUser.toInt(),
-                identification,
-                email,
-                idBrand.toInt()
+            uiState = uiState.copy(
+                idBrand = dataStorePreferences.getIdBrand().first(),
+                pkUser = dataStorePreferences.getPkUser().first(),
+                identification = dataStorePreferences.getIdentification().first(),
+                email = dataStorePreferences.getUserEmail().first(),
+                userName = dataStorePreferences.getUserName().first()
             )
 
-            callQueryGetConfigurationVersion(idBrand.toInt())
+            callQueryValidateUserStatus(
+                uiState.pkUser.toInt(),
+                uiState.identification,
+                uiState.email,
+                uiState.idBrand.toInt()
+            )
+
+            callQueryGetConfigurationVersion(uiState.idBrand.toInt())
+
+
         }
     }
+
+    private fun callQueryGetQuickActions(
+        idBrand : Int,
+        pkUser : Int,
+        identification : String,
+        infoCreditStatus : Int,
+        infoVirtualCardStatus : Int,
+        infoBankAccountStatus : Int,
+        infoCriptoStatus : Int
+    ) = executeUseCase {
+        querytGetQuickActionsUseCase.invoke(
+            idBrand =  idBrand,
+            pkUser = pkUser,
+            identification = identification,
+            infoCreditStatus = infoCreditStatus,
+            infoVirtualCardStatus = infoVirtualCardStatus,
+            infoBankAccountStatus = infoBankAccountStatus,
+            infoCriptoStatus = infoCriptoStatus
+        ).collectLatest { result ->
+            result.onSuccess { balance ->
+                balance?.let {
+                    if (uiState.isLoading)
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            quickActions = it.quickActions
+                        )
+                }
+
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+
 
     private fun callQueryBalanceUseCase(
         user: String,
@@ -100,7 +136,14 @@ class HomeViewModel @Inject constructor(
             cardStatus = cardStatus
         ).collectLatest { result ->
             result.onSuccess { balance ->
-                this.balance = balance
+                balance?.let {
+                    if (uiState.isLoading)
+                        uiState = uiState.copy(isLoading = false)
+                    uiState = uiState.copy(balance = balance)
+
+                    //this.balance = balance
+                }
+
             }
             result.onFailure {
                 onFailure(it)
@@ -120,8 +163,14 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
-                balance?.let { uiState = uiState.copy(isLoading = false) }
-                this.configurationVersion = configurationVersion
+
+                configurationVersion?.let {
+//                    if (uiState.isLoading)
+//                        uiState = uiState.copy(isLoading = false)
+                    uiState = uiState.copy(configurationVersion = configurationVersion)
+                    //this.configurationVersion = configurationVersion
+                }
+
                 emitBaseEvent(
                     OnStartCountDownTimer(
                         configurationVersion?.configuration?.timeSession?.toLong() ?: 0
@@ -151,7 +200,8 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { validateUserStatus ->
                 dataStorePreferences.setUserPhoneNumber(validateUserStatus?.infoUser?.phone.orEmpty())
-                this.validateUserStatus = validateUserStatus
+                uiState = uiState.copy(validateUserStatus = validateUserStatus)
+                //this.validateUserStatus = validateUserStatus
                 callQueryBalanceUseCase(
                     user = email,
                     identification = identification,
@@ -163,6 +213,15 @@ class HomeViewModel @Inject constructor(
                     cryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     // cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0
                     cardStatus = 0 // TODO, the API doesn't support this yet
+                )
+                callQueryGetQuickActions(
+                    idBrand = idBrand,
+                    pkUser = pkUser,
+                    identification = identification,
+                    infoCreditStatus = validateUserStatus?.infoCredit?.status ?: 0,
+                    infoVirtualCardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0,
+                    infoCriptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
+                    infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
             }
             result.onFailure {
@@ -201,7 +260,16 @@ class HomeViewModel @Inject constructor(
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters()
+        val openDialog: DialogParameters = DialogParameters(),
+        var quickActions : List<QuickAction>? = listOf(),
+        var configurationVersion: ConfigurationVersion? = null,
+        var validateUserStatus: ValidateUserStatus? = null,
+        var balance: Balance? = null,
+        var idBrand: String = "",
+        var pkUser: String = "",
+        var identification: String = "",
+        var email: String = "",
+        var userName: String = ""
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

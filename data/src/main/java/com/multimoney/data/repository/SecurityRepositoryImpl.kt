@@ -3,18 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
-import com.multimoney.domain.model.security.CatalogType
-import com.multimoney.domain.model.security.ClientInfoCr
-import com.multimoney.domain.model.security.Company
-import com.multimoney.domain.model.security.ConfigurationVersion
-import com.multimoney.domain.model.security.CountryList
-import com.multimoney.domain.model.security.OnfidoCheckProcess
-import com.multimoney.domain.model.security.OnfidoToken
-import com.multimoney.domain.model.security.SendPinProcess
-import com.multimoney.domain.model.security.UserData
-import com.multimoney.domain.model.security.ValidatePin
-import com.multimoney.domain.model.security.ValidateSecurity
-import com.multimoney.domain.model.security.ValidateUserStatus
+import com.multimoney.domain.model.security.*
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -169,6 +158,7 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
+
     override suspend fun mutationSendPinProcess(
         identification: String,
         firstName: String,
@@ -314,4 +304,28 @@ class SecurityRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
+    override suspend fun queryGetQuickActions(
+        idBrand: Int,
+        pkUser: Int,
+        identification: String,
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCriptoStatus: Int
+    ): Flow<MultimoneyResult<QuickActions?>> =
+        fetchData(
+            apolloCall = graphqlApi.queryGetQuickActions(
+                idBrand,
+                pkUser,
+                identification,
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCriptoStatus
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
 }

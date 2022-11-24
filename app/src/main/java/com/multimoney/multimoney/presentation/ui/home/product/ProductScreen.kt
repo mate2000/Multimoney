@@ -65,32 +65,35 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductType
 @Composable
 fun ProductScreen(
     sharedViewModel: HomeViewModel,
-    isRestart: Boolean = true,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
-    viewModel.apply {
-        isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
-            if (isOnRestart) {
-                onUIEvent(
-                    OnSetUserData(
-                        balanceCredit = sharedViewModel.balance,
-                        pkUser = sharedViewModel.pkUser,
-                        identification = sharedViewModel.identification,
-                        email = sharedViewModel.email,
-                        userName = sharedViewModel.userName,
-                        validateUserStatus = sharedViewModel.validateUserStatus,
-                        configurationVersion = sharedViewModel.configurationVersion
-                    )
-                )
-                executeNavigation(onNavigate = onNavigate)
-            }
-            onDispose {
-                isOnRestart = false
-            }
-        }
+    viewModel.onUIEvent(
+        OnSetUserData(
+            balanceCredit = sharedViewModel.uiState.balance,
+            pkUser = sharedViewModel.uiState.pkUser,
+            identification = sharedViewModel.uiState.identification,
+            email = sharedViewModel.uiState.email,
+            userName = sharedViewModel.uiState.userName,
+            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+            configurationVersion = sharedViewModel.uiState.configurationVersion
+        )
+    )
+    LaunchedEffect(key1 = true){
+        viewModel.executeNavigation(onNavigate = onNavigate)
     }
+//    viewModel.apply {
+//        isOnRestart = isRestart
+//        DisposableEffect(isOnRestart) {
+//            if (isOnRestart) {
+//
+//                executeNavigation(onNavigate = onNavigate)
+//            }
+//            onDispose {
+//                isOnRestart = false
+//            }
+//        }
+//    }
 
     // Pager
     val headerExpandedPagerState = rememberPagerState()
@@ -110,7 +113,7 @@ fun ProductScreen(
     }
 
     // todo we have to send the pages to the view pager when the back return
-    if (viewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
+    if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
         Column(
@@ -159,7 +162,7 @@ fun ProductScreen(
                 }
             )
         }
-        LoadingIndicator(viewModel.uiState.isLoading)
+        //LoadingIndicator(sharedViewModel.uiState.isLoading)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

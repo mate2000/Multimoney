@@ -70,36 +70,7 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
-import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
-import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
-import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
-import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
-import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
-import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseCase
-import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCase
-import com.multimoney.domain.interaction.security.QueryDataInformationClientUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
-import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
-import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
-import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
-import com.multimoney.domain.interaction.security.QueryValidatePinUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCase
-import com.multimoney.domain.interaction.security.QueryValidateUserExistsUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
-import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCaseImpl
-import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
-import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
+import com.multimoney.domain.interaction.security.*
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
 import com.multimoney.domain.repository.SecurityRepository
@@ -144,6 +115,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryValidateUserStatusUseCase(securityRepository: SecurityRepository): QueryValidateUserStatusUseCase =
         QueryValidateUserStatusUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetQuickActions(securityRepository: SecurityRepository): QueryGetQuickActionsUseCase =
+        QueryGetQuickActionsImpl(securityRepository)
 
     @Provides
     @Singleton

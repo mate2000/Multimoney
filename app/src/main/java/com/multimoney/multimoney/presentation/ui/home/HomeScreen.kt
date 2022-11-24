@@ -6,14 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
+import androidx.compose.material.*
 import androidx.compose.material.ModalBottomSheetValue.Hidden
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -63,9 +57,10 @@ fun HomeScreen(
 
     val innerNavController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
-    val quickActionsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val quickActionsModalBottomSheetState = rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
     val activity = (LocalContext.current as? Activity)
+
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
@@ -78,6 +73,7 @@ fun HomeScreen(
             when (event) {
                 is HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
                     coroutineScope.launch {
+
                         quickActionsModalBottomSheetState.show()
                     }
                 }
@@ -97,7 +93,6 @@ fun HomeScreen(
         Column(Modifier.padding(paddingValues)) {
             HomeInsideNavGraph(
                 sharedViewModel = viewModel,
-                isRestart = isRestart,
                 navController = navController,
                 innerNavController = innerNavController
             )
@@ -124,8 +119,6 @@ fun HomeScreen(
             }
         }
     }
-
-    LoadingIndicator(viewModel.uiState.isLoading)
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(

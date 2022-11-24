@@ -18,7 +18,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -30,7 +30,6 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
@@ -57,14 +56,15 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomSlider
 import com.multimoney.multimoney.presentation.uielement.CustomToggleButton
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.Size.Large
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyIntegerTransformation
 
 @Composable
-@Preview
 fun DisbursementAmountScreen(
+    isRestart: Boolean,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: DisbursementAmountViewModel = hiltViewModel()
@@ -72,12 +72,20 @@ fun DisbursementAmountScreen(
     // Properties
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(key1 = true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-        viewModel.onUIEvent(OnStart)
+    viewModel.apply {
+        isOnRestart = isRestart
+        DisposableEffect(isOnRestart) {
+            if (isOnRestart) {
+                viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+                viewModel.onUIEvent(OnStart)
+            }
+            onDispose {
+                isOnRestart = false
+            }
+        }
     }
 
-    if (viewModel.uiState.isLoading) {
+    if (viewModel.uiState.isLoading && viewModel.uiState.isContinue.not()) {
         DisbursementAmountScreenSkeleton()
     } else {
         Column(
@@ -214,10 +222,12 @@ fun DisbursementAmountScreen(
         }
     }
 
+    LoadingIndicator(viewModel.uiState.isContinue)
+
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description,
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,

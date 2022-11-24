@@ -39,7 +39,7 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun DisbursementAccountScreen(
-    isRestart: Boolean = true,
+    isRestart: Boolean,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: DisbursementAccountViewModel = hiltViewModel()

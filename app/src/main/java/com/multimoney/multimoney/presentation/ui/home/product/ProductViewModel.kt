@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,6 +41,7 @@ import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -435,6 +437,15 @@ class ProductViewModel @Inject constructor(
         return amount
     }
 
+    private fun OnQuickActionClicked(flow : String){
+        Log.e("TAG","opening flow")
+        when (flow){
+            QuickActionFlow.ACTIVATE_MM_VISA.flow -> onNavigateToVisaActivateScreen()
+            QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
+        }
+
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -484,6 +495,7 @@ class ProductViewModel @Inject constructor(
             is IsPaymentExpired -> isExpired()
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
+            is UIEvent.OnQuickActionClicked -> OnQuickActionClicked(uiEvent.flow)
         }
     }
 
@@ -533,6 +545,8 @@ class ProductViewModel @Inject constructor(
             val accountLabel: String,
             val ibanAccount: String
         ) : UIEvent()
+
+        data class OnQuickActionClicked (val flow : String) : UIEvent()
     }
 
     companion object {

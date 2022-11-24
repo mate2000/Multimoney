@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -60,6 +62,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -68,6 +71,8 @@ fun ProductScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     viewModel.onUIEvent(
         OnSetUserData(
             balanceCredit = sharedViewModel.uiState.balance,
@@ -82,6 +87,19 @@ fun ProductScreen(
     LaunchedEffect(key1 = true){
         viewModel.executeNavigation(onNavigate = onNavigate)
     }
+
+    LaunchedEffect(key1 = true){
+        sharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
+                    coroutineScope.launch {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnQuickActionClicked(event.flow))
+                    }
+                }
+            }
+        }
+    }
+
 
     // Pager
     val headerExpandedPagerState = rememberPagerState()

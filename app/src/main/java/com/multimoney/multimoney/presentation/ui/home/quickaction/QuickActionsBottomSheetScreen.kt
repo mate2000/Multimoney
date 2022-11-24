@@ -1,16 +1,17 @@
 package com.multimoney.multimoney.presentation.ui.home.quickaction
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
@@ -31,7 +32,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.QuickAction
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.*
+import com.multimoney.multimoney.presentation.theme.ComplementaryTwo500
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.Secondary500
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency16
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionsProductType
@@ -75,14 +81,14 @@ fun QuickActionBottomSheetScreen(
                     QuickActionsRow(
                         viewModel = viewModel,
                         quickActions = it,
-                        quickActionsBackgroundColor = Primary500
+                        quickActionsBackgroundColor = Primary500,
+                        shareViewModel = shareViewModel
                     )
                 }
                 when (viewModel.quickActionUiState.idBrand) {
                     Brand.CostaRica.id.toString(), Brand.ElSalvador.id.toString() -> {
-                        /*
-                        SMART SECTION
-                         */
+
+                        //smart section
                         smartActions.let {
                             Spacer(modifier = Modifier.height(16.dp))
                             Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
@@ -96,14 +102,12 @@ fun QuickActionBottomSheetScreen(
                             QuickActionsRow(
                                 viewModel = viewModel,
                                 quickActions = it,
-                                quickActionsBackgroundColor = Secondary500
+                                quickActionsBackgroundColor = Secondary500,
+                                shareViewModel = shareViewModel
                             )
                         }
 
-                        /*
-                        CRYPTO SECTION
-                         */
-
+                        //crypto section
                         cryptoActions.let {
                             Spacer(modifier = Modifier.height(16.dp))
                             Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
@@ -116,7 +120,8 @@ fun QuickActionBottomSheetScreen(
                             QuickActionsRow(
                                 viewModel = viewModel,
                                 quickActions = it,
-                                quickActionsBackgroundColor = ComplementaryTwo500
+                                quickActionsBackgroundColor = ComplementaryTwo500,
+                                shareViewModel = shareViewModel
                             )
                         }
                     }
@@ -131,7 +136,8 @@ fun QuickActionBottomSheetScreen(
 fun QuickActionsRow(
     viewModel: QuickActionsBottomSheetViewModel,
     quickActions: List<QuickAction>?,
-    quickActionsBackgroundColor: Color
+    quickActionsBackgroundColor: Color,
+    shareViewModel: HomeViewModel
 ) {
     LazyRow(
         modifier = Modifier
@@ -146,7 +152,10 @@ fun QuickActionsRow(
                         iconId = quickActions[index].iconId,
                     ), backgroundColor = quickActionsBackgroundColor
                 ) {
+                    Log.e("Clicking","Item")
                     // send to savings smart screen
+
+                    shareViewModel.onUIEvent(HomeViewModel.UIEvent.OnOpenQuickActionFlow(quickActions[index].flow))
                 }
             }
         }

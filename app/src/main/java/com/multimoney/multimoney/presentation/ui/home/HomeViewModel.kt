@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSe
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -240,6 +241,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun openQuickActionFlow(flow : String){
+        emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
@@ -260,13 +265,14 @@ class HomeViewModel @Inject constructor(
             is OnBottomNavigationItemClick -> navigation(uiEvent.innerNavHostController, uiEvent.route)
             is OnSignOut -> popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
             is OnSetUserData -> onsetUserData()
+            is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
         }
     }
 
     sealed class UIEvent {
+        data class OnOpenQuickActionFlow (val flow : String) : UIEvent()
         data class OnBottomNavigationItemClick(val innerNavHostController: NavHostController, val route: String) :
             UIEvent()
-
         object OnSetUserData : UIEvent()
         object OnSignOut : UIEvent()
     }
@@ -275,5 +281,6 @@ class HomeViewModel @Inject constructor(
         object OnOpenQuickActionsBottomSheet : BaseEvent()
         object OnOpenMyProductsBottomSheet : BaseEvent()
         data class OnStartCountDownTimer(val millisInFuture: Long?)
+        data class OnQuickActionClicked (val flow : String)
     }
 }

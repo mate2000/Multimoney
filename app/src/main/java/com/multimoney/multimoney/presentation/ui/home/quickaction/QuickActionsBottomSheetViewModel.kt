@@ -1,15 +1,19 @@
 package com.multimoney.multimoney.presentation.ui.home.quickaction
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.security.ValidateUserStatus
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.presentation.util.catalog.QuickActionIconByType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -52,17 +56,17 @@ class QuickActionsBottomSheetViewModel @Inject constructor(
 
     private fun getQuickActionIconByType(iconId : String) : Int? {
         return when (iconId){
-            "1" -> R.drawable.ic_quick_action_calendar
-            "2" -> R.drawable.ic_quick_action_money
-            "3" -> R.drawable.ic_quick_action_visa_logo
-            "4" -> R.drawable.ic_quick_action_view
-            "5" -> R.drawable.ic_quick_action_pay
-            "6" -> R.drawable.ic_saving_smart
-            "7" -> R.drawable.ic_send_money
-            "8" -> R.drawable.ic_buy_crypto
-            "9" -> R.drawable.ic_quick_actionsell_crypto
-            "10" -> R.drawable.ic_quick_action_receive_crypto
-            "11" -> R.drawable.ic_quick_action_send_crypto
+            QuickActionIconByType.DISBURSE_AVAILABLE.iconId -> QuickActionIconByType.DISBURSE_AVAILABLE.iconResource
+            QuickActionIconByType.PAY_FEE.iconId -> QuickActionIconByType.PAY_FEE.iconResource
+            QuickActionIconByType.ACTIVATE_MM_VISA.iconId -> QuickActionIconByType.ACTIVATE_MM_VISA.iconResource
+            QuickActionIconByType.SEE_MM_VISA.iconId -> QuickActionIconByType.SEE_MM_VISA.iconResource
+            QuickActionIconByType.PAY_AT_BUSINESS.iconId -> QuickActionIconByType.PAY_AT_BUSINESS.iconResource
+            QuickActionIconByType.SAVE_SMART.iconId -> QuickActionIconByType.SAVE_SMART.iconResource
+            QuickActionIconByType.SEND_MONEY.iconId -> QuickActionIconByType.SEND_MONEY.iconResource
+            QuickActionIconByType.BUY_CRYPTO.iconId -> QuickActionIconByType.BUY_CRYPTO.iconResource
+            QuickActionIconByType.SELL_CRYPTO.iconId -> QuickActionIconByType.SELL_CRYPTO.iconResource
+            QuickActionIconByType.RECEIVE_CRYPTO.iconId -> QuickActionIconByType.RECEIVE_CRYPTO.iconResource
+            QuickActionIconByType.SEND_CRYPTO.iconId -> QuickActionIconByType.SEND_CRYPTO.iconResource
             else -> null
         }
     }

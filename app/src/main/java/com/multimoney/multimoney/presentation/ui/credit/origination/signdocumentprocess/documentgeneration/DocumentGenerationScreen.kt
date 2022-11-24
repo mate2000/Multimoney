@@ -40,7 +40,9 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(FlowPreview::class)
 @Composable
 fun DocumentGenerationScreen(
-    viewModel: SignDocumentProcessViewModel
+    viewModel: SignDocumentProcessViewModel,
+    title: Int? = null,
+    subtitle: Int? = null
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
@@ -67,7 +69,7 @@ fun DocumentGenerationScreen(
         ) {
             CustomImage(drawableResource = drawable.ic_frame)
             Text(
-                text = stringResource(id = string.document_generation_title),
+                text = stringResource(id = title ?: string.document_generation_title),
                 modifier = Modifier.padding(top = 24.dp),
                 style = Typography.h5.copy(
                     fontWeight = FontWeight.SemiBold,
@@ -77,14 +79,17 @@ fun DocumentGenerationScreen(
                 textAlign = TextAlign.Center
             )
             Text(
-                text = stringResource(id = string.document_generation_subtitle),
+                text = stringResource(id = subtitle ?: string.document_generation_subtitle),
                 modifier = Modifier.padding(top = 8.dp),
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.text,
                 textAlign = Companion.Center
             )
         }
-        Row(modifier = Modifier.padding(bottom = 30.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.padding(bottom = 30.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(32.dp),
                 color =

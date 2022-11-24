@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.Companion.NUMBER_REGEX
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.Companion.SPECIAL_CHARACTER_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.All
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
@@ -27,7 +29,13 @@ fun Context.openWhatsAppDeepLink(link: String) {
 
 fun Context.openMapsLink(latitude: String, longitude: String) {
     val mapsIntentUri =
-        Uri.parse(String.format(resources.getString(R.string.payment_location_intent_uri_format), latitude, longitude))
+        Uri.parse(
+            String.format(
+                resources.getString(R.string.payment_location_intent_uri_format),
+                latitude,
+                longitude
+            )
+        )
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
     mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)
@@ -117,3 +125,7 @@ fun String.getMaskedText(
     firstDigits: Int,
     lastDigits: Int
 ) = take(firstDigits).plus(maskSymbol).plus(takeLast(lastDigits))
+
+// Formatted strings
+fun String.hasNumbersAndSpecialCharacters() =
+    !this.contains(NUMBER_REGEX.toRegex()) && !this.contains(SPECIAL_CHARACTER_REGEX.toRegex())

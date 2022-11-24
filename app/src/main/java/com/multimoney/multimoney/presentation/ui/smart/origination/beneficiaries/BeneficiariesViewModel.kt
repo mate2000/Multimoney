@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.hasNumbersAndSpecialCharacters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -51,7 +52,9 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         }
 
     private fun onFullNameValueChange(name: String) {
-        uiState = uiState.copy(beneficiaryFullName = name)
+        if (name.hasNumbersAndSpecialCharacters()) {
+            uiState = uiState.copy(beneficiaryFullName = name)
+        }
         validateForm()
     }
 
@@ -169,6 +172,8 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
     }
 
     companion object {
+        const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
+        const val NUMBER_REGEX = "[0-9]"
         const val MAX_PERCENTAGE = 100
     }
 }

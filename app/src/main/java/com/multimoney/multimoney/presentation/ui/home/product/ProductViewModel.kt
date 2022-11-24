@@ -67,6 +67,7 @@ class ProductViewModel @Inject constructor(
     var isExpiredTitle = R.string.home_product_expiration
 
     private fun onSetUserData(
+        idBrand: String,
         balanceCredit: Balance?,
         pkUser: String,
         identification: String,
@@ -80,6 +81,7 @@ class ProductViewModel @Inject constructor(
         this.email = email
         this.userName = userName
         this.configurationVersion = configurationVersion
+        uiState = uiState.copy(idBrand = idBrand)
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
     }
@@ -477,6 +479,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is OnSetUserData -> onSetUserData(
+                idBrand = uiEvent.idBrand,
                 balanceCredit = uiEvent.balanceCredit,
                 pkUser = uiEvent.pkUser,
                 identification = uiEvent.identification,
@@ -536,6 +539,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
 
         data class OnSetUserData(
+            val idBrand: String,
             val balanceCredit: Balance?,
             val pkUser: String,
             val identification: String,

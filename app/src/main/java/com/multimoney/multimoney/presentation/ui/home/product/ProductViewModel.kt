@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,7 +12,6 @@ import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditOfferAndTip
-import com.multimoney.domain.model.credit.ProductMovement
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
@@ -69,6 +67,7 @@ class ProductViewModel @Inject constructor(
     private fun onSetUserData(
         idBrand: String,
         balanceCredit: Balance?,
+        idBrand: String,
         pkUser: String,
         identification: String,
         email: String,
@@ -137,7 +136,7 @@ class ProductViewModel @Inject constructor(
             }
             uiState = uiState.copy(
                 productPageList = productPageList,
-                canExpandCredit = it.getFirstCredit()?.canExpandCredit ?: false,
+                canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     R.drawable.ic_alert_expired_payment
                 } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
@@ -339,9 +338,14 @@ class ProductViewModel @Inject constructor(
         helper.shareTextPlain("$clientLabel: ${userName.uppercase()}\n$accountLabel: $ibanAccount")
     }
 
-    private fun onNavigateToDisbursement() {
-        // TODO: Navigate to disbursement screen
-    }
+    private fun onNavigateToDisbursement() =
+        navigateTo(
+            route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
+            encodeData(
+                balanceCredit?.getFirstCredit()?.summary
+            )
+            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}"
+        )
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(
@@ -369,14 +373,6 @@ class ProductViewModel @Inject constructor(
                 "",
                 ""
             )
-        )
-    }
-
-    fun getProductMovement(): List<ProductMovement> {
-        return listOf(
-            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
-            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
-            ProductMovement("Pago de cuota", "10/06/2022", "3000")
         )
     }
 
@@ -444,13 +440,11 @@ class ProductViewModel @Inject constructor(
         return amount
     }
 
-    private fun OnQuickActionClicked(flow : String){
-        Log.e("TAG","opening flow")
-        when (flow){
+    private fun onQuickActionClicked(flow: String) {
+        when (flow) {
             QuickActionFlow.ACTIVATE_MM_VISA.flow -> onNavigateToVisaActivateScreen()
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
         }
-
     }
 
     data class UIState(
@@ -481,6 +475,7 @@ class ProductViewModel @Inject constructor(
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
                 balanceCredit = uiEvent.balanceCredit,
+                idBrand = uiEvent.idBrand,
                 pkUser = uiEvent.pkUser,
                 identification = uiEvent.identification,
                 email = uiEvent.email,
@@ -503,7 +498,7 @@ class ProductViewModel @Inject constructor(
             is IsPaymentExpired -> isExpired()
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
-            is UIEvent.OnQuickActionClicked -> OnQuickActionClicked(uiEvent.flow)
+            is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
         }
     }
 
@@ -541,6 +536,7 @@ class ProductViewModel @Inject constructor(
         data class OnSetUserData(
             val idBrand: String,
             val balanceCredit: Balance?,
+            val idBrand: String,
             val pkUser: String,
             val identification: String,
             val email: String,
@@ -555,7 +551,7 @@ class ProductViewModel @Inject constructor(
             val ibanAccount: String
         ) : UIEvent()
 
-        data class OnQuickActionClicked (val flow : String) : UIEvent()
+        data class OnQuickActionClicked(val flow: String) : UIEvent()
     }
 
     companion object {

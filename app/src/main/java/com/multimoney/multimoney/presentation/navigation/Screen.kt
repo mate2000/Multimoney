@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
@@ -33,7 +34,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUD
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
@@ -47,6 +50,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 const val LOGIN_ROUTE = "log_in_route"
 const val HOME_ROUTE = "home_route"
 const val CREDIT_ROUTE = "credit_route"
+const val DISBURSEMENT_ROUTE = "disbursement_route"
 const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
@@ -80,6 +84,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object HomeScreen : Screen("home_screen")
 
     object ProfileScreen : Screen("profile_screen/{$ID_BRAND}", "profile_screen")
+
+    // DisbursementNavGraph Screens
+    object DisbursementAmountScreen : Screen(
+        "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}",
+        "disbursement_amount_screen"
+    )
+
+    object DisbursementAccountScreen : Screen(
+        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}",
+        "disbursement_account_screen"
+    )
 
     // CreditNavGraph Screens
     object CreditScreen : Screen(

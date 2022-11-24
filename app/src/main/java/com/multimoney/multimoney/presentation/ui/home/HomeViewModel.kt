@@ -31,7 +31,6 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSe
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -72,16 +71,16 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun callQueryGetQuickActions(
-        idBrand : Int,
-        pkUser : Int,
-        identification : String,
-        infoCreditStatus : Int,
-        infoVirtualCardStatus : Int,
-        infoBankAccountStatus : Int,
-        infoCriptoStatus : Int
+        idBrand: Int,
+        pkUser: Int,
+        identification: String,
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCriptoStatus: Int
     ) = executeUseCase {
         querytGetQuickActionsUseCase.invoke(
-            idBrand =  idBrand,
+            idBrand = idBrand,
             pkUser = pkUser,
             identification = identification,
             infoCreditStatus = infoCreditStatus,
@@ -89,13 +88,14 @@ class HomeViewModel @Inject constructor(
             infoBankAccountStatus = infoBankAccountStatus,
             infoCriptoStatus = infoCriptoStatus
         ).collectLatest { result ->
-            result.onSuccess { balance ->
-                balance?.let {
-                    if (uiState.isLoading)
-                        uiState = uiState.copy(
-                            isLoading = false,
-                            quickActions = it.quickActions
-                        )
+            result.onSuccess { quickActions ->
+                quickActions?.let {
+                    if (uiState.configurationVersion != null && uiState.balance != null) {
+                        uiState = uiState.copy(isLoading = false)
+                    }
+                    uiState = uiState.copy(
+                        quickActions = it.quickActions
+                    )
                 }
             }
             result.onFailure {
@@ -131,8 +131,9 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { balance ->
                 balance?.let {
-                    if (uiState.isLoading)
+                    if (uiState.configurationVersion != null && uiState.quickActions != null) {
                         uiState = uiState.copy(isLoading = false)
+                    }
                     uiState = uiState.copy(balance = balance)
                 }
             }
@@ -154,6 +155,9 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
+                if (uiState.balance != null && uiState.quickActions != null && uiState.validateUserStatus != null) {
+                    uiState = uiState.copy(isLoading = false)
+                }
                 configurationVersion?.let {
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
@@ -241,7 +245,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun openQuickActionFlow(flow : String){
+    private fun openQuickActionFlow(flow: String) {
         emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
     }
 
@@ -249,7 +253,7 @@ class HomeViewModel @Inject constructor(
         // Fields
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        var quickActions : List<QuickAction>? = listOf(),
+        var quickActions: List<QuickAction>? = null,
         var configurationVersion: ConfigurationVersion? = null,
         var validateUserStatus: ValidateUserStatus? = null,
         var balance: Balance? = null,
@@ -270,9 +274,10 @@ class HomeViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnOpenQuickActionFlow (val flow : String) : UIEvent()
+        data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
         data class OnBottomNavigationItemClick(val innerNavHostController: NavHostController, val route: String) :
             UIEvent()
+
         object OnSetUserData : UIEvent()
         object OnSignOut : UIEvent()
     }
@@ -281,6 +286,6 @@ class HomeViewModel @Inject constructor(
         object OnOpenQuickActionsBottomSheet : BaseEvent()
         object OnOpenMyProductsBottomSheet : BaseEvent()
         data class OnStartCountDownTimer(val millisInFuture: Long?)
-        data class OnQuickActionClicked (val flow : String)
+        data class OnQuickActionClicked(val flow: String)
     }
 }

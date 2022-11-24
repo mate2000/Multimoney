@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.creditamount
+package com.multimoney.multimoney.presentation.ui.credit.origination.amount
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -19,21 +19,21 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnInitializeErrorMessages
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnInitializeText
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnOpenTermAndCondition
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnSliderValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnInitializeErrorMessages
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnInitializeText
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnOpenConditionCreditDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnOpenTermAndCondition
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnSliderValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnSliderValueChangeFinished
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -284,7 +284,7 @@ class CreditAmountViewModel @Inject constructor(
                     } else {
                         uiState.sliderValue
                     },
-                    progressFactor = progressFactor,
+                    progressFactor = progressFactor ?: 0.0,
                     currencyItems = currencyItems ?: listOf(),
                     feeLabel = feeLabel,
                     disbursement = maximumDisbursement?.toDouble()?.toInt().toString(),
@@ -312,7 +312,8 @@ class CreditAmountViewModel @Inject constructor(
      * we have to get module of disbursement that could be 1000 if module is equal to 0 that means
      * that is multiple of progress factor
      **/
-    private fun isDisbursementMultipleOfProgressFactor(value: Float) = (value % (uiState.progressFactor ?: 1.0)).toInt() == 0
+    private fun isDisbursementMultipleOfProgressFactor(value: Float) =
+        (value % (uiState.progressFactor ?: 1.0)).toInt() == 0
 
     /**
      * Get slider initial value to exclude the disbursement the user could not select

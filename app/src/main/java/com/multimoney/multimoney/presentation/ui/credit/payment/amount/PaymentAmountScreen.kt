@@ -32,7 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnHidePaymentBottomSheet
@@ -115,7 +115,10 @@ fun PaymentAmountContent(
                     Text(
                         modifier = Modifier.padding(top = 42.dp),
                         text = stringResource(id = R.string.payment_amount_title),
-                        style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.labelText),
+                        style = Typography.h5.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MultimoneyTheme.colors.labelText
+                        ),
                         textAlign = TextAlign.Left
                     )
                     Row(

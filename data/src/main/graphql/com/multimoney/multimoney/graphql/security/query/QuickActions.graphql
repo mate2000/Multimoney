@@ -1,0 +1,18 @@
+query QuickActions($idBrand : Int!,$pkUser : Long!, $identification : String!,$infoCreditStatus:Int!, $infoVirtualCardStatus:Int!, $infoBankAccountStatus: Int!, $infoCriptoStatus: Int!){
+    quickActions(
+        quickActionsInput: {
+            idBrand:$idBrand
+            pkUser:$pkUser
+            identification:$identification
+            infoCreditStatus: $infoCreditStatus
+            infoVirtualCardStatus: $infoVirtualCardStatus
+            infoBankAccountStatus: $infoBankAccountStatus
+            infoCriptoStatus: $infoCriptoStatus
+        }
+    ) {
+        idIcono
+        tipoProducto
+        nombre
+        flujo
+    }
+}

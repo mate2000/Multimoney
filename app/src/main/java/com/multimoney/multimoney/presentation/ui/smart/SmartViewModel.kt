@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
@@ -38,11 +39,15 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
+import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrentDateString
+import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -124,8 +129,20 @@ class SmartViewModel @Inject constructor(
                 idBrand = accountSmartData?.idBrand ?: 0,
                 currentStep = accountSmartData?.currentStep ?: "",
                 idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
-                birthday = accountSmartData?.birthday ?: "",
-                expirationDate = accountSmartData?.expirationDate ?: "",
+                birthday = accountSmartData?.birthday?.ifEmpty {
+                    getFormatDateByString(
+                        getCurrentDateString(),
+                        YEAR_MONTH_DAY_PATTERN,
+                        ISO_8601_API_FORMAT_PATTERN
+                    )
+                }.orEmpty(),
+                expirationDate = accountSmartData?.expirationDate?.ifEmpty {
+                    getFormatDateByString(
+                        getCurrentDateString(),
+                        YEAR_MONTH_DAY_PATTERN,
+                        ISO_8601_API_FORMAT_PATTERN
+                    )
+                }.orEmpty(),
                 idGender = accountSmartData?.idGender ?: 0,
                 companyName = accountSmartData?.companyName.orEmpty(),
                 aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
@@ -167,13 +184,18 @@ class SmartViewModel @Inject constructor(
         }
     )
 
-    private fun moveToStep(step: Int) {
-        if (step <= SMART_TOTAL_STEPS) {
-            uiState = uiState.copy(
-                currentStep = step,
-                isCloseVisible = step > SmartSteps.One.id
-            )
+    /**
+     * Each country has different smart origination flow, so the total
+     * of screen is different on both. This function will return the total
+     * of pages based on the country id.
+     */
+    fun getTotalStepperCounter(): Int {
+        val counter = if (idBrandAsInt == Brand.ElSalvador.id) {
+            SMART_INDICATOR_SV_TOTAL_STEPS
+        } else {
+            SMART_INDICATOR_CR_TOTAL_STEPS
         }
+        return counter
     }
 
     private fun onBackClick(focusManager: FocusManager) {
@@ -246,11 +268,13 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun nextStep() {
-        if (nextStep <= SMART_TOTAL_STEPS) {
+        if (nextStep <= getTotalStepperCounter()) {
             uiState = uiState.copy(
                 currentStep = nextStep,
                 isCloseVisible = nextStep >= SmartSteps.One.id
             )
+        } else {
+            // TODO, navigate to onfido, there is no more steps on the flow.
         }
     }
 
@@ -370,7 +394,11 @@ class SmartViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
-        data class OnContinueVisible(val visible: Boolean, val textResId: Int = string.button_continue) : UIEvent()
+        data class OnContinueVisible(
+            val visible: Boolean,
+            val textResId: Int = string.button_continue
+        ) : UIEvent()
+
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
 
@@ -378,8 +406,8 @@ class SmartViewModel @Inject constructor(
     }
 
     companion object {
-        const val SMART_TOTAL_STEPS = 6
-        const val SMART_INDICATOR_TOTAL_STEPS = 5
+        const val SMART_INDICATOR_SV_TOTAL_STEPS = 5
+        const val SMART_INDICATOR_CR_TOTAL_STEPS = 3
         const val DEFAULT_ID_BRAND_ERROR = -1
     }
 }

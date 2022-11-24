@@ -20,13 +20,15 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.hasNumbersAndSpecialCharacters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUseCase: QueryRelationshipUseCase) :
-    BaseViewModel(true) {
+class BeneficiariesViewModel @Inject constructor(
+    private val queryRelationshipUseCase: QueryRelationshipUseCase
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -51,7 +53,9 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         }
 
     private fun onFullNameValueChange(name: String) {
-        uiState = uiState.copy(beneficiaryFullName = name)
+        if (name.hasNumbersAndSpecialCharacters()) {
+            uiState = uiState.copy(beneficiaryFullName = name)
+        }
         validateForm()
     }
 

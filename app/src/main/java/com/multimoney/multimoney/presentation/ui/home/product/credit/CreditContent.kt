@@ -16,6 +16,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditPreApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmReject
@@ -126,6 +127,20 @@ fun CreditContent(viewModel: ProductViewModel) {
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ONFIDO_MAX_ATTEMPTS, this) -> {
                             CardWithCreditInProcess(
                                 type = CreditProcessOnfidoMaxAttempts,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(
+                                        OnMaxAttemptsCardClick(
+                                            whatsAppLink = whatsAppLink,
+                                            context = context
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_ERROR_CREATE_ACCOUNT, this) -> {
+                            CardWithCreditInProcess(
+                                type = CreditProcessCreateAccountFailure,
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(

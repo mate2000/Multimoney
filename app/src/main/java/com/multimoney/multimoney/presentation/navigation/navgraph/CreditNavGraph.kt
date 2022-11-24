@@ -39,7 +39,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             route = Screen.CreditScreen.route,
             arguments = listOf(
                 navArgument(CREDIT_STEP) { type = NavType.IntType },
-                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) { navBackStackEntry ->
             CreditScreen(onNavigate = {

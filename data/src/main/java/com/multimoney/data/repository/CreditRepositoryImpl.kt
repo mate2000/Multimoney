@@ -5,6 +5,7 @@ import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
+import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -263,6 +264,21 @@ class CreditRepositoryImpl @Inject constructor(
             idBrand,
             idClient,
             idLoanClient
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryListCardVD(
+        user: String,
+        idBrand: Int,
+        identification: String
+    ): Flow<MultimoneyResult<List<CardVisaDirect?>?>> = fetchData(
+        apolloCall = graphqlApi.queryListCardsVD(
+            user,
+            idBrand,
+            identification
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

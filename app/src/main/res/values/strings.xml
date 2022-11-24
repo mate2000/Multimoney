@@ -265,6 +265,9 @@
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
     <string name="home_product_amount" translatable="false">de %s</string>
+    <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
+    <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
+    <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
 
     <!-- Home Product Header -->
     <string name="home_product_header_title" translatable="false">Mis Productos</string>

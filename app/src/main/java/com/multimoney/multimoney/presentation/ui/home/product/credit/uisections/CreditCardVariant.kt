@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -80,10 +82,10 @@ fun CardGTWithoutCredit(action: () -> Unit = {}) {
             modifier = Modifier
                 .padding(top = 40.dp)
                 .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
+            drawableResource = drawable.ic_chevron_up
         )
         Text(
-            text = stringResource(id = R.string.home_product_gt_with_out_credit_action),
+            text = stringResource(id = string.home_product_gt_with_out_credit_action),
             modifier = Modifier
                 .padding(bottom = 12.dp)
                 .align(Alignment.CenterHorizontally),
@@ -107,19 +109,6 @@ fun CreditPreApproved(
     wording: Wording? = Wording("", "", "")
 ) {
     val notDefinedValue = stringResource(id = R.string.not_defined)
-    var description = ""
-
-    description = if (idBrand == Brand.Guatemala.id) {
-        stringResource(
-            id = R.string.home_product_gt_credit_approved_card_description,
-            amount ?: "0.0"
-        )
-    } else {
-        stringResource(
-            id = R.string.home_product_credit_approved_card_description,
-            amount ?: "0.0"
-        )
-    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -145,7 +134,7 @@ fun CreditPreApproved(
             modifier = Modifier
                 .padding(top = 32.dp)
                 .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
+            drawableResource = drawable.ic_chevron_up
         )
         Text(
             text = wording?.cTA?.filter { wording.cTA != notDefinedValue } ?: "",
@@ -164,7 +153,7 @@ fun CardWithCreditInProcess(
     type: CreditProcessStarted = CreditProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
     action: () -> Unit = {},
-    wording: Wording? = Wording("","", "")
+    wording: Wording? = Wording("", "", "")
 ) {
     val notDefinedValue = stringResource(id = R.string.not_defined)
     var chipText = R.string.home_product_process_credit_label
@@ -180,19 +169,19 @@ fun CardWithCreditInProcess(
     }
     when (type) {
         CreditStartProcessIncomplete -> {
-            chipText = R.string.home_product_process_credit_preapproved_label
-            startIcon = R.drawable.ic_warning
+            chipText = string.home_product_process_credit_preapproved_label
+            startIcon = drawable.ic_warning
         }
         CreditProcessOnFidoIncomplete -> {
-            startIcon = R.drawable.ic_warning
+            startIcon = drawable.ic_warning
         }
         CreditProcessOnfidoReject -> {
-            startIcon = R.drawable.ic_warning
+            startIcon = drawable.ic_warning
         }
-
         CreditProcessCreateAccountFailure -> {
-            startIcon = R.drawable.ic_warning
+            startIcon = drawable.ic_warning
         }
+        else -> Unit
     }
 
     Column(
@@ -229,12 +218,12 @@ fun CardWithCreditInProcess(
             color = MultimoneyTheme.colors.text
         )
         actionText?.let {
-            if (it.isNotBlank()){
+            if (it.isNotBlank()) {
                 CustomImage(
                     modifier = Modifier
                         .padding(top = 21.dp)
                         .align(Alignment.CenterHorizontally),
-                    drawableResource = R.drawable.ic_chevron_up
+                    drawableResource = drawable.ic_chevron_up
                 )
 
                 Text(
@@ -278,7 +267,7 @@ fun CardCreditFirmedAndOnfidoPending() {
             modifier = Modifier.padding(top = 12.dp),
             shape = RoundedCornerShape(12.dp),
             background = backgroundShip,
-            startIcon = R.drawable.ic_warning
+            startIcon = drawable.ic_warning
         )
         Text(
             text = stringResource(id = R.string.home_product_process_accept_contract_title),
@@ -388,9 +377,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                    ?: 0
-                                                ) > 0
+                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                            ?: 0
+                                        ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

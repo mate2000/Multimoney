@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -441,8 +440,7 @@ class ProductViewModel @Inject constructor(
         return amount
     }
 
-    private fun OnQuickActionClicked(flow: String) {
-        Log.e("TAG", "opening flow")
+    private fun onQuickActionClicked(flow: String) {
         when (flow) {
             QuickActionFlow.ACTIVATE_MM_VISA.flow -> onNavigateToVisaActivateScreen()
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
@@ -500,7 +498,7 @@ class ProductViewModel @Inject constructor(
             is IsPaymentExpired -> isExpired()
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
-            is UIEvent.OnQuickActionClicked -> OnQuickActionClicked(uiEvent.flow)
+            is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
         }
     }
 

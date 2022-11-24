@@ -23,5 +23,8 @@ data class Summary(
     val balanceAmountCancel: String,
     val daysExpired: Int,
     val canExpandState: Boolean?,
-    val isProductActive: Boolean?
+    val isProductActive: Boolean?,
+    val applyAutomaticDebit: Boolean?,
+    val automaticDebitEnabled: Boolean?,
+    val visaAutomaticDebitEnabled: Boolean?
 ) : Parcelable

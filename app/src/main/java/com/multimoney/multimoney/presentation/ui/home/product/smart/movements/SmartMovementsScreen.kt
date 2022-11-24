@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -39,7 +37,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.Sm
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnNavigateBackToHome
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.API_COLONES
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
@@ -52,7 +49,7 @@ fun SmartMovementsScreen(
     viewModel: SmartMovementsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnGetMovement(viewModel.uiState.currentPage, PAGE_SIZE))
+        viewModel.onUIEvent(OnGetMovement)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -80,14 +77,7 @@ fun SmartMovementsScreen(
             isRightButtonVisible = false,
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBackToHome) }
         )
-//        if (
-//            scrollState.value == scrollState.maxValue &&
-//            scrollState.maxValue != 0 &&
-//            !viewModel.uiState.isLoading &&
-//            viewModel.uiState.moreRecordsAvailable
-//        ) {
-//            viewModel.onUIEvent(OnGetMovement(viewModel.uiState.currentPage, PAGE_SIZE))
-//        }
+
         Text(
             text = stringResource(string.home_product_movement_title),
             style = Typography.h5.copy(
@@ -97,9 +87,7 @@ fun SmartMovementsScreen(
         )
         MovementsList(smartMoves)
     }
-    // LoadingIndicator(viewModel.uiState.isLoading)
 }
-const val PAGE_SIZE = 10
 
 @Composable
 fun MovementsList(smartMoves: LazyPagingItems<SmartMovement>) {

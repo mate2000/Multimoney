@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.paging.PagingData
-import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -19,7 +18,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SmartMovementsViewModel @Inject constructor(
-    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
     private val queryGetPagedSmartMovements: QueryGetPagedSmartMovementsUseCase
 ) : BaseViewModel(true) {
 
@@ -27,49 +25,7 @@ class SmartMovementsViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-//    private fun onGetSmartMovements(
-//        pageNumber: Int = 1,
-//        pageSize: Int = 10
-//    ) {
-//        executeUseCase {
-//            queryGetCoreBankMovements.invoke(
-//                user = "401920903",
-//                idBrand = 5,
-//                identificationNumber = "107910975",
-//                accountToken = 287380645,
-//                pageNumber = pageNumber,
-//                pageSize = pageSize,
-//                monthDate = null
-//            ).collectLatest { result ->
-//                result.onSuccess { movements ->
-//                    uiState = uiState.copy(
-//                        smartMovementsList = uiState.smartMovementsList.plus(movements?.result ?: emptyList()),
-//                        moreRecordsAvailable = ((movements?.totalRecords ?: 0) > uiState.currentPage * PAGE_SIZE),
-//                        currentPage = uiState.currentPage + 1
-//                    )
-//                    delay(100)
-//                    uiState = uiState.copy(isLoading = false)
-//                }
-//                result.onLoading {
-//                    uiState = uiState.copy(isLoading = true)
-//                }
-//                result.onFailure { error ->
-//                    uiState = uiState.copy(
-//                        openDialog = DialogParameters(
-//                            description = error.getError() ?: "",
-//                            isActive = mutableStateOf(true)
-//                        ),
-//                        isLoading = false
-//                    )
-//                }
-//            }
-//        }
-//    }
-
-    private fun onGetSmartMovements(
-        pageNumber: Int = 1,
-        pageSize: Int = 10
-    ) {
+    private fun onGetSmartMovements() {
         executeUseCase {
             uiState = uiState.copy(
                 movementsPage = queryGetPagedSmartMovements.invoke(
@@ -92,13 +48,13 @@ class SmartMovementsViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnGetMovement -> onGetSmartMovements(event.pageNumber, event.pageSize)
+            is OnGetMovement -> onGetSmartMovements()
             is OnNavigateBackToHome -> navigateBackToHome()
         }
     }
 
     sealed class UIEvent {
-        data class OnGetMovement(val pageNumber: Int, val pageSize: Int) : UIEvent()
+        object OnGetMovement : UIEvent()
         object OnNavigateBackToHome : UIEvent()
     }
 
@@ -107,7 +63,6 @@ class SmartMovementsViewModel @Inject constructor(
         var idBrand: String = "0",
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val smartMovementsList: List<SmartMovement> = emptyList(),
         val currentPage: Int = 1,
         val moreRecordsAvailable: Boolean = true,
         val movementsPage: Flow<PagingData<SmartMovement>> = flowOf()

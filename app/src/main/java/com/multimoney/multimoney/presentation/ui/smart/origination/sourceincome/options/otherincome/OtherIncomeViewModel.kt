@@ -25,14 +25,19 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun incomeSourceChange(source: String) {
-        if (source.length <= DESCRIPTION_MAX_LENGTH) {
-            uiState = uiState.copy(incomeSource = source)
-
-            uiState = if (source.length == DESCRIPTION_MAX_LENGTH) {
-                uiState.copy(sourceError = Pair(true, R.string.max_number_of_characters_reached_error))
-            } else {
-                uiState.copy(sourceError = Pair(false, R.string.empty))
-            }
+        uiState = if (source.length <= DESCRIPTION_MAX_LENGTH) {
+            uiState.copy(
+                incomeSource = source,
+                sourceError = Pair(false, R.string.empty)
+            )
+        } else {
+            uiState.copy(
+                incomeSource = source,
+                sourceError = Pair(
+                    true,
+                    R.string.smart_own_business_description_max_char_error
+                )
+            )
         }
         onValidateForm()
     }
@@ -41,7 +46,8 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun isFormValid() = uiState.incomeSource.isNotBlank() &&
         uiState.incomeAmount.isNotBlank() &&
-        uiState.incomeAmount.toFloat() > MIN_INCOME
+        uiState.incomeAmount.toFloat() > MIN_INCOME &&
+        uiState.sourceError.first.not()
 
     data class UIState(
         var incomeAmount: String = "",

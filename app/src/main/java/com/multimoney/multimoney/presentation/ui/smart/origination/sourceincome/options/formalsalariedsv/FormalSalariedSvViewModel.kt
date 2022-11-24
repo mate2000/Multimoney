@@ -134,14 +134,19 @@ class FormalSalariedSvViewModel @Inject constructor(
     }
 
     private fun onWorkingAddressChange(address: String) {
-        if (address.length <= ADDRESS_MAX_LENGTH) {
-            uiState = uiState.copy(workingAddress = address)
-
-            uiState = if (address.length == ADDRESS_MAX_LENGTH) {
-                uiState.copy(workingAddressError = Pair(true, R.string.max_number_of_characters_reached_error))
-            } else {
-                uiState.copy(workingAddressError = Pair(false, R.string.empty))
-            }
+        uiState = if (address.length <= ADDRESS_MAX_LENGTH) {
+            uiState.copy(
+                workingAddress = address,
+                workingAddressError = Pair(false, R.string.empty)
+            )
+        } else {
+            uiState.copy(
+                workingAddress = address,
+                workingAddressError = Pair(
+                    true,
+                    R.string.smart_own_business_description_max_char_error
+                )
+            )
         }
         onValidateForm()
     }
@@ -156,7 +161,8 @@ class FormalSalariedSvViewModel @Inject constructor(
             uiState.salary.toFloat() > MIN_INCOME &&
             uiState.workingAddress.isNotBlank() &&
             uiState.divisionTwoSelected != null &&
-            uiState.divisionThreeSelected != null
+            uiState.divisionThreeSelected != null &&
+            uiState.workingAddressError.first.not()
 
     data class UIState(
         var companyName: String = "",

@@ -174,14 +174,19 @@ class SmartLivAddressViewModel @Inject constructor(
     }
 
     private fun onAddressValueChange(address: String) {
-        if (address.length <= ADDRESS_MAX_LENGTH) {
-            uiState = uiState.copy(address = address)
-
-            uiState = if (address.length == ADDRESS_MAX_LENGTH) {
-                uiState.copy(addressError = Pair(true, R.string.max_number_of_characters_reached_error))
-            } else {
-                uiState.copy(addressError = Pair(false, R.string.empty))
-            }
+        uiState = if (address.length <= ADDRESS_MAX_LENGTH) {
+            uiState.copy(
+                address = address,
+                addressError = Pair(false, R.string.empty)
+            )
+        } else {
+            uiState.copy(
+                address = address,
+                addressError = Pair(
+                    true,
+                    R.string.smart_own_business_description_max_char_error
+                )
+            )
         }
         validate()
     }
@@ -195,7 +200,8 @@ class SmartLivAddressViewModel @Inject constructor(
     fun isFormValid() = uiState.divisionOneSelected != null &&
         uiState.divisionTwoSelected != null &&
         uiState.divisionThreeSelected != null &&
-        uiState.address.isNotEmpty()
+        uiState.address.isNotEmpty() &&
+        uiState.addressError.first.not()
 
     sealed class UIEvent {
         data class OnGetUserData(

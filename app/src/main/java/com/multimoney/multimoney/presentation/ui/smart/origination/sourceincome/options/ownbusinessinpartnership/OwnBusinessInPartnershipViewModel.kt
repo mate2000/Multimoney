@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,10 +9,10 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnBusinessActivityChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIdentificationChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIncomeAmountChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.UIEvent.OnBusinessActivityChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.UIEvent.OnIdentificationChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.UIEvent.OnIncomeAmountChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
@@ -21,21 +21,26 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
-class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
+class OwnBusinessInPartnershipViewModel @Inject constructor(
     private val queryCompany: QueryCompanyNameByIdentityUseCase
 ) : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
     private fun businessActivityChange(source: String) {
-        if (source.length <= DESCRIPTION_MAX_LENGTH) {
-            uiState = uiState.copy(businessActivity = source)
-
-            uiState = if (source.length == DESCRIPTION_MAX_LENGTH) {
-                uiState.copy(activityError = Pair(true, R.string.max_number_of_characters_reached_error))
-            } else {
-                uiState.copy(activityError = Pair(false, R.string.empty))
-            }
+        uiState = if (source.length <= DESCRIPTION_MAX_LENGTH) {
+            uiState.copy(
+                businessActivity = source,
+                businessActivityError = Pair(false, R.string.empty)
+            )
+        } else {
+            uiState.copy(
+                businessActivity = source,
+                businessActivityError = Pair(
+                    true,
+                    R.string.smart_own_business_description_max_char_error
+                )
+            )
         }
         onValidateForm()
     }
@@ -125,13 +130,13 @@ class OwnBusinessOnPersonalBasisViewModel @Inject constructor(
         uiState.businessActivity.isNotBlank() &&
         uiState.identificationSuccess.first &&
         uiState.businessIdentification.length == IDENTIFICATION_LENGTH &&
-        uiState.businessIncome.toFloat() > MIN_INCOME
+        uiState.businessIncome.toFloat() > MIN_INCOME &&
+        uiState.businessActivityError.first.not()
 
     data class UIState(
         var businessIncome: String = "",
-        var incomeError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         var businessActivity: String = "",
-        var activityError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        var businessActivityError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         var businessIdentification: String = "",
         var identificationSuccess: Pair<Boolean, Int> = Pair(false, R.string.empty),
         var identificationLoading: Pair<Boolean, Int> = Pair(false, R.string.empty),

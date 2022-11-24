@@ -23,17 +23,23 @@ class SmartRetiredViewModel : BaseViewModel(true) {
 
     fun isFormValid() = uiState.institution.isNotBlank() &&
         uiState.paymentAmount.isNotBlank() &&
-        uiState.paymentAmount.toFloat() > MIN_INCOME
+        uiState.paymentAmount.toFloat() > MIN_INCOME &&
+        uiState.institutionError.first.not()
 
     private fun onInstitutionValueChange(institution: String) {
-        if (institution.length <= INSTITUTION_MAX_LENGTH) {
-            uiState = uiState.copy(institution = institution)
-
-            uiState = if (institution.length == INSTITUTION_MAX_LENGTH) {
-                uiState.copy(institutionError = Pair(true, R.string.max_number_of_characters_reached_error))
-            } else {
-                uiState.copy(institutionError = Pair(false, R.string.empty))
-            }
+        uiState = if (institution.length <= INSTITUTION_MAX_LENGTH) {
+            uiState.copy(
+                institution = institution,
+                institutionError = Pair(false, R.string.empty)
+            )
+        } else {
+            uiState.copy(
+                institution = institution,
+                institutionError = Pair(
+                    true,
+                    R.string.smart_own_business_description_max_char_error
+                )
+            )
         }
         validateForm()
     }

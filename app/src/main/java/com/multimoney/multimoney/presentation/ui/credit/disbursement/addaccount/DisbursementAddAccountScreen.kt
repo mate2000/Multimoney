@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.disbursement.addnewaccount
+package com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.credit.CreditCatalogOption
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.addnewaccount.AddNewAccountViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -34,36 +34,22 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
-fun AddNewAccountScreen(
+fun DisbursementAddAccountScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: AddNewAccountViewModel = hiltViewModel()
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    viewModel: DisbursementAddAccountViewModel = hiltViewModel()
 ) {
 
     // Navigation
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-    }
-
-    // Load Data
-
-    LaunchedEffect(key1 = true){
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
         viewModel.onUIEvent(OnCallQueryBanksAndRegularExpression)
     }
-
 
     // View
 
     val focusManager = LocalFocusManager.current
-
-    var title = R.string.empty
-    if (viewModel.idBrand.isNotEmpty()) {
-        title = when (viewModel.idBrand.toInt()) {
-            Brand.Guatemala.id -> R.string.credit_bank_title_gt
-            else -> R.string.credit_bank_title
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -73,21 +59,21 @@ fun AddNewAccountScreen(
     ) {
         Column {
             TopBar(onBackClick = {
-                viewModel.onUIEvent(AddNewAccountViewModel.UIEvent.OnBackClick(focusManager))
+                viewModel.onUIEvent(DisbursementAddAccountViewModel.UIEvent.OnBackClick(focusManager))
             } )
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Title(title = title)
+                Title(title = viewModel.uiState.titleResource)
                 Subtitle()
                 BankDestiny(
                     items = viewModel.uiState.bankList,
                     value = viewModel.uiState.bankSelected,
                     onValueChange = {
                         viewModel.onUIEvent(
-                            AddNewAccountViewModel.UIEvent.OnBankValueChanged(
+                            DisbursementAddAccountViewModel.UIEvent.OnBankValueChanged(
                                 it
                             )
                         )
@@ -99,7 +85,7 @@ fun AddNewAccountScreen(
                     value = viewModel.uiState.accountTypeSelectedString,
                     onValueChange = { value ->
                         viewModel.onUIEvent(
-                            AddNewAccountViewModel.UIEvent.OnAccountTypeValueChanged(
+                            DisbursementAddAccountViewModel.UIEvent.OnAccountTypeValueChanged(
                                 viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value })
                         )
                     })
@@ -107,7 +93,7 @@ fun AddNewAccountScreen(
                     value = viewModel.uiState.accountNumber,
                     onValueChange = {
                         viewModel.onUIEvent(
-                            AddNewAccountViewModel.UIEvent.OnAccountNumberValueChange(
+                            DisbursementAddAccountViewModel.UIEvent.OnAccountNumberValueChange(
                                 it
                             )
                         )

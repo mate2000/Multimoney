@@ -18,6 +18,8 @@ import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditContractEventSubscription
+import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionAmountQuery
+import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionMessageQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
@@ -43,6 +45,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
@@ -447,6 +450,81 @@ class GraphqlApi @Inject constructor(
                 idBrand,
                 idClient,
                 idLoanClient
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCreditExtensionAmount(
+        idClient: Long,
+        currency: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CreditExtensionAmountQuery.Data> =
+        apolloAuthorizedClient.query(CreditExtensionAmountQuery(idClient, currency, user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCreditExtensionMessage(
+        idClient: Long,
+        currency: String,
+        user: String,
+        idBrand: Int,
+        amountRequest: Double,
+        idLoanClient: Long,
+        quotaMax: Double,
+        idProductBase: Int,
+        cicle: Int
+    ): ApolloCall<CreditExtensionMessageQuery.Data> =
+        apolloAuthorizedClient.query(
+            CreditExtensionMessageQuery(
+                idClient,
+                currency,
+                user,
+                idBrand,
+                amountRequest,
+                idLoanClient,
+                quotaMax,
+                idProductBase,
+                cicle
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveCreditExtensionDetail(
+        pkUser: Int,
+        idBrand: Int,
+        user: String,
+        accountNumber: String,
+        amount: Double,
+        month: Int,
+        pkPromotionMonth: Int,
+        nextPaymentDate: String,
+        quota: Double,
+        quotaTotal: Double,
+        comissionDisbursement: Double,
+        rateInterestNormalLoan: Double,
+        rateInterestNormalRegular: Double,
+        cicle: Int,
+        idProduct: Int,
+        descriptionPromotionTerm: String,
+        pkPromotion: Int
+    ): ApolloCall<SaveCreditExtensionDetailMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveCreditExtensionDetailMutation(
+                pkUser,
+                idBrand,
+                user,
+                accountNumber,
+                amount,
+                month,
+                pkPromotionMonth,
+                nextPaymentDate,
+                quota,
+                quotaTotal,
+                comissionDisbursement,
+                rateInterestNormalLoan,
+                rateInterestNormalRegular,
+                cicle,
+                idProduct,
+                descriptionPromotionTerm,
+                pkPromotion
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

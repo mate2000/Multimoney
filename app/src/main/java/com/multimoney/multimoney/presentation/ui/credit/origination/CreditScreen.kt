@@ -32,8 +32,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
@@ -103,7 +103,7 @@ fun CreditScreen(
     if (viewModel.uiState.loadContent) {
         if (viewModel.uiState.lastStep != 1) {
             val stringId = viewModel.getLoadingString()
-            LoadingMultiMoney(textRes = stringId, viewModel)
+            LoadingMultiMoney(textRes = stringId)
             LaunchedEffect(true) {
                 viewModel.queryCreditSteps()
             }

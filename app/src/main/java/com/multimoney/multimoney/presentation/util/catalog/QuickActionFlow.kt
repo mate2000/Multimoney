@@ -1,6 +1,6 @@
 package com.multimoney.multimoney.presentation.util.catalog
 
-enum class QuickActionFlow (val flow : String) {
+enum class QuickActionFlow(val flow : String) {
     DISBURSE_AVAILABLE ("DESEMBOLSAR_DISPONIBLE"),
     PAY_FEE("PAGAR_CUOTA"),
     ACTIVATE_MM_VISA("ACTIVAR_MULTIMONEY_VISA"),

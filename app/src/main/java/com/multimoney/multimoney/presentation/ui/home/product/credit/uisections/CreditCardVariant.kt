@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
@@ -42,11 +43,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmMaxAttempts
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -85,10 +82,10 @@ fun CardGTWithoutCredit(action: () -> Unit = {}) {
             modifier = Modifier
                 .padding(top = 40.dp)
                 .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
+            drawableResource = drawable.ic_chevron_up
         )
         Text(
-            text = stringResource(id = R.string.home_product_gt_with_out_credit_action),
+            text = stringResource(id = string.home_product_gt_with_out_credit_action),
             modifier = Modifier
                 .padding(bottom = 12.dp)
                 .align(Alignment.CenterHorizontally),
@@ -137,7 +134,7 @@ fun CreditPreApproved(
             modifier = Modifier
                 .padding(top = 32.dp)
                 .align(Alignment.CenterHorizontally),
-            drawableResource = R.drawable.ic_chevron_up
+            drawableResource = drawable.ic_chevron_up
         )
         Text(
             text = wording?.cTA?.filter { wording.cTA != notDefinedValue } ?: "",
@@ -156,7 +153,7 @@ fun CardWithCreditInProcess(
     type: CreditProcessStarted = CreditProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
     action: () -> Unit = {},
-    wording: Wording? = Wording("","", "")
+    wording: Wording? = Wording("", "", "")
 ) {
     val notDefinedValue = stringResource(id = R.string.not_defined)
     var chipText = R.string.home_product_process_credit_label
@@ -221,12 +218,12 @@ fun CardWithCreditInProcess(
             color = MultimoneyTheme.colors.text
         )
         actionText?.let {
-            if (it.isNotBlank()){
+            if (it.isNotBlank()) {
                 CustomImage(
                     modifier = Modifier
                         .padding(top = 21.dp)
                         .align(Alignment.CenterHorizontally),
-                    drawableResource = R.drawable.ic_chevron_up
+                    drawableResource = drawable.ic_chevron_up
                 )
 
                 Text(
@@ -270,7 +267,7 @@ fun CardCreditFirmedAndOnfidoPending() {
             modifier = Modifier.padding(top = 12.dp),
             shape = RoundedCornerShape(12.dp),
             background = backgroundShip,
-            startIcon = R.drawable.ic_warning
+            startIcon = drawable.ic_warning
         )
         Text(
             text = stringResource(id = R.string.home_product_process_accept_contract_title),
@@ -380,9 +377,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                    ?: 0
-                                                ) > 0
+                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                            ?: 0
+                                        ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

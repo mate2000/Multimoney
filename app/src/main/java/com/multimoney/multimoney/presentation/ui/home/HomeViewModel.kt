@@ -186,7 +186,6 @@ class HomeViewModel @Inject constructor(
             result.onSuccess { validateUserStatus ->
                 dataStorePreferences.setUserPhoneNumber(validateUserStatus?.infoUser?.phone.orEmpty())
                 uiState = uiState.copy(validateUserStatus = validateUserStatus)
-                //this.validateUserStatus = validateUserStatus
                 callQueryBalanceUseCase(
                     user = email,
                     identification = identification,
@@ -196,7 +195,6 @@ class HomeViewModel @Inject constructor(
                     creditStatus = validateUserStatus?.infoCredit?.status ?: 0,
                     accountStatus = validateUserStatus?.infoBankAccount?.status ?: 0,
                     cryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
-                    // cardStatus = uiState.userStatus?.infoVirtualCard?.status ?: 0
                     cardStatus = 0 // TODO, the API doesn't support this yet
                 )
                 callQueryGetQuickActions(

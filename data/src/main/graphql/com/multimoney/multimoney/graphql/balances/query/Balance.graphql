@@ -35,6 +35,8 @@ query Balance(
             cuenta_Iban
             saldo_Monto_Cancelar
             dias_Vencidos
+            estado_Ampli
+            producto_Activo
         }
         limite_credito
         limite_credito_label

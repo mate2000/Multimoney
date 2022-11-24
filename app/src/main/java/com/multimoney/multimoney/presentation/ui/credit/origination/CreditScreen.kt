@@ -32,10 +32,9 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.document.CreditDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen
@@ -104,7 +103,7 @@ fun CreditScreen(
     if (viewModel.uiState.loadContent) {
         if (viewModel.uiState.lastStep != 1) {
             val stringId = viewModel.getLoadingString()
-            LoadingMultiMoney(textRes = stringId, viewModel)
+            LoadingMultiMoney(textRes = stringId)
             LaunchedEffect(true) {
                 viewModel.queryCreditSteps()
             }
@@ -116,7 +115,7 @@ fun CreditScreen(
             ) {
                 Column {
                     TopNavBar(
-                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id,
+                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
                         isRightButtonVisible = viewModel.uiState.isCloseVisible,
                         onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                         onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
@@ -209,7 +208,6 @@ fun GetStepContent(
         CreditStep.Four.id -> JobInfoScreen(sharedViewModel = viewModel)
         CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
         CreditStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
-        CreditStep.Seven.id -> AdditionalInformationScreen(sharedViewModel = viewModel)
-        else -> CreditDocumentScreen(sharedViewModel = viewModel)
+        else -> AdditionalInformationScreen(sharedViewModel = viewModel)
     }
 }

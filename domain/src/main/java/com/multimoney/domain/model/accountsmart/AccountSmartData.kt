@@ -33,5 +33,7 @@ data class AccountSmartData(
     var isUSCitizen: Boolean? = null,
     var isActivityOfArt15: Boolean? = null,
     var isUSTaxPayer: Boolean? = null,
-    var isTaxPayer: Boolean? = null
+    var isTaxPayer: Boolean? = null,
+    var idJobLevel2: Long? = 0,
+    var idJobLevel3: Long? = 0
 )

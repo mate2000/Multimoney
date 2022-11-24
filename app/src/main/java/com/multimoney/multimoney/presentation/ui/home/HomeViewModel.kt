@@ -8,13 +8,13 @@ import com.multimoney.multimoney.presentation.navigation.Screen.ProductsBNScreen
 import com.multimoney.multimoney.presentation.navigation.Screen.QuickActionBNScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
-import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    val countDownTimer: LifecycleCountDownTimer
+    val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
     fun navigation(innerNavHostController: NavHostController, route: String) {

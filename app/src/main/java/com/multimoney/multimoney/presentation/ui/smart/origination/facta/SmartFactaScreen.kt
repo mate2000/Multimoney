@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.facta
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +18,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,7 +27,6 @@ import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
@@ -35,6 +34,8 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.Companion.CR_PAGE_ONE
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.Companion.CR_PAGE_TWO
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnCrGoPageOne
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnCrGoPageTwo
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsActivityOfArt15Change
@@ -81,25 +82,32 @@ fun SmartFactaScreen(
             }
         }
     }
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = stringResource(id = R.string.smart_facta_title),
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
 
-    when (sharedViewModel.idBrandAsInt) {
-        Brand.CostaRica.id -> {
-            when (viewModel.uiState.crPage) {
-                CR_PAGE_ONE -> {
-                    Column {
-                        ContentOneCR(viewModel, sharedViewModel, Modifier.padding(16.dp))
-                        sharedViewModel.onUIEvent(OnContinueVisible(false))
+        when (sharedViewModel.idBrandAsInt) {
+            Brand.CostaRica.id -> {
+                when (viewModel.uiState.crPage) {
+                    CR_PAGE_ONE -> {
+                        Column {
+                            ContentOneCR(viewModel, sharedViewModel)
+                            sharedViewModel.onUIEvent(OnContinueVisible(false))
+                        }
+                    }
+                    CR_PAGE_TWO -> {
+                        ContentTwoCR(viewModel)
+                        sharedViewModel.onUIEvent(OnContinueVisible(true))
                     }
                 }
-                CR_PAGE_TWO -> {
-                    ContentTwoCR(viewModel, Modifier.padding(16.dp))
-                    sharedViewModel.onUIEvent(OnContinueVisible(true))
-                }
             }
-        }
-        Brand.ElSalvador.id -> {
-            ContentSV(viewModel, Modifier.padding(16.dp))
-            sharedViewModel.onUIEvent(OnContinueVisible(true))
+            Brand.ElSalvador.id -> {
+                ContentSV(viewModel)
+                sharedViewModel.onUIEvent(OnContinueVisible(true))
+            }
         }
     }
 }
@@ -116,7 +124,8 @@ fun ContentSV(
         Text(
             text = stringResource(R.string.smart_facta_are_you_us_citizen),
             style = Typography.body1,
-            color = WhiteTransparency90
+            color = MultimoneyTheme.colors.labelText,
+            modifier = Modifier.padding(top = 24.dp)
         )
         CustomRadioButtonsLayout(
             options = optionsCitizen,
@@ -130,16 +139,11 @@ fun ContentSV(
             }
         )
 
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-        )
-
         Text(
             text = stringResource(R.string.smart_facta_are_you_or_family_pep),
             style = Typography.body1,
-            color = WhiteTransparency90
+            color = MultimoneyTheme.colors.labelText,
+            modifier = Modifier.padding(top = 32.dp)
         )
         CustomRadioButtonsLayout(
             options = optionsPep,
@@ -174,7 +178,7 @@ fun ContentOneCR(
         Column(modifier = modifier) {
             ClickableText(
                 text = annotatedText,
-                style = Typography.body1.copy(color = WhiteTransparency90),
+                style = Typography.body1.copy(color = MultimoneyTheme.colors.labelText),
                 onClick = { offset ->
                     annotatedText.getStringAnnotations(
                         tag = INFO_TAG,
@@ -190,9 +194,9 @@ fun ContentOneCR(
                             )
                         }
                     }
-                }
+                },
+                modifier = Modifier.padding(top = 16.dp)
             )
-
             CustomRadioButtonsLayout(
                 options = optionsYesNo,
                 onOptionSelected = {
@@ -205,16 +209,11 @@ fun ContentOneCR(
                 }
             )
 
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-            )
-
             Text(
                 text = stringResource(R.string.smart_facta_are_you_or_family_pep),
                 style = Typography.body1,
-                color = WhiteTransparency90
+                color = MultimoneyTheme.colors.labelText,
+                modifier = Modifier.padding(top = 32.dp)
             )
             CustomRadioButtonsLayout(
                 options = optionsPep,
@@ -248,7 +247,8 @@ fun ContentTwoCR(
         Text(
             text = stringResource(R.string.smart_facta_are_you_us_tax_payer),
             style = Typography.body1,
-            color = WhiteTransparency90
+            color = MultimoneyTheme.colors.labelText,
+            modifier = Modifier.padding(top = 24.dp)
         )
         CustomRadioButtonsLayout(
             options = options,
@@ -257,16 +257,11 @@ fun ContentTwoCR(
             }
         )
 
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-        )
-
         Text(
             text = stringResource(R.string.smart_facta_are_you_other_country_tax_payer),
             style = Typography.body1,
-            color = WhiteTransparency90
+            color = MultimoneyTheme.colors.labelText,
+            modifier = Modifier.padding(top = 32.dp)
         )
         CustomRadioButtonsLayout(
             options = options,

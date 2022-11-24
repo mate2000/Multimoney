@@ -123,7 +123,7 @@ fun CustomProductBackground(
                     brush = Brush.linearGradient(
                         colors = listOf(gradientOneColor, gradientTwoColor, gradientThreeColor),
                         start = Offset(-startOffset.toFloat(), Float.POSITIVE_INFINITY),
-                        end = Offset(Float.POSITIVE_INFINITY, 0f),
+                        end = Offset(Float.POSITIVE_INFINITY, 0f)
                     )
                 )
                 .blur(0.24.dp)

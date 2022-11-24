@@ -85,7 +85,7 @@ fun CompanyAddressScreen(
                         OnNextActionClick(
                             user = sharedViewModel.email,
                             nextStepAction = {
-                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
+                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep())
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )

@@ -1,7 +1,15 @@
 package com.multimoney.data.mapper.security
 
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
-import com.multimoney.domain.model.security.*
+import com.multimoney.domain.model.security.InfoBankAccount
+import com.multimoney.domain.model.security.InfoCredit
+import com.multimoney.domain.model.security.InfoCrypto
+import com.multimoney.domain.model.security.InfoPreApprove
+import com.multimoney.domain.model.security.InfoUser
+import com.multimoney.domain.model.security.InfoVirtualCard
+import com.multimoney.domain.model.security.Product
+import com.multimoney.domain.model.security.ValidateUserStatus
+import com.multimoney.domain.model.security.Wording
 
 private fun ValidateUserStatusQuery.ValidateUserStatus.mapToDomainModel() = ValidateUserStatus(
     infoUser = infoUser.mapToDomainModel(),
@@ -36,7 +44,8 @@ private fun ValidateUserStatusQuery.InfoPreApprove.mapToDomainModel() = InfoPreA
     selectedAmount = selectedAmount.toString().toFloat(),
     statusFirm = statusFirm,
     currentStep = currentStep,
-    infoProducts = infoProducts?.map { it.mapToDomainModel() }
+    infoProducts = infoProducts?.map { it.mapToDomainModel() },
+    idPrint = idPrint.toString().toLong()
 )
 
 private fun ValidateUserStatusQuery.InfoProduct.mapToDomainModel() =
@@ -59,6 +68,7 @@ private fun ValidateUserStatusQuery.Wording1.mapToDomainModel() = Wording(
     textTwo = textTwo,
     cTA = cTA
 )
+
 private fun ValidateUserStatusQuery.InfoCrypto.mapToDomainModel() = InfoCrypto(status = status)
 
 private fun ValidateUserStatusQuery.InfoVirtualCard.mapToDomainModel() = InfoVirtualCard(status = status)

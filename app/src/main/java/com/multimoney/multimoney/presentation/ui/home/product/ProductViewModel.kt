@@ -67,6 +67,7 @@ class ProductViewModel @Inject constructor(
     var isExpiredTitle = R.string.home_product_expiration
 
     private fun onSetUserData(
+        idBrand: String,
         balanceCredit: Balance?,
         pkUser: String,
         identification: String,
@@ -80,6 +81,7 @@ class ProductViewModel @Inject constructor(
         this.email = email
         this.userName = userName
         this.configurationVersion = configurationVersion
+        uiState = uiState.copy(idBrand = idBrand)
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
     }
@@ -163,7 +165,7 @@ class ProductViewModel @Inject constructor(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                         "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
                         "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}"
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
                 )
             }
         }
@@ -323,6 +325,11 @@ class ProductViewModel @Inject constructor(
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
 
+                CREDIT_ERROR_CREATE_ACCOUNT -> {
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.FAILED.status ||
+                        infoCredit?.infoPreApprove?.status == ERROR_CREDIT
+                }
+
                 else -> false
             }
         }
@@ -472,6 +479,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is OnSetUserData -> onSetUserData(
+                idBrand = uiEvent.idBrand,
                 balanceCredit = uiEvent.balanceCredit,
                 pkUser = uiEvent.pkUser,
                 identification = uiEvent.identification,
@@ -531,6 +539,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
 
         data class OnSetUserData(
+            val idBrand: String,
             val balanceCredit: Balance?,
             val pkUser: String,
             val identification: String,
@@ -550,6 +559,7 @@ class ProductViewModel @Inject constructor(
     }
 
     companion object {
+        const val ERROR_CREDIT = "Error"
         const val DEFAULT_PRODUCT_PAGES = 1
         const val DEFAULT_PROGRESS = 1F
         const val ZERO = 0.0
@@ -563,6 +573,7 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_FIRMED_ONFIDO_PENDING = "CREDIT_FIRMED_ONFIDO_PENDING"
         const val CREDIT_ONFIDO_REJECTED = "CREDT_ONFIFO_REJECTED"
         const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
+        const val CREDIT_ERROR_CREATE_ACCOUNT = "CREDIT_ERROR_CREATE_ACCOUNT"
         const val SEPARATOR = " + "
     }
 }

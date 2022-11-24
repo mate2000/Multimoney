@@ -37,7 +37,7 @@ class SmartRetiredViewModel : BaseViewModel(true) {
                 institution = institution,
                 institutionError = Pair(
                     true,
-                    R.string.smart_own_business_description_max_char_error
+                    R.string.you_have_exceeded_the_max_characters_error
                 )
             )
         }

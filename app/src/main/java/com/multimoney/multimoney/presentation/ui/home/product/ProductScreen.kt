@@ -82,18 +82,6 @@ fun ProductScreen(
     LaunchedEffect(key1 = true){
         viewModel.executeNavigation(onNavigate = onNavigate)
     }
-//    viewModel.apply {
-//        isOnRestart = isRestart
-//        DisposableEffect(isOnRestart) {
-//            if (isOnRestart) {
-//
-//                executeNavigation(onNavigate = onNavigate)
-//            }
-//            onDispose {
-//                isOnRestart = false
-//            }
-//        }
-//    }
 
     // Pager
     val headerExpandedPagerState = rememberPagerState()
@@ -162,7 +150,6 @@ fun ProductScreen(
                 }
             )
         }
-        //LoadingIndicator(sharedViewModel.uiState.isLoading)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {

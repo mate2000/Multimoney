@@ -16,6 +16,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.presentation.theme.ComplementaryOne500
@@ -26,6 +27,7 @@ import com.multimoney.multimoney.presentation.theme.GradientPrimary
 import com.multimoney.multimoney.presentation.theme.GradientSecondary
 import com.multimoney.multimoney.presentation.theme.GradientTertiary
 import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.Primary600
 import com.multimoney.multimoney.presentation.theme.Secondary500
 import com.multimoney.multimoney.presentation.theme.Tertiary500
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryOne
@@ -34,13 +36,13 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Pr
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Secondary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
 
-const val SIXTY_PERCENT = 0.60
-
+const val SIXTY_PERCENT = 0.90
+@Preview
 @Composable
 fun CustomProductBackground(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     type: ProductBackGroundType = Primary,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit = {}
 ) {
 
     val configuration = LocalConfiguration.current
@@ -49,52 +51,59 @@ fun CustomProductBackground(
     val startOffset = screenWidth.value * SIXTY_PERCENT
 
     val gradientOneColor: Color
-    val gradientTwoColor: Color
+    var gradientTwoColor: Color = Primary600
+    val gradientThreeColor: Color
 
     when (type) {
         Primary -> {
             if (isSystemInDarkTheme()) {
                 gradientOneColor = Primary500
-                gradientTwoColor = GradientPrimary
+                gradientTwoColor = Primary500
+                gradientThreeColor = Color(0xFF81DB65)
             } else {
                 gradientOneColor = Primary500
-                gradientTwoColor = GradientPrimary
+                gradientTwoColor = Primary600
+                gradientThreeColor = Primary500
             }
         }
         Secondary -> {
             if (isSystemInDarkTheme()) {
                 gradientOneColor = Secondary500
-                gradientTwoColor = GradientSecondary
+                gradientTwoColor = Secondary500
+                gradientThreeColor = GradientSecondary
             } else {
                 gradientOneColor = Secondary500
-                gradientTwoColor = GradientSecondary
+                gradientTwoColor = Secondary500
+                gradientThreeColor = GradientSecondary
             }
         }
         Tertiary -> {
             if (isSystemInDarkTheme()) {
                 gradientOneColor = Tertiary500
-                gradientTwoColor = GradientTertiary
+                gradientTwoColor = Tertiary500
+                gradientThreeColor = GradientTertiary
             } else {
                 gradientOneColor = Tertiary500
-                gradientTwoColor = GradientTertiary
+                gradientTwoColor = Tertiary500
+                gradientThreeColor = GradientTertiary
             }
         }
         ComplementaryOne -> {
             if (isSystemInDarkTheme()) {
                 gradientOneColor = ComplementaryOne500
-                gradientTwoColor = GradientComplementaryOne
+                gradientThreeColor = GradientComplementaryOne
             } else {
                 gradientOneColor = ComplementaryOne500
-                gradientTwoColor = GradientComplementaryOne
+                gradientThreeColor = GradientComplementaryOne
             }
         }
         ComplementaryTwo -> {
             if (isSystemInDarkTheme()) {
                 gradientOneColor = ComplementaryTwo500
-                gradientTwoColor = GradientComplementaryTwo
+                gradientThreeColor = GradientComplementaryTwo
             } else {
                 gradientOneColor = ComplementaryTwo500
-                gradientTwoColor = GradientComplementaryTwo
+                gradientThreeColor = GradientComplementaryTwo
             }
         }
     }
@@ -108,9 +117,9 @@ fun CustomProductBackground(
                 .clip(RoundedCornerShape(24.dp))
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(gradientOneColor, gradientOneColor, gradientTwoColor),
+                        colors = listOf(gradientOneColor, gradientTwoColor, gradientThreeColor),
                         start = Offset(-startOffset.toFloat(), Float.POSITIVE_INFINITY),
-                        end = Offset(Float.POSITIVE_INFINITY, 0f)
+                        end = Offset(Float.POSITIVE_INFINITY, 0f),
                     )
                 )
                 .blur(0.24.dp)

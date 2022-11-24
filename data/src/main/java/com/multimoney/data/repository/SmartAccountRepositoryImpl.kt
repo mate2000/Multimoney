@@ -31,7 +31,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
         accountToken: Long,
         pageNumber: Int,
         pageSize: Int,
-        monthDate: String
+        monthDate: String?
     ): Flow<MultimoneyResult<SmartMovementsResult?>> =
         fetchData(
             apolloCall = graphqlApi.queryGetCoreBankMovements(

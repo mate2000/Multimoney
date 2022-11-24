@@ -15,7 +15,7 @@ class QueryGetCoreBankMovementsUseCaseImpl(
         accountToken: Long,
         pageNumber: Int,
         pageSize: Int,
-        monthDate: String
+        monthDate: String?
     ): Flow<MultimoneyResult<SmartMovementsResult?>> =
         smartAccountRepository.queryGetCoreBankMovements(
             user,

@@ -39,7 +39,7 @@ class SmartMovementsViewModel @Inject constructor(
                 accountToken = 287380645,
                 pageNumber = pageNumber,
                 pageSize = pageSize,
-                monthDate = "2022-10-01"
+                monthDate = null
             ).collectLatest { result ->
                 result.onSuccess { movements ->
                     uiState = uiState.copy(

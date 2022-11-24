@@ -5,7 +5,7 @@ query GetCoreBankMovements(
     $accountToken: Long!,
     $pageNumber: Int!,
     $pageSize: Int!,
-    $monthDate: DateTime!
+    $monthDate: DateTime
 ){
     getCoreBankMovements(
         getCoreBankMovementsInput: {

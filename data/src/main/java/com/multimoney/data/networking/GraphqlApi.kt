@@ -720,7 +720,7 @@ class GraphqlApi @Inject constructor(
         accountToken: Long,
         pageNumber: Int,
         pageSize: Int,
-        monthDate: String
+        monthDate: String?
     ): ApolloCall<GetCoreBankMovementsQuery.Data> =
         apolloAuthorizedClient.query(
             GetCoreBankMovementsQuery(

@@ -22,7 +22,7 @@ interface SmartAccountRepository {
         accountToken: Long,
         pageNumber: Int,
         pageSize: Int,
-        monthDate: String
+        monthDate: String?
     ): Flow<MultimoneyResult<SmartMovementsResult?>>
 
     suspend fun queryCivilStatus(

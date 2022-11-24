@@ -28,7 +28,10 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             ibanAccount = it.cuenta_Iban,
             monthlyQuota = it.cuota_Mensual.toString(),
             balanceAmountCancel = it.saldo_Monto_Cancelar.toString(),
-            daysExpired = it.dias_Vencidos
+            daysExpired = it.dias_Vencidos,
+            applyAutomaticDebit = it.aplica_Debito_Aut,
+            automaticDebitEnabled = it.debito_Aut_Activo,
+            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo
         )
     },
     creditLimit = limite_credito,

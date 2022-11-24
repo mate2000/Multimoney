@@ -113,6 +113,9 @@ fun SmartBeneficiaryScreen(
                 } else {
                     sharedViewModel.onUIEvent(
                         SmartViewModel.UIEvent.OnSetNavigation(
+                            nextAction = {
+                                sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnNextStep)
+                            },
                             nextStep = SmartSteps.Five.id,
                             previousStep = SmartSteps.Three.id
                         )

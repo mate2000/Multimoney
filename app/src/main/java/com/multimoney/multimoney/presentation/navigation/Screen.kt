@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
@@ -145,7 +146,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentOptionsScreen : Screen(
-        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/{$PAYMENT_AMOUNT}",
+        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/{$PAYMENT_AMOUNT}/{$IDENTIFICATION}/{$USER}",
         "payment_options_screen"
     )
 
@@ -157,6 +158,16 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object PaymentPointsScreen : Screen(
         "payment_points_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_AMOUNT}",
         "payment_points_screen"
+    )
+
+    object PaymentCardsListScreen : Screen(
+        "payment_cards_list_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}",
+        "payment_cards_list_screen"
+    )
+
+    object PaymentAmountCardsScreen : Screen(
+        "payment_amount_cards_list_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$CARD_SELECTED}",
+        "payment_amount_cards_list_screen"
     )
 
     object PaymentLocationDetailsScreen : Screen(

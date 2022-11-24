@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product.smart.movements
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -55,7 +54,6 @@ class SmartMovementsViewModel @Inject constructor(
                     uiState = uiState.copy(isLoading = true)
                 }
                 result.onFailure { error ->
-                    Log.d("AAAA", "")
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
                             description = error.getError() ?: "",

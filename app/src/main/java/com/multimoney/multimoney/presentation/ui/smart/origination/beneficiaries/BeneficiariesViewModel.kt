@@ -173,8 +173,6 @@ class BeneficiariesViewModel @Inject constructor(
     }
 
     companion object {
-        const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
-        const val NUMBER_REGEX = "[0-9]"
         const val MAX_PERCENTAGE = 100
     }
 }

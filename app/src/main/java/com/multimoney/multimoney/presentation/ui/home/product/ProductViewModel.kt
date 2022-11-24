@@ -46,7 +46,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
-//    private val dataStorePreferences: DataStorePreferences,
     private val helper: ShareHelper
 ) : BaseViewModel(true) {
 
@@ -57,7 +56,6 @@ class ProductViewModel @Inject constructor(
     // Stateless
     var lastStep: Int = 1
     var balanceCredit: Balance? = null
-
     var configurationVersion: ConfigurationVersion? = null
     var pkUser: String = ""
     var identification: String = ""
@@ -436,7 +434,6 @@ class ProductViewModel @Inject constructor(
         }
         return amount
     }
-
 
     data class UIState(
         // Fields

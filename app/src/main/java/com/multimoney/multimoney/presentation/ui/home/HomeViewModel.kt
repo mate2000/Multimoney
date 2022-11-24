@@ -60,17 +60,13 @@ class HomeViewModel @Inject constructor(
                 email = dataStorePreferences.getUserEmail().first(),
                 userName = dataStorePreferences.getUserName().first()
             )
-
             callQueryValidateUserStatus(
                 uiState.pkUser.toInt(),
                 uiState.identification,
                 uiState.email,
                 uiState.idBrand.toInt()
             )
-
             callQueryGetConfigurationVersion(uiState.idBrand.toInt())
-
-
         }
     }
 
@@ -100,7 +96,6 @@ class HomeViewModel @Inject constructor(
                             quickActions = it.quickActions
                         )
                 }
-
             }
             result.onFailure {
                 onFailure(it)
@@ -110,8 +105,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-
 
     private fun callQueryBalanceUseCase(
         user: String,
@@ -140,10 +133,7 @@ class HomeViewModel @Inject constructor(
                     if (uiState.isLoading)
                         uiState = uiState.copy(isLoading = false)
                     uiState = uiState.copy(balance = balance)
-
-                    //this.balance = balance
                 }
-
             }
             result.onFailure {
                 onFailure(it)
@@ -163,14 +153,9 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
-
                 configurationVersion?.let {
-//                    if (uiState.isLoading)
-//                        uiState = uiState.copy(isLoading = false)
                     uiState = uiState.copy(configurationVersion = configurationVersion)
-                    //this.configurationVersion = configurationVersion
                 }
-
                 emitBaseEvent(
                     OnStartCountDownTimer(
                         configurationVersion?.configuration?.timeSession?.toLong() ?: 0

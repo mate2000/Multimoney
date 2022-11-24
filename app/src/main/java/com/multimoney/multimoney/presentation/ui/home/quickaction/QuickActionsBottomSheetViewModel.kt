@@ -24,13 +24,11 @@ class QuickActionsBottomSheetViewModel @Inject constructor(
     var quickActionUiState by mutableStateOf(QuickActionUiState())
 
     // Stateless
-
     var validateUserStatus: ValidateUserStatus? = null
     var balance: Balance? = null
     var idBrand: String = ""
     var pkUser: String = ""
     var identification: String = ""
-
 
     init {
         getIdBrand()
@@ -48,14 +46,11 @@ class QuickActionsBottomSheetViewModel @Inject constructor(
 
     fun isNfcAvailable() = nfcHelper.isNfcSupported()
 
-
-
-
     fun getSmartQuickAction(label: String, iconId: String): QuickActionDummy {
         return QuickActionDummy(getQuickActionIconByType(iconId), label)
     }
 
-    fun getQuickActionIconByType(iconId : String) : Int? {
+    private fun getQuickActionIconByType(iconId : String) : Int? {
         return when (iconId){
             "1" -> R.drawable.ic_quick_action_calendar
             "2" -> R.drawable.ic_quick_action_money
@@ -71,8 +66,6 @@ class QuickActionsBottomSheetViewModel @Inject constructor(
             else -> null
         }
     }
-
-
 }
 
 data class QuickActionDummy(val icon: Int?, val label: String)

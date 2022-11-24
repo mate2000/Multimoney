@@ -196,6 +196,10 @@ dependencies {
     // Slider
     implementation slider.slider
 
+    // VISA
+    implementation appcompat.appcompat
+    implementation visa.visa
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit

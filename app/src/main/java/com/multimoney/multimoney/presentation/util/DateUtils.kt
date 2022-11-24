@@ -22,11 +22,18 @@ fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): S
     }
 }
 
-fun getCardDateFormat(date: String?): String {
+fun getCurrentDateString() = getPickedDateAsString(
+    Calendar.getInstance().get(Calendar.YEAR),
+    Calendar.getInstance().get(Calendar.MONTH),
+    Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+    YEAR_MONTH_DAY_PATTERN
+)
+
+fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
         val dateFormatted = SHORT_DATE_FORMAT.parse(date)
         dateFormatted?.let {
-            BAR_DIVIDER_FORMAT.format(dateFormatted)
+            format.format(dateFormatted)
         } ?: run {
             ""
         }
@@ -77,3 +84,4 @@ val API_DATE_FORMAT = SimpleDateFormat(ISO_8601_API_FORMAT_PATTERN, Locale.getDe
 val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
+val BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS = SimpleDateFormat("dd | MM | yy", Locale.getDefault())

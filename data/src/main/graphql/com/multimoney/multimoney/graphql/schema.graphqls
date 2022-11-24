@@ -120,6 +120,11 @@ type Query {
   getLinkAccountSmartContract(linkAccountSmartContractInput: LinkAccountSmartContractDtoInput!): LinkAccountSmartContract!
 
   """
+  AccountSmart
+  """
+  bankList365Type(bankList365Input: BankList365DtoInput!): [BankList365!]
+
+  """
   Balance
   """
   balanceCredit(balanceCreditInput: balanceCreditInput!): [PromissoryNoteMobile!]
@@ -1474,6 +1479,18 @@ input LinkAccountSmartContractDtoInput {
 
   idRequestSysde: Long!
 
+  idBrand: Int
+
+  user: String
+}
+
+type BankList365 {
+  bankId: Long!
+
+  name: String!
+}
+
+input BankList365DtoInput {
   idBrand: Int
 
   user: String
@@ -2876,13 +2893,17 @@ type QuickActions {
 }
 
 input QuickActionsDtoInput {
-  infoCreditStatus: Boolean!
+  pkUser: Long!
 
-  infoVirtualCardStatus: Boolean!
+  identification: String!
 
-  infoBankAccountStatus: Boolean!
+  infoCreditStatus: Int!
 
-  infoCripto: Boolean!
+  infoVirtualCardStatus: Int!
+
+  infoBankAccountStatus: Int!
+
+  infoCriptoStatus: Int!
 
   idBrand: Int
 

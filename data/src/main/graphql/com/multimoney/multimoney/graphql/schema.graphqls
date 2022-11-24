@@ -110,6 +110,16 @@ type Query {
   professionSmart(professionInput: ProfessionDtoInput!): Profession
 
   """
+  AccountSmart
+  """
+  listPaymentType(paymentTypeInput: PaymentDtoInput!): [PaymentType!]
+
+  """
+  AccountSmart
+  """
+  getLinkAccountSmartContract(linkAccountSmartContractInput: LinkAccountSmartContractDtoInput!): LinkAccountSmartContract!
+
+  """
   Balance
   """
   balanceCredit(balanceCreditInput: balanceCreditInput!): [PromissoryNoteMobile!]
@@ -250,7 +260,6 @@ type Query {
   accountStatement(accountStatementInput: AccountStatementDtoInput!): AccountStatement!
 
   """
-
   Credit
   """
   getInfoDeposit(infoDepositInput: InfoDepositDtoInput!): InfoDeposit!
@@ -261,8 +270,6 @@ type Query {
   getLinkCreditContract(linkCreditContractInput: LinkCreditContractDtoInput!): LinkCreditContract!
 
   """
-=======
-
   Crypto
   """
   cryptoCurrencyMovement(cryptoMovementInput: CryptoMovementDtoInput!): CryptoCurrencyMovement!
@@ -395,6 +402,11 @@ type Query {
   getCompanyNameByIdentification(dataCompanyInformationInput: GetCompanyNameByIdentificationDtoInput!): DataCompanyInformation!
 
   """
+  Security
+  """
+  quickActions(quickActionsInput: QuickActionsDtoInput!): [QuickActions!]!
+
+  """
   VirtualCard
   """
   listCardVD(listCardVDInput: ListCardDtoInput!): [ListCard!]!
@@ -510,6 +522,11 @@ type Mutation {
   AccountSmart
   """
   transferMovil365(transferMovil365Input: TransferMovil365DtoInput!): Transfer365
+
+  """
+  AccountSmart
+  """
+  saveAccountSmartContract(accountSmartContractInput: AccountSmartContractDtoInput!): AccountSmartContract
 
   """
   Credit
@@ -780,6 +797,22 @@ type Mutation {
 
 type Subscription {
   creditContractEvent(input: CreditContractEventDtoInput!): CreditContractEvent!
+
+  accountSmartContractEvent(input: AccountSmartContractEventDtoInput!): AccountSmartContractEvent!
+}
+
+type AddressLevel4 {
+  result: [CatalogAdressLevel4ListResponse!]!
+
+  status: Int
+
+  message: String
+
+  _HaveError: Boolean
+
+  _ErrorMessage: String
+
+  _FullError: String
 }
 
 input AddressLevel3DtoInput {
@@ -896,20 +929,6 @@ input CivilStatusDtoInput {
 
 type CivilStatus {
   result: [MaritalStatusListResponse!]!
-
-  status: Int
-
-  message: String
-
-  _HaveError: Boolean
-
-  _ErrorMessage: String
-
-  _FullError: String
-}
-
-type AddressLevel4 {
-  result: [CatalogAdressLevel4ListResponse!]!
 
   status: Int
 
@@ -1428,6 +1447,38 @@ input ProfessionDtoInput {
   user: String
 }
 
+type PaymentType {
+  id: Int!
+
+  description: String!
+
+  code: String!
+}
+
+input PaymentDtoInput {
+  idBrand: Int
+
+  user: String
+}
+
+type LinkAccountSmartContract {
+  linkAvailable: Boolean!
+
+  link: String
+
+  statusEvicertia: String
+}
+
+input LinkAccountSmartContractDtoInput {
+  pkUser: Long!
+
+  idRequestSysde: Long!
+
+  idBrand: Int
+
+  user: String
+}
+
 type PromissoryNoteMobile {
   fk_Suv_Cat_Marca: Short!
 
@@ -1473,7 +1524,7 @@ type PromissoryNoteMobile {
 
   debito_Aut_Activo: Boolean
 
-  vDDebito_Aut_Activo: Boolean
+  aplica_Debito_Aut: Boolean!
 }
 
 input balanceCreditInput {
@@ -1803,47 +1854,47 @@ type CreditExtensionConfigurator {
 }
 
 input CreditExtensionDtoInput {
-  pkPromotion: Long!
+  pkPromotion: Long
 
-  pkPromotionMonth: Int!
+  pkPromotionMonth: Int
 
   idClient: Long!
 
-  amountRequest: Decimal!
+  amountRequest: Decimal
 
-  valuesProduct: [[String!]!]!
+  valuesProduct: [[String!]!]
 
-  tableClass: String!
+  tableClass: String
 
-  idProductSelect: Int!
+  idProductSelect: Int
 
-  idProductBase: Int!
+  idProductBase: Int
 
-  monthSelect: Int!
+  monthSelect: Int
 
-  quotaCalculator: String!
+  quotaCalculator: String
 
-  modelCreditExtensionConfigurator: CreditExtensionConfiguratorDtoInput!
+  modelCreditExtensionConfigurator: CreditExtensionConfiguratorDtoInput
 
-  requiredSms: Boolean!
+  requiredSms: Boolean
 
-  numberTelephone: String!
+  numberTelephone: String
 
-  fkUser: Int!
+  fkUser: Int
 
-  menssageAmountExtensionPart1: String!
+  menssageAmountExtensionPart1: String
 
-  menssageAmountExtensionPart2: String!
+  menssageAmountExtensionPart2: String
 
-  menssageInformationExtensionPart1: String!
+  menssageInformationExtensionPart1: String
 
-  menssageInformationExtensionPart2: String!
+  menssageInformationExtensionPart2: String
 
-  menssageInformationApp: String!
+  menssageInformationApp: String
 
   currency: String!
 
-  promissoryNote: String!
+  promissoryNote: String
 
   idBrand: Int
 
@@ -1851,45 +1902,45 @@ input CreditExtensionDtoInput {
 }
 
 type CreditExtension {
-  pkPromotion: Long!
+  pkPromotion: Long
 
-  pkPromotionMonth: Int!
+  pkPromotionMonth: Int
 
-  idClient: Long!
+  idClient: Long
 
-  amountRequest: Decimal!
+  amountRequest: Decimal
 
-  product: [CreditExtensionProduct!]!
+  product: [CreditExtensionProduct!]
 
-  tableClass: String!
+  tableClass: String
 
-  idProductSelect: Int!
+  idProductSelect: Int
 
-  idProductBase: Int!
+  idProductBase: Int
 
-  monthSelect: Int!
+  monthSelect: Int
 
-  quotaCalculator: String!
+  quotaCalculator: String
 
-  requiredSms: Boolean!
+  requiredSms: Boolean
 
-  numberTelephone: String!
+  numberTelephone: String
 
-  fkUser: Int!
+  fkUser: Int
 
-  menssageAmountExtensionPart1: String!
+  menssageAmountExtensionPart1: String
 
-  menssageAmountExtensionPart2: String!
+  menssageAmountExtensionPart2: String
 
-  menssageInformationExtensionPart1: String!
+  menssageInformationExtensionPart1: String
 
-  menssageInformationExtensionPart2: String!
+  menssageInformationExtensionPart2: String
 
-  menssageInformationApp: String!
+  menssageInformationApp: String
 
-  currency: String!
+  currency: String
 
-  promissoryNote: String!
+  promissoryNote: String
 }
 
 type PromissoryNoteDetailList {
@@ -1982,7 +2033,6 @@ input AccountStatementDtoInput {
   user: String
 }
 
-
 type InfoDeposit {
   numeroCuenta: String!
 
@@ -2024,7 +2074,6 @@ input LinkCreditContractDtoInput {
 
   user: String
 }
-
 
 type CryptoCurrencyMovement {
   globalBalance: String
@@ -2707,9 +2756,11 @@ type Minicard {
 
   tipo: String!
 
-  imagenUrl: String!
+  imagenUrl: String
 
-  deeplink: String!
+  deeplink: String
+
+  flujo: String
 }
 
 input MinicardDtoInput {
@@ -2751,25 +2802,25 @@ input TermsConditionsSignedDtoInput {
 type ParameterMobile {
   pk_Suv_Par_Parametro: Int!
 
-  llave_Busqueda: String!
+  llave_Busqueda: String
 
-  descripcion: String!
+  descripcion: String
 
   valor: String!
 
-  categoria: String!
+  categoria: String
 
-  editable: Boolean!
+  editable: Boolean
 
-  valor_Inicio: String!
+  valor_Inicio: String
 
-  direccion_IP: String!
+  direccion_IP: String
 
-  descripcion_Inicio: String!
+  descripcion_Inicio: String
 
-  optionAplication: String!
+  optionAplication: String
 
-  origen: Boolean!
+  origen: Boolean
 }
 
 input GetParameterMobileByCategoryDtoInput {
@@ -2808,6 +2859,30 @@ type DataCompanyInformation {
 
 input GetCompanyNameByIdentificationDtoInput {
   identification: String!
+
+  idBrand: Int
+
+  user: String
+}
+
+type QuickActions {
+  idIcono: String!
+
+  tipoProducto: String!
+
+  nombre: String!
+
+  flujo: String!
+}
+
+input QuickActionsDtoInput {
+  infoCreditStatus: Boolean!
+
+  infoVirtualCardStatus: Boolean!
+
+  infoBankAccountStatus: Boolean!
+
+  infoCripto: Boolean!
 
   idBrand: Int
 
@@ -3371,21 +3446,19 @@ input Transfer365DtoInput {
 
   destinationAccount: String!
 
-  destinationBank: String
+  destinationBank: String!
 
   destinationName: String!
 
   destinationLastName: String
 
-  bankReference: String
-
   isMovil: Boolean
 
-  paymentType: String
+  paymentType: String!
 
-  sourceType: String
+  destinationType: String!
 
-  destinationType: String
+  accountType: String!
 
   idBrand: Int
 
@@ -3401,11 +3474,45 @@ input TransferMovil365DtoInput {
 
   destinationPhone: String!
 
-  destinationBank: String
+  destinationBank: String!
 
   destinationName: String!
 
   destinationLastName: String
+
+  idBrand: Int
+
+  user: String
+}
+
+type AccountSmartContract {
+  idRequestSysde: Long!
+
+  idBrand: Int
+
+  link: String
+
+  statusEvicertia: String
+
+  statusOnfido: String
+
+  active: Boolean!
+
+  currentStep: String!
+}
+
+input AccountSmartContractDtoInput {
+  idRequestSysde: Long!
+
+  link: String
+
+  statusEvicertia: String
+
+  statusOnfido: String
+
+  active: Boolean!
+
+  currentStep: String!
 
   idBrand: Int
 
@@ -3617,173 +3724,179 @@ input termsAndConditionsCreditInput {
 }
 
 type CreditExtensionDetail {
-  fk_Suv_Mtr_Control_Flujo: Long!
+  fk_Suv_Mtr_Control_Flujo: Long
 
-  pK_PSE_CAT_PROMOCION: Long!
+  pK_PSE_CAT_PROMOCION: Long
 
-  pK_PSE_CAT_PROMOCION_PLAZO: Int!
+  pK_PSE_CAT_PROMOCION_PLAZO: Int
 
-  id_Como_Te_Enteraste: Short!
+  id_Como_Te_Enteraste: Short
 
-  como_Te_Enteraste: String!
+  como_Te_Enteraste: String
 
-  id_Proposito: Short!
+  id_Proposito: Short
 
-  proposito: String!
+  proposito: String
 
-  monto_Inicial: String!
+  monto_Inicial: String
 
-  monto_Seleccionado: String!
+  monto_Seleccionado: String
 
-  id_Producto: Short!
+  id_Producto: Short
 
-  descripcion_Producto: String!
+  descripcion_Producto: String
 
-  plazo: String!
+  plazo: String
 
-  tasa: String!
+  tasa: String
 
-  cuota: String!
+  cuota: String
 
-  cuota_Total: String!
+  cuota_Total: String
 
-  comision_Desembolso: String!
+  comision_Desembolso: String
 
-  cuota_Maxima: String!
+  cuota_Maxima: String
 
-  ciclo: Int!
+  ciclo: Int
 
-  pagare: String!
+  pagare: String
 
-  proximo_Pago: DateTime!
+  proximo_Pago: DateTime
 
-  id_Forma_Desembolso: Short!
+  id_Forma_Desembolso: Short
 
-  forma_Desembolso: String!
+  forma_Desembolso: String
 
-  id_Forma_Entrega: Short!
+  id_Forma_Entrega: Short
 
-  forma_Entrega: String!
+  forma_Entrega: String
 
-  id_Agencia: Short!
+  id_Agencia: Short
 
-  agente: String!
+  agente: String
 
-  fecha_Entrega: DateTime!
+  fecha_Entrega: DateTime
 
-  id_Horario_Entrega: Short!
+  id_Horario_Entrega: Short
 
-  horario_Entrega: String!
+  horario_Entrega: String
 
-  horario_Entrega_Desde: String!
+  horario_Entrega_Desde: String
 
-  horario_Entrega_Hasta: String!
+  horario_Entrega_Hasta: String
 
-  id_Hora_Entrega: Short!
+  id_Hora_Entrega: Short
 
-  hora_Entrega: String!
+  hora_Entrega: String
 
-  id_Cliente: Long!
+  id_Cliente: Long
 
-  id_Tipo_Direccion: Short!
+  id_Tipo_Direccion: Short
 
-  tipo_SAP: String!
+  tipo_SAP: String
 
-  provincia: String!
+  provincia: String
 
-  canton: String!
+  canton: String
 
-  distrito: String!
+  distrito: String
 
-  lugarEntrega: String!
+  lugarEntrega: String
 
-  detalle_Direccion: String!
+  detalle_Direccion: String
 
-  id_Tipo_Transferencia: Int!
+  id_Tipo_Transferencia: Int
 
-  tipo_Transferencia: String!
+  tipo_Transferencia: String
 
-  tipo_Cuenta: String!
+  tipo_Cuenta: String
 
-  id_Numero_Cuenta: Long!
+  id_Numero_Cuenta: Long
 
-  numero_Cuenta: String!
+  numero_Cuenta: String
 
-  banco: String!
+  banco: String
 
-  telefono: String!
+  telefono: String
 
-  es_Etapa_Final: Boolean!
+  es_Etapa_Final: Boolean
 
-  enviar_Sms: Boolean!
+  enviar_Sms: Boolean
 
-  id_Ampliacion_Core: String!
+  id_Ampliacion_Core: String
 
-  numero_Gestion: String!
+  numero_Gestion: String
 
-  correo_Electronico: String!
+  correo_Electronico: String
 
-  identificacion_Usuario: String!
+  identificacion_Usuario: String
 
-  usuario_Creacion: String!
+  usuario_Creacion: String
 
-  direccion_IP: String!
+  direccion_IP: String
 
-  es_App: Boolean!
+  es_App: Boolean
 
-  origen: Boolean!
+  origen: Boolean
 
-  tipo_Cambio: Decimal!
+  tipo_Cambio: Decimal
 
-  moneda_Pagare: String!
+  moneda_Pagare: String
 
-  moneda_Desembolso: String!
+  moneda_Desembolso: String
 
-  monto_Real: Decimal!
+  monto_Real: Decimal
 
-  moneda: String!
+  moneda: String
 
-  fk_Suv_Mtr_Usuario: Int!
+  fk_Suv_Mtr_Usuario: Int
 
-  pantalla_Confirmacion: Boolean!
+  pantalla_Confirmacion: Boolean
 
-  id_Prestamo: Int!
+  id_Prestamo: Int
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input CreditExtensionDetailDtoInput {
-  pkUser: Int
+  pkUser: Int!
 
-  accountNumber: String
+  accountNumber: String!
 
-  amount: Decimal
+  amount: Decimal!
 
-  term: Short
+  month: Short!
 
-  idTerm: Int
+  pkPromotionMonth: Int!
 
-  nextPaymentDate: DateTime
+  nextPaymentDate: DateTime!
 
-  monthlyPayment: Decimal
+  quota: Decimal!
 
-  totalMonthlyPayment: Decimal
+  quotaTotal: Decimal!
 
-  loanCharge: Decimal
+  comissionDisbursement: Decimal!
 
-  interestRateLoan: Decimal
+  rateInterestNormalLoan: Decimal!
 
-  regularInterestRate: Decimal
+  rateInterestNormalRegular: Decimal!
 
-  cycle: Short
+  cicle: Short!
 
-  idProduct: Int
+  idProduct: Int!
 
-  productDescription: String
+  descriptionPromotionTerm: String!
 
-  idPromotion: Int
+  pkPromotion: Int!
 
   bankAccount: String
 
-  userEmail: String
+  userEmail: String!
 
   loanForm: String
 
@@ -3793,27 +3906,27 @@ input CreditExtensionDetailDtoInput {
 }
 
 input ProcessCreditExtensionDtoInput {
-  idFlowControl: Long
+  idFlowControl: Long!
 
   accountNumber: String
 
   currency: String
 
-  idBankAccount: Long
+  idBankAccount: Long!
 
   bankAccount: String
 
-  idLoanForm: Short
+  idLoanForm: Short!
 
   phoneNumber: String
 
   userEmail: String
 
-  pkUser: Int
+  pkUser: Int!
 
   loanForm: String
 
-  idCredit: Int
+  idLoanClient: Int!
 
   idBrand: Int
 
@@ -5026,6 +5139,28 @@ input CreditContractEventDtoInput {
   idBrand: Int
 }
 
+type AccountSmartContractEvent {
+  idRequestSysde: Long
+
+  idBrand: Int
+
+  link: String
+
+  statusEvicertia: String
+
+  statusOnfido: String
+
+  active: Boolean
+
+  currentStep: String
+}
+
+input AccountSmartContractEventDtoInput {
+  idRequestSysde: Long
+
+  idBrand: Int
+}
+
 type basicCardInfo {
   vCardId: String!
 
@@ -5507,69 +5642,69 @@ type PromissoryNoteDetail {
 }
 
 type CreditExtensionProduct {
-  pkPromotion: Long!
+  pkPromotion: Long
 
-  pkPromotionMonth: Int!
+  pkPromotionMonth: Int
 
-  descriptionPromotionTerm: String!
+  descriptionPromotionTerm: String
 
-  rateInterestNormal: String!
+  rateInterestNormal: String
 
-  rateIntMoratorium: String!
+  rateIntMoratorium: String
 
-  comissionMoratorium: Decimal!
+  comissionMoratorium: Decimal
 
-  comissionDisbursement: String!
+  comissionDisbursement: String
 
-  strRateInterestNormal: String!
+  strRateInterestNormal: String
 
-  strComissionDisbursement: String!
+  strComissionDisbursement: String
 
-  extensionCommission: Decimal!
+  extensionCommission: Decimal
 
-  interestRateExpansion: String!
+  interestRateExpansion: String
 
-  showDetail: String!
+  showDetail: String
 
-  month: String!
+  month: String
 
-  quota: Decimal!
+  quota: Decimal
 
-  quotaTotal: Decimal!
+  quotaTotal: Decimal
 
-  cicle: Int!
+  cicle: Int
 
-  isPromotion: Boolean!
+  isPromotion: Boolean
 
-  datePay: DateTime!
+  datePay: DateTime
 
-  datePayActuality: DateTime!
+  datePayActuality: DateTime
 
-  strQuota: String!
+  strQuota: String
 
-  strQuotaTotal: String!
+  strQuotaTotal: String
 
-  quotaActuality: Decimal!
+  quotaActuality: Decimal
 
-  strQuotaActuality: String!
+  strQuotaActuality: String
 
-  strDatePay: String!
+  strDatePay: String
 
-  strDatePayActuality: String!
+  strDatePayActuality: String
 }
 
 input CreditExtensionConfiguratorDtoInput {
-  amountMax: Decimal!
+  amountMax: Decimal
 
-  amountMin: Decimal!
+  amountMin: Decimal
 
-  labelAmountMaxAvailable: String!
+  labelAmountMaxAvailable: String
 
-  labelAmountMinAvailable: String!
+  labelAmountMinAvailable: String
 
-  symbol: String!
+  symbol: String
 
-  amountTract: Int!
+  amountTract: Int
 
   idLoanClient: Long!
 
@@ -5579,11 +5714,11 @@ input CreditExtensionConfiguratorDtoInput {
 
   quotaMax: Decimal!
 
-  promissoryNote: String!
+  promissoryNote: String
 
-  amountMinDisbursementCK: Decimal!
+  amountMinDisbursementCK: Decimal
 
-  paramMore: Boolean!
+  paramMore: Boolean
 
   idBrand: Int
 
@@ -6083,14 +6218,6 @@ type generalEconomicActivityResult {
   iconCode: String
 }
 
-type CatalogAdressLevel4ListResponse {
-  id: String!
-
-  name: String!
-
-  code: String!
-}
-
 type MaritalStatusListResponse {
   maritalStatusId: Int!
 
@@ -6128,6 +6255,14 @@ type CatalogAdressLevel2ListResponse {
 }
 
 type CatalogAdressLevel3ListResponse {
+  id: String!
+
+  name: String!
+
+  code: String!
+}
+
+type CatalogAdressLevel4ListResponse {
   id: String!
 
   name: String!

@@ -42,6 +42,11 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                 statusFirm
                 currentStep
             }
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
         infoVirtualCard {
             status

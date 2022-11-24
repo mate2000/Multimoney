@@ -41,6 +41,7 @@
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
     <string name="info" translatable="false">Información</string>
+    <string name="not_defined" translatable="false">Not Defined</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -247,6 +248,7 @@
     <string name="home_product_credit_approved_process_started_card_description" translatable="false">Tu solicitud de crédito está en proceso. ¡No pierdas la oportunidad!</string>
     <string name="home_product_credit_approved_process_started_card_action" translatable="false">Continuar con proceso</string>
     <string name="home_product_process_credit_label" translatable="false">Crédito</string>
+    <string name="home_product_process_credit_preapproved_label" translatable="false">Crédito</string>
     <string name="home_product_process_title" translatable="false">Parece que hubo un error</string>
     <string name="home_product_process_description" translatable="false">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
     <string name="home_product_process_action" translatable="false">Validar identificación</string>

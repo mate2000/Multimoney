@@ -7,8 +7,6 @@ sealed class SmartSteps(val id: Int, val name: String) {
     object Four : SmartSteps(4, "Paso_4")
     object Five : SmartSteps(5, "Paso_5")
     object Six : SmartSteps(6, "Paso_6")
-    object Seven : SmartSteps(7, "Paso_7")
-    object Eight : SmartSteps(8, "Paso_8")
 
     object Search {
         fun getIdByName(name: String?) = when (name) {
@@ -18,8 +16,6 @@ sealed class SmartSteps(val id: Int, val name: String) {
             Four.name -> Four.id
             Five.name -> Five.id
             Six.name -> Six.id
-            Seven.name -> Seven.id
-            Eight.name -> Eight.id
             else -> One.id
         }
 
@@ -30,8 +26,6 @@ sealed class SmartSteps(val id: Int, val name: String) {
             Four.id -> Four.name
             Five.id -> Five.name
             Six.id -> Six.name
-            Seven.id -> Seven.name
-            Eight.id -> Eight.name
             else -> One.name
         }
     }

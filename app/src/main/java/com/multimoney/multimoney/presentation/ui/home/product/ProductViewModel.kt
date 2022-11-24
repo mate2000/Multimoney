@@ -21,12 +21,14 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
@@ -133,7 +135,14 @@ class ProductViewModel @Inject constructor(
             }
             uiState = uiState.copy(
                 productPageList = productPageList,
-                canExpandCredit = it.getFirstCredit()?.canExpandCredit ?: false
+                canExpandCredit = it.getFirstCredit()?.canExpandCredit ?: false,
+                scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
+                    R.drawable.ic_alert_expired_payment
+                } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
+                    R.drawable.info_blue_icon
+                } else {
+                    null
+                }
             )
         }
     }
@@ -187,12 +196,12 @@ class ProductViewModel @Inject constructor(
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
             encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}" +
-                "/${balanceCredit?.getFirstSummary()?.minPaymentLabel}"
+                "/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/$identification/$email"
         }
         navigateTo(route)
     }
 
-    private fun onNavigateToPaymentSchedule() {
+    private fun onNavigateToAutomaticPaymentScheduleScreen() {
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
             route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
@@ -200,6 +209,28 @@ class ProductViewModel @Inject constructor(
                 ClientBankAccount()
             )
             }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/${false}"
+        )
+    }
+
+    private fun onChipQuotaClick() {
+        uiState = uiState.copy(
+            openDialog = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
+                DialogParameters(
+                    titleResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_title,
+                    descriptionResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_description,
+                    positiveResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_button,
+                    isActive = mutableStateOf(true)
+                )
+            } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
+                DialogParameters(
+                    titleResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_title,
+                    descriptionResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_description,
+                    positiveResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_button,
+                    isActive = mutableStateOf(true)
+                )
+            } else {
+                DialogParameters()
+            }
         )
     }
 
@@ -385,6 +416,28 @@ class ProductViewModel @Inject constructor(
         return totalBalance > 0
     }
 
+    fun getSchedulePaymentAmount(balance: Balance?): String {
+        var amount = ""
+        balance?.balanceCredit?.forEach { balanceCredit ->
+            if (balance.isBalanceCreditSummaryMultiple()) {
+                balanceCredit?.summary?.forEachIndexed { index, summary ->
+                    amount = if (index < (balanceCredit.summary?.lastIndex ?: 0)) {
+                        amount.plus(summary.monthlyQuotaLabel).plus(
+                            SEPARATOR
+                        )
+                    } else {
+                        amount.plus(summary.monthlyQuotaLabel)
+                    }
+                }
+            } else if (balanceCredit?.summary?.isNotEmpty() == true && balanceCredit.summary?.firstOrNull() != null) {
+                val summary = balanceCredit.summary?.first()
+                amount = summary?.monthlyQuotaLabel.orEmpty()
+            }
+        }
+        return amount
+    }
+
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -393,7 +446,8 @@ class ProductViewModel @Inject constructor(
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
-        val canExpandCredit: Boolean = false
+        val canExpandCredit: Boolean = false,
+        val scheduleChipIconResource: Int? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -431,6 +485,8 @@ class ProductViewModel @Inject constructor(
             )
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
+            is OnChipQuotaClick -> onChipQuotaClick()
+            is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
         }
     }
 
@@ -462,6 +518,8 @@ class ProductViewModel @Inject constructor(
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
+        object OnChipQuotaClick : UIEvent()
+        object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
 
         data class OnSetUserData(
             val balanceCredit: Balance?,

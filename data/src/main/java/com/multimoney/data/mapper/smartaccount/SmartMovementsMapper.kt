@@ -6,14 +6,14 @@ import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 
 private fun GetCoreBankMovementsQuery.Result.mapToDomainModel(): SmartMovement {
     return SmartMovement(
-        idTransaction as Int,
-        creationDate as String,
-        transactionCatalogueDescription ?: "",
+        idTransaction.toString().toInt(),
+        creationDate.toString(),
+        transactionCatalogueDescription,
         amount.toString().toDouble(),
         currencyDescription ?: "",
         bankAuthorization ?: "",
-        idSubTransaction as Int,
-        sign ?: ""
+        idSubTransaction.toString().toInt(),
+        sign
     )
 }
 

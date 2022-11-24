@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
@@ -24,8 +25,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.data.util.catalog.Brand.ElSalvador
+import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -63,28 +68,26 @@ fun SmartMovementsScreen(
         )
     }
 
-    val scrollState = rememberScrollState()
+    val smartMoves = viewModel.uiState.movementsPage.collectAsLazyPagingItems()
+
     Column(
         Modifier
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
-            .verticalScroll(scrollState)
     ) {
         TopNavBar(
             isLeftButtonVisible = true,
             isRightButtonVisible = false,
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBackToHome) }
         )
-
-        if (
-            scrollState.value == scrollState.maxValue &&
-            scrollState.maxValue != 0 &&
-            !viewModel.uiState.isLoading &&
-            viewModel.uiState.moreRecordsAvailable
-        ) {
-            viewModel.onUIEvent(OnGetMovement(viewModel.uiState.currentPage, PAGE_SIZE))
-        }
-
+//        if (
+//            scrollState.value == scrollState.maxValue &&
+//            scrollState.maxValue != 0 &&
+//            !viewModel.uiState.isLoading &&
+//            viewModel.uiState.moreRecordsAvailable
+//        ) {
+//            viewModel.onUIEvent(OnGetMovement(viewModel.uiState.currentPage, PAGE_SIZE))
+//        }
         Text(
             text = stringResource(string.home_product_movement_title),
             style = Typography.h5.copy(
@@ -92,19 +95,28 @@ fun SmartMovementsScreen(
             ),
             modifier = Modifier.padding(vertical = 24.dp, horizontal = 16.dp)
         )
-        viewModel.uiState.smartMovementsList.forEach {
+        MovementsList(smartMoves)
+    }
+    // LoadingIndicator(viewModel.uiState.isLoading)
+}
+const val PAGE_SIZE = 10
+
+@Composable
+fun MovementsList(smartMoves: LazyPagingItems<SmartMovement>) {
+    LazyColumn {
+        items(items = smartMoves) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                 horizontalArrangement = Absolute.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val currencySymbol = if (it.currencyDescription == API_COLONES) {
+                val currencySymbol = if (it?.currencyDescription == API_COLONES) {
                     CostaRica.id.getCurrencySymbol()
                 } else {
                     ElSalvador.id.getCurrencySymbol()
                 }
 
-                val symbol = if (it.amount > 0) {
+                val symbol = if ((it?.amount ?: 0.0) > 0) {
                     drawable.ic_plus
                 } else {
                     drawable.ic_close
@@ -112,14 +124,14 @@ fun SmartMovementsScreen(
 
                 Column(Modifier.weight(2f)) {
                     Text(
-                        text = it.transactionCatalogueDescription,
+                        text = it?.transactionCatalogueDescription ?: "",
                         style = Typography.subtitle2.copy(
                             color = MultimoneyTheme.colors.labelText
                         ),
                         maxLines = 1
                     )
                     Text(
-                        text = parseApiDateToCardDate(it.creationDate),
+                        text = parseApiDateToCardDate(it?.creationDate),
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.textSubhead
                         ),
@@ -137,7 +149,7 @@ fun SmartMovementsScreen(
                         tint = Color.Unspecified
                     )
                     Text(
-                        text = stringResource(currencySymbol) + it.amount.toString(),
+                        text = stringResource(currencySymbol) + it?.amount.toString(),
                         style = Typography.subtitle1.copy(
                             textAlign = TextAlign.End,
                             color = MultimoneyTheme.colors.labelText,
@@ -150,6 +162,4 @@ fun SmartMovementsScreen(
             Divider(color = MultimoneyTheme.colors.dividerWhite30)
         }
     }
-    LoadingIndicator(viewModel.uiState.isLoading)
 }
-const val PAGE_SIZE = 10

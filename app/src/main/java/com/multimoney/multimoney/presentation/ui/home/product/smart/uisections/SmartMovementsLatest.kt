@@ -74,7 +74,7 @@ fun SmartMovementsLatest(viewModel: ProductViewModel) {
 
                 Column(Modifier.weight(2f)) {
                     Text(
-                        text = it.transactionCatalogueDescription,
+                        text = it.transactionCatalogueDescription ?: "",
                         style = Typography.subtitle2.copy(
                             color = MultimoneyTheme.colors.labelText
                         ),

@@ -3,66 +3,83 @@ package com.multimoney.multimoney.presentation.ui.home.product.smart.movements
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.paging.PagingData
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovement
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnGetMovement
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnNavigateBackToHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartMovementsViewModel @Inject constructor(
-    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase
+    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
+    private val queryGetPagedSmartMovements: QueryGetPagedSmartMovementsUseCase
 ) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
+//    private fun onGetSmartMovements(
+//        pageNumber: Int = 1,
+//        pageSize: Int = 10
+//    ) {
+//        executeUseCase {
+//            queryGetCoreBankMovements.invoke(
+//                user = "401920903",
+//                idBrand = 5,
+//                identificationNumber = "107910975",
+//                accountToken = 287380645,
+//                pageNumber = pageNumber,
+//                pageSize = pageSize,
+//                monthDate = null
+//            ).collectLatest { result ->
+//                result.onSuccess { movements ->
+//                    uiState = uiState.copy(
+//                        smartMovementsList = uiState.smartMovementsList.plus(movements?.result ?: emptyList()),
+//                        moreRecordsAvailable = ((movements?.totalRecords ?: 0) > uiState.currentPage * PAGE_SIZE),
+//                        currentPage = uiState.currentPage + 1
+//                    )
+//                    delay(100)
+//                    uiState = uiState.copy(isLoading = false)
+//                }
+//                result.onLoading {
+//                    uiState = uiState.copy(isLoading = true)
+//                }
+//                result.onFailure { error ->
+//                    uiState = uiState.copy(
+//                        openDialog = DialogParameters(
+//                            description = error.getError() ?: "",
+//                            isActive = mutableStateOf(true)
+//                        ),
+//                        isLoading = false
+//                    )
+//                }
+//            }
+//        }
+//    }
+
     private fun onGetSmartMovements(
         pageNumber: Int = 1,
         pageSize: Int = 10
     ) {
         executeUseCase {
-            queryGetCoreBankMovements.invoke(
-                user = "401920903",
-                idBrand = 5,
-                identificationNumber = "107910975",
-                accountToken = 287380645,
-                pageNumber = pageNumber,
-                pageSize = pageSize,
-                monthDate = null
-            ).collectLatest { result ->
-                result.onSuccess { movements ->
-                    uiState = uiState.copy(
-                        smartMovementsList = uiState.smartMovementsList.plus(movements?.result ?: emptyList()),
-                        moreRecordsAvailable = ((movements?.totalRecords ?: 0) > uiState.currentPage * PAGE_SIZE),
-                        currentPage = uiState.currentPage + 1
-                    )
-                    delay(100)
-                    uiState = uiState.copy(isLoading = false)
-                }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
-                result.onFailure { error ->
-                    uiState = uiState.copy(
-                        openDialog = DialogParameters(
-                            description = error.getError() ?: "",
-                            isActive = mutableStateOf(true)
-                        ),
-                        isLoading = false
-                    )
-                }
-            }
+            uiState = uiState.copy(
+                movementsPage = queryGetPagedSmartMovements.invoke(
+                    user = "401920903",
+                    idBrand = 5,
+                    identificationNumber = "107910975",
+                    accountToken = 1,
+                    monthDate = null
+                )
+            )
         }
     }
 
@@ -92,6 +109,7 @@ class SmartMovementsViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val smartMovementsList: List<SmartMovement> = emptyList(),
         val currentPage: Int = 1,
-        val moreRecordsAvailable: Boolean = true
+        val moreRecordsAvailable: Boolean = true,
+        val movementsPage: Flow<PagingData<SmartMovement>> = flowOf()
     )
 }

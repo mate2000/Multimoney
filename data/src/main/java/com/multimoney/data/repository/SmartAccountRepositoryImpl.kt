@@ -1,9 +1,13 @@
 package com.multimoney.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
+import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
@@ -12,6 +16,7 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -47,6 +52,28 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+
+    override suspend fun getPagedMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        monthDate: String?
+    ): Flow<PagingData<SmartMovement>> {
+        return Pager(
+            config = PagingConfig(10),
+            pagingSourceFactory = {
+                SmartMovementsPagingSource(
+                    graphqlApi,
+                    user,
+                    idBrand,
+                    identificationNumber,
+                    accountToken,
+                    monthDate
+                )
+            }
+        ).flow
+    }
 
     override suspend fun queryCivilStatus(
         pkUser: String,

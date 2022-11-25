@@ -67,7 +67,6 @@ class ProductViewModel @Inject constructor(
     private fun onSetUserData(
         idBrand: String,
         balanceCredit: Balance?,
-        idBrand: String,
         pkUser: String,
         identification: String,
         email: String,
@@ -475,7 +474,6 @@ class ProductViewModel @Inject constructor(
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
                 balanceCredit = uiEvent.balanceCredit,
-                idBrand = uiEvent.idBrand,
                 pkUser = uiEvent.pkUser,
                 identification = uiEvent.identification,
                 email = uiEvent.email,
@@ -536,7 +534,6 @@ class ProductViewModel @Inject constructor(
         data class OnSetUserData(
             val idBrand: String,
             val balanceCredit: Balance?,
-            val idBrand: String,
             val pkUser: String,
             val identification: String,
             val email: String,

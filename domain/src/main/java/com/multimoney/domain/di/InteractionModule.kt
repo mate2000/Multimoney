@@ -56,6 +56,8 @@ import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryGetInfoDepositUseCase
+import com.multimoney.domain.interaction.credit.QueryGetInfoDepositUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCase
@@ -353,6 +355,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationCreditContractEventUseCase(creditRepository: CreditRepository): MutationSendCreditContractEventUseCase =
         MutationSendCreditContractEventUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetInfoDepositUseCase(creditRepository: CreditRepository): QueryGetInfoDepositUseCase =
+        QueryGetInfoDepositUseCaseImpl(creditRepository)
 
     // Smart
 

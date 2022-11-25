@@ -154,10 +154,14 @@ class SignDocumentProcessViewModel @Inject constructor(
                 )
             }
             CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
-                popAndNavigateTo(
-                    route = Screen.ProcessingTransactionScreen.route,
-                    popTo = Screen.SignDocumentProcessScreen.route
-                )
+                if (idBrand == Brand.CostaRica.id) {
+                    popAndNavigateTo(
+                        route = "${Screen.ProcessingTransactionScreen.baseRoute}/$idBrand/$idPrint/$email",
+                        popTo = Screen.SignDocumentProcessScreen.route
+                    )
+                } else {
+                    // todo call screen for El Salvador and Guatemala
+                }
             }
             CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
                 onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value)

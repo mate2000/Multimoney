@@ -1,0 +1,15 @@
+query GetInfoDeposit($idBrand:Int, $idPrint:Long!, $user:String){
+  getInfoDeposit(infoDepositInput: {
+    idBrand: $idBrand,
+    idPrint: $idPrint,
+    user: $user
+  }) {
+    numeroCuenta
+    monto
+    numeroReferencia
+    fecha
+    status
+    message
+    detail
+  }
+}

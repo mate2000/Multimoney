@@ -16,27 +16,23 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditCtaButtons
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditDetail
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditVisa
-import com.multimoney.multimoney.presentation.uielement.CustomTextButton
-import com.multimoney.multimoney.presentation.uielement.ScheduleAutomaticPaymentTextInfo
-import com.multimoney.multimoney.presentation.util.BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS
-import com.multimoney.multimoney.presentation.util.getCardDateFormat
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.ScheduleAutomaticPayment
 
 /**
  * Composable function to show the option to active accountsmart product
  */
 @Composable
-fun CreditFooterExpanded(viewModel: ProductViewModel) {
+fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewModel) {
     ConstraintLayout(
         Modifier.fillMaxSize()
     ) {
@@ -54,7 +50,7 @@ fun CreditFooterExpanded(viewModel: ProductViewModel) {
                 }
         ) {
             if (viewModel.uiState.idBrand.toInt() == Brand.CostaRica.id) {
-                ScheduleAutomaticPayment(viewModel)
+                ScheduleAutomaticPayment(viewModel, sharedViewModel)
                 Spacer(modifier = Modifier.height(24.dp))
             }
             Divider(color = MultimoneyTheme.colors.dividerWhite30)
@@ -101,30 +97,5 @@ fun CreditFooterExpanded(viewModel: ProductViewModel) {
             onClickDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
             canDisburse = viewModel.uiState.canExpandCredit
         )
-    }
-}
-
-@Composable
-fun ScheduleAutomaticPayment(viewModel: ProductViewModel) {
-    viewModel.balanceCredit?.balanceCredit?.firstOrNull()?.summary?.firstOrNull()?.let { summary ->
-        if (summary.automaticDebitEnabled == true) {
-            Spacer(modifier = Modifier.height(8.dp))
-            ScheduleAutomaticPaymentTextInfo(
-                dateText = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel, BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS),
-                chipLeadingIconResource = viewModel.uiState.scheduleChipIconResource,
-                amountText = viewModel.getSchedulePaymentAmount(viewModel.balanceCredit),
-                chipOnClick = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnChipQuotaClick) }
-            )
-        } else if (summary.applyAutomaticDebit == true) {
-            Spacer(modifier = Modifier.height(24.dp))
-            CustomTextButton(
-                R.string.schedule_automatic_payment_credit_button,
-                R.drawable.ic_calendar_schedule_automatic_payment
-            ) {
-                viewModel.onUIEvent(
-                    OnNavigateToScheduleAutomaticPaymentScreen
-                )
-            }
-        }
     }
 }

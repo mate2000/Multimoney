@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.theme.GradientTertiary
 import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Secondary500
 import com.multimoney.multimoney.presentation.theme.Tertiary500
+import com.multimoney.multimoney.presentation.theme.ComplementaryTwo400
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryOne
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryTwo
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
@@ -91,7 +92,7 @@ fun CustomProductBackground(
         ComplementaryTwo -> {
             if (isSystemInDarkTheme()) {
                 gradientOneColor = ComplementaryTwo500
-                gradientTwoColor = GradientComplementaryTwo
+                gradientTwoColor = ComplementaryTwo400
             } else {
                 gradientOneColor = ComplementaryTwo500
                 gradientTwoColor = GradientComplementaryTwo

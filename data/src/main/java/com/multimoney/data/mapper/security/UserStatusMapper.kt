@@ -5,6 +5,7 @@ import com.multimoney.domain.model.security.InfoBankAccount
 import com.multimoney.domain.model.security.InfoCredit
 import com.multimoney.domain.model.security.InfoCrypto
 import com.multimoney.domain.model.security.InfoPreApprove
+import com.multimoney.domain.model.security.InfoRequest
 import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.security.InfoVirtualCard
 import com.multimoney.domain.model.security.Product
@@ -54,7 +55,21 @@ private fun ValidateUserStatusQuery.InfoProduct.mapToDomainModel() =
 private fun ValidateUserStatusQuery.InfoBankAccount.mapToDomainModel() = InfoBankAccount(
     statusFirm = statusFirm,
     status = status,
+    infoRequest = infoRequest.mapToDomainModel(),
     wording = wording?.mapToDomainModel()
+)
+
+private fun ValidateUserStatusQuery.InfoCrypto.mapToDomainModel() = InfoCrypto(
+    status = status,
+    statusFirm = statusFirm,
+    wording = wording?.mapToDomainModel()
+)
+
+private fun ValidateUserStatusQuery.InfoRequest.mapToDomainModel() = InfoRequest(
+    idRequestSysde = idRequestSysde.toString().toLong(),
+    idRequestGlobal = idRequestGlobal.toString().toLong(),
+    currentStep = currentStep,
+    statusRequest = statusRequest
 )
 
 private fun ValidateUserStatusQuery.Wording.mapToDomainModel() = Wording(
@@ -69,7 +84,11 @@ private fun ValidateUserStatusQuery.Wording1.mapToDomainModel() = Wording(
     cTA = cTA
 )
 
-private fun ValidateUserStatusQuery.InfoCrypto.mapToDomainModel() = InfoCrypto(status = status)
+private fun ValidateUserStatusQuery.Wording2.mapToDomainModel() = Wording(
+    textOne = textOne,
+    textTwo = textTwo,
+    cTA = cTA
+)
 
 private fun ValidateUserStatusQuery.InfoVirtualCard.mapToDomainModel() = InfoVirtualCard(status = status)
 

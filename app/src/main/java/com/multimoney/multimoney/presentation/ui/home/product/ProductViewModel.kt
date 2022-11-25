@@ -7,11 +7,9 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
-import com.multimoney.domain.model.balance.BalanceAccountSmart
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
@@ -25,6 +23,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
@@ -45,8 +44,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
-import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -464,6 +461,19 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun onDeleteAutomaticPayment(onAcceptClick: () -> Unit) {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_title,
+                descriptionResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_description,
+                positiveResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_accept,
+                negativeResource = R.string.cancel,
+                positiveAction = { onAcceptClick() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -517,6 +527,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
             is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
+            is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
         }
     }
 
@@ -579,6 +590,7 @@ class ProductViewModel @Inject constructor(
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
+        data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
     }
 
     companion object {

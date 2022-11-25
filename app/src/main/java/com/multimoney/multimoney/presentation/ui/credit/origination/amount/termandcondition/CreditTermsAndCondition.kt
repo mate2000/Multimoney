@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.termandcondition
+package com.multimoney.multimoney.presentation.ui.credit.origination.amount.termandcondition
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -25,8 +25,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.MmWebViewHtml
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

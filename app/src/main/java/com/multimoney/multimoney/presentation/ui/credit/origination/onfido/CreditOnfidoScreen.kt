@@ -43,7 +43,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -61,11 +60,6 @@ fun CreditOnfidoScreen(
     viewModel: CreditOnfidoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-
-    val whatsAppLink = stringResource(
-        id = string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
-    )
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)

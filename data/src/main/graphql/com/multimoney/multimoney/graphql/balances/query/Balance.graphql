@@ -17,7 +17,6 @@ query Balance(
         }
     ) {
         pagare
-        puede_Ampliar
         resumen {
             id_Moneda
             moneda
@@ -36,6 +35,8 @@ query Balance(
             cuenta_Iban
             saldo_Monto_Cancelar
             dias_Vencidos
+            estado_Ampli
+            producto_Activo
             aplica_Debito_Aut
             debito_Aut_Activo
             vDDebito_Aut_Activo
@@ -73,6 +74,7 @@ query Balance(
             visaDirectId
             visaDirectUser
             totalInterest
+            tokenNumber
         }
         request {
             statusFirm

@@ -72,6 +72,7 @@ fun ProductScreen(
 
     viewModel.onUIEvent(
         OnSetUserData(
+            idBrand = sharedViewModel.uiState.idBrand,
             balanceCredit = sharedViewModel.uiState.balance,
             pkUser = sharedViewModel.uiState.pkUser,
             identification = sharedViewModel.uiState.identification,
@@ -79,14 +80,14 @@ fun ProductScreen(
             userName = sharedViewModel.uiState.userName,
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
             configurationVersion = sharedViewModel.uiState.configurationVersion,
-            idBrand = sharedViewModel.uiState.idBrand
+            smartMovements = sharedViewModel.uiState.smartMovementsList
         )
     )
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         sharedViewModel.baseEvent.collect { event ->
             when (event) {
                 is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
@@ -97,7 +98,6 @@ fun ProductScreen(
             }
         }
     }
-
 
     // Pager
     val headerExpandedPagerState = rememberPagerState()
@@ -350,7 +350,7 @@ fun ProductFooterExpanded(
                 ProductType.Credit.value -> CreditFooterExpanded(viewModel = viewModel)
                 ProductType.Smart.value -> SmartFooterExpanded(
                     viewModel = viewModel,
-                    viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+                    currentPage
                 )
             }
         }

@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.skeleton
+package com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.skeleton
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +17,7 @@ import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 
 @Composable
 @Preview(heightDp = 800)
-fun CreditAmountScreenSkeleton() {
+fun DisbursementAmountScreenSkeleton() {
     ShimmerBoxView {
         Column(Modifier.fillMaxSize()) {
             ConstraintLayout(
@@ -185,35 +185,6 @@ fun CreditAmountScreenSkeleton() {
                         .constrainAs(textInfoFour) {
                             top.linkTo(iconFour.top)
                             start.linkTo(iconFour.end, margin = 8.dp)
-                        }
-                )
-
-                ShimmerItemView(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .constrainAs(dividerTwo) {
-                            top.linkTo(iconFour.bottom, margin = 16.dp)
-                        }
-                )
-
-                ShimmerItemView(
-                    modifier = Modifier
-                        .size(18.dp)
-                        .constrainAs(termsAndConditionOne) {
-                            top.linkTo(dividerTwo.bottom, margin = 34.dp)
-                            start.linkTo(parent.start)
-                        }
-                )
-
-                ShimmerItemView(
-                    modifier = Modifier
-                        .height(18.dp)
-                        .fillMaxWidth(0.90f)
-                        .constrainAs(termsAndConditionTwo) {
-                            start.linkTo(termsAndConditionOne.end, margin = 8.dp)
-                            end.linkTo(parent.end)
-                            top.linkTo(termsAndConditionOne.top)
                         }
                 )
             }

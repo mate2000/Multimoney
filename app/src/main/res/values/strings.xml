@@ -277,6 +277,11 @@
     <string name="home_firm_incomplete_description" translatable="false">Para recibir tu dinero solo tenés que firmar el contrato</string>
     <string name="home_firm_incomplete_action" translatable="false">Firmar!</string>
 
+    <!-- Home save credit operation error -->
+    <string name="home_save_credit_operation_error_title" translatable="false">Hubo un problema al crear tu crédito</string>
+    <string name="home_save_credit_operation_error_description_gt" translatable="false">Comunícate con nosotros para ayudarte personalmente.</string>
+    <string name="home_save_credit_operation_error_description" translatable="false">Comunicate con nosotros para ayudarte personalmente.</string>
+
     <!-- My Profile -->
     <string name="profile_title" translatable="false">Mi perfil</string>
     <string name="profile_my_accounts" translatable="false">Mis cuentas</string>
@@ -435,6 +440,7 @@
     <string name="credit_additional_information_bottom_sheet_description" translatable="false">Prestamistas, casas de empeño, comercio de metales y piedras preciosas, tarjetas y operadores de tarjetas de crédito, organizaciones sin fines de lucro, proveedores de servicios fiduciarios, compra y venta de bienes inmuebles, facilidad crediticia, administración de recursos de terceros.</string>
     <string name="credit_additional_information_bottom_sheet_button_" translatable="false">Aceptar</string>
 
+    <!-- Save Credit operation error -->
     <string name="save_credit_operation_error_subtitle_gt" translatable="false">Contáctanos para brindarte más información</string>
     <string name="save_credit_operation_error_action_gt" translatable="false">Escríbenos por whatsAppfv</string>
     <string name="save_credit_operation_error_title" translatable="false">¡Oh no! Hubo un error</string>
@@ -700,6 +706,18 @@
 
     <!-- Payment Schedule Account-->
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
+
+    <!-- Disbursement Amount-->
+    <string name="disbursement_amount_title" translatable="false">¿Cuánto \ndinero necesitás?</string>
+    <string name="disbursement_amount_gt_title" translatable="false">¿Cuánto \ndinero necesitas?</string>
+    <string name="disbursement_amount_info" translatable="false">Condiciones</string>
+    <string name="disbursement_amount_info_dialog_title" translatable="false">Condiciones</string>
+    <string name="disbursement_amount_info_dialog_description" translatable="false">La cuota e interés pueden variar según su evaluación crediticia.</string>
+
+    <!-- Disbursement Account-->
+    <string name="disbursement_account_sv_title" translatable="false">¿Dónde querés recibir tu crédito?</string>
+    <string name="disbursement_account_gt_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
+    <string name="disbursement_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
 
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>

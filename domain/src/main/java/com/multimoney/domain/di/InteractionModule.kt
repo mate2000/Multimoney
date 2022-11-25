@@ -12,6 +12,10 @@ import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCaseUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
@@ -28,6 +32,8 @@ import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCas
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveCreditExtensionDetailUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveCreditExtensionDetailUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
@@ -42,6 +48,10 @@ import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCreditExtensionAmountUseCase
+import com.multimoney.domain.interaction.credit.QueryCreditExtensionAmountUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCreditExtensionMessageUseCase
+import com.multimoney.domain.interaction.credit.QueryCreditExtensionMessageUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
@@ -330,10 +340,35 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideQueryCreditExtensionAmountUseCase(creditRepository: CreditRepository): QueryCreditExtensionAmountUseCase =
+        QueryCreditExtensionAmountUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryCreditExtensionMessageUseCase(creditRepository: CreditRepository): QueryCreditExtensionMessageUseCase =
+        QueryCreditExtensionMessageUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveCreditExtensionDetailUseCase(creditRepository: CreditRepository): MutationSaveCreditExtensionDetailUseCase =
+        MutationSaveCreditExtensionDetailUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
     fun provideMutationCreditContractEventUseCase(creditRepository: CreditRepository): MutationSendCreditContractEventUseCase =
         MutationSendCreditContractEventUseCaseImpl(creditRepository)
 
     // Smart
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCoreBankMovementsUseCase(smartAccountRepository: SmartAccountRepository): QueryGetCoreBankMovementsUseCase =
+        QueryGetCoreBankMovementsUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetPagedSmartMovementsUseCase(smartAccountRepository: SmartAccountRepository): QueryGetPagedSmartMovementsUseCase =
+        QueryGetPagedSmartMovementsUseCaseUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

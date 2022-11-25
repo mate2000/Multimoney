@@ -15,10 +15,12 @@ fun Navigation() {
         loginNavGraph(navController = navController)
         homeNavGraph(navController = navController)
         creditNavGraph(navController = navController)
+        disbursementNavGraph(navController = navController)
         visaNavGraph(navController = navController)
         paymentNavGraph(navController = navController)
         smartNavGraph(navController = navController)
         profileNavGraph(navController = navController)
+        smartMovementsNavGraph(navController = navController)
         testNavGraph(navController = navController)
     }
 }

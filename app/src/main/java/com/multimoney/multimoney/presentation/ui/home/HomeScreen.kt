@@ -11,7 +11,6 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-
 import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
@@ -36,7 +35,6 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSe
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerFinish
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
@@ -68,7 +66,6 @@ fun HomeScreen(
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
     val activity = (LocalContext.current as? Activity)
 
-
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
         viewModel.countDownTimer.subscribe(object : OnCountDownTimerFinish {
@@ -80,7 +77,6 @@ fun HomeScreen(
             when (event) {
                 is HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
                     coroutineScope.launch {
-
                         quickActionsModalBottomSheetState.show()
                     }
                 }

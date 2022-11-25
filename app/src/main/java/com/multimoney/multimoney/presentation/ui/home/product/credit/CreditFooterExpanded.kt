@@ -19,6 +19,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
@@ -97,9 +98,7 @@ fun CreditFooterExpanded(viewModel: ProductViewModel) {
                     bottom.linkTo(parent.bottom)
                 },
             onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
-            onClickDisbursement = {
-                // todo navigate to disbursement process
-            },
+            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
             canDisburse = viewModel.uiState.canExpandCredit
         )
     }

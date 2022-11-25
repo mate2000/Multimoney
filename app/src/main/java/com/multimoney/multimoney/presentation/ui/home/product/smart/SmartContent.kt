@@ -17,18 +17,15 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
         SmartAccountStatus.EXIST_IN_CORE.status -> {
             viewModel.balanceCredit?.balanceAccountSmart?.let {
                 if (it.isNotEmpty()) {
+                    var index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
                     CustomProductBackground(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         type = ProductBackGroundType.Secondary
                     ) {
                         CardSmartProduct(
-                            currency = it[currentPage.minus(
-                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                            )]?.currencyCode ?: "", profitMonthly = it[currentPage.minus(
-                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                            )]?.gainedInterest.toString(), profitTotal = it[currentPage.minus(
-                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                            )]?.totalBalance.toString()
+                            currency = it[index]?.currencyCode ?: "",
+                            profitMonthly = it[index]?.gainedInterest.toString(),
+                            profitTotal = it[index]?.totalBalance.toString()
                         )
                     }
                 }
@@ -41,9 +38,11 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                     type = ProductBackGroundType.Secondary
                 ) {
                     CardInactiveSmartProduct(
-                        it?.textOne.toString(), it?.textTwo.toString(), it?.cTA.toString()
+                        it?.textOne.toString(),
+                        it?.textTwo.toString(),
+                        it?.cTA.toString()
                     ) {
-                        //TODO add navigation according to status
+                        // TODO add navigation according to status
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
                     }
                 }

@@ -38,6 +38,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                     amountAvailableFormat
                     symbolCurrency
                 }
+                idPrint
                 selectedAmount
                 statusFirm
                 currentStep

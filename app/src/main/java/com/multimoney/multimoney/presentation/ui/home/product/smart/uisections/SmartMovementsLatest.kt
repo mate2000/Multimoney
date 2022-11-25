@@ -1,0 +1,130 @@
+package com.multimoney.multimoney.presentation.ui.home.product.smart.uisections
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Absolute.SpaceBetween
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartMovements
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+import com.multimoney.multimoney.presentation.util.parseApiDateToCardDate
+
+@Composable
+fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
+    if (viewModel.smartMovementsList.isEmpty().not()) {
+        val accountSelected = viewModel.balanceCredit?.balanceAccountSmart?.get(index)
+        val moves = viewModel.smartMovementsList.find { account ->
+            account.accountToken.toString() == accountSelected?.tokenNumber
+        }
+
+        Column(
+            Modifier.fillMaxWidth().padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                horizontalArrangement = SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(R.string.home_product_movement_title),
+                    style = Typography.body1.copy(
+                        color = MultimoneyTheme.colors.text
+                    )
+                )
+                ClickableText(
+                    text = AnnotatedString(stringResource(R.string.home_product_check_all)),
+                    style = Typography.button.copy(
+                        color = MultimoneyTheme.colors.textLink
+                    ),
+                    onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements(moves?.accountToken.toString())) }
+                )
+            }
+            moves?.result?.forEach {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    horizontalArrangement = SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val currencySymbol = if (it.currencyDescription == API_COLONES) {
+                        Brand.CostaRica.id.getCurrencySymbol()
+                    } else {
+                        Brand.ElSalvador.id.getCurrencySymbol()
+                    }
+
+                    val symbol = if (it.amount > 0) {
+                        R.drawable.ic_plus
+                    } else {
+                        R.drawable.ic_close
+                    }
+
+                    Column(Modifier.weight(2f)) {
+                        Text(
+                            text = it.transactionCatalogueDescription ?: "",
+                            style = Typography.subtitle2.copy(
+                                color = MultimoneyTheme.colors.labelText
+                            ),
+                            maxLines = 1
+                        )
+                        Text(
+                            text = parseApiDateToCardDate(it.creationDate),
+                            style = Typography.body2.copy(
+                                color = MultimoneyTheme.colors.textSubhead
+                            ),
+                            maxLines = 1
+                        )
+                    }
+                    Row(
+                        Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(symbol),
+                            contentDescription = "",
+                            tint = Color.Unspecified
+                        )
+                        Text(
+                            text = stringResource(currencySymbol) + it.amount.toString(),
+                            style = Typography.subtitle1.copy(
+                                textAlign = TextAlign.End,
+                                color = MultimoneyTheme.colors.labelText,
+                                fontWeight = FontWeight.W600
+                            ),
+                            maxLines = 1
+                        )
+                    }
+                }
+                Divider(color = MultimoneyTheme.colors.dividerWhite30)
+            }
+        }
+    } else {
+        Text(
+            text = "No movements",
+            style = Typography.body1.copy(
+                color = MultimoneyTheme.colors.text
+            )
+        )
+    }
+}
+
+const val API_DOLARES = "DOLARES"
+const val API_COLONES = "COLONES"

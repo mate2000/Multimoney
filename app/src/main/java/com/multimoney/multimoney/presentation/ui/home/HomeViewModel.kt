@@ -1,15 +1,18 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.QuickAction
@@ -27,11 +30,11 @@ import com.multimoney.multimoney.presentation.navigation.Screen.ProductsBNScreen
 import com.multimoney.multimoney.presentation.navigation.Screen.QuickActionBNScreen
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnStartCountDownTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -45,7 +48,8 @@ class HomeViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
-    private val querytGetQuickActionsUseCase: QueryGetQuickActionsUseCase
+    private val querytGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
+    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -71,17 +75,53 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun onGetSmartMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        tokenNumber: Long
+    ) {
+        executeUseCase {
+            queryGetCoreBankMovements.invoke(
+                user = user,
+                idBrand = idBrand,
+                identificationNumber = identificationNumber,
+                accountToken = tokenNumber,
+                pageNumber = INDEX_ONE,
+                pageSize = PAGE_SIZE,
+                monthDate = null
+            ).collectLatest { result ->
+                result.onSuccess { movements ->
+                    if (movements != null) {
+                        movements.accountToken = tokenNumber
+                        uiState = uiState.copy(
+                            smartMovementsList = uiState.smartMovementsList + movements,
+                            isLoading = false
+                        )
+                    }
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+                result.onFailure {
+                    onFailure(it)
+                    uiState = uiState.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
     private fun callQueryGetQuickActions(
-        idBrand : Int,
-        pkUser : Int,
-        identification : String,
-        infoCreditStatus : Int,
-        infoVirtualCardStatus : Int,
-        infoBankAccountStatus : Int,
-        infoCriptoStatus : Int
+        idBrand: Int,
+        pkUser: Int,
+        identification: String,
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCriptoStatus: Int
     ) = executeUseCase {
         querytGetQuickActionsUseCase.invoke(
-            idBrand =  idBrand,
+            idBrand = idBrand,
             pkUser = pkUser,
             identification = identification,
             infoCreditStatus = infoCreditStatus,
@@ -89,13 +129,14 @@ class HomeViewModel @Inject constructor(
             infoBankAccountStatus = infoBankAccountStatus,
             infoCriptoStatus = infoCriptoStatus
         ).collectLatest { result ->
-            result.onSuccess { balance ->
-                balance?.let {
-                    if (uiState.isLoading)
-                        uiState = uiState.copy(
-                            isLoading = false,
-                            quickActions = it.quickActions
-                        )
+            result.onSuccess { quickActions ->
+                quickActions?.let {
+                    if (uiState.configurationVersion != null && uiState.balance != null) {
+                        uiState = uiState.copy(isLoading = false)
+                    }
+                    uiState = uiState.copy(
+                        quickActions = it.quickActions
+                    )
                 }
             }
             result.onFailure {
@@ -131,9 +172,21 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { balance ->
                 balance?.let {
-                    if (uiState.isLoading)
+                    if (uiState.configurationVersion != null && uiState.quickActions != null) {
                         uiState = uiState.copy(isLoading = false)
+                    }
                     uiState = uiState.copy(balance = balance)
+
+                    balance.balanceAccountSmart?.forEach {
+                        if (it != null) {
+                            onGetSmartMovements(
+                                user,
+                                idBrand,
+                                identification,
+                                it.tokenNumber?.toLongOrNull() ?: 0
+                            )
+                        }
+                    }
                 }
             }
             result.onFailure {
@@ -154,6 +207,9 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
+                if (uiState.balance != null && uiState.quickActions != null && uiState.validateUserStatus != null) {
+                    uiState = uiState.copy(isLoading = false)
+                }
                 configurationVersion?.let {
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
@@ -241,7 +297,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun openQuickActionFlow(flow : String){
+    private fun openQuickActionFlow(flow: String) {
         emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
     }
 
@@ -249,7 +305,7 @@ class HomeViewModel @Inject constructor(
         // Fields
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        var quickActions : List<QuickAction>? = listOf(),
+        var quickActions: List<QuickAction>? = null,
         var configurationVersion: ConfigurationVersion? = null,
         var validateUserStatus: ValidateUserStatus? = null,
         var balance: Balance? = null,
@@ -257,7 +313,8 @@ class HomeViewModel @Inject constructor(
         var pkUser: String = "",
         var identification: String = "",
         var email: String = "",
-        var userName: String = ""
+        var userName: String = "",
+        val smartMovementsList: List<SmartMovementsResult> = emptyList()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -266,13 +323,25 @@ class HomeViewModel @Inject constructor(
             is OnSignOut -> popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
             is OnSetUserData -> onsetUserData()
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
+            is OnGetSmartMovements -> onGetSmartMovements(
+                uiEvent.user,
+                uiEvent.idBrand,
+                uiEvent.identificationNumber,
+                uiEvent.tokenNumber
+            )
         }
     }
 
     sealed class UIEvent {
-        data class OnOpenQuickActionFlow (val flow : String) : UIEvent()
+        data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
         data class OnBottomNavigationItemClick(val innerNavHostController: NavHostController, val route: String) :
             UIEvent()
+        data class OnGetSmartMovements(
+            val user: String,
+            val idBrand: Int,
+            val identificationNumber: String,
+            val tokenNumber: Long
+        ) : UIEvent()
         object OnSetUserData : UIEvent()
         object OnSignOut : UIEvent()
     }
@@ -281,6 +350,11 @@ class HomeViewModel @Inject constructor(
         object OnOpenQuickActionsBottomSheet : BaseEvent()
         object OnOpenMyProductsBottomSheet : BaseEvent()
         data class OnStartCountDownTimer(val millisInFuture: Long?)
-        data class OnQuickActionClicked (val flow : String)
+        data class OnQuickActionClicked(val flow: String)
+    }
+
+    companion object {
+        const val INDEX_ONE = 1
+        const val PAGE_SIZE = 3
     }
 }

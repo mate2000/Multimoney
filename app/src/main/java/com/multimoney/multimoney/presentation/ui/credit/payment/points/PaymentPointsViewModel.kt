@@ -24,8 +24,10 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPo
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class PaymentPointsViewModel @Inject constructor(
@@ -54,7 +56,15 @@ class PaymentPointsViewModel @Inject constructor(
         pointLatitude: String,
         pointLongitude: String
     ) =
-        navigateTo(route = "${Screen.PaymentLocationDetailsScreen.baseRoute}/$pointName/$pointAddress/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$creditNumber/$idBrand")
+        navigateTo(
+            route = "${Screen.PaymentLocationDetailsScreen.baseRoute}/$pointName/${
+            URLEncoder.encode(
+                pointAddress,
+                StandardCharsets.UTF_8.name()
+            )
+            }" +
+                "/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$creditNumber/$idBrand"
+        )
 
     private fun onQueryValueChange(value: String) {
         uiState = uiState.copy(
@@ -146,6 +156,7 @@ class PaymentPointsViewModel @Inject constructor(
             val pointLatitude: String,
             val pointLongitude: String
         ) : UIEvent()
+
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
     }
 }

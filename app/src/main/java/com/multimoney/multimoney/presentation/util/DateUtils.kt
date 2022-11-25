@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -31,10 +32,14 @@ fun getCurrentDateString() = getPickedDateAsString(
 
 fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
-        val dateFormatted = SHORT_DATE_FORMAT.parse(date)
-        dateFormatted?.let {
-            format.format(dateFormatted)
-        } ?: run {
+        try {
+            val dateFormatted = SHORT_DATE_FORMAT.parse(date)
+            dateFormatted?.let {
+                format.format(dateFormatted)
+            } ?: run {
+                ""
+            }
+        } catch (e: ParseException) {
             ""
         }
     } else {
@@ -61,6 +66,19 @@ fun getCurrentDate(time: Date): String {
 
 fun getCurrentTime(time: Date): String {
     return SHORT_TIME_FORMAT.format(time)
+}
+
+fun parseApiDateToCardDate(date: String?): String {
+    return if (date.isNullOrEmpty().not()) {
+        val dateFormatted = API_DATE_FORMAT.parse(date)
+        dateFormatted?.let {
+            BAR_DIVIDER_FORMAT.format(dateFormatted)
+        } ?: run {
+            ""
+        }
+    } else {
+        ""
+    }
 }
 
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"

@@ -13,6 +13,4 @@ data class Balance(
     fun getExpiredDays() = getFirstSummary()?.expiredDays ?: 1
 
     fun isBalanceCreditSummaryMultiple() = (getFirstCredit()?.summary?.size ?: 0) > 0
-
-    fun getFirstAccountSmart() = balanceAccountSmart?.firstOrNull()
 }

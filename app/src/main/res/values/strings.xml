@@ -303,11 +303,10 @@
     <!-- Home Smart - Account Details -->
     <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>
     <string name="smart_account_detail_cr_account_label" translatable="false">IBAN | %s</string>
-    <string name="smart_account_detail_sv_account_label" translatable="false">Número de cuenta %s</string>
     <string name="smart_account_detail_gained_interest_label" translatable="false">Interés anual</string>
     <string name="smart_account_detail_total_balance_label" translatable="false">Ganancia total a la fecha</string>
     <string name="smart_account_detail_gained_interest" translatable="false">%s%%</string>
-    <string name="smart_account_detail_gained_interest_mock" translatable="false">3.5%</string>
+    <string name="smart_account_detail_gained_interest_mock" translatable="false">3.25%</string>
     <string name="smart_account_detail_total_balance" translatable="false">%s %s</string>
 
     <!-- my products bottom sheet -->

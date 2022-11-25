@@ -36,25 +36,25 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
                     height = Dimension.fillToConstraints
                 }
         ) {
-            SmartAccountDetail(
-                modifier = Modifier
-                    .background(MultimoneyTheme.colors.creditDetailBackground)
-                    .wrapContentSize(),
-                uiState = viewModel.uiState,
-                balance = viewModel.balanceCredit,
-                onShareIbanAccount = { clientLabel: String, accountLabel: String, ibanAccount: String ->
-                    viewModel.onUIEvent(
-                        ProductViewModel.UIEvent.OnShareIbanAccount(
-                            clientLabel,
-                            accountLabel,
-                            ibanAccount
-                        )
-                    )
-                }
-            )
             viewModel.balanceCredit?.balanceAccountSmart?.let {
                 if (it.isNotEmpty()) {
-                    var index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                    SmartAccountDetail(
+                        modifier = Modifier
+                            .background(MultimoneyTheme.colors.creditDetailBackground)
+                            .wrapContentSize(),
+                        uiState = viewModel.uiState,
+                        account = it[index],
+                        onShareIbanAccount = { clientLabel: String, accountLabel: String, ibanAccount: String ->
+                            viewModel.onUIEvent(
+                                ProductViewModel.UIEvent.OnShareIbanAccount(
+                                    clientLabel,
+                                    accountLabel,
+                                    ibanAccount
+                                )
+                            )
+                        }
+                    )
                     SmartMovementsLatest(viewModel, index)
                 }
             }

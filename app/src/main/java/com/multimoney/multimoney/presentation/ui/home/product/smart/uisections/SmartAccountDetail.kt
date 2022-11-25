@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -28,7 +28,7 @@ import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 fun SmartAccountDetail(
     modifier: Modifier,
     uiState: UIState,
-    balance: Balance?,
+    account: Account?,
     onShareIbanAccount: (String, String, String) -> Unit
 ) {
     ExpandableSectionLayout(
@@ -36,82 +36,36 @@ fun SmartAccountDetail(
         modifier = modifier
     ) {
         Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
-            val currency = balance?.balanceAccountSmart?.firstOrNull()?.currencyCode
             val clientLabel = stringResource(id = string.credit_detail_client)
             var accountLabel = stringResource(string.credit_detail_iban)
+            val currencySymbol = account?.currencyCode?.getCurrencySymbol() ?: string.empty
+            val currencySymbolValue = account?.currencyCode?.getCurrencySymbolValue() ?: string.empty
 
             if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-
                 CreditDetailItem(
                     label = stringResource(
                         string.smart_account_detail_cr_account_label,
-                        stringResource(currency?.getCurrencySymbol() ?: 0)
+                        stringResource(currencySymbol)
                     ),
                     value = {
-                        Row {
-                            Text(
-                                text = balance?.getFirstAccountSmart()?.ibanAccountNumber.orEmpty(),
-                                style = Typography.body2.copy(
-                                    color = MultimoneyTheme.colors.text,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            )
-                            balance?.balanceAccountSmart?.firstOrNull()?.ibanAccountNumber?.let {
-                                Icon(
-                                    imageVector = Icons.Outlined.Share,
-                                    tint = MultimoneyTheme.colors.arrowColor,
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .clickable {
-                                            if (it.isNotEmpty()) {
-                                                onShareIbanAccount(
-                                                    clientLabel,
-                                                    accountLabel,
-                                                    it
-                                                )
-                                            }
-                                        }
-                                        .padding(start = 16.dp)
-                                )
-                            }
-                        }
+                        SmartDetailAccountNumberItem(
+                            account?.ibanAccountNumber,
+                            clientLabel,
+                            accountLabel,
+                            onShareIbanAccount
+                        )
                     })
             } else if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
                 accountLabel = stringResource(id = string.payment_options_transfer_account)
-
                 CreditDetailItem(
-                    label = stringResource(
-                        string.smart_account_detail_sv_account_label,
-                        currency?.getCurrencySymbol()?.let { stringResource(it) } ?: ""
-                    ),
+                    label = accountLabel,
                     value = {
-                        Row {
-                            Text(
-                                text = balance?.getFirstAccountSmart()?.accountNumber.orEmpty(),
-                                style = Typography.body2.copy(
-                                    color = MultimoneyTheme.colors.text,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            )
-                            balance?.balanceAccountSmart?.firstOrNull()?.accountNumber?.let {
-                                Icon(
-                                    imageVector = Icons.Outlined.Share,
-                                    tint = MultimoneyTheme.colors.arrowColor,
-                                    contentDescription = "",
-                                    modifier = Modifier
-                                        .clickable {
-                                            if (it.isNotEmpty()) {
-                                                onShareIbanAccount(
-                                                    clientLabel,
-                                                    accountLabel,
-                                                    it
-                                                )
-                                            }
-                                        }
-                                        .padding(start = 16.dp)
-                                )
-                            }
-                        }
+                        SmartDetailAccountNumberItem(
+                            account?.accountNumber,
+                            clientLabel,
+                            accountLabel,
+                            onShareIbanAccount
+                        )
                     })
             }
             CreditDetailItem(
@@ -129,19 +83,56 @@ fun SmartAccountDetail(
                 label = stringResource(id = string.smart_account_detail_total_balance_label),
                 value = {
                     Text(
-                        text = balance?.getFirstAccountSmart()?.currencyCode?.getCurrencySymbolValue()
-                            ?.let {
-                                stringResource(
-                                    it,
-                                    balance.getFirstAccountSmart()?.totalBalance.toString()
-                                )
-                            } ?: "",
+                        text = stringResource(
+                            currencySymbolValue,
+                            account?.totalBalance.toString()
+                        ),
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold
                         )
                     )
                 })
+        }
+    }
+}
+
+/**
+ * this will represent the account number for both countries, CR and SV, it will
+ * have the exact same share action, the only different thing is the accountNumber.
+ * @param accountNumber the accountNumber value
+ * @param clientLabel will be the same for both.
+ * @param accountLabel different for CR or SV
+ * @param onShareIbanAccount the share action that will show a modal with the accountNumber.
+ */
+@Composable
+fun SmartDetailAccountNumberItem(
+    accountNumber: String?,
+    clientLabel: String,
+    accountLabel: String,
+    onShareIbanAccount: (String, String, String) -> Unit
+) {
+    Row {
+        Text(
+            text = accountNumber.orEmpty(),
+            style = Typography.body2.copy(
+                color = MultimoneyTheme.colors.text,
+                fontWeight = FontWeight.SemiBold
+            )
+        )
+        accountNumber?.let {
+            Icon(
+                imageVector = Icons.Outlined.Share,
+                tint = MultimoneyTheme.colors.arrowColor,
+                contentDescription = "",
+                modifier = Modifier
+                    .clickable {
+                        if (it.isNotEmpty()) {
+                            onShareIbanAccount(clientLabel, accountLabel, it)
+                        }
+                    }
+                    .padding(start = 16.dp)
+            )
         }
     }
 }

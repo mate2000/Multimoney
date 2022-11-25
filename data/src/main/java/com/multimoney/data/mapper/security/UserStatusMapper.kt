@@ -5,6 +5,7 @@ import com.multimoney.domain.model.security.InfoBankAccount
 import com.multimoney.domain.model.security.InfoCredit
 import com.multimoney.domain.model.security.InfoCrypto
 import com.multimoney.domain.model.security.InfoPreApprove
+import com.multimoney.domain.model.security.InfoRequest
 import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.security.InfoVirtualCard
 import com.multimoney.domain.model.security.Product
@@ -78,6 +79,12 @@ private fun ValidateUserStatusQuery.Wording.mapToDomainModel() = Wording(
 )
 
 private fun ValidateUserStatusQuery.Wording1.mapToDomainModel() = Wording(
+    textOne = textOne,
+    textTwo = textTwo,
+    cTA = cTA
+)
+
+private fun ValidateUserStatusQuery.Wording2.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
     cTA = cTA

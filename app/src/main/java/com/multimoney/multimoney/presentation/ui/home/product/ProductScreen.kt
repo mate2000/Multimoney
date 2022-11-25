@@ -48,6 +48,10 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditConte
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditHeaderExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoContent
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooter
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoHeaderExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
@@ -270,6 +274,7 @@ fun ProductHeaderExpanded(
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
                 ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
+                ProductType.Crypto.value -> CryptoHeaderExpanded { backPressed() }
             }
         }
     }
@@ -291,6 +296,10 @@ fun ProductContent(
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
                 ProductType.Smart.value -> SmartContent(viewModel = viewModel, currentPage)
+                ProductType.Crypto.value -> CryptoContent(
+                    userStatus = viewModel.uiState.userStatus,
+                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount
+                )
             }
         }
         Spacer(modifier = Modifier.padding(4.dp))
@@ -327,6 +336,7 @@ fun ProductFooter(
                     onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToVisaActivateScreen) }
                 )
                 ProductType.Smart.value -> SmartFooter()
+                ProductType.Crypto.value -> CryptoFooter()
             }
         }
     }
@@ -351,6 +361,7 @@ fun ProductFooterExpanded(
                     viewModel = viewModel,
                     viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
                 )
+                ProductType.Crypto.value -> CryptoFooterExpanded()
             }
         }
     }

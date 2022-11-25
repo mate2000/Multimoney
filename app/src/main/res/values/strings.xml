@@ -233,6 +233,9 @@
     <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
     <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
     <string name="home_disburse_request_button_text" translatable="false">Solicitar disponible</string>
+    <string name="home_smart_in_process_crypto_card" translatable="false">Cripto</string>
+    <string name="home_crypto_card_with_balance_title" translatable="false">Balance</string>
+    <string name="home_crypto_card_with_balance_zero_text" translatable="false">0.00</string>
     <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
     <string name="home_pay_button_text" translatable="false">Abonar</string>
 
@@ -271,6 +274,9 @@
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
     <string name="home_product_amount" translatable="false">de %s</string>
+    <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
+    <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
+    <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
 
     <!-- Credit in progress firm incomplete -->
     <string name="home_firm_incomplete_title" translatable="false">¡Sólo falta tu firma!</string>

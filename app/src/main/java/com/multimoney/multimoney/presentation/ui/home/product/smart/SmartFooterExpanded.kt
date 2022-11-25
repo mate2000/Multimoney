@@ -15,7 +15,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.S
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartMovementsLatest
 
 @Composable
-fun SmartFooterExpanded(viewModel: ProductViewModel, productSmartIndex: Int?) {
+fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
     ConstraintLayout(
         Modifier.fillMaxSize()
     ) {
@@ -32,7 +32,12 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, productSmartIndex: Int?) {
                     height = Dimension.fillToConstraints
                 }
         ) {
-            SmartMovementsLatest(viewModel)
+            viewModel.balanceCredit?.balanceAccountSmart?.let {
+                if (it.isNotEmpty()) {
+                    var index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                    SmartMovementsLatest(viewModel, index)
+                }
+            }
         }
         SmartCtaButtons(
             modifier = Modifier
@@ -44,7 +49,9 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, productSmartIndex: Int?) {
                 },
             onClickPay = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow) },
             onClickDisbursement = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow) },
-            canDisburse = viewModel.canSendMoney(productSmartIndex)
+            canDisburse = viewModel.canSendMoney(
+                viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+            )
         )
     }
 }

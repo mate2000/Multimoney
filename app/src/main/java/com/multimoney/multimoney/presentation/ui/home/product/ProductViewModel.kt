@@ -8,10 +8,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
-import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
-import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
-import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
-import com.multimoney.domain.model.accountsmart.SmartMovement
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
@@ -19,9 +16,6 @@ import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -29,8 +23,6 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
@@ -53,14 +45,13 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
     private val helper: ShareHelper,
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase
-    ) : BaseViewModel(true) {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -76,17 +67,18 @@ class ProductViewModel @Inject constructor(
     var userName: String = ""
     var productProgress = 0F
     var isExpiredTitle = R.string.home_product_expiration
+    var smartMovementsList: List<SmartMovementsResult> = emptyList()
 
     private fun onSetUserData(
         idBrand: String,
         balanceCredit: Balance?,
-        idBrand: String,
         pkUser: String,
         identification: String,
         email: String,
         userName: String,
         validateUserStatus: ValidateUserStatus?,
-        configurationVersion: ConfigurationVersion?
+        configurationVersion: ConfigurationVersion?,
+        smartMovements: List<SmartMovementsResult>
     ) {
         this.pkUser = pkUser
         this.identification = identification
@@ -96,35 +88,7 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(idBrand = idBrand)
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
-    }
-
-    private fun onGetSmartMovements(
-        pageNumber: Int = 1,
-        pageSize: Int = 3
-    ) {
-        executeUseCase {
-            queryGetCoreBankMovements.invoke(
-                user = "401920903",
-                idBrand = 5,
-                identificationNumber = "107910975",
-                accountToken = 287380645,
-                pageNumber = pageNumber,
-                pageSize = pageSize,
-                monthDate = null
-            ).collectLatest { result ->
-                result.onSuccess { movements ->
-                    uiState = uiState.copy(
-                        smartMovementsList = movements?.result ?: emptyList()
-                    )
-                }
-                result.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
-                result.onFailure {
-                    onFailure(it)
-                }
-            }
-        }
+        this.smartMovementsList = smartMovements
     }
 
     private fun setBalance(balance: Balance?) {
@@ -297,8 +261,8 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
     }
 
-    private fun onNavigateToSmartMovements() =
-        navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser")
+    private fun onNavigateToSmartMovements(accountToken: String) =
+        navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
@@ -464,6 +428,10 @@ class ProductViewModel @Inject constructor(
         return totalBalance > 0
     }
 
+    fun getLatestMovements(smartAccountIndex: Int) {
+
+    }
+
     fun getSchedulePaymentAmount(balance: Balance?): String {
         var amount = ""
         balance?.balanceCredit?.forEach { balanceCredit ->
@@ -502,7 +470,6 @@ class ProductViewModel @Inject constructor(
         val isExpanded: Boolean = false,
         val canExpandCredit: Boolean = false,
         val scheduleChipIconResource: Int? = null,
-        val smartMovementsList: List<SmartMovement>? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -521,13 +488,13 @@ class ProductViewModel @Inject constructor(
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
                 balanceCredit = uiEvent.balanceCredit,
-                idBrand = uiEvent.idBrand,
                 pkUser = uiEvent.pkUser,
                 identification = uiEvent.identification,
                 email = uiEvent.email,
                 userName = uiEvent.userName,
                 validateUserStatus = uiEvent.validateUserStatus,
-                configurationVersion = uiEvent.configurationVersion
+                configurationVersion = uiEvent.configurationVersion,
+                smartMovements = uiEvent.smartMovements
             )
             is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -545,8 +512,7 @@ class ProductViewModel @Inject constructor(
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
             is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
-            is OnGetSmartMovements -> onGetSmartMovements()
-            is OnNavigateToSmartMovements -> onNavigateToSmartMovements()
+            is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
         }
     }
 
@@ -584,13 +550,13 @@ class ProductViewModel @Inject constructor(
         data class OnSetUserData(
             val idBrand: String,
             val balanceCredit: Balance?,
-            val idBrand: String,
             val pkUser: String,
             val identification: String,
             val email: String,
             val userName: String,
             val validateUserStatus: ValidateUserStatus?,
-            val configurationVersion: ConfigurationVersion?
+            val configurationVersion: ConfigurationVersion?,
+            val smartMovements: List<SmartMovementsResult>
         ) : UIEvent()
 
         data class OnShareIbanAccount(
@@ -598,8 +564,15 @@ class ProductViewModel @Inject constructor(
             val accountLabel: String,
             val ibanAccount: String
         ) : UIEvent()
-        object OnGetSmartMovements : UIEvent()
-        object OnNavigateToSmartMovements : UIEvent()
+
+        data class OnGetSmartMovements(
+            val user: String,
+            val idBrand: Int,
+            val identificationNumber: String,
+            val accountToken: Long
+        ) : UIEvent()
+
+        data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
     }

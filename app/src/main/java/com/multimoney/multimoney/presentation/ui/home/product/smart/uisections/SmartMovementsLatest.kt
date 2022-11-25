@@ -30,87 +30,96 @@ import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.parseApiDateToCardDate
 
 @Composable
-fun SmartMovementsLatest(viewModel: ProductViewModel) {
-    val moves = viewModel.uiState.smartMovementsList ?: emptyList()
+fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
+    if (viewModel.smartMovementsList.isNullOrEmpty().not()) {
+        var moves = viewModel.smartMovementsList[index]
 
-    Column(
-        Modifier.fillMaxWidth().padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-            horizontalArrangement = SpaceBetween
+        Column(
+            Modifier.fillMaxWidth().padding(16.dp)
         ) {
-            Text(
-                text = stringResource(R.string.home_product_movement_title),
-                style = Typography.body1.copy(
-                    color = MultimoneyTheme.colors.text
-                )
-            )
-            ClickableText(
-                text = AnnotatedString(stringResource(R.string.home_product_check_all)),
-                style = Typography.button.copy(
-                    color = MultimoneyTheme.colors.textLink
-                ),
-                onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements) }
-            )
-        }
-        moves.forEach {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                horizontalArrangement = SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                horizontalArrangement = SpaceBetween
             ) {
-                val currencySymbol = if (it.currencyDescription == API_COLONES) {
-                    Brand.CostaRica.id.getCurrencySymbol()
-                } else {
-                    Brand.ElSalvador.id.getCurrencySymbol()
-                }
-
-                val symbol = if (it.amount > 0) {
-                    R.drawable.ic_plus
-                } else {
-                    R.drawable.ic_alert
-                }
-
-                Column(Modifier.weight(2f)) {
-                    Text(
-                        text = it.transactionCatalogueDescription ?: "",
-                        style = Typography.subtitle2.copy(
-                            color = MultimoneyTheme.colors.labelText
-                        ),
-                        maxLines = 1
+                Text(
+                    text = stringResource(R.string.home_product_movement_title),
+                    style = Typography.body1.copy(
+                        color = MultimoneyTheme.colors.text
                     )
-                    Text(
-                        text = parseApiDateToCardDate(it.creationDate),
-                        style = Typography.body2.copy(
-                            color = MultimoneyTheme.colors.textSubhead
-                        ),
-                        maxLines = 1
-                    )
-                }
+                )
+                ClickableText(
+                    text = AnnotatedString(stringResource(R.string.home_product_check_all)),
+                    style = Typography.button.copy(
+                        color = MultimoneyTheme.colors.textLink
+                    ),
+                    onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements(moves.accountToken.toString())) }
+                )
+            }
+            moves.result.forEach {
                 Row(
-                    Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    horizontalArrangement = SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        painter = painterResource(symbol),
-                        contentDescription = "",
-                        tint = Color.Unspecified
-                    )
-                    Text(
-                        text = stringResource(currencySymbol) + it.amount.toString(),
-                        style = Typography.subtitle1.copy(
-                            textAlign = TextAlign.End,
-                            color = MultimoneyTheme.colors.labelText,
-                            fontWeight = FontWeight.W600
-                        ),
-                        maxLines = 1
-                    )
+                    val currencySymbol = if (it.currencyDescription == API_COLONES) {
+                        Brand.CostaRica.id.getCurrencySymbol()
+                    } else {
+                        Brand.ElSalvador.id.getCurrencySymbol()
+                    }
+
+                    val symbol = if (it.amount > 0) {
+                        R.drawable.ic_plus
+                    } else {
+                        R.drawable.ic_close
+                    }
+
+                    Column(Modifier.weight(2f)) {
+                        Text(
+                            text = it.transactionCatalogueDescription ?: "",
+                            style = Typography.subtitle2.copy(
+                                color = MultimoneyTheme.colors.labelText
+                            ),
+                            maxLines = 1
+                        )
+                        Text(
+                            text = parseApiDateToCardDate(it.creationDate),
+                            style = Typography.body2.copy(
+                                color = MultimoneyTheme.colors.textSubhead
+                            ),
+                            maxLines = 1
+                        )
+                    }
+                    Row(
+                        Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(symbol),
+                            contentDescription = "",
+                            tint = Color.Unspecified
+                        )
+                        Text(
+                            text = stringResource(currencySymbol) + it.amount.toString(),
+                            style = Typography.subtitle1.copy(
+                                textAlign = TextAlign.End,
+                                color = MultimoneyTheme.colors.labelText,
+                                fontWeight = FontWeight.W600
+                            ),
+                            maxLines = 1
+                        )
+                    }
                 }
+                Divider(color = MultimoneyTheme.colors.dividerWhite30)
             }
-            Divider(color = MultimoneyTheme.colors.dividerWhite30)
         }
+    } else {
+        Text(
+            text = "No movements",
+            style = Typography.body1.copy(
+                color = MultimoneyTheme.colors.text
+            )
+        )
     }
 }
 

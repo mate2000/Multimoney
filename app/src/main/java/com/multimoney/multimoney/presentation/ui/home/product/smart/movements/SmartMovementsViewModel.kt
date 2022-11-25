@@ -3,11 +3,16 @@ package com.multimoney.multimoney.presentation.ui.home.product.smart.movements
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnGetMovement
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnNavigateBackToHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -18,21 +23,28 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SmartMovementsViewModel @Inject constructor(
-    private val queryGetPagedSmartMovements: QueryGetPagedSmartMovementsUseCase
+    private val queryGetPagedSmartMovements: QueryGetPagedSmartMovementsUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
+    // Bundle parameters
+    val idBrand = savedStateHandle[ID_BRAND] ?: ""
+    private val user = savedStateHandle[USER] ?: ""
+    private val identification = savedStateHandle[IDENTIFICATION] ?: ""
+    private val accountToken = savedStateHandle[ACCOUNT_TOKEN] ?: ""
+
     private fun onGetSmartMovements() {
         executeUseCase {
             uiState = uiState.copy(
                 movementsPage = queryGetPagedSmartMovements.invoke(
-                    user = "401920903",
-                    idBrand = 5,
-                    identificationNumber = "107910975",
-                    accountToken = 1,
+                    user = user,
+                    idBrand = idBrand.toIntOrNull() ?: 0,
+                    identificationNumber = identification,
+                    accountToken = accountToken.toLongOrNull() ?: 0,
                     monthDate = null
                 )
             )
@@ -60,7 +72,6 @@ class SmartMovementsViewModel @Inject constructor(
 
     data class UIState(
         // Fields
-        var idBrand: String = "0",
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val currentPage: Int = 1,

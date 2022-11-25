@@ -39,8 +39,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
@@ -81,15 +79,12 @@ fun ProductScreen(
             email = sharedViewModel.uiState.email,
             userName = sharedViewModel.uiState.userName,
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
-            configurationVersion = sharedViewModel.uiState.configurationVersion
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            smartMovements = sharedViewModel.uiState.smartMovementsList
         )
     )
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
-    }
-
-    LaunchedEffect(key1 = true) {
-        viewModel.onUIEvent(OnGetSmartMovements)
     }
 
     LaunchedEffect(key1 = true) {
@@ -355,7 +350,7 @@ fun ProductFooterExpanded(
                 ProductType.Credit.value -> CreditFooterExpanded(viewModel = viewModel)
                 ProductType.Smart.value -> SmartFooterExpanded(
                     viewModel = viewModel,
-                    viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+                    currentPage
                 )
             }
         }

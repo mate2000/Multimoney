@@ -13,6 +13,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 
+const val ACCOUNT_TOKEN = "account_token"
+
 fun NavGraphBuilder.smartMovementsNavGraph(navController: NavHostController) {
     navigation(
         startDestination = Screen.SmartMovementsScreen.route,
@@ -27,7 +29,10 @@ fun NavGraphBuilder.smartMovementsNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
                 },
-                navArgument(PK_USER) {
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
+                },
+                navArgument(ACCOUNT_TOKEN) {
                     type = NavType.StringType
                 }
             )

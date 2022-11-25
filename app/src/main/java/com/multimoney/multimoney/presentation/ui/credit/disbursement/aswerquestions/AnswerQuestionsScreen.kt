@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.disbursement.aswerquestions
 
+import android.app.DatePickerDialog
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -12,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -31,12 +33,16 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel
 import com.multimoney.multimoney.presentation.uielement.*
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
+import java.util.*
 
 @Composable
 fun AnswerQuestionsScreen(
@@ -52,8 +58,8 @@ fun AnswerQuestionsScreen(
     var title = R.string.empty
     if (viewModel.idBrand.isNotEmpty()) {
         title = when (viewModel.idBrand.toInt()) {
-            Brand.Guatemala.id -> R.string.disbursement_answer_questions_gt
-            else -> R.string.smart_account_document_title
+            Brand.Guatemala.id -> R.string.disbursement_answer_questions_title_gt
+            else -> R.string.disbursement_answer_questions_title_sv
         }
     }
 
@@ -72,40 +78,22 @@ fun AnswerQuestionsScreen(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Title(title = title)
-                BankDestiny(
-                    items = viewModel.uiState.bankList,
-                    value = viewModel.uiState.bankSelected,
+                Title(title = R.string.smart_account_document_title)
+                BirthDay(
+                    context = context,
+                    focusManager = focusManager,
+                    value = "",
                     onValueChange = {
-                        viewModel.onUIEvent(
-                            AnswerQuestionsScreenViewModel.UIEvent.OnBankValueChanged(
-                                it
-                            )
-                        )
+
                     }
                 )
-                AccountType(
-                    items = viewModel.uiState.accountTypeListFiltered?.map { it?.description ?: "" }
-                        ?: listOf(),
-                    value = viewModel.uiState.accountTypeSelectedString,
-                    onValueChange = { value ->
-                        viewModel.onUIEvent(
-                            AnswerQuestionsScreenViewModel.UIEvent.OnAccountTypeValueChanged(
-                                viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value })
-                        )
-                    })
-                AccountNumber(
-                    value = viewModel.uiState.accountNumber,
-                    onValueChange = {
-                        viewModel.onUIEvent(
-                            AnswerQuestionsScreenViewModel.UIEvent.OnAccountNumberValueChange(
-                                it
-                            )
-                        )
-                    },
-                    onError = viewModel.uiState.accountNumberError,
+                MonthlyIncome(
+                    value = "",
+                    onValueChange = {},
+                    onError = Pair(true, 0),
                     focusManager = focusManager
                 )
+                LaborSituation(items = listOf(), value = "" , onValueChange = { } )
             }
             Spacer(modifier = Modifier.weight(1f))
             Continue(
@@ -155,45 +143,32 @@ private fun MonthlyIncome(
     focusManager: FocusManager
 ) {
     CustomOutlinedTextField(
-        modifier = Modifier.padding(top = 32.dp),
-        value = viewModel.uiState.income,
-        leadingIcon = R.drawable.ic_money_gray,
-        placeHolder = stringResource(
-            id = R.string.credit_monthly_income_income_hint,
-            sharedViewModel.currencySymbol.ifEmpty {
-                stringResource(id = sharedViewModel.idBrand.toInt().getCurrencySymbol())
-            }
-        ),
+        value = "",
+        onValueChange = {
+            //viewModel.onUIEvent(SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange(it))
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next
         ),
         keyboardActions = KeyboardActions(onNext = {
-            focusManager.clearFocus()
+            focusManager.moveFocus(FocusDirection.Down)
         }),
-        isRequiredMessage = stringResource(id = R.string.credit_monthly_income_required_income),
-        onValueChange = {
-            viewModel.onUIEvent(
-                MonthlyIncomeViewModel.UIEvent.OnIncomeValueChange(
-                    it
-                )
-            )
-        },
-        isError = viewModel.uiState.incomeError.first,
-        errorMessage = stringResource(id = viewModel.uiState.incomeError.second),
-        customTransformation = formatMoney(
-            sharedViewModel.currencySymbol.ifEmpty {
-                stringResource(id = sharedViewModel.idBrand.toInt().getCurrencySymbol())
-            }
+        labelText = stringResource(id = R.string.disbursement_answer_questions_income_label),
+        modifier = Modifier
+            .padding(top = 16.dp),
+        placeHolder = stringResource(id = R.string.disbursement_answer_questions_income_placeholder),
+        customTransformation = formatDecimalMoney("$"
+            //stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
         )
     )
 }
 
 @Composable
 private fun LaborSituation(
-    items: List<CreditCatalogOption?>?,
-    value: CreditCatalogOption?,
-    onValueChange: (CreditCatalogOption?) -> Unit
+    items: List<String>,
+    value: String,
+    onValueChange: (String) -> Unit
 ) {
     CustomDropdown(
         modifier = Modifier
@@ -203,7 +178,7 @@ private fun LaborSituation(
         items = items,
         value = value,
         onValueChange = onValueChange,
-        labelText = stringResource(id = R.string.credit_bank_account_destiny),
+        labelText = stringResource(id = R.string.disbursement_answer_questions_labor_situation_label),
         placeHolder = stringResource(id = R.string.select)
     )
 }
@@ -215,34 +190,49 @@ private fun BirthDay(
     value: String,
     onValueChange: (String) -> Unit
 ){
-    CustomDatePicker(
-        context = context,
-        modifier = Modifier.padding(top = 16.dp),
-        labelText = stringResource(id = R.string.credit_job_joined_date),
-        placeHolder = stringResource(id = R.string.credit_job_date_placeholder),
-        value = viewModel.uiState.date,
-        minYear = JobInfoViewModel.JOB_DATE_MIN_YEAR,
-        minMonth = JobInfoViewModel.JOB_DATE_MIN_MONTH,
-        minDay = JobInfoViewModel.JOB_DATE_MIN_DAY,
-        leadingIcon = R.drawable.ic_calendar_voucher,
+    CustomOutlinedTextField(
+        leadingIcon = R.drawable.ic_calendar,
+        modifier = Modifier
+            .padding(top = 32.dp),
+        labelText = stringResource(id = R.string.disbursement_answer_questions_birthdate_label),
+        placeHolder = stringResource(id = R.string.disbursement_answer_questions_birthdate_placeholder),
+        value = "",
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next
         ),
         keyboardActions = KeyboardActions(onNext = {
             focusManager.clearFocus()
         }),
-        onValueChange = { _, year, month, dayOfMonth ->
-            viewModel.onUIEvent(
-                JobInfoViewModel.UIEvent.OnDateValueChange(
-                    getPickedDateAsString(
+        isRequired = true,
+        isRequiredMessage = stringResource(id = R.string.credit_job_date_required),
+        onClick = {
+            focusManager.clearFocus()
+            val calendar = Calendar.getInstance()
+            val datePicker = DatePickerDialog(
+                context,
+                { _, year, month, day ->
+                    val date = getPickedDateAsString(
                         year,
                         month,
-                        dayOfMonth,
-                        JobInfoViewModel.DATE_FORMAT
+                        day,
+                        SmartDocumentViewModel.DATE_FORMAT
                     )
-                )
+                    //viewModel.onUIEvent(SmartDocumentViewModel.UIEvent.OnBirthDateValueChange(date))
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
             )
-        }
+            calendar.set(
+                SmartDocumentViewModel.BIRTH_DATE_MIN_YEAR,
+                SmartDocumentViewModel.BIRTH_DATE_MIN_MONTH,
+                SmartDocumentViewModel.BIRTH_DATE_MIN_DAY
+            )
+            datePicker.datePicker.minDate = calendar.timeInMillis
+            datePicker.datePicker.maxDate = Date().time
+            datePicker.show()
+        },
+        isClickable = true
     )
 }
 

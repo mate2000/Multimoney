@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
@@ -22,11 +23,23 @@ class SmartRetiredViewModel : BaseViewModel(true) {
 
     fun isFormValid() = uiState.institution.isNotBlank() &&
         uiState.paymentAmount.isNotBlank() &&
-        uiState.paymentAmount.toFloat() > MIN_INCOME
+        uiState.paymentAmount.toFloat() > MIN_INCOME &&
+        uiState.institutionError.first.not()
 
     private fun onInstitutionValueChange(institution: String) {
-        if (institution.length <= INSTITUTION_MAX_LENGTH) {
-            uiState = uiState.copy(institution = institution)
+        uiState = if (institution.length <= INSTITUTION_MAX_LENGTH) {
+            uiState.copy(
+                institution = institution,
+                institutionError = Pair(false, R.string.empty)
+            )
+        } else {
+            uiState.copy(
+                institution = institution,
+                institutionError = Pair(
+                    true,
+                    R.string.you_have_exceeded_the_max_characters_error
+                )
+            )
         }
         validateForm()
     }
@@ -41,6 +54,7 @@ class SmartRetiredViewModel : BaseViewModel(true) {
     data class UIState(
         // Fields
         val institution: String = "",
+        val institutionError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val paymentAmount: String = ""
     )
 

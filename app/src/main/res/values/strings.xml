@@ -418,7 +418,15 @@
     <string name="save_credit_operation_error_action" translatable="false">Escríbinos por whatsApp</string>
 
     <!-- Disbursement Answer Questions -->
-    <string name="disbursement_answer_questions_gt" translatable="false">Cuéntanos de ti</string>
+    <string name="disbursement_answer_questions_title_gt" translatable="false">Cuéntanos de ti</string>
+    <string name="disbursement_answer_questions_title_sv" translatable="false">Contános sobre vos</string>
+    <string name="disbursement_answer_questions_birthdate_label" translatable="false">Fecha de nacimiento</string>
+    <string name="disbursement_answer_questions_birthdate_placeholder" translatable="false">00 | 00 | 0000</string>
+    <string name="disbursement_answer_questions_birthdate_required" translatable="false">Fecha de nacimiento requerida</string>
+    <string name="disbursement_answer_questions_income_label" translatable="false">Ingreso mensual</string>
+    <string name="disbursement_answer_questions_income_placeholder" translatable="false">$000</string>
+    <string name="disbursement_answer_questions_labor_situation_label" translatable="false">Situación laboral</string>
+
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tu cuenta</string>

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
@@ -22,9 +23,12 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getRegex
 import com.multimoney.multimoney.presentation.util.matchRegex
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -41,29 +45,31 @@ class AnswerQuestionsScreenViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var bank: CreditCatalog? = null
-    private var bankList: List<CreditCatalogOption?>? = listOf()
-    var accountTypeList: List<RegularExpression?>? = listOf()
-    var idBrand: String = ""
+    var idBrand: Int? = null
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
     var idUserRequest: Int = 0
 
     init {
-        idBrand = savedStateHandle[ID_BRAND] ?: ""
+        idBrand = savedStateHandle[ID_BRAND]
         pkUser = savedStateHandle[PK_USER] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         email = savedStateHandle[EMAIL] ?: ""
-        Log.v("CITERIO","init idBrand " + idBrand + ", pkUser " + pkUser + ", identification " + identification + ", email " + email + ", idUserRequest " + savedStateHandle[ID_USER_REQUEST])
-        var id = savedStateHandle[ID_USER_REQUEST] ?: "0"
-        if (id == "null"){
-            id = "0"
-        }
-        idUserRequest = id.toInt()
+        idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
     }
 
-    private fun onLoad(){
+    private fun getTextResources() {
+        uiState = uiState.copy(
+            titleResource = when (idBrand) {
+                Brand.ElSalvador.id -> R.string.disbursement_answer_questions_title_sv
+                Brand.Guatemala.id -> R.string.disbursement_answer_questions_title_gt
+                else -> R.string.disbursement_answer_questions_title_sv
+            }
+        )
+    }
+
+    /*private fun onLoad(){
 
         onCallQueryBanksAndRegularExpressions(
             pkUser = pkUser.toInt(),
@@ -118,57 +124,37 @@ class AnswerQuestionsScreenViewModel @Inject constructor(
                 )
             }
         }
-    }
+    }*/
 
-    private fun onBankValueChanged(bankSelected: CreditCatalogOption?) {
-        uiState = uiState.copy(
-            bankSelected = bankSelected,
-            accountTypeListFiltered = accountTypeList?.filter {
-                it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt()
-            },
-            accountTypeSelectedString = "",
-            accountTypeSelected = null,
-            accountNumber = "",
-            accountNumberError = Pair(false, R.string.empty)
-        )
+    private fun onBirthDateValueChange(birthdate: String) {
+        uiState = uiState.copy(birthdate = birthdate)
         validateForm()
     }
 
-    private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
-        uiState = uiState.copy(
-            accountTypeSelectedString = regulaExpression?.description ?: "",
-            accountTypeSelected = regulaExpression,
-            accountNumber = "",
-            accountNumberError = Pair(false, R.string.empty)
-        )
+    private fun onAmountValueChange(paymentAmount: String) {
+        if (validateDecimalIncome(paymentAmount)) {
+            uiState = uiState.copy(paymentAmount = paymentAmount)
+        }
         validateForm()
     }
 
-    private fun onAccountNumberValueChanged(accountNumber: String) {
+    private fun onLaborSituationValueChanged(laborSituationSelected: String?) {
         uiState = uiState.copy(
-            accountNumber = accountNumber,
-            accountNumberError =
-            if (matchRegex(accountNumber, getRegex(uiState.accountTypeSelected?.regularExpression.orEmpty()))) {
-                Pair(false, R.string.empty)
-            } else {
-                Pair(true, R.string.credit_bank_account_number_error)
-            }
+            laborSituationSelected = laborSituationSelected,
         )
         validateForm()
     }
 
     private fun validateForm() {
-        uiState = uiState.copy(isContinueEnabled = uiState.bankSelected != null && uiState.accountTypeSelected != null && uiState.accountNumber.isNotEmpty())
+        //uiState = uiState.copy(isContinueEnabled = uiState.laborSituationSelected != null && uiState.accountTypeSelected != null && uiState.accountNumber.isNotEmpty())
     }
 
     data class UIState(
-        val accountNumber: String = "",
-        val accountNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        val bankList: List<CreditCatalogOption?>? = listOf(),
-        val bankSelected: CreditCatalogOption? = null,
-        val accountTypeListFiltered: List<RegularExpression?>? = listOf(),
-        val accountTypeSelectedString: String = "",
-        val accountTypeSelected: RegularExpression? = null,
+        val titleResource: Int = R.string.empty,
+        val birthdate: String = "",
+        val laborSituationList: List<String> = listOf(),
+        val laborSituationSelected: String? = null,
+        val paymentAmount: String = "",
         val isContinueEnabled: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isLoading: Boolean = false
@@ -176,43 +162,17 @@ class AnswerQuestionsScreenViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            //is CreditBankViewModel.UIEvent.OnNextActionClick -> onNextActionClick(event.user, event.nextStepAction, event.saveCreditStepsHelper)
-            /*is UIEvent.OnCallQueryBanksAndRegularExpression -> onCallQueryBanksAndRegularExpressions(
-                event.pkUser,
-                event.user,
-                event.idBrand,
-                event.idUserRequest,
-                event.list,
-                event.onLoadingValueChange,
-                event.onFailureWithDialog
-            )*/
-            is UIEvent.OnCallQueryBanksAndRegularExpression -> onLoad()
+            //is UIEvent.OnCallQueryBanksAndRegularExpression -> onLoad()
             is UIEvent.OnValidateForm -> validateForm()
-            is UIEvent.OnAccountNumberValueChange -> onAccountNumberValueChanged(event.accountNumber)
-            is UIEvent.OnBankValueChanged -> onBankValueChanged(event.bankSelected)
-            is UIEvent.OnAccountTypeValueChanged -> onAccountTypeValueChange(event.regularExpressionSelected)
             is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
+            is UIEvent.OnBirthDateValueChange -> onBirthDateValueChange(event.date)
+            is UIEvent.OnPaymentAmountValueChange -> onAmountValueChange(event.paymentAmount)
+            is UIEvent.OnLaborSituationValueChanged -> onLaborSituationValueChanged(event.laborSituationSelected)
             is UIEvent.OnFailureWithDialog ->
                 uiState =
                     uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is UIEvent.OnBackClick -> navigateBackToHome()
         }
-    }
-
-    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
-        val bankSelected = bankList?.find { it?.pkCatalog == bank?.pkCatalog }
-        val accountType = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_TYPE }
-        val accountTypeListFiltered =
-            accountTypeList?.filter { it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt() }
-        val accountNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
-        uiState = uiState.copy(
-            bankSelected = bankSelected,
-            accountTypeListFiltered = accountTypeListFiltered,
-            accountTypeSelectedString = accountType?.value ?: "",
-            accountTypeSelected = accountTypeListFiltered?.findLast { it?.description == accountType?.value },
-            accountNumber = accountNumber?.value ?: ""
-        )
-        validateForm()
     }
 
     private fun navigateBackToHome() {
@@ -223,32 +183,21 @@ class AnswerQuestionsScreenViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        /*data class OnCallQueryBanksAndRegularExpression(
-            val pkUser: Int,
-            val user: String,
-            val idBrand: Int,
-            val idUserRequest: Int,
-            val list: List<CreditCatalog?>?,
-            val onLoadingValueChange: (isLoading: Boolean) -> Unit,
-            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
-        ) : UIEvent()*/
         object OnCallQueryBanksAndRegularExpression : UIEvent()
         object OnValidateForm : UIEvent()
-        data class OnAccountNumberValueChange(val accountNumber: String) : UIEvent()
-        data class OnBankValueChanged(val bankSelected: CreditCatalogOption?) : UIEvent()
-        data class OnAccountTypeValueChanged(val regularExpressionSelected: RegularExpression?) : UIEvent()
+        data class OnBirthDateValueChange(val date: String) : UIEvent()
+        data class OnPaymentAmountValueChange(val paymentAmount: String) : UIEvent()
+        data class OnLaborSituationValueChanged(val laborSituationSelected: String) : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
     }
 
-    sealed class BaseEvent {
-        data class OnFormCompleted(val isFormCompleted: Boolean) : BaseEvent()
-    }
-
     companion object {
-        const val MIDDLE_DASH = "-"
+        const val DATE_FORMAT = "yyyy-MM-dd"
+        const val BIRTH_DATE_MIN_YEAR = 1902
+        const val BIRTH_DATE_MIN_MONTH = 0
+        const val BIRTH_DATE_MIN_DAY = 1
     }
-
 
 }

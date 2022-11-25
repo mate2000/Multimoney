@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
@@ -67,7 +68,6 @@ class ProductViewModel @Inject constructor(
     private fun onSetUserData(
         idBrand: String,
         balanceCredit: Balance?,
-        idBrand: String,
         pkUser: String,
         identification: String,
         email: String,
@@ -447,6 +447,19 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun onDeleteAutomaticPayment(onAcceptClick: () -> Unit) {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_title,
+                descriptionResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_description,
+                positiveResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_accept,
+                negativeResource = R.string.cancel,
+                positiveAction = { onAcceptClick() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -475,7 +488,6 @@ class ProductViewModel @Inject constructor(
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
                 balanceCredit = uiEvent.balanceCredit,
-                idBrand = uiEvent.idBrand,
                 pkUser = uiEvent.pkUser,
                 identification = uiEvent.identification,
                 email = uiEvent.email,
@@ -499,6 +511,7 @@ class ProductViewModel @Inject constructor(
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
             is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
+            is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
         }
     }
 
@@ -536,7 +549,6 @@ class ProductViewModel @Inject constructor(
         data class OnSetUserData(
             val idBrand: String,
             val balanceCredit: Balance?,
-            val idBrand: String,
             val pkUser: String,
             val identification: String,
             val email: String,
@@ -552,6 +564,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
+        data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
     }
 
     companion object {

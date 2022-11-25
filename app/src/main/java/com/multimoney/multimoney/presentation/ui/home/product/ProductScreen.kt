@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -58,7 +56,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartHeaderE
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
@@ -81,7 +78,8 @@ fun ProductScreen(
             email = sharedViewModel.uiState.email,
             userName = sharedViewModel.uiState.userName,
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
-            configurationVersion = sharedViewModel.uiState.configurationVersion
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            idBrand = sharedViewModel.uiState.idBrand
         )
     )
     LaunchedEffect(key1 = true){

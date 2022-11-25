@@ -8,7 +8,9 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.balance.BalanceAccountSmart
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
@@ -42,6 +44,8 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -73,13 +77,15 @@ class ProductViewModel @Inject constructor(
         email: String,
         userName: String,
         validateUserStatus: ValidateUserStatus?,
-        configurationVersion: ConfigurationVersion?
+        configurationVersion: ConfigurationVersion?,
+        idBrand: String
     ) {
         this.pkUser = pkUser
         this.identification = identification
         this.email = email
         this.userName = userName
         this.configurationVersion = configurationVersion
+        this.uiState.idBrand = idBrand
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
     }
@@ -478,7 +484,8 @@ class ProductViewModel @Inject constructor(
                 email = uiEvent.email,
                 userName = uiEvent.userName,
                 validateUserStatus = uiEvent.validateUserStatus,
-                configurationVersion = uiEvent.configurationVersion
+                configurationVersion = uiEvent.configurationVersion,
+                idBrand = uiEvent.idBrand
             )
             is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -537,7 +544,8 @@ class ProductViewModel @Inject constructor(
             val email: String,
             val userName: String,
             val validateUserStatus: ValidateUserStatus?,
-            val configurationVersion: ConfigurationVersion?
+            val configurationVersion: ConfigurationVersion?,
+            val idBrand: String
         ) : UIEvent()
 
         data class OnShareIbanAccount(

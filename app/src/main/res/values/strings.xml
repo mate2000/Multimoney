@@ -10,6 +10,7 @@
     <string name="label_email" translatable="false">Correo electrónico</string>
     <string name="finalize" translatable="false">Finalizar</string>
     <string name="accept" translatable="false">Aceptar</string>
+    <string name="save" translatable="false">Guardar</string>
     <string name="cancel" translatable="false">Cancelar</string>
     <string name="contact" translatable="false">Contactar</string>
     <string name="error" translatable="false">Error</string>

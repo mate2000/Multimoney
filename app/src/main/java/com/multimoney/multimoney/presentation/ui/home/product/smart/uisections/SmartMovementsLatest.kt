@@ -31,8 +31,11 @@ import com.multimoney.multimoney.presentation.util.parseApiDateToCardDate
 
 @Composable
 fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
-    if (viewModel.smartMovementsList.isNullOrEmpty().not()) {
-        var moves = viewModel.smartMovementsList[index]
+    if (viewModel.smartMovementsList.isEmpty().not()) {
+        val accountSelected = viewModel.balanceCredit?.balanceAccountSmart?.get(index)
+        val moves = viewModel.smartMovementsList.find { account ->
+            account.accountToken.toString() == accountSelected?.tokenNumber
+        }
 
         Column(
             Modifier.fillMaxWidth().padding(16.dp)
@@ -52,10 +55,10 @@ fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
                     style = Typography.button.copy(
                         color = MultimoneyTheme.colors.textLink
                     ),
-                    onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements(moves.accountToken.toString())) }
+                    onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements(moves?.accountToken.toString())) }
                 )
             }
-            moves.result.forEach {
+            moves?.result?.forEach {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                     horizontalArrangement = SpaceBetween,

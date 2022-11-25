@@ -262,7 +262,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartMovements(accountToken: String) =
-        navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
+        navigateTo("${Screen.SmartMovementsScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${accountToken}")
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)

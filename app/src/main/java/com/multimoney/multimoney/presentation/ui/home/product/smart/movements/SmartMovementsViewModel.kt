@@ -32,7 +32,7 @@ class SmartMovementsViewModel @Inject constructor(
         private set
 
     // Bundle parameters
-    val idBrand = savedStateHandle[ID_BRAND] ?: ""
+    val idBrand = savedStateHandle[ID_BRAND] ?: 0
     private val user = savedStateHandle[USER] ?: ""
     private val identification = savedStateHandle[IDENTIFICATION] ?: ""
     private val accountToken = savedStateHandle[ACCOUNT_TOKEN] ?: ""
@@ -42,7 +42,7 @@ class SmartMovementsViewModel @Inject constructor(
             uiState = uiState.copy(
                 movementsPage = queryGetPagedSmartMovements.invoke(
                     user = user,
-                    idBrand = idBrand.toIntOrNull() ?: 0,
+                    idBrand = idBrand,
                     identificationNumber = identification,
                     accountToken = accountToken.toLongOrNull() ?: 0,
                     monthDate = null

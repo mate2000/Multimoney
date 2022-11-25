@@ -94,8 +94,8 @@ fun Int.getCurrencySymbol(): Int {
 
 fun String.getCurrencySymbolValue(): Int {
     return when (this) {
-        Colon.value -> R.string.dollar_symbol_value
-        Dollar.value -> R.string.colon_symbol_value
+        Colon.value -> R.string.colon_symbol_value
+        Dollar.value -> R.string.dollar_symbol_value
         Quetzal.value -> R.string.quetzal_symbol_value
         else -> R.string.empty
     }

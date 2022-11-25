@@ -2055,7 +2055,11 @@ type InfoDeposit {
 
   monto: Decimal!
 
+  monto_Label: String!
+
   numeroReferencia: String!
+
+  pagare: String!
 
   fecha: DateTime!
 
@@ -2671,6 +2675,8 @@ type Catalog {
 }
 
 input CatalogDtoInput {
+  isTransferIdentifaction: Int
+
   idBrand: Int
 
   user: String

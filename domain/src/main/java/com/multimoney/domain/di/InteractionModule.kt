@@ -100,6 +100,8 @@ import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsImpl
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
+import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
+import com.multimoney.domain.interaction.security.QueryMiniCardsUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
@@ -405,4 +407,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelationshipUseCaseImpl(smartAccountRepository: SmartAccountRepository): QueryRelationshipUseCase =
         QueryRelationshipUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMiniCardsUseCase(securityRepository: SecurityRepository): QueryMiniCardsUseCase =
+        QueryMiniCardsUseCaseImpl(securityRepository)
 }

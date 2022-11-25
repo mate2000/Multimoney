@@ -35,6 +35,7 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
+import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
@@ -951,4 +952,21 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<QuickActionsQuery.Data> =
         apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryMiniCards(
+        infoCreditStatus:Boolean,
+        infoVirtualCardStatus:Boolean,
+        infoBankAccountStatus:Boolean,
+        infoCrypto:Boolean,
+        userEmail:String,
+        idBrand:Int
+    ): ApolloCall<ListMiniCardsQuery.Data> =
+        apolloAuthorizedClient.query(ListMiniCardsQuery(
+            infoCreditStatus,
+            infoVirtualCardStatus,
+            infoBankAccountStatus,
+            infoCrypto,
+            userEmail,
+            idBrand
+        )).fetchPolicy(FetchPolicy.NetworkOnly)
 }

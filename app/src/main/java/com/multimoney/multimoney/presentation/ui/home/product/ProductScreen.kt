@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,13 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -27,11 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import com.multimoney.domain.model.credit.CreditOfferAndTip
+import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
@@ -126,7 +130,7 @@ fun ProductScreen(
         ) {
             MotionLayoutMM(
                 header = {
-                    ProductHeader(viewModel = viewModel)
+                    ProductHeader(viewModel = viewModel, sharedViewModel = sharedViewModel)
                 },
                 headerExpanded = { backPressed ->
                     ProductHeaderExpanded(
@@ -179,7 +183,7 @@ fun ProductScreen(
 }
 
 @Composable
-fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
+fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel, sharedViewModel: HomeViewModel) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -226,21 +230,25 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         ) {
-            items(items = viewModel.getCreditOfferAndTips(), itemContent = {
-                TipAndOfferItem(viewModel, it)
-            })
+            sharedViewModel.uiState.miniCardList?.let { miniCardList ->
+                items(items = miniCardList, itemContent = {
+                    TipAndOfferItem(it)
+                })
+            }
         }
     }
 }
 
 @Composable
 fun ProductHeader(
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
 ) {
     Column {
         TipsAndOffer(
             modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-            viewModel = viewModel
+            viewModel = viewModel,
+            sharedViewModel= sharedViewModel
         )
         Text(
             text = stringResource(id = R.string.home_product_header_title),
@@ -357,7 +365,7 @@ fun ProductFooterExpanded(
 }
 
 @Composable
-fun TipAndOfferItem(viewModel: ProductViewModel, creditOfferAndTip: CreditOfferAndTip) {
+fun TipAndOfferItem(miniCardsItem: MiniCardsItem) {
     TipBox {
         Box(
             Modifier
@@ -365,38 +373,15 @@ fun TipAndOfferItem(viewModel: ProductViewModel, creditOfferAndTip: CreditOfferA
                 .clickable {
                     // TODO: Call appropriate screen when all flows are available
                     // TODO, mocking the first item in order to navigate to the smart origination flow
-                    if (creditOfferAndTip.id == "1") {
-                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
-                    }
                 }
         ) {
-            CustomImage(
-                drawableResource = R.drawable.ic_logo_multimoney,
+            Image(
+                painter = rememberAsyncImagePainter(miniCardsItem.imageUrl),
+                contentDescription = "",
                 modifier = Modifier
-                    .size(54.dp, 54.dp)
-                    .align(Alignment.BottomEnd)
+                    .fillMaxSize().clip(RoundedCornerShape(26.dp)),
+                contentScale = ContentScale.Crop
             )
-            Column {
-                Text(
-                    text = creditOfferAndTip.title,
-                    modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
-                    style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.labelText
-                )
-                Text(
-                    text = creditOfferAndTip.description,
-                    modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
-                    style = Typography.caption,
-                    color = MultimoneyTheme.colors.labelText,
-                    maxLines = 2
-                )
-                Text(
-                    text = creditOfferAndTip.actionName,
-                    modifier = Modifier.padding(top = 14.dp, start = 16.dp, end = 16.dp),
-                    style = Typography.caption.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.tipActionColor
-                )
-            }
         }
     }
 }

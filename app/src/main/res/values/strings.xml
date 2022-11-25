@@ -768,6 +768,15 @@
     <string name="schedule_automatic_payment_credit_multiple_payment_dialog_description" translatable="false">Se calcula en base al tipo de cambio del día de pago</string>
     <string name="schedule_automatic_payment_credit_multiple_payment_dialog_button" translatable="false">Entendido</string>
 
+    <!-- Credit Schedule Automatic Payment -->
+    <string name="automatic_payment_edit_bottom_sheet_title" translatable="false">Pago programado</string>
+    <string name="automatic_payment_edit_bottom_sheet_edit" translatable="false">Editar pago</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete" translatable="false">Eliminar pago</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_title" translatable="false">Eliminar pago automático</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_description" translatable="false">¿Estas seguro que quieres eliminar tu pago automático?</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_accept" translatable="false">Eliminar</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_toast" translatable="false">Tu pago automático fue eliminado</string>
+
     <!-- Payment Cards List -->
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>

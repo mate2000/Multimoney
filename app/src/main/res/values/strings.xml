@@ -42,6 +42,7 @@
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
     <string name="info" translatable="false">Información</string>
+    <string name="not_defined" translatable="false">Not Defined</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -248,6 +249,7 @@
     <string name="home_product_credit_approved_process_started_card_description" translatable="false">Tu solicitud de crédito está en proceso. ¡No pierdas la oportunidad!</string>
     <string name="home_product_credit_approved_process_started_card_action" translatable="false">Continuar con proceso</string>
     <string name="home_product_process_credit_label" translatable="false">Crédito</string>
+    <string name="home_product_process_credit_preapproved_label" translatable="false">Crédito</string>
     <string name="home_product_process_title" translatable="false">Parece que hubo un error</string>
     <string name="home_product_process_description" translatable="false">No es posible validar tu identidad por favor, inténtalo nuevamente.</string>
     <string name="home_product_process_action" translatable="false">Validar identificación</string>
@@ -276,6 +278,11 @@
     <string name="home_firm_incomplete_description" translatable="false">Para recibir tu dinero solo tenés que firmar el contrato</string>
     <string name="home_firm_incomplete_action" translatable="false">Firmar!</string>
 
+    <!-- Home save credit operation error -->
+    <string name="home_save_credit_operation_error_title" translatable="false">Hubo un problema al crear tu crédito</string>
+    <string name="home_save_credit_operation_error_description_gt" translatable="false">Comunícate con nosotros para ayudarte personalmente.</string>
+    <string name="home_save_credit_operation_error_description" translatable="false">Comunicate con nosotros para ayudarte personalmente.</string>
+
     <!-- My Profile -->
     <string name="profile_title" translatable="false">Mi perfil</string>
     <string name="profile_my_accounts" translatable="false">Mis cuentas</string>
@@ -300,6 +307,18 @@
     <!-- quick actions bottom sheet -->
     <string name="quick_action_bottom_sheet_title" translatable="false">¿Qué querés hacer?</string>
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
+    <string name="quick_action_bottom_sheet_smart_section" translatable="false">Smart</string>
+    <string name="quick_action_bottom_sheet_crypto_section" translatable="false">Crypto</string>
+    <string name="quick_action_bottom_sheet_credit_pay_fee" translatable="false">Pagar cuota</string>
+    <string name="quick_action_bottom_sheet_credit_disburse_available" translatable="false">Desembolsar disponible</string>
+    <string name="quick_action_bottom_sheet_credit_pay_at_business" translatable="false">Pagar en comercio</string>
+    <string name="quick_action_bottom_sheet_credit_see_multimoney_visa_info" translatable="false">Ver datos Multimoney Visa</string>
+    <string name="quick_action_bottom_sheet_smart_saving" translatable="false">Ahorrar Smart</string>
+    <string name="quick_action_bottom_sheet_smart_send_money" translatable="false">Enviar dinero</string>
+    <string name="quick_action_bottom_sheet_crypto_buy" translatable="false">Comprar cripto</string>
+    <string name="quick_action_bottom_sheet_crypto_sell" translatable="false">Vender cripto</string>
+    <string name="quick_action_bottom_sheet_crypto_send" translatable="false">Enviar cripto</string>
+    <string name="quick_action_bottom_sheet_crypto_receive" translatable="false">Recibir cripto</string>
 
     <!-- Credit Close Dialog-->
     <string name="credit_close_dialog_title" translatable="false">¿Estás seguro que querés salir?</string>
@@ -412,6 +431,7 @@
     <string name="credit_additional_information_bottom_sheet_description" translatable="false">Prestamistas, casas de empeño, comercio de metales y piedras preciosas, tarjetas y operadores de tarjetas de crédito, organizaciones sin fines de lucro, proveedores de servicios fiduciarios, compra y venta de bienes inmuebles, facilidad crediticia, administración de recursos de terceros.</string>
     <string name="credit_additional_information_bottom_sheet_button_" translatable="false">Aceptar</string>
 
+    <!-- Save Credit operation error -->
     <string name="save_credit_operation_error_subtitle_gt" translatable="false">Contáctanos para brindarte más información</string>
     <string name="save_credit_operation_error_action_gt" translatable="false">Escríbenos por whatsAppfv</string>
     <string name="save_credit_operation_error_title" translatable="false">¡Oh no! Hubo un error</string>
@@ -678,6 +698,18 @@
     <!-- Payment Schedule Account-->
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
 
+    <!-- Disbursement Amount-->
+    <string name="disbursement_amount_title" translatable="false">¿Cuánto \ndinero necesitás?</string>
+    <string name="disbursement_amount_gt_title" translatable="false">¿Cuánto \ndinero necesitas?</string>
+    <string name="disbursement_amount_info" translatable="false">Condiciones</string>
+    <string name="disbursement_amount_info_dialog_title" translatable="false">Condiciones</string>
+    <string name="disbursement_amount_info_dialog_description" translatable="false">La cuota e interés pueden variar según su evaluación crediticia.</string>
+
+    <!-- Disbursement Account-->
+    <string name="disbursement_account_sv_title" translatable="false">¿Dónde querés recibir tu crédito?</string>
+    <string name="disbursement_account_gt_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
+    <string name="disbursement_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
+
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
@@ -719,4 +751,23 @@
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+
+    <!-- Credit Schedule Automatic Payment -->
+    <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>
+    <string name="schedule_automatic_payment_credit_subtitle" translatable="false">Pago programado de cuota</string>
+    <string name="schedule_automatic_payment_credit_next_payment" translatable="false">Próximo pago</string>
+    <string name="schedule_automatic_payment_credit_expired_payment_dialog_title" translatable="false">Error pago automático</string>
+    <string name="schedule_automatic_payment_credit_expired_payment_dialog_description" translatable="false">No posees suficientes fondos para realizar el pago, por favor realiza el pago manual o registra otra cuenta.</string>
+    <string name="schedule_automatic_payment_credit_expired_payment_dialog_button" translatable="false">Entendido</string>
+    <string name="schedule_automatic_payment_credit_multiple_payment_dialog_title" translatable="false">Tu cuota programada</string>
+    <string name="schedule_automatic_payment_credit_multiple_payment_dialog_description" translatable="false">Se calcula en base al tipo de cambio del día de pago</string>
+    <string name="schedule_automatic_payment_credit_multiple_payment_dialog_button" translatable="false">Entendido</string>
+
+    <!-- Payment Cards List -->
+    <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
+    <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
+    <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+
+    <!-- Payment Amount Card -->
+    <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
 </resources>

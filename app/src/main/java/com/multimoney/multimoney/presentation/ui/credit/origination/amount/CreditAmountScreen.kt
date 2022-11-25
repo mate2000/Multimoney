@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.creditamount
+package com.multimoney.multimoney.presentation.ui.credit.origination.amount
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,14 +43,14 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.Companion.SLIDER_TOTAL
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.skeleton.CreditAmountScreenSkeleton
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.termandcondition.CreditTermsAndCondition
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_TOTAL
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.skeleton.CreditAmountScreenSkeleton
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.termandcondition.CreditTermsAndCondition
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip

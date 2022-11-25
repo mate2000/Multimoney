@@ -38,6 +38,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                     amountAvailableFormat
                     symbolCurrency
                 }
+                idPrint
                 selectedAmount
                 statusFirm
                 currentStep
@@ -68,6 +69,12 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
         }
         infoCrypto {
             status
+            statusFirm
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
     }
 }

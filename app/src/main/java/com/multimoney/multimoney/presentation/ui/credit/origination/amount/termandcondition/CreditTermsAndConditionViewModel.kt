@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.termandcondition
+package com.multimoney.multimoney.presentation.ui.credit.origination.amount.termandcondition
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -170,6 +170,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_screen"
     )
 
+    object SmartOnfidoScreen : Screen(
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}/{$EVICERTIA_STATUS}",
+        "smart_onfido_screen"
+    )
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")

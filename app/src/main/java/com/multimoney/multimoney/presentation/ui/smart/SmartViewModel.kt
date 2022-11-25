@@ -23,8 +23,9 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.*
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
@@ -60,6 +61,15 @@ class SmartViewModel @Inject constructor(
     val idBrand = savedStateHandle[ID_BRAND] ?: ""
     val user = savedStateHandle[USER] ?: ""
     val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
+    var identification: String = "4546"
+    var email: String = "test@test.com"
+    var firstName: String = "Alejandra"
+    var lastName: String = "Perez"
+    var idUserRequest: Long = 121
+    var idPrint: Long = 45
+    var evicertiaUrl: String = "test.com"
+    var evicertiaStatus: String = "activo"
+
 
     // Stateless
     var nextAction: () -> Unit = {}
@@ -68,6 +78,7 @@ class SmartViewModel @Inject constructor(
     var accountSmartData: AccountSmartData? = null
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
+    var isOnFidoVerified = true
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -79,6 +90,14 @@ class SmartViewModel @Inject constructor(
             idBrand = idBrandAsInt,
             user = user
         )
+        /*
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        email = savedStateHandle[EMAIL] ?: ""
+        idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
+        firstName = savedStateHandle[FIRST_NAME] ?: ""
+        lastName = savedStateHandle[LAST_NAME] ?: ""
+        statusOnfido = savedStateHandle[ONFIDO_STATUS] ?: ""
+        statusEvicertia = savedStateHandle[EVICERTIA_STATUS] ?: "" */
     }
 
     // FIXME, this is the logic to list the data, it should be handled in another ticket
@@ -248,12 +267,20 @@ class SmartViewModel @Inject constructor(
     }
 
     private fun nextStep() {
-        if (nextStep <= SMART_TOTAL_STEPS) {
+        if (nextStep < SMART_TOTAL_STEPS) {
             uiState = uiState.copy(
                 currentStep = nextStep,
                 isCloseVisible = nextStep >= SmartSteps.One.id
             )
+        } else {
+           navigateToOnfido()
         }
+    }
+
+    private fun navigateToOnfido() {
+       popAndNavigateTo(
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/${URL_EMPTY}/$evicertiaStatus",
+            Screen.SmartScreen.route)
     }
 
     private fun onSetNavigation(
@@ -347,6 +374,7 @@ class SmartViewModel @Inject constructor(
                 uiState =
                     uiState.copy(isContinueVisible = event.visible, buttonTextRes = event.textResId)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
+            is UIEvent.OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
         }
     }
 
@@ -370,14 +398,15 @@ class SmartViewModel @Inject constructor(
             val previousStep: Int
         ) : UIEvent()
 
-        data class OnUseDataValueChange(val userData: UserData?, val idBrand: Int? = null) : SmartViewModel.UIEvent()
+        object OnNavigateToContinueValidatingIdentity : UIEvent()
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
         data class OnContinueVisible(val visible: Boolean, val textResId: Int = string.button_continue) : UIEvent()
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
-
+        data class OnUseDataValueChange(val accountSmartData: AccountSmartData?, val idBrand: Int? = null) : UIEvent()
+        data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
         object OnClickBottomSheet : UIEvent()
     }
 
@@ -385,5 +414,6 @@ class SmartViewModel @Inject constructor(
         const val SMART_TOTAL_STEPS = 6
         const val SMART_INDICATOR_TOTAL_STEPS = 5
         const val DEFAULT_ID_BRAND_ERROR = -1
+        const val URL_EMPTY = "url"
     }
 }

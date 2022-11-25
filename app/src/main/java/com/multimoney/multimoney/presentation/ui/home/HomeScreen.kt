@@ -65,7 +65,7 @@ fun HomeScreen(
     val innerNavController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
     val quickActionsModalBottomSheetState = rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
-    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
     val activity = (LocalContext.current as? Activity)
 
 

@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
@@ -31,7 +33,6 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSe
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalPagerApi::class)
 class HomeViewModel @Inject constructor(
     val countDownTimer: MMCountDownTimer,
     private val dataStorePreferences: DataStorePreferences,
@@ -257,7 +259,9 @@ class HomeViewModel @Inject constructor(
         var pkUser: String = "",
         var identification: String = "",
         var email: String = "",
-        var userName: String = ""
+        var userName: String = "",
+        var forceIsExpanded: Boolean = false,
+        var productScreenPagerState: PagerState? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -266,6 +270,8 @@ class HomeViewModel @Inject constructor(
             is OnSignOut -> popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
             is OnSetUserData -> onsetUserData()
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
+            is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
+            is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
         }
     }
 
@@ -273,6 +279,8 @@ class HomeViewModel @Inject constructor(
         data class OnOpenQuickActionFlow (val flow : String) : UIEvent()
         data class OnBottomNavigationItemClick(val innerNavHostController: NavHostController, val route: String) :
             UIEvent()
+        data class OnMyProductClick(val expand: Boolean) : UIEvent()
+        data class OnMyProductPageChange(val page: PagerState) : UIEvent()
         object OnSetUserData : UIEvent()
         object OnSignOut : UIEvent()
     }

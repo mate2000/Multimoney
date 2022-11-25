@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -40,6 +38,8 @@ import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
@@ -58,7 +58,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartHeaderE
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
@@ -84,11 +83,11 @@ fun ProductScreen(
             configurationVersion = sharedViewModel.uiState.configurationVersion
         )
     )
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         sharedViewModel.baseEvent.collect { event ->
             when (event) {
                 is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
@@ -106,6 +105,10 @@ fun ProductScreen(
     val contentPagerState = rememberPagerState()
     val footerPagerState = rememberPagerState()
     val footerExpandedPagerState = rememberPagerState()
+
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(OnMyProductPageChange(contentPagerState))
+    }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
         headerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
@@ -165,6 +168,10 @@ fun ProductScreen(
                 isExpanded = viewModel.uiState.isExpanded,
                 updateIsExpanded = { isExpanded ->
                     viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                },
+                forceExpanded = sharedViewModel.uiState.forceIsExpanded,
+                updateForceExpanded = { forceExpanded ->
+                    sharedViewModel.onUIEvent(OnMyProductClick(forceExpanded))
                 }
             )
         }
@@ -283,7 +290,7 @@ fun ProductHeaderExpanded(
 fun ProductContent(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
@@ -327,7 +334,11 @@ fun ProductFooter(
                     uiState = viewModel.uiState,
                     balance = viewModel.balanceCredit,
                     onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
-                    onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToVisaActivateScreen) }
+                    onNavigateToVisaActivateScreen = {
+                        viewModel.onUIEvent(
+                            OnNavigateToVisaActivateScreen
+                        )
+                    }
                 )
                 ProductType.Smart.value -> SmartFooter()
             }

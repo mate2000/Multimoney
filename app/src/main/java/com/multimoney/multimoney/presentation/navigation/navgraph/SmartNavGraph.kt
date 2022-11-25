@@ -49,7 +49,6 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(USER) { type = NavType.StringType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(ID_USER_REQUEST) { type = NavType.LongType },
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) {

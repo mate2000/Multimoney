@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
@@ -43,8 +44,10 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -61,14 +64,13 @@ class SmartViewModel @Inject constructor(
     val idBrand = savedStateHandle[ID_BRAND] ?: ""
     val user = savedStateHandle[USER] ?: ""
     val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
-    var identification: String = "4546"
-    var email: String = "test@test.com"
-    var firstName: String = "Alejandra"
-    var lastName: String = "Perez"
-    var idUserRequest: Long = 121
-    var idPrint: Long = 45
-    var evicertiaUrl: String = "test.com"
-    var evicertiaStatus: String = "activo"
+    var identification: String = ""
+    var email: String = ""
+    var firstName: String = ""
+    var lastName: String = ""
+    var idPrint: Long = 1120654
+    var linkEvicertia: String = URL_EMPTY
+    var statusOnfido: String = ""
 
 
     // Stateless
@@ -90,14 +92,12 @@ class SmartViewModel @Inject constructor(
             idBrand = idBrandAsInt,
             user = user
         )
-        /*
+
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         email = savedStateHandle[EMAIL] ?: ""
-        idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
         statusOnfido = savedStateHandle[ONFIDO_STATUS] ?: ""
-        statusEvicertia = savedStateHandle[EVICERTIA_STATUS] ?: "" */
     }
 
     // FIXME, this is the logic to list the data, it should be handled in another ticket
@@ -279,7 +279,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
        popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/${URL_EMPTY}/$evicertiaStatus",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/${URL_EMPTY}",
             Screen.SmartScreen.route)
     }
 

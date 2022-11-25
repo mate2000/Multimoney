@@ -119,8 +119,13 @@ fun CryptoCardWithBalance(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentSize()
-            .padding(top = 24.dp, start = 16.dp, end = 16.dp)
+            .wrapContentHeight()
+            .padding(
+                top = 24.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = if (isBalanceNullOrZero) 136.dp else 0.dp
+            )
             .clickable(enabled = isActionEnable) { action.invoke() }
     ) {
         Text(
@@ -162,13 +167,6 @@ fun CryptoCardWithBalance(
                     startIcon = R.drawable.ic_gains_crypto
                 )
             }*/
-        } else {
-            //space under balance in card with 0 crypto balance
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(136.dp)
-            )
         }
     }
 }

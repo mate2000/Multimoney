@@ -240,7 +240,7 @@ class SmartOnfidoViewModel @Inject constructor(
     }
 
     private fun onCloseClick() {
-        uiState = uiState.copy(
+        /*uiState = uiState.copy(
             openDialog = DialogParameters(
                 titleResource = closeDialogTitle,
                 description = closeDialogDescription,
@@ -251,7 +251,8 @@ class SmartOnfidoViewModel @Inject constructor(
                 },
                 isActive = mutableStateOf(true)
             )
-        )
+        )*/
+        onNavigateToHome()
     }
 
     private fun onNavigateToHome() {

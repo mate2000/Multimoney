@@ -47,24 +47,6 @@ fun SmartOnfidoScreen(
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
 
-    if (viewModel.idBrand != null) {
-        if (viewModel.idBrand == Brand.Guatemala.id) {
-            viewModel.onUIEvent(
-                OnSetCloseDialogTexts(
-                    string.credit_close_dialog_gt_title,
-                    stringResource(id = string.credit_close_dialog_gt_description)
-                )
-            )
-        } else {
-            viewModel.onUIEvent(
-                OnSetCloseDialogTexts(
-                    string.credit_close_dialog_title,
-                    stringResource(id = string.credit_close_dialog_description)
-                )
-            )
-        }
-    }
-
     val launchOnFidoActivityResult = rememberLauncherForActivityResult(StartActivityForResult()) { result ->
         viewModel.onUIEvent(
             OnConfigureOnFidoSdk(result)
@@ -233,17 +215,6 @@ fun SmartOnfidoScreen(
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
-
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description,
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
-        )
-    }
 
     BackHandler {
         viewModel.onUIEvent(OnCloseClick)

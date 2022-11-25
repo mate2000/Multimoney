@@ -56,8 +56,8 @@ fun IndProfessionalScreen(
                     )
                 },
                 overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
-                nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Three.id
+                nextStep = sourceIncomeSharedViewModel.getNextStep(sharedViewModel.idBrandAsInt),
+                previousStep = sourceIncomeSharedViewModel.getPreviousStep(sharedViewModel.idBrandAsInt)
             )
         )
         viewModel.baseEvent.collect { event ->
@@ -74,9 +74,9 @@ fun IndProfessionalScreen(
     // return to the main options screen whenever tapping on native back button from the device
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
-            (SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
+            SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
                 SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            ))
+            )
         )
     }
 

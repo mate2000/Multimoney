@@ -38,7 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.transformation.formatMoney
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
 @Composable
 @Preview
@@ -46,10 +46,9 @@ fun SmartOwnBusinessSvScreen(
     viewModel: OwnBusinessViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
     LaunchedEffect(true) {
-
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
 
@@ -69,8 +68,8 @@ fun SmartOwnBusinessSvScreen(
                     )
                 },
                 overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
-                nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Two.id
+                nextStep = sourceIncomeSharedViewModel.getNextStep(sharedViewModel.idBrandAsInt),
+                previousStep = sourceIncomeSharedViewModel.getPreviousStep(sharedViewModel.idBrandAsInt)
             )
         )
 
@@ -163,7 +162,7 @@ fun SmartOwnBusinessSvContent(
                 id = R.string.smart_own_business_monthly_income_placeholder,
                 stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
             ),
-            customTransformation = formatMoney(
+            customTransformation = formatDecimalMoney(
                 stringResource(
                     sharedViewModel.idBrandAsInt.getCurrencySymbol()
                 )

@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.ui.graphics.Color
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -27,7 +28,13 @@ fun Context.openWhatsAppDeepLink(link: String) {
 
 fun Context.openMapsLink(latitude: String, longitude: String) {
     val mapsIntentUri =
-        Uri.parse(String.format(resources.getString(R.string.payment_location_intent_uri_format), latitude, longitude))
+        Uri.parse(
+            String.format(
+                resources.getString(R.string.payment_location_intent_uri_format),
+                latitude,
+                longitude
+            )
+        )
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
     mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)
@@ -117,3 +124,18 @@ fun String.getMaskedText(
     firstDigits: Int,
     lastDigits: Int
 ) = take(firstDigits).plus(maskSymbol).plus(takeLast(lastDigits))
+
+// Formatted strings
+fun String.hasNumbersAndSpecialCharacters() =
+    !this.contains(NUMBER_REGEX.toRegex()) && !this.contains(SPECIAL_CHARACTER_REGEX.toRegex())
+
+fun Color.toHexCode(): String {
+    val red = this.red * 255
+    val green = this.green * 255
+    val blue = this.blue * 255
+    return String.format(HEX_FORMAT, red.toInt(), green.toInt(), blue.toInt())
+}
+
+private const val HEX_FORMAT = "#%02x%02x%02x"
+private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
+private const val NUMBER_REGEX = "[0-9]"

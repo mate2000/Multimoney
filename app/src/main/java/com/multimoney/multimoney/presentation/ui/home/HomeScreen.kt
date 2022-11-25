@@ -11,16 +11,19 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+
 import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -29,25 +32,42 @@ import androidx.navigation.compose.rememberNavController
 import com.multimoney.multimoney.presentation.navigation.BottomNavItem
 import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavGraph
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
-import com.multimoney.multimoney.presentation.util.LifecycleCountDownTimer.OnCountDownTimerFinish
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerFinish
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
+    isRestart: Boolean = true,
     navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    viewModel.apply {
+        isOnRestart = isRestart
+        DisposableEffect(isOnRestart) {
+            if (isOnRestart) {
+                onUIEvent(OnSetUserData)
+            }
+            onDispose {
+                isOnRestart = false
+            }
+        }
+    }
+
     val innerNavController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
-    val quickActionsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val quickActionsModalBottomSheetState = rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
     val activity = (LocalContext.current as? Activity)
+
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
@@ -60,6 +80,7 @@ fun HomeScreen(
             when (event) {
                 is HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
                     coroutineScope.launch {
+
                         quickActionsModalBottomSheetState.show()
                     }
                 }
@@ -68,13 +89,20 @@ fun HomeScreen(
                         myProductsModalBottomSheetState.show()
                     }
                 }
+                is HomeViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
+                    event.millisInFuture
+                )
             }
         }
     }
 
     Scaffold(bottomBar = { MMBottomNavigation(navController = innerNavController, viewModel) }) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            HomeInsideNavGraph(navController = navController, innerNavController = innerNavController)
+            HomeInsideNavGraph(
+                sharedViewModel = viewModel,
+                navController = navController,
+                innerNavController = innerNavController
+            )
         }
     }
 
@@ -97,6 +125,16 @@ fun HomeScreen(
                 activity?.finish()
             }
         }
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }
 

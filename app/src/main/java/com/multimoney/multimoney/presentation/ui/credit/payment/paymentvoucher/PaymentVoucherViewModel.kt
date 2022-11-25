@@ -11,20 +11,21 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
+import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
-import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.util.ShareHelper
@@ -36,10 +37,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PaymentVoucherViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val shareHelper: ShareHelper
 ) : BaseViewModel(true) {
-
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -48,14 +48,14 @@ class PaymentVoucherViewModel @Inject constructor(
     // Stateless
     var referenceNumber: String? = null
     var currentAmountValueString: String? = null
-    var currency : String? = null
+    var currency: String? = null
     var clientBankAccount: ClientBankAccount? = null
-    var currentDate : String = ""
-    var currentTime : String = ""
+    var currentDate: String = ""
+    var currentTime: String = ""
     var exchangeRateLabel: String? = null
     var paymentLabel: String? = null
-    var shouldDisplayExchangeRate : Boolean? = null
-    var isMultiCurrency : Boolean? = null
+    var shouldDisplayExchangeRate: Boolean? = null
+    var isMultiCurrency: Boolean? = null
     var isAutomaticProgrammedPaymentChecked: Boolean? = false
     private var user: String = ""
     private var idBrand: Int = 0
@@ -64,8 +64,6 @@ class PaymentVoucherViewModel @Inject constructor(
     private var identification: String? = null
     private var userName: String? = null
     private var paymentDate: String? = null
-
-
 
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
@@ -84,9 +82,8 @@ class PaymentVoucherViewModel @Inject constructor(
         shouldDisplayExchangeRate = savedStateHandle[SHOULD_DISPLAY_EXCHANGE_RATE]
         isMultiCurrency = savedStateHandle[SHOULD_DISPLAY_EXCHANGE_RATE]
         isAutomaticProgrammedPaymentChecked = savedStateHandle[IS_AUTOMATIC_PAYMENT_CHECKED]
-        val time = Calendar.getInstance().time
-        currentDate = getCurrentDate(time)
-        currentTime = getCurrentTime(time)
+        currentDate = getCurrentDate(Calendar.getInstance().time)
+        currentTime = getCurrentTime(Calendar.getInstance().time)
     }
 
     private fun onShareVoucherImage(
@@ -104,6 +101,9 @@ class PaymentVoucherViewModel @Inject constructor(
         }/$paymentDate/${false}/${Screen.PaymentVoucherScreen.baseRoute}/${false}"
     )
 
+    private fun onNavigateToHome() =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
+
     data class UIState(
         val test: String = "",
         val showScheduleAutomaticPaymentProcess: Boolean = true,
@@ -116,18 +116,19 @@ class PaymentVoucherViewModel @Inject constructor(
         val isAlertResultVisible: Boolean = false,
         val alertResultTitle: String = "",
         val alertResultDescription: String = "",
-        val isLoading: Boolean = false,
-        )
-
+        val isLoading: Boolean = false
+    )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
+            is OnCloseClick -> onNavigateToHome()
             is OnSharedVoucherImage -> onShareVoucherImage(event.view, event.capturingBounds)
             is OnScheduleAutomaticPayment -> onScheduleAutomaticPayment()
         }
     }
 
     sealed class UIEvent {
+        object OnCloseClick : UIEvent()
         data class OnSharedVoucherImage(
             val view: View,
             val capturingBounds: Rect

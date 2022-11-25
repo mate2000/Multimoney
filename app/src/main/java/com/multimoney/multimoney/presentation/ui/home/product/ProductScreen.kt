@@ -16,8 +16,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -37,11 +37,12 @@ import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
@@ -59,37 +60,44 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartHeaderE
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProductScreen(
-    isRestart: Boolean = true,
+    sharedViewModel: HomeViewModel,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
-    viewModel.apply {
-        isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
-            if (isOnRestart) {
-                onUIEvent(OnGetIdBrand)
-                executeNavigation(onNavigate = onNavigate)
-            }
-            onDispose {
-                isOnRestart = false
-            }
-        }
+    val coroutineScope = rememberCoroutineScope()
+
+    viewModel.onUIEvent(
+        OnSetUserData(
+            idBrand = sharedViewModel.uiState.idBrand,
+            balanceCredit = sharedViewModel.uiState.balance,
+            pkUser = sharedViewModel.uiState.pkUser,
+            identification = sharedViewModel.uiState.identification,
+            email = sharedViewModel.uiState.email,
+            userName = sharedViewModel.uiState.userName,
+            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+            configurationVersion = sharedViewModel.uiState.configurationVersion
+        )
+    )
+    LaunchedEffect(key1 = true) {
+        viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
-    LaunchedEffect(true) {
-        viewModel.baseEvent.collect { event ->
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.baseEvent.collect { event ->
             when (event) {
-                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
-                    event.millisInFuture
-                )
+                is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
+                    coroutineScope.launch {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnQuickActionClicked(event.flow))
+                    }
+                }
             }
         }
     }
@@ -112,7 +120,7 @@ fun ProductScreen(
     }
 
     // todo we have to send the pages to the view pager when the back return
-    if (viewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
+    if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
         Column(
@@ -161,7 +169,6 @@ fun ProductScreen(
                 }
             )
         }
-        LoadingIndicator(viewModel.uiState.isLoading)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -212,9 +219,7 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
                     painter = painterResource(R.drawable.ic_profile),
                     modifier = Modifier
                         .padding(start = 16.dp, end = 2.dp)
-                        .clickable {
-                            // todo action
-                        },
+                        .clickable { viewModel.onUIEvent(OnNavigateToProfileScreen) },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )
@@ -352,7 +357,10 @@ fun ProductFooterExpanded(
         ) { currentPage ->
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditFooterExpanded(viewModel = viewModel)
-                ProductType.Smart.value -> SmartFooterExpanded()
+                ProductType.Smart.value -> SmartFooterExpanded(
+                    viewModel = viewModel,
+                    viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+                )
                 ProductType.Crypto.value -> CryptoFooterExpanded()
             }
         }
@@ -370,8 +378,6 @@ fun TipAndOfferItem(viewModel: ProductViewModel, creditOfferAndTip: CreditOfferA
                     // TODO, mocking the first item in order to navigate to the smart origination flow
                     if (creditOfferAndTip.id == "1") {
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
-                    } else {
-                        viewModel.onUIEvent(OnNavigateToCreditScreen)
                     }
                 }
         ) {
@@ -422,6 +428,3 @@ fun TipBox(content: @Composable () -> Unit) {
         content()
     }
 }
-
-private const val NUMBER_PAGES = 2
-private const val PAGE_ZERO = 0

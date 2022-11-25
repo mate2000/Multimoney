@@ -1,7 +1,15 @@
 package com.multimoney.data.mapper.security
 
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
-import com.multimoney.domain.model.security.*
+import com.multimoney.domain.model.security.InfoBankAccount
+import com.multimoney.domain.model.security.InfoCredit
+import com.multimoney.domain.model.security.InfoCrypto
+import com.multimoney.domain.model.security.InfoPreApprove
+import com.multimoney.domain.model.security.InfoUser
+import com.multimoney.domain.model.security.InfoVirtualCard
+import com.multimoney.domain.model.security.Product
+import com.multimoney.domain.model.security.ValidateUserStatus
+import com.multimoney.domain.model.security.Wording
 
 private fun ValidateUserStatusQuery.ValidateUserStatus.mapToDomainModel() = ValidateUserStatus(
     infoUser = infoUser.mapToDomainModel(),
@@ -15,6 +23,10 @@ private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
     idBrand = idBrand.toString().toInt(),
     userName = userName,
     idClient = idClient.toString().toInt(),
+    firstName = firstName,
+    lastName = lastName,
+    secondLastName = secondLastName,
+    phone = phone,
     statusOnfido = statusOnfido
 )
 
@@ -22,7 +34,8 @@ private fun ValidateUserStatusQuery.InfoCredit.mapToDomainModel() = InfoCredit(
     idClient = idClient.toString().toInt(),
     idLoanClient = idLoanClient.toString().toInt(),
     status = status,
-    infoPreApprove = infoPreApprove?.mapToDomainModel()
+    infoPreApprove = infoPreApprove?.mapToDomainModel(),
+    wording = wording?.mapToDomainModel()
 )
 
 private fun ValidateUserStatusQuery.InfoPreApprove.mapToDomainModel() = InfoPreApprove(
@@ -31,7 +44,8 @@ private fun ValidateUserStatusQuery.InfoPreApprove.mapToDomainModel() = InfoPreA
     selectedAmount = selectedAmount.toString().toFloat(),
     statusFirm = statusFirm,
     currentStep = currentStep,
-    infoProducts = infoProducts?.map { it.mapToDomainModel() }
+    infoProducts = infoProducts?.map { it.mapToDomainModel() },
+    idPrint = idPrint.toString().toLong()
 )
 
 private fun ValidateUserStatusQuery.InfoProduct.mapToDomainModel() =

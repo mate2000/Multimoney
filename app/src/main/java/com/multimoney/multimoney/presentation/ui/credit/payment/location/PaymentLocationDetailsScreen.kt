@@ -50,6 +50,11 @@ fun PaymentLocationDetailsScreen(
             .background(MultimoneyTheme.colors.background),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
+        TopNavBar(
+            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
+            onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnCloseScreenClick) }
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -57,10 +62,6 @@ fun PaymentLocationDetailsScreen(
                 .padding(horizontal = 24.dp)
                 .background(MultimoneyTheme.colors.background)
         ) {
-            TopNavBar(
-                onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
-                onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnCloseScreenClick) }
-            )
             // Location name
             Text(
                 modifier = Modifier

@@ -1,32 +1,46 @@
 package com.multimoney.multimoney.presentation.ui.home.quickaction
 
-import android.widget.Toast
+import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.security.QuickAction
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.ComplementaryTwo500
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.Secondary500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency16
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
+import com.multimoney.multimoney.presentation.util.catalog.QuickActionsProductType
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -37,6 +51,7 @@ fun QuickActionBottomSheetScreen(
     modalBottomSheetState: ModalBottomSheetState,
     viewModel: QuickActionsBottomSheetViewModel = hiltViewModel()
 ) {
+
     CustomModalBottomSheet(
         title = R.string.quick_action_bottom_sheet_title,
         closeIcon = R.drawable.ic_close_bottom_sheet,
@@ -47,20 +62,101 @@ fun QuickActionBottomSheetScreen(
             Modifier
                 .fillMaxWidth()
                 .padding(top = 28.dp, bottom = 16.dp)
+
         ) {
-            Text(
-                text = stringResource(id = R.string.quick_action_bottom_sheet_credit_section),
-                style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.creditNotApprovedText
-            )
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            ) {
-                items(items = viewModel.getQuickActions(), itemContent = { item ->
-                    QuickActionItem(item, viewModel)
-                })
+            shareViewModel.uiState.quickActions.let { quickActions ->
+                val creditActions =
+                    quickActions?.filter { quickAction -> quickAction.productType == QuickActionsProductType.Credit.value }
+                val smartActions =
+                    quickActions?.filter { quickAction -> quickAction.productType == QuickActionsProductType.Smart.value }
+                val cryptoActions =
+                    quickActions?.filter { quickAction -> quickAction.productType == QuickActionsProductType.Crypto.value }
+
+                creditActions.let {
+                    Text(
+                        text = stringResource(id = R.string.quick_action_bottom_sheet_credit_section),
+                        style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.creditNotApprovedText
+                    )
+                    QuickActionsRow(
+                        viewModel = viewModel,
+                        quickActions = it,
+                        quickActionsBackgroundColor = Primary500,
+                        shareViewModel = shareViewModel
+                    )
+                }
+                when (viewModel.quickActionUiState.idBrand) {
+                    Brand.CostaRica.id.toString(), Brand.ElSalvador.id.toString() -> {
+
+                        //smart section
+                        smartActions.let {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text(
+                                text = stringResource(id = R.string.quick_action_bottom_sheet_smart_section),
+                                style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
+                                color = MultimoneyTheme.colors.creditNotApprovedText
+                            )
+                            QuickActionsRow(
+                                viewModel = viewModel,
+                                quickActions = it,
+                                quickActionsBackgroundColor = Secondary500,
+                                shareViewModel = shareViewModel
+                            )
+                        }
+
+                        //crypto section
+                        cryptoActions.let {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = stringResource(id = R.string.quick_action_bottom_sheet_crypto_section),
+                                style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
+                                color = MultimoneyTheme.colors.creditNotApprovedText
+                            )
+                            QuickActionsRow(
+                                viewModel = viewModel,
+                                quickActions = it,
+                                quickActionsBackgroundColor = ComplementaryTwo500,
+                                shareViewModel = shareViewModel
+                            )
+                        }
+                    }
+                    else -> Unit
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun QuickActionsRow(
+    viewModel: QuickActionsBottomSheetViewModel,
+    quickActions: List<QuickAction>?,
+    quickActionsBackgroundColor: Color,
+    shareViewModel: HomeViewModel
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+    ) {
+        if (quickActions != null) {
+            items(quickActions.count()) { index ->
+                QuickActionItem(
+                    viewModel.getSmartQuickAction(
+                        label = quickActions[index].name,
+                        iconId = quickActions[index].iconId,
+                    ), backgroundColor = quickActionsBackgroundColor
+                ) {
+                    Log.e("Clicking","Item")
+                    // send to savings smart screen
+
+                    shareViewModel.onUIEvent(HomeViewModel.UIEvent.OnOpenQuickActionFlow(quickActions[index].flow))
+                }
             }
         }
     }
@@ -68,28 +164,37 @@ fun QuickActionBottomSheetScreen(
 
 @Composable
 fun QuickActionItem(
-    quickActionDummy: QuickActionDummy,
-    quickActionsBottomSheetViewModel: QuickActionsBottomSheetViewModel
+    quickActionDummy: QuickActionDummy, backgroundColor: Color, action: () -> Unit = {}
 ) {
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier
             .width(88.dp)
-            .padding(end = 16.dp)
-            .clickable {
-                Toast
-                    .makeText(context, "QuickAction clicked", Toast.LENGTH_SHORT)
-                    .show()
-            }, horizontalAlignment = Alignment.CenterHorizontally
+            .padding(end = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painter = painterResource(id = quickActionDummy.icon), contentDescription = "")
+        Box(contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(8.dp)
+                .clip(CircleShape)
+                .background(shape = CircleShape, color = backgroundColor)
+                .clickable { action() }) {
+            Image(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .padding(16.dp)
+                    .background(shape = CircleShape, color = Color.Transparent),
+                painter = painterResource(id = quickActionDummy.icon ?: 0),
+                contentDescription = quickActionDummy.label
+            )
+        }
         Text(
             text = quickActionDummy.label,
             modifier = Modifier.padding(top = 16.dp),
             style = Typography.caption,
             color = MultimoneyTheme.colors.quickActionLabelColor,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

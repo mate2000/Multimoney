@@ -1257,7 +1257,7 @@ type GetCoreBankMovements {
 
   pageSize: Int!
 
-  result: [GetCoreBankMovementsResult!]!
+  result: [GetCoreBankMovementsResult!]
 
   status: Int
 
@@ -1967,7 +1967,7 @@ type PromissoryNoteDetailList {
 
   pageSize: Int!
 
-  values: [PromissoryNoteDetail!]!
+  values: [PromissoryNoteDetail!]
 
   status: Int
 
@@ -2893,13 +2893,17 @@ type QuickActions {
 }
 
 input QuickActionsDtoInput {
-  infoCreditStatus: Boolean!
+  pkUser: Long!
 
-  infoVirtualCardStatus: Boolean!
+  identification: String!
 
-  infoBankAccountStatus: Boolean!
+  infoCreditStatus: Int!
 
-  infoCripto: Boolean!
+  infoVirtualCardStatus: Int!
+
+  infoBankAccountStatus: Int!
+
+  infoCriptoStatus: Int!
 
   idBrand: Int
 
@@ -5653,9 +5657,9 @@ type exchangeRateCreditResult {
 }
 
 type PromissoryNoteDetail {
-  title: String!
+  title: String
 
-  values_Transactions: [PromissoryNoteTransactionMobile!]!
+  values_Transactions: [PromissoryNoteTransactionMobile!]
 }
 
 type CreditExtensionProduct {
@@ -6306,31 +6310,31 @@ type ObjPhone {
 }
 
 type PromissoryNoteTransactionMobile {
-  tipo: String!
+  tipo: String
 
-  fecha_Aplicacion: DateTime!
+  fecha_Aplicacion: DateTime
 
-  monto: String!
+  monto: String
 
-  id_Prestamo: Long!
+  id_Prestamo: Long
 
-  fecha_Inicio: DateTime!
+  fecha_Inicio: DateTime
 
-  fecha_Fin: DateTime!
+  fecha_Fin: DateTime
 
-  fecha_Aplicacion_Label: String!
+  fecha_Aplicacion_Label: String
 
-  monto_Label: String!
+  monto_Label: String
 
-  moneda: String!
+  moneda: String
 
-  mes: String!
+  mes: String
 
-  indicador: Int!
+  indicador: Int
 
-  tipo_Transaccion: String!
+  tipo_Transaccion: String
 
-  id_Tipo_Transaccion: Int!
+  id_Tipo_Transaccion: Int
 }
 
 type CreditPreApproveInfo {

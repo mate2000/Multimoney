@@ -199,7 +199,7 @@ fun FormalSalariedSvContent(
                     OnDivisionThreeValueChange(divisionThree = it)
                 )
             },
-            labelText = stringResource(R.string.credit_address_state),
+            labelText = stringResource(R.string.credit_address_municipality),
             placeHolder = stringResource(id = R.string.select),
             modifier = Modifier.padding(top = 16.dp)
         )

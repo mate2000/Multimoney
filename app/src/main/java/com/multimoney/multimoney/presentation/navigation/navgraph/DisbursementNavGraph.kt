@@ -34,6 +34,7 @@ fun NavGraphBuilder.disbursementNavGraph(navController: NavHostController) {
             )
         ) {
             DisbursementAmountScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -58,6 +59,7 @@ fun NavGraphBuilder.disbursementNavGraph(navController: NavHostController) {
             )
         ) {
             DisbursementAccountScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = {
                     navController.navigate(it.route)
                 },

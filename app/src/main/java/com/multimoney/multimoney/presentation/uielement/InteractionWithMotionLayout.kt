@@ -59,6 +59,9 @@ fun MotionLayoutMM(
         if (isExpanded || forceExpanded && isBackPressed) {
             swipeAbleState.animateTo(BEGINNING_ANIMATION)
             isBackPressed = false
+            if(forceExpanded) {
+                updateForceExpanded(false)
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -29,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.multimoney.data.util.catalog.Brand
+import com.google.accompanist.pager.PagerState
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.ComplementaryTwo500
@@ -41,6 +42,8 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency16
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
+import com.multimoney.multimoney.presentation.util.catalog.ProductPage
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -63,122 +66,82 @@ fun MyProductsBottomSheetScreen(
                 .fillMaxWidth()
                 .padding(top = 28.dp, bottom = 24.dp)
         ) {
-            when (shareViewModel.uiState.idBrand) {
-
-                Brand.CostaRica.id.toString() -> {
-                    ContentPerBrand(
-                        cr = true,
-                        shareViewModel = shareViewModel,
-                        modalBottomSheetState = modalBottomSheetState
-                    )
-                }
-                Brand.ElSalvador.id.toString() -> {
-                    ContentPerBrand(
-                        sv = true,
-                        shareViewModel = shareViewModel,
-                        modalBottomSheetState = modalBottomSheetState
-                    )
-                }
-                Brand.Guatemala.id.toString() -> {
-                    ContentPerBrand(
-                        shareViewModel = shareViewModel,
-                        modalBottomSheetState = modalBottomSheetState
-                    )
-                }
-                else -> Unit
-            }
+            MyProductsContent(shareViewModel, modalBottomSheetState)
         }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
 @Composable
-fun ContentPerBrand(
+fun MyProductsContent(
     shareViewModel: HomeViewModel,
-    modalBottomSheetState: ModalBottomSheetState,
-    cr: Boolean = false,
-    sv: Boolean = false
+    modalBottomSheetState: ModalBottomSheetState
 ) {
     val coroutineScope = rememberCoroutineScope()
     val productScreenPagerState = shareViewModel.uiState.productScreenPagerState
+    val productPageList = shareViewModel.uiState.productPageList
 
     // credit section
-    Text(
-        text = stringResource(id = string.home_my_products_title_credit),
-        style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
-        color = MultimoneyTheme.colors.creditNotApprovedText
-    )
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-    ) {
-        item {
-            MyProductItem(icon = drawable.ic_my_credit,
-                label = stringResource(id = string.home_my_products_label_credit),
-                backGroundColor = Primary500,
-                action = {
-                    shareViewModel.onUIEvent(OnMyProductClick(true))
-                    coroutineScope.launch {
-                        modalBottomSheetState.hide()
-                        productScreenPagerState?.animateScrollToPage(PAGER_INDEX_CREDIT)
-                    }
-                })
-        }
-    }
-    Spacer(modifier = Modifier.height(16.dp))
-    Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
-    Spacer(modifier = Modifier.height(16.dp))
-    // smart section
-    Text(
-        text = stringResource(id = string.home_my_products_title_smart),
-        style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
-        color = MultimoneyTheme.colors.creditNotApprovedText
-    )
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-    ) {
+    val creditProducts = productPageList.filter { it.product == ProductType.Credit.value }
 
-        item {
-            MyProductItem(icon = drawable.ic_dollars_strong,
-                label = stringResource(id = string.home_my_products_label_smart),
-                backGroundColor = Secondary500,
-                action = {
-                    shareViewModel.onUIEvent(OnMyProductClick(true))
-                    coroutineScope.launch {
-                        modalBottomSheetState.hide()
-                        productScreenPagerState?.animateScrollToPage(PAGER_INDEX_SMART)
-                    }
-                })
+    MyProductSection(
+        creditProducts,
+        shareViewModel,
+        coroutineScope,
+        modalBottomSheetState,
+        productScreenPagerState,
+        Primary500,
+        stringResource(id = string.home_my_products_title_credit),
+    )
+
+    // smart section
+    val smartProducts = productPageList.filter { it.product == ProductType.Smart.value }
+
+    MyProductSection(
+        products = smartProducts,
+        shareViewModel = shareViewModel,
+        coroutineScope = coroutineScope,
+        modalBottomSheetState = modalBottomSheetState,
+        productScreenPagerState = productScreenPagerState,
+        backGroundColor = Secondary500,
+        labelText = stringResource(id = string.home_my_products_title_smart),
+        true
+    )
+
+    //crypto section
+    val cryptoProducts = productPageList.filter { it.product == ProductType.Crypto.value }
+
+    MyProductSection(
+        products = cryptoProducts,
+        shareViewModel = shareViewModel,
+        coroutineScope = coroutineScope,
+        modalBottomSheetState = modalBottomSheetState,
+        productScreenPagerState = productScreenPagerState,
+        backGroundColor = ComplementaryTwo500,
+        labelText = stringResource(id = string.home_my_products_title_crypto),
+        true
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
+@Composable
+private fun MyProductSection(
+    products: List<ProductPage>,
+    shareViewModel: HomeViewModel,
+    coroutineScope: CoroutineScope,
+    modalBottomSheetState: ModalBottomSheetState,
+    productScreenPagerState: PagerState?,
+    backGroundColor: Color,
+    labelText: String,
+    showDivider: Boolean = false
+) {
+
+    if (products.isNotEmpty()) {
+        if (showDivider) {
+            CustomDivider()
         }
-        // only show multi account if brand is Costa Rica
-        if (cr) {
-            item {
-                MyProductItem(icon = drawable.ic_colones_strong,
-                    label = stringResource(id = string.home_my_products_label_smart_colones),
-                    backGroundColor = Secondary500,
-                    action = {
-                        shareViewModel.onUIEvent(OnMyProductClick(true))
-                        coroutineScope.launch {
-                            modalBottomSheetState.hide()
-                            productScreenPagerState?.animateScrollToPage(
-                                PAGER_INDEX_SMART_MULTI_ACCOUNT
-                            )
-                        }
-                    })
-            }
-        }
-    }
-    // if Costa Rica or El Salvador show crypto
-    if (cr || sv) {
-        Spacer(modifier = Modifier.height(16.dp))
-        Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
-        Spacer(modifier = Modifier.height(16.dp))
-        //crypto section
         Text(
-            text = stringResource(id = string.home_my_products_title_crypto),
+            text = labelText,
             style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.creditNotApprovedText
         )
@@ -187,19 +150,16 @@ fun ContentPerBrand(
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         ) {
-            val multiAccountSmart = productScreenPagerState?.pageCount ?: DEFAULT_PAGER_INDEX
-
-            item {
-                MyProductItem(icon = drawable.ic_union,
-                    label = stringResource(id = string.home_my_products_label_crypto),
-                    backGroundColor = ComplementaryTwo500,
+            items(products) { productPage ->
+                MyProductItem(
+                    icon = productPage.resourceIcon,
+                    label = stringResource(id = productPage.resourceText),
+                    backGroundColor = backGroundColor,
                     action = {
                         shareViewModel.onUIEvent(OnMyProductClick(true))
                         coroutineScope.launch {
                             modalBottomSheetState.hide()
-                            val page = if (multiAccountSmart > PAGER_COUNT_MULTI_ACCOUNT)
-                                PAGER_INDEX_MULTI_ACCOUNT_CRYPTO else PAGER_INDEX_DEFAULT_CRYPTO
-                            productScreenPagerState?.animateScrollToPage(page)
+                            productScreenPagerState?.animateScrollToPage(productPage.index)
                         }
                     }
                 )
@@ -210,7 +170,9 @@ fun ContentPerBrand(
 
 @Composable
 fun MyProductItem(
-    icon: Int, label: String, backGroundColor: Color, action: () -> Unit = {}
+    icon: Int, label: String,
+    backGroundColor: Color,
+    action: () -> Unit = {}
 ) {
 
     Column(
@@ -225,7 +187,8 @@ fun MyProductItem(
                 .padding(8.dp)
                 .clip(CircleShape)
                 .background(shape = CircleShape, color = backGroundColor)
-                .clickable { action() }) {
+                .clickable { action() }
+        ) {
             Icon(
                 modifier = Modifier
                     .clip(CircleShape)
@@ -246,10 +209,9 @@ fun MyProductItem(
     }
 }
 
-const val PAGER_INDEX_CREDIT = 0
-const val PAGER_INDEX_SMART = 1
-const val PAGER_INDEX_SMART_MULTI_ACCOUNT = 2
-const val PAGER_INDEX_DEFAULT_CRYPTO = 2
-const val PAGER_INDEX_MULTI_ACCOUNT_CRYPTO = 3
-const val PAGER_COUNT_MULTI_ACCOUNT = 3
-const val DEFAULT_PAGER_INDEX = 2
+@Composable
+private fun CustomDivider() {
+    Spacer(modifier = Modifier.height(16.dp))
+    Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
+    Spacer(modifier = Modifier.height(16.dp))
+}

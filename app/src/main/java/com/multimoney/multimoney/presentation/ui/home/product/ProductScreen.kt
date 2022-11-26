@@ -85,7 +85,8 @@ fun ProductScreen(
             email = sharedViewModel.uiState.email,
             userName = sharedViewModel.uiState.userName,
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
-            configurationVersion = sharedViewModel.uiState.configurationVersion
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            productPageList = sharedViewModel.uiState.productPageList
         )
     )
     LaunchedEffect(key1 = true) {

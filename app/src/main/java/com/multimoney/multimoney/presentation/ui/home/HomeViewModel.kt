@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
@@ -22,6 +23,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.HomeBNScreen
@@ -32,7 +34,10 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBo
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ProductPage
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -74,16 +79,16 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun callQueryGetQuickActions(
-        idBrand: Int,
-        pkUser: Int,
-        identification: String,
-        infoCreditStatus: Int,
-        infoVirtualCardStatus: Int,
-        infoBankAccountStatus: Int,
-        infoCriptoStatus: Int
+        idBrand : Int,
+        pkUser : Int,
+        identification : String,
+        infoCreditStatus : Int,
+        infoVirtualCardStatus : Int,
+        infoBankAccountStatus : Int,
+        infoCriptoStatus : Int
     ) = executeUseCase {
         querytGetQuickActionsUseCase.invoke(
-            idBrand = idBrand,
+            idBrand =  idBrand,
             pkUser = pkUser,
             identification = identification,
             infoCreditStatus = infoCreditStatus,
@@ -91,14 +96,13 @@ class HomeViewModel @Inject constructor(
             infoBankAccountStatus = infoBankAccountStatus,
             infoCriptoStatus = infoCriptoStatus
         ).collectLatest { result ->
-            result.onSuccess { quickActions ->
-                quickActions?.let {
-                    if (uiState.configurationVersion != null && uiState.balance != null) {
-                        uiState = uiState.copy(isLoading = false)
-                    }
-                    uiState = uiState.copy(
-                        quickActions = it.quickActions
-                    )
+            result.onSuccess { balance ->
+                balance?.let {
+                    if (uiState.isLoading)
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            quickActions = it.quickActions
+                        )
                 }
             }
             result.onFailure {
@@ -133,11 +137,89 @@ class HomeViewModel @Inject constructor(
             cardStatus = cardStatus
         ).collectLatest { result ->
             result.onSuccess { balance ->
-                balance?.let {
-                    if (uiState.configurationVersion != null && uiState.quickActions != null) {
-                        uiState = uiState.copy(isLoading = false)
+                val productPageList = mutableListOf<ProductPage>()
+
+                val defaultIndex = 0
+                // Default credit
+                productPageList.add(
+                    ProductPage(
+                        product = ProductType.Credit.value,
+                        enabled = true,
+                        index = defaultIndex,
+                        resourceIcon = R.drawable.ic_my_credit,
+                        resourceText = R.string.home_my_products_label_credit,
+                    )
+                )
+                // If idBrand is different from Guatemala enable Smart
+                if (uiState.idBrand != Brand.Guatemala.id.toString()) {
+                    if (balance?.balanceAccountSmart.isNullOrEmpty().not()) {
+                        // Add the amount of account smart that user has
+                        balance?.balanceAccountSmart?.forEachIndexed { index, account ->
+                            productPageList.add(
+                                ProductPage(
+                                    product = ProductType.Smart.value,
+                                    productSmartIndex = index,
+                                    enabled = true,
+                                    index = productPageList.lastIndex + 1,
+                                    resourceText = run {
+                                        when(account?.currencyCode) {
+                                            CurrencyType.Dollar.value -> R.string.home_my_products_label_smart
+                                            CurrencyType.Colon.value -> R.string.home_my_products_label_smart_colones
+                                            //  adding quetzal label here if necessary
+                                            else -> R.string.home_my_products_label_smart
+                                        }
+                                    },
+                                    resourceIcon = run {
+                                        when(account?.currencyCode) {
+                                            CurrencyType.Dollar.value -> R.drawable.ic_dollars_strong
+                                            CurrencyType.Colon.value -> R.drawable.ic_colones_strong
+                                            // adding quetzal icon here if necessary
+                                            else -> R.drawable.ic_dollars_strong
+                                        }
+                                    }
+                                )
+                            )
+                        }
+                        // If user has smart activated he can enable crypto
+                        productPageList.add(
+                            ProductPage(
+                                product = ProductType.Crypto.value,
+                                enabled = true,
+                                index = productPageList.lastIndex + 1,
+                                resourceIcon = R.drawable.ic_union,
+                                resourceText = R.string.home_my_products_label_crypto,
+                            )
+                        )
+                    } else {
+                        // If user doesn't have smart we have to add one empty card to activate the product
+                        productPageList.add(
+                            ProductPage(
+                                product = ProductType.Smart.value,
+                                enabled = true,
+                                index = productPageList.lastIndex + 1,
+                                resourceText = R.string.home_my_products_label_smart,
+                                resourceIcon = R.drawable.ic_dollars_strong
+                            )
+                        )
+                        productPageList.add(
+                            ProductPage(
+                                product = ProductType.Crypto.value,
+                                enabled = true,
+                                index = productPageList.lastIndex + 1,
+                                resourceIcon = R.drawable.ic_union,
+                                resourceText = R.string.home_my_products_label_crypto,
+                            )
+                        )
                     }
-                    uiState = uiState.copy(balance = balance)
+                }
+
+                balance?.let {
+                    if (uiState.isLoading)
+                        uiState = uiState.copy(isLoading = false)
+                    uiState = uiState.copy(
+                        balance = balance,
+                        productPageList = productPageList
+                    )
                 }
             }
             result.onFailure {
@@ -158,9 +240,6 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
-                if (uiState.balance != null && uiState.quickActions != null && uiState.validateUserStatus != null) {
-                    uiState = uiState.copy(isLoading = false)
-                }
                 configurationVersion?.let {
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }
@@ -248,7 +327,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun openQuickActionFlow(flow: String) {
+    private fun openQuickActionFlow(flow : String){
         emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
     }
 
@@ -266,7 +345,8 @@ class HomeViewModel @Inject constructor(
         var email: String = "",
         var userName: String = "",
         var forceIsExpanded: Boolean = false,
-        var productScreenPagerState: PagerState? = null
+        var productScreenPagerState: PagerState? = null,
+        var productPageList: List<ProductPage> = emptyList(),
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

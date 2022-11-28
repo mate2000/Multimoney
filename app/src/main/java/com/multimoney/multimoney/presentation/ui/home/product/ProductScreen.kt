@@ -345,7 +345,7 @@ fun ProductFooterExpanded(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             state = state,
             userScrollEnabled = false
-        ) { currentPage ->
+        ) { _ ->
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditFooterExpanded(viewModel = viewModel)
                 ProductType.Smart.value -> SmartFooterExpanded(

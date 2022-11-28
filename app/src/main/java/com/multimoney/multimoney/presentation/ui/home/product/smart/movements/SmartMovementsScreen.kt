@@ -107,7 +107,7 @@ fun MovementsList(smartMoves: LazyPagingItems<SmartMovement>) {
                 val symbol = if ((it?.amount ?: 0.0) > 0) {
                     drawable.ic_plus
                 } else {
-                    drawable.ic_close
+                    drawable.ic_minus
                 }
 
                 Column(Modifier.weight(2f)) {

@@ -73,7 +73,7 @@ fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
                     val symbol = if (it.amount > 0) {
                         R.drawable.ic_plus
                     } else {
-                        R.drawable.ic_close
+                        R.drawable.ic_minus
                     }
 
                     Column(Modifier.weight(2f)) {

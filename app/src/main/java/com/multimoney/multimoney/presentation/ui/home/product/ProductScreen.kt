@@ -40,8 +40,8 @@ import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
@@ -92,7 +92,8 @@ fun ProductScreen(
             email = sharedViewModel.uiState.email,
             userName = sharedViewModel.uiState.userName,
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
-            configurationVersion = sharedViewModel.uiState.configurationVersion
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            productPageList = sharedViewModel.uiState.productPageList
         )
     )
     LaunchedEffect(key1 = true) {
@@ -131,6 +132,10 @@ fun ProductScreen(
     val contentPagerState = rememberPagerState()
     val footerPagerState = rememberPagerState()
     val footerExpandedPagerState = rememberPagerState()
+
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(OnMyProductPageChange(contentPagerState))
+    }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
         headerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
@@ -191,6 +196,10 @@ fun ProductScreen(
                 isExpanded = viewModel.uiState.isExpanded,
                 updateIsExpanded = { isExpanded ->
                     viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                },
+                forceExpanded = sharedViewModel.uiState.forceIsExpanded,
+                updateForceExpanded = { forceExpanded ->
+                    sharedViewModel.onUIEvent(OnMyProductClick(forceExpanded))
                 }
             )
         }
@@ -313,7 +322,7 @@ fun ProductHeaderExpanded(
 fun ProductContent(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
@@ -361,7 +370,11 @@ fun ProductFooter(
                     uiState = viewModel.uiState,
                     balance = viewModel.balanceCredit,
                     onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
-                    onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToVisaActivateScreen) }
+                    onNavigateToVisaActivateScreen = {
+                        viewModel.onUIEvent(
+                            OnNavigateToVisaActivateScreen
+                        )
+                    }
                 )
                 ProductType.Smart.value -> SmartFooter()
                 ProductType.Crypto.value -> CryptoFooter()

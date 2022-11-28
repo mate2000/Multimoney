@@ -10,6 +10,7 @@
     <string name="label_email" translatable="false">Correo electrónico</string>
     <string name="finalize" translatable="false">Finalizar</string>
     <string name="accept" translatable="false">Aceptar</string>
+    <string name="save" translatable="false">Guardar</string>
     <string name="cancel" translatable="false">Cancelar</string>
     <string name="contact" translatable="false">Contactar</string>
     <string name="error" translatable="false">Error</string>
@@ -41,6 +42,8 @@
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
     <string name="info" translatable="false">Información</string>
+    <string name="common_options" translatable="false">Opciones</string>
+    <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
     <string-array name="options_yes_no">
         <item>Si</item>
@@ -56,6 +59,7 @@
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
     <string name="error_no_internet_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="you_have_exceeded_the_max_characters_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
@@ -233,6 +237,9 @@
     <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
     <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
     <string name="home_disburse_request_button_text" translatable="false">Solicitar disponible</string>
+    <string name="home_smart_in_process_crypto_card" translatable="false">Cripto</string>
+    <string name="home_crypto_card_with_balance_title" translatable="false">Balance</string>
+    <string name="home_crypto_card_with_balance_zero_text" translatable="false">0.00</string>
     <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
     <string name="home_pay_button_text" translatable="false">Abonar</string>
 
@@ -271,6 +278,9 @@
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
     <string name="home_product_amount" translatable="false">de %s</string>
+    <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
+    <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
+    <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
 
     <!-- Credit in progress firm incomplete -->
     <string name="home_firm_incomplete_title" translatable="false">¡Sólo falta tu firma!</string>
@@ -582,6 +592,13 @@
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>
     <string name="smart_account_beneficiary_info_description" translatable="false">En caso de fallecimiento, tus beneficiarios recibirán el monto disponible de tu cuenta smart. Recuerda que debes de asignar el 100%</string>
 
+    <!-- Smart Account - Edit Beneficiary -->
+    <string name="smart_account_edit_beneficiary" translatable="false">Editar beneficiario</string>
+
+    <!-- Smart Account - Remove Beneficiary -->
+    <string name="smart_account_remove_beneficiary" translatable="false">Eliminar beneficiario</string>
+    <string name="smart_account_remove_beneficiary_alert_description" translatable="false">¿Deseas eliminar beneficiario?</string>
+
     <!-- Smart - Close origin flow -->
     <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
@@ -592,7 +609,6 @@
     <string name="smart_own_business_company_name_required" translatable="false">Nombre de la empresa requerido</string>
     <string name="smart_own_business_description_label" translatable="false">¿Qué hace la empresa?</string>
     <string name="smart_own_business_description_required" translatable="false">Descripcion de la empresa requerido</string>
-    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
     <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
     <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
@@ -761,6 +777,15 @@
     <string name="schedule_automatic_payment_credit_multiple_payment_dialog_title" translatable="false">Tu cuota programada</string>
     <string name="schedule_automatic_payment_credit_multiple_payment_dialog_description" translatable="false">Se calcula en base al tipo de cambio del día de pago</string>
     <string name="schedule_automatic_payment_credit_multiple_payment_dialog_button" translatable="false">Entendido</string>
+
+    <!-- Credit Schedule Automatic Payment -->
+    <string name="automatic_payment_edit_bottom_sheet_title" translatable="false">Pago programado</string>
+    <string name="automatic_payment_edit_bottom_sheet_edit" translatable="false">Editar pago</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete" translatable="false">Eliminar pago</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_title" translatable="false">Eliminar pago automático</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_description" translatable="false">¿Estas seguro que quieres eliminar tu pago automático?</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_accept" translatable="false">Eliminar</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_toast" translatable="false">Tu pago automático fue eliminado</string>
 
     <!-- Payment Cards List -->
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>

@@ -1,3 +1,5 @@
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,11 +32,10 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnBusinessActivityChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIdentificationChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessonpersonalbasis.OwnBusinessOnPersonalBasisViewModel.UIEvent.OnIncomeAmountChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.UIEvent.OnBusinessActivityChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.UIEvent.OnIdentificationChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
@@ -43,8 +44,8 @@ import com.multimoney.multimoney.presentation.util.transformation.formatBusiness
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
 @Composable
-fun OwnBusinessOnPersonalBasisScreen(
-    viewModel: OwnBusinessOnPersonalBasisViewModel = hiltViewModel(),
+fun OwnBusinessInPartnershipScreen(
+    viewModel: OwnBusinessInPartnershipViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
@@ -95,7 +96,7 @@ fun OwnBusinessOnPersonalBasisScreen(
 
 @Composable
 fun OwnBusinessOnPersonalBasisContent(
-    viewModel: OwnBusinessOnPersonalBasisViewModel,
+    viewModel: OwnBusinessInPartnershipViewModel,
     idBrand: Int,
     user: String
 ) {
@@ -134,8 +135,8 @@ fun OwnBusinessOnPersonalBasisContent(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             isTextArea = true,
-            isError = viewModel.uiState.activityError.first,
-            errorMessage = stringResource(viewModel.uiState.activityError.second),
+            isError = viewModel.uiState.businessActivityError.first,
+            errorMessage = stringResource(viewModel.uiState.businessActivityError.second),
             isRequiredMessage = stringResource(R.string.smart_business_personal_basis_activity_required_message)
         )
 
@@ -163,8 +164,6 @@ fun OwnBusinessOnPersonalBasisContent(
             ),
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
-            isError = viewModel.uiState.incomeError.first,
-            errorMessage = stringResource(viewModel.uiState.incomeError.second),
             isRequired = true,
             isRequiredMessage = stringResource(R.string.smart_business_personal_basis_income_required_message)
         )

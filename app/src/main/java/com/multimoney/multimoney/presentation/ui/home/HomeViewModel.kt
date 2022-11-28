@@ -9,6 +9,8 @@ import androidx.navigation.NavHostController
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
+import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
+import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
@@ -28,10 +30,20 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.HomeBNScreen
 import com.multimoney.multimoney.presentation.navigation.Screen.ProductsBNScreen
 import com.multimoney.multimoney.presentation.navigation.Screen.QuickActionBNScreen
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnStartCountDownTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -49,6 +61,8 @@ class HomeViewModel @Inject constructor(
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
     private val querytGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
+    private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
+    private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase
 ) : BaseViewModel(true) {
 
@@ -273,6 +287,59 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun onCallGetClientAutomaticDebitUseCase() = executeUseCase {
+        getClientAutomaticDebitUseCase.invoke(
+            user = uiState.email,
+            idBrand = uiState.idBrand.toInt(),
+            idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
+            idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                val clientBankAccount = it?.firstOrNull()
+                callMutationDeactivateClientAutomaticDebitUseCase(
+                    clientBankAccount?.origin.orEmpty(),
+                    clientBankAccount?.id?.toLong() ?: 0
+                )
+            }.onFailure {
+                onFailure(it)
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun callMutationDeactivateClientAutomaticDebitUseCase(origin: String, idAccount: Long) = executeUseCase {
+        mutationDeactivateClientAutomaticDebitUseCase.invoke(
+            user = uiState.email,
+            idBrand = uiState.idBrand.toInt(),
+            idClient = uiState.validateUserStatus?.infoUser?.idClient?.toLong() ?: 0,
+            idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient?.toLong() ?: 0,
+            origin = origin,
+            idAccount = idAccount
+        ).collectLatest { result ->
+            result.onSuccess {
+                callQueryBalanceUseCase(
+                    user = uiState.email,
+                    identification = uiState.identification,
+                    idBrand = uiState.idBrand.toInt(),
+                    idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
+                    idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0,
+                    creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
+                    accountStatus = uiState.validateUserStatus?.infoBankAccount?.status ?: 0,
+                    cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
+                    cardStatus = 0 // TODO, the API doesn't support this yet
+                )
+                emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
             isLoading = false,
@@ -329,6 +396,11 @@ class HomeViewModel @Inject constructor(
                 uiEvent.identificationNumber,
                 uiEvent.tokenNumber
             )
+            is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
+            is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
+            is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
+            is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
+            is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
         }
     }
 
@@ -344,6 +416,12 @@ class HomeViewModel @Inject constructor(
         ) : UIEvent()
         object OnSetUserData : UIEvent()
         object OnSignOut : UIEvent()
+
+        object OnShowAutomaticPaymentEdit : UIEvent()
+        object OnHideAutomaticPaymentEdit : UIEvent()
+        object OnEditAutomaticPayment : UIEvent()
+        object OnDeleteAutomaticPayment : UIEvent()
+        object OnCallMutationDeactivateClientAutomaticDebit : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -351,6 +429,11 @@ class HomeViewModel @Inject constructor(
         object OnOpenMyProductsBottomSheet : BaseEvent()
         data class OnStartCountDownTimer(val millisInFuture: Long?)
         data class OnQuickActionClicked(val flow: String)
+        object OnShowAutomaticPaymentEditBottomSheet : BaseEvent()
+        object OnHideAutomaticPaymentEditBottomSheet : BaseEvent()
+        object OnEditAutomaticPaymentEvent : BaseEvent()
+        object OnDeleteAutomaticPaymentEvent : BaseEvent()
+        object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
     }
 
     companion object {

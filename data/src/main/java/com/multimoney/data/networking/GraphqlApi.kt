@@ -22,6 +22,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionAmountQ
 import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionMessageQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
+import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
@@ -437,6 +438,25 @@ class GraphqlApi @Inject constructor(
                 origin,
                 idAccount,
                 idCurrency
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationDeactivatedClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long
+    ): ApolloCall<DeactivatedClientAutomaticDebitMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            DeactivatedClientAutomaticDebitMutation(
+                user,
+                idBrand,
+                idClient,
+                idLoanClient,
+                origin,
+                idAccount
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

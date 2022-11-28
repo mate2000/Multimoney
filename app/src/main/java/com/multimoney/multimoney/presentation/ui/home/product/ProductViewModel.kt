@@ -91,7 +91,6 @@ class ProductViewModel @Inject constructor(
 
 
             uiState = uiState.copy(
-                //productPageList = productPageList,
                 canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     R.drawable.ic_alert_expired_payment

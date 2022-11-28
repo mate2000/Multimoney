@@ -28,14 +28,18 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             ibanAccount = it.cuenta_Iban,
             monthlyQuota = it.cuota_Mensual.toString(),
             balanceAmountCancel = it.saldo_Monto_Cancelar.toString(),
-            daysExpired = it.dias_Vencidos
+            daysExpired = it.dias_Vencidos,
+            canExpandState = it.estado_Ampli,
+            isProductActive = it.producto_Activo,
+            applyAutomaticDebit = it.aplica_Debito_Aut,
+            automaticDebitEnabled = it.debito_Aut_Activo,
+            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo
         )
     },
     creditLimit = limite_credito,
     creditLimitLabel = limite_credito_label,
     creditNumber = pagare,
-    term = plazo,
-    canExpandCredit = puede_Ampliar
+    term = plazo
 )
 
 private fun BalanceQuery.Account.mapToDomainModel() =

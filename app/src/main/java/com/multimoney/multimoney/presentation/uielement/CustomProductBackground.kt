@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.Primary600
 import com.multimoney.multimoney.presentation.theme.Secondary500
 import com.multimoney.multimoney.presentation.theme.Tertiary500
+import com.multimoney.multimoney.presentation.theme.ComplementaryTwo400
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryOne
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryTwo
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary

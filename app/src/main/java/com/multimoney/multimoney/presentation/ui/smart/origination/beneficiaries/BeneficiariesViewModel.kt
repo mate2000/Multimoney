@@ -15,21 +15,28 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnBeneficiaryFullNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnCallQueryRelationshipUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnEditBeneficiaryClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnPercentageValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRemoveBeneficiaryClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.hasNumbersAndSpecialCharacters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
-class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUseCase: QueryRelationshipUseCase) :
-    BaseViewModel(true) {
+class BeneficiariesViewModel @Inject constructor(
+    private val queryRelationshipUseCase: QueryRelationshipUseCase
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
+
+    // Stateless
+    private var beneficiaryToUpdate: Beneficiary? = null
 
     private fun callQueryRelationshipUseCase(user: String, idBrand: Int, idRequest: Int) =
         executeUseCase {
@@ -51,7 +58,9 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         }
 
     private fun onFullNameValueChange(name: String) {
-        uiState = uiState.copy(beneficiaryFullName = name)
+        if (name.hasNumbersAndSpecialCharacters()) {
+            uiState = uiState.copy(beneficiaryFullName = name)
+        }
         validateForm()
     }
 
@@ -68,9 +77,16 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
     }
 
     private fun onAddBeneficiaryStateChange(status: Boolean, beneficiary: Beneficiary?) {
-        val totalPercentage =
-            uiState.totalPercentage.plus(beneficiary?.allocationPercentage?.toInt() ?: 0)
+        // if the object is not null, then remove that beneficiary from the list before
+        // adding a new beneficiary obtained from the form's data.
+        beneficiaryToUpdate?.let {
+            onRemoveBeneficiary(it)
+            beneficiaryToUpdate = null
+        }
+
+        val totalPercentage = uiState.totalPercentage.plus(beneficiary?.allocationPercentage?.toInt() ?: 0)
         val beneficiariesList = uiState.beneficiaryList.toMutableList()
+
         if (beneficiary != null && totalPercentage <= MAX_PERCENTAGE) {
             beneficiariesList.add(beneficiary)
             uiState = uiState.copy(
@@ -92,6 +108,52 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
             )
         }
         validatePercentage()
+    }
+
+    /**
+     * fulfill the form' UI components with the previous beneficiary data
+     * @param beneficiary the object that contains the data to be shown on the UI.
+     */
+    private fun onEditBeneficiary(beneficiary: Beneficiary) {
+        uiState = uiState.copy(
+            addBeneficiaryState = true,
+            beneficiaryFullName = beneficiary.fullName.orEmpty(),
+            relationship = beneficiary.strRelationship.orEmpty(),
+            percentage = beneficiary.allocationPercentage.orEmpty()
+        )
+        beneficiaryToUpdate = beneficiary
+    }
+
+    private fun onShowAlertBeforeRemoveBeneficiary(beneficiary: Beneficiary) {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = string.smart_account_remove_beneficiary,
+                descriptionResource = string.smart_account_remove_beneficiary_alert_description,
+                positiveResource = string.common_remove,
+                negativeResource = string.cancel,
+                isActive = mutableStateOf(true),
+                positiveAction = {
+                    onRemoveBeneficiary(beneficiary)
+                }
+            )
+        )
+    }
+
+    /**
+     * remove the beneficiary from the local list, also update the total percentage
+     * @param beneficiary the item that will be removed from the list
+     */
+    private fun onRemoveBeneficiary(beneficiary: Beneficiary) {
+        val totalPercentage = uiState.totalPercentage.minus(
+            beneficiary.allocationPercentage?.toInt() ?: 0
+        )
+        val beneficiaryList = uiState.beneficiaryList.toMutableList()
+        beneficiaryList.remove(beneficiary)
+
+        uiState = uiState.copy(
+            beneficiaryList = beneficiaryList,
+            totalPercentage = totalPercentage,
+        )
     }
 
     private fun cleanUI() {
@@ -126,6 +188,8 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
                 event.status,
                 event.beneficiary
             )
+            is OnEditBeneficiaryClick -> onEditBeneficiary(event.beneficiary)
+            is OnRemoveBeneficiaryClick -> onShowAlertBeforeRemoveBeneficiary(event.beneficiary)
             is OnAddBeneficiaryOptionChange -> uiState =
                 uiState.copy(addBeneficiaryOption = event.option)
         }
@@ -154,6 +218,8 @@ class BeneficiariesViewModel @Inject constructor(private val queryRelationshipUs
         data class OnRelationshipValueChange(val relationship: String) : UIEvent()
         data class OnPercentageValueChange(val percentage: String) : UIEvent()
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
+        data class OnEditBeneficiaryClick(val beneficiary: Beneficiary) : UIEvent()
+        data class OnRemoveBeneficiaryClick(val beneficiary: Beneficiary) : UIEvent()
         data class OnAddBeneficiaryStateChange(
             val status: Boolean,
             val beneficiary: Beneficiary? = null

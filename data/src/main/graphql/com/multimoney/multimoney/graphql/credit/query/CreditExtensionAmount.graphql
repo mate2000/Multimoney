@@ -1,0 +1,24 @@
+query CreditExtensionAmount($idClient:Long!, $currency:String!, $user: String!, $idBrand: Int!){
+    creditExtensionAmount(
+        creditExtensionAmountInput: {
+            idClient: $idClient
+            currency: $currency
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        amountMax
+        amountMin
+        labelAmountMaxAvailable
+        labelAmountMinAvailable
+        symbol
+        amountTract
+        idLoanClient
+        idProductBase
+        cicle
+        quotaMax
+        promissoryNote
+        amountMinDisbursementCK
+        paramMore
+    }
+}

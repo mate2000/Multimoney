@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.multimoney.multimoney.presentation.navigation.HOME_ROUTE
+import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.HomeScreen
 
@@ -17,6 +18,7 @@ fun NavGraphBuilder.homeNavGraph(
     ) {
         composable(route = Screen.HomeScreen.route) {
             HomeScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 navController = navController,
                 onInnerNavigate = { innerNavController, navEvent ->
                     innerNavController.navigate(navEvent.route) {

@@ -1,0 +1,49 @@
+mutation SaveCreditExtensionDetail($pkUser: Int!,
+    $idBrand: Int,
+    $user: String!,
+    $accountNumber: String!,
+    $amount: Decimal!,
+    $month: Short!,
+    $pkPromotionMonth: Int!,
+    $nextPaymentDate: DateTime!,
+    $quota: Decimal!,
+    $quotaTotal: Decimal!,
+    $comissionDisbursement: Decimal!,
+    $rateInterestNormalLoan: Decimal!,
+    $rateInterestNormalRegular: Decimal!,
+    $cicle: Short!,
+    $idProduct: Int!,
+    $descriptionPromotionTerm: String!,
+    $pkPromotion: Int!){
+    saveCreditExtensionDetail(
+        creditExtensionDetailInput: {
+            pkUser: $pkUser
+            idBrand: $idBrand
+            user: $user
+            accountNumber: $accountNumber
+            amount: $amount
+            month: $month
+            pkPromotionMonth: $pkPromotionMonth
+            nextPaymentDate: $nextPaymentDate
+            quota: $quota
+            quotaTotal: $quotaTotal
+            comissionDisbursement: $comissionDisbursement
+            rateInterestNormalLoan: $rateInterestNormalLoan
+            rateInterestNormalRegular: $rateInterestNormalRegular
+            cicle: $cicle
+            idProduct: $idProduct
+            descriptionPromotionTerm: $descriptionPromotionTerm
+            pkPromotion: $pkPromotion
+            userEmail:$user
+        }
+    )  {
+        comision_Desembolso
+        cuota_Total
+        cuota_Maxima
+        monto_Seleccionado
+        proximo_Pago
+        status
+        message
+        detail
+    }
+}

@@ -6,10 +6,10 @@ import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.credit.CreditExtensionAmount
 import com.multimoney.domain.model.credit.CreditExtensionDetail
 import com.multimoney.domain.model.credit.CreditExtensionMessage
-import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
@@ -208,6 +208,15 @@ interface CreditRepository {
         origin: String,
         idAccount: Long,
         idCurrency: Int
+    ): Flow<MultimoneyResult<AutomaticDebit?>>
+
+    suspend fun mutationDeactivateClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long
     ): Flow<MultimoneyResult<AutomaticDebit?>>
 
     suspend fun queryGetClientAutomaticDebit(

@@ -29,8 +29,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnLoadingValueChange
@@ -42,19 +42,18 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartO
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_SMART_IDENTITY
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SmartOnfidoViewModel @Inject constructor(
@@ -77,14 +76,14 @@ class SmartOnfidoViewModel @Inject constructor(
     // Parameters
     var idBrand: Int? = null
     var pkUser: Long = 0
-    var identification: String = "65644"
-    var email: String = "test@test.com"
-    var firstName: String = "Alejandra"
-    var lastName: String = "Perez"
-    var idUserRequest: Long = 121
-    var idPrint: Long = 45
-    var evicertiaUrl: String = "test.com"
-    var evicertiaStatus: String = "activo"
+    var identification: String = ""
+    var email: String = ""
+    var firstName: String = ""
+    var lastName: String = ""
+    var idUserRequest: Long = 0
+    var idPrint: Long = 0
+    var evicertiaUrl: String = ""
+    var evicertiaStatus: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -126,9 +125,6 @@ class SmartOnfidoViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     injectNewToken(it?.sdkToken ?: "")
-                }
-                result.onFailure {
-                    // The sdk shows an error.
                 }
             }
         }
@@ -202,7 +198,7 @@ class SmartOnfidoViewModel @Inject constructor(
             mutationOnfidoCheckProcessUseCase.invoke(
                 identification,
                 PACKAGE_NAME,
-                AppFlow.CREDIT_ORIGINATION.flow,
+                AppFlow.SMART.flow,
                 pkUser,
                 idUserRequest,
                 idBrand,
@@ -221,10 +217,10 @@ class SmartOnfidoViewModel @Inject constructor(
 
     private fun navigateToCorrectScreen() {
         val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
-            SignDocumentStep.VALIDATE_SMART_IDENTITY.value
+            VALIDATE_SMART_IDENTITY.value
         } else {
             if (evicertiaStatus.lowercase() == CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
-                SignDocumentStep.VALIDATE_SMART_IDENTITY.value
+                VALIDATE_SMART_IDENTITY.value
             } else {
                 GENERATE_DOCUMENT_STEP.value
             }
@@ -237,22 +233,6 @@ class SmartOnfidoViewModel @Inject constructor(
             "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditOnfidoScreen.route
         )
-    }
-
-    private fun onCloseClick() {
-        /*uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = closeDialogTitle,
-                description = closeDialogDescription,
-                positiveResource = string.credit_close_dialog_positive_button_text,
-                negativeResource = string.credit_close_dialog_negative_button_text,
-                positiveAction = {
-                    onNavigateToHome()
-                },
-                isActive = mutableStateOf(true)
-            )
-        )*/
-        onNavigateToHome()
     }
 
     private fun onNavigateToHome() {
@@ -283,7 +263,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 event.injectNewToken
             )
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnCloseClick -> onCloseClick()
+            is OnCloseClick ->  onNavigateToHome()
             is OnContinueClick -> continueAction()
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)

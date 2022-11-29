@@ -22,37 +22,39 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.Sm
 @Composable
 fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
     val accountSelected = viewModel.balanceCredit?.balanceAccountSmart?.get(index)
-    val moves = viewModel.smartMovementsList.find { account ->
+    val movesResult = viewModel.smartMovementsList.find { account ->
         account.accountToken.toString() == accountSelected?.tokenNumber
     }
 
-    moves?.result?.isNotEmpty()?.let {
-        Column(
-            Modifier.fillMaxWidth().padding(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                horizontalArrangement = SpaceBetween
+    movesResult?.result?.let { movements ->
+        if (movements.isNotEmpty()) {
+            Column(
+                Modifier.fillMaxWidth().padding(16.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.home_product_movement_title),
-                    style = Typography.body1.copy(
-                        color = MultimoneyTheme.colors.text
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    horizontalArrangement = SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(R.string.home_product_movement_title),
+                        style = Typography.body1.copy(
+                            color = MultimoneyTheme.colors.text
+                        )
                     )
-                )
-                ClickableText(
-                    text = AnnotatedString(stringResource(R.string.home_product_check_all)),
-                    style = Typography.button.copy(
-                        color = MultimoneyTheme.colors.textLink
-                    ),
-                    onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements(moves.accountToken.toString())) }
-                )
+                    ClickableText(
+                        text = AnnotatedString(stringResource(R.string.home_product_check_all)),
+                        style = Typography.button.copy(
+                            color = MultimoneyTheme.colors.textLink
+                        ),
+                        onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements(movesResult.accountToken.toString())) }
+                    )
+                }
+                movesResult.result.forEach {
+                    SmartMovementDisplayer(it)
+                }
             }
-            moves.result.forEach {
-                SmartMovementDisplayer(it)
-            }
+        } else {
+            // todo: Show no movements ui
         }
-    } ?: run {
-        // todo: Show no movements ui
     }
 }

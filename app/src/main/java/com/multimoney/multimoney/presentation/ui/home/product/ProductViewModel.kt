@@ -94,7 +94,6 @@ class ProductViewModel @Inject constructor(
         balance?.let {
             balanceCredit = it
 
-
             uiState = uiState.copy(
                 canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {

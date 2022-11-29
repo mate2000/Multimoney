@@ -269,7 +269,7 @@ class HomeViewModel @Inject constructor(
 
                 balance?.let {
                     if (uiState.isLoading)
-
+                        uiState = uiState.copy(isLoading = false)
                     uiState = uiState.copy(
                         balance = balance,
                         productPageList = productPageList

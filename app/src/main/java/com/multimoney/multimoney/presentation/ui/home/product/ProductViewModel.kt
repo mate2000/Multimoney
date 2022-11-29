@@ -36,10 +36,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.util.ShareHelper
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.ProductPage
-import com.multimoney.multimoney.presentation.util.catalog.ProductType
-import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
+import com.multimoney.multimoney.presentation.util.catalog.*
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -67,7 +64,6 @@ class ProductViewModel @Inject constructor(
     private fun onSetUserData(
         idBrand: String,
         balanceCredit: Balance?,
-        idBrand: String,
         pkUser: String,
         identification: String,
         email: String,
@@ -340,12 +336,15 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToDisbursement() =
         navigateTo(
+            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/${uiState.idBrand}/${pkUser}/${email}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoCredit?.idClient ?: 0}/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}/${CurrencyType.Quetzal.id}"
+        )
+        /*navigateTo(
             route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
             encodeData(
                 balanceCredit?.getFirstCredit()?.summary
             )
-            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}"
-        )
+            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
+        )*/
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(
@@ -475,7 +474,6 @@ class ProductViewModel @Inject constructor(
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
                 balanceCredit = uiEvent.balanceCredit,
-                idBrand = uiEvent.idBrand,
                 pkUser = uiEvent.pkUser,
                 identification = uiEvent.identification,
                 email = uiEvent.email,
@@ -536,7 +534,6 @@ class ProductViewModel @Inject constructor(
         data class OnSetUserData(
             val idBrand: String,
             val balanceCredit: Balance?,
-            val idBrand: String,
             val pkUser: String,
             val identification: String,
             val email: String,

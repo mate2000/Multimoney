@@ -55,7 +55,9 @@ fun NavGraphBuilder.disbursementNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(SUMMARY_LIST) { type = SummaryListNavType() },
-                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType },
+                navArgument(ID_CURRENCY) { type = NavType.IntType },
+                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType }
             )
         ) {
             DisbursementAccountScreen(
@@ -78,7 +80,10 @@ fun NavGraphBuilder.disbursementNavGraph(navController: NavHostController) {
             route = Screen.DisbursementAddAccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType },
+                navArgument(ID_CLIENT) { type = NavType.IntType },
+                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
+                navArgument(ID_CURRENCY) { type = NavType.IntType }
             )
         ) {
             DisbursementAddAccountScreen(

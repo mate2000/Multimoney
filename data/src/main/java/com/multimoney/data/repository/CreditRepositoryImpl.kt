@@ -3,25 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
-import com.multimoney.domain.model.credit.AutomaticDebit
-import com.multimoney.domain.model.credit.BanksAndRegularExpression
-import com.multimoney.domain.model.credit.CardVisaDirect
-import com.multimoney.domain.model.credit.ClientBankAccount
-import com.multimoney.domain.model.credit.CreditApplication
-import com.multimoney.domain.model.credit.CreditCatalog
-import com.multimoney.domain.model.credit.CreditExtensionAmount
-import com.multimoney.domain.model.credit.CreditExtensionDetail
-import com.multimoney.domain.model.credit.CreditExtensionMessage
-import com.multimoney.domain.model.credit.CreditContractEvent
-import com.multimoney.domain.model.credit.CreditInfoQuestion
-import com.multimoney.domain.model.credit.CreditOffer
-import com.multimoney.domain.model.credit.DestinyAccount
-import com.multimoney.domain.model.credit.ExchangeRate
-import com.multimoney.domain.model.credit.PaymentAmount
-import com.multimoney.domain.model.credit.PaymentPoint
-import com.multimoney.domain.model.credit.ProcessPaymentList
-import com.multimoney.domain.model.credit.SaveCreditFlowStep
-import com.multimoney.domain.model.credit.SaveCreditOperation
+import com.multimoney.domain.model.credit.*
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -499,6 +481,30 @@ class CreditRepositoryImpl @Inject constructor(
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
+    )
+
+    override suspend fun mutationSaveClientBankAccount(
+        idClient: Long,
+        idBank: Int,
+        accountNumber: String,
+        idCurrency: Int,
+        idLoanClient: Long,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveClientBankAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationSaveClientBankAccount(
+            idClient = idClient,
+            idBank = idBank,
+            accountNumber = accountNumber,
+            idCurrency = idCurrency,
+            idLoanClient = idLoanClient,
+            user = user,
+            idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+
     )
 
     override suspend fun mutationSaveCreditExtensionDetail(

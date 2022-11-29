@@ -275,7 +275,7 @@ class DisbursementAmountViewModel @Inject constructor(
                     encodeData(
                         summary
                     )
-                    }/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/${pkUser}/${idUserRequest ?: 0}"
+                    }/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/${pkUser}/${idUserRequest ?: 0}/${creditExtensionAmount?.idLoanClient ?: 0}/${currencyItems?.get(uiState.currencyIndex)}"
                 )
             }.onFailure {
                 uiState = uiState.copy(

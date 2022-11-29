@@ -46,6 +46,7 @@ class DisbursementAccountViewModel @Inject constructor(
     private var quotaTotal: String? = null
     private var selectedAmount: String? = null
     private var pkUser: Int? = null
+    private var idCurrency: Int?
     private var idUserRequest: Int? = null
 
     init {
@@ -58,6 +59,7 @@ class DisbursementAccountViewModel @Inject constructor(
         quotaTotal = savedStateHandle[QUOTA_TOTAL]
         selectedAmount = savedStateHandle[SELECTED_AMOUNT]
         pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
+        idCurrency = savedStateHandle[ID_CURRENCY]
         idUserRequest = savedStateHandle[ID_USER_REQUEST]
         getTextResources()
     }
@@ -110,7 +112,7 @@ class DisbursementAccountViewModel @Inject constructor(
 
     private fun onNavigateToDisbursementAddAccount() =
         navigateTo(
-            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/${idBrand}/${user}/${pkUser}/${idUserRequest}"
+            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/${idBrand}/${pkUser}/${user}/${idUserRequest}/${idClient}/${idLoanClient}/${idCurrency}"
         )
 
     data class UIState(

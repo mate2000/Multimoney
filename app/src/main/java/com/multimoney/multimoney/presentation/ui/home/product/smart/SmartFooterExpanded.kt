@@ -34,7 +34,7 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
         ) {
             viewModel.balanceCredit?.balanceAccountSmart?.let {
                 if (it.isNotEmpty()) {
-                    var index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
                     SmartMovementsLatest(viewModel, index)
                 }
             }

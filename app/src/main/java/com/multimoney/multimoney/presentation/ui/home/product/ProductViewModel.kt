@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
@@ -50,8 +49,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
-    private val helper: ShareHelper,
-    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase
+    private val helper: ShareHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -263,7 +261,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartMovements(accountToken: String) =
-        navigateTo("${Screen.SmartMovementsScreen.baseRoute}/${userName}/${uiState.idBrand}/${identification}/${accountToken}")
+        navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
@@ -429,10 +427,6 @@ class ProductViewModel @Inject constructor(
         return totalBalance > 0
     }
 
-    fun getLatestMovements(smartAccountIndex: Int) {
-
-    }
-
     fun getSchedulePaymentAmount(balance: Balance?): String {
         var amount = ""
         balance?.balanceCredit?.forEach { balanceCredit ->
@@ -483,7 +477,7 @@ class ProductViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
         val canExpandCredit: Boolean = false,
-        val scheduleChipIconResource: Int? = null,
+        val scheduleChipIconResource: Int? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -556,6 +550,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToDisbursement : UIEvent()
         object OnNavigateToSendMoneyFlow : UIEvent()
         object OnNavigateToPaymentSmartFlow : UIEvent()
+        data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
@@ -579,15 +574,6 @@ class ProductViewModel @Inject constructor(
             val accountLabel: String,
             val ibanAccount: String
         ) : UIEvent()
-
-        data class OnGetSmartMovements(
-            val user: String,
-            val idBrand: Int,
-            val identificationNumber: String,
-            val accountToken: Long
-        ) : UIEvent()
-
-        data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()

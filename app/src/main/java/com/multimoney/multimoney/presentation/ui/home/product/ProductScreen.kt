@@ -299,7 +299,7 @@ fun ProductHeaderExpanded(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             state = state,
             userScrollEnabled = false
-        ) { currentPage ->
+        ) {
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
                 ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
@@ -356,7 +356,7 @@ fun ProductFooter(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             state = state,
             userScrollEnabled = false
-        ) { currentPage ->
+        ) {
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditFooter(
                     uiState = viewModel.uiState,
@@ -384,7 +384,7 @@ fun ProductFooterExpanded(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             state = state,
             userScrollEnabled = false
-        ) { _ ->
+        ) {
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditFooterExpanded(
                     viewModel = viewModel,

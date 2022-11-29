@@ -1,6 +1,5 @@
 package com.multimoney.data.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
@@ -23,7 +22,6 @@ class SmartMovementsPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SmartMovement> {
         val currentPage = params.key ?: INDEX_ONE
-        Log.d("SmartMovementsPagingSource", "current page on load(): $currentPage")
         return try {
             val response = fetchData(
                 apolloCall = graphqlApi.queryGetCoreBankMovements(
@@ -67,14 +65,12 @@ class SmartMovementsPagingSource(
                 )
             }
         } catch (e: Exception) {
-            Log.d("tellException", "error: ${e.message}")
             LoadResult.Error(e)
         }
     }
 
     override fun getRefreshKey(state: PagingState<Int, SmartMovement>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
-
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(INDEX_ONE)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(INDEX_ONE)
         }

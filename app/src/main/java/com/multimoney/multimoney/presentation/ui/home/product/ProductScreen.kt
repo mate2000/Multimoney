@@ -60,7 +60,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoConte
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooter
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoHeaderExpanded
-import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooterExpanded
@@ -324,7 +323,7 @@ fun ProductHeaderExpanded(
 fun ProductContent(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel,
+    viewModel: ProductViewModel
 ) {
     Column(modifier = modifier) {
         HorizontalPager(

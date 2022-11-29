@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps.Four
 import com.multimoney.data.util.catalog.SmartSteps.Two
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -150,7 +151,8 @@ fun SmartCrSalaryScreen(
                     id = sharedViewModel.idBrandAsInt
                         .getCurrencySymbol()
                 )
-            )
+            ),
+            leadingIcon = R.drawable.ic_money_gray
         )
 
         CustomDropdown(

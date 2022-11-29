@@ -31,10 +31,10 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
-import java.time.Period
 import javax.inject.Inject
 
 @HiltViewModel
@@ -170,17 +170,7 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     private fun onBirthDateValueChange(birthdate: String, pickedDate: LocalDate) {
-        val actualDate = LocalDate.now()
-        val periodBetweenDates = Period.between(pickedDate, actualDate).years
-        val dateValidation = if (periodBetweenDates <= EIGHTEEN_YEARS_VALUE) {
-            Pair(true, R.string.smart_account_document_birthdate_age_error)
-        } else if (periodBetweenDates > EIGHTEEN_YEARS_VALUE && periodBetweenDates > ONE_HUNDRED_TWENTY_YEARS_VALUE
-        ) {
-            Pair(true, R.string.smart_account_document_birthdate_age_limit_error)
-        } else {
-            Pair(false, R.string.smart_account_document_birthdate_age_limit_error)
-        }
-
+        val dateValidation = onBirthDateAgeValidation(pickedDate)
         uiState = uiState.copy(
             birthdate = birthdate,
             birthdateErrorStatus = dateValidation.first,

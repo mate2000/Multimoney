@@ -1,6 +1,11 @@
 package com.multimoney.multimoney.presentation.util
 
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.Companion
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.Period
 import java.util.Calendar
 import java.util.Locale
 import java.util.Date
@@ -45,6 +50,19 @@ fun getDayFromString(date: String?, format: SimpleDateFormat): String {
         }
     } else {
         ""
+    }
+}
+
+fun onBirthDateAgeValidation(pickedDate: LocalDate): Pair<Boolean, Int> {
+    val actualDate = LocalDate.now()
+    val periodBetweenDates = Period.between(pickedDate, actualDate).years
+    return if (periodBetweenDates <= SmartDocumentViewModel.EIGHTEEN_YEARS_VALUE) {
+        Pair(true, R.string.smart_account_document_birthdate_age_error)
+    } else if (periodBetweenDates > SmartDocumentViewModel.EIGHTEEN_YEARS_VALUE && periodBetweenDates > SmartDocumentViewModel.ONE_HUNDRED_TWENTY_YEARS_VALUE
+    ) {
+        Pair(true, R.string.smart_account_document_birthdate_age_limit_error)
+    } else {
+        Pair(false, R.string.smart_account_document_birthdate_age_limit_error)
     }
 }
 

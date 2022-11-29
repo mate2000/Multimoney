@@ -219,13 +219,13 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
         ) {
             Column {
                 Text(
-                    text = "Buen día",
+                    text = viewModel.uiState.userStatus?.wording?.textOne ?: "",
                     style = Typography.h6.copy(letterSpacing = 0.38.sp),
                     color = MultimoneyTheme.colors.labelText
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = "User Name",
+                    text =  viewModel.uiState.userStatus?.wording?.textTwo ?: "",
                     style = Typography.h5.copy(
                         fontSize = 28.sp,
                         letterSpacing = 0.4.sp,

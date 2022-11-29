@@ -21,11 +21,14 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.originations
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ProcessingTransactionViewModel @Inject constructor(
@@ -92,6 +95,32 @@ class ProcessingTransactionViewModel @Inject constructor(
             route = Screen.HomeScreen.route,
             popTo = Screen.ProcessingTransactionScreen.route
         )
+    }
+
+    fun getDateFormatted(): String {
+        return uiState.infoDeposit?.date?.let {
+            val date = API_DATE_FORMAT.parse(it)
+            date?.let {
+                getCurrentDate(date)
+            } ?: run {
+                ""
+            }
+        } ?: run {
+            ""
+        }
+    }
+
+    fun getHourFormatted(): String {
+        return uiState.infoDeposit?.date?.let {
+            val date = API_DATE_FORMAT.parse(it)
+            date?.let {
+                getCurrentTime(date)
+            } ?: run {
+                ""
+            }
+        } ?: run {
+            ""
+        }
     }
 
     data class UIState(

@@ -2,10 +2,14 @@ package com.multimoney.multimoney.presentation.navigation.navgraph
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
@@ -91,6 +95,19 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         }
         composable(route = Screen.SubscriptionScreen.route) {
             SubscriptionScreen()
+        }
+        composable(
+            route = Screen.ProcessingTransactionScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+            )
+        ) {
+            ProcessingTransactionScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
     }
 }

@@ -6,7 +6,9 @@ query GetInfoDeposit($idBrand:Int, $idPrint:Long!, $user:String){
   }) {
     numeroCuenta
     monto
+    monto_Label
     numeroReferencia
+    pagare
     fecha
     status
     message

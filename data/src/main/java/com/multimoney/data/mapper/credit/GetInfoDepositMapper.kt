@@ -6,8 +6,10 @@ import com.multimoney.domain.model.credit.GetInfoDeposit
 fun GetInfoDepositQuery.GetInfoDeposit.mapToDomainModel() = GetInfoDeposit(
     accountNumber = numeroCuenta,
     amount = monto.toString(),
+    amountLabel = monto_Label,
     referenceNumber = numeroReferencia,
-    data = fecha.toString(),
+    creditNumber = pagare,
+    date = fecha.toString(),
     message = message,
     status = status,
     detail = detail

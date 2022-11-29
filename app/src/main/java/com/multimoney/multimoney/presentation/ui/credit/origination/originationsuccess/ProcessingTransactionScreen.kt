@@ -156,7 +156,7 @@ fun ProcessingTransactionScreen(
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = viewModel.uiState.infoDeposit?.amount ?: "",
+                            text = viewModel.uiState.infoDeposit?.amountLabel ?: "",
                             style = Typography.h4.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center
@@ -207,14 +207,14 @@ fun ProcessingTransactionScreen(
                                 contentDescription = ""
                             )
                             Text(
-                                text = viewModel.uiState.infoDeposit?.data ?: "",
+                                text = viewModel.getDateFormatted(),
                                 modifier = Modifier.padding(start = 15.dp),
                                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                                 color = MultimoneyTheme.colors.labelText
                             )
                         }
                         Text(
-                            text = viewModel.uiState.infoDeposit?.data ?: "",
+                            text = viewModel.getHourFormatted(),
                             modifier = Modifier.padding(bottom = 16.dp),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText

@@ -22,12 +22,12 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.Sm
 @Composable
 fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
     val accountSelected = viewModel.balanceCredit?.balanceAccountSmart?.get(index)
-    val movesResult = viewModel.smartMovementsList.find { account ->
+    val moves = viewModel.smartMovementsList.find { account ->
         account.accountToken.toString() == accountSelected?.tokenNumber
     }
 
-    movesResult?.result?.let { movements ->
-        if (movements.isNotEmpty()) {
+    moves?.result?.isNotEmpty()?.let {
+        if (it) {
             Column(
                 Modifier.fillMaxWidth().padding(16.dp)
             ) {
@@ -46,11 +46,11 @@ fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
                         style = Typography.button.copy(
                             color = MultimoneyTheme.colors.textLink
                         ),
-                        onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements(movesResult.accountToken.toString())) }
+                        onClick = { viewModel.onUIEvent(OnNavigateToSmartMovements(moves.accountToken.toString())) }
                     )
                 }
-                movesResult.result.forEach {
-                    SmartMovementDisplayer(it)
+                moves.result.forEach { move ->
+                    SmartMovementDisplayer(move)
                 }
             }
         } else {

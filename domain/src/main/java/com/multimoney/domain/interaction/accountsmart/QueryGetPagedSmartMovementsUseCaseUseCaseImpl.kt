@@ -11,6 +11,7 @@ class QueryGetPagedSmartMovementsUseCaseUseCaseImpl(val repository: SmartAccount
         idBrand: Int,
         identificationNumber: String,
         accountToken: Long,
+        pageSize: Int,
         monthDate: String?
     ): Flow<PagingData<SmartMovement>> =
         repository.getPagedMovements(
@@ -18,6 +19,7 @@ class QueryGetPagedSmartMovementsUseCaseUseCaseImpl(val repository: SmartAccount
             idBrand,
             identificationNumber,
             accountToken,
+            pageSize,
             monthDate
         )
 }

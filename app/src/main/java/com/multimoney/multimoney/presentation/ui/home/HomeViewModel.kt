@@ -48,6 +48,8 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHi
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
+import com.multimoney.multimoney.presentation.util.INDEX_ONE
+import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -109,7 +111,7 @@ class HomeViewModel @Inject constructor(
                 identificationNumber = identificationNumber,
                 accountToken = tokenNumber,
                 pageNumber = INDEX_ONE,
-                pageSize = PAGE_SIZE,
+                pageSize = LAST_THREE,
                 monthDate = null
             ).collectLatest { result ->
                 result.onSuccess { movements ->
@@ -523,10 +525,5 @@ class HomeViewModel @Inject constructor(
         object OnEditAutomaticPaymentEvent : BaseEvent()
         object OnDeleteAutomaticPaymentEvent : BaseEvent()
         object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
-    }
-
-    companion object {
-        const val INDEX_ONE = 1
-        const val PAGE_SIZE = 3
     }
 }

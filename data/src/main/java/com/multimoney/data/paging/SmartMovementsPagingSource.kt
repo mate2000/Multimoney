@@ -17,6 +17,7 @@ class SmartMovementsPagingSource(
     private val idBrand: Int,
     private val identificationNumber: String,
     private val accountToken: Long,
+    private val pageSize: Int,
     private val monthDate: String?
 ) : PagingSource<Int, SmartMovement>() {
 
@@ -30,7 +31,7 @@ class SmartMovementsPagingSource(
                     identificationNumber,
                     accountToken,
                     currentPage,
-                    PAGE_SIZE,
+                    pageSize,
                     monthDate
                 ),
                 apolloCallMapper = { data ->
@@ -44,7 +45,7 @@ class SmartMovementsPagingSource(
             response.collectLatest { result ->
                 result.onSuccess { moves ->
                     searchResult = moves?.result ?: emptyList()
-                    endOfPageReached = PAGE_SIZE * currentPage > (moves?.totalRecords ?: 0)
+                    endOfPageReached = pageSize * currentPage > (moves?.totalRecords ?: 0)
                 }
                 result.onFailure { error ->
                     error.throwable?.let { LoadResult.Error<Int, SmartMovement>(it) }
@@ -78,6 +79,5 @@ class SmartMovementsPagingSource(
 
     companion object {
         const val INDEX_ONE = 1
-        const val PAGE_SIZE = 10
     }
 }

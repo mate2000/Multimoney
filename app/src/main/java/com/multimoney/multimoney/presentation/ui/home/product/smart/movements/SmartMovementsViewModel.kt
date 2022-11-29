@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.Sm
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnGetMovement
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnIsLoadingChange
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsViewModel.UIEvent.OnNavigateBackToHome
+import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -49,6 +50,7 @@ class SmartMovementsViewModel @Inject constructor(
                     idBrand = idBrand,
                     identificationNumber = identification,
                     accountToken = accountToken.toLongOrNull() ?: 0,
+                    pageSize = PAGE_SIZE,
                     monthDate = null
                 ).cachedIn(viewModelScope)
             )

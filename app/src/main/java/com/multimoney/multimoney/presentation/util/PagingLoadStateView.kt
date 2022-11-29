@@ -26,3 +26,7 @@ fun PagingLoadStateView(
         }
     }
 }
+
+const val INDEX_ONE = 1
+const val PAGE_SIZE = 10
+const val LAST_THREE = 3

@@ -9,11 +9,8 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
-
-
 
 fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
     navigation(
@@ -36,7 +33,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         ) {
             SmartScreen(onNavigate = {
                 navController.navigate(it.route)
-            }, onPopAndNavigate = { it ->
+            }, onPopAndNavigate = {
                 navController.navigate(it.route) {
                     popUpTo(it.popTo) { inclusive = true }
                 }

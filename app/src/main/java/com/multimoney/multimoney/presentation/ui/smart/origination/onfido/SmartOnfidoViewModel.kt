@@ -54,6 +54,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class SmartOnfidoViewModel @Inject constructor(
@@ -161,7 +162,13 @@ class SmartOnfidoViewModel @Inject constructor(
                 object : OnfidoResultListener {
                     override fun userCompleted(captures: Captures) {
                         countDownTimer.resumeTimer()
-                        onCallOnfidoCheckProcess(pkUser, identification, idBrand ?: 0, idUserRequest, email)
+                        onCallOnfidoCheckProcess(
+                            pkUser,
+                            identification,
+                            idBrand ?: 0,
+                            idUserRequest,
+                            email
+                        )
                     }
 
                     override fun userExited(exitCode: ExitCode) {
@@ -205,10 +212,10 @@ class SmartOnfidoViewModel @Inject constructor(
                 user
             ).collectLatest { result ->
                 result.onSuccess {
-                    // nothing to do here
+                    Timber.d("onFido status: ${it.id}")
                 }
                 result.onFailure {
-                    // nothing to do here
+                    Timber.d("onFido status: ${it.errorCode}")
                 }
             }
             navigateToCorrectScreen()
@@ -263,7 +270,7 @@ class SmartOnfidoViewModel @Inject constructor(
                 event.injectNewToken
             )
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
-            is OnCloseClick ->  onNavigateToHome()
+            is OnCloseClick -> onNavigateToHome()
             is OnContinueClick -> continueAction()
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)

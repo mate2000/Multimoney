@@ -57,49 +57,19 @@ class AdditionalInformationViewModel @Inject constructor() : BaseViewModel(true)
         saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
         when (idBrand) {
-            Brand.ElSalvador.id -> {
-                saveCreditStepsHelper.saveStepSix(
-                    user,
-                    if (uiState.questionOneValue) {
-                        questionTopAnswer
-                    } else {
-                        questionBottomAnswer
-                    }
-                )
-            }
-            Brand.Guatemala.id -> {
-                saveCreditStepsHelper.saveStepSix(
-                    user,
-                    if (uiState.questionOneValue) {
-                        questionTopAnswer
-                    } else {
-                        questionBottomAnswer
-                    }
-                )
-            }
             Brand.CostaRica.id -> {
                 saveCreditStepsHelper.saveStepSixCR(
                     user,
-                    if (uiState.questionOneValue) {
-                        questionTopAnswer
-                    } else {
-                        questionBottomAnswer
-                    },
-                    if (uiState.questionTwoValue) {
-                        questionTopAnswer
-                    } else {
-                        questionBottomAnswer
-                    },
-                    if (uiState.questionThreeValue) {
-                        questionTopAnswer
-                    } else {
-                        questionBottomAnswer
-                    },
-                    if (uiState.questionFourValue) {
-                        questionTopAnswer
-                    } else {
-                        questionBottomAnswer
-                    }
+                    uiState.questionOneValue.toString(),
+                    uiState.questionTwoValue.toString(),
+                    uiState.questionThreeValue.toString(),
+                    uiState.questionFourValue.toString()
+                )
+            }
+            else -> {
+                saveCreditStepsHelper.saveStepSix(
+                    user,
+                    uiState.questionOneValue.toString()
                 )
             }
         }
@@ -113,14 +83,14 @@ class AdditionalInformationViewModel @Inject constructor() : BaseViewModel(true)
         val taxPayerExternal = list?.find { it?.description == SaveCreditStepsHelper.TAX_PAYER_EXTERNAL }
         uiState = if (idBrand == Brand.CostaRica.id) {
             uiState.copy(
-                questionOneValue = article15?.value == questionTopAnswer,
-                questionTwoValue = pep?.value == questionTopAnswer,
-                questionThreeValue = taxPayerUSA?.value == questionTopAnswer,
-                questionFourValue = taxPayerExternal?.value == questionTopAnswer
+                questionOneValue = article15?.value.toBoolean(),
+                questionTwoValue = pep?.value.toBoolean(),
+                questionThreeValue = taxPayerUSA?.value.toBoolean(),
+                questionFourValue = taxPayerExternal?.value.toBoolean()
             )
         } else {
             uiState.copy(
-                questionOneValue = pep?.value == questionTopAnswer
+                questionOneValue = pep?.value.toBoolean()
             )
         }
     }

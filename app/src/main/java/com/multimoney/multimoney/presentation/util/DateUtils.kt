@@ -1,9 +1,10 @@
 package com.multimoney.multimoney.presentation.util
 
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import java.util.Date
+import java.util.Locale
 
 fun getPickedDateAsString(year: Int, month: Int, day: Int, dateFormat: String): String {
     val calendar = Calendar.getInstance()
@@ -22,12 +23,23 @@ fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): S
     }
 }
 
-fun getCardDateFormat(date: String?): String {
+fun getCurrentDateString() = getPickedDateAsString(
+    Calendar.getInstance().get(Calendar.YEAR),
+    Calendar.getInstance().get(Calendar.MONTH),
+    Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+    YEAR_MONTH_DAY_PATTERN
+)
+
+fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
-        val dateFormatted = SHORT_DATE_FORMAT.parse(date)
-        dateFormatted?.let {
-            BAR_DIVIDER_FORMAT.format(dateFormatted)
-        } ?: run {
+        try {
+            val dateFormatted = SHORT_DATE_FORMAT.parse(date)
+            dateFormatted?.let {
+                format.format(dateFormatted)
+            } ?: run {
+                ""
+            }
+        } catch (e: ParseException) {
             ""
         }
     } else {
@@ -48,11 +60,11 @@ fun getDayFromString(date: String?, format: SimpleDateFormat): String {
     }
 }
 
-fun getCurrentDate(time : Date) : String{
+fun getCurrentDate(time: Date): String {
     return BAR_DIVIDER_FORMAT.format(time)
 }
 
-fun getCurrentTime(time : Date) : String{
+fun getCurrentTime(time: Date): String {
     return SHORT_TIME_FORMAT.format(time)
 }
 
@@ -64,4 +76,4 @@ val API_DATE_FORMAT = SimpleDateFormat(ISO_8601_API_FORMAT_PATTERN, Locale.getDe
 val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
-
+val BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS = SimpleDateFormat("dd | MM | yy", Locale.getDefault())

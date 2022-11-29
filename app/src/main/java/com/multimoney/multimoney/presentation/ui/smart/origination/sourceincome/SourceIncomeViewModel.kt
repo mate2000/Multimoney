@@ -3,6 +3,8 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +27,26 @@ class SourceIncomeViewModel @Inject constructor() : BaseViewModel(false) {
                 SourceIncomeOptionType.MainSourceIncomeScreenType.id
             )
         )
+    }
+
+    /**
+     * get the previous step based on the idBrand, since the total of screens in the
+     * stepper is different across CR and SV, it should be obtained depending on the country.
+     * Besides, this function will be shared across all the economical options screen.
+     * @param idBrand to get the country id and handle the back step accordingly.
+     */
+    fun getPreviousStep(idBrand: Int) : Int {
+        return if (idBrand == Brand.ElSalvador.id) SmartSteps.Two.id else SmartSteps.One.id
+    }
+
+    /**
+     * get the next step based on the idBrand, since the total of screens in the
+     * stepper is different across CR and SV, it should be obtained depending on the country.
+     * Besides, this function will be shared across all the economical options screen.
+     * @param idBrand to get the country id and handle the next step accordingly.
+     */
+    fun getNextStep(idBrand: Int): Int {
+        return if (idBrand == Brand.ElSalvador.id) SmartSteps.Four.id else SmartSteps.Three.id
     }
 
     data class UIState(

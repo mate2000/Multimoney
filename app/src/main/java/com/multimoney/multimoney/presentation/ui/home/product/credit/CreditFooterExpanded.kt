@@ -15,20 +15,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditCtaButtons
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditDetail
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditVisa
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.ScheduleAutomaticPayment
 
 /**
  * Composable function to show the option to active accountsmart product
  */
 @Composable
-fun CreditFooterExpanded(viewModel: ProductViewModel) {
+fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewModel) {
     ConstraintLayout(
         Modifier.fillMaxSize()
     ) {
@@ -45,6 +49,10 @@ fun CreditFooterExpanded(viewModel: ProductViewModel) {
                     height = Dimension.fillToConstraints
                 }
         ) {
+            if (viewModel.uiState.idBrand.toInt() == Brand.CostaRica.id) {
+                ScheduleAutomaticPayment(viewModel, sharedViewModel)
+                Spacer(modifier = Modifier.height(24.dp))
+            }
             Divider(color = MultimoneyTheme.colors.dividerWhite30)
             Spacer(modifier = Modifier.height(24.dp))
             CreditVisa(
@@ -86,9 +94,7 @@ fun CreditFooterExpanded(viewModel: ProductViewModel) {
                     bottom.linkTo(parent.bottom)
                 },
             onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
-            onClickDisbursement = {
-                // todo navigate to disbursement process
-            },
+            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
             canDisburse = viewModel.uiState.canExpandCredit
         )
     }

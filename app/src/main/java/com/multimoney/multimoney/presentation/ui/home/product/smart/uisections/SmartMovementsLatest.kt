@@ -26,7 +26,7 @@ fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
         account.accountToken.toString() == accountSelected?.tokenNumber
     }
 
-    if (moves != null && moves.result.isNotEmpty()) {
+    moves?.result?.isNotEmpty()?.let {
         Column(
             Modifier.fillMaxWidth().padding(16.dp)
         ) {
@@ -52,7 +52,7 @@ fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
                 SmartMovementDisplayer(it)
             }
         }
-    } else {
+    } ?: run {
         // todo: Show no movements ui
     }
 }

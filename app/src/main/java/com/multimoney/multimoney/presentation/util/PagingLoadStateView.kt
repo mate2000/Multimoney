@@ -4,6 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 
+/**
+ * PagingLoadStateView is used to handle the states of a pagination source (When using Paging 3)
+ *
+ * Parameters:
+ * @param loadState: Takes the LoadState of the collected lazy paging items we want to handle
+ * @param onLoad: Function to handle loading state. Returning boolean indicates (true = Loading, false = Not Loading)
+ * @param onError: Function to handle error while loading items. Returns string with the error message
+ */
+
 @Composable
 fun PagingLoadStateView(
     loadState: CombinedLoadStates?,

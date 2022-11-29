@@ -55,8 +55,8 @@ class SmartMovementsPagingSource(
             if (searchResult.isNotEmpty()) {
                 LoadResult.Page(
                     data = searchResult,
-                    prevKey = if (currentPage == 1) null else currentPage - 1,
-                    nextKey = if (endOfPageReached) null else currentPage + 1
+                    prevKey = if (currentPage == INDEX_ONE) null else currentPage.minus(INDEX_ONE),
+                    nextKey = if (endOfPageReached) null else currentPage.plus(INDEX_ONE)
                 )
             } else {
                 LoadResult.Page(

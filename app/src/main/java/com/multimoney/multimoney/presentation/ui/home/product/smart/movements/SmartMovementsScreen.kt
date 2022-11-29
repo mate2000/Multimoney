@@ -107,7 +107,7 @@ fun SmartMovementsScreen(
 fun MovementsList(smartMoves: LazyPagingItems<SmartMovement>) {
     LazyColumn {
         items(items = smartMoves) {
-            if (it != null) {
+            it?.let {
                 SmartMovementDisplayer(it)
             }
         }

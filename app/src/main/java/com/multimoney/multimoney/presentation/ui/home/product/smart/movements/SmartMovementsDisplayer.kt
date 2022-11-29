@@ -64,14 +64,15 @@ fun SmartMovementDisplayer(
         ) {
             Icon(
                 painter = painterResource(
-                    if (move.amount > 0) { R.drawable.ic_plus } else { R.drawable.ic_minus }
+                    if (move.amount > 0) R.drawable.ic_plus else R.drawable.ic_minus
                 ),
                 contentDescription = "",
                 tint = Color.Unspecified,
                 modifier = Modifier.padding(end = 4.dp)
             )
             Text(
-                text = stringResource(currencySymbol) + move.amount.toString().removePrefix(MINUS_SIGN),
+                text = stringResource(currencySymbol) + move.amount.toString()
+                    .removePrefix(MINUS_SIGN),
                 style = Typography.subtitle1.copy(
                     textAlign = TextAlign.End,
                     color = MultimoneyTheme.colors.labelText,
@@ -86,5 +87,6 @@ fun SmartMovementDisplayer(
         modifier = Modifier.padding(top = 8.dp)
     )
 }
+
 const val MINUS_SIGN = "-"
 const val API_COLONES = "COLONES"

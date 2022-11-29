@@ -114,8 +114,8 @@ class HomeViewModel @Inject constructor(
                 pageSize = LAST_THREE,
                 monthDate = null
             ).collectLatest { result ->
-                result.onSuccess { movements ->
-                    if (movements != null) {
+                result.onSuccess {
+                    it?.let { movements ->
                         movements.accountToken = tokenNumber
                         uiState = uiState.copy(
                             smartMovementsList = uiState.smartMovementsList + movements,
@@ -154,11 +154,12 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { balance ->
                 balance?.let {
-                    if (uiState.isLoading)
+                    if (uiState.isLoading) {
                         uiState = uiState.copy(
                             isLoading = false,
                             quickActions = it.quickActions
                         )
+                    }
                 }
             }
             result.onFailure {
@@ -203,7 +204,7 @@ class HomeViewModel @Inject constructor(
                         enabled = true,
                         index = defaultIndex,
                         resourceIcon = R.drawable.ic_my_credit,
-                        resourceText = R.string.home_my_products_label_credit,
+                        resourceText = R.string.home_my_products_label_credit
                     )
                 )
                 // If idBrand is different from Guatemala enable Smart
@@ -218,7 +219,7 @@ class HomeViewModel @Inject constructor(
                                     enabled = true,
                                     index = productPageList.lastIndex + 1,
                                     resourceText = run {
-                                        when(account?.currencyCode) {
+                                        when (account?.currencyCode) {
                                             CurrencyType.Dollar.value -> R.string.home_my_products_label_smart
                                             CurrencyType.Colon.value -> R.string.home_my_products_label_smart_colones
                                             //  adding quetzal label here if necessary
@@ -226,7 +227,7 @@ class HomeViewModel @Inject constructor(
                                         }
                                     },
                                     resourceIcon = run {
-                                        when(account?.currencyCode) {
+                                        when (account?.currencyCode) {
                                             CurrencyType.Dollar.value -> R.drawable.ic_dollars_strong
                                             CurrencyType.Colon.value -> R.drawable.ic_colones_strong
                                             // adding quetzal icon here if necessary
@@ -243,9 +244,18 @@ class HomeViewModel @Inject constructor(
                                 enabled = true,
                                 index = productPageList.lastIndex + 1,
                                 resourceIcon = R.drawable.ic_union,
-                                resourceText = R.string.home_my_products_label_crypto,
+                                resourceText = R.string.home_my_products_label_crypto
                             )
                         )
+
+                        balance?.balanceAccountSmart?.forEach {
+                            onGetSmartMovements(
+                                user,
+                                idBrand,
+                                identification,
+                                it?.tokenNumber?.toLongOrNull() ?: 0
+                            )
+                        }
                     } else {
                         // If user doesn't have smart we have to add one empty card to activate the product
                         productPageList.add(
@@ -263,7 +273,7 @@ class HomeViewModel @Inject constructor(
                                 enabled = true,
                                 index = productPageList.lastIndex + 1,
                                 resourceIcon = R.drawable.ic_union,
-                                resourceText = R.string.home_my_products_label_crypto,
+                                resourceText = R.string.home_my_products_label_crypto
                             )
                         )
                     }
@@ -276,17 +286,6 @@ class HomeViewModel @Inject constructor(
                         balance = balance,
                         productPageList = productPageList
                     )
-
-                    balance.balanceAccountSmart?.forEach {
-                        if (it != null) {
-                            onGetSmartMovements(
-                                user,
-                                idBrand,
-                                identification,
-                                it.tokenNumber?.toLongOrNull() ?: 0
-                            )
-                        }
-                    }
                 }
             }
             result.onFailure {

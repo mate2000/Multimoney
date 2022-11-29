@@ -70,7 +70,7 @@ fun getCurrentTime(time: Date): String {
 
 fun parseApiDateToCardDate(date: String?): String {
     return if (date.isNullOrEmpty().not()) {
-        val dateFormatted = API_DATE_FORMAT.parse(date)
+        val dateFormatted = date?.let { API_DATE_FORMAT.parse(it) }
         dateFormatted?.let {
             BAR_DIVIDER_FORMAT.format(dateFormatted)
         } ?: run {

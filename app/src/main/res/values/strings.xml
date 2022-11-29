@@ -242,6 +242,15 @@
     <string name="home_crypto_card_with_balance_zero_text" translatable="false">0.00</string>
     <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
     <string name="home_pay_button_text" translatable="false">Abonar</string>
+    <string name="home_my_products_title" translatable="false">Mi billetera Multimoney</string>
+    <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
+    <string name="home_my_products_title_credit" translatable="false">Credito</string>
+    <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
+    <string name="home_my_products_title_smart" translatable="false">Smart</string>
+    <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
+    <string name="home_my_products_label_smart_colones" translatable="false">Mi Cuenta Smart | ₡</string>
+    <string name="home_my_products_title_crypto" translatable="false">Cripto</string>
+    <string name="home_my_products_label_crypto" translatable="false">Cripto</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>

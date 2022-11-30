@@ -46,7 +46,7 @@ fun isPhoneNumberValid(
 fun validId(sizeRequired: Int, errorMessage: Int, personalDocumentLength: Int) =
     if (personalDocumentLength >= sizeRequired) {
         Pair(false, R.string.error_empty)
-    }else {
+    } else {
         Pair(true, errorMessage)
     }
 
@@ -153,4 +153,5 @@ const val INVALID_CHARACTERS_CHUNKS = 4
 const val CHARACTER_NEED_TO_VALIDATE = 3
 const val EIGHT_MINIMUM_CHARACTERS = 8
 const val DESCRIPTION_MAX_LENGTH = 150
+const val ADDRESS_MAX_LENGTH = 150
 const val MIN_INCOME = 0

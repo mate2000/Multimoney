@@ -405,6 +405,31 @@ class CreditRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun mutationDeactivateClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long
+    ): Flow<MultimoneyResult<AutomaticDebit?>> = fetchData(
+        apolloCall = graphqlApi.mutationDeactivatedClientAutomaticDebit(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            origin = origin,
+            idAccount = idAccount
+        ),
+        apolloCallMapper = { data ->
+            if (data.deactivatedClientAutomaticDebit.status == null || data.deactivatedClientAutomaticDebit.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
     override suspend fun queryGetClientAutomaticDebit(
         user: String,
         idBrand: Int,

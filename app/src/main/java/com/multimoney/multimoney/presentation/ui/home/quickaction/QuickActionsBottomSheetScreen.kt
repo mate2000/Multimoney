@@ -51,7 +51,6 @@ fun QuickActionBottomSheetScreen(
     modalBottomSheetState: ModalBottomSheetState,
     viewModel: QuickActionsBottomSheetViewModel = hiltViewModel()
 ) {
-
     CustomModalBottomSheet(
         title = R.string.quick_action_bottom_sheet_title,
         closeIcon = R.drawable.ic_close_bottom_sheet,
@@ -85,10 +84,9 @@ fun QuickActionBottomSheetScreen(
                         shareViewModel = shareViewModel
                     )
                 }
-                when (viewModel.quickActionUiState.idBrand) {
+                when (shareViewModel.uiState.idBrand) {
                     Brand.CostaRica.id.toString(), Brand.ElSalvador.id.toString() -> {
-
-                        //smart section
+                        // smart section
                         smartActions.let {
                             Spacer(modifier = Modifier.height(16.dp))
                             Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
@@ -107,7 +105,7 @@ fun QuickActionBottomSheetScreen(
                             )
                         }
 
-                        //crypto section
+                        // crypto section
                         cryptoActions.let {
                             Spacer(modifier = Modifier.height(16.dp))
                             Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
@@ -149,10 +147,11 @@ fun QuickActionsRow(
                 QuickActionItem(
                     viewModel.getSmartQuickAction(
                         label = quickActions[index].name,
-                        iconId = quickActions[index].iconId,
-                    ), backgroundColor = quickActionsBackgroundColor
+                        iconId = quickActions[index].iconId
+                    ),
+                    backgroundColor = quickActionsBackgroundColor
                 ) {
-                    Log.e("Clicking","Item")
+                    Log.e("Clicking", "Item")
                     // send to savings smart screen
 
                     shareViewModel.onUIEvent(HomeViewModel.UIEvent.OnOpenQuickActionFlow(quickActions[index].flow))
@@ -164,22 +163,25 @@ fun QuickActionsRow(
 
 @Composable
 fun QuickActionItem(
-    quickActionDummy: QuickActionDummy, backgroundColor: Color, action: () -> Unit = {}
+    quickActionDummy: QuickActionDummy,
+    backgroundColor: Color,
+    action: () -> Unit = {}
 ) {
-
     Column(
         modifier = Modifier
             .width(88.dp)
             .padding(end = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(contentAlignment = Alignment.Center,
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .wrapContentSize()
                 .padding(8.dp)
                 .clip(CircleShape)
                 .background(shape = CircleShape, color = backgroundColor)
-                .clickable { action() }) {
+                .clickable { action() }
+        ) {
             Image(
                 modifier = Modifier
                     .clip(CircleShape)
@@ -194,7 +196,7 @@ fun QuickActionItem(
             modifier = Modifier.padding(top = 16.dp),
             style = Typography.caption,
             color = MultimoneyTheme.colors.quickActionLabelColor,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
     }
 }

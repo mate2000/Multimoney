@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 
-import OwnBusinessOnPersonalBasisScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
@@ -9,6 +8,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.independentprofessional.IndProfessionalScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.SmartOwnBusinessSvScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinessinpartnership.OwnBusinessInPartnershipScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryScreen
@@ -58,7 +58,7 @@ fun ShowSelectedSourceIncomeOption(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
-        SourceIncomeOptionType.OwnBusinessOnPersonalBasis.id -> OwnBusinessOnPersonalBasisScreen(
+        SourceIncomeOptionType.OwnBusinessInPartnership.id -> OwnBusinessInPartnershipScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
@@ -66,7 +66,7 @@ fun ShowSelectedSourceIncomeOption(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )
-        SourceIncomeOptionType.OwnBusinessInPartnership.id -> OwnBusinessTitleScreen(
+        SourceIncomeOptionType.OwnBusinessOnPersonalBasis.id -> OwnBusinessTitleScreen(
             sharedViewModel = sharedViewModel,
             sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
         )

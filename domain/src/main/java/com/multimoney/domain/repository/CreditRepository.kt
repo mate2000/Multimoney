@@ -1,6 +1,25 @@
 package com.multimoney.domain.repository
 
-import com.multimoney.domain.model.credit.*
+import com.multimoney.domain.model.credit.AutomaticDebit
+import com.multimoney.domain.model.credit.BanksAndRegularExpression
+import com.multimoney.domain.model.credit.CardVisaDirect
+import com.multimoney.domain.model.credit.ClientBankAccount
+import com.multimoney.domain.model.credit.CreditApplication
+import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.credit.CreditContractEvent
+import com.multimoney.domain.model.credit.CreditExtensionAmount
+import com.multimoney.domain.model.credit.CreditExtensionDetail
+import com.multimoney.domain.model.credit.CreditExtensionMessage
+import com.multimoney.domain.model.credit.CreditInfoQuestion
+import com.multimoney.domain.model.credit.CreditOffer
+import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.credit.ExchangeRate
+import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessPaymentList
+import com.multimoney.domain.model.credit.SaveCreditFlowStep
+import com.multimoney.domain.model.credit.SaveCreditOperation
+import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -190,6 +209,15 @@ interface CreditRepository {
         origin: String,
         idAccount: Long,
         idCurrency: Int
+    ): Flow<MultimoneyResult<AutomaticDebit?>>
+
+    suspend fun mutationDeactivateClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long
     ): Flow<MultimoneyResult<AutomaticDebit?>>
 
     suspend fun queryGetClientAutomaticDebit(

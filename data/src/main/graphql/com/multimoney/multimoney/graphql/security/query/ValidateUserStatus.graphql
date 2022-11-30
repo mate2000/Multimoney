@@ -69,6 +69,12 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
         }
         infoCrypto {
             status
+            statusFirm
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
     }
 }

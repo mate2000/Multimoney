@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +41,7 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCallQueryGetInfoDebit
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.InfoItem
@@ -59,11 +61,12 @@ fun ProcessingTransactionScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: ProcessingTransactionViewModel = hiltViewModel()
 ) {
-    val view = LocalView.current
-    var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
+//    val view = LocalView.current
+//    var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.onUIEvent(OnCallQueryGetInfoDebit)
     }
 
     Column(
@@ -76,7 +79,7 @@ fun ProcessingTransactionScreen(
         })
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxHeight()
                 .verticalScroll(rememberScrollState())
         ) {
             ConstraintLayout(
@@ -105,9 +108,9 @@ fun ProcessingTransactionScreen(
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         }
-                        .onGloballyPositioned {
-                            capturingViewBounds = it.boundsInRoot()
-                        }
+//                        .onGloballyPositioned {
+//                            capturingViewBounds = it.boundsInRoot()
+//                        }
                 ) {
                     Column(
                         modifier = Modifier
@@ -123,14 +126,14 @@ fun ProcessingTransactionScreen(
                         )
                         CustomButton(
                             onClick = {
-                                capturingViewBounds?.let { bounds ->
-                                    viewModel.onUIEvent(
-                                        OnSharedVoucherImage(
-                                            view,
-                                            bounds
-                                        )
-                                    )
-                                }
+//                                capturingViewBounds?.let { bounds ->
+//                                    viewModel.onUIEvent(
+//                                        OnSharedVoucherImage(
+//                                            view,
+//                                            bounds
+//                                        )
+//                                    )
+//                                }
                             },
                             text = stringResource(string.payment_voucher_shared_button),
                             modifier = Modifier
@@ -238,7 +241,7 @@ fun ProcessingTransactionScreen(
         )
     }
 
-    BackHandler {
-        viewModel.onUIEvent(OnCloseClick)
-    }
+//    BackHandler {
+//        viewModel.onUIEvent(OnCloseClick)
+//    }
 }

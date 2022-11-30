@@ -93,9 +93,6 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SubscriptionScreen.route) {
-            SubscriptionScreen()
-        }
         composable(
             route = Screen.ProcessingTransactionScreen.route,
             arguments = listOf(

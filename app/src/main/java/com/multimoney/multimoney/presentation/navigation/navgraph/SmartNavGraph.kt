@@ -29,6 +29,9 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 navArgument(PK_USER) {
                     type = NavType.StringType
                 },
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
+                }
             )
         ) {
             SmartScreen(onNavigate = {

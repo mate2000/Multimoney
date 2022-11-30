@@ -13,6 +13,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.util.error.HttpError
@@ -31,9 +32,13 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallSaveAutomatedSmartAccount
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnLoadingValueChange
@@ -48,9 +53,9 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateString
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -58,6 +63,7 @@ class SmartViewModel @Inject constructor(
     private val queryStepByStepUseCase: QueryStepByStepUseCase,
     private val mutationGlobalRequestUseCase: MutationGlobalRequestUseCase,
     private val dataStorePreferences: DataStorePreferences,
+    private val mutationSaveSmartAccount: MutationSaveAutomatedSmartAccountUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -74,7 +80,6 @@ class SmartViewModel @Inject constructor(
     var linkEvicertia: String = URL_EMPTY
     var statusOnfido: String = ""
 
-
     // Stateless
     var nextAction: () -> Unit = {}
     private var overridePreviousAction: (() -> Unit)? = null
@@ -82,6 +87,7 @@ class SmartViewModel @Inject constructor(
     var accountSmartData: AccountSmartData? = null
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
+    private var idRequest: Int = 0
     var isOnFidoVerified = true
 
     // UIState
@@ -111,7 +117,7 @@ class SmartViewModel @Inject constructor(
         ).collectLatest { result ->
             dataStorePreferences.getIdBrand().first()
             result.onSuccess {
-                onUIEvent(UIEvent.OnLoadingValueChange(false))
+                onUIEvent(OnLoadingValueChange(false))
             }
             result.onFailure {
                 onUIEvent(
@@ -130,7 +136,7 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun callMutationGlobalRequestUseCase() = executeUseCase(
+    private fun callMutationGlobalRequestUseCase(isLastStep: Boolean = false) = executeUseCase(
         action = {
             mutationGlobalRequestUseCase.invoke(
                 pkUser = accountSmartData?.pkUser?.toInt() ?: 0,
@@ -178,6 +184,30 @@ class SmartViewModel @Inject constructor(
                 idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
+                    idRequest = it?.idGlobalRequest ?: 0
+
+                    if (isLastStep) {
+                        executeUseCase {
+                            mutationSaveSmartAccount.invoke(
+                                user = user,
+                                idBrand = idBrandAsInt,
+                                identificationNumber = identification,
+                                idRequest = idRequest.toLong()
+                            ).collectLatest { savedResult ->
+                                savedResult.onFailure { error ->
+                                    onUIEvent(OnLoadingValueChange(false))
+                                    uiState = uiState.copy(
+                                        isAlertResultVisible = true,
+                                        alertResultDescription = error.getError()
+                                    )
+                                }
+                                savedResult.onLoading {
+                                    onUIEvent(OnLoadingValueChange(true))
+                                }
+                            }
+                        }
+                    }
+
                     onUIEvent(OnLoadingValueChange(false))
                     onUIEvent(OnNextStep)
                 }
@@ -201,6 +231,15 @@ class SmartViewModel @Inject constructor(
             )
         }
     )
+
+    /**
+     * After last step of origination (Before OnFido/Evicertia)
+     * Saves account smart
+     */
+    private fun onCallMutationSaveSmartAccount(accountData: AccountSmartData?) {
+        accountSmartData = accountData
+        callMutationGlobalRequestUseCase(true)
+    }
 
     /**
      * Each country has different smart origination flow, so the total
@@ -292,14 +331,15 @@ class SmartViewModel @Inject constructor(
                 isCloseVisible = nextStep >= SmartSteps.One.id
             )
         } else {
-           navigateToOnfido()
+            navigateToOnfido()
         }
     }
 
     private fun navigateToOnfido() {
-       popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/${URL_EMPTY}",
-            Screen.SmartScreen.route)
+        popAndNavigateTo(
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/$URL_EMPTY",
+            Screen.SmartScreen.route
+        )
     }
 
     private fun onSetNavigation(
@@ -368,7 +408,7 @@ class SmartViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnClickBottomSheet -> onClickBottomSheet()
+            is OnClickBottomSheet -> onClickBottomSheet()
             is OnSetNavigation -> onSetNavigation(
                 event.nextAction,
                 event.overridePreviousAction,
@@ -380,8 +420,8 @@ class SmartViewModel @Inject constructor(
             is OnCloseClick -> onCloseClick(event.focusManager)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.enable)
-            is UIEvent.OnCloseAlertClick -> onCloseAlertClick()
-            is UIEvent.OnCtaAlertClick -> onCtaAlertClick(event.focusManager)
+            is OnCloseAlertClick -> onCloseAlertClick()
+            is OnCtaAlertClick -> onCtaAlertClick(event.focusManager)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
             is OnFailureWithDialog ->
@@ -394,6 +434,7 @@ class SmartViewModel @Inject constructor(
                     uiState.copy(isContinueVisible = event.visible, buttonTextRes = event.textResId)
             is UIEvent.OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
+            is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
         }
     }
 
@@ -428,8 +469,17 @@ class SmartViewModel @Inject constructor(
 
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
-        data class OnUseDataValueChange(val accountSmartData: AccountSmartData?, val idBrand: Int? = null) : UIEvent()
+
+        data class OnUseDataValueChange(
+            val accountSmartData: AccountSmartData?,
+            val idBrand: Int? = null
+        ) : UIEvent()
+
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
+
+        data class OnCallSaveAutomatedSmartAccount(val accountSmartData: AccountSmartData?) :
+            UIEvent()
+
         object OnClickBottomSheet : UIEvent()
     }
 

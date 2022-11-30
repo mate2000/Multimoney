@@ -12,6 +12,7 @@ class MutationSaveClientBankAccountUseCaseImpl @Inject constructor (val creditRe
         idBank: Int,
         accountNumber: String,
         idCurrency: Int,
+        idAccountType: Int,
         idLoanClient: Long,
         user: String,
         idBrand: Int
@@ -21,6 +22,7 @@ class MutationSaveClientBankAccountUseCaseImpl @Inject constructor (val creditRe
             idBank = idBank,
             accountNumber = accountNumber,
             idCurrency = idCurrency,
+            idAccountType = idAccountType,
             idLoanClient = idLoanClient,
             user = user,
             idBrand = idBrand

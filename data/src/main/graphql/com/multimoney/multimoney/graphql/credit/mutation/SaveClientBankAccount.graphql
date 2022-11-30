@@ -3,6 +3,7 @@ mutation SaveClientBankAccount(
     $id_Banco: Int!,
     $numeroCuenta: String!,
     $id_Moneda: Int!,
+    $id_Tipo_Cuenta: Int!,
     $idLoanClient: Long!,
     $user: String!,
     $idBrand: Int!
@@ -13,6 +14,7 @@ mutation SaveClientBankAccount(
       id_Banco: $id_Banco
       numeroCuenta: $numeroCuenta
       id_Moneda: $id_Moneda
+      id_Tipo_Cuenta: $id_Tipo_Cuenta
       idLoanClient: $idLoanClient
       user: $user
       idBrand: $idBrand

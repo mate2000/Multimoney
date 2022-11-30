@@ -30,7 +30,6 @@ import javax.inject.Inject
 @HiltViewModel
 class DisbursementAddAccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val saveCreditStepsHelper: SaveCreditStepsHelper,
     private val queryBanksAndRegularExpressionUseCase: QueryBanksAndRegularExpressionUseCase,
     private val mutationSaveClientBankAccountUseCase: MutationSaveClientBankAccountUseCase
 ) : BaseViewModel(true) {
@@ -79,7 +78,6 @@ class DisbursementAddAccountViewModel @Inject constructor(
             user = email,
             idBrand = idBrand ?: 0,
             idUserRequest = idUserRequest ?: 0,
-            list = saveCreditStepsHelper.inputTextInfoList,
             onLoadingValueChange = { isLoading ->
                 onUIEvent(UIEvent.OnLoadingValueChange(isLoading))
             },
@@ -99,7 +97,6 @@ class DisbursementAddAccountViewModel @Inject constructor(
         user: String,
         idBrand: Int,
         idUserRequest: Int,
-        list: List<CreditCatalog?>?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
@@ -112,9 +109,6 @@ class DisbursementAddAccountViewModel @Inject constructor(
                         filter?.description != MIDDLE_DASH
                     }
                     uiState = uiState.copy(bankList = bankList)
-                    if (!bank?.pkCatalog.isNullOrEmpty()) {
-                        loadStepsInfo(list)
-                    }
                     onLoadingValueChange(false)
                 }.onLoading {
                     onLoadingValueChange(true)
@@ -182,6 +176,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
             idBank = uiState.bankSelected?.pkCatalog?.toInt() ?: 0,
             accountNumber = uiState.accountNumber,
             idCurrency = idCurrency ?: 0,
+            idAccountType = uiState.accountTypeSelected?.idTypeAccount ?: 0,
             idLoanClient = idLoanClient.toLong(),
             user = email,
             idBrand = idBrand ?: 0
@@ -238,22 +233,6 @@ class DisbursementAddAccountViewModel @Inject constructor(
             is UIEvent.OnBackClick -> navigateBack(false)
             is UIEvent.OnContinueClick -> onContinueClick(event.focusManager)
         }
-    }
-
-    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
-        val bankSelected = bankList?.find { it?.pkCatalog == bank?.pkCatalog }
-        val accountType = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_TYPE }
-        val accountTypeListFiltered =
-            accountTypeList?.filter { it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt() }
-        val accountNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
-        uiState = uiState.copy(
-            bankSelected = bankSelected,
-            accountTypeListFiltered = accountTypeListFiltered,
-            accountTypeSelectedString = accountType?.value ?: "",
-            accountTypeSelected = accountTypeListFiltered?.findLast { it?.description == accountType?.value },
-            accountNumber = accountNumber?.value ?: ""
-        )
-        validateForm()
     }
 
     private fun navigateBack(isRestart: Boolean) =

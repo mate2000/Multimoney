@@ -903,6 +903,7 @@ class GraphqlApi @Inject constructor(
         idBank: Int,
         accountNumber: String,
         idCurrency: Int,
+        idAccountType: Int,
         idLoanClient: Long,
         user: String,
         idBrand: Int
@@ -913,6 +914,7 @@ class GraphqlApi @Inject constructor(
                 id_Banco = idBank,
                 numeroCuenta = accountNumber,
                 id_Moneda = idCurrency,
+                id_Tipo_Cuenta = idAccountType,
                 idLoanClient = idLoanClient,
                 user = user,
                 idBrand = idBrand

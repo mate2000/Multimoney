@@ -1791,6 +1791,8 @@ input ClientBankAccountDtoInput {
 
   id_Moneda: Int
 
+  id_Tipo_Cuenta: Int
+
   id_Moneda_Destino: Int
 
   idBrand: Int

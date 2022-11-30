@@ -336,15 +336,12 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToDisbursement() =
         navigateTo(
-            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/${uiState.idBrand}/${pkUser}/${email}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/${uiState.userStatus?.infoCredit?.idClient ?: 0}/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}/${CurrencyType.Quetzal.id}"
-        )
-        /*navigateTo(
             route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
             encodeData(
                 balanceCredit?.getFirstCredit()?.summary
             )
             }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
-        )*/
+        )
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(

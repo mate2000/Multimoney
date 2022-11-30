@@ -55,14 +55,6 @@ fun AnswerQuestionsScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    var title = R.string.empty
-    if (viewModel.idBrand.isNotEmpty()) {
-        title = when (viewModel.idBrand.toInt()) {
-            Brand.Guatemala.id -> R.string.disbursement_answer_questions_title_gt
-            else -> R.string.disbursement_answer_questions_title_sv
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +70,7 @@ fun AnswerQuestionsScreen(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Title(title = R.string.smart_account_document_title)
+                Title(title = viewModel.uiState.titleResource)
                 BirthDay(
                     context = context,
                     focusManager = focusManager,
@@ -100,10 +92,10 @@ fun AnswerQuestionsScreen(
                 enable = viewModel.uiState.isContinueEnabled,
                 onClick = {  }
             )
-            LoadingIndicator(viewModel.uiState.isLoading)
-            ErrorDialog(viewModel.uiState.openDialog)
         }
     }
+    LoadingIndicator(viewModel.uiState.isLoading)
+    ErrorDialog(viewModel.uiState.openDialog)
 
 }
 

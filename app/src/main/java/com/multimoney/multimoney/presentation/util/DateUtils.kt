@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.Companion
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
@@ -56,9 +54,9 @@ fun getDayFromString(date: String?, format: SimpleDateFormat): String {
 fun onBirthDateAgeValidation(pickedDate: LocalDate): Pair<Boolean, Int> {
     val actualDate = LocalDate.now()
     val periodBetweenDates = Period.between(pickedDate, actualDate).years
-    return if (periodBetweenDates <= SmartDocumentViewModel.EIGHTEEN_YEARS_VALUE) {
+    return if (periodBetweenDates <= EIGHTEEN_YEARS_VALUE) {
         Pair(true, R.string.smart_account_document_birthdate_age_error)
-    } else if (periodBetweenDates > SmartDocumentViewModel.EIGHTEEN_YEARS_VALUE && periodBetweenDates > SmartDocumentViewModel.ONE_HUNDRED_TWENTY_YEARS_VALUE
+    } else if (periodBetweenDates > EIGHTEEN_YEARS_VALUE && periodBetweenDates > ONE_HUNDRED_TWENTY_YEARS_VALUE
     ) {
         Pair(true, R.string.smart_account_document_birthdate_age_limit_error)
     } else {
@@ -82,4 +80,8 @@ val API_DATE_FORMAT = SimpleDateFormat(ISO_8601_API_FORMAT_PATTERN, Locale.getDe
 val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
-
+const val BIRTH_DATE_MIN_YEAR = 1902
+const val BIRTH_DATE_MIN_MONTH = 0
+const val BIRTH_DATE_MIN_DAY = 1
+const val EIGHTEEN_YEARS_VALUE = 18
+const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120

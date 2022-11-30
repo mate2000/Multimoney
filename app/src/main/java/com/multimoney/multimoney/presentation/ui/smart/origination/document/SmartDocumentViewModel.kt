@@ -293,13 +293,4 @@ class SmartDocumentViewModel @Inject constructor(
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
     }
-
-    companion object {
-        const val DATE_FORMAT = "yyyy-MM-dd"
-        const val BIRTH_DATE_MIN_YEAR = 1902
-        const val BIRTH_DATE_MIN_MONTH = 0
-        const val BIRTH_DATE_MIN_DAY = 1
-        const val EIGHTEEN_YEARS_VALUE = 18
-        const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
-    }
 }

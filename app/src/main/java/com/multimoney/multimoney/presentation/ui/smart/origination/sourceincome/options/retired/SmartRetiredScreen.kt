@@ -128,7 +128,9 @@ fun SmartRetiredScreen(
             labelText = stringResource(id = R.string.smart_account_retired_institution_label),
             modifier = Modifier
                 .padding(top = 44.dp),
-            placeHolder = stringResource(id = R.string.smart_account_retired_institution_placeholder)
+            placeHolder = stringResource(id = R.string.smart_account_retired_institution_placeholder),
+            isError = viewModel.uiState.institutionError.first,
+            errorMessage = stringResource(viewModel.uiState.institutionError.second)
         )
 
         CustomOutlinedTextField(

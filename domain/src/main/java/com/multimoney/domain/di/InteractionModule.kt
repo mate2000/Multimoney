@@ -24,6 +24,8 @@ import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
+import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
@@ -330,6 +332,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationActivateClientAutomaticDebitUseCase(creditRepository: CreditRepository): MutationActivateClientAutomaticDebitUseCase =
         MutationActivateClientAutomaticDebitUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationDeactivateClientAutomaticDebitUseCase(creditRepository: CreditRepository): MutationDeactivateClientAutomaticDebitUseCase =
+        MutationDeactivateClientAutomaticDebitUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton

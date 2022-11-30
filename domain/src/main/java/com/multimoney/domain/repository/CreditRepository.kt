@@ -211,6 +211,15 @@ interface CreditRepository {
         idCurrency: Int
     ): Flow<MultimoneyResult<AutomaticDebit?>>
 
+    suspend fun mutationDeactivateClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long
+    ): Flow<MultimoneyResult<AutomaticDebit?>>
+
     suspend fun queryGetClientAutomaticDebit(
         user: String,
         idBrand: Int,

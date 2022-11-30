@@ -12,9 +12,11 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnNavigateBack
@@ -33,12 +35,16 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
 
     // Stateless
     private var idBrand: Int = 0
+    private var identification: String = ""
+    private var user: String = ""
     private var creditNumber: String? = null
     private var transferAccount: TransferAccount? = null
     private var paymentAmount: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        user = savedStateHandle[USER] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER]
         transferAccount = savedStateHandle[TRANSFER_ACCOUNT]
         paymentAmount = savedStateHandle[PAYMENT_AMOUNT]
@@ -60,7 +66,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
             PaymentMethodType.TransferBank.value ->
                 "${Screen.PaymentOptionsTransferScreen.baseRoute}/$idBrand/$creditNumber/${encodeData(transferAccount)}"
             PaymentMethodType.VisaDirect.value -> {
-                "${Screen.PaymentPointsScreen.baseRoute}/$idBrand"
+                "${Screen.PaymentCardsListScreen.baseRoute}/$idBrand/$identification/$user"
             }
             else -> {
                 "${Screen.PaymentPointsScreen.baseRoute}/$idBrand/$creditNumber/$paymentAmount"

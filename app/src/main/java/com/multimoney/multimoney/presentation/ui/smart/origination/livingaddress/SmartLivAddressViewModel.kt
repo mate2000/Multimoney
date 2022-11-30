@@ -17,6 +17,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnNotApplicable
+import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -173,13 +174,17 @@ class SmartLivAddressViewModel @Inject constructor(
     }
 
     private fun onAddressValueChange(address: String) {
-        uiState = if (address.length < ADDRESS_MAX_LENGHT) {
-            uiState.copy(address = address)
+        uiState = if (address.length <= ADDRESS_MAX_LENGTH) {
+            uiState.copy(
+                address = address,
+                addressError = Pair(false, R.string.empty)
+            )
         } else {
             uiState.copy(
+                address = address,
                 addressError = Pair(
                     true,
-                    R.string.smart_own_business_description_max_char_error
+                    R.string.you_have_exceeded_the_max_characters_error
                 )
             )
         }
@@ -195,7 +200,8 @@ class SmartLivAddressViewModel @Inject constructor(
     fun isFormValid() = uiState.divisionOneSelected != null &&
         uiState.divisionTwoSelected != null &&
         uiState.divisionThreeSelected != null &&
-        uiState.address.isNotEmpty()
+        uiState.address.isNotEmpty() &&
+        uiState.addressError.first.not()
 
     sealed class UIEvent {
         data class OnGetUserData(
@@ -242,11 +248,7 @@ class SmartLivAddressViewModel @Inject constructor(
         val address: String = "",
         val addressError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.credit_company_address_accurate_address_error
+            R.string.empty
         )
     )
-
-    companion object {
-        const val ADDRESS_MAX_LENGHT = 150
-    }
 }

@@ -80,7 +80,7 @@ fun IbanAccountScreen(
                         user = sharedViewModel.email,
                         nextStepAction = {
                             sharedViewModel.onUIEvent(
-                                OnCallMutationSaveCreditFlowStep
+                                OnCallMutationSaveCreditFlowStep()
                             )
                         },
                         saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,11 +17,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,17 +39,27 @@ import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditHeaderExpanded
-import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoContent
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooter
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoHeaderExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooterExpanded
@@ -59,33 +71,59 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProductScreen(
-    isRestart: Boolean = true,
+    sharedViewModel: HomeViewModel,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
-    viewModel.apply {
-        isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
-            if (isOnRestart) {
-                onUIEvent(OnGetIdBrand)
-                executeNavigation(onNavigate = onNavigate)
-            }
-            onDispose {
-                isOnRestart = false
-            }
-        }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val deleteAutomaticPaymentToastText = stringResource(id = R.string.automatic_payment_edit_bottom_sheet_delete_toast)
+
+    viewModel.onUIEvent(
+        OnSetUserData(
+            idBrand = sharedViewModel.uiState.idBrand,
+            balanceCredit = sharedViewModel.uiState.balance,
+            pkUser = sharedViewModel.uiState.pkUser,
+            identification = sharedViewModel.uiState.identification,
+            email = sharedViewModel.uiState.email,
+            userName = sharedViewModel.uiState.userName,
+            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            productPageList = sharedViewModel.uiState.productPageList
+        )
+    )
+    LaunchedEffect(key1 = true) {
+        viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
-    LaunchedEffect(true) {
-        viewModel.baseEvent.collect { event ->
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.baseEvent.collect { event ->
             when (event) {
-                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
-                    event.millisInFuture
-                )
+                is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
+                    coroutineScope.launch {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnQuickActionClicked(event.flow))
+                    }
+                }
+                is HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent -> {
+                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen)
+                }
+                is HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent -> {
+                    viewModel.onUIEvent(
+                        OnDeleteAutomaticPayment {
+                            sharedViewModel.onUIEvent(
+                                OnCallMutationDeactivateClientAutomaticDebit
+                            )
+                        }
+                    )
+                }
+                is OnDeleteAutomaticPaymentToastEvent -> {
+                    Toast.makeText(context, deleteAutomaticPaymentToastText, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -95,6 +133,10 @@ fun ProductScreen(
     val contentPagerState = rememberPagerState()
     val footerPagerState = rememberPagerState()
     val footerExpandedPagerState = rememberPagerState()
+
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(OnMyProductPageChange(contentPagerState))
+    }
 
     LaunchedEffect(key1 = contentPagerState.currentPage) {
         headerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
@@ -108,7 +150,7 @@ fun ProductScreen(
     }
 
     // todo we have to send the pages to the view pager when the back return
-    if (viewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
+    if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
         Column(
@@ -148,23 +190,30 @@ fun ProductScreen(
                     ProductFooterExpanded(
                         modifier = Modifier.padding(top = 16.dp),
                         state = footerExpandedPagerState,
-                        viewModel = viewModel
+                        viewModel = viewModel,
+                        sharedViewModel = sharedViewModel
                     )
                 },
                 isExpanded = viewModel.uiState.isExpanded,
                 updateIsExpanded = { isExpanded ->
                     viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                },
+                forceExpanded = sharedViewModel.uiState.forceIsExpanded,
+                updateForceExpanded = { forceExpanded ->
+                    sharedViewModel.onUIEvent(OnMyProductClick(forceExpanded))
                 }
             )
         }
-        LoadingIndicator(viewModel.uiState.isLoading)
     }
+
+    LoadingIndicator(sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded)
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
@@ -263,6 +312,7 @@ fun ProductHeaderExpanded(
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
                 ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
+                ProductType.Crypto.value -> CryptoHeaderExpanded { backPressed() }
             }
         }
     }
@@ -284,6 +334,10 @@ fun ProductContent(
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
                 ProductType.Smart.value -> SmartContent(viewModel = viewModel, currentPage)
+                ProductType.Crypto.value -> CryptoContent(
+                    userStatus = viewModel.uiState.userStatus,
+                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount
+                )
             }
         }
         Spacer(modifier = Modifier.padding(4.dp))
@@ -317,9 +371,14 @@ fun ProductFooter(
                     uiState = viewModel.uiState,
                     balance = viewModel.balanceCredit,
                     onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
-                    onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToVisaActivateScreen) }
+                    onNavigateToVisaActivateScreen = {
+                        viewModel.onUIEvent(
+                            OnNavigateToVisaActivateScreen
+                        )
+                    }
                 )
                 ProductType.Smart.value -> SmartFooter()
+                ProductType.Crypto.value -> CryptoFooter()
             }
         }
     }
@@ -330,7 +389,8 @@ fun ProductFooter(
 fun ProductFooterExpanded(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
@@ -339,11 +399,15 @@ fun ProductFooterExpanded(
             userScrollEnabled = false
         ) { currentPage ->
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
-                ProductType.Credit.value -> CreditFooterExpanded(viewModel = viewModel)
+                ProductType.Credit.value -> CreditFooterExpanded(
+                    viewModel = viewModel,
+                    sharedViewModel = sharedViewModel
+                )
                 ProductType.Smart.value -> SmartFooterExpanded(
                     viewModel = viewModel,
                     viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
                 )
+                ProductType.Crypto.value -> CryptoFooterExpanded()
             }
         }
     }

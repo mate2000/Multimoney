@@ -36,7 +36,6 @@ fun IndProfessionalScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
@@ -56,8 +55,8 @@ fun IndProfessionalScreen(
                     )
                 },
                 overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
-                nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Three.id
+                nextStep = sourceIncomeSharedViewModel.getNextStep(sharedViewModel.idBrandAsInt),
+                previousStep = sourceIncomeSharedViewModel.getPreviousStep(sharedViewModel.idBrandAsInt)
             )
         )
         viewModel.baseEvent.collect { event ->
@@ -113,8 +112,7 @@ fun IndProfessionalScreen(
             placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
-            isError = viewModel.uiState.amountError.first,
-            errorMessage = stringResource(viewModel.uiState.amountError.second)
+            isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required)
         )
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 16.dp),
@@ -133,7 +131,7 @@ fun IndProfessionalScreen(
             isTextArea = true,
             isError = viewModel.uiState.addressError.first,
             errorMessage = stringResource(viewModel.uiState.addressError.second),
-            isRequired = true
+            isRequiredMessage = stringResource(R.string.smart_ind_professional_address_required)
         )
     }
 }

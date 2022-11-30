@@ -101,12 +101,8 @@ class PaymentVoucherViewModel @Inject constructor(
         }/$paymentDate/${false}/${Screen.PaymentVoucherScreen.baseRoute}/${false}"
     )
 
-    private fun onNavigateToHome() {
-        popAndNavigateTo(
-            Screen.HomeScreen.route,
-            Screen.PaymentVoucherScreen.route
-        )
-    }
+    private fun onNavigateToHome() =
+        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true)
 
     data class UIState(
         val test: String = "",

@@ -6,9 +6,19 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.COUNTRY_CODE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
@@ -25,13 +35,18 @@ class ProfileViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
+
     private fun getProfileInfo() = viewModelScope.launch {
         uiState = uiState.copy(
             userName = dataStorePreferences.getUserName().first(),
             userEmail = dataStorePreferences.getUserEmail().first(),
             phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
-            idBrand = savedStateHandle[ID_BRAND] ?: 0
+            idBrand = savedStateHandle[ID_BRAND] ?: 0,
         )
+    }
+
+    private fun navigateToPersonalInfoScreen(){
+        navigateTo("${Screen.PersonalInfoScreen.baseRoute}/${uiState.idBrand}/${uiState.phoneNumber}")
     }
 
     data class UIState(
@@ -39,20 +54,16 @@ class ProfileViewModel @Inject constructor(
         val userName: String = "",
         val userEmail: String = "",
         val phoneNumber: String = "",
-        val idBrand: Int = 0,
+        val idBrand: Int? = null,
+        val countryCode : String? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetProfileInfo -> getProfileInfo()
-            is UIEvent.OnUpdateProfileClick -> Timber.d("navigate to update profile screen")
-            is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
-            is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
-            is UIEvent.OnSettingsClick -> Timber.d("navigate to settings screen")
-            is UIEvent.OnHelpClick -> Timber.d("navigate to help screen")
-            is UIEvent.OnInviteFriendsClick -> Timber.d("navigate to invite friends screen")
-            is UIEvent.OnLogoutClick -> Timber.d("handle logout action")
+            is UIEvent.OnUpdateProfileClick -> navigateToPersonalInfoScreen()
+
         }
     }
 

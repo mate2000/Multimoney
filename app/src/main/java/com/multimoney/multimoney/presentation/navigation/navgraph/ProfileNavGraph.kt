@@ -11,6 +11,8 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.PROFILE_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.PersonalInfoScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -25,6 +27,52 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 })
         ) {
             ProfileScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
+        composable(
+            Screen.PersonalInfoScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND){
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            PersonalInfoScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
+        composable(
+            Screen.ChangePhoneScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND){
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            ChangePhoneScreen(
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(

@@ -58,6 +58,8 @@ const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
 
 const val ID_BRAND = "id_brand"
+const val PHONE_NUMBER = "phone_number"
+const val COUNTRY_CODE = "country_code"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -83,7 +85,15 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // HomeNavGraph Screens
     object HomeScreen : Screen("home_screen")
 
-    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}", "profile_screen")
+    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}",
+        "profile_screen")
+
+    object PersonalInfoScreen : Screen("personal_info_screen/{$ID_BRAND}/{$PHONE_NUMBER}",
+        "personal_info_screen")
+
+    object ChangePhoneScreen : Screen("change_phone_screen/{$ID_BRAND}/{$PHONE_NUMBER}",
+        "change_phone_screen")
+
 
     // DisbursementNavGraph Screens
     object DisbursementAmountScreen : Screen(

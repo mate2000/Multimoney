@@ -424,7 +424,8 @@ class ProductViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
         val canExpandCredit: Boolean = false,
-        val scheduleChipIconResource: Int? = null
+        val scheduleChipIconResource: Int? = null,
+        val phoneNumber : String? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -492,7 +493,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToSmartOriginationFlow : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
-        object OnNavigateToProfileScreen : UIEvent()
+        object OnNavigateToProfileScreen: UIEvent()
         object OnNavigateToDisbursement : UIEvent()
         object OnNavigateToSendMoneyFlow : UIEvent()
         object OnNavigateToPaymentSmartFlow : UIEvent()

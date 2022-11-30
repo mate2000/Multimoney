@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiary.SmartBeneficiaryScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
@@ -54,7 +55,7 @@ fun SmartScreen(
     }
 
     viewModel.onUIEvent(
-        SmartViewModel.UIEvent.OnInitializeText(
+        OnInitializeText(
             stringResource(R.string.smart_close_origination_dialog_description)
         )
     )

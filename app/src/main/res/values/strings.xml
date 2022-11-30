@@ -778,6 +778,9 @@
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+    <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
+    <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
+
 
     <!-- Credit Schedule Automatic Payment -->
     <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>
@@ -806,4 +809,5 @@
 
     <!-- Payment Amount Card -->
     <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
+
 </resources>

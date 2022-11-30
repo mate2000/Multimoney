@@ -6,10 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
+import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -19,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
@@ -47,7 +50,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase
+    private val subscriptionCreditContractEventUseCase: SubscriptionCreditContractEventUseCase,
+    private val subscriptionAccountSmartContractUseCase: SubscriptionAccountSmartContractUseCase
 ) : BaseViewModel(true) {
     // uiState
     var uiState by mutableStateOf(UIState())
@@ -62,6 +66,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var firstName: String = ""
     var lastName: String = ""
+    var isSmart: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -72,6 +77,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
+        isSmart = savedStateHandle[IS_SMART_EVICERTIA] ?: false
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: "",
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
@@ -91,22 +97,58 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
         if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
-            onListenCreditContractEventSubscription(idPrint, idBrand)
+            if (isSmart) {
+                uiState = uiState.copy(
+                    loadingIcon = drawable.ic_multimoney_white_logo,
+                    loadingTitle = string.smart_other_generating_document_title,
+                    loadingSubtitle = string.smart_other_generating_document_subtitle
+                )
+                onListenSmartContractEventSubscription(idBrand, idPrint)
+            } else {
+                onListenCreditContractEventSubscription(idPrint, idBrand)
+            }
+        }
+    }
+
+    private fun onListenSmartContractEventSubscription(idBrand: Int, idRequestSys: Long) {
+        executeUseCase {
+            subscriptionAccountSmartContractUseCase.invoke(idBrand, idRequestSys)
+                .collectLatest { result ->
+                    result.onSuccess {
+                        handleEvents(
+                            creditContractEvent = CreditContractEvent(
+                                idPrint = it?.idRequestSysde ?: idRequestSys,
+                                idBrand = it?.idBrand,
+                                link = it?.link,
+                                statusEvicertia = it?.statusEvicertia,
+                                statusOnfido = it?.statusOnfido,
+                                active = it?.active,
+                                currentStep = it?.currentStep
+                            )
+                        )
+                    }.onFailure {
+                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
+                            onListenSmartContractEventSubscription(idBrand, idRequestSys)
+                            numAttemptsToStartSubscription++
+                        }
+                    }
+                }
         }
     }
 
     private fun onListenCreditContractEventSubscription(idPrint: Long, idBrand: Int) {
         executeUseCase {
-            subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand).collectLatest { result ->
-                result.onSuccess {
-                    handleEvents(creditContractEvent = it)
-                }.onFailure {
-                    while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
-                        onListenCreditContractEventSubscription(idPrint, idBrand)
-                        numAttemptsToStartSubscription++
+            subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand)
+                .collectLatest { result ->
+                    result.onSuccess {
+                        handleEvents(creditContractEvent = it)
+                    }.onFailure {
+                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
+                            onListenCreditContractEventSubscription(idPrint, idBrand)
+                            numAttemptsToStartSubscription++
+                        }
                     }
                 }
-            }
         }
     }
 
@@ -194,13 +236,17 @@ class SignDocumentProcessViewModel @Inject constructor(
         // Interactions
         val signDocumentProcessStep: String = GENERATE_DOCUMENT_STEP.value,
         val dialogParameters: DialogParameters = DialogParameters(),
-        val signDocumentUrl: String = ""
+        val signDocumentUrl: String = "",
+        val loadingIcon: Int = drawable.ic_frame,
+        val loadingTitle: Int = string.document_generation_title,
+        val loadingSubtitle: Int = string.document_generation_subtitle
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnCallSubscriptionCreditContractEvent -> onShouldCallSubscription(idPrint, idBrand)
-            is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState =
+                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()
@@ -225,7 +271,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     companion object {
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 600000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
     }
 }

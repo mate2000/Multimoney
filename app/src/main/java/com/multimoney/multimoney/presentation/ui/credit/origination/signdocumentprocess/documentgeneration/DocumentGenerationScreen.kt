@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun DocumentGenerationScreen(
     viewModel: SignDocumentProcessViewModel,
+    icon: Int? = null,
     title: Int? = null,
     subtitle: Int? = null
 ) {
@@ -67,7 +68,7 @@ fun DocumentGenerationScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CustomImage(drawableResource = drawable.ic_frame)
+            CustomImage(drawableResource = icon ?: drawable.ic_frame)
             Text(
                 text = stringResource(id = title ?: string.document_generation_title),
                 modifier = Modifier.padding(top = 24.dp),
@@ -86,21 +87,23 @@ fun DocumentGenerationScreen(
                 textAlign = Companion.Center
             )
         }
-        Row(
-            modifier = Modifier.padding(bottom = 30.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(32.dp),
-                color =
-                MultimoneyTheme.colors.primary
-            )
-            Text(
-                text = stringResource(id = string.document_generation_info),
-                modifier = Modifier.padding(start = 12.dp),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text
-            )
+        if (!viewModel.isSmart) {
+            Row(
+                modifier = Modifier.padding(bottom = 30.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(32.dp),
+                    color =
+                    MultimoneyTheme.colors.primary
+                )
+                Text(
+                    text = stringResource(id = string.document_generation_info),
+                    modifier = Modifier.padding(start = 12.dp),
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.text
+                )
+            }
         }
     }
 

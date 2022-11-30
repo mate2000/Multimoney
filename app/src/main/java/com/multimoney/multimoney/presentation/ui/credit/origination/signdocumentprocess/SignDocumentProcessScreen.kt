@@ -42,7 +42,12 @@ fun SignDocumentProcessScreen(
 
     when (viewModel.uiState.signDocumentProcessStep) {
         GENERATE_DOCUMENT_STEP.value -> {
-            DocumentGenerationScreen(viewModel = viewModel)
+            DocumentGenerationScreen(
+                viewModel = viewModel,
+                icon = viewModel.uiState.loadingIcon,
+                title = viewModel.uiState.loadingTitle,
+                subtitle = viewModel.uiState.loadingSubtitle
+            )
         }
         SIGN_DOCUMENTS_STEP.value -> {
             SignDocumentScreen(viewModel = viewModel)

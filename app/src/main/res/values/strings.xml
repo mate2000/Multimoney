@@ -52,6 +52,7 @@
     <string name="colons" translatable="false">Colenes</string>
     <string name="dollars" translatable="false">Doláres</string>
     <string name="quetzales" translatable="false">Quetzales</string>
+    <string name="detail" translatable="false">Detalle</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -134,7 +135,7 @@
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
-    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s incorrecto</string>
+    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s inválido</string>
     <string name="sign_up_personal_data_id_required" translatable="false">Número de %s requerido</string>
     <string name="sign_up_personal_data_nationality_header" translatable="false">¿Cuáles son tus datos personales?</string>
     <string name="sign_up_personal_data_nationality" translatable="false">Nacionalidad</string>

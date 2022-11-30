@@ -152,14 +152,14 @@ class HomeViewModel @Inject constructor(
             infoBankAccountStatus = infoBankAccountStatus,
             infoCriptoStatus = infoCriptoStatus
         ).collectLatest { result ->
-            result.onSuccess { balance ->
-                balance?.let {
-                    if (uiState.isLoading) {
-                        uiState = uiState.copy(
-                            isLoading = false,
-                            quickActions = it.quickActions
-                        )
+            result.onSuccess { quickActions ->
+                quickActions?.let {
+                    if (uiState.configurationVersion != null && uiState.balance != null) {
+                        uiState = uiState.copy(isLoading = false)
                     }
+                    uiState = uiState.copy(
+                        quickActions = it.quickActions
+                    )
                 }
             }
             result.onFailure {
@@ -194,7 +194,19 @@ class HomeViewModel @Inject constructor(
             cardStatus = cardStatus
         ).collectLatest { result ->
             result.onSuccess { balance ->
-                val productPageList = mutableListOf<ProductPage>()
+                balance?.let { setBalance(it) }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun setBalance(balance: Balance) {
+        val productPageList = mutableListOf<ProductPage>()
 
                 val defaultIndex = 0
                 // Default credit
@@ -279,22 +291,10 @@ class HomeViewModel @Inject constructor(
                     }
                 }
 
-                balance?.let {
-                    if (uiState.isLoading)
-                        uiState = uiState.copy(isLoading = false)
-                    uiState = uiState.copy(
-                        balance = balance,
-                        productPageList = productPageList
-                    )
-                }
-            }
-            result.onFailure {
-                onFailure(it)
-            }
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true)
-            }
+        if (uiState.configurationVersion != null && uiState.quickActions != null) {
+            uiState = uiState.copy(isLoading = false)
         }
+        uiState = uiState.copy(balance = balance, productPageList = productPageList)
     }
 
     private fun callQueryGetConfigurationVersion(
@@ -306,6 +306,9 @@ class HomeViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
+                if (uiState.balance != null && uiState.quickActions != null && uiState.validateUserStatus != null) {
+                    uiState = uiState.copy(isLoading = false)
+                }
                 configurationVersion?.let {
                     uiState = uiState.copy(configurationVersion = configurationVersion)
                 }

@@ -93,7 +93,7 @@ class ProductViewModel @Inject constructor(
     private fun setBalance(balance: Balance?) {
         balance?.let {
             balanceCredit = it
-
+            val isCreditAvailable = (balanceCredit?.getFirstSummary()?.availableBalance ?: 0.0) > 0.0
             uiState = uiState.copy(
                 canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
@@ -102,6 +102,12 @@ class ProductViewModel @Inject constructor(
                     R.drawable.info_blue_icon
                 } else {
                     null
+                },
+                isCreditAvailable = isCreditAvailable,
+                onGoingCreditCardTitle = if (isCreditAvailable) {
+                    R.string.home_product_title
+                } else {
+                    R.string.detail
                 }
             )
         }
@@ -430,6 +436,8 @@ class ProductViewModel @Inject constructor(
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
+        val onGoingCreditCardTitle: Int = R.string.home_product_title,
+        val isCreditAvailable: Boolean = false,
         val canExpandCredit: Boolean = false,
         val scheduleChipIconResource: Int? = null
     )

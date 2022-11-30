@@ -32,6 +32,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
@@ -111,7 +112,7 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.query(
             PaymentAmountQuery(
                 amount,
-                months?:"",
+                months ?: "",
                 idProduct,
                 currencySymbol,
                 user,
@@ -845,5 +846,13 @@ class GraphqlApi @Inject constructor(
         option: Int
     ): ApolloCall<RelationshipQuery.Data> =
         apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationInitialRequestSmartAccount(
+        pkUser: Long,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<InitialRequestSmartAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(InitialRequestSmartAccountMutation(pkUser, idBrand, user))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 }

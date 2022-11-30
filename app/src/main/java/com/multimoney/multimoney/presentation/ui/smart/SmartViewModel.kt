@@ -12,6 +12,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.util.error.HttpError
@@ -25,6 +26,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
@@ -49,6 +51,7 @@ import javax.inject.Inject
 class SmartViewModel @Inject constructor(
     private val queryStepByStepUseCase: QueryStepByStepUseCase,
     private val mutationGlobalRequestUseCase: MutationGlobalRequestUseCase,
+    private val mutationInitialRequestUseCase: MutationInitialRequestUseCase,
     private val dataStorePreferences: DataStorePreferences,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
@@ -66,6 +69,7 @@ class SmartViewModel @Inject constructor(
     var accountSmartData: AccountSmartData? = null
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
+    private var globalRequest: Int = 0
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -106,6 +110,30 @@ class SmartViewModel @Inject constructor(
             }
         }
     }
+
+    private fun callMutationInitialRequestUseCase() = executeUseCase(
+        action = {
+            mutationInitialRequestUseCase.invoke(
+                pkUser = accountSmartData?.pkUser?.toInt()?.toLong() ?: 0,
+                idBrand = accountSmartData?.idBrand ?: 0,
+                user = accountSmartData?.user ?: ""
+            ).collectLatest { result ->
+                result.onSuccess {
+                    globalRequest = it?.idGlobalRequest ?: 0
+                }
+                result.onFailure {
+                    onUIEvent(OnLoadingValueChange(false))
+                    uiState = uiState.copy(
+                        isAlertResultVisible = true,
+                        alertResultDescription = it.getError()
+                    )
+                }
+                result.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
+            }
+        }
+    )
 
     private fun callMutationGlobalRequestUseCase() = executeUseCase(
         action = {
@@ -345,6 +373,7 @@ class SmartViewModel @Inject constructor(
                 uiState =
                     uiState.copy(isContinueVisible = event.visible, buttonTextRes = event.textResId)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
+            is OnCallMutationInitialRequest -> callMutationInitialRequestUseCase()
         }
     }
 
@@ -370,11 +399,17 @@ class SmartViewModel @Inject constructor(
 
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
-        data class OnContinueVisible(val visible: Boolean, val textResId: Int = string.button_continue) : UIEvent()
+        data class OnContinueVisible(
+            val visible: Boolean,
+            val textResId: Int = string.button_continue
+        ) : UIEvent()
+
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
 
         object OnClickBottomSheet : UIEvent()
+
+        object OnCallMutationInitialRequest : UIEvent()
     }
 
     companion object {

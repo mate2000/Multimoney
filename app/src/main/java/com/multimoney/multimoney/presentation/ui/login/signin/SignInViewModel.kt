@@ -304,7 +304,6 @@ class SignInViewModel @Inject constructor(
 
     private fun onNavigateToForgotPassword() {
         // TODO navigate to forgot screen
-        navigateTo(route = "${Screen.ProcessingTransactionScreen.baseRoute}/5/12345/diego")
     }
 
     private fun onShowBiometricSignInChanged(value: Boolean) {

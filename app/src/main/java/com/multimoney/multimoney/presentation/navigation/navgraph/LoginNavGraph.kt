@@ -2,14 +2,10 @@ package com.multimoney.multimoney.presentation.navigation.navgraph
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.navArgument
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
@@ -17,7 +13,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STE
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBack
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
-import com.multimoney.multimoney.presentation.ui.test.subscription.SubscriptionScreen
 
 const val SIGN_UP_STEP = "sign_up_step"
 
@@ -92,19 +87,6 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                     }
                 }
             )
-        }
-        composable(
-            route = Screen.ProcessingTransactionScreen.route,
-            arguments = listOf(
-                navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
-            )
-        ) {
-            ProcessingTransactionScreen(onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
-                }
-            })
         }
     }
 }

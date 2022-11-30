@@ -61,8 +61,8 @@ fun ProcessingTransactionScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: ProcessingTransactionViewModel = hiltViewModel()
 ) {
-//    val view = LocalView.current
-//    var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
+    val view = LocalView.current
+    var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
@@ -108,9 +108,9 @@ fun ProcessingTransactionScreen(
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         }
-//                        .onGloballyPositioned {
-//                            capturingViewBounds = it.boundsInRoot()
-//                        }
+                        .onGloballyPositioned {
+                            capturingViewBounds = it.boundsInRoot()
+                        }
                 ) {
                     Column(
                         modifier = Modifier
@@ -126,14 +126,14 @@ fun ProcessingTransactionScreen(
                         )
                         CustomButton(
                             onClick = {
-//                                capturingViewBounds?.let { bounds ->
-//                                    viewModel.onUIEvent(
-//                                        OnSharedVoucherImage(
-//                                            view,
-//                                            bounds
-//                                        )
-//                                    )
-//                                }
+                                capturingViewBounds?.let { bounds ->
+                                    viewModel.onUIEvent(
+                                        OnSharedVoucherImage(
+                                            view,
+                                            bounds
+                                        )
+                                    )
+                                }
                             },
                             text = stringResource(string.payment_voucher_shared_button),
                             modifier = Modifier
@@ -241,7 +241,7 @@ fun ProcessingTransactionScreen(
         )
     }
 
-//    BackHandler {
-//        viewModel.onUIEvent(OnCloseClick)
-//    }
+    BackHandler {
+        viewModel.onUIEvent(OnCloseClick)
+    }
 }

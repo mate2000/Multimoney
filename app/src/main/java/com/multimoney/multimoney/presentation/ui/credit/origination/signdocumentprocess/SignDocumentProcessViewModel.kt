@@ -160,7 +160,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                         popTo = Screen.SignDocumentProcessScreen.route
                     )
                 } else {
-                    // todo call screen for El Salvador and Guatemala
+                    // todo call the success screen for El Salvador and Guatemala
                 }
             }
             CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {

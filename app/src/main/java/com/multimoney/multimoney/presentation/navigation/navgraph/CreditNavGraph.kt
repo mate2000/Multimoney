@@ -91,19 +91,19 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 }
             })
         }
-//        composable(
-//            route = Screen.ProcessingTransactionScreen.route,
-//            arguments = listOf(
-//                navArgument(ID_BRAND) { type = NavType.IntType },
-//                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
-//            )
-//        ) {
-//            ProcessingTransactionScreen(onPopAndNavigate = {
-//                navController.navigate(it.route) {
-//                    popUpTo(it.popTo) { inclusive = true }
-//                }
-//            })
-//        }
+        composable(
+            route = Screen.ProcessingTransactionScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+            )
+        ) {
+            ProcessingTransactionScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
+        }
         composable(
             route = Screen.OnfidoAndEvicertiaErrorsScreen.route,
             arguments = listOf(

@@ -22,11 +22,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 
-@OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalMotionApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MotionLayoutMM(
     header: @Composable () -> Unit,
@@ -34,7 +33,9 @@ fun MotionLayoutMM(
     content: @Composable (modifier: Modifier) -> Unit,
     footer: @Composable () -> Unit,
     isExpanded: Boolean = false,
+    forceExpanded: Boolean = false,
     updateIsExpanded: (Boolean) -> Unit,
+    updateForceExpanded: (Boolean) -> Unit,
     footerExpanded: @Composable () -> Unit
 ) {
     val context = LocalContext.current
@@ -51,18 +52,22 @@ fun MotionLayoutMM(
 
     LaunchedEffect(key1 = swipeAbleState.offset.value) {
         updateIsExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
+        updateForceExpanded(swipeAbleState.offset.value == TOTAL_PERCENTAGE)
     }
 
     LaunchedEffect(key1 = isBackPressed) {
-        if (isExpanded && isBackPressed) {
+        if (isExpanded || forceExpanded && isBackPressed) {
             swipeAbleState.animateTo(BEGINNING_ANIMATION)
             isBackPressed = false
+            if(forceExpanded) {
+                updateForceExpanded(false)
+            }
         }
     }
 
     MotionLayout(
         motionScene = MotionScene(motionSceneContent),
-        progress = (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
+        progress = if(forceExpanded) 1f else (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
         modifier = Modifier.fillMaxHeight()
     ) {
         Box(

@@ -18,16 +18,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
-import com.multimoney.data.util.catalog.SmartSteps.Six
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.SMART_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiary.SmartBeneficiaryScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
@@ -61,7 +60,7 @@ fun SmartScreen(
     }
 
     viewModel.onUIEvent(
-        SmartViewModel.UIEvent.OnInitializeText(
+        OnInitializeText(
             stringResource(R.string.smart_close_origination_dialog_description)
         )
     )
@@ -73,15 +72,15 @@ fun SmartScreen(
     ) {
         Column {
             TopNavBar(
-                isLeftButtonVisible = viewModel.uiState.currentStep != Six.id,
+                isLeftButtonVisible = viewModel.uiState.currentStep <= viewModel.getTotalStepperCounter(),
                 isRightButtonVisible = viewModel.uiState.isCloseVisible,
                 onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
                 onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
             )
-            if (viewModel.uiState.currentStep != Six.id) {
+            if (viewModel.uiState.currentStep <= viewModel.getTotalStepperCounter()) {
                 StepProgressBar(
-                    steps = SMART_INDICATOR_TOTAL_STEPS,
-                    currentStep = if (viewModel.uiState.currentStep == Six.id) SmartSteps.Five.id else viewModel.uiState.currentStep,
+                    steps = viewModel.getTotalStepperCounter(),
+                    currentStep = viewModel.uiState.currentStep,
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 )
             }
@@ -90,10 +89,18 @@ fun SmartScreen(
             modifier = Modifier.weight(0.1f),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            GetStepContent(
-                step = viewModel.uiState.currentStep,
-                viewModel = viewModel
-            )
+            // Each country has it's own steps on the smart origination flow
+            if (viewModel.idBrandAsInt == Brand.ElSalvador.id) {
+                GetSvStepContent(
+                    step = viewModel.uiState.currentStep,
+                    viewModel = viewModel
+                )
+            } else {
+                GetCrStepContent(
+                    step = viewModel.uiState.currentStep,
+                    viewModel = viewModel
+                )
+            }
         }
         CustomButton(
             onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
@@ -145,7 +152,7 @@ fun SmartScreen(
 }
 
 @Composable
-fun GetStepContent(
+fun GetSvStepContent(
     step: Int,
     viewModel: SmartViewModel
 ) {
@@ -153,13 +160,19 @@ fun GetStepContent(
         SmartSteps.One.id -> SmartDocumentScreen(sharedViewModel = viewModel)
         SmartSteps.Two.id -> SmartLivAddressScreen(sharedViewModel = viewModel)
         SmartSteps.Three.id -> SourceIncomeScreen(sharedViewModel = viewModel)
-        SmartSteps.Four.id -> {
-            if (viewModel.idBrandAsInt == Brand.ElSalvador.id) {
-                SmartBeneficiaryScreen(sharedViewModel = viewModel)
-            } else {
-                SmartFactaScreen(sharedViewModel = viewModel)
-            }
-        }
+        SmartSteps.Four.id -> SmartBeneficiaryScreen(sharedViewModel = viewModel)
         SmartSteps.Five.id -> SmartFactaScreen(sharedViewModel = viewModel)
+    }
+}
+
+@Composable
+fun GetCrStepContent(
+    step: Int,
+    viewModel: SmartViewModel
+) {
+    when (step) {
+        SmartSteps.One.id -> SmartLivAddressScreen(sharedViewModel = viewModel)
+        SmartSteps.Two.id -> SourceIncomeScreen(sharedViewModel = viewModel)
+        SmartSteps.Three.id -> SmartFactaScreen(sharedViewModel = viewModel)
     }
 }

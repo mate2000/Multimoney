@@ -399,6 +399,11 @@ type Query {
   """
   Security
   """
+  validateUserStatusOnCreditRequest(validateUserStatusOnCreditRequestDto: ValidateUserStatusOnCreditRequestDtoInput!): ValidateUserStatusOnCreditRequest!
+
+  """
+  Security
+  """
   getParameterMobileByCategory(parameterMobileInput: GetParameterMobileByCategoryDtoInput!): [ParameterMobile!]!
 
   """
@@ -1257,7 +1262,7 @@ type GetCoreBankMovements {
 
   pageSize: Int!
 
-  result: [GetCoreBankMovementsResult!]!
+  result: [GetCoreBankMovementsResult!]
 
   status: Int
 
@@ -1793,6 +1798,8 @@ input ClientBankAccountDtoInput {
 
   id_Moneda_Destino: Int
 
+  id_Tipo_Cuenta: Int
+
   idBrand: Int
 
   user: String
@@ -1967,7 +1974,7 @@ type PromissoryNoteDetailList {
 
   pageSize: Int!
 
-  values: [PromissoryNoteDetail!]!
+  values: [PromissoryNoteDetail!]
 
   status: Int
 
@@ -2055,7 +2062,11 @@ type InfoDeposit {
 
   monto: Decimal!
 
+  monto_Label: String!
+
   numeroReferencia: String!
+
+  pagare: String!
 
   fecha: DateTime!
 
@@ -2671,6 +2682,8 @@ type Catalog {
 }
 
 input CatalogDtoInput {
+  isTransferIdentifaction: Int
+
   idBrand: Int
 
   user: String
@@ -2787,7 +2800,7 @@ input MinicardDtoInput {
 
   infoBankAccountStatus: Boolean!
 
-  infoCripto: Boolean!
+  infoCriptoStatus: Boolean!
 
   idBrand: Int
 
@@ -2810,6 +2823,22 @@ input TermsConditionsSignedDtoInput {
   userId: Int!
 
   identification: String!
+
+  idBrand: Int
+
+  user: String
+}
+
+type ValidateUserStatusOnCreditRequest {
+  validateUserStatusOnCreditRequestInfo: ValidateUserStatusOnCreditRequestInfo!
+
+  info: String!
+}
+
+input ValidateUserStatusOnCreditRequestDtoInput {
+  identification: String!
+
+  pkUser: Long!
 
   idBrand: Int
 
@@ -2893,13 +2922,17 @@ type QuickActions {
 }
 
 input QuickActionsDtoInput {
-  infoCreditStatus: Boolean!
+  pkUser: Long!
 
-  infoVirtualCardStatus: Boolean!
+  identification: String!
 
-  infoBankAccountStatus: Boolean!
+  infoCreditStatus: Int!
 
-  infoCripto: Boolean!
+  infoVirtualCardStatus: Int!
+
+  infoBankAccountStatus: Int!
+
+  infoCriptoStatus: Int!
 
   idBrand: Int
 
@@ -3273,7 +3306,7 @@ input SaveAutomatedSmartAccountDtoInput {
 }
 
 type ACHTransfer {
-  result: ObjectSendMoneyACH!
+  result: ObjectSendMoneyACH
 
   status: Int
 
@@ -3315,7 +3348,7 @@ input ACHTransferByPhoneDtoInput {
 }
 
 type ProcessLocalTransfer {
-  result: ProcessLocalTransferResult!
+  result: ProcessLocalTransferResult
 
   status: Int
 
@@ -3393,7 +3426,7 @@ input ManageSinpeAccountDtoInput {
 }
 
 type SinpeTransfer {
-  result: OBjectSendMoneySinpe!
+  result: OBjectSendMoneySinpe
 
   status: Int
 
@@ -3441,7 +3474,7 @@ input SinpeTransferDtoInput {
 }
 
 type Transfer365 {
-  result: ObjectSendMoney365!
+  result: ObjectSendMoney365
 
   status: Int
 
@@ -3471,11 +3504,11 @@ input Transfer365DtoInput {
 
   isMovil: Boolean
 
-  paymentType: String!
+  paymentType: String
 
   destinationType: String!
 
-  accountType: String!
+  typeAccount: String!
 
   idBrand: Int
 
@@ -3496,6 +3529,10 @@ input TransferMovil365DtoInput {
   destinationName: String!
 
   destinationLastName: String
+
+  destinationType: String
+
+  typeAccount: String
 
   idBrand: Int
 
@@ -5355,17 +5392,17 @@ input questionsDataInput {
 }
 
 type ObjectSendMoney365 {
-  bankAuthorization: Authorization!
+  bankAuthorization: Authorization
 
-  transfer365: Transfer!
+  transfer365: Transfer
 
-  bankTransferRegistration: RegisterOperation!
+  bankTransferRegistration: RegisterOperation
 
-  coreBanking: ProcessCore!
+  coreBanking: ProcessCore
 }
 
 type OBjectSendMoneySinpe {
-  nUMERO_REFERENCIA_INTERNO: String!
+  nUMERO_REFERENCIA_INTERNO: String
 }
 
 type ManageSinpeAccountResult {
@@ -5373,19 +5410,19 @@ type ManageSinpeAccountResult {
 }
 
 type ProcessLocalTransferResult {
-  authorization: String!
+  authorization: String
 
-  currentBalance: Decimal!
+  currentBalance: Decimal
 
-  destinationTitularName: String!
+  destinationTitularName: String
 
-  originAccountNumber: String!
+  originAccountNumber: String
 }
 
 type ObjectSendMoneyACH {
-  bankAuthorization: Authorization!
+  bankAuthorization: Authorization
 
-  coreBanking: ProcessCore!
+  coreBanking: ProcessCore
 }
 
 type SaveAutomatedSmartAccountResult {
@@ -5454,6 +5491,16 @@ type GlobalRequest_Response_Result {
   idSysdeRequest: Long!
 
   isCrosseling: Short!
+}
+
+enum ValidateUserStatusOnCreditRequestInfo {
+  NONE
+
+  BLACKLIST
+
+  IN_PROCESS
+
+  CREDIT_ACTIVE
 }
 
 type configurationVersionObject {
@@ -5653,9 +5700,9 @@ type exchangeRateCreditResult {
 }
 
 type PromissoryNoteDetail {
-  title: String!
+  title: String
 
-  values_Transactions: [PromissoryNoteTransactionMobile!]!
+  values_Transactions: [PromissoryNoteTransactionMobile!]
 }
 
 type CreditExtensionProduct {
@@ -5915,6 +5962,8 @@ type CheckAccountResult {
   totalInterest: Decimal
 
   month: String
+
+  rate: Decimal
 }
 
 type PromissoryNoteResumeMobile {
@@ -5950,7 +5999,7 @@ type PromissoryNoteResumeMobile {
 
   fecha_Pago_Label: String!
 
-  estado_Pagare: Boolean!
+  estado_Pagare: Short!
 
   estado_Ampli: Boolean!
 
@@ -6306,31 +6355,31 @@ type ObjPhone {
 }
 
 type PromissoryNoteTransactionMobile {
-  tipo: String!
+  tipo: String
 
-  fecha_Aplicacion: DateTime!
+  fecha_Aplicacion: DateTime
 
-  monto: String!
+  monto: String
 
-  id_Prestamo: Long!
+  id_Prestamo: Long
 
-  fecha_Inicio: DateTime!
+  fecha_Inicio: DateTime
 
-  fecha_Fin: DateTime!
+  fecha_Fin: DateTime
 
-  fecha_Aplicacion_Label: String!
+  fecha_Aplicacion_Label: String
 
-  monto_Label: String!
+  monto_Label: String
 
-  moneda: String!
+  moneda: String
 
-  mes: String!
+  mes: String
 
-  indicador: Int!
+  indicador: Int
 
-  tipo_Transaccion: String!
+  tipo_Transaccion: String
 
-  id_Tipo_Transaccion: Int!
+  id_Tipo_Transaccion: Int
 }
 
 type CreditPreApproveInfo {
@@ -6404,29 +6453,29 @@ type CurrencyConfigurationType {
 }
 
 type ProcessCore {
-  transferDetail: TransferDetailObj!
+  transferDetail: TransferDetailObj
 }
 
 type RegisterOperation {
-  status: Int!
+  status: Int
 
-  message: String!
+  message: String
 }
 
 type Transfer {
-  status: Int!
+  status: Int
 
-  message: String!
+  message: String
 }
 
 type Authorization {
-  status: Int!
+  status: Int
 
-  authorizationId: String!
+  authorizationId: String
 
-  message: String!
+  message: String
 
-  outHours: Boolean!
+  outHours: Boolean
 }
 
 type expirationDate {
@@ -6436,21 +6485,21 @@ type expirationDate {
 }
 
 type TransferDetailObj {
-  originName: String!
+  originName: String
 
-  originAccount: String!
+  originAccount: String
 
-  destinationBank: String!
+  destinationBank: String
 
-  destinationName: String!
+  destinationName: String
 
-  destinationAccount: String!
+  destinationAccount: String
 
-  amount: Decimal!
+  amount: Decimal
 
-  emailSent: Int!
+  emailSent: Int
 
-  typeAccountDescription: String!
+  typeAccountDescription: String
 }
 
 type TransferMethodConfigurationType {

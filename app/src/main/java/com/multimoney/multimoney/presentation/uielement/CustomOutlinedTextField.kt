@@ -90,6 +90,10 @@ import kotlinx.coroutines.launch
  * @param onDebounceValidation: Function to handle validations with a debounce of 0.5 seg.
  * @param onClick: Function to handle onClick events
  * @param isClickable: Boolean to enable or disable click events
+ * @param isSuccess: Display success message
+ * @param successMessage: Success message to be displayed
+ * @param showInfo: Display information message
+ * @param infoMessage: Information message to be displayed
  * **/
 
 @OptIn(

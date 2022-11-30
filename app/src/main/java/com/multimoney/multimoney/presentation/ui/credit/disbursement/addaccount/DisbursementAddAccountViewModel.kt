@@ -18,7 +18,12 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.*
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getRegex
 import com.multimoney.multimoney.presentation.util.matchRegex
@@ -64,8 +69,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
         uiState = uiState.copy(
             titleResource = when (idBrand) {
                 Brand.ElSalvador.id -> R.string.disbursement_account_sv_title
-                Brand.Guatemala.id -> R.string.disbursement_account_gt_title
-                else -> R.string.disbursement_account_cr_title
+                else -> R.string.disbursement_account_gt_title
             }
         )
     }
@@ -184,7 +188,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
                 uiState = uiState.copy(
                     isLoading = false
                 )
-                navigateBack(isRestart = false)
+                navigateBack(isRestart = true)
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,

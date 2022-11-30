@@ -15,7 +15,16 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.*
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
+import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBack

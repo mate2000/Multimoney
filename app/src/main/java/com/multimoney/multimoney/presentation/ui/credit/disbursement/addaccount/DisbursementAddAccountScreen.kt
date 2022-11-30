@@ -2,7 +2,13 @@ package com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,8 +33,20 @@ import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.*
-import com.multimoney.multimoney.presentation.uielement.*
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnBankValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnAccountTypeValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnAccountNumberValueChange
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 

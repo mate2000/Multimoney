@@ -22,7 +22,12 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.*
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnContinueClick

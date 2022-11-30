@@ -275,6 +275,15 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.query(OcupationsQuery(pkUser, user, idBrand, idUserRequest))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
+    /*fun queryEmploymentSituation(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): ApolloCall<Emplo> =
+        apolloAuthorizedClient.query(OcupationsQuery(pkUser, user, idBrand, idUserRequest))
+            .fetchPolicy(FetchPolicy.NetworkOnly)*/
+
     fun mutationTermsAndConditions(
         user: String,
         idBrand: Int,

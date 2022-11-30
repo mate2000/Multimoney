@@ -29,6 +29,7 @@ const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
+const val IS_SMART_EVICERTIA = "is_smart_evicertia"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -45,10 +46,10 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             CreditScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                })
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
 
         composable(
@@ -72,7 +73,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
-                navArgument(PK_USER) { type = NavType.LongType }
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType }
             )
         ) {
             SignDocumentProcessScreen(onPopAndNavigate = {

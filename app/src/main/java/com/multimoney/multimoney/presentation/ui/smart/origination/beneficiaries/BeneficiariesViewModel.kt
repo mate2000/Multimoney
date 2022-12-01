@@ -24,8 +24,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.hasNumbersAndSpecialCharacters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class BeneficiariesViewModel @Inject constructor(
@@ -70,8 +70,12 @@ class BeneficiariesViewModel @Inject constructor(
     }
 
     private fun onPercentageValueChange(percentage: String) {
-        if (percentage.toInt() <= 100) {
+        if (percentage.isBlank()) {
             uiState = uiState.copy(percentage = percentage)
+        } else {
+            if (percentage.toInt() <= 100) {
+                uiState = uiState.copy(percentage = percentage)
+            }
         }
         validateForm()
     }
@@ -84,7 +88,8 @@ class BeneficiariesViewModel @Inject constructor(
             beneficiaryToUpdate = null
         }
 
-        val totalPercentage = uiState.totalPercentage.plus(beneficiary?.allocationPercentage?.toInt() ?: 0)
+        val totalPercentage =
+            uiState.totalPercentage.plus(beneficiary?.allocationPercentage?.toInt() ?: 0)
         val beneficiariesList = uiState.beneficiaryList.toMutableList()
 
         if (beneficiary != null && totalPercentage <= MAX_PERCENTAGE) {

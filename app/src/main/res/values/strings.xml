@@ -598,7 +598,7 @@
     <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_account_beneficiaries_percentage" translatable="false">Porcentaje a otorgar (%)</string>
-    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario</string>
+    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario +</string>
     <string name="smart_account_beneficiary_content" translatable="false">%1$s | %2$s</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_title" translatable="false">Superaste el máximo permitido</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>

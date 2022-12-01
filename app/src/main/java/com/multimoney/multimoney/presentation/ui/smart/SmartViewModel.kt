@@ -185,25 +185,25 @@ class SmartViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     idRequest = it?.idGlobalRequest ?: 0
-
                     if (isLastStep) {
-                        executeUseCase {
-                            mutationSaveSmartAccount.invoke(
-                                user = user,
-                                idBrand = idBrandAsInt,
-                                identificationNumber = identification,
-                                idRequest = idRequest.toLong()
-                            ).collectLatest { savedResult ->
-                                savedResult.onFailure { error ->
-                                    onUIEvent(OnLoadingValueChange(false))
-                                    uiState = uiState.copy(
-                                        isAlertResultVisible = true,
-                                        alertResultDescription = error.getError()
-                                    )
-                                }
-                                savedResult.onLoading {
-                                    onUIEvent(OnLoadingValueChange(true))
-                                }
+                        mutationSaveSmartAccount.invoke(
+                            user = user,
+                            idBrand = idBrandAsInt,
+                            identificationNumber = identification,
+                            idRequest = idRequest.toLong()
+                        ).collectLatest { savedResult ->
+                            savedResult.onSuccess {
+                                onUIEvent(OnLoadingValueChange(false))
+                            }
+                            savedResult.onFailure { error ->
+                                onUIEvent(OnLoadingValueChange(false))
+                                uiState = uiState.copy(
+                                    isAlertResultVisible = true,
+                                    alertResultDescription = error.getError()
+                                )
+                            }
+                            savedResult.onLoading {
+                                onUIEvent(OnLoadingValueChange(true))
                             }
                         }
                     }

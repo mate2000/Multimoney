@@ -12,6 +12,10 @@ import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCaseUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
@@ -369,6 +373,16 @@ class InteractionModule {
         MutationSendCreditContractEventUseCaseImpl(creditRepository)
 
     // Smart
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCoreBankMovementsUseCase(smartAccountRepository: SmartAccountRepository): QueryGetCoreBankMovementsUseCase =
+        QueryGetCoreBankMovementsUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetPagedSmartMovementsUseCase(smartAccountRepository: SmartAccountRepository): QueryGetPagedSmartMovementsUseCase =
+        QueryGetPagedSmartMovementsUseCaseUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

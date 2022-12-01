@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
@@ -205,6 +206,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SmartOnfidoScreen : Screen(
         "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}",
         "smart_onfido_screen"
+    )
+
+    object SmartMovementsScreen : Screen(
+        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
+        "smart_movements_screen"
     )
 
     // TestNavGraph Screens

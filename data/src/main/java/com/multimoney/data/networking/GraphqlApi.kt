@@ -28,6 +28,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebi
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
@@ -811,6 +812,28 @@ class GraphqlApi @Inject constructor(
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // SmartAccount
+
+    fun queryGetCoreBankMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        monthDate: String?
+    ): ApolloCall<GetCoreBankMovementsQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetCoreBankMovementsQuery(
+                user,
+                idBrand,
+                identificationNumber,
+                accountToken,
+                pageNumber,
+                pageSize,
+                monthDate
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryCivilStatus(
         pkUser: String,
         idBrand: Int

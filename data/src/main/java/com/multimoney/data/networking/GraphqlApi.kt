@@ -57,6 +57,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
@@ -914,4 +915,27 @@ class GraphqlApi @Inject constructor(
             infoCriptoStatus
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveClientBankAccount(
+        idClient: Long,
+        idBank: Int,
+        accountNumber: String,
+        idCurrency: Int,
+        idAccountType: Int,
+        idLoanClient: Long,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<SaveClientBankAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveClientBankAccountMutation(
+                idClient = idClient,
+                id_Banco = idBank,
+                numeroCuenta = accountNumber,
+                id_Moneda = idCurrency,
+                id_Tipo_Cuenta = idAccountType,
+                idLoanClient = idLoanClient,
+                user = user,
+                idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

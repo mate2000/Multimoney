@@ -486,7 +486,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSendMoneyScreen() {
-        // TODO: Navigate to SendMoney screen
+        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
     sealed class UIEvent {

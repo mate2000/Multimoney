@@ -56,7 +56,6 @@ const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
 const val PROFILE_ROUTE = "profile_route"
-const val SMART_MOVEMENTS_ROUTE = "smart_movements_route"
 const val TEST_ROUTE = "test_route"
 
 const val ID_BRAND = "id_brand"
@@ -96,11 +95,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object DisbursementAccountScreen : Screen(
         "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}",
         "disbursement_account_screen"
-    )
-
-    object SmartMovementsScreen : Screen(
-        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
-        "smart_movements_screen"
     )
 
     // CreditNavGraph Screens
@@ -206,6 +200,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SmartOnfidoScreen : Screen(
         "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}",
         "smart_onfido_screen"
+    )
+
+    object SmartMovementsScreen : Screen(
+        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
+        "smart_movements_screen"
     )
 
     // TestNavGraph Screens

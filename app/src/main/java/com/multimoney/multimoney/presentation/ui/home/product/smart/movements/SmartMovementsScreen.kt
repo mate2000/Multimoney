@@ -35,11 +35,10 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 @Composable
 fun SmartMovementsScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: SmartMovementsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
         viewModel.isOnRestart = false
         viewModel.onUIEvent(OnGetMovement)
     }

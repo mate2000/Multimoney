@@ -26,8 +26,8 @@ fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
         account.accountToken.toString() == accountSelected?.tokenNumber
     }
 
-    moves?.result?.isNotEmpty()?.let {
-        if (it) {
+    moves?.result?.isNotEmpty()?.let { result ->
+        if (result) {
             Column(
                 Modifier.fillMaxWidth().padding(16.dp)
             ) {

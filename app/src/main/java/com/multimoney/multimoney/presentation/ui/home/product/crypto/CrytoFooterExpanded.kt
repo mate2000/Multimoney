@@ -43,6 +43,8 @@ import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency10
 import com.multimoney.multimoney.presentation.theme.GrayScale300
+import com.multimoney.multimoney.presentation.theme.GrayScale400
+import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -93,13 +95,13 @@ fun CryptoFooterExpandedContent(
             actionWallet = actionWallet
         )
         NoticeSection()
-        Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
+        Divider(modifier = Modifier.fillMaxWidth(), color = GrayScale500)
         CryptoActionsSection(
             hasSmartBalance = hasSmartBalance,
             noBalanceAction = noBalanceAction,
             hasBalanceAction = hasBalanceAction
         )
-        Divider(modifier = Modifier.fillMaxWidth(), color = WhiteTransparency16)
+        Divider(modifier = Modifier.fillMaxWidth(), color = GrayScale500)
     }
 }
 
@@ -174,10 +176,10 @@ fun NoticeSection(showNoticeSection: Boolean = true) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Icon(
+                Image(
                     modifier = Modifier.padding(16.dp),
                     painter = painterResource(id = R.drawable.ic_crypto_empty_state_notice),
-                    tint = GrayScale300,
+                    //tint = GrayScale300,
                     contentDescription = null
                 )
                 Text(
@@ -270,7 +272,7 @@ fun CryptoAction(
                 .background(shape = CircleShape, color = Color.Transparent)
                 .border(
                     width = 2.dp,
-                    color = if (enable) Primary400 else GrayScale600,
+                    color = if (enable) Primary400 else GrayScale400,
                     shape = CircleShape
                 )
                 .clickable(enabled = enable, onClick = action)

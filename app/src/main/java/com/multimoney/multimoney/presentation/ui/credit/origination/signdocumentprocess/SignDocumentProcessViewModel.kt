@@ -127,6 +127,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
                     CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         handleOnfidoStatus(creditContractEvent)
                     }
                     CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
@@ -242,5 +243,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
+        const val TIME_TO_WAIT_VALIDATE_SMART_IDENTITY_IN_MILLI_SECOND = 30000L
     }
 }

@@ -30,6 +30,7 @@ const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
 const val IS_PEP = "is_pep"
+const val ID_CURRENCY = "currency"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(

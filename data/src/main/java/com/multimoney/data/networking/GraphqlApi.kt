@@ -28,6 +28,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebi
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
@@ -36,6 +37,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
@@ -47,6 +49,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
+import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
@@ -755,6 +758,28 @@ class GraphqlApi @Inject constructor(
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // SmartAccount
+
+    fun queryGetCoreBankMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        monthDate: String?
+    ): ApolloCall<GetCoreBankMovementsQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetCoreBankMovementsQuery(
+                user,
+                idBrand,
+                identificationNumber,
+                accountToken,
+                pageNumber,
+                pageSize,
+                monthDate
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryCivilStatus(
         pkUser: String,
         idBrand: Int
@@ -895,6 +920,14 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<RelationshipQuery.Data> =
         apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option)).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationInitialRequestSmartAccount(
+        pkUser: Long,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<InitialRequestSmartAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(InitialRequestSmartAccountMutation(pkUser, idBrand, user))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryGetQuickActions(
         idBrand: Int,
         pkUser: Int,
@@ -914,4 +947,27 @@ class GraphqlApi @Inject constructor(
             infoCriptoStatus
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveClientBankAccount(
+        idClient: Long,
+        idBank: Int,
+        accountNumber: String,
+        idCurrency: Int,
+        idAccountType: Int,
+        idLoanClient: Long,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<SaveClientBankAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveClientBankAccountMutation(
+                idClient = idClient,
+                id_Banco = idBank,
+                numeroCuenta = accountNumber,
+                id_Moneda = idCurrency,
+                id_Tipo_Cuenta = idAccountType,
+                idLoanClient = idLoanClient,
+                user = user,
+                idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

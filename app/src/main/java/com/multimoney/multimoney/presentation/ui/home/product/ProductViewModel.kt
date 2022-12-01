@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
@@ -29,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
@@ -64,6 +66,7 @@ class ProductViewModel @Inject constructor(
     var productProgress = 0F
     var isExpiredTitle = R.string.home_product_expiration
     var isPep: Boolean = false
+    var smartMovementsList: List<SmartMovementsResult> = emptyList()
 
     private fun onSetUserData(
         idBrand: String,
@@ -74,7 +77,8 @@ class ProductViewModel @Inject constructor(
         userName: String,
         validateUserStatus: ValidateUserStatus?,
         configurationVersion: ConfigurationVersion?,
-        productPageList: List<ProductPage>
+        productPageList: List<ProductPage>,
+        smartMovements: List<SmartMovementsResult>
     ) {
         this.pkUser = pkUser
         this.identification = identification
@@ -84,6 +88,7 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(idBrand = idBrand, productPageList = productPageList)
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
+        this.smartMovementsList = smartMovements
     }
 
     private fun setBalance(balance: Balance?) {
@@ -133,7 +138,10 @@ class ProductViewModel @Inject constructor(
     private fun getIfIsPep() = uiState.userStatus?.infoCredit?.infoPreApprove?.status == PENDING_TO_CHECK_STATUS
 
     private fun onNavigateToSmartFlow() {
-        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser")
+        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
+                "${uiState.userStatus?.infoUser?.firstName}/" +
+                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}"
+        )
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -216,6 +224,9 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
     }
+
+    private fun onNavigateToSmartMovements(accountToken: String) =
+        navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
@@ -314,7 +325,7 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 balanceCredit?.getFirstCredit()?.summary
             )
-            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}"
+            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
         )
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
@@ -466,7 +477,8 @@ class ProductViewModel @Inject constructor(
                 userName = uiEvent.userName,
                 validateUserStatus = uiEvent.validateUserStatus,
                 configurationVersion = uiEvent.configurationVersion,
-                productPageList = uiEvent.productPageList
+                productPageList = uiEvent.productPageList,
+                smartMovements = uiEvent.smartMovements
             )
             is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -485,6 +497,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
             is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
+            is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
         }
     }
 
@@ -513,6 +526,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToDisbursement : UIEvent()
         object OnNavigateToSendMoneyFlow : UIEvent()
         object OnNavigateToPaymentSmartFlow : UIEvent()
+        data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
@@ -528,7 +542,8 @@ class ProductViewModel @Inject constructor(
             val userName: String,
             val validateUserStatus: ValidateUserStatus?,
             val configurationVersion: ConfigurationVersion?,
-            val productPageList: List<ProductPage>
+            val productPageList: List<ProductPage>,
+            val smartMovements: List<SmartMovementsResult>
         ) : UIEvent()
 
         data class OnShareIbanAccount(

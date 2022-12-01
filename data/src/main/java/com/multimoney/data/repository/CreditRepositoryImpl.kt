@@ -21,6 +21,7 @@ import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessPaymentList
+import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -526,6 +527,32 @@ class CreditRepositoryImpl @Inject constructor(
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
+    )
+
+    override suspend fun mutationSaveClientBankAccount(
+        idClient: Long,
+        idBank: Int,
+        accountNumber: String,
+        idCurrency: Int,
+        idAccountType: Int,
+        idLoanClient: Long,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveClientBankAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationSaveClientBankAccount(
+            idClient = idClient,
+            idBank = idBank,
+            accountNumber = accountNumber,
+            idCurrency = idCurrency,
+            idAccountType = idAccountType,
+            idLoanClient = idLoanClient,
+            user = user,
+            idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+
     )
 
     override suspend fun mutationSaveCreditExtensionDetail(

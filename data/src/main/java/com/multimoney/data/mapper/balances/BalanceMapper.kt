@@ -46,7 +46,8 @@ private fun BalanceQuery.Account.mapToDomainModel() =
     Account(
         totalBalance = totalBalance.toString().toDouble(),
         currencyCode = currencyCode,
-        gainedInterest = gainedInterest.toString().toDouble()
+        gainedInterest = gainedInterest.toString().toDouble(),
+        tokenNumber = tokenNumber
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =

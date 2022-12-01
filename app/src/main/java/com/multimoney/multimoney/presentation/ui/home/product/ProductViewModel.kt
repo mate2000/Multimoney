@@ -136,7 +136,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartFlow() {
-        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser")
+        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
+                "${uiState.userStatus?.infoUser?.firstName}/" +
+                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}"
+        )
     }
 
     private fun onNavigateToPaymentScreen() {

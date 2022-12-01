@@ -2,6 +2,8 @@ package com.multimoney.domain.di
 
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationInitialUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -12,6 +14,10 @@ import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCaseUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
@@ -379,6 +385,16 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideQueryGetCoreBankMovementsUseCase(smartAccountRepository: SmartAccountRepository): QueryGetCoreBankMovementsUseCase =
+        QueryGetCoreBankMovementsUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetPagedSmartMovementsUseCase(smartAccountRepository: SmartAccountRepository): QueryGetPagedSmartMovementsUseCase =
+        QueryGetPagedSmartMovementsUseCaseUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryCivilStatusUseCase(smartAccountRepository: SmartAccountRepository): QueryCivilStatusUseCase =
         QueryCivilStatusUseCaseImpl(smartAccountRepository)
 
@@ -401,6 +417,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationGlobalRequestUseCase(smartAccountRepository: SmartAccountRepository): MutationGlobalRequestUseCase =
         MutationGlobalRequestUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationInitialRequestUseCase(smartAccountRepository: SmartAccountRepository): MutationInitialRequestUseCase =
+        MutationInitialUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

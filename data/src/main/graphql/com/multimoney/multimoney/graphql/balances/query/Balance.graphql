@@ -57,6 +57,7 @@ query Balance(
             currencyCode
             totalBalance
             gainedInterest
+            tokenNumber
         }
         request {
             statusFirm

@@ -532,6 +532,10 @@
     <string name="credit_detail_client" translatable="false">Cliente</string>
     <string name="credit_detail_iban_number" translatable="false">Numero de cuenta IBAN</string>
 
+    <!-- Disbursement Request Sent-->
+    <string name="disbursement_request_sent_successfully" translatable="false">Tu solicitud fue \nenviada \nexitosamente</string>
+    <string name="disbursement_info_verification_wait" translatable="false">Estamos verificando tus datos, pronto te daremos una respuesta</string>
+
     <!-- Payment Fee -->
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>
     <string name="payment_fee_one_option" translatable="false">Cuota en</string>

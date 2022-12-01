@@ -12,7 +12,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 
 @Composable
-fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
+fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
     when (viewModel.uiState.userStatus?.infoBankAccount?.status) {
         SmartAccountStatus.EXIST_IN_CORE.status -> {
             viewModel.balanceCredit?.balanceAccountSmart?.let {
@@ -22,13 +22,9 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                         type = ProductBackGroundType.Secondary
                     ) {
                         CardSmartProduct(
-                            currency = it[currentPage.minus(
-                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                            )]?.currencyCode ?: "", profitMonthly = it[currentPage.minus(
-                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                            )]?.gainedInterest.toString(), profitTotal = it[currentPage.minus(
-                                viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                            )]?.totalBalance.toString()
+                            currency = it[currentSmartPage.minus(1)]?.currencyCode ?: "",
+                            profitMonthly = it[currentSmartPage.minus(1)]?.gainedInterest.toString(),
+                            profitTotal = it[currentSmartPage.minus(1)]?.totalBalance.toString()
                         )
                     }
                 }

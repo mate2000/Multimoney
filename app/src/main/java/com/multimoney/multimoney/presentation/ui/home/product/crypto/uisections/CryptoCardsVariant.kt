@@ -132,7 +132,9 @@ fun CryptoCardWithBalance(
                 end = 16.dp,
                 bottom = if (isBalanceNullOrZero) 136.dp else 0.dp
             )
-            .clickable(enabled = isActionEnable) { action.invoke() }
+            .clickable(enabled = isActionEnable) {
+                action.invoke()
+            }
     ) {
         Text(
             text = stringResource(id = R.string.home_crypto_card_with_balance_title),

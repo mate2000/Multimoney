@@ -83,7 +83,8 @@ fun ProductScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val deleteAutomaticPaymentToastText = stringResource(id = R.string.automatic_payment_edit_bottom_sheet_delete_toast)
+    val deleteAutomaticPaymentToastText =
+        stringResource(id = R.string.automatic_payment_edit_bottom_sheet_delete_toast)
 
     viewModel.onUIEvent(
         OnSetUserData(
@@ -123,7 +124,8 @@ fun ProductScreen(
                     )
                 }
                 is OnDeleteAutomaticPaymentToastEvent -> {
-                    Toast.makeText(context, deleteAutomaticPaymentToastText, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, deleteAutomaticPaymentToastText, Toast.LENGTH_LONG)
+                        .show()
                 }
             }
         }
@@ -324,7 +326,7 @@ fun ProductHeaderExpanded(
 fun ProductContent(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel,
+    viewModel: ProductViewModel
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
@@ -337,7 +339,8 @@ fun ProductContent(
                 ProductType.Smart.value -> SmartContent(viewModel = viewModel, currentPage)
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
-                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount
+                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
+                    openCryptoHomeAction = { /*open card action*/ }
                 )
             }
         }
@@ -408,7 +411,14 @@ fun ProductFooterExpanded(
                     viewModel = viewModel,
                     viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
                 )
-                ProductType.Crypto.value -> CryptoFooterExpanded()
+                ProductType.Crypto.value -> CryptoFooterExpanded(
+                    userStatus = viewModel.uiState.userStatus,
+                    balance = viewModel.balanceCredit,
+                    actionMarket = { /*send to all coins screen*/ },
+                    actionWallet = { /*send to "my wallet"*/ },
+                    noBalanceAction = {},
+                    hasBalanceAction = { /*go to smart origination*/ }
+                )
             }
         }
     }

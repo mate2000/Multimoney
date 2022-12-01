@@ -244,7 +244,7 @@
     <string name="home_pay_button_text" translatable="false">Abonar</string>
     <string name="home_my_products_title" translatable="false">Mi billetera Multimoney</string>
     <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
-    <string name="home_my_products_title_credit" translatable="false">Credito</string>
+    <string name="home_my_products_title_credit" translatable="false">Crédito</string>
     <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
     <string name="home_my_products_title_smart" translatable="false">Smart</string>
     <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
@@ -318,6 +318,19 @@
 
     <!-- Home Smart Header Expanded-->
     <string name="home_product_smart_header_expanded_title" translatable="false">Mi Cuenta Smart</string>
+
+    <!-- Home Crypto Header Expanded-->
+    <string name="home_crypto_header_expanded_title" translatable="false">Mi Cripto</string>
+
+    <!-- Home Credit Footer Expanded-->
+    <string name="crypto_footer_expanded_btn_wallet" translatable="false">Mi portafolio</string>
+    <string name="crypto_footer_expanded_btn_market" translatable="false">Mercado</string>
+    <string name="crypto_footer_expanded_notice_title" translatable="false">Empezá a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en Portafolio y comprá desde el Mercado</string>
+    <string name="crypto_footer_expanded_buy_crypto_label" translatable="false">Comprar</string>
+    <string name="crypto_footer_expanded_sell_crypto_label" translatable="false">Vender</string>
+    <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
+    <string name="crypto_footer_expanded_send_crypto_label" translatable="false">Enviar</string>
 
     <!-- my products bottom sheet -->
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>

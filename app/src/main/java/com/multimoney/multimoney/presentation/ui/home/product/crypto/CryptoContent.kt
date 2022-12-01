@@ -20,8 +20,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 fun CryptoContent(
     userStatus: ValidateUserStatus?,
     cryptoBalance: BalanceCryptoAccount?,
-    onDiscoverCryptoAction: () -> Unit = {},
-    onCryptoCardWithBalanceAction: () -> Unit = {},
+    openCryptoHomeAction: () -> Unit = {}
 ) {
     when (userStatus?.infoBankAccount?.status) {
 
@@ -36,7 +35,8 @@ fun CryptoContent(
                         ) {
                             CryptoCardWithBalance(
                                 isBalanceNullOrZero = true,
-                                cryptoBalance = stringResource(id = R.string.home_crypto_card_with_balance_zero_text)
+                                cryptoBalance = stringResource(id = R.string.home_crypto_card_with_balance_zero_text),
+                                action = openCryptoHomeAction
                             )
                         }
                         return
@@ -49,7 +49,7 @@ fun CryptoContent(
                         CryptoCardWithBalance(
                             isActionEnable = true,
                             cryptoBalance = cryptoBalance.toString(),
-                            action = onCryptoCardWithBalanceAction
+                            action = openCryptoHomeAction
                         )
                     }
                 }
@@ -62,7 +62,7 @@ fun CryptoContent(
                         CryptoCardDiscoverCrypto(
                             wording = userStatus.infoCrypto?.wording,
                             isActionEnable = true,
-                            action = onDiscoverCryptoAction
+                            action = openCryptoHomeAction
                         )
                     }
                 }
@@ -89,7 +89,11 @@ fun CryptoContent(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 type = ProductBackGroundType.ComplementaryTwo
             ) {
-                CryptoCardDiscoverCrypto(wording = userStatus.infoCrypto?.wording)
+                CryptoCardDiscoverCrypto(
+                    wording = userStatus.infoCrypto?.wording,
+                    isActionEnable = true,
+                    action = openCryptoHomeAction
+                )
             }
         }
     }

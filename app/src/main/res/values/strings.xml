@@ -629,6 +629,8 @@
     <string name="smart_other_title" translatable="false">Otro</string>
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
+    <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
+    <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
     <!--Smart Account - Own Business On Personal basis-->
     <string name="smart_business_personal_basis_title" translatable="false">Negocio propio en sociedad</string>

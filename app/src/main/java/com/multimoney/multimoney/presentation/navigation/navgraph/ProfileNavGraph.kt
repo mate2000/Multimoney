@@ -13,6 +13,8 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.PersonalInfoScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ValidateOTPScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.VerifyIdentityScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -42,7 +44,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         }
 
         composable(
-            Screen.PersonalInfoScreen.route,
+            Screen.ProfilePersonalInfoScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND){
                     type = NavType.IntType
@@ -65,7 +67,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         }
 
         composable(
-            Screen.ChangePhoneScreen.route,
+            Screen.ProfileChangePhoneScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND){
                     type = NavType.IntType
@@ -73,6 +75,52 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             )
         ) {
             ChangePhoneScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
+        composable(
+            Screen.ProfileVerifyIdentityScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND){
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            VerifyIdentityScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
+        composable(
+            Screen.ProfileValidateOTPScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND){
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            ValidateOTPScreen(
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(

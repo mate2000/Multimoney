@@ -9,10 +9,14 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -27,10 +31,14 @@ class ChangePhoneViewModel @Inject constructor(
 
     data class UIState(
         // Fields
-        val userName: String = "",
-        val userEmail: String = "",
+        val userName: String? = null,
+        val email: String? = null,
+        val identification : String? = null,
         val phoneNumber: String? = null,
+        val newPhoneNumber : String? = null,
         val idBrand: Int? = null,
+        val firstName : String? = null,
+        val pkUser : String? = null,
         val phoneCode: String = "",
         val countryCode : String? = null,
         val phoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_phone_not_valid),
@@ -39,7 +47,16 @@ class ChangePhoneViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
 
     init {
-        uiState = uiState.copy(phoneNumber = savedStateHandle[PHONE_NUMBER], idBrand =  savedStateHandle[ID_BRAND], countryCode = initCountryCode() )
+        uiState = uiState.copy(phoneNumber = savedStateHandle[PHONE_NUMBER],
+            idBrand =  savedStateHandle[ID_BRAND],
+            email = savedStateHandle[EMAIL],
+            userName = savedStateHandle[USER_NAME],
+            identification = savedStateHandle[IDENTIFICATION],
+            countryCode = initCountryCode(),
+            pkUser = savedStateHandle[PK_USER],
+            firstName = savedStateHandle[FIRST_NAME]
+        )
+
         when  (uiState.idBrand) {
             Brand.Guatemala.id -> {uiState = uiState.copy(countryCode = "gt")}
             Brand.CostaRica.id -> {uiState = uiState.copy(countryCode = "cr")}
@@ -49,10 +66,10 @@ class ChangePhoneViewModel @Inject constructor(
 
     private fun isFormValid(countryCode: String) = emitBaseEvent(
             when {
-                uiState.phoneCode.isBlank() || uiState.phoneNumber?.isBlank() == true -> uiState = uiState.copy(isButtonEnabled = false)
+                uiState.phoneCode.isBlank() || uiState.newPhoneNumber?.isBlank() == true -> uiState = uiState.copy(isButtonEnabled = false)
                 isPhoneNumberValid(
-                    phone = uiState.phoneNumber.toString(),
-                    fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
+                    phone = uiState.newPhoneNumber.toString(),
+                    fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",
                     countryCode = countryCode,
                     phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
                 ).not() -> uiState = uiState.copy(isButtonEnabled = false)
@@ -60,9 +77,9 @@ class ChangePhoneViewModel @Inject constructor(
             }
     )
 
-    private fun onUserPhoneValueChanged(phoneNumber: String, countryCode: String) {
+    private fun onUserPhoneValueChanged(newPhoneNumber: String, countryCode: String) {
         uiState =
-            uiState.copy(phoneNumber = phoneNumber, phoneNumberError = Pair(false, R.string.error_empty))
+            uiState.copy(newPhoneNumber = newPhoneNumber, phoneNumberError = Pair(false, R.string.error_empty))
         isFormValid(countryCode)
     }
 
@@ -84,7 +101,7 @@ class ChangePhoneViewModel @Inject constructor(
     private fun onCountryCodeValueChanged(phoneCode: String, countryCode: String) {
         uiState = uiState.copy(
             phoneCode = phoneCode,
-            phoneNumber = "",
+            newPhoneNumber = "",
             phoneNumberError = Pair(false, R.string.error_empty)
         )
         isFormValid(countryCode)
@@ -92,12 +109,13 @@ class ChangePhoneViewModel @Inject constructor(
 
     private fun isPhoneValid(countryCode: String?) {
         if (isPhoneNumberValid(
-                phone = uiState.phoneNumber.toString(),
-                fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
+                phone = uiState.newPhoneNumber.toString(),
+                fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",
                 countryCode = countryCode ?: "",
                 phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
             ).not()
         ) uiState = uiState.copy(phoneNumberError = Pair(true, R.string.sign_up_phone_not_valid))
+        else clearPhoneError()
     }
 
     private fun clearPhoneError() {
@@ -105,7 +123,7 @@ class ChangePhoneViewModel @Inject constructor(
     }
 
     private fun onContinueButtonClicked(){
-
+        navigateTo("${Screen.ProfileVerifyIdentityScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/{${uiState.email}}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
 

@@ -59,7 +59,11 @@ const val TEST_ROUTE = "test_route"
 
 const val ID_BRAND = "id_brand"
 const val PHONE_NUMBER = "phone_number"
-const val COUNTRY_CODE = "country_code"
+const val NEW_PHONE_NUMBER = "new_phone_number"
+const val IDENTIFICATION = "identification"
+const val EMAIL = "email"
+const val USER_NAME = "user_name"
+const val SEND_METHOD = "send_method"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -85,14 +89,20 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // HomeNavGraph Screens
     object HomeScreen : Screen("home_screen")
 
-    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}",
+    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}/{$FIRST_NAME}",
         "profile_screen")
 
-    object PersonalInfoScreen : Screen("personal_info_screen/{$ID_BRAND}/{$PHONE_NUMBER}",
-        "personal_info_screen")
+    object ProfilePersonalInfoScreen : Screen("profile_personal_info_screen/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_personal_info_screen")
 
-    object ChangePhoneScreen : Screen("change_phone_screen/{$ID_BRAND}/{$PHONE_NUMBER}",
-        "change_phone_screen")
+    object ProfileVerifyIdentityScreen : Screen("profile_verify_identity_screen/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$NEW_PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_verify_identity_screen")
+
+    object ProfileChangePhoneScreen : Screen("profile_change_phone_screen/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_change_phone_screen")
+
+    object ProfileValidateOTPScreen : Screen("profile_validate_otp_screen/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}",
+        "profile_validate_otp_screen")
 
 
     // DisbursementNavGraph Screens

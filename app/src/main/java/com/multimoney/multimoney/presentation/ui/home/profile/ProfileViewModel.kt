@@ -6,24 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.domain.model.balance.Summary
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.COUNTRY_CODE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
@@ -39,22 +30,28 @@ class ProfileViewModel @Inject constructor(
     private fun getProfileInfo() = viewModelScope.launch {
         uiState = uiState.copy(
             userName = dataStorePreferences.getUserName().first(),
-            userEmail = dataStorePreferences.getUserEmail().first(),
+            email = dataStorePreferences.getUserEmail().first(),
             phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
+            identification = dataStorePreferences.getIdentification().first(),
+            pkUser = dataStorePreferences.getPkUser().first(),
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
+            firstName = savedStateHandle[FIRST_NAME]
         )
     }
 
     private fun navigateToPersonalInfoScreen(){
-        navigateTo("${Screen.PersonalInfoScreen.baseRoute}/${uiState.idBrand}/${uiState.phoneNumber}")
+        navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     data class UIState(
         // Fields
         val userName: String = "",
-        val userEmail: String = "",
+        val email: String = "",
         val phoneNumber: String = "",
+        val identification : String = "",
         val idBrand: Int? = null,
+        val pkUser: String? = null,
+        val firstName : String? = null,
         val countryCode : String? = null
     )
 

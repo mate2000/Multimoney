@@ -309,12 +309,22 @@
     <string name="profile_help" translatable="false">Ayuda e información</string>
     <string name="profile_invite_friends" translatable="false">Invitar amigos</string>
     <string name="profile_logout" translatable="false">Cerrar Sesión</string>
-    <string name="personal_info_title" translatable="false">Datos personales</string>
-    <string name="change_email_address" translatable="false">Cambio de correo electrónico</string>
-    <string name="change_phone" translatable="false">Cambio de teléfono</string>
-    <string name="change_phone_title" translatable="false">Cambiar teléfono</string>
+    <string name="profile_personal_info_title" translatable="false">Datos personales</string>
+    <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
+    <string name="profile_change_phone" translatable="false">Cambio de teléfono</string>
+    <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
+    <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
+    <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde quieres recibir el código?</string>
     <string name="profile_new_phone_number" translatable="false">Nuevo número de teléfono</string>
     <string name="profile_we_will_send_you_a_code" translatable="false">Te envieramos un código de verificación para confirmar tu nuevo teléfono</string>
+    <string name="profile_sms_to_previous_phone" translatable="false">SMS al teléfono anterior</string>
+    <string name="profile_to_email" translatable="false">Correo electrónico</string>
+    <string name="profile_send_code" translatable="false">Enviar código</string>
+    <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
+    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_code_expires_in_template" translatable="false">Codigo expira en %1$s segundos</string>
+
+
 
 
     <!-- Home Product Header -->

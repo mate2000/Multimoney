@@ -62,6 +62,7 @@ class ProductViewModel @Inject constructor(
     var email: String = ""
     var userName: String = ""
     var productProgress = 0F
+    val firstName : String? = null
     var isExpiredTitle = R.string.home_product_expiration
 
     private fun onSetUserData(
@@ -106,6 +107,8 @@ class ProductViewModel @Inject constructor(
     private fun setValidateUserStatus(userStatus: ValidateUserStatus?) {
         lastStep = CreditStep.Search.getIdByName(userStatus?.infoCredit?.infoPreApprove?.currentStep)
         uiState = uiState.copy(userStatus = userStatus)
+
+
     }
 
     private fun onNavigateToCreditScreen(creditStep: String) {
@@ -207,7 +210,7 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}")
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {

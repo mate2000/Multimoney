@@ -10,6 +10,10 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,15 +32,18 @@ class PersonalInfoViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToEditPhone(){
-        navigateTo("${Screen.ChangePhoneScreen.baseRoute}/${uiState.idBrand}/${uiState.phoneNumber}")
+    private fun navigateToEditPhone() {
+        navigateTo("${Screen.ProfileChangePhoneScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     data class UIState(
         // Fields
         val userData: UserData? = null,
-        val userName: String = "",
-        val userEmail: String = "",
+        val userName: String? = null,
+        val email: String? = null,
+        val identification: String? = null,
+        val pkUser: String? = null,
+        val firstName : String? = null,
         val phoneNumber: String? = null,
         val idBrand: Int? = null,
     )
@@ -46,7 +53,11 @@ class PersonalInfoViewModel @Inject constructor(
     init {
         uiState = uiState.copy(
             phoneNumber = savedStateHandle[PHONE_NUMBER],
-            idBrand = savedStateHandle[ID_BRAND]
+            idBrand = savedStateHandle[ID_BRAND],
+            pkUser = savedStateHandle[PK_USER],
+            identification = savedStateHandle[IDENTIFICATION],
+            email = savedStateHandle[EMAIL],
+            firstName = savedStateHandle[FIRST_NAME]
         )
     }
 

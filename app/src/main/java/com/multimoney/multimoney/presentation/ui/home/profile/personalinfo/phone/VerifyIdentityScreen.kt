@@ -7,13 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,111 +21,97 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.PhoneTextField
+import com.multimoney.multimoney.presentation.uielement.RadioButtonQuestion
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.togitech.ccp.data.CountryData
-import com.togitech.ccp.data.utils.getLibCountries
+
 
 @Preview
 @Composable
-fun ChangePhoneScreen(
+fun VerifyIdentityScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: ChangePhoneViewModel = hiltViewModel()
+    viewModel: VerifyIdentityViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
 
     BackHandler {
-        viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnNavigateBack)
+        viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnNavigateBack)
     }
-    val focusManager = LocalFocusManager.current
-    val selectedCountry = getLibCountries().first {
-        it.countryCode == viewModel.uiState.countryCode
-    }
-    viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnStart(phoneCode = selectedCountry.countryPhoneCode))
-    ChangePhoneScreenContent(viewModel, selectedCountry, focusManager)
+
+    //viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnStart(phoneCode = selectedCountry.countryPhoneCode))
+    VerifyIdentityContent(viewModel = viewModel)
+
 }
 
 @Composable
-private fun ChangePhoneScreenContent(
-    viewModel: ChangePhoneViewModel, selectedCountry: CountryData, focusManager: FocusManager
-) {
+fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
     ConstraintLayout(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        val (topNavBar, phoneInputColumn, continueButton) = createRefs()
+        val (topNavBar, methodSelectionColumn, continueButton) = createRefs()
 
         TopNavBar(
             modifier = Modifier.constrainAs(topNavBar) {
                 top.linkTo(parent.top)
             },
             onLeftButtonClick = {
-                viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnNavigateBack)
+                //   viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnNavigateBack)
             },
             isRightButtonVisible = false
         )
-
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
-                .constrainAs(phoneInputColumn) {
+                .constrainAs(methodSelectionColumn) {
                     top.linkTo(topNavBar.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                 }
         ) {
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = stringResource(id = R.string.profile_change_phone_title),
+                text = stringResource(id = R.string.profile_identity_verification),
                 style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
             )
-            PhoneTextField(
-                value = viewModel.uiState.newPhoneNumber,
-                onValueChange = {
+            Text(
+                modifier = Modifier.padding(top = 8.dp),
+                text = stringResource(id = R.string.profile_where_do_you_want_to_receive_the_code),
+                style = Typography.body2.copy(fontWeight = FontWeight.Light),
+                color = MultimoneyTheme.colors.labelText,
+                textAlign = TextAlign.Left
+            )
+            RadioButtonQuestion(
+                questionTextResource = R.string.empty,
+                firstButtonTextResource = R.string.profile_sms_to_previous_phone,
+                secondButtonTextResource = R.string.profile_to_email,
+                shouldHaveDisclaimer = false,
+                firstButtonIsSelected = viewModel.uiState.questionOneValue,
+                secondButtonIsSelected = viewModel.uiState.questionOneValue.not(),
+                onFirstButtonOnClick = {
                     viewModel.onUIEvent(
-                        ChangePhoneViewModel.UIEvent.OnUserPhoneValueChanged(
-                            phoneNumber = it,
-                            countryCode = viewModel.uiState.countryCode ?: "",
+                        VerifyIdentityViewModel.UIEvent.OnQuestionOneValueChange(
+                            true
                         )
                     )
                 },
-                onDebounceValidation = {
-                    viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnValidatePhone(viewModel.uiState.phoneCode))
-                },
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.clearFocus()
-                }),
-                labelText = stringResource(id = R.string.profile_new_phone_number),
-                modifier = Modifier.padding(top = 24.dp),
-                isRequired = true,
-                isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
-                isError = viewModel.uiState.phoneNumberError.first,
-                errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
-                defaultCountry = selectedCountry,
-                pickedCountry = {
+                onSecondButtonOnClick = {
                     viewModel.onUIEvent(
-                        ChangePhoneViewModel.UIEvent.OnCountryCodeValueChanged(
-                            phoneCode = it.countryPhoneCode,
-                            countryCode = it.countryCode,
+                        VerifyIdentityViewModel.UIEvent.OnQuestionOneValueChange(
+                            false
                         )
                     )
                 }
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                text = stringResource(id = R.string.profile_we_will_send_you_a_code),
-                style = Typography.body2.copy(fontWeight = FontWeight.Light),
-                color = MultimoneyTheme.colors.labelText
             )
         }
         CustomButton(
@@ -140,10 +123,10 @@ private fun ChangePhoneScreenContent(
                     bottom.linkTo(parent.bottom, margin = 40.dp)
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
-            text = stringResource(id = R.string.profile_change_phone_title),
-            enable = viewModel.uiState.isButtonEnabled,
+            text = stringResource(id = R.string.profile_send_code),
+            enable = true,
             onClick = {
-                viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnContinueButtonClicked)
+                viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnContinueButtonClicked)
             }
         )
     }

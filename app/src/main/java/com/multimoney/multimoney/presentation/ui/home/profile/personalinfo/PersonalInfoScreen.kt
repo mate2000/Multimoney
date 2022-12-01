@@ -5,8 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,16 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.profile.ProfileContent
-import com.multimoney.multimoney.presentation.ui.home.profile.ProfileHeader
-import com.multimoney.multimoney.presentation.ui.home.profile.ProfileOptions
-import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -62,19 +55,19 @@ fun PersonalInfoContent(viewModel : PersonalInfoViewModel){
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = stringResource(id = R.string.personal_info_title),
+                text = stringResource(id = R.string.profile_personal_info_title),
                 style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
             )
             CustomItemRow(
-                title = stringResource(R.string.change_email_address),
+                title = stringResource(R.string.profile_change_email_address),
                 startIcon = R.drawable.ic_envelope,
                 endIcon = R.drawable.ic_right_chevron,
                 onClick = { }
             )
             CustomItemRow(
-                title = stringResource(R.string.change_phone),
+                title = stringResource(R.string.profile_change_phone),
                 startIcon = R.drawable.ic_phone,
                 endIcon = R.drawable.ic_right_chevron,
                 onClick = {

@@ -73,7 +73,7 @@ class BeneficiariesViewModel @Inject constructor(
         if (percentage.isBlank()) {
             uiState = uiState.copy(percentage = percentage)
         } else {
-            if (percentage.toInt() <= 100) {
+            if (percentage.toInt() <= MAX_PERCENTAGE) {
                 uiState = uiState.copy(percentage = percentage)
             }
         }

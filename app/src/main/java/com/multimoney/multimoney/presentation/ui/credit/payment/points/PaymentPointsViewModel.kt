@@ -24,10 +24,10 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPo
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class PaymentPointsViewModel @Inject constructor(
@@ -52,6 +52,7 @@ class PaymentPointsViewModel @Inject constructor(
     private fun onItemPointClick(
         pointName: String,
         pointAddress: String,
+        pointAddressDescription: String,
         pointSchedule: String,
         pointLatitude: String,
         pointLongitude: String
@@ -62,8 +63,7 @@ class PaymentPointsViewModel @Inject constructor(
                 pointAddress,
                 StandardCharsets.UTF_8.name()
             )
-            }" +
-                "/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$creditNumber/$idBrand"
+            }/$pointAddressDescription}/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$creditNumber/$idBrand"
         )
 
     private fun onQueryValueChange(value: String) {
@@ -136,6 +136,7 @@ class PaymentPointsViewModel @Inject constructor(
             is OnItemPointClick -> onItemPointClick(
                 uiEvent.pointName,
                 uiEvent.pointAddress,
+                uiEvent.pointAddressDescription,
                 uiEvent.pointSchedule,
                 uiEvent.pointLatitude,
                 uiEvent.pointLongitude
@@ -152,6 +153,7 @@ class PaymentPointsViewModel @Inject constructor(
         data class OnItemPointClick(
             val pointName: String,
             val pointAddress: String,
+            val pointAddressDescription: String,
             val pointSchedule: String,
             val pointLatitude: String,
             val pointLongitude: String

@@ -58,10 +58,11 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idBrand: Int,
         identificationNumber: String,
         accountToken: Long,
+        pageSize: Int,
         monthDate: String?
     ): Flow<PagingData<SmartMovement>> {
         return Pager(
-            config = PagingConfig(SmartMovementsPagingSource.PAGE_SIZE),
+            config = PagingConfig(pageSize),
             pagingSourceFactory = {
                 SmartMovementsPagingSource(
                     graphqlApi,
@@ -69,6 +70,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
                     idBrand,
                     identificationNumber,
                     accountToken,
+                    pageSize,
                     monthDate
                 )
             }

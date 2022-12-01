@@ -15,17 +15,21 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateToDisbursementAddAccount
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -50,6 +54,9 @@ class DisbursementAccountViewModel @Inject constructor(
     private var nextPaymentDate: String? = null
     private var quotaTotal: String? = null
     private var selectedAmount: String? = null
+    private var pkUser: Int? = null
+    private var idCurrency: Int?
+    private var idUserRequest: Int? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -60,6 +67,9 @@ class DisbursementAccountViewModel @Inject constructor(
         nextPaymentDate = savedStateHandle[NEXT_PAYMENT_DATE]
         quotaTotal = savedStateHandle[QUOTA_TOTAL]
         selectedAmount = savedStateHandle[SELECTED_AMOUNT]
+        pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
+        idCurrency = savedStateHandle[ID_CURRENCY]
+        idUserRequest = savedStateHandle[ID_USER_REQUEST]
         getTextResources()
     }
 
@@ -109,6 +119,11 @@ class DisbursementAccountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
+    private fun onNavigateToDisbursementAddAccount() =
+        navigateTo(
+            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/${idBrand}/${pkUser}/${user}/${idUserRequest}/${idClient}/${idLoanClient}/${idCurrency}"
+        )
+
     data class UIState(
         // Interactions
         val titleResource: Int = R.string.empty,
@@ -123,6 +138,7 @@ class DisbursementAccountViewModel @Inject constructor(
             is OnNavigateBackHome -> onNavigateBackHome()
             is OnCallQueryGetClientBankAccount -> onCallQueryGetClientBankAccountUseCase()
             is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount)
+            is OnNavigateToDisbursementAddAccount -> onNavigateToDisbursementAddAccount()
         }
     }
 
@@ -131,5 +147,6 @@ class DisbursementAccountViewModel @Inject constructor(
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigateBackHome : UIEvent()
+        object OnNavigateToDisbursementAddAccount : UIEvent()
     }
 }

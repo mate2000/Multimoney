@@ -32,6 +32,7 @@ interface SmartAccountRepository {
         idBrand: Int,
         identificationNumber: String,
         accountToken: Long,
+        pageSize: Int,
         monthDate: String?
     ): Flow<PagingData<SmartMovement>>
 

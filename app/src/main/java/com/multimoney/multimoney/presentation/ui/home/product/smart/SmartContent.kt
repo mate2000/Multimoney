@@ -17,7 +17,7 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
         SmartAccountStatus.EXIST_IN_CORE.status -> {
             viewModel.balanceCredit?.balanceAccountSmart?.let {
                 if (it.isNotEmpty()) {
-                    var index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
                     CustomProductBackground(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         type = ProductBackGroundType.Secondary

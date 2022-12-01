@@ -22,11 +22,12 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnContinueClick
@@ -85,6 +86,7 @@ class DisbursementAmountViewModel @Inject constructor(
     private var summary: List<Summary>? = listOf()
     private var pkUser: Int? = null
     private var creditNumber: String? = null
+    private var idUserRequest: Int? = null
     private var creditExtensionAmount: CreditExtensionAmount? = null
     private var creditExtensionMessage: CreditExtensionMessage? = null
     private var creditExtensionDetail: CreditExtensionDetail? = null
@@ -97,6 +99,7 @@ class DisbursementAmountViewModel @Inject constructor(
         currencyItems = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()?.map { it.idCurrency ?: 0 }
         pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
         creditNumber = savedStateHandle[CREDIT_NUMBER]
+        idUserRequest = savedStateHandle[ID_USER_REQUEST]
     }
 
     private fun onStart() {
@@ -277,7 +280,7 @@ class DisbursementAmountViewModel @Inject constructor(
                     encodeData(
                         summary
                     )
-                    }/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}"
+                    }/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/${pkUser}/${idUserRequest ?: 0}/${creditExtensionAmount?.idLoanClient ?: 0}/${currencyItems?.get(uiState.currencyIndex)}"
                 )
             }.onFailure {
                 uiState = uiState.copy(

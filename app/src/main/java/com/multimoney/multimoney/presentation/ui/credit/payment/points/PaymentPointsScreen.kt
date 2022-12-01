@@ -13,7 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -38,15 +38,22 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun PaymentPointsScreen(
+    isRestart: Boolean,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PaymentPointsViewModel = hiltViewModel()
 ) {
     // Navigation
-    LaunchedEffect(true) {
-        viewModel.apply {
-            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnGetPaymentPoints)
+    viewModel.apply {
+        isOnRestart = isRestart
+        DisposableEffect(isOnRestart) {
+            if (isOnRestart) {
+                executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+                onUIEvent(OnGetPaymentPoints)
+            }
+            onDispose {
+                isOnRestart = false
+            }
         }
     }
 
@@ -116,6 +123,7 @@ fun PaymentPointsContent(
                                     UIEvent.OnItemPointClick(
                                         point.name ?: "",
                                         point.address ?: "",
+                                        point.addressDescription ?: "",
                                         point.schedule ?: "",
                                         point.latitude ?: "",
                                         point.longitude ?: ""

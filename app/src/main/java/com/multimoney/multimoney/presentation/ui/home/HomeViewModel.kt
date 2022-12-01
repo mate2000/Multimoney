@@ -5,7 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
@@ -24,6 +27,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.HomeBNScreen
@@ -44,8 +48,13 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHi
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
+import com.multimoney.multimoney.presentation.util.INDEX_ONE
+import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ProductPage
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -53,16 +62,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @HiltViewModel
+@OptIn(ExperimentalPagerApi::class)
 class HomeViewModel @Inject constructor(
     val countDownTimer: MMCountDownTimer,
     private val dataStorePreferences: DataStorePreferences,
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
-    private val querytGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
-    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
+    private val queryGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
-    private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase
+    private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase,
+    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -101,11 +111,11 @@ class HomeViewModel @Inject constructor(
                 identificationNumber = identificationNumber,
                 accountToken = tokenNumber,
                 pageNumber = INDEX_ONE,
-                pageSize = PAGE_SIZE,
+                pageSize = LAST_THREE,
                 monthDate = null
             ).collectLatest { result ->
-                result.onSuccess { movements ->
-                    if (movements != null) {
+                result.onSuccess {
+                    it?.let { movements ->
                         movements.accountToken = tokenNumber
                         uiState = uiState.copy(
                             smartMovementsList = uiState.smartMovementsList + movements,
@@ -133,7 +143,7 @@ class HomeViewModel @Inject constructor(
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ) = executeUseCase {
-        querytGetQuickActionsUseCase.invoke(
+        queryGetQuickActionsUseCase.invoke(
             idBrand = idBrand,
             pkUser = pkUser,
             identification = identification,
@@ -184,23 +194,7 @@ class HomeViewModel @Inject constructor(
             cardStatus = cardStatus
         ).collectLatest { result ->
             result.onSuccess { balance ->
-                balance?.let {
-                    if (uiState.configurationVersion != null && uiState.quickActions != null) {
-                        uiState = uiState.copy(isLoading = false)
-                    }
-                    uiState = uiState.copy(balance = balance)
-
-                    balance.balanceAccountSmart?.forEach {
-                        if (it != null) {
-                            onGetSmartMovements(
-                                user,
-                                idBrand,
-                                identification,
-                                it.tokenNumber?.toLongOrNull() ?: 0
-                            )
-                        }
-                    }
-                }
+                balance?.let { setBalance(it) }
             }
             result.onFailure {
                 onFailure(it)
@@ -209,6 +203,96 @@ class HomeViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = true)
             }
         }
+    }
+
+    private fun setBalance(balance: Balance) {
+        val productPageList = mutableListOf<ProductPage>()
+
+        val defaultIndex = 0
+        // Default credit
+        productPageList.add(
+            ProductPage(
+                product = ProductType.Credit.value,
+                enabled = true,
+                index = defaultIndex,
+                resourceIcon = R.drawable.ic_my_credit,
+                resourceText = R.string.home_my_products_label_credit
+            )
+        )
+        // If idBrand is different from Guatemala enable Smart
+        if (uiState.idBrand != Brand.Guatemala.id.toString()) {
+            if (balance.balanceAccountSmart.isNullOrEmpty().not()) {
+                // Add the amount of account smart that user has
+                balance.balanceAccountSmart?.forEachIndexed { index, account ->
+                    productPageList.add(
+                        ProductPage(
+                            product = ProductType.Smart.value,
+                            productSmartIndex = index,
+                            enabled = true,
+                            index = productPageList.lastIndex + 1,
+                            resourceText = run {
+                                when (account?.currencyCode) {
+                                    CurrencyType.Dollar.value -> R.string.home_my_products_label_smart
+                                    CurrencyType.Colon.value -> R.string.home_my_products_label_smart_colones
+                                    //  adding quetzal label here if necessary
+                                    else -> R.string.home_my_products_label_smart
+                                }
+                            },
+                            resourceIcon = run {
+                                when (account?.currencyCode) {
+                                    CurrencyType.Dollar.value -> R.drawable.ic_dollars_strong
+                                    CurrencyType.Colon.value -> R.drawable.ic_colones_strong
+                                    // adding quetzal icon here if necessary
+                                    else -> R.drawable.ic_dollars_strong
+                                }
+                            }
+                        )
+                    )
+
+                    onGetSmartMovements(
+                        uiState.userName,
+                        uiState.idBrand.toInt(),
+                        uiState.identification,
+                        account?.tokenNumber?.toLongOrNull() ?: 0
+                    )
+                }
+                // If user has smart activated he can enable crypto
+                productPageList.add(
+                    ProductPage(
+                        product = ProductType.Crypto.value,
+                        enabled = true,
+                        index = productPageList.lastIndex + 1,
+                        resourceIcon = R.drawable.ic_union,
+                        resourceText = R.string.home_my_products_label_crypto
+                    )
+                )
+            } else {
+                // If user doesn't have smart we have to add one empty card to activate the product
+                productPageList.add(
+                    ProductPage(
+                        product = ProductType.Smart.value,
+                        enabled = true,
+                        index = productPageList.lastIndex + 1,
+                        resourceText = R.string.home_my_products_label_smart,
+                        resourceIcon = R.drawable.ic_dollars_strong
+                    )
+                )
+                productPageList.add(
+                    ProductPage(
+                        product = ProductType.Crypto.value,
+                        enabled = true,
+                        index = productPageList.lastIndex + 1,
+                        resourceIcon = R.drawable.ic_union,
+                        resourceText = R.string.home_my_products_label_crypto
+                    )
+                )
+            }
+        }
+
+        if (uiState.configurationVersion != null && uiState.quickActions != null) {
+            uiState = uiState.copy(isLoading = false)
+        }
+        uiState = uiState.copy(balance = balance, productPageList = productPageList)
     }
 
     private fun callQueryGetConfigurationVersion(
@@ -380,6 +464,9 @@ class HomeViewModel @Inject constructor(
         var identification: String = "",
         var email: String = "",
         var userName: String = "",
+        var forceIsExpanded: Boolean = false,
+        var productScreenPagerState: PagerState? = null,
+        var productPageList: List<ProductPage> = emptyList(),
         val smartMovementsList: List<SmartMovementsResult> = emptyList()
     )
 
@@ -400,6 +487,8 @@ class HomeViewModel @Inject constructor(
             is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
+            is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
+            is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
         }
     }
 
@@ -413,6 +502,9 @@ class HomeViewModel @Inject constructor(
             val identificationNumber: String,
             val tokenNumber: Long
         ) : UIEvent()
+
+        data class OnMyProductClick(val expand: Boolean) : UIEvent()
+        data class OnMyProductPageChange(val page: PagerState) : UIEvent()
         object OnSetUserData : UIEvent()
         object OnSignOut : UIEvent()
 
@@ -433,10 +525,5 @@ class HomeViewModel @Inject constructor(
         object OnEditAutomaticPaymentEvent : BaseEvent()
         object OnDeleteAutomaticPaymentEvent : BaseEvent()
         object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
-    }
-
-    companion object {
-        const val INDEX_ONE = 1
-        const val PAGE_SIZE = 3
     }
 }

@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
@@ -17,15 +16,7 @@ class OwnBusinessTitleViewModel @Inject constructor() : BaseViewModel(true) {
 
     data class UIState(
         var incomeAmount: String = "",
-        var businessName: String = "",
-        var amountError: Pair<Boolean, Int> = Pair(
-            false,
-            R.string.smart_business_personal_income_label_required
-        ),
-        var businessNameError: Pair<Boolean, Int> = Pair(
-            false,
-            R.string.smart_business_personal_name_required
-        )
+        var businessName: String = ""
     )
 
     sealed class UIEvent {

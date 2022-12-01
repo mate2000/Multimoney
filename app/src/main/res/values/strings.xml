@@ -10,6 +10,7 @@
     <string name="label_email" translatable="false">Correo electrónico</string>
     <string name="finalize" translatable="false">Finalizar</string>
     <string name="accept" translatable="false">Aceptar</string>
+    <string name="save" translatable="false">Guardar</string>
     <string name="cancel" translatable="false">Cancelar</string>
     <string name="contact" translatable="false">Contactar</string>
     <string name="error" translatable="false">Error</string>
@@ -41,6 +42,8 @@
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
     <string name="info" translatable="false">Información</string>
+    <string name="common_options" translatable="false">Opciones</string>
+    <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
     <string-array name="options_yes_no">
         <item>Si</item>
@@ -49,6 +52,7 @@
     <string name="colons" translatable="false">Colenes</string>
     <string name="dollars" translatable="false">Doláres</string>
     <string name="quetzales" translatable="false">Quetzales</string>
+    <string name="detail" translatable="false">Detalle</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -56,6 +60,7 @@
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
     <string name="error_no_internet_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="you_have_exceeded_the_max_characters_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
@@ -130,7 +135,7 @@
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
-    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s incorrecto</string>
+    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s inválido</string>
     <string name="sign_up_personal_data_id_required" translatable="false">Número de %s requerido</string>
     <string name="sign_up_personal_data_nationality_header" translatable="false">¿Cuáles son tus datos personales?</string>
     <string name="sign_up_personal_data_nationality" translatable="false">Nacionalidad</string>
@@ -238,6 +243,15 @@
     <string name="home_crypto_card_with_balance_zero_text" translatable="false">0.00</string>
     <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
     <string name="home_pay_button_text" translatable="false">Abonar</string>
+    <string name="home_my_products_title" translatable="false">Mi billetera Multimoney</string>
+    <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
+    <string name="home_my_products_title_credit" translatable="false">Credito</string>
+    <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
+    <string name="home_my_products_title_smart" translatable="false">Smart</string>
+    <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
+    <string name="home_my_products_label_smart_colones" translatable="false">Mi Cuenta Smart | ₡</string>
+    <string name="home_my_products_title_crypto" translatable="false">Cripto</string>
+    <string name="home_my_products_label_crypto" translatable="false">Cripto</string>
 
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
@@ -527,6 +541,10 @@
     <string name="credit_detail_client" translatable="false">Cliente</string>
     <string name="credit_detail_iban_number" translatable="false">Numero de cuenta IBAN</string>
 
+    <!-- Disbursement Request Sent-->
+    <string name="disbursement_request_sent_successfully" translatable="false">Tu solicitud fue \nenviada \nexitosamente</string>
+    <string name="disbursement_info_verification_wait" translatable="false">Estamos verificando tus datos, pronto te daremos una respuesta</string>
+
     <!-- Payment Fee -->
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>
     <string name="payment_fee_one_option" translatable="false">Cuota en</string>
@@ -572,6 +590,8 @@
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
+    <string name="smart_account_document_birthdate_age_error" translatable="false">Debes ser mayor de 18 años</string>
+    <string name="smart_account_document_birthdate_age_limit_error" translatable="false">Validá tu fecha de nacimiento.</string>
     <string name="smart_account_document_issue_date_required" translatable="false">Fecha de nacimiento requerida</string>
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
@@ -585,7 +605,7 @@
     <string name="smart_account_formal_title" translatable="false">Asalariado Formal</string>
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
-    <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+    <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
 
     <!-- Smart Account - Beneficiary -->
@@ -597,6 +617,13 @@
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>
     <string name="smart_account_beneficiary_info_description" translatable="false">En caso de fallecimiento, tus beneficiarios recibirán el monto disponible de tu cuenta smart. Recuerda que debes de asignar el 100%</string>
 
+    <!-- Smart Account - Edit Beneficiary -->
+    <string name="smart_account_edit_beneficiary" translatable="false">Editar beneficiario</string>
+
+    <!-- Smart Account - Remove Beneficiary -->
+    <string name="smart_account_remove_beneficiary" translatable="false">Eliminar beneficiario</string>
+    <string name="smart_account_remove_beneficiary_alert_description" translatable="false">¿Deseas eliminar beneficiario?</string>
+
     <!-- Smart - Close origin flow -->
     <string name="smart_close_origination_dialog_title" translatable="false">Abandonar proceso</string>
     <string name="smart_close_origination_dialog_description" translatable="false">¿Estás seguro de abandonar el proceso de solicitud?</string>
@@ -607,7 +634,6 @@
     <string name="smart_own_business_company_name_required" translatable="false">Nombre de la empresa requerido</string>
     <string name="smart_own_business_description_label" translatable="false">¿Qué hace la empresa?</string>
     <string name="smart_own_business_description_required" translatable="false">Descripcion de la empresa requerido</string>
-    <string name="smart_own_business_description_max_char_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
     <string name="smart_own_business_monthly_income_label" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_own_business_monthly_income_required" translatable="false">Ingreso promedio mensual requerido</string>
     <string name="smart_own_business_monthly_income_placeholder" translatable="false">%s0</string>
@@ -765,6 +791,9 @@
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+    <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
+    <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
+
 
     <!-- Credit Schedule Automatic Payment -->
     <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>
@@ -793,4 +822,5 @@
 
     <!-- Payment Amount Card -->
     <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
+
 </resources>

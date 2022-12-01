@@ -1,6 +1,5 @@
 package com.multimoney.data.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
@@ -18,12 +17,12 @@ class SmartMovementsPagingSource(
     private val idBrand: Int,
     private val identificationNumber: String,
     private val accountToken: Long,
+    private val pageSize: Int,
     private val monthDate: String?
 ) : PagingSource<Int, SmartMovement>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SmartMovement> {
         val currentPage = params.key ?: INDEX_ONE
-        Log.d("SmartMovementsPagingSource", "current page on load(): $currentPage")
         return try {
             val response = fetchData(
                 apolloCall = graphqlApi.queryGetCoreBankMovements(
@@ -32,7 +31,7 @@ class SmartMovementsPagingSource(
                     identificationNumber,
                     accountToken,
                     currentPage,
-                    PAGE_SIZE,
+                    pageSize,
                     monthDate
                 ),
                 apolloCallMapper = { data ->
@@ -46,7 +45,7 @@ class SmartMovementsPagingSource(
             response.collectLatest { result ->
                 result.onSuccess { moves ->
                     searchResult = moves?.result ?: emptyList()
-                    endOfPageReached = PAGE_SIZE * currentPage > (moves?.totalRecords ?: 0)
+                    endOfPageReached = pageSize * currentPage > (moves?.totalRecords ?: 0)
                 }
                 result.onFailure { error ->
                     error.throwable?.let { LoadResult.Error<Int, SmartMovement>(it) }
@@ -56,8 +55,8 @@ class SmartMovementsPagingSource(
             if (searchResult.isNotEmpty()) {
                 LoadResult.Page(
                     data = searchResult,
-                    prevKey = if (currentPage == 1) null else currentPage - 1,
-                    nextKey = if (endOfPageReached) null else currentPage + 1
+                    prevKey = if (currentPage == INDEX_ONE) null else currentPage.minus(INDEX_ONE),
+                    nextKey = if (endOfPageReached) null else currentPage.plus(INDEX_ONE)
                 )
             } else {
                 LoadResult.Page(
@@ -67,14 +66,12 @@ class SmartMovementsPagingSource(
                 )
             }
         } catch (e: Exception) {
-            Log.d("tellException", "error: ${e.message}")
             LoadResult.Error(e)
         }
     }
 
     override fun getRefreshKey(state: PagingState<Int, SmartMovement>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
-
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(INDEX_ONE)
                 ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(INDEX_ONE)
         }
@@ -82,6 +79,5 @@ class SmartMovementsPagingSource(
 
     companion object {
         const val INDEX_ONE = 1
-        const val PAGE_SIZE = 10
     }
 }

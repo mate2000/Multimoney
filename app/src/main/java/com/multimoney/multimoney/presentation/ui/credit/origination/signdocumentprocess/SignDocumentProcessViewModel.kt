@@ -142,7 +142,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             VALIDATE_IDENTITY.value -> {
                 emitBaseEvent(SimulateUserInteraction)
                 if (creditContractEvent?.active == true) {
-                    if (idBrand == Brand.CostaRica.id && creditContractEvent.currentStep != PENDING_TO_CHECK_STATUS) {
+                    if (idBrand == Brand.CostaRica.id && isPep.not()) {
                         navigateToProcessingTransaction()
                     } else {
                         // todo navigate to success screen

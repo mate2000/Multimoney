@@ -260,18 +260,22 @@ class ProductViewModel @Inject constructor(
                         )
                 }
 
+                CREDIT_EL_SALVADOR_MANUAL_PROCESS -> {
+                    uiState.idBrand.toInt() == Brand.ElSalvador.id && infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status
+                }
+
+                CREDIT_PEP_PROCESS -> {
+                    uiState.idBrand.toInt() == Brand.CostaRica.id && infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status && getIfIsPep()
+                }
+
                 CREDIT_FIRM_INCOMPLETE -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
                         infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.PENDING.status
                 }
 
                 CREDIT_FIRMED_ONFIDO_PENDING -> {
-                    if (uiState.idBrand.toInt() == Brand.ElSalvador.id) {
-                        true
-                    }else{
-                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.FIRMED.status &&
-                                infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
-                    }
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.FIRMED.status &&
+                        infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
                 }
 
                 CREDIT_FIRM_REJECTED -> {
@@ -553,6 +557,8 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_ONFIDO_REJECTED = "CREDT_ONFIFO_REJECTED"
         const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
         const val CREDIT_ERROR_CREATE_ACCOUNT = "CREDIT_ERROR_CREATE_ACCOUNT"
+        const val CREDIT_EL_SALVADOR_MANUAL_PROCESS = "CREDIT_EL_SALVADOR_MANUAL_PROCESS"
+        const val CREDIT_PEP_PROCESS = "CREDIT_PEP_PROCESS"
         const val SEPARATOR = " + "
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
     }

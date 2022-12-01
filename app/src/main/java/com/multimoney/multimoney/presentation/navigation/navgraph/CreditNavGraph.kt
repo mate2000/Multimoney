@@ -29,6 +29,7 @@ const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
+const val IS_PEP = "is_pep"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -58,7 +59,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
-                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
+                navArgument(IS_PEP) { type = NavType.BoolType }
             )
         ) {
             CreditOnfidoScreen(onPopAndNavigate = {
@@ -73,7 +75,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
-                navArgument(PK_USER) { type = NavType.LongType }
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(IS_PEP) { type = NavType.BoolType }
             )
         ) {
             SignDocumentProcessScreen(onPopAndNavigate = {
@@ -109,7 +112,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
-                navArgument(ID_USER_REQUEST) { type = NavType.LongType }
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType },
+                navArgument(IS_PEP) { type = NavType.BoolType }
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(

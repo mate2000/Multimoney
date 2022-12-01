@@ -63,6 +63,7 @@ class ProductViewModel @Inject constructor(
     var userName: String = ""
     var productProgress = 0F
     var isExpiredTitle = R.string.home_product_expiration
+    var isPep: Boolean = false
 
     private fun onSetUserData(
         idBrand: String,
@@ -118,17 +119,18 @@ class ProductViewModel @Inject constructor(
             CREDIT_FIRM_INCOMPLETE, CREDIT_ONFIDO_REJECTED, CREDIT_FIRM_REJECTED -> {
                 // todo call the new endpoint to get the evicertia url
             }
-
             else -> {
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                         "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
                         "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}/${getIfIsPep()}"
                 )
             }
         }
     }
+
+    private fun getIfIsPep() = uiState.userStatus?.infoCredit?.infoPreApprove?.status == PENDING_TO_CHECK_STATUS
 
     private fun onNavigateToSmartFlow() {
         navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser")
@@ -264,8 +266,12 @@ class ProductViewModel @Inject constructor(
                 }
 
                 CREDIT_FIRMED_ONFIDO_PENDING -> {
-                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.FIRMED.status &&
-                        infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
+                    if (uiState.idBrand.toInt() == Brand.ElSalvador.id) {
+                        true
+                    }else{
+                        infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.FIRMED.status &&
+                                infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
+                    }
                 }
 
                 CREDIT_FIRM_REJECTED -> {
@@ -548,5 +554,6 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
         const val CREDIT_ERROR_CREATE_ACCOUNT = "CREDIT_ERROR_CREATE_ACCOUNT"
         const val SEPARATOR = " + "
+        const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
     }
 }

@@ -490,6 +490,10 @@
     <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
     <string name="sign_document_reject_description_gt" translatable="false">Si quieres finalizar la solicitud de tu crédito debés firmar el contrato</string>
 
+    <!-- Origination Voucher -->
+    <string name="origination_voucher_amount" translatable="false">Has recibido</string>
+    <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
+
     <!-- Visa -->
     <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>
     <string name="visa_cvv_label" translatable="false">CVV</string>
@@ -513,7 +517,6 @@
     <string name="visa_card_cr_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_gt_dialog_description_available" translatable="false">Recuerda que puedes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_available_amount" translatable="false">Disponible %s</string>
-
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>

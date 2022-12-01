@@ -14,12 +14,13 @@ import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
 import com.multimoney.domain.model.credit.ExchangeRate
+import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessPaymentList
+import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
-import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -275,6 +276,12 @@ interface CreditRepository {
         statusOnfido: String,
         currentStep: String
     ): Flow<MultimoneyResult<CreditContractEvent?>>
+
+    suspend fun queryGetInfoDeposit(
+        idBrand: Int,
+        idPrint: Long,
+        user: String
+    ): Flow<MultimoneyResult<GetInfoDeposit?>>
 
     suspend fun mutationSaveClientBankAccount(
         idClient: Long,

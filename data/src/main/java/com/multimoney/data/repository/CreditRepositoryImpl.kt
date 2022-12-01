@@ -3,26 +3,27 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
-import com.multimoney.domain.model.credit.CreditOffer
-import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.AutomaticDebit
+import com.multimoney.domain.model.credit.BanksAndRegularExpression
+import com.multimoney.domain.model.credit.CardVisaDirect
+import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
-import com.multimoney.domain.model.credit.CreditInfoQuestion
-import com.multimoney.domain.model.credit.SaveCreditFlowStep
-import com.multimoney.domain.model.credit.ClientBankAccount
-import com.multimoney.domain.model.credit.CardVisaDirect
-import com.multimoney.domain.model.credit.PaymentPoint
-import com.multimoney.domain.model.credit.ExchangeRate
-import com.multimoney.domain.model.credit.BanksAndRegularExpression
-import com.multimoney.domain.model.credit.DestinyAccount
-import com.multimoney.domain.model.credit.ProcessPaymentList
-import com.multimoney.domain.model.credit.SaveCreditOperation
-import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.credit.CreditExtensionAmount
-import com.multimoney.domain.model.credit.CreditExtensionMessage
-import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.CreditExtensionDetail
+import com.multimoney.domain.model.credit.CreditExtensionMessage
+import com.multimoney.domain.model.credit.CreditInfoQuestion
+import com.multimoney.domain.model.credit.CreditOffer
+import com.multimoney.domain.model.credit.DestinyAccount
+import com.multimoney.domain.model.credit.ExchangeRate
+import com.multimoney.domain.model.credit.GetInfoDeposit
+import com.multimoney.domain.model.credit.PaymentAmount
+import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessPaymentList
+import com.multimoney.domain.model.credit.SaveClientBankAccount
+import com.multimoney.domain.model.credit.SaveCreditFlowStep
+import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -498,7 +499,8 @@ class CreditRepositoryImpl @Inject constructor(
             idLoanClient,
             quotaMax,
             idProductBase,
-            cicle),
+            cicle
+        ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -593,6 +595,21 @@ class CreditRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             if (data.saveCreditExtensionDetail?.status == null || data.saveCreditExtensionDetail.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
+    override suspend fun queryGetInfoDeposit(
+        idBrand: Int,
+        idPrint: Long,
+        user: String
+    ): Flow<MultimoneyResult<GetInfoDeposit?>> = fetchData(
+        apolloCall = graphqlApi.queryGetInfoDeposit(idBrand, idPrint, user),
+        apolloCallMapper = { data ->
+            if (data.getInfoDeposit.status == null || data.getInfoDeposit.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())

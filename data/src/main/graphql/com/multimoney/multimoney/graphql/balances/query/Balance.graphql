@@ -54,9 +54,26 @@ query Balance(
         }
     ) {
         accounts {
-            currencyCode
+            code
+            message
             totalBalance
+            averageBalance
+            accountNumber
+            tokenNumber
+            productType
+            currencyCode
+            email
+            phoneNumber
+            accountStatus
+            customerId
             gainedInterest
+            activeBroker
+            ibanAccountNumber
+            idCurrencyAccount
+            fullNameCustomer
+            visaDirectId
+            visaDirectUser
+            totalInterest
             tokenNumber
         }
         request {
@@ -90,5 +107,7 @@ query Balance(
             cardNumber
         }
         eSTADO
+        cOMISION_DESEMBOLSO
+        tASA_INTERES
     }
 }

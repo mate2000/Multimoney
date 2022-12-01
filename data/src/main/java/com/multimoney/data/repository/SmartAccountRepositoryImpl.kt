@@ -255,4 +255,19 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCallMapper = { data -> Success(data.mapToDomain()) }
         )
     }
+
+    override suspend fun mutationInitialRequestSmartAccount(
+        pkUser: Long,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<GlobalRequest?>> {
+        return fetchData(
+            apolloCall = graphqlApi.mutationInitialRequestSmartAccount(
+                pkUser,
+                idBrand,
+                user
+            ), apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            })
+    }
 }

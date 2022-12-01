@@ -36,6 +36,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
@@ -984,6 +985,14 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationInitialRequestSmartAccount(
+        pkUser: Long,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<InitialRequestSmartAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(InitialRequestSmartAccountMutation(pkUser, idBrand, user))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryGetQuickActions(
         idBrand: Int,
         pkUser: Int,
@@ -993,7 +1002,17 @@ class GraphqlApi @Inject constructor(
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ): ApolloCall<QuickActionsQuery.Data> =
-        apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
+        apolloAuthorizedClient.query(
+            QuickActionsQuery(
+                idBrand,
+                pkUser,
+                identification,
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCriptoStatus
+            )
+        )
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveClientBankAccount(

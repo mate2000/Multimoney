@@ -44,10 +44,14 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_DAY
+import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_MONTH
+import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_YEAR
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
+import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 
@@ -177,6 +181,8 @@ fun SmartDocumentScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.clearFocus()
             }),
+            errorMessage = stringResource(id = viewModel.uiState.birthdateError),
+            isError = viewModel.uiState.birthdateErrorStatus,
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.credit_job_date_required),
             onClick = {
@@ -189,18 +195,21 @@ fun SmartDocumentScreen(
                             year,
                             month,
                             day,
-                            SmartDocumentViewModel.DATE_FORMAT
+                            YEAR_MONTH_DAY_PATTERN
                         )
-                        viewModel.onUIEvent(OnBirthDateValueChange(date))
+
+                        val calendarValidation = Calendar.getInstance()
+                        calendarValidation.set(year, month, day)
+                        viewModel.onUIEvent(OnBirthDateValueChange(date, LocalDate.of(year, month, day)))
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
                 calendar.set(
-                    SmartDocumentViewModel.BIRTH_DATE_MIN_YEAR,
-                    SmartDocumentViewModel.BIRTH_DATE_MIN_MONTH,
-                    SmartDocumentViewModel.BIRTH_DATE_MIN_DAY
+                    BIRTH_DATE_MIN_YEAR,
+                    BIRTH_DATE_MIN_MONTH,
+                    BIRTH_DATE_MIN_DAY
                 )
                 datePicker.datePicker.minDate = calendar.timeInMillis
                 datePicker.datePicker.maxDate = Date().time
@@ -270,7 +279,7 @@ fun SmartDocumentScreen(
                             year,
                             month,
                             day,
-                            SmartDocumentViewModel.DATE_FORMAT
+                            YEAR_MONTH_DAY_PATTERN
                         )
                         viewModel.onUIEvent(UIEvent.OnExpirationDateValueChange(date))
                     },
@@ -279,9 +288,9 @@ fun SmartDocumentScreen(
                     calendar.get(Calendar.DAY_OF_MONTH)
                 )
                 calendar.set(
-                    SmartDocumentViewModel.BIRTH_DATE_MIN_YEAR,
-                    SmartDocumentViewModel.BIRTH_DATE_MIN_MONTH,
-                    SmartDocumentViewModel.BIRTH_DATE_MIN_DAY
+                    BIRTH_DATE_MIN_YEAR,
+                    BIRTH_DATE_MIN_MONTH,
+                    BIRTH_DATE_MIN_DAY
                 )
                 datePicker.datePicker.minDate = Date().time
                 datePicker.show()

@@ -52,6 +52,7 @@
     <string name="colons" translatable="false">Colenes</string>
     <string name="dollars" translatable="false">Doláres</string>
     <string name="quetzales" translatable="false">Quetzales</string>
+    <string name="detail" translatable="false">Detalle</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -134,7 +135,7 @@
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
-    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s incorrecto</string>
+    <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s inválido</string>
     <string name="sign_up_personal_data_id_required" translatable="false">Número de %s requerido</string>
     <string name="sign_up_personal_data_nationality_header" translatable="false">¿Cuáles son tus datos personales?</string>
     <string name="sign_up_personal_data_nationality" translatable="false">Nacionalidad</string>
@@ -589,6 +590,8 @@
     <!-- Smart Account -->
     <string name="smart_account_document_title" translatable="false">Contános sobre vos</string>
     <string name="smart_account_document_birthdate_title" translatable="false">Fecha de nacimiento</string>
+    <string name="smart_account_document_birthdate_age_error" translatable="false">Debes ser mayor de 18 años</string>
+    <string name="smart_account_document_birthdate_age_limit_error" translatable="false">Validá tu fecha de nacimiento.</string>
     <string name="smart_account_document_issue_date_required" translatable="false">Fecha de nacimiento requerida</string>
     <string name="smart_account_smart_account_document_date_required_date_valid" translatable="false">Validá la fecha de emisión</string>
     <string name="smart_account_document_expiration_title" translatable="false">Fecha de vencimiento</string>
@@ -602,7 +605,7 @@
     <string name="smart_account_formal_title" translatable="false">Asalariado Formal</string>
     <string name="smart_account_formal_monthly" translatable="false">Ingreso mensual en colones</string>
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
-    <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesion</string>
+    <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
 
     <!-- Smart Account - Beneficiary -->
@@ -788,6 +791,9 @@
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+    <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
+    <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
+
 
     <!-- Credit Schedule Automatic Payment -->
     <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>
@@ -816,4 +822,5 @@
 
     <!-- Payment Amount Card -->
     <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
+
 </resources>

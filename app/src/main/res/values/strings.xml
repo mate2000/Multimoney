@@ -552,6 +552,10 @@
     <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente a la de la cuota.</string>
     <string name="payment_account_empty_state_description" translatable="false">Agregá una cuenta para \npodás realizar tus pagos</string>
 
+    <!-- Add iban account Screen -->
+    <string name="add_iban_account_disbursement_tile" translatable="false">¿En cuál cuenta IBAN querés recibir tu dinero?</string>
+    <string name="add_iban_account_payment_tile" translatable="false">¿Con cuál cuenta IBAN querés realizar tu pago?</string>
+
     <!-- Iban account Screen -->
     <string name="iban_account_tile" translatable="false">¿En cuál cuenta IBAN querés recibir tu dinero?</string>
     <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>

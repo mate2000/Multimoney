@@ -17,9 +17,9 @@ import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessPaymentList
+import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
-import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -281,7 +281,7 @@ interface CreditRepository {
         idBank: Int,
         accountNumber: String,
         idCurrency: Int,
-        idAccountType: Int,
+        idAccountType: Int?,
         idLoanClient: Long,
         user: String,
         idBrand: Int

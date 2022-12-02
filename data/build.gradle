@@ -62,7 +62,6 @@ apollo {
     service("graphql") {
         sourceFolder.set("com/multimoney/multimoney/graphql")
         packageName.set("com.multimoney.data.networking.graphql.apollomodel")
-        generateOptionalOperationVariables.set(false)
     }
 }
 

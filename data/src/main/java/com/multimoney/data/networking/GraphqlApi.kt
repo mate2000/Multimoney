@@ -46,6 +46,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
+import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
@@ -56,7 +57,6 @@ import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
@@ -531,7 +531,7 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.mutation(
             SaveCreditExtensionDetailMutation(
                 pkUser,
-                idBrand,
+                Optional.Present(idBrand),
                 user,
                 accountNumber,
                 amount,
@@ -563,7 +563,7 @@ class GraphqlApi @Inject constructor(
             SendCreditContractEventMutation(
                 idImpresion,
                 idBrand,
-                link,
+                Optional.Present(link),
                 active,
                 statusEvicertia,
                 statusOnfido,
@@ -597,9 +597,9 @@ class GraphqlApi @Inject constructor(
             idDocument,
             identification,
             firstName,
-            secondName,
+            Optional.Present(secondName),
             firstSurname,
-            secondSurname
+            Optional.Present(secondSurname)
         )
     ).fetchPolicy(
         FetchPolicy.NetworkOnly
@@ -625,15 +625,15 @@ class GraphqlApi @Inject constructor(
             pkUser,
             user,
             email,
-            phoneNumber,
-            fullName,
-            firstName,
-            secondName,
-            lastName,
-            secondLastName,
-            nationality,
-            identification,
-            countryCode,
+            Optional.Present(phoneNumber),
+            Optional.Present(fullName),
+            Optional.Present(firstName),
+            Optional.Present(secondName),
+            Optional.Present(lastName),
+            Optional.Present(secondLastName),
+            Optional.Present(nationality),
+            Optional.Present(identification),
+            Optional.Present(countryCode),
             currentStep,
             idBrand
         )
@@ -735,14 +735,14 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<ValidatePinQuery.Data> = apolloAuthorizedClient.query(
         ValidatePinQuery(
             idBrand,
-            appSource,
+            Optional.Present(appSource),
             pkUser.toInt(),
-            ip,
+            Optional.Present(ip),
             pinSecurity,
-            telephone,
-            sendValidatePin,
-            flowOrigination,
-            userCreate
+            Optional.Present(telephone),
+            Optional.Present(sendValidatePin),
+            Optional.Present(flowOrigination),
+            Optional.Present(userCreate)
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -915,7 +915,7 @@ class GraphqlApi @Inject constructor(
                 expirationDate,
                 idGender,
                 idCivilStatusType,
-                companyName,
+                Optional.Present(companyName),
                 aboutCompany,
                 institutionPension,
                 idAddressLevel3,
@@ -934,13 +934,15 @@ class GraphqlApi @Inject constructor(
                 isPEP,
                 isUSTaxPayer,
                 isTaxPayer,
-                beneficiaries.map { beneficiary ->
-                    BeneficiaryRequestDtoInput(
-                        fullName = Optional.presentIfNotNull(beneficiary.fullName),
-                        relationship = Optional.presentIfNotNull(beneficiary.relationship.toString()),
-                        allocationPercentage = Optional.presentIfNotNull(beneficiary.allocationPercentage)
-                    )
-                },
+                Optional.Present(
+                    beneficiaries.map { beneficiary ->
+                        BeneficiaryRequestDtoInput(
+                            fullName = Optional.presentIfNotNull(beneficiary.fullName),
+                            relationship = Optional.presentIfNotNull(beneficiary.relationship.toString()),
+                            allocationPercentage = Optional.presentIfNotNull(beneficiary.allocationPercentage)
+                        )
+                    }
+                ),
                 idJobLevel2,
                 idJobLevel3
             )
@@ -970,7 +972,17 @@ class GraphqlApi @Inject constructor(
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ): ApolloCall<QuickActionsQuery.Data> =
-        apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
+        apolloAuthorizedClient.query(
+            QuickActionsQuery(
+                idBrand,
+                pkUser,
+                identification,
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCriptoStatus
+            )
+        )
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveClientBankAccount(
@@ -978,7 +990,7 @@ class GraphqlApi @Inject constructor(
         idBank: Int,
         accountNumber: String,
         idCurrency: Int,
-        idAccountType: Int,
+        idAccountType: Int?,
         idLoanClient: Long,
         user: String,
         idBrand: Int
@@ -989,7 +1001,7 @@ class GraphqlApi @Inject constructor(
                 id_Banco = idBank,
                 numeroCuenta = accountNumber,
                 id_Moneda = idCurrency,
-                id_Tipo_Cuenta = idAccountType,
+                id_Tipo_Cuenta = idAccountType?.let { Optional.Present(it) } ?: run { Optional.Absent },
                 idLoanClient = idLoanClient,
                 user = user,
                 idBrand = idBrand

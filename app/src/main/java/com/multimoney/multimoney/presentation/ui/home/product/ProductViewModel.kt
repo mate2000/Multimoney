@@ -129,16 +129,15 @@ class ProductViewModel @Inject constructor(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                         "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
                         "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}/${getIfIsPep()}"
+                        "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
                 )
             }
         }
     }
 
-    private fun getIfIsPep() = uiState.userStatus?.infoCredit?.infoPreApprove?.status == PENDING_TO_CHECK_STATUS
-
     private fun onNavigateToSmartFlow() {
-        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
+        navigateTo(
+            "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
                 "${uiState.userStatus?.infoUser?.firstName}/" +
                 "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}"
         )
@@ -250,6 +249,8 @@ class ProductViewModel @Inject constructor(
         ) R.string.home_product_expired else R.string.home_product_expiration
     }
 
+    private fun getIfIsPep() = uiState.userStatus?.infoCredit?.infoPreApprove?.status == PENDING_TO_CHECK_STATUS
+
     fun evaluateCardCondition(action: String, validateUserStatus: ValidateUserStatus): Boolean {
         validateUserStatus.apply {
             return when (action) {
@@ -276,7 +277,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 CREDIT_PEP_PROCESS -> {
-                    uiState.idBrand.toInt() == Brand.CostaRica.id && infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status && getIfIsPep()
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status && infoCredit?.infoPreApprove?.idPrint == 0L && getIfIsPep()
                 }
 
                 CREDIT_FIRM_INCOMPLETE -> {

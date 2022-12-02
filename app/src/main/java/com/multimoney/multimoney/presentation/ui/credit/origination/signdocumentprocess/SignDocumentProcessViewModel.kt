@@ -19,7 +19,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_PEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
@@ -63,7 +62,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var firstName: String = ""
     var lastName: String = ""
-    var isPep: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -74,7 +72,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
-        isPep = savedStateHandle[IS_PEP] ?: false
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: "",
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
@@ -93,7 +90,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
-        if (idBrand != Brand.ElSalvador.id) {
+        if (idBrand != Brand.ElSalvador.id && idPrint != 0L) {
             onListenCreditContractEventSubscription(idPrint, idBrand)
         }
     }
@@ -143,7 +140,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             VALIDATE_IDENTITY.value -> {
                 emitBaseEvent(SimulateUserInteraction)
                 if (creditContractEvent?.active == true) {
-                    if (idBrand == Brand.CostaRica.id && isPep.not()) {
+                    if (idBrand == Brand.CostaRica.id && idPrint != 0L) {
                         navigateToProcessingTransaction()
                     } else {
                         // todo navigate to success screen
@@ -192,7 +189,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
         popAndNavigateTo(
-            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$isPep",
+            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             popTo = Screen.SignDocumentProcessScreen.route
         )
     }
@@ -242,5 +239,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
+        const val TIME_TO_WAIT_VALIDATE_SMART_IDENTITY_IN_MILLI_SECOND = 30000L
     }
 }

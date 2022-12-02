@@ -23,7 +23,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STAT
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_PEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
@@ -51,10 +50,10 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditOnfidoViewModel @Inject constructor(
@@ -85,7 +84,6 @@ class CreditOnfidoViewModel @Inject constructor(
     var idPrint: Long = 0
     var evicertiaUrl: String = ""
     var evicertiaStatus: String = ""
-    var isPep: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -98,7 +96,6 @@ class CreditOnfidoViewModel @Inject constructor(
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
         evicertiaUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
         evicertiaStatus = savedStateHandle[EVICERTIA_STATUS] ?: ""
-        isPep = savedStateHandle[IS_PEP] ?: false
     }
 
     // Events
@@ -222,7 +219,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     private fun navigateToCorrectScreen() {
-        val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
+        val signDocumentStep = if (idBrand == Brand.ElSalvador.id || idPrint == 0L) {
             VALIDATE_IDENTITY.value
         } else {
             if (evicertiaStatus.lowercase() == CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
@@ -236,7 +233,7 @@ class CreditOnfidoViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$isPep",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditOnfidoScreen.route
         )
     }

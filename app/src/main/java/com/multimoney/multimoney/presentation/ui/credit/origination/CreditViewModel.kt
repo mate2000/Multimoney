@@ -26,7 +26,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STAT
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_PEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
@@ -93,7 +92,6 @@ class CreditViewModel @Inject constructor(
     var statusOnfido: String = ""
     var statusEvicertia: String = ""
     var linkEvicertia: String = URL_EMPTY
-    var isPep: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: ""
@@ -106,7 +104,6 @@ class CreditViewModel @Inject constructor(
         statusOnfido = savedStateHandle[ONFIDO_STATUS] ?: ""
         statusEvicertia = savedStateHandle[EVICERTIA_STATUS] ?: ""
         idPrint = savedStateHandle[SIGN_DOCUMENT_ID_PRINT] ?: 0
-        isPep = savedStateHandle[IS_PEP] ?: false
         uiState = uiState.copy(
             lastStep = savedStateHandle[CREDIT_STEP] ?: CreditStep.One.id,
             loadContent = true
@@ -216,14 +213,14 @@ class CreditViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$URL_EMPTY/$statusEvicertia/$isPep",
+            "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$idPrint/$URL_EMPTY/$statusEvicertia",
             Screen.CreditScreen.route
         )
     }
 
     private fun navigateToSignDocumentProcess(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$isPep",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             Screen.CreditScreen.route
         )
     }

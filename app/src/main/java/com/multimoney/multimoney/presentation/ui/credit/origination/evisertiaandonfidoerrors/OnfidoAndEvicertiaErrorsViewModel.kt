@@ -12,7 +12,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.IS_PEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
@@ -36,7 +35,6 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var firstName: String = ""
     var lastName: String = ""
-    var isPep: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -46,7 +44,6 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
-        isPep = savedStateHandle[IS_PEP] ?: false
         uiState = uiState.copy(error = savedStateHandle[ONFIDO_AND_EVICERTIA_ERROR] ?: "")
     }
 
@@ -59,7 +56,7 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
 
     private fun onNavigateToOnfidoProcess() {
         popAndNavigateTo(
-            route = "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$PRINT_EMPTY/$URL_EMPTY/${CreditOnFidoOrFirmStatus.FIRMED.status}/$isPep",
+            route = "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$PRINT_EMPTY/$URL_EMPTY/${CreditOnFidoOrFirmStatus.FIRMED.status}",
             popTo = Screen.OnfidoAndEvicertiaErrorsScreen.route
         )
     }

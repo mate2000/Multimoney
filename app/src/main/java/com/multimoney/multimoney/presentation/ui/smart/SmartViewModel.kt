@@ -35,8 +35,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallSaveAutomatedSmartAccount
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
@@ -94,7 +92,6 @@ class SmartViewModel @Inject constructor(
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
     private var globalRequest: Int = 0
-    private var idRequest: Int = 0
     var isOnFidoVerified = true
 
     // UIState
@@ -151,7 +148,8 @@ class SmartViewModel @Inject constructor(
                 user = accountSmartData?.user ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
-                    globalRequest = it?.idGlobalRequest ?: 0
+                    this.globalRequest = it?.idGlobalRequest ?: 0
+                    onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -215,32 +213,13 @@ class SmartViewModel @Inject constructor(
                 idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
-                    idRequest = it?.idGlobalRequest ?: 0
                     if (isLastStep) {
-                        mutationSaveSmartAccount.invoke(
-                            user = user,
-                            idBrand = idBrandAsInt,
-                            identificationNumber = identification,
-                            idRequest = idRequest.toLong()
-                        ).collectLatest { savedResult ->
-                            savedResult.onSuccess {
-                                onUIEvent(OnLoadingValueChange(false))
-                            }
-                            savedResult.onFailure { error ->
-                                onUIEvent(OnLoadingValueChange(false))
-                                uiState = uiState.copy(
-                                    isAlertResultVisible = true,
-                                    alertResultDescription = error.getError()
-                                )
-                            }
-                            savedResult.onLoading {
-                                onUIEvent(OnLoadingValueChange(true))
-                            }
-                        }
+                        this.globalRequest = it?.idGlobalRequest ?: 0
+                        callMutationSaveSmartAccount()
+                    } else {
+                        onUIEvent(OnLoadingValueChange(false))
+                        onUIEvent(OnNextStep)
                     }
-
-                    onUIEvent(OnLoadingValueChange(false))
-                    onUIEvent(OnNextStep)
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -262,6 +241,30 @@ class SmartViewModel @Inject constructor(
             )
         }
     )
+
+    private suspend fun callMutationSaveSmartAccount() {
+        mutationSaveSmartAccount.invoke(
+            user = user,
+            idBrand = idBrandAsInt,
+            identificationNumber = identification,
+            idRequest = this.globalRequest.toLong()
+        ).collectLatest { result ->
+            result.onSuccess {
+                onUIEvent(OnLoadingValueChange(false))
+                onUIEvent(OnNextStep)
+            }
+            result.onFailure { error ->
+                onUIEvent(OnLoadingValueChange(false))
+                uiState = uiState.copy(
+                    isAlertResultVisible = true,
+                    alertResultDescription = error.getError()
+                )
+            }
+            result.onLoading {
+                onUIEvent(OnLoadingValueChange(true))
+            }
+        }
+    }
 
     /**
      * After last step of origination (Before OnFido/Evicertia)

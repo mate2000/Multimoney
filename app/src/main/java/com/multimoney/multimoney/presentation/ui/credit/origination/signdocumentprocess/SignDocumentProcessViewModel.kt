@@ -90,7 +90,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
-        if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
+        if (idBrand != Brand.ElSalvador.id) {
             onListenCreditContractEventSubscription(idPrint, idBrand)
         }
     }
@@ -124,6 +124,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
                     CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         handleOnfidoStatus(creditContractEvent)
                     }
                     CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
@@ -138,7 +139,13 @@ class SignDocumentProcessViewModel @Inject constructor(
             }
             VALIDATE_IDENTITY.value -> {
                 emitBaseEvent(SimulateUserInteraction)
-                handleOnfidoStatus(creditContractEvent)
+                if (creditContractEvent?.active == true) {
+                    if (idBrand == Brand.CostaRica.id) {
+                        navigateToProcessingTransaction()
+                    } else {
+                        // todo navigate to success screen
+                    }
+                }
             }
         }
     }
@@ -154,9 +161,8 @@ class SignDocumentProcessViewModel @Inject constructor(
                 )
             }
             CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
-                popAndNavigateTo(
-                    route = Screen.ProcessingTransactionScreen.route,
-                    popTo = Screen.SignDocumentProcessScreen.route
+                uiState = uiState.copy(
+                    signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
             CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
@@ -167,6 +173,12 @@ class SignDocumentProcessViewModel @Inject constructor(
             }
         }
     }
+
+    private fun navigateToProcessingTransaction() =
+        popAndNavigateTo(
+            route = "${Screen.ProcessingTransactionScreen.baseRoute}/$idBrand/$idPrint/$email",
+            popTo = Screen.SignDocumentProcessScreen.route
+        )
 
     private fun onNavigateToContinueValidatingIdentity() {
         popAndNavigateTo(

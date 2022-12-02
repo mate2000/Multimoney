@@ -29,6 +29,7 @@ const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
+const val ID_CURRENCY = "currency"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -92,7 +93,11 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             })
         }
         composable(
-            route = Screen.ProcessingTransactionScreen.route
+            route = Screen.ProcessingTransactionScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+            )
         ) {
             ProcessingTransactionScreen(onPopAndNavigate = {
                 navController.navigate(it.route) {

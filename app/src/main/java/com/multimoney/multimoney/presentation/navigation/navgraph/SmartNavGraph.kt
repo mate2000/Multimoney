@@ -9,8 +9,11 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
+
+const val ACCOUNT_TOKEN = "account_token"
 
 fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
     navigation(
@@ -37,10 +40,10 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             SmartScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
-                }
-            })
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                })
         }
 
         composable(
@@ -57,6 +60,32 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                     popUpTo(it.popTo) { inclusive = true }
                 }
             })
+        }
+
+        composable(
+            Screen.SmartMovementsScreen.route,
+            arguments = listOf(
+                navArgument(USER) {
+                    type = NavType.StringType
+                },
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
+                },
+                navArgument(ACCOUNT_TOKEN) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            SmartMovementsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

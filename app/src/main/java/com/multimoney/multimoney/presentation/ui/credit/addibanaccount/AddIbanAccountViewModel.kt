@@ -146,7 +146,7 @@ class AddIbanAccountViewModel @Inject constructor(
         mutationSaveClientBankAccountUseCase(
             idClient = idClient?.toLong() ?: 0,
             idBank = validateAccount?.bankId ?: 0,
-            accountNumber = uiState.accountNumber,
+            accountNumber = "${Brand.CostaRica.iban}${uiState.accountNumber}",
             idCurrency = validateAccount?.currency?.getCurrency()?.id ?: 0,
             idAccountType = null,
             idLoanClient = idLoanClient?.toLong() ?: 0,

@@ -149,7 +149,7 @@ class SmartViewModel @Inject constructor(
                 user = accountSmartData?.user ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
-                    this.globalRequest = it?.idGlobalRequest ?: 0
+                    globalRequest = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
@@ -248,7 +248,7 @@ class SmartViewModel @Inject constructor(
             user = user,
             idBrand = idBrandAsInt,
             identificationNumber = identification,
-            idRequest = this.globalRequest.toLong()
+            idRequest = globalRequest.toLong()
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))

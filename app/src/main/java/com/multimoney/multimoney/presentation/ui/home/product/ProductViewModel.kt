@@ -65,7 +65,6 @@ class ProductViewModel @Inject constructor(
     var userName: String = ""
     var productProgress = 0F
     var isExpiredTitle = R.string.home_product_expiration
-    var isPep: Boolean = false
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
 
     private fun onSetUserData(

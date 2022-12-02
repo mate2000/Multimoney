@@ -219,7 +219,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     private fun navigateToCorrectScreen() {
-        val signDocumentStep = if (idBrand == Brand.ElSalvador.id || idPrint == 0L) {
+        val signDocumentStep = if (idBrand == Brand.ElSalvador.id || idPrint == ID_PRINT_EMPTY) {
             VALIDATE_IDENTITY.value
         } else {
             if (evicertiaStatus.lowercase() == CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
@@ -332,6 +332,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     companion object {
-        const val PACKAGE_NAME = "com.multimoney.multimoney.sv"
+        const val PACKAGE_NAME = "com.multimoney.multimoney.cr"
+        const val ID_PRINT_EMPTY = 0L
     }
 }

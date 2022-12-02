@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.Dis
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateToDisbursementAddAccount
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -134,7 +135,7 @@ fun PaymentAccountList(
             .padding(top = 32.dp)
             .fillMaxWidth(),
         onClick = {
-            Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
+            viewModel.onUIEvent(OnNavigateToDisbursementAddAccount)
         },
         buttonType = CustomButtonType.PrimaryTertiary,
         trailingIcon = R.drawable.ic_plus

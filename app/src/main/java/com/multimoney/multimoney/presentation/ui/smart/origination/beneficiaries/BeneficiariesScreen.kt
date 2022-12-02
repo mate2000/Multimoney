@@ -228,7 +228,7 @@ fun BeneficiaryList(
                     subtitle = stringResource(
                         id = string.smart_account_beneficiary_content,
                         beneficiary.strRelationship ?: "",
-                        beneficiary.allocationPercentage ?: ""
+                        "${beneficiary.allocationPercentage}%"
                     ),
                     endIcon = R.drawable.ic_options,
                     startIcon = R.drawable.ic_beneficiary,

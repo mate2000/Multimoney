@@ -9,12 +9,14 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.QuickAction
@@ -41,20 +43,23 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBo
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
+import com.multimoney.multimoney.presentation.util.INDEX_ONE
+import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -64,9 +69,10 @@ class HomeViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
-    private val querytGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
+    private val queryGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
-    private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase
+    private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase,
+    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -92,6 +98,42 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun onGetSmartMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        tokenNumber: Long
+    ) {
+        executeUseCase {
+            queryGetCoreBankMovements.invoke(
+                user = user,
+                idBrand = idBrand,
+                identificationNumber = identificationNumber,
+                accountToken = tokenNumber,
+                pageNumber = INDEX_ONE,
+                pageSize = LAST_THREE,
+                monthDate = null
+            ).collectLatest { result ->
+                result.onSuccess {
+                    it?.let { movements ->
+                        movements.accountToken = tokenNumber
+                        uiState = uiState.copy(
+                            smartMovementsList = uiState.smartMovementsList + movements,
+                            isLoading = false
+                        )
+                    }
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+                result.onFailure {
+                    onFailure(it)
+                    uiState = uiState.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
     private fun callQueryGetQuickActions(
         idBrand: Int,
         pkUser: Int,
@@ -101,7 +143,7 @@ class HomeViewModel @Inject constructor(
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ) = executeUseCase {
-        querytGetQuickActionsUseCase.invoke(
+        queryGetQuickActionsUseCase.invoke(
             idBrand = idBrand,
             pkUser = pkUser,
             identification = identification,
@@ -205,6 +247,13 @@ class HomeViewModel @Inject constructor(
                                 }
                             }
                         )
+                    )
+
+                    onGetSmartMovements(
+                        uiState.userName,
+                        uiState.idBrand.toInt(),
+                        uiState.identification,
+                        account?.tokenNumber?.toLongOrNull() ?: 0
                     )
                 }
                 // If user has smart activated he can enable crypto
@@ -417,7 +466,8 @@ class HomeViewModel @Inject constructor(
         var userName: String = "",
         var forceIsExpanded: Boolean = false,
         var productScreenPagerState: PagerState? = null,
-        var productPageList: List<ProductPage> = emptyList()
+        var productPageList: List<ProductPage> = emptyList(),
+        val smartMovementsList: List<SmartMovementsResult> = emptyList()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -426,6 +476,12 @@ class HomeViewModel @Inject constructor(
             is OnSignOut -> popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
             is OnSetUserData -> onsetUserData()
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
+            is OnGetSmartMovements -> onGetSmartMovements(
+                uiEvent.user,
+                uiEvent.idBrand,
+                uiEvent.identificationNumber,
+                uiEvent.tokenNumber
+            )
             is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
             is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
             is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
@@ -440,6 +496,12 @@ class HomeViewModel @Inject constructor(
         data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
         data class OnBottomNavigationItemClick(val innerNavHostController: NavHostController, val route: String) :
             UIEvent()
+        data class OnGetSmartMovements(
+            val user: String,
+            val idBrand: Int,
+            val identificationNumber: String,
+            val tokenNumber: Long
+        ) : UIEvent()
 
         data class OnMyProductClick(val expand: Boolean) : UIEvent()
         data class OnMyProductPageChange(val page: PagerState) : UIEvent()

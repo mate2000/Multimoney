@@ -41,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnInitializeText
@@ -214,7 +215,7 @@ class SmartViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     if (isLastStep) {
-                        this.globalRequest = it?.idGlobalRequest ?: 0
+                        globalRequest = it?.idGlobalRequest ?: 0
                         callMutationSaveSmartAccount()
                     } else {
                         onUIEvent(OnLoadingValueChange(false))
@@ -463,7 +464,7 @@ class SmartViewModel @Inject constructor(
                     uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnPreviousStep -> previousStep()
-            is UIEvent.OnContinueVisible ->
+            is OnContinueVisible ->
                 uiState =
                     uiState.copy(isContinueVisible = event.visible, buttonTextRes = event.textResId)
             is OnCallMutationUpdateGlobalRequestUseCase -> onUpdateAccountSmartData(event.accountSmartData)
@@ -505,10 +506,7 @@ class SmartViewModel @Inject constructor(
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
 
-        data class OnUseDataValueChange(
-            val accountSmartData: AccountSmartData?,
-            val idBrand: Int? = null
-        ) : UIEvent()
+        data class OnUseDataValueChange(val accountSmartData: AccountSmartData?, val idBrand: Int? = null) : UIEvent()
 
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
 

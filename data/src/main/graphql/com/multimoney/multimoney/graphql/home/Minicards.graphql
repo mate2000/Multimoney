@@ -12,7 +12,7 @@ query ListMiniCards(
             infoCreditStatus: $infoCreditStatus
             infoVirtualCardStatus: $infoVirtualCardStatus
             infoBankAccountStatus: $infoBankAccountStatus
-            infoCripto: $infoCripto
+            infoCriptoStatus: $infoCripto
             user: $userEmail
             idBrand: $idBrand
         }

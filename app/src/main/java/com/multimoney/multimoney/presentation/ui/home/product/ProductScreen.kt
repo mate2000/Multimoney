@@ -98,6 +98,11 @@ fun ProductScreen(
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnQuickActionClicked(event.flow))
                     }
                 }
+                is HomeViewModel.BaseEvent.OnMiniCardsClicked -> {
+                    coroutineScope.launch {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnMiniCardsClicked(event.flow))
+                    }
+                }
             }
         }
     }

@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSi
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.boolean
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -339,5 +340,6 @@ class HomeViewModel @Inject constructor(
         object OnOpenMyProductsBottomSheet : BaseEvent()
         data class OnStartCountDownTimer(val millisInFuture: Long?)
         data class OnQuickActionClicked(val flow: String)
+        data class OnMiniCardsClicked(val flow: String)
     }
 }

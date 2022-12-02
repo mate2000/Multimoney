@@ -9,8 +9,7 @@ fun ListMiniCardsQuery.Data.mapToDomainModel() = MiniCards(
         MiniCardsItem(
             priority = it.prioridad,
             type = it.tipo,
-            //todo uncomment this
-            imageUrl = /*it.imagenUrl ?: ""*/ "https://images.prismic.io/mmsv/89928082-6f31-4943-8d38-8e619aaca600_Nuevo+blog+mm+smart-01.png?auto=compress,format",
+            imageUrl = it.imagenUrl ?: "",
             deepLink = it.deeplink  ?: ""
         )
     }

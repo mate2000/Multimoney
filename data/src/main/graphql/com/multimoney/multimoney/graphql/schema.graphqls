@@ -399,6 +399,11 @@ type Query {
   """
   Security
   """
+  validateUserStatusOnCreditRequest(validateUserStatusOnCreditRequestDto: ValidateUserStatusOnCreditRequestDtoInput!): ValidateUserStatusOnCreditRequest!
+
+  """
+  Security
+  """
   getParameterMobileByCategory(parameterMobileInput: GetParameterMobileByCategoryDtoInput!): [ParameterMobile!]!
 
   """
@@ -1793,6 +1798,8 @@ input ClientBankAccountDtoInput {
 
   id_Moneda_Destino: Int
 
+  id_Tipo_Cuenta: Int
+
   idBrand: Int
 
   user: String
@@ -2793,7 +2800,7 @@ input MinicardDtoInput {
 
   infoBankAccountStatus: Boolean!
 
-  infoCripto: Boolean!
+  infoCriptoStatus: Boolean!
 
   idBrand: Int
 
@@ -2816,6 +2823,22 @@ input TermsConditionsSignedDtoInput {
   userId: Int!
 
   identification: String!
+
+  idBrand: Int
+
+  user: String
+}
+
+type ValidateUserStatusOnCreditRequest {
+  validateUserStatusOnCreditRequestInfo: ValidateUserStatusOnCreditRequestInfo!
+
+  info: String!
+}
+
+input ValidateUserStatusOnCreditRequestDtoInput {
+  identification: String!
+
+  pkUser: Long!
 
   idBrand: Int
 
@@ -3481,11 +3504,11 @@ input Transfer365DtoInput {
 
   isMovil: Boolean
 
-  paymentType: String!
+  paymentType: String
 
   destinationType: String!
 
-  accountType: String!
+  typeAccount: String!
 
   idBrand: Int
 
@@ -3506,6 +3529,10 @@ input TransferMovil365DtoInput {
   destinationName: String!
 
   destinationLastName: String
+
+  destinationType: String
+
+  typeAccount: String
 
   idBrand: Int
 
@@ -5466,6 +5493,16 @@ type GlobalRequest_Response_Result {
   isCrosseling: Short!
 }
 
+enum ValidateUserStatusOnCreditRequestInfo {
+  NONE
+
+  BLACKLIST
+
+  IN_PROCESS
+
+  CREDIT_ACTIVE
+}
+
 type configurationVersionObject {
   enableAddToAppleWallet: String
 
@@ -5922,9 +5959,11 @@ type CheckAccountResult {
 
   visaDirectUser: String
 
-  totalInterest: Decimal
+  totalInterest: Decimal!
 
-  month: String
+  month: String!
+
+  rate: Decimal!
 }
 
 type PromissoryNoteResumeMobile {
@@ -5960,7 +5999,7 @@ type PromissoryNoteResumeMobile {
 
   fecha_Pago_Label: String!
 
-  estado_Pagare: Boolean!
+  estado_Pagare: Short!
 
   estado_Ampli: Boolean!
 

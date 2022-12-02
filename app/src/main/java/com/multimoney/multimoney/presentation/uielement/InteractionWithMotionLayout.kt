@@ -56,10 +56,10 @@ fun MotionLayoutMM(
     }
 
     LaunchedEffect(key1 = isBackPressed) {
-        if (isExpanded || forceExpanded && isBackPressed) {
+        if ((isExpanded && isBackPressed) || (forceExpanded && isBackPressed)) {
             swipeAbleState.animateTo(BEGINNING_ANIMATION)
             isBackPressed = false
-            if(forceExpanded) {
+            if (forceExpanded) {
                 updateForceExpanded(false)
             }
         }
@@ -67,7 +67,7 @@ fun MotionLayoutMM(
 
     MotionLayout(
         motionScene = MotionScene(motionSceneContent),
-        progress = if(forceExpanded) 1f else (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
+        progress = if (forceExpanded) 1f else (swipeAbleState.offset.value / TOTAL_PERCENTAGE),
         modifier = Modifier.fillMaxHeight()
     ) {
         Box(

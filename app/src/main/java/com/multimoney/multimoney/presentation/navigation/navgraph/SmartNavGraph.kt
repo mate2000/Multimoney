@@ -21,21 +21,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         route = SMART_ROUTE
     ) {
         composable(
-            Screen.SmartScreen.route,
-            arguments = listOf(
-                navArgument(USER) {
-                    type = NavType.StringType
-                },
-                navArgument(ID_BRAND) {
-                    type = NavType.StringType
-                },
-                navArgument(PK_USER) {
-                    type = NavType.StringType
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                }
-            )
+            Screen.SmartScreen.route
         ) {
             SmartScreen(onNavigate = {
                 navController.navigate(it.route)
@@ -49,7 +35,6 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartOnfidoScreen.route,
             arguments = listOf(
-                navArgument(USER) { type = NavType.StringType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
@@ -65,17 +50,8 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartMovementsScreen.route,
             arguments = listOf(
-                navArgument(USER) {
-                    type = NavType.StringType
-                },
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(ACCOUNT_TOKEN) {
-                    type = NavType.StringType
                 }
             )
         ) {

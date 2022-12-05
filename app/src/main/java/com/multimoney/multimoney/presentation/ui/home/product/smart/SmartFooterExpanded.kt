@@ -68,8 +68,8 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
                     bottom.linkTo(parent.bottom)
                 },
             onClickPay = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow) },
-            onClickDisbursement = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow) },
-            canDisburse = viewModel.canSendMoney(
+            onClickSendMoney = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow) },
+            canSendMoney = viewModel.canSendMoney(
                 viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
             )
         )

@@ -57,6 +57,10 @@ fun SmartPaymentCardsScreen(
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
+        TopNavBar(
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            isRightButtonVisible = false
+        )
         PaymentCardsListContent(viewModel)
     }
 }
@@ -66,10 +70,6 @@ fun PaymentCardsListContent(
     viewModel: SmartPaymentCardsViewModel
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
-        TopNavBar(
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
-        )
         Text(
             modifier = Modifier.padding(top = 32.dp),
             text = stringResource(R.string.smart_payment_cards_list_card_title),

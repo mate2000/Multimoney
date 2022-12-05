@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
@@ -11,6 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
@@ -87,13 +89,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // DisbursementNavGraph Screens
     object DisbursementAmountScreen : Screen(
-        "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}",
+        "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}/{$ID_USER_REQUEST}/{$IDENTIFICATION}",
         "disbursement_amount_screen"
     )
 
     object DisbursementAccountScreen : Screen(
-        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}",
+        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}/{$PK_USER}/{$ID_USER_REQUEST}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}/{$IDENTIFICATION}",
         "disbursement_account_screen"
+    )
+
+    object DisbursementAddAccountScreen : Screen(
+        "disbursement_add_account_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$ID_USER_REQUEST}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}",
+        "disbursement_add_account_screen"
     )
 
     // CreditNavGraph Screens
@@ -113,7 +120,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
-    object ProcessingTransactionScreen : Screen("processing_transaction_screen")
+
+    object ProcessingTransactionScreen : Screen(
+        "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
+        "processing_transaction_screen"
+    )
+
     object OnfidoAndEvicertiaErrorsScreen : Screen(
         "onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
         "onfido_and_evicertia_errors_screen"
@@ -127,6 +139,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object HomeBNScreen : Screen("home_bn_screen")
     object QuickActionBNScreen : Screen("quick_action_bt_screen")
     object ProductsBNScreen : Screen("products_bt_screen")
+
+    // Add Iban Account
+    object AddIbanAccountScreen : Screen(
+        "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "add_iban_account_screen"
+    )
 
     // Payment Credit
     object PaymentFeeScreen : Screen(
@@ -202,6 +220,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SavingMethodTransferScreen : Screen("saving_method_transfer_screen")
+
+    object SmartMovementsScreen : Screen(
+        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
+        "smart_movements_screen"
+    )
 
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")

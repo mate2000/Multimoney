@@ -10,9 +10,12 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
+
+const val ACCOUNT_TOKEN = "account_token"
 
 fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
     navigation(
@@ -30,7 +33,7 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 },
                 navArgument(PK_USER) {
                     type = NavType.StringType
-                },
+                }
             )
         ) {
             SmartScreen(onNavigate = {
@@ -63,12 +66,40 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                     navController.navigate(it.route)
                 },
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,
                         saveState = false
                     )
+                }
+            )
+        }
+        composable(
+            Screen.SmartMovementsScreen.route,
+            arguments = listOf(
+                navArgument(USER) {
+                    type = NavType.StringType
+                },
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
+                },
+                navArgument(ACCOUNT_TOKEN) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            SmartMovementsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
             )
         }

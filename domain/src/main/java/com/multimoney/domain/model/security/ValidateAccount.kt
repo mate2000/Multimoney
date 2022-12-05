@@ -7,6 +7,6 @@ data class ValidateAccount(
     val currency: String,
     val sellPriceDollar: String,
     val buyPriceDollar: String,
-    val bankId: Any?,
+    val bankId: Int?,
     val bankName: String?
 )

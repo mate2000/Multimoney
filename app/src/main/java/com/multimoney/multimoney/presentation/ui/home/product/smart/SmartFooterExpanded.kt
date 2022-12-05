@@ -1,8 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.home.product.smart
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -10,16 +12,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartAccountDetail
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartCtaButtons
+import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartMovementsLatest
 
 @Composable
-fun SmartFooterExpanded(viewModel: ProductViewModel, productSmartIndex: Int?) {
-
+fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
     ConstraintLayout(
         Modifier.fillMaxSize()
     ) {
-
         val (content, buttons) = createRefs()
 
         Column(
@@ -33,7 +36,28 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, productSmartIndex: Int?) {
                     height = Dimension.fillToConstraints
                 }
         ) {
-
+            viewModel.balanceCredit?.balanceAccountSmart?.let {
+                if (it.isNotEmpty()) {
+                    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                    SmartAccountDetail(
+                        modifier = Modifier
+                            .background(MultimoneyTheme.colors.creditDetailBackground)
+                            .wrapContentSize(),
+                        uiState = viewModel.uiState,
+                        account = it[index],
+                        onShareIbanAccount = { clientLabel: String, accountLabel: String, ibanAccount: String ->
+                            viewModel.onUIEvent(
+                                ProductViewModel.UIEvent.OnShareIbanAccount(
+                                    clientLabel,
+                                    accountLabel,
+                                    ibanAccount
+                                )
+                            )
+                        }
+                    )
+                    SmartMovementsLatest(viewModel, index)
+                }
+            }
         }
         SmartCtaButtons(
             modifier = Modifier
@@ -45,7 +69,9 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, productSmartIndex: Int?) {
                 },
             onClickPay = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow) },
             onClickDisbursement = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow) },
-            canDisburse = viewModel.canSendMoney(productSmartIndex)
+            canDisburse = viewModel.canSendMoney(
+                viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+            )
         )
     }
 }

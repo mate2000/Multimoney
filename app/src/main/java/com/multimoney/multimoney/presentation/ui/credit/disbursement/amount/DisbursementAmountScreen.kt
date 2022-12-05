@@ -144,7 +144,7 @@ fun DisbursementAmountScreen(
                     errorMessage = stringResource(
                         id = viewModel.uiState.disbursementError.second,
                         viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
-                        viewModel.uiState.progressFactor
+                        viewModel.uiState.progressFactor.toInt()
                     ),
                     customTransformation = CurrencyIntegerTransformation(
                         viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],

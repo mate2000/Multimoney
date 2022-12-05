@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnSettingsClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnUpdateProfileClick
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -84,6 +85,17 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
                 )
             }
         }
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource),
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }
 

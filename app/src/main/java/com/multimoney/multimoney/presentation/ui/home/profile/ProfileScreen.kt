@@ -23,13 +23,13 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnGetProfileInfo
-import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnUpdateProfileClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnHelpClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnLogoutClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnMyAccountsClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnMyCardsClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnSettingsClick
+import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnUpdateProfileClick
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -39,10 +39,15 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 fun ProfileScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.executeNavigation(
+            onPopBackStack = onPopBackStack,
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate
+        )
         viewModel.onUIEvent(OnGetProfileInfo)
     }
 
@@ -117,7 +122,7 @@ fun ProfileOptions(
     onMyCardsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onHelpClick: () -> Unit,
-    onLogoutClick: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp)

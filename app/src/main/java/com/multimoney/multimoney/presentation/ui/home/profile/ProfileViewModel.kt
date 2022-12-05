@@ -9,16 +9,20 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val cognitoHelper: CognitoHelper,
+    private val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
     // UIState
@@ -34,12 +38,26 @@ class ProfileViewModel @Inject constructor(
         )
     }
 
+    private fun signOut() {
+        cognitoHelper.signOut(signOutError = {
+            Timber.d("SignOut Error")
+        })
+        viewModelScope.launch {
+            dataStorePreferences.setAuthToken("")
+        }
+        countDownTimer.discardTimer()
+        popAndNavigateTo(
+            Screen.SignInScreen.route,
+            Screen.HomeScreen.route
+        )
+    }
+
     data class UIState(
         // Fields
         val userName: String = "",
         val userEmail: String = "",
         val phoneNumber: String = "",
-        val idBrand: Int = 0,
+        val idBrand: Int = 0
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -52,7 +70,7 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnSettingsClick -> Timber.d("navigate to settings screen")
             is UIEvent.OnHelpClick -> Timber.d("navigate to help screen")
             is UIEvent.OnInviteFriendsClick -> Timber.d("navigate to invite friends screen")
-            is UIEvent.OnLogoutClick -> Timber.d("handle logout action")
+            is UIEvent.OnLogoutClick -> signOut()
         }
     }
 

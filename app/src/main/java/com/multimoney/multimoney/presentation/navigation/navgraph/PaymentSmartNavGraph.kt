@@ -22,12 +22,6 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(USER) {
-                    type = NavType.StringType
                 }
             )
         ) {

@@ -508,6 +508,9 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSendMoneyScreen() {
         // TODO: Navigate to SendMoney screen
+
+        // FIXME, mocking the navigation until the previous screen is done.
+        navigateTo(Screen.SavingMethodTransferScreen.route)
     }
 
     sealed class UIEvent {

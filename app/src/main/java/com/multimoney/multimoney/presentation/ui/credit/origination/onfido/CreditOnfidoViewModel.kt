@@ -216,8 +216,8 @@ class CreditOnfidoViewModel @Inject constructor(
                     // nothing to do here
                 }
             }
-            navigateToCorrectScreen()
         }
+        navigateToCorrectScreen()
     }
 
     private fun navigateToCorrectScreen() {
@@ -334,7 +334,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     companion object {
-        const val PACKAGE_NAME = "com.multimoney.multimoney.cr"
+        const val PACKAGE_NAME = "com.multimoney.multimoney.sv"
         const val ID_PRINT_EMPTY = 0L
     }
 }

@@ -5,5 +5,6 @@ data class ValidateUserStatus(
     val infoCredit: InfoCredit?,
     val infoBankAccount: InfoBankAccount?,
     val infoCrypto: InfoCrypto?,
-    val infoVirtualCard: InfoVirtualCard?
+    val infoVirtualCard: InfoVirtualCard?,
+    val wording: Wording?
 )

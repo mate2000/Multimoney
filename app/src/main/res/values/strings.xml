@@ -584,6 +584,15 @@
     <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
     <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
 
+    <!-- Smart payment success -->
+    <string name="smart_payment_success" translatable="false">¡Transacción exitosa!</string>
+    <string name="smart_payment_you_saved_on_you_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
+    <string name="smart_payment_from_label" translatable="false">Desde</string>
+    <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="smart_payment_reference_number_label" translatable="false">N° de referencia</string>
+    <string name="smart_payment_shared_button" translatable="false">Compartir</string>
+    <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
+
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
     <string name="smart_card_smart_title" translatable="false">Smart</string>

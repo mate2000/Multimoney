@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.paysuccess.PaymentSuccessScreen
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 
 /**

@@ -84,6 +84,7 @@ class CreditOnfidoViewModel @Inject constructor(
     var idPrint: Long = 0
     var evicertiaUrl: String = ""
     var evicertiaStatus: String = ""
+    var applicantId: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -124,6 +125,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 user
             ).collectLatest { result ->
                 result.onSuccess {
+                    applicantId = it?.applicantId
                     injectNewToken(it?.sdkToken ?: "")
                 }
                 result.onFailure {
@@ -200,7 +202,7 @@ class CreditOnfidoViewModel @Inject constructor(
         executeUseCase {
             mutationOnfidoCheckProcessUseCase.invoke(
                 identification,
-                PACKAGE_NAME,
+                applicantId ?: "",
                 AppFlow.CREDIT_ORIGINATION.flow,
                 pkUser,
                 idUserRequest,

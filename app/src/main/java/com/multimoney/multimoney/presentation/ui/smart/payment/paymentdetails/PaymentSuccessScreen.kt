@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.paysuccess
+package com.multimoney.multimoney.presentation.ui.smart.payment.paymentdetails
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,25 +26,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel
@@ -54,7 +48,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.NavEvent.PopBackStack
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
@@ -83,34 +76,21 @@ fun PaymentSuccessScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            ConstraintLayout(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                val (backgroundId, contentId, shareButtonId) = createRefs()
                 CustomImage(
-                    modifier = Modifier.constrainAs(backgroundId) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        height = Dimension.fillToConstraints
-                        width = Dimension.fillToConstraints
-                    },
-                    drawableResource = drawable.bg_confirmation_card,
+                    modifier = Modifier.fillMaxSize(),
+                    drawableResource = R.drawable.bg_confirmation_card,
                     contentScale = ContentScale.FillBounds
                 )
                 Column(
-                    modifier = Modifier
-                        .constrainAs(contentId) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(shareButtonId.top)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
+                    modifier = Modifier.fillMaxWidth()
                         .onGloballyPositioned {
                             capturingViewBounds = it.boundsInRoot()
                         }
@@ -122,7 +102,7 @@ fun PaymentSuccessScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(string.payment_voucher_transaction_success),
+                            text = stringResource(R.string.smart_payment_success),
                             modifier = Modifier.padding(top = 16.dp),
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text
@@ -139,7 +119,7 @@ fun PaymentSuccessScreen(
 //                                    )
 //                                }
                             },
-                            text = stringResource(string.payment_voucher_shared_button),
+                            text = stringResource(R.string.smart_payment_shared_button),
                             modifier = Modifier
                                 .padding(
                                     start = 24.dp,
@@ -152,11 +132,11 @@ fun PaymentSuccessScreen(
                                 pressedElevation = 0.dp,
                                 disabledElevation = 0.dp
                             ),
-                            trailingIcon = drawable.ic_icon_share,
+                            trailingIcon = R.drawable.ic_icon_share,
                             buttonType = PrimaryTertiary
                         )
                         Text(
-                            text = stringResource(string.payment_voucher_you_have_paid),
+                            text = stringResource(R.string.smart_payment_you_saved_on_you_smart_account),
                             modifier = Modifier.padding(top = 12.dp),
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
@@ -178,13 +158,13 @@ fun PaymentSuccessScreen(
 //                                textAlign = TextAlign.Center
 //                            )
 //                        } else {
-//                            Text(
-//                                modifier = Modifier.fillMaxWidth(),
-//                                text = viewModel.currentAmountValueString ?: "",
-//                                style = Typography.h4.copy(fontWeight = FontWeight.W600),
-//                                color = MultimoneyTheme.colors.text,
-//                                textAlign = TextAlign.Center
-//                            )
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "$500",
+                            style = Typography.h4.copy(fontWeight = FontWeight.W600),
+                            color = MultimoneyTheme.colors.text,
+                            textAlign = TextAlign.Center
+                        )
 //                        }
                     }
                     Box(
@@ -194,7 +174,7 @@ fun PaymentSuccessScreen(
                             .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 10.dp))
                     )
                     Text(
-                        text = stringResource(string.payment_voucher_from_label),
+                        text = stringResource(R.string.smart_payment_from_label),
                         modifier = Modifier.padding(top = 16.dp, start = 24.dp),
                         style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.labelText
@@ -202,20 +182,20 @@ fun PaymentSuccessScreen(
 
                     InfoItemAccount(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
-                        icon = drawable.ic_bank,
+                        icon = R.drawable.ic_bank,
                         tintIcon = MultimoneyTheme.colors.iconTintVoucher,
-                        title = stringResource(string.payment_voucher_origin_account_label),
-                        subTitle = ""
+                        title = stringResource(R.string.smart_payment_origin_account_label),
+                        subTitle = "[Inicial pais]••••0000"
 //                            viewModel.clientBankAccount?.accountNumber ?: "",
 //                            stringResource(id = string.payment_account_masked_text)
                     )
 
                     InfoItem(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
-                        icon = drawable.ic_receipt,
+                        icon = R.drawable.ic_receipt,
                         tintIcon = MultimoneyTheme.colors.iconTintVoucher,
-                        title = stringResource(string.payment_voucher_reference_number_label),
-                        subTitle = "" // viewModel.referenceNumber ?: ""
+                        title = stringResource(R.string.smart_payment_reference_number_label),
+                        subTitle = "7453892" // viewModel.referenceNumber ?: ""
                     )
 
 //                    if (viewModel.shouldDisplayExchangeRate == true) {
@@ -232,19 +212,19 @@ fun PaymentSuccessScreen(
                     ) {
                         Row {
                             Icon(
-                                painter = painterResource(id = drawable.ic_calendar_voucher),
+                                painter = painterResource(R.drawable.ic_calendar_voucher),
                                 tint = MultimoneyTheme.colors.iconTintVoucher,
                                 contentDescription = ""
                             )
                             Text(
-                                text = "", // viewModel.currentDate,
+                                text = "12|06|2022", // viewModel.currentDate,
                                 modifier = Modifier.padding(start = 15.dp),
                                 style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                                 color = MultimoneyTheme.colors.labelText
                             )
                         }
                         Text(
-                            text = "", // viewModel.currentTime,
+                            text = "8:12 am", // viewModel.currentTime,
                             modifier = Modifier.padding(bottom = 16.dp),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
@@ -252,9 +232,10 @@ fun PaymentSuccessScreen(
                     }
                 }
             }
+
             CustomButton(
                 onClick = { },
-                text = stringResource(string.payment_voucher_schedule_payment),
+                text = stringResource(R.string.smart_payment_make_another_payment),
                 modifier = Modifier
                     .padding(
                         start = 16.dp,
@@ -277,14 +258,14 @@ fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
     ) {
         Icon(
 
-            painter = painterResource(id = drawable.ic_money_gray),
+            painter = painterResource(R.drawable.ic_money_gray),
             tint = MultimoneyTheme.colors.iconTintVoucher,
             contentDescription = "",
             modifier = Modifier.height(24.dp).width(24.dp)
         )
         Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
-                text = stringResource(id = string.payment_amount_bottom_sheet_exchange_type),
+                text = stringResource(id = R.string.payment_amount_bottom_sheet_exchange_type),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -306,7 +287,7 @@ fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
-                text = stringResource(id = string.payment_amount_bottom_sheet_amount_to_debit),
+                text = stringResource(id = R.string.payment_amount_bottom_sheet_amount_to_debit),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start

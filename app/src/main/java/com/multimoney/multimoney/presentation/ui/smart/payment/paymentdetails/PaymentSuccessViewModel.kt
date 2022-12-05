@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.paysuccess
+package com.multimoney.multimoney.presentation.ui.smart.payment.paymentdetails
 
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

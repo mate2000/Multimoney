@@ -28,11 +28,10 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCtaAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnInitializeText
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiary.SmartBeneficiaryScreen
-import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.paysuccess.PaymentSuccessScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.paymentdetails.PaymentSuccessScreen
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary

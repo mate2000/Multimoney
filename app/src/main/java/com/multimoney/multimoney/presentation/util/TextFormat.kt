@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
+import com.multimoney.data.util.catalog.Brand
 import java.text.DecimalFormat
 import java.util.Locale
 import kotlin.math.abs
@@ -62,6 +63,12 @@ fun String.capitalized(): String {
 fun getMaskedAccount(accountNumber: String, maskedText: String) =
     accountNumber.take(ACCOUNT_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
 
+fun getMaskedAccountIban(accountNumber: String, maskedText: String) =
+    Brand.CostaRica.iban.plus(
+        accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText).plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+    )
+
+const val ACCOUNT_IBAN_FIRST_DIGITS = 0
 const val ACCOUNT_FIRST_DIGITS = 2
 const val ACCOUNT_LAST_DIGITS = 4
 const val TWO_DECIMALS_FORMAT = "%.2f"

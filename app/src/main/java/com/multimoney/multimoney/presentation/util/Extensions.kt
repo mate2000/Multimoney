@@ -110,6 +110,15 @@ fun String.getCurrencySymbol(): Int {
     }
 }
 
+fun String.getCurrency(): CurrencyType {
+    return when (this) {
+        Colon.currency -> Colon
+        Dollar.currency -> Dollar
+        Quetzal.currency -> Quetzal
+        else -> All
+    }
+}
+
 // Payment
 fun String.getPaymentMethodType(): PaymentMethodType {
     return when (this) {

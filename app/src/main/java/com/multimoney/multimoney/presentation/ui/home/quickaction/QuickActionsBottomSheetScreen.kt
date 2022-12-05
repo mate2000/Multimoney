@@ -58,7 +58,7 @@ fun QuickActionBottomSheetScreen(
     modalBottomSheetState: ModalBottomSheetState,
     viewModel: QuickActionsBottomSheetViewModel = hiltViewModel()
 ) {
-    if (shareViewModel.uiState.idBrand != "") {
+    if (shareViewModel.uiState.idBrand.isNotEmpty()) {
         CustomModalBottomSheet(
             title = getQuickActionsHeaderTitlePerCountry(idBrand = shareViewModel.uiState.idBrand.toInt()),
             closeIcon = R.drawable.ic_close_bottom_sheet,
@@ -69,17 +69,16 @@ fun QuickActionBottomSheetScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(top = 28.dp, bottom = 16.dp)
-
             ) {
-                shareViewModel.uiState.quickActions.let { quickActions ->
+                shareViewModel.uiState.quickActions?.let { quickActions ->
                     val creditActions =
-                        quickActions?.filter { quickAction -> quickAction.productType == QuickActionsProductType.Credit.value }
+                        quickActions.filter { quickAction -> quickAction.productType == QuickActionsProductType.Credit.value }
                     val smartActions =
-                        quickActions?.filter { quickAction -> quickAction.productType == QuickActionsProductType.Smart.value }
+                        quickActions.filter { quickAction -> quickAction.productType == QuickActionsProductType.Smart.value }
                     val cryptoActions =
-                        quickActions?.filter { quickAction -> quickAction.productType == QuickActionsProductType.Crypto.value }
+                        quickActions.filter { quickAction -> quickAction.productType == QuickActionsProductType.Crypto.value }
 
-                    creditActions.let {
+                    if(creditActions.isNotEmpty()){
                         Text(
                             text = stringResource(id = R.string.quick_action_bottom_sheet_credit_section),
                             style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
@@ -87,7 +86,7 @@ fun QuickActionBottomSheetScreen(
                         )
                         QuickActionsRow(
                             viewModel = viewModel,
-                            quickActions = it,
+                            quickActions = creditActions,
                             quickActionsBackgroundColor = Primary500,
                             shareViewModel = shareViewModel
                         )
@@ -95,14 +94,13 @@ fun QuickActionBottomSheetScreen(
                     when (shareViewModel.uiState.idBrand) {
                         Brand.CostaRica.id.toString(), Brand.ElSalvador.id.toString() -> {
                             // smart section
-                            smartActions.let {
+                            if(smartActions.isNotEmpty()){
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Divider(
                                     modifier = Modifier.fillMaxWidth(),
                                     color = WhiteTransparency16
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
-
                                 Text(
                                     text = stringResource(id = R.string.quick_action_bottom_sheet_smart_section),
                                     style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
@@ -110,14 +108,13 @@ fun QuickActionBottomSheetScreen(
                                 )
                                 QuickActionsRow(
                                     viewModel = viewModel,
-                                    quickActions = it,
+                                    quickActions = smartActions,
                                     quickActionsBackgroundColor = Secondary500,
                                     shareViewModel = shareViewModel
                                 )
                             }
-
                             // crypto section
-                            cryptoActions.let {
+                            if (cryptoActions.isNotEmpty()){
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Divider(
                                     modifier = Modifier.fillMaxWidth(),
@@ -131,7 +128,7 @@ fun QuickActionBottomSheetScreen(
                                 )
                                 QuickActionsRow(
                                     viewModel = viewModel,
-                                    quickActions = it,
+                                    quickActions = cryptoActions,
                                     quickActionsBackgroundColor = ComplementaryTwo500,
                                     shareViewModel = shareViewModel
                                 )
@@ -143,15 +140,13 @@ fun QuickActionBottomSheetScreen(
             }
         }
     }
-
 }
 
 @Composable
 fun getQuickActionsHeaderTitlePerCountry(idBrand: Int): Int {
     return when (idBrand) {
-        Brand.CostaRica.id -> R.string.quick_action_bottom_sheet_title
-        Brand.ElSalvador.id -> R.string.quick_action_bottom_sheet_title
-        else -> R.string.quick_action_bottom_sheet_title_gt
+        Brand.Guatemala.id -> R.string.quick_action_bottom_sheet_title_gt
+        else -> R.string.quick_action_bottom_sheet_title
     }
 }
 
@@ -163,10 +158,8 @@ fun QuickActionsRow(
     shareViewModel: HomeViewModel
 ) {
     val localDensity = LocalDensity.current
-    var widthIs by remember {
-        mutableStateOf(88.dp)
-    }
-    var quickActionItemWidth = widthIs
+    var widthIs by remember { mutableStateOf(88.dp) }
+    var quickActionItemWidth: Dp
 
     LazyRow(
         modifier = Modifier
@@ -207,7 +200,6 @@ fun QuickActionItem(
     backgroundColor: Color,
     itemWidth: Dp,
     action: () -> Unit = {},
-
     ) {
     Column(
         modifier = Modifier

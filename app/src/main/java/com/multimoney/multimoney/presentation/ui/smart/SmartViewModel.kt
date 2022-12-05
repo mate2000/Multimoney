@@ -34,8 +34,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseAlertClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
@@ -80,7 +78,6 @@ class SmartViewModel @Inject constructor(
     var linkEvicertia: String = URL_EMPTY
     var statusOnfido: String = ""
 
-
     // Stateless
     var nextAction: () -> Unit = {}
     private var overridePreviousAction: (() -> Unit)? = null
@@ -118,7 +115,7 @@ class SmartViewModel @Inject constructor(
         ).collectLatest { result ->
             dataStorePreferences.getIdBrand().first()
             result.onSuccess {
-                onUIEvent(UIEvent.OnLoadingValueChange(false))
+                onUIEvent(OnLoadingValueChange(false))
             }
             result.onFailure {
                 onUIEvent(
@@ -146,6 +143,7 @@ class SmartViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     globalRequest = it?.idGlobalRequest ?: 0
+                    onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -323,14 +321,15 @@ class SmartViewModel @Inject constructor(
                 isCloseVisible = nextStep >= SmartSteps.One.id
             )
         } else {
-           navigateToOnfido()
+            navigateToOnfido()
         }
     }
 
     private fun navigateToOnfido() {
-       popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/${URL_EMPTY}",
-            Screen.SmartScreen.route)
+        popAndNavigateTo(
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/$URL_EMPTY",
+            Screen.SmartScreen.route
+        )
     }
 
     private fun onSetNavigation(
@@ -460,7 +459,12 @@ class SmartViewModel @Inject constructor(
 
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
-        data class OnUseDataValueChange(val accountSmartData: AccountSmartData?, val idBrand: Int? = null) : UIEvent()
+
+        data class OnUseDataValueChange(
+            val accountSmartData: AccountSmartData?,
+            val idBrand: Int? = null
+        ) : UIEvent()
+
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
         object OnClickBottomSheet : UIEvent()
 

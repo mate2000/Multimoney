@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -51,45 +52,38 @@ fun SmartPaymentCardsScreen(
             }
         }
     }
-    PaymentCardsListContent(viewModel)
+    Column(
+        modifier = Modifier
+            .background(MultimoneyTheme.colors.background)
+            .fillMaxSize()
+    ) {
+        PaymentCardsListContent(viewModel)
+    }
 }
 
 @Composable
 fun PaymentCardsListContent(
     viewModel: SmartPaymentCardsViewModel
 ) {
-    Column(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize()
-    ) {
+    Column(Modifier.padding(horizontal = 16.dp)) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
             isRightButtonVisible = false
         )
-        if (viewModel.uiState.openDialog.isActive.value) {
-            CustomDialog(
-                title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-                message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
-                positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-                openDialogCustom = viewModel.uiState.openDialog.isActive,
-                onPositiveAction = viewModel.uiState.openDialog.positiveAction
-            )
-        }
-    }
-    LoadingIndicator(viewModel.uiState.isLoading)
-
-    Column {
         Text(
-            modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp, bottom = 20.dp),
+            modifier = Modifier.padding(top = 32.dp),
             text = stringResource(R.string.smart_payment_cards_list_card_title),
-            style = Typography.h6.copy(
+            style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
             )
         )
 
-        PaymentCardList(viewModel)
+        PaymentCardList(
+            cardList = viewModel.uiState.cardVDList,
+            modifier = Modifier.padding(top = 32.dp)
+        ) { viewModel.onUIEvent(OnCardSelected(it)) }
+
         CustomButton(
             text = stringResource(id = R.string.payment_cards_list_create),
             modifier = Modifier
@@ -100,25 +94,38 @@ fun PaymentCardsListContent(
             trailingIcon = R.drawable.ic_plus
         )
     }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
+    }
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable
 fun PaymentCardList(
-    viewModel: SmartPaymentCardsViewModel
+    cardList: List<CardVisaDirect?>,
+    modifier: Modifier = Modifier,
+    onCardSelected: (CardVisaDirect) -> Unit
 ) {
-    LazyColumn(modifier = Modifier.padding(top = 32.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.uiState.cardVDList) { card ->
+    LazyColumn(modifier = modifier) {
+        items(cardList) { card ->
             card?.let {
                 CustomInfoButton(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     imageModifier = Modifier.size(48.dp),
                     startIcon = R.drawable.ic_visa_card_item,
                     title = card.detail ?: "",
-                    subtitle = card.cardMaskedNumber ?: "",
-                    onClick = {
-                        viewModel.onUIEvent(OnCardSelected(card))
-                    }
+                    subtitle = stringResource(
+                        R.string.visa_card_masked_number,
+                        card.cardMaskedNumber?.takeLast(4) ?: ""
+                    ),
+                    onClick = { onCardSelected(card) }
                 )
             }
         }

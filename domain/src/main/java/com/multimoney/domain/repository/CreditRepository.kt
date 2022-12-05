@@ -14,10 +14,12 @@ import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
 import com.multimoney.domain.model.credit.ExchangeRate
+import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
 import com.multimoney.domain.model.credit.ProcessPaymentList
+import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -211,6 +213,15 @@ interface CreditRepository {
         idCurrency: Int
     ): Flow<MultimoneyResult<AutomaticDebit?>>
 
+    suspend fun mutationDeactivateClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long
+    ): Flow<MultimoneyResult<AutomaticDebit?>>
+
     suspend fun queryGetClientAutomaticDebit(
         user: String,
         idBrand: Int,
@@ -282,4 +293,21 @@ interface CreditRepository {
         statusOnfido: String,
         currentStep: String
     ): Flow<MultimoneyResult<CreditContractEvent?>>
+
+    suspend fun queryGetInfoDeposit(
+        idBrand: Int,
+        idPrint: Long,
+        user: String
+    ): Flow<MultimoneyResult<GetInfoDeposit?>>
+
+    suspend fun mutationSaveClientBankAccount(
+        idClient: Long,
+        idBank: Int,
+        accountNumber: String,
+        idCurrency: Int,
+        idAccountType: Int,
+        idLoanClient: Long,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveClientBankAccount?>>
 }

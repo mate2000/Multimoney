@@ -206,6 +206,11 @@ dependencies {
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
+
+    // Paging
+    implementation paging3.paging3_runtime
+    implementation paging3.paging3_compose
+
 }
 
 dexguard {

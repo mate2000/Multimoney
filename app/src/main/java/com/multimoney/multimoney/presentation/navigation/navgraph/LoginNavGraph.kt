@@ -13,7 +13,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STE
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBack
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
-import com.multimoney.multimoney.presentation.ui.test.subscription.SubscriptionScreen
 
 const val SIGN_UP_STEP = "sign_up_step"
 
@@ -88,9 +87,6 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                     }
                 }
             )
-        }
-        composable(route = Screen.SubscriptionScreen.route) {
-            SubscriptionScreen()
         }
     }
 }

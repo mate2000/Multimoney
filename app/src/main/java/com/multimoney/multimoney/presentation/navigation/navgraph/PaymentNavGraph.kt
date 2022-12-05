@@ -58,6 +58,7 @@ const val PREVIOUS_SCREEN = "previous_screen"
 // Payment maps location parameters
 const val POINT_NAME = "point_name"
 const val POINT_ADDRESS = "point_address"
+const val POINT_ADDRESS_DESCRIPTION = "point_address_description"
 const val POINT_SCHEDULE = "point_schedule"
 const val POINT_LATITUDE = "point_latitude"
 const val POINT_LONGITUDE = "point_longitude"
@@ -347,6 +348,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         ) {
             PaymentPointsScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = { navController.navigate(it.route) },
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)

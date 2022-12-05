@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -298,17 +299,21 @@ fun OngoingCredit(
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.home_product_title),
+            text = stringResource(id = viewModel.uiState.onGoingCreditCardTitle),
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        Text(
-            text = viewModel.balanceCredit?.getFirstSummary()?.availableBalanceLabel.toString(),
-            modifier = Modifier.padding(bottom = 10.dp),
-            style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
-        )
+        if (viewModel.uiState.isCreditAvailable) {
+            Text(
+                text = viewModel.balanceCredit?.getFirstSummary()?.availableBalanceLabel.toString(),
+                modifier = Modifier.padding(bottom = 10.dp),
+                style = Typography.h4.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+        } else {
+            Spacer(modifier = Modifier.padding(bottom = 44.dp))
+        }
         CustomRoundedLinearProgress(
             progress = viewModel.productProgress,
             modifier = Modifier
@@ -338,7 +343,14 @@ fun OngoingCredit(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 14.dp)
+                .padding(
+                    top = if (viewModel.uiState.isCreditAvailable) {
+                        0.dp
+                    } else {
+                        40.dp
+                    },
+                    bottom = 14.dp
+                )
         ) {
             Column(modifier = Modifier.weight(0.5F)) {
                 Text(

@@ -2,7 +2,13 @@ package com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,13 +29,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.credit.CreditCatalogOption
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.uielement.*
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnCallQueryBanksAndRegularExpression
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnBankValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnAccountTypeValueChanged
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnAccountNumberValueChange
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.addaccount.DisbursementAddAccountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
@@ -39,6 +56,9 @@ fun DisbursementAddAccountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: DisbursementAddAccountViewModel = hiltViewModel()
 ) {
+    // Properties
+
+    val focusManager = LocalFocusManager.current
 
     // Navigation
 
@@ -49,8 +69,6 @@ fun DisbursementAddAccountScreen(
 
     // View
 
-    val focusManager = LocalFocusManager.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,8 +77,8 @@ fun DisbursementAddAccountScreen(
     ) {
         Column {
             TopBar(onBackClick = {
-                viewModel.onUIEvent(DisbursementAddAccountViewModel.UIEvent.OnBackClick(focusManager))
-            } )
+                viewModel.onUIEvent(OnBackClick(focusManager))
+            })
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -73,9 +91,7 @@ fun DisbursementAddAccountScreen(
                     value = viewModel.uiState.bankSelected,
                     onValueChange = {
                         viewModel.onUIEvent(
-                            DisbursementAddAccountViewModel.UIEvent.OnBankValueChanged(
-                                it
-                            )
+                            OnBankValueChanged(it)
                         )
                     }
                 )
@@ -85,7 +101,7 @@ fun DisbursementAddAccountScreen(
                     value = viewModel.uiState.accountTypeSelectedString,
                     onValueChange = { value ->
                         viewModel.onUIEvent(
-                            DisbursementAddAccountViewModel.UIEvent.OnAccountTypeValueChanged(
+                            OnAccountTypeValueChanged(
                                 viewModel.uiState.accountTypeListFiltered?.findLast { it?.description == value })
                         )
                     })
@@ -93,9 +109,7 @@ fun DisbursementAddAccountScreen(
                     value = viewModel.uiState.accountNumber,
                     onValueChange = {
                         viewModel.onUIEvent(
-                            DisbursementAddAccountViewModel.UIEvent.OnAccountNumberValueChange(
-                                it
-                            )
+                            OnAccountNumberValueChange(it)
                         )
                     },
                     onError = viewModel.uiState.accountNumberError,
@@ -105,12 +119,12 @@ fun DisbursementAddAccountScreen(
             Spacer(modifier = Modifier.weight(1f))
             Continue(
                 enable = viewModel.uiState.isContinueEnabled,
-                onClick = {  }
+                onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) }
             )
-            LoadingIndicator(viewModel.uiState.isLoading)
-            ErrorDialog(viewModel.uiState.openDialog)
         }
     }
+    LoadingIndicator(viewModel.uiState.isLoading)
+    ErrorDialog(viewModel.uiState.openDialog)
 }
 
 @Composable

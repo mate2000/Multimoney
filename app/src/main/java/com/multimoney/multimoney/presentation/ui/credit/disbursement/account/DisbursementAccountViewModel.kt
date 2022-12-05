@@ -34,6 +34,16 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
+import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
@@ -83,7 +93,7 @@ class DisbursementAccountViewModel @Inject constructor(
     private var quotaTotal: String? = null
     private var selectedAmount: String? = null
     private var pkUser: Int? = null
-    private var currencyId: Int? = null
+    private var idCurrency: Int?
     private var idUserRequest: Int? = null
     private var creditNumber: String? = null
     private var fkFlowControl: Int? = null
@@ -97,11 +107,11 @@ class DisbursementAccountViewModel @Inject constructor(
         quotaTotal = savedStateHandle[QUOTA_TOTAL]
         selectedAmount = savedStateHandle[SELECTED_AMOUNT]
         pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
+        idCurrency = savedStateHandle[CURRENCY_ID]
         idUserRequest = savedStateHandle[ID_USER_REQUEST]
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER]
         fkFlowControl = savedStateHandle[FK_FLOW_CONTROL] ?: 0
-        currencyId = savedStateHandle[CURRENCY_ID] ?: 0
 
         getTextResources()
     }
@@ -277,7 +287,7 @@ class DisbursementAccountViewModel @Inject constructor(
 
     private fun onNavigateToDisbursementAddAccount() =
         navigateTo(
-            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/$idBrand/$user/$pkUser/$idUserRequest"
+            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/${idBrand}/${pkUser}/${user}/${idUserRequest}/${idClient}/${idLoanClient}/${idCurrency}"
         )
 
     fun getCurrentAmountFormatted() =

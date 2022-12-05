@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.home.product.skeleton
+package com.multimoney.multimoney.presentation.ui.home.product
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

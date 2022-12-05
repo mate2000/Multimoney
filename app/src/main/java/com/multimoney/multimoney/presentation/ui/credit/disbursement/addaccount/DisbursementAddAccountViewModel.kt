@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditCatalogOption
@@ -17,11 +18,12 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getRegex
 import com.multimoney.multimoney.presentation.util.matchRegex
@@ -32,8 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DisbursementAddAccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val saveCreditStepsHelper: SaveCreditStepsHelper,
-    private val queryBanksAndRegularExpressionUseCase: QueryBanksAndRegularExpressionUseCase
+    private val queryBanksAndRegularExpressionUseCase: QueryBanksAndRegularExpressionUseCase,
+    private val mutationSaveClientBankAccountUseCase: MutationSaveClientBankAccountUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -43,19 +45,23 @@ class DisbursementAddAccountViewModel @Inject constructor(
     // Stateless
     private var bank: CreditCatalog? = null
     private var bankList: List<CreditCatalogOption?>? = listOf()
-    var accountTypeList: List<RegularExpression?>? = listOf()
-    var idBrand: Int? = null
-    var pkUser: String = ""
-    var identification: String = ""
-    var email: String = ""
-    var idUserRequest: Int?
+    private var accountTypeList: List<RegularExpression?>? = listOf()
+    private var idBrand: Int? = null
+    private var pkUser: String = ""
+    private var email: String = ""
+    private var idClient: Int? = null
+    private var idUserRequest: Int?
+    private var idCurrency: Int?
+    private var idLoanClient: Int = 0
 
     init {
         idBrand = savedStateHandle[ID_BRAND]
         pkUser = savedStateHandle[PK_USER] ?: ""
-        identification = savedStateHandle[IDENTIFICATION] ?: ""
         email = savedStateHandle[EMAIL] ?: ""
+        idClient = savedStateHandle[ID_CLIENT]
         idUserRequest = savedStateHandle[ID_USER_REQUEST]
+        idCurrency = savedStateHandle[ID_CURRENCY]
+        idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         getTextResources()
     }
 
@@ -63,20 +69,18 @@ class DisbursementAddAccountViewModel @Inject constructor(
         uiState = uiState.copy(
             titleResource = when (idBrand) {
                 Brand.ElSalvador.id -> R.string.disbursement_account_sv_title
-                Brand.Guatemala.id -> R.string.disbursement_account_gt_title
-                else -> R.string.disbursement_account_cr_title
+                else -> R.string.disbursement_account_gt_title
             }
         )
     }
 
-    private fun onLoad() {
+    private fun onStart() {
 
         onCallQueryBanksAndRegularExpressions(
             pkUser = pkUser.toInt(),
             user = email,
             idBrand = idBrand ?: 0,
             idUserRequest = idUserRequest ?: 0,
-            list = saveCreditStepsHelper.inputTextInfoList,
             onLoadingValueChange = { isLoading ->
                 onUIEvent(UIEvent.OnLoadingValueChange(isLoading))
             },
@@ -96,7 +100,6 @@ class DisbursementAddAccountViewModel @Inject constructor(
         user: String,
         idBrand: Int,
         idUserRequest: Int,
-        list: List<CreditCatalog?>?,
         onLoadingValueChange: (isLoading: Boolean) -> Unit,
         onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
@@ -109,9 +112,6 @@ class DisbursementAddAccountViewModel @Inject constructor(
                         filter?.description != MIDDLE_DASH
                     }
                     uiState = uiState.copy(bankList = bankList)
-                    if (!bank?.pkCatalog.isNullOrEmpty()) {
-                        loadStepsInfo(list)
-                    }
                     onLoadingValueChange(false)
                 }.onLoading {
                     onLoadingValueChange(true)
@@ -173,6 +173,41 @@ class DisbursementAddAccountViewModel @Inject constructor(
             uiState.copy(isContinueEnabled = uiState.bankSelected != null && uiState.accountTypeSelected != null && uiState.accountNumber.isNotEmpty())
     }
 
+    private fun callMutationSaveClientBankAccount() = executeUseCase {
+        mutationSaveClientBankAccountUseCase(
+            idClient = idClient?.toLong() ?: 0,
+            idBank = uiState.bankSelected?.pkCatalog?.toInt() ?: 0,
+            accountNumber = uiState.accountNumber,
+            idCurrency = idCurrency ?: 0,
+            idAccountType = uiState.accountTypeSelected?.idTypeAccount ?: 0,
+            idLoanClient = idLoanClient.toLong(),
+            user = email,
+            idBrand = idBrand ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(
+                    isLoading = false
+                )
+                navigateBack(isRestart = true)
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onContinueClick(focusManager: FocusManager) {
+        focusManager.clearFocus()
+        callMutationSaveClientBankAccount()
+    }
+
     data class UIState(
         val titleResource: Int = R.string.empty,
         val accountNumber: String = "",
@@ -189,7 +224,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnCallQueryBanksAndRegularExpression -> onLoad()
+            is UIEvent.OnCallQueryBanksAndRegularExpression -> onStart()
             is UIEvent.OnValidateForm -> validateForm()
             is UIEvent.OnAccountNumberValueChange -> onAccountNumberValueChanged(event.accountNumber)
             is UIEvent.OnBankValueChanged -> onBankValueChanged(event.bankSelected)
@@ -199,23 +234,8 @@ class DisbursementAddAccountViewModel @Inject constructor(
                 uiState =
                     uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is UIEvent.OnBackClick -> navigateBack(false)
+            is UIEvent.OnContinueClick -> onContinueClick(event.focusManager)
         }
-    }
-
-    private fun loadStepsInfo(list: List<CreditCatalog?>?) {
-        val bankSelected = bankList?.find { it?.pkCatalog == bank?.pkCatalog }
-        val accountType = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_TYPE }
-        val accountTypeListFiltered =
-            accountTypeList?.filter { it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt() }
-        val accountNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
-        uiState = uiState.copy(
-            bankSelected = bankSelected,
-            accountTypeListFiltered = accountTypeListFiltered,
-            accountTypeSelectedString = accountType?.value ?: "",
-            accountTypeSelected = accountTypeListFiltered?.findLast { it?.description == accountType?.value },
-            accountNumber = accountNumber?.value ?: ""
-        )
-        validateForm()
     }
 
     private fun navigateBack(isRestart: Boolean) =
@@ -237,6 +257,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
             UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
+        data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
     }
 
     companion object {

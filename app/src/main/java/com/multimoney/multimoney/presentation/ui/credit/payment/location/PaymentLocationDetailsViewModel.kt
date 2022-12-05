@@ -12,8 +12,8 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
@@ -38,6 +38,7 @@ class LocationDetailsViewModel @Inject constructor(
     // Stateless
     var pointName: String = ""
     var pointAddress: String = ""
+    var pointAddressDescription: String = ""
     var pointSchedule: String = ""
     var pointLatitude: String = ""
     var pointLongitude: String = ""
@@ -48,6 +49,7 @@ class LocationDetailsViewModel @Inject constructor(
     init {
         pointName = savedStateHandle[POINT_NAME] ?: ""
         pointAddress = savedStateHandle[POINT_ADDRESS] ?: ""
+        pointAddressDescription = savedStateHandle[POINT_ADDRESS_DESCRIPTION] ?: ""
         pointSchedule = savedStateHandle[POINT_SCHEDULE] ?: ""
         pointLatitude = savedStateHandle[POINT_LATITUDE] ?: ""
         pointLongitude = savedStateHandle[POINT_LONGITUDE] ?: ""

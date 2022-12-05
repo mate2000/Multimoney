@@ -97,42 +97,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
         if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
-            if (isSmart) {
-                uiState = uiState.copy(
-                    loadingIcon = drawable.ic_multimoney_white_logo,
-                    loadingTitle = string.smart_other_generating_document_title,
-                    loadingSubtitle = string.smart_other_generating_document_subtitle
-                )
-                onListenSmartContractEventSubscription(idBrand, idPrint)
-            } else {
-                onListenCreditContractEventSubscription(idPrint, idBrand)
-            }
-        }
-    }
-
-    private fun onListenSmartContractEventSubscription(idBrand: Int, idRequestSys: Long) {
-        executeUseCase {
-            subscriptionAccountSmartContractUseCase.invoke(idBrand, idRequestSys)
-                .collectLatest { result ->
-                    result.onSuccess {
-                        handleEvents(
-                            creditContractEvent = CreditContractEvent(
-                                idPrint = it?.idRequestSysde ?: idRequestSys,
-                                idBrand = it?.idBrand,
-                                link = it?.link,
-                                statusEvicertia = it?.statusEvicertia,
-                                statusOnfido = it?.statusOnfido,
-                                active = it?.active,
-                                currentStep = it?.currentStep
-                            )
-                        )
-                    }.onFailure {
-                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
-                            onListenSmartContractEventSubscription(idBrand, idRequestSys)
-                            numAttemptsToStartSubscription++
-                        }
-                    }
-                }
+            onListenCreditContractEventSubscription(idPrint, idBrand)
         }
     }
 
@@ -166,6 +131,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
                     CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         handleOnfidoStatus(creditContractEvent)
                     }
                     CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
@@ -180,7 +146,13 @@ class SignDocumentProcessViewModel @Inject constructor(
             }
             VALIDATE_IDENTITY.value -> {
                 emitBaseEvent(SimulateUserInteraction)
-                handleOnfidoStatus(creditContractEvent)
+                if (creditContractEvent?.active == true) {
+                    if (idBrand == Brand.CostaRica.id) {
+                        navigateToProcessingTransaction()
+                    } else {
+                        // todo navigate to success screen
+                    }
+                }
             }
         }
     }
@@ -196,9 +168,8 @@ class SignDocumentProcessViewModel @Inject constructor(
                 )
             }
             CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
-                popAndNavigateTo(
-                    route = Screen.ProcessingTransactionScreen.route,
-                    popTo = Screen.SignDocumentProcessScreen.route
+                uiState = uiState.copy(
+                    signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
             CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
@@ -209,6 +180,12 @@ class SignDocumentProcessViewModel @Inject constructor(
             }
         }
     }
+
+    private fun navigateToProcessingTransaction() =
+        popAndNavigateTo(
+            route = "${Screen.ProcessingTransactionScreen.baseRoute}/$idBrand/$idPrint/$email",
+            popTo = Screen.SignDocumentProcessScreen.route
+        )
 
     private fun onNavigateToContinueValidatingIdentity() {
         popAndNavigateTo(
@@ -273,5 +250,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 600000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
+        const val TIME_TO_WAIT_VALIDATE_SMART_IDENTITY_IN_MILLI_SECOND = 30000L
     }
 }

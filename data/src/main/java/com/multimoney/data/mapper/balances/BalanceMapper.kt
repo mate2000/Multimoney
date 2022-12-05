@@ -29,6 +29,8 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             monthlyQuota = it.cuota_Mensual.toString(),
             balanceAmountCancel = it.saldo_Monto_Cancelar.toString(),
             daysExpired = it.dias_Vencidos,
+            canExpandState = it.estado_Ampli,
+            isProductActive = it.producto_Activo,
             applyAutomaticDebit = it.aplica_Debito_Aut,
             automaticDebitEnabled = it.debito_Aut_Activo,
             visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo
@@ -37,15 +39,18 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
     creditLimit = limite_credito,
     creditLimitLabel = limite_credito_label,
     creditNumber = pagare,
-    term = plazo,
-    canExpandCredit = puede_Ampliar
+    term = plazo
 )
 
 private fun BalanceQuery.Account.mapToDomainModel() =
     Account(
         totalBalance = totalBalance.toString().toDouble(),
         currencyCode = currencyCode,
-        gainedInterest = gainedInterest.toString().toDouble()
+        gainedInterest = gainedInterest.toString().toDouble(),
+        accountNumber = accountNumber,
+        ibanAccountNumber = ibanAccountNumber,
+        totalInterest = totalInterest.toString(),
+        tokenNumber = tokenNumber
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =

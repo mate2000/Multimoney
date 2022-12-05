@@ -31,8 +31,13 @@ import androidx.navigation.compose.rememberNavController
 import com.multimoney.multimoney.presentation.navigation.BottomNavItem
 import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavGraph
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.AutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerFinish
@@ -62,11 +67,11 @@ fun HomeScreen(
 
     val innerNavController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
+    val automaticPaymentEditBottomSheetState = rememberModalBottomSheetState(Hidden)
     val quickActionsModalBottomSheetState =
         rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
     val activity = (LocalContext.current as? Activity)
-
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
@@ -82,7 +87,6 @@ fun HomeScreen(
             when (event) {
                 is HomeViewModel.BaseEvent.OnOpenQuickActionsBottomSheet -> {
                     coroutineScope.launch {
-
                         quickActionsModalBottomSheetState.show()
                     }
                 }
@@ -94,6 +98,16 @@ fun HomeScreen(
                 is HomeViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
                     event.millisInFuture
                 )
+                is OnShowAutomaticPaymentEditBottomSheet -> {
+                    coroutineScope.launch {
+                        automaticPaymentEditBottomSheetState.show()
+                    }
+                }
+                is OnHideAutomaticPaymentEditBottomSheet -> {
+                    coroutineScope.launch {
+                        automaticPaymentEditBottomSheetState.hide()
+                    }
+                }
             }
         }
     }
@@ -115,6 +129,12 @@ fun HomeScreen(
 
     QuickActionBottomSheetScreen(viewModel, coroutineScope, quickActionsModalBottomSheetState)
     MyProductsBottomSheetScreen(viewModel, coroutineScope, myProductsModalBottomSheetState)
+    AutomaticPaymentEditBottomSheet(
+        coroutineScope = coroutineScope,
+        modalBottomSheetState = automaticPaymentEditBottomSheetState,
+        onEditClick = { viewModel.onUIEvent(OnEditAutomaticPayment) },
+        onDeleteClick = { viewModel.onUIEvent(OnDeleteAutomaticPayment) }
+    )
 
     BackHandler {
         when {

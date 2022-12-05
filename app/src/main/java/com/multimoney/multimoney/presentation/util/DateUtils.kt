@@ -1,6 +1,10 @@
 package com.multimoney.multimoney.presentation.util
 
+import com.multimoney.multimoney.R
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.Period
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -31,10 +35,14 @@ fun getCurrentDateString() = getPickedDateAsString(
 
 fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
-        val dateFormatted = SHORT_DATE_FORMAT.parse(date)
-        dateFormatted?.let {
-            format.format(dateFormatted)
-        } ?: run {
+        try {
+            val dateFormatted = SHORT_DATE_FORMAT.parse(date)
+            dateFormatted?.let {
+                format.format(dateFormatted)
+            } ?: run {
+                ""
+            }
+        } catch (e: ParseException) {
             ""
         }
     } else {
@@ -55,6 +63,19 @@ fun getDayFromString(date: String?, format: SimpleDateFormat): String {
     }
 }
 
+fun onBirthDateAgeValidation(pickedDate: LocalDate): Pair<Boolean, Int> {
+    val actualDate = LocalDate.now()
+    val periodBetweenDates = Period.between(pickedDate, actualDate).years
+    return if (periodBetweenDates <= EIGHTEEN_YEARS_VALUE) {
+        Pair(true, R.string.smart_account_document_birthdate_age_error)
+    } else if (periodBetweenDates > EIGHTEEN_YEARS_VALUE && periodBetweenDates > ONE_HUNDRED_TWENTY_YEARS_VALUE
+    ) {
+        Pair(true, R.string.smart_account_document_birthdate_age_limit_error)
+    } else {
+        Pair(false, R.string.smart_account_document_birthdate_age_limit_error)
+    }
+}
+
 fun getCurrentDate(time: Date): String {
     return BAR_DIVIDER_FORMAT.format(time)
 }
@@ -63,8 +84,26 @@ fun getCurrentTime(time: Date): String {
     return SHORT_TIME_FORMAT.format(time)
 }
 
+fun parseApiDateToCardDate(date: String?): String {
+    return if (date.isNullOrEmpty().not()) {
+        val dateFormatted = date?.let { API_DATE_FORMAT.parse(it) }
+        dateFormatted?.let {
+            BAR_DIVIDER_FORMAT.format(dateFormatted)
+        } ?: run {
+            ""
+        }
+    } else {
+        ""
+    }
+}
+
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+const val BIRTH_DATE_MIN_YEAR = 1902
+const val BIRTH_DATE_MIN_MONTH = 0
+const val BIRTH_DATE_MIN_DAY = 1
+const val EIGHTEEN_YEARS_VALUE = 18
+const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
 
 val DAY_FORMAT = SimpleDateFormat(YEAR_MONTH_DAY_PATTERN, Locale.getDefault())
 val API_DATE_FORMAT = SimpleDateFormat(ISO_8601_API_FORMAT_PATTERN, Locale.getDefault())

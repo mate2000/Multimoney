@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.location
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -41,7 +43,10 @@ fun PaymentLocationDetailsScreen(
 
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnStart)
+        }
     }
 
     Column(
@@ -50,6 +55,11 @@ fun PaymentLocationDetailsScreen(
             .background(MultimoneyTheme.colors.background),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
+        TopNavBar(
+            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
+            onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnCloseScreenClick) }
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -57,10 +67,6 @@ fun PaymentLocationDetailsScreen(
                 .padding(horizontal = 24.dp)
                 .background(MultimoneyTheme.colors.background)
         ) {
-            TopNavBar(
-                onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
-                onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnCloseScreenClick) }
-            )
             // Location name
             Text(
                 modifier = Modifier
@@ -76,7 +82,7 @@ fun PaymentLocationDetailsScreen(
             // Address
             CustomLabelDescColumn(
                 labelText = stringResource(id = R.string.payment_location_maps_address),
-                descriptionText = viewModel.pointAddress
+                descriptionText = viewModel.pointAddressDescription
             )
 
             // Opening time
@@ -140,5 +146,9 @@ fun PaymentLocationDetailsScreen(
             onPositiveAction = viewModel.uiState.dialogParameters.positiveAction,
             onNegativeAction = viewModel.uiState.dialogParameters.negativeAction
         )
+    }
+
+    BackHandler {
+        viewModel.onUIEvent(UIEvent.OnNavigateBack)
     }
 }

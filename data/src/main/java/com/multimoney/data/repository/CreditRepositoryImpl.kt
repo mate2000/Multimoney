@@ -10,13 +10,18 @@ import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
 import com.multimoney.domain.model.credit.CreditContractEvent
+import com.multimoney.domain.model.credit.CreditExtensionAmount
+import com.multimoney.domain.model.credit.CreditExtensionDetail
+import com.multimoney.domain.model.credit.CreditExtensionMessage
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
 import com.multimoney.domain.model.credit.ExchangeRate
+import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessPaymentList
+import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.util.MultimoneyResult
@@ -246,7 +251,7 @@ class CreditRepositoryImpl @Inject constructor(
             systemInDarkTheme
         ),
         apolloCallMapper = { data ->
-            Success(data.terminsAndConditions.terminsAndConditionsHtml ?: "")
+            Success(data.terminsAndConditions.terminsAndConditionsHtml)
         }
     )
 
@@ -420,6 +425,31 @@ class CreditRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun mutationDeactivateClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long
+    ): Flow<MultimoneyResult<AutomaticDebit?>> = fetchData(
+        apolloCall = graphqlApi.mutationDeactivatedClientAutomaticDebit(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            origin = origin,
+            idAccount = idAccount
+        ),
+        apolloCallMapper = { data ->
+            if (data.deactivatedClientAutomaticDebit.status == null || data.deactivatedClientAutomaticDebit.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
     override suspend fun queryGetClientAutomaticDebit(
         user: String,
         idBrand: Int,
@@ -431,6 +461,45 @@ class CreditRepositoryImpl @Inject constructor(
             idBrand,
             idClient,
             idLoanClient
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryCreditExtensionAmount(
+        idClient: Long,
+        currency: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<CreditExtensionAmount?>> = fetchData(
+        apolloCall = graphqlApi.queryCreditExtensionAmount(idClient, currency, user, idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryCreditExtensionMessage(
+        idClient: Long,
+        currency: String,
+        user: String,
+        idBrand: Int,
+        amountRequest: Double,
+        idLoanClient: Long,
+        quotaMax: Double,
+        idProductBase: Int,
+        cicle: Int
+    ): Flow<MultimoneyResult<CreditExtensionMessage?>> = fetchData(
+        apolloCall = graphqlApi.queryCreditExtensionMessage(
+            idClient,
+            currency,
+            user,
+            idBrand,
+            amountRequest,
+            idLoanClient,
+            quotaMax,
+            idProductBase,
+            cicle
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
@@ -457,6 +526,94 @@ class CreditRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationSaveClientBankAccount(
+        idClient: Long,
+        idBank: Int,
+        accountNumber: String,
+        idCurrency: Int,
+        idAccountType: Int,
+        idLoanClient: Long,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveClientBankAccount?>> = fetchData(
+        apolloCall = graphqlApi.mutationSaveClientBankAccount(
+            idClient = idClient,
+            idBank = idBank,
+            accountNumber = accountNumber,
+            idCurrency = idCurrency,
+            idAccountType = idAccountType,
+            idLoanClient = idLoanClient,
+            user = user,
+            idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+
+    )
+
+    override suspend fun mutationSaveCreditExtensionDetail(
+        pkUser: Int,
+        idBrand: Int,
+        user: String,
+        accountNumber: String,
+        amount: Double,
+        month: Int,
+        pkPromotionMonth: Int,
+        nextPaymentDate: String,
+        quota: Double,
+        quotaTotal: Double,
+        comissionDisbursement: Double,
+        rateInterestNormalLoan: Double,
+        rateInterestNormalRegular: Double,
+        cicle: Int,
+        idProduct: Int,
+        descriptionPromotionTerm: String,
+        pkPromotion: Int
+    ): Flow<MultimoneyResult<CreditExtensionDetail?>> = fetchData(
+        apolloCall = graphqlApi.mutationSaveCreditExtensionDetail(
+            pkUser,
+            idBrand,
+            user,
+            accountNumber,
+            amount,
+            month,
+            pkPromotionMonth,
+            nextPaymentDate,
+            quota,
+            quotaTotal,
+            comissionDisbursement,
+            rateInterestNormalLoan,
+            rateInterestNormalRegular,
+            cicle,
+            idProduct,
+            descriptionPromotionTerm,
+            pkPromotion
+        ),
+        apolloCallMapper = { data ->
+            if (data.saveCreditExtensionDetail?.status == null || data.saveCreditExtensionDetail.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
+    override suspend fun queryGetInfoDeposit(
+        idBrand: Int,
+        idPrint: Long,
+        user: String
+    ): Flow<MultimoneyResult<GetInfoDeposit?>> = fetchData(
+        apolloCall = graphqlApi.queryGetInfoDeposit(idBrand, idPrint, user),
+        apolloCallMapper = { data ->
+            if (data.getInfoDeposit.status == null || data.getInfoDeposit.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
         }
     )
 }

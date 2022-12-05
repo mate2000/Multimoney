@@ -1,19 +1,18 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditOfferAndTip
-import com.multimoney.domain.model.credit.ProductMovement
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
@@ -23,6 +22,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
@@ -40,7 +41,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
-import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -65,8 +65,10 @@ class ProductViewModel @Inject constructor(
     var userName: String = ""
     var productProgress = 0F
     var isExpiredTitle = R.string.home_product_expiration
+    var smartMovementsList: List<SmartMovementsResult> = emptyList()
 
     private fun onSetUserData(
+        idBrand: String,
         balanceCredit: Balance?,
         pkUser: String,
         identification: String,
@@ -74,76 +76,40 @@ class ProductViewModel @Inject constructor(
         userName: String,
         validateUserStatus: ValidateUserStatus?,
         configurationVersion: ConfigurationVersion?,
-        idBrand: String
+        productPageList: List<ProductPage>,
+        smartMovements: List<SmartMovementsResult>
     ) {
         this.pkUser = pkUser
         this.identification = identification
         this.email = email
         this.userName = userName
         this.configurationVersion = configurationVersion
+        uiState = uiState.copy(idBrand = idBrand, productPageList = productPageList)
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
         uiState = uiState.copy(idBrand = idBrand)
+        this.smartMovementsList = smartMovements
     }
 
     private fun setBalance(balance: Balance?) {
         balance?.let {
             balanceCredit = it
-
-            val productPageList = mutableListOf<ProductPage>()
-
-            // Default credit
-            productPageList.add(
-                ProductPage(
-                    product = ProductType.Credit.value,
-                    enabled = true
-                )
-            )
-            // If idBrand is different from Guatemala enable Smart
-            if (uiState.idBrand != Brand.Guatemala.id.toString()) {
-                if (it.balanceAccountSmart.isNullOrEmpty().not()) {
-                    // Add the amount of account smart that user has
-                    it.balanceAccountSmart?.forEachIndexed { index, _ ->
-                        productPageList.add(
-                            ProductPage(
-                                product = ProductType.Smart.value,
-                                productSmartIndex = index,
-                                enabled = true
-                            )
-                        )
-                    }
-                    // If user has smart activated he can enable crypto
-                    productPageList.add(
-                        ProductPage(
-                            product = ProductType.Crypto.value,
-                            enabled = true
-                        )
-                    )
-                } else {
-                    // If user doesn't have smart we have to add one empty card to activate the product
-                    productPageList.add(
-                        ProductPage(
-                            product = ProductType.Smart.value,
-                            enabled = true
-                        )
-                    )
-                    productPageList.add(
-                        ProductPage(
-                            product = ProductType.Crypto.value,
-                            enabled = false
-                        )
-                    )
-                }
-            }
+            val isCreditAvailable =
+                (balanceCredit?.getFirstSummary()?.availableBalance ?: 0.0) > 0.0
             uiState = uiState.copy(
-                productPageList = productPageList,
-                canExpandCredit = it.getFirstCredit()?.canExpandCredit ?: false,
+                canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     R.drawable.ic_alert_expired_payment
                 } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
                     R.drawable.info_blue_icon
                 } else {
                     null
+                },
+                isCreditAvailable = isCreditAvailable,
+                onGoingCreditCardTitle = if (isCreditAvailable) {
+                    R.string.home_product_title
+                } else {
+                    R.string.detail
                 }
             )
         }
@@ -166,14 +132,14 @@ class ProductViewModel @Inject constructor(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
                             "${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest}/${uiState.userStatus?.infoUser?.firstName}/" +
                             "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/" +
-                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}"
+                            "${uiState.userStatus?.infoCredit?.infoPreApprove?.statusFirm}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint}"
                 )
             }
         }
     }
 
     private fun onNavigateToSmartFlow() {
-        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/${email}")
+        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/${email}\"${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}")
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -257,6 +223,9 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
     }
 
+    private fun onNavigateToSmartMovements(accountToken: String) =
+        navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
+
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
     }
@@ -326,6 +295,11 @@ class ProductViewModel @Inject constructor(
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
 
+                CREDIT_ERROR_CREATE_ACCOUNT -> {
+                    infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.FAILED.status ||
+                            infoCredit?.infoPreApprove?.status == ERROR_CREDIT
+                }
+
                 else -> false
             }
         }
@@ -335,9 +309,14 @@ class ProductViewModel @Inject constructor(
         helper.shareTextPlain("$clientLabel: ${userName.uppercase()}\n$accountLabel: $ibanAccount")
     }
 
-    private fun onNavigateToDisbursement() {
-        // TODO: Navigate to disbursement screen
-    }
+    private fun onNavigateToDisbursement() =
+        navigateTo(
+            route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
+                encodeData(
+                    balanceCredit?.getFirstCredit()?.summary
+                )
+            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
+        )
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
         return listOf(
@@ -365,14 +344,6 @@ class ProductViewModel @Inject constructor(
                 "",
                 ""
             )
-        )
-    }
-
-    fun getProductMovement(): List<ProductMovement> {
-        return listOf(
-            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
-            ProductMovement("Pago de cuota", "10/06/2022", "3000"),
-            ProductMovement("Pago de cuota", "10/06/2022", "3000")
         )
     }
 
@@ -440,13 +411,24 @@ class ProductViewModel @Inject constructor(
         return amount
     }
 
-    private fun OnQuickActionClicked(flow: String) {
-        Log.e("TAG", "opening flow")
+    private fun onQuickActionClicked(flow: String) {
         when (flow) {
             QuickActionFlow.ACTIVATE_MM_VISA.flow -> onNavigateToVisaActivateScreen()
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
         }
+    }
 
+    private fun onDeleteAutomaticPayment(onAcceptClick: () -> Unit) {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_title,
+                descriptionResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_description,
+                positiveResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_accept,
+                negativeResource = R.string.cancel,
+                positiveAction = { onAcceptClick() },
+                isActive = mutableStateOf(true)
+            )
+        )
     }
 
     data class UIState(
@@ -457,6 +439,8 @@ class ProductViewModel @Inject constructor(
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
+        val onGoingCreditCardTitle: Int = R.string.home_product_title,
+        val isCreditAvailable: Boolean = false,
         val canExpandCredit: Boolean = false,
         val scheduleChipIconResource: Int? = null
     )
@@ -475,6 +459,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is OnSetUserData -> onSetUserData(
+                idBrand = uiEvent.idBrand,
                 balanceCredit = uiEvent.balanceCredit,
                 pkUser = uiEvent.pkUser,
                 identification = uiEvent.identification,
@@ -482,7 +467,8 @@ class ProductViewModel @Inject constructor(
                 userName = uiEvent.userName,
                 validateUserStatus = uiEvent.validateUserStatus,
                 configurationVersion = uiEvent.configurationVersion,
-                idBrand = uiEvent.idBrand
+                productPageList = uiEvent.productPageList,
+                smartMovements = uiEvent.smartMovements
             )
             is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -499,7 +485,9 @@ class ProductViewModel @Inject constructor(
             is IsPaymentExpired -> isExpired()
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
-            is UIEvent.OnQuickActionClicked -> OnQuickActionClicked(uiEvent.flow)
+            is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
+            is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
+            is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
         }
     }
 
@@ -528,6 +516,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToDisbursement : UIEvent()
         object OnNavigateToSendMoneyFlow : UIEvent()
         object OnNavigateToPaymentSmartFlow : UIEvent()
+        data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
@@ -535,6 +524,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
 
         data class OnSetUserData(
+            val idBrand: String,
             val balanceCredit: Balance?,
             val pkUser: String,
             val identification: String,
@@ -542,7 +532,8 @@ class ProductViewModel @Inject constructor(
             val userName: String,
             val validateUserStatus: ValidateUserStatus?,
             val configurationVersion: ConfigurationVersion?,
-            val idBrand: String
+            val productPageList: List<ProductPage>,
+            val smartMovements: List<SmartMovementsResult>
         ) : UIEvent()
 
         data class OnShareIbanAccount(
@@ -552,9 +543,11 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
+        data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
     }
 
     companion object {
+        const val ERROR_CREDIT = "Error"
         const val DEFAULT_PRODUCT_PAGES = 1
         const val DEFAULT_PROGRESS = 1F
         const val ZERO = 0.0
@@ -568,6 +561,7 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_FIRMED_ONFIDO_PENDING = "CREDIT_FIRMED_ONFIDO_PENDING"
         const val CREDIT_ONFIDO_REJECTED = "CREDT_ONFIFO_REJECTED"
         const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
+        const val CREDIT_ERROR_CREATE_ACCOUNT = "CREDIT_ERROR_CREATE_ACCOUNT"
         const val SEPARATOR = " + "
     }
 }

@@ -1,6 +1,7 @@
 package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
+import androidx.paging.PagingData
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
@@ -9,11 +10,32 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SmartMovement
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
 interface SmartAccountRepository {
+
+    suspend fun queryGetCoreBankMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        monthDate: String?
+    ): Flow<MultimoneyResult<SmartMovementsResult?>>
+
+    suspend fun getPagedMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageSize: Int,
+        monthDate: String?
+    ): Flow<PagingData<SmartMovement>>
 
     suspend fun queryCivilStatus(
         pkUser: String,
@@ -103,4 +125,10 @@ interface SmartAccountRepository {
         idBrand: Int,
         idRequestSys: Long
     ): Flow<MultimoneyResult<AccountSmartContractResult?>>
+
+    suspend fun mutationInitialRequestSmartAccount(
+        pkUser: Long,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<GlobalRequest?>>
 }

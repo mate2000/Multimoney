@@ -146,6 +146,7 @@ class SmartViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     globalRequest = it?.idGlobalRequest ?: 0
+                    onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))

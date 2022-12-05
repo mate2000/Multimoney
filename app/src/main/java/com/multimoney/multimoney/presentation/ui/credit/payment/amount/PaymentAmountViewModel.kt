@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.model.balance.Summary
@@ -57,7 +58,8 @@ import kotlin.math.roundToInt
 class PaymentAmountViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val mutationProcessPaymentUseCase: MutationProcessPaymentListUseCase,
-    private val queryGetExchangeRateCreditUseCase: QueryGetExchangeRateCreditUseCase
+    private val queryGetExchangeRateCreditUseCase: QueryGetExchangeRateCreditUseCase,
+    private val mutationActivateClientAutomaticDebitUseCase: MutationActivateClientAutomaticDebitUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -281,9 +283,13 @@ class PaymentAmountViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     referenceNumber = it?.referenceNumberSinpe
-                    onUIEvent(OnHidePaymentBottomSheet)
-                    onLoadingValueChange(false)
-                    onUIEvent(OnNavigateToVoucher)
+                    if (uiState.isAutomaticProgrammedPaymentChecked) {
+                        onCallMutationActivateClientAutomaticDebitUseCase()
+                    } else {
+                        onUIEvent(OnHidePaymentBottomSheet)
+                        onLoadingValueChange(false)
+                        onUIEvent(OnNavigateToVoucher)
+                    }
                 }.onMessage {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
@@ -304,6 +310,35 @@ class PaymentAmountViewModel @Inject constructor(
                 }
             }
         }
+
+    private fun onCallMutationActivateClientAutomaticDebitUseCase() = executeUseCase {
+        mutationActivateClientAutomaticDebitUseCase.invoke(
+            user = user.orEmpty(),
+            idBrand = idBrand ?: 0,
+            idClient = idClient?.toLong() ?: 0,
+            idLoanClient = idLoanClient?.toLong() ?: 0,
+            origin = uiState.clientBankAccount?.origin ?: "",
+            idAccount = uiState.clientBankAccount?.id?.toLong() ?: 0,
+            idCurrency = uiState.clientBankAccount?.idCurrency ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                onActivateClientAutomaticDebitResult(it?.isUpdated ?: false)
+            }.onMessage {
+                onActivateClientAutomaticDebitResult(false)
+            }.onFailure {
+                onActivateClientAutomaticDebitResult(false)
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onActivateClientAutomaticDebitResult(isAutomaticProgrammed: Boolean) {
+        onAutomaticProgrammedPaymentCheckedChanged(isAutomaticProgrammed)
+        onUIEvent(OnHidePaymentBottomSheet)
+        onLoadingValueChange(false)
+        onUIEvent(OnNavigateToVoucher)
+    }
 
     private fun getDestinyAccountNumber(idCurrency: Int?): String =
         summaryList?.find { it.idCurrency == idCurrency }?.ibanAccount ?: ""

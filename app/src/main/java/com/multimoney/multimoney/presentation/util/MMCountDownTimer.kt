@@ -1,10 +1,8 @@
 package com.multimoney.multimoney.presentation.util
 
 import android.os.CountDownTimer
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 
-class MMCountDownTimer : DefaultLifecycleObserver {
+class MMCountDownTimer {
 
     private var timer: CountDownTimer? = null
     private var milliInFuture: Long? = null
@@ -56,10 +54,6 @@ class MMCountDownTimer : DefaultLifecycleObserver {
     fun discardTimer() {
         milliInFuture = null
         timer?.cancel()
-    }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        discardTimer()
     }
 
     interface OnCountDownTimerFinish {

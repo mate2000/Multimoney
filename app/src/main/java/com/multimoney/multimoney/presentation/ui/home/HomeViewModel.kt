@@ -55,11 +55,13 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -72,7 +74,8 @@ class HomeViewModel @Inject constructor(
     private val queryGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
     private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase,
-    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase
+    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
+    private val cognitoHelper: CognitoHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -451,6 +454,20 @@ class HomeViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
     }
 
+    private fun signOut() {
+        cognitoHelper.signOut(signOutError = {
+            Timber.d("SignOut Error")
+        })
+        viewModelScope.launch {
+            dataStorePreferences.setAuthToken("")
+        }
+        countDownTimer.discardTimer()
+        popAndNavigateTo(
+            Screen.SignInScreen.route,
+            Screen.HomeScreen.route
+        )
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
@@ -473,7 +490,7 @@ class HomeViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnBottomNavigationItemClick -> navigation(uiEvent.innerNavHostController, uiEvent.route)
-            is OnSignOut -> popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
+            is OnSignOut -> signOut()
             is OnSetUserData -> onsetUserData()
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
             is OnGetSmartMovements -> onGetSmartMovements(
@@ -496,6 +513,7 @@ class HomeViewModel @Inject constructor(
         data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
         data class OnBottomNavigationItemClick(val innerNavHostController: NavHostController, val route: String) :
             UIEvent()
+
         data class OnGetSmartMovements(
             val user: String,
             val idBrand: Int,

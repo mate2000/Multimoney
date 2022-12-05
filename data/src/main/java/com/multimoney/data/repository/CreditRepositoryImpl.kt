@@ -17,6 +17,7 @@ import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
 import com.multimoney.domain.model.credit.ExchangeRate
+import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessPaymentList
@@ -594,6 +595,21 @@ class CreditRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             if (data.saveCreditExtensionDetail?.status == null || data.saveCreditExtensionDetail.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
+    override suspend fun queryGetInfoDeposit(
+        idBrand: Int,
+        idPrint: Long,
+        user: String
+    ): Flow<MultimoneyResult<GetInfoDeposit?>> = fetchData(
+        apolloCall = graphqlApi.queryGetInfoDeposit(idBrand, idPrint, user),
+        apolloCallMapper = { data ->
+            if (data.getInfoDeposit.status == null || data.getInfoDeposit.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())

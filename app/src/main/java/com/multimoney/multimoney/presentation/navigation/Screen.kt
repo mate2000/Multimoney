@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
@@ -119,7 +120,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
-    object ProcessingTransactionScreen : Screen("processing_transaction_screen")
+
+    object ProcessingTransactionScreen : Screen(
+        "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
+        "processing_transaction_screen"
+    )
+
     object OnfidoAndEvicertiaErrorsScreen : Screen(
         "onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
         "onfido_and_evicertia_errors_screen"
@@ -211,6 +217,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SmartOnfidoScreen : Screen(
         "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}",
         "smart_onfido_screen"
+    )
+
+    object SmartMovementsScreen : Screen(
+        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
+        "smart_movements_screen"
     )
 
     // TestNavGraph Screens

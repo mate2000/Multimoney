@@ -50,10 +50,10 @@ import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
 import com.onfido.android.sdk.capture.errors.OnfidoException
 import com.onfido.android.sdk.capture.upload.Captures
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class CreditOnfidoViewModel @Inject constructor(
@@ -221,7 +221,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     private fun navigateToCorrectScreen() {
-        val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
+        val signDocumentStep = if (idBrand == Brand.ElSalvador.id || idPrint == ID_PRINT_EMPTY) {
             VALIDATE_IDENTITY.value
         } else {
             if (evicertiaStatus.lowercase() == CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
@@ -334,6 +334,7 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     companion object {
-        const val PACKAGE_NAME = "com.multimoney.multimoney.sv"
+        const val PACKAGE_NAME = "com.multimoney.multimoney.cr"
+        const val ID_PRINT_EMPTY = 0L
     }
 }

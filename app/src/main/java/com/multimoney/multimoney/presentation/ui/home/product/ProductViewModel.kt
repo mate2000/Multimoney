@@ -123,7 +123,6 @@ class ProductViewModel @Inject constructor(
             CREDIT_FIRM_INCOMPLETE, CREDIT_ONFIDO_REJECTED, CREDIT_FIRM_REJECTED -> {
                 // todo call the new endpoint to get the evicertia url
             }
-
             else -> {
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
@@ -249,6 +248,8 @@ class ProductViewModel @Inject constructor(
         ) R.string.home_product_expired else R.string.home_product_expiration
     }
 
+    private fun getIfIsPep() = uiState.userStatus?.infoCredit?.infoPreApprove?.status == PENDING_TO_CHECK_STATUS
+
     fun evaluateCardCondition(action: String, validateUserStatus: ValidateUserStatus): Boolean {
         validateUserStatus.apply {
             return when (action) {
@@ -268,6 +269,14 @@ class ProductViewModel @Inject constructor(
                     infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status && (
                         CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id
                         )
+                }
+
+                CREDIT_EL_SALVADOR_MANUAL_PROCESS -> {
+                    uiState.idBrand.toInt() == Brand.ElSalvador.id && infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status
+                }
+
+                CREDIT_PEP_PROCESS -> {
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status && infoCredit?.infoPreApprove?.idPrint == 0L && getIfIsPep()
                 }
 
                 CREDIT_FIRM_INCOMPLETE -> {
@@ -563,6 +572,9 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_ONFIDO_REJECTED = "CREDT_ONFIFO_REJECTED"
         const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
         const val CREDIT_ERROR_CREATE_ACCOUNT = "CREDIT_ERROR_CREATE_ACCOUNT"
+        const val CREDIT_EL_SALVADOR_MANUAL_PROCESS = "CREDIT_EL_SALVADOR_MANUAL_PROCESS"
+        const val CREDIT_PEP_PROCESS = "CREDIT_PEP_PROCESS"
         const val SEPARATOR = " + "
+        const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
     }
 }

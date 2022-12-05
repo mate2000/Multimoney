@@ -12,6 +12,7 @@ import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
+import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
 import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
@@ -993,4 +994,25 @@ class GraphqlApi @Inject constructor(
                 idBrand = idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    // Multimoney Visa
+
+    fun queryCardIssuanceNV(
+        idClient: Long,
+        requestType: String,
+        identification: String,
+        idLoanClient: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CardIssuanceNVQuery.Data> =
+        apolloAuthorizedClient.query(
+            CardIssuanceNVQuery(
+                idClient,
+                requestType,
+                identification,
+                idLoanClient,
+                Optional.Present(idBrand),
+                Optional.Present(user)
+            )
+        )
 }

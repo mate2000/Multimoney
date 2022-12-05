@@ -33,7 +33,9 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             isProductActive = it.producto_Activo,
             applyAutomaticDebit = it.aplica_Debito_Aut,
             automaticDebitEnabled = it.debito_Aut_Activo,
-            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo
+            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo,
+            applyCommerce = it.aplica_Ampli_Comercio,
+            applyCreateCard = it.aplica_Crear_Tarjeta
         )
     },
     creditLimit = limite_credito,

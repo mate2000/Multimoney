@@ -136,7 +136,8 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartFlow() {
-        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
+        navigateTo(
+            "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
                 "${uiState.userStatus?.infoUser?.firstName}/" +
                 "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}"
         )
@@ -315,7 +316,7 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 balanceCredit?.getFirstCredit()?.summary
             )
-            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
+            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
         )
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {

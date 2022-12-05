@@ -55,9 +55,6 @@ fun SignDocumentProcessScreen(
         VALIDATE_IDENTITY.value -> {
             ValidateIdentityScreen(viewModel = viewModel)
         }
-        SignDocumentStep.VALIDATE_SMART_IDENTITY.value -> {
-            DocumentGenerationIdentityScreen(viewModel = viewModel)
-        }
     }
 
     if (viewModel.uiState.dialogParameters.isActive.value) {

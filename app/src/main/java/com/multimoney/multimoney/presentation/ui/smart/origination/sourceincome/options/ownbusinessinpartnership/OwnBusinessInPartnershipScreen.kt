@@ -159,7 +159,7 @@ fun OwnBusinessOnPersonalBasisContent(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             placeHolder = stringResource(
-                R.string.decimal_income_placeholder,
+                R.string.smart_decimal_income_placeholder,
                 currencySymbol
             ),
             leadingIcon = R.drawable.ic_money_gray,

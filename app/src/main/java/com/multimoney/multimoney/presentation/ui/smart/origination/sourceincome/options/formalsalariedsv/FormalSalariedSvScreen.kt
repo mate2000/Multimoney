@@ -172,7 +172,7 @@ fun FormalSalariedSvContent(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             leadingIcon = R.drawable.ic_money_gray,
-            placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
+            placeHolder = stringResource(R.string.smart_salaried_salary_placeholder, currencySymbol),
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_salaried_average_salary_required),
             modifier = Modifier.padding(top = 16.dp)

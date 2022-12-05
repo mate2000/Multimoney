@@ -37,7 +37,6 @@
     <string name="dollar_symbol" translatable="false">$</string>
     <string name="colon_symbol" translatable="false">₡</string>
     <string name="quetzal_symbol" translatable="false">Q</string>
-    <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
@@ -310,6 +309,11 @@
     <string name="profile_help" translatable="false">Ayuda e información</string>
     <string name="profile_invite_friends" translatable="false">Invitar amigos</string>
     <string name="profile_logout" translatable="false">Cerrar Sesión</string>
+
+    <!-- Sign Out -->
+    <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
+    <string name="sign_out_dialog_title_gt" translatable="false">¿Estás seguro que quieres cerrar sesión?</string>
+    <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
 
     <!-- Home Product Header -->
     <string name="home_product_header_title" translatable="false">Mis Productos</string>
@@ -615,6 +619,7 @@
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
+    <string name="smart_decimal_income_placeholder" translatable="false">%s 00,000.00</string>
 
     <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>
@@ -650,6 +655,8 @@
     <string name="smart_other_title" translatable="false">Otro</string>
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
+    <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
+    <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
     <!--Smart Account - Own Business On Personal basis-->
     <string name="smart_business_personal_basis_title" translatable="false">Negocio propio en sociedad</string>
@@ -667,10 +674,11 @@
 
     <!--Smart Account - Salaried SV-->
     <string name="smart_salaried_title" translatable="false">Asalariado</string>
-    <string name="smart_salaried_working_address" translatable="false">Dirección laboral</string>
+    <string name="smart_salaried_working_address" translatable="false">Dirección laboral completa</string>
     <string name="smart_salaried_working_address_required" translatable="false">Dirección requerida</string>
     <string name="smart_salaried_average_salary" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_salaried_average_salary_required" translatable="false">Ingresos requeridos</string>
+    <string name="smart_salaried_salary_placeholder" translatable="false">%s 0.00</string>
     <string name="smart_salaried_profession" translatable="false">Cargo que desempeña</string>
     <string name="smart_salaried_profession_required" translatable="false">Cargo requerido</string>
     <string name="smart_salaried_company_name" translatable="false">Nombre de la empresa</string>

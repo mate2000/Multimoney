@@ -325,7 +325,7 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 balanceCredit?.getFirstCredit()?.summary
             )
-            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
+            }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
         )
 
     fun getCreditOfferAndTips(): List<CreditOfferAndTip> {

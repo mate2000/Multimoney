@@ -92,6 +92,7 @@ fun CreditOnfidoScreen(
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
             event.onSuccess {
+                viewModel.applicantId = it?.applicantId
                 viewModel.apply {
                     onUIEvent(
                         OnOpenOnfidoSdk(onOpenOnfidoSdk = {

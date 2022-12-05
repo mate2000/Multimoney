@@ -25,12 +25,13 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBackHome
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -73,16 +74,16 @@ class PaymentAccountViewModel @Inject constructor(
         } else {
             summaryList?.firstOrNull()?.idCurrency
         }
-        getTextResources()
     }
 
     private fun getTextResources() {
         uiState = uiState.copy(
-            titleResource = idCurrency?.getCurrency()?.accountTitle ?: 0
+            titleResource = idCurrency?.getCurrency()?.accountTitle ?: R.string.empty
         )
     }
 
     private fun onCallQueryGetClientBankAccountUseCase() {
+        getTextResources()
         executeUseCase {
             queryGetClientBankAccountUseCase.invoke(
                 user = user,
@@ -147,6 +148,10 @@ class PaymentAccountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
+    private fun onAddAccountClick() = navigateTo(
+        route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/$idLoanClient"
+    )
+
     data class UIState(
         // Interactions
         val titleResource: Int = R.string.empty,
@@ -158,6 +163,7 @@ class PaymentAccountViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnAddAccountClick -> onAddAccountClick()
             is OnNavigateBack -> onNavigateBack()
             is OnNavigateBackHome -> onNavigateBackHome()
             is OnCallQueryGetClientBankAccount -> onCallQueryGetClientBankAccountUseCase()
@@ -169,6 +175,7 @@ class PaymentAccountViewModel @Inject constructor(
         object OnCallQueryGetClientBankAccount : UIEvent()
 
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
+        object OnAddAccountClick : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigateBackHome : UIEvent()
     }

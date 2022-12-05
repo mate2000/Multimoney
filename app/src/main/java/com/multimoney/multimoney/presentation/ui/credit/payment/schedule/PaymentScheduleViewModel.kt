@@ -139,7 +139,11 @@ class PaymentScheduleViewModel @Inject constructor(
         ).collectLatest { result ->
             setPaymentScheduleAttempts++
             result.onSuccess {
-                setSuccessAlertResult()
+                if (it?.isUpdated == true) {
+                    setSuccessAlertResult()
+                } else {
+                    setErrorAlertResult(attempts = setPaymentScheduleAttempts)
+                }
             }.onMessage {
                 setErrorAlertResult(
                     alertResultDescription = it?.messageError?.message ?: "",

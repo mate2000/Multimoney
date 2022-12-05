@@ -137,6 +137,9 @@ class BeneficiariesViewModel @Inject constructor(
                 positiveResource = string.common_remove,
                 negativeResource = string.cancel,
                 isActive = mutableStateOf(true),
+                negativeAction = {
+                    uiState = uiState.copy(showOptionsModal = true)
+                },
                 positiveAction = {
                     onRemoveBeneficiary(beneficiary)
                 }
@@ -208,6 +211,7 @@ class BeneficiariesViewModel @Inject constructor(
         val percentage: String = "",
         val addBeneficiaryState: Boolean = true,
         val totalPercentage: Int = 0,
+        var showOptionsModal: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val addBeneficiaryOption: Boolean = false
     )

@@ -399,7 +399,7 @@ fun CustomOutlinedTextField(
                     } else {
                         ""
                     },
-                    color = MultimoneyTheme.colors.textInformation,
+                    color = MultimoneyTheme.colors.text,
                     modifier = Modifier
                         .padding(start = 5.dp)
                         .wrapContentSize(),

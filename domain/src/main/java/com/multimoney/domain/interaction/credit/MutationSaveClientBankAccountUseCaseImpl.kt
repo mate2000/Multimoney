@@ -6,13 +6,14 @@ import com.multimoney.domain.repository.CreditRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class MutationSaveClientBankAccountUseCaseImpl @Inject constructor (val creditRepository: CreditRepository) : MutationSaveClientBankAccountUseCase {
+class MutationSaveClientBankAccountUseCaseImpl @Inject constructor(val creditRepository: CreditRepository) :
+    MutationSaveClientBankAccountUseCase {
     override suspend fun invoke(
         idClient: Long,
         idBank: Int,
         accountNumber: String,
         idCurrency: Int,
-        idAccountType: Int,
+        idAccountType: Int?,
         idLoanClient: Long,
         user: String,
         idBrand: Int

@@ -75,16 +75,17 @@ fun PaymentVoucherScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
+            .background(MultimoneyTheme.colors.background),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
-            viewModel.onUIEvent(OnCloseClick)
-        })
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
+            TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
+                viewModel.onUIEvent(OnCloseClick)
+            })
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -252,22 +253,22 @@ fun PaymentVoucherScreen(
                     }
                 }
             }
-            if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
-                CustomButton(
-                    onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
-                    text = stringResource(string.payment_voucher_schedule_payment),
-                    modifier = Modifier
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = 32.dp,
-                            top = 16.dp
-                        )
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    buttonType = PrimaryPrimary
-                )
-            }
+        }
+        if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
+            CustomButton(
+                onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
+                text = stringResource(string.payment_voucher_schedule_payment),
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 32.dp,
+                        top = 16.dp
+                    )
+                    .fillMaxWidth()
+                    .height(48.dp),
+                buttonType = PrimaryPrimary
+            )
         }
     }
 }

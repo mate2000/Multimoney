@@ -58,7 +58,7 @@ fun NavGraphBuilder.disbursementNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) { type = NavType.LongType },
                 navArgument(ID_USER_REQUEST) { type = NavType.IntType },
                 navArgument(FK_FLOW_CONTROL) { type = NavType.IntType },
-                navArgument(CURRENCY_ID) { type = NavType.IntType }
+                navArgument(ID_CURRENCY) { type = NavType.IntType }
             )
         ) {
             DisbursementAccountScreen(

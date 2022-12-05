@@ -23,27 +23,17 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
-import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENCY_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
-import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
-import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
-import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
-import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
+import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
@@ -107,7 +97,7 @@ class DisbursementAccountViewModel @Inject constructor(
         quotaTotal = savedStateHandle[QUOTA_TOTAL]
         selectedAmount = savedStateHandle[SELECTED_AMOUNT]
         pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
-        idCurrency = savedStateHandle[CURRENCY_ID]
+        idCurrency = savedStateHandle[ID_CURRENCY]
         idUserRequest = savedStateHandle[ID_USER_REQUEST]
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER]
@@ -155,7 +145,7 @@ class DisbursementAccountViewModel @Inject constructor(
 
     fun shouldDisplayExchangeRate() =
         when (idBrand) {
-            Brand.CostaRica.id -> uiState.clientBankAccountSelected?.idCurrency != currencyId
+            Brand.CostaRica.id -> uiState.clientBankAccountSelected?.idCurrency != idCurrency
             else -> false
         }
 
@@ -211,7 +201,7 @@ class DisbursementAccountViewModel @Inject constructor(
             pkUser = pkUser ?: 0,
             idBrand = idBrand,
             idFlowControl = fkFlowControl ?: 0,
-            currency = currencyId?.getCurrency()?.disbursementValue ?: "",
+            currency = idCurrency?.getCurrency()?.disbursementValue ?: "",
             accountNumber = creditNumber ?: "",
             bankAccount = uiState.clientBankAccountSelected?.accountNumber ?: "",
             idBankAccount = uiState.clientBankAccountSelected?.id ?: "",
@@ -244,7 +234,7 @@ class DisbursementAccountViewModel @Inject constructor(
             idBrand,
             user,
             identification ?: "",
-            currencyId?.toString() ?: "",
+            idCurrency?.toString() ?: "",
             uiState.clientBankAccountSelected?.idCurrency?.toString() ?: "",
             selectedAmount?.toDouble() ?: 0.0
 
@@ -287,11 +277,11 @@ class DisbursementAccountViewModel @Inject constructor(
 
     private fun onNavigateToDisbursementAddAccount() =
         navigateTo(
-            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/${idBrand}/${pkUser}/${user}/${idUserRequest}/${idClient}/${idLoanClient}/${idCurrency}"
+            route = "${Screen.DisbursementAddAccountScreen.baseRoute}/$idBrand/$pkUser/$user/$idUserRequest/$idClient/$idLoanClient/$idCurrency"
         )
 
     fun getCurrentAmountFormatted() =
-        "${currencyId?.getCurrency()?.symbol ?: ""}${
+        "${idCurrency?.getCurrency()?.symbol ?: ""}${
         selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
@@ -301,12 +291,12 @@ class DisbursementAccountViewModel @Inject constructor(
         }"
 
     fun getExchangeRateFormatted() =
-        "${currencyId?.getCurrency()?.symbol ?: ""}${
+        "${idCurrency?.getCurrency()?.symbol ?: ""}${
         uiState.exchangeRateLabel.toString().stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getQuotaTotalFormatted() =
-        "${currencyId?.getCurrency()?.symbol ?: ""}${
+        "${idCurrency?.getCurrency()?.symbol ?: ""}${
         quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
         }"
 

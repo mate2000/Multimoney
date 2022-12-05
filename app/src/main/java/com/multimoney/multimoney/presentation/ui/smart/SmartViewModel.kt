@@ -31,8 +31,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.Companion
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationInitialRequest
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
@@ -76,8 +74,6 @@ class SmartViewModel @Inject constructor(
     val email: String = savedStateHandle[EMAIL] ?: ""
     val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
     val lastName: String = savedStateHandle[LAST_NAME] ?: ""
-    var linkEvicertia: String = URL_EMPTY
-    var statusOnfido = savedStateHandle[ONFIDO_STATUS] ?: ""
 
 
     // Stateless
@@ -88,8 +84,7 @@ class SmartViewModel @Inject constructor(
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
     var globalRequestId = 0
-    var idPrint: Long = 1120654
-    private var globalRequest: Int = 0
+    private var idPrint: Long = 1120654
     var isOnFidoVerified = true
 
     // UIState
@@ -139,7 +134,7 @@ class SmartViewModel @Inject constructor(
                 user = accountSmartData?.user ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
-                    globalRequest = it?.idGlobalRequest ?: 0
+                    globalRequestId = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
@@ -314,10 +309,7 @@ class SmartViewModel @Inject constructor(
 
     private fun nextStep() {
         if (nextStep <= getTotalStepperCounter()) {
-            uiState = uiState.copy(
-                currentStep = nextStep,
-                isCloseVisible = nextStep >= SmartSteps.One.id
-            )
+            navigateToOnfido()
         } else {
             navigateToOnfido()
         }
@@ -325,7 +317,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/${URL_EMPTY}",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/$globalRequestId/${URL_EMPTY}",
             Screen.SmartScreen.route
         )
     }

@@ -12,6 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
 
 const val ACCOUNT_TOKEN = "account_token"
 
@@ -83,6 +84,23 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                     }
                 }
             )
+        }
+
+        composable(
+            route = Screen.SmartSignScreen.route,
+            arguments = listOf(
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType },
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType }
+            )
+        ) {
+            SmartSignScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
     }
 }

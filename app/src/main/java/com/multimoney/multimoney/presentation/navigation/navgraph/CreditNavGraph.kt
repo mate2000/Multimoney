@@ -15,7 +15,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaand
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
-import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
 
 const val PK_USER = "pk_user"
 const val IDENTIFICATION = "identification"
@@ -45,7 +44,7 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ID_USER_REQUEST) { type = NavType.IntType },
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
-        ) { navBackStackEntry ->
+        ) {
             CreditScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {

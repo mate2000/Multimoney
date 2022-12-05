@@ -777,7 +777,6 @@ class GraphqlApi @Inject constructor(
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // SmartAccount
-
     fun queryGetCoreBankMovements(
         user: String,
         idBrand: Int,
@@ -982,8 +981,9 @@ class GraphqlApi @Inject constructor(
                 infoCreditStatus,
                 infoVirtualCardStatus,
                 infoBankAccountStatus,
-                infoCriptoStatus)
-            ).fetchPolicy(FetchPolicy.NetworkOnly)
+                infoCriptoStatus
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveClientBankAccount(
         idClient: Long,

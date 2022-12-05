@@ -98,6 +98,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_document_process_screen"
     )
 
+    object SmartSignScreen : Screen(
+        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}",
+        "sign_document_process_screen"
+    )
+
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
     object ProcessingTransactionScreen : Screen("processing_transaction_screen")
     object OnfidoAndEvicertiaErrorsScreen : Screen(

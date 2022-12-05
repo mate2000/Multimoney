@@ -23,8 +23,13 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.Companion.URL_EMPTY
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
@@ -45,9 +50,9 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateString
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -63,6 +68,10 @@ class SmartViewModel @Inject constructor(
     val idBrand = savedStateHandle[ID_BRAND] ?: ""
     val user = savedStateHandle[USER] ?: ""
     val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
+    val identification: String = savedStateHandle[IDENTIFICATION] ?: ""
+    val email: String = savedStateHandle[EMAIL] ?: ""
+    val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
+    val lastName: String = savedStateHandle[LAST_NAME] ?: ""
 
     // Stateless
     var nextAction: () -> Unit = {}
@@ -71,10 +80,11 @@ class SmartViewModel @Inject constructor(
     var accountSmartData: AccountSmartData? = null
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
+    var globalRequestId = 0
+    var idPrint: Long = 1120654
 
     // UIState
     var uiState by mutableStateOf(UIState())
-        private set
 
     init {
         accountSmartData = AccountSmartData(
@@ -160,6 +170,7 @@ class SmartViewModel @Inject constructor(
                 idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
+                    globalRequestId = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
                     onUIEvent(OnNextStep)
                 }
@@ -276,6 +287,13 @@ class SmartViewModel @Inject constructor(
         } else {
             // TODO, navigate to onfido, there is no more steps on the flow.
         }
+    }
+
+    private fun navigateOnfido(signDocumentStep: String) {
+        popAndNavigateTo(
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$URL_EMPTY/$idPrint/$idBrand/$pkUser/$identification/$email/$globalRequestId/$firstName/$lastName/${true}",
+            popTo = Screen.HomeScreen.route
+        )
     }
 
     private fun onSetNavigation(

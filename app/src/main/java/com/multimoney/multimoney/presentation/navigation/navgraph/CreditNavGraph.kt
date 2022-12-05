@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaand
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
 
 const val PK_USER = "pk_user"
 const val IDENTIFICATION = "identification"
@@ -78,6 +79,23 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         ) {
             SignDocumentProcessScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
+        }
+
+        composable(
+            route = Screen.SmartSignScreen.route,
+            arguments = listOf(
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType },
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType }
+            )
+        ) {
+            SmartSignScreen(onPopAndNavigate = {
                 navController.navigate(it.route) {
                     popUpTo(it.popTo) { inclusive = true }
                 }

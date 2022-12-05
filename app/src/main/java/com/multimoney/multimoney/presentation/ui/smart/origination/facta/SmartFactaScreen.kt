@@ -28,7 +28,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallSaveAutomatedSmartAccount
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
@@ -58,7 +58,7 @@ fun SmartFactaScreen(
             OnSetNavigation(
                 nextAction = {
                     sharedViewModel.onUIEvent(
-                        OnCallMutationUpdateGlobalRequestUseCase(
+                        OnCallSaveAutomatedSmartAccount(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
                                 isPEP = viewModel.uiState.isPEP,
                                 isUSCitizen = viewModel.uiState.isUSCitizen,
@@ -70,8 +70,8 @@ fun SmartFactaScreen(
                         )
                     )
                 },
-                nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) SmartSteps.Six.id else SmartSteps.Four.id,
-                previousStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) SmartSteps.Four.id else SmartSteps.Two.id
+                nextStep = if (sharedViewModel.idBrandAsInt == Brand.ElSalvador.id) SmartSteps.Six.id else SmartSteps.Four.id,
+                previousStep = if (sharedViewModel.idBrandAsInt == Brand.ElSalvador.id) SmartSteps.Four.id else SmartSteps.Two.id
             )
         )
         viewModel.baseEvent.collect { event ->

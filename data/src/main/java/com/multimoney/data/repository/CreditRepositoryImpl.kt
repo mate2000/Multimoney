@@ -9,16 +9,17 @@ import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
+import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.credit.CreditExtensionAmount
 import com.multimoney.domain.model.credit.CreditExtensionDetail
 import com.multimoney.domain.model.credit.CreditExtensionMessage
-import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
 import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
 import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
@@ -472,7 +473,8 @@ class CreditRepositoryImpl @Inject constructor(
             idLoanClient,
             quotaMax,
             idProductBase,
-            cicle),
+            cicle
+        ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -541,6 +543,45 @@ class CreditRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             if (data.saveCreditExtensionDetail?.status == null || data.saveCreditExtensionDetail.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
+    override suspend fun mutationProcessCreditExtensionDetail(
+        user: String,
+        pkUser: Int,
+        idBrand: Int,
+        idFlowControl: Any,
+        currency: String,
+        accountNumber: String,
+        bankAccount: String,
+        idBankAccount: Any,
+        idLoanForm: Any,
+        loanForm: String,
+        idLoanClient: Int,
+        phoneNumber: String,
+        userEmail: String
+    ): Flow<MultimoneyResult<ProcessCreditExtensionDetail?>> = fetchData(
+        apolloCall = graphqlApi.mutationProcessCreditExtensionDetail(
+            user,
+            pkUser,
+            idBrand,
+            idFlowControl,
+            currency,
+            accountNumber,
+            bankAccount,
+            idBankAccount,
+            idLoanForm,
+            loanForm,
+            idLoanClient,
+            phoneNumber,
+            userEmail
+        ),
+        apolloCallMapper = { data ->
+            if (data.processCreditExtensionDetail?.status == null || data.processCreditExtensionDetail.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())

@@ -9,7 +9,11 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
+
+const val ACCOUNT_TOKEN = "account_token"
 
 fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
     navigation(
@@ -17,26 +21,47 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         route = SMART_ROUTE
     ) {
         composable(
-            Screen.SmartScreen.route,
-            arguments = listOf(
-                navArgument(USER) {
-                    type = NavType.StringType
-                },
-                navArgument(ID_BRAND) {
-                    type = NavType.StringType
-                },
-                navArgument(PK_USER) {
-                    type = NavType.StringType
-                },
-            )
+            Screen.SmartScreen.route
         ) {
             SmartScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                })
+        }
+
+        composable(
+            Screen.SmartOnfidoScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+            )
+        ) {
+            SmartOnfidoScreen(onPopAndNavigate = {
                 navController.navigate(it.route) {
                     popUpTo(it.popTo) { inclusive = true }
                 }
             })
+        }
+
+        composable(
+            Screen.SmartMovementsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            SmartMovementsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

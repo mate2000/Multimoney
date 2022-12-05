@@ -62,7 +62,6 @@ apollo {
     service("graphql") {
         sourceFolder.set("com/multimoney/multimoney/graphql")
         packageName.set("com.multimoney.data.networking.graphql.apollomodel")
-        generateOptionalOperationVariables.set(false)
     }
 }
 
@@ -75,6 +74,7 @@ dependencies {
 
     // Room
     implementation room.runtime
+    implementation 'androidx.paging:paging-common-ktx:3.1.1'
     kapt room.compiler
     implementation room.ktx
     testImplementation room.testing
@@ -110,4 +110,8 @@ dependencies {
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
+
+    // Paging
+    implementation paging3.paging3_runtime
+
 }

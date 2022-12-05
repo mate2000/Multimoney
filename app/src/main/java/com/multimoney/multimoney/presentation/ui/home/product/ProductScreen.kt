@@ -60,7 +60,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoConte
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooter
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoHeaderExpanded
-import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooterExpanded
@@ -95,7 +94,8 @@ fun ProductScreen(
             userName = sharedViewModel.uiState.userName,
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
             configurationVersion = sharedViewModel.uiState.configurationVersion,
-            productPageList = sharedViewModel.uiState.productPageList
+            productPageList = sharedViewModel.uiState.productPageList,
+            smartMovements = sharedViewModel.uiState.smartMovementsList
         )
     )
     LaunchedEffect(key1 = true) {
@@ -230,13 +230,13 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
         ) {
             Column {
                 Text(
-                    text = "Buen día",
+                    text = viewModel.uiState.userStatus?.wording?.textOne ?: "",
                     style = Typography.h6.copy(letterSpacing = 0.38.sp),
                     color = MultimoneyTheme.colors.labelText
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = "User Name",
+                    text =  viewModel.uiState.userStatus?.wording?.textTwo ?: "",
                     style = Typography.h5.copy(
                         fontSize = 28.sp,
                         letterSpacing = 0.4.sp,
@@ -309,7 +309,7 @@ fun ProductHeaderExpanded(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             state = state,
             userScrollEnabled = false
-        ) { currentPage ->
+        ) {
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
                 ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
@@ -324,7 +324,7 @@ fun ProductHeaderExpanded(
 fun ProductContent(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel,
+    viewModel: ProductViewModel
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
@@ -366,7 +366,7 @@ fun ProductFooter(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             state = state,
             userScrollEnabled = false
-        ) { currentPage ->
+        ) {
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditFooter(
                     uiState = viewModel.uiState,
@@ -398,7 +398,7 @@ fun ProductFooterExpanded(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             state = state,
             userScrollEnabled = false
-        ) { currentPage ->
+        ) {
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditFooterExpanded(
                     viewModel = viewModel,
@@ -406,7 +406,7 @@ fun ProductFooterExpanded(
                 )
                 ProductType.Smart.value -> SmartFooterExpanded(
                     viewModel = viewModel,
-                    viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+                    currentPage
                 )
                 ProductType.Crypto.value -> CryptoFooterExpanded()
             }

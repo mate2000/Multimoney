@@ -50,7 +50,7 @@ sealed class CurrencyType(
         R.string.payment_account_title_dollar,
         R.drawable.ic_payment_fee_icon,
         R.string.empty,
-        "$"
+        "Q"
     )
 
     object All : CurrencyType(

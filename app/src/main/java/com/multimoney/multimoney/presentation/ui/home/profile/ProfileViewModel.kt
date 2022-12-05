@@ -6,20 +6,28 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand.Guatemala
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import timber.log.Timber
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val cognitoHelper: CognitoHelper,
+    private val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
     // UIState
@@ -39,8 +47,36 @@ class ProfileViewModel @Inject constructor(
         )
     }
 
-    private fun navigateToPersonalInfoScreen(){
+
+    private fun navigateToPersonalInfoScreen() {
         navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+    }
+
+    private fun signOutDialogConfirmation() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = if (uiState.idBrand == Guatemala.id) R.string.sign_out_dialog_title_gt else R.string.sign_out_dialog_title,
+                descriptionResource = R.string.sign_out_dialog_description,
+                positiveResource = R.string.button_continue,
+                negativeResource = R.string.cancel,
+                positiveAction = { signOut() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    private fun signOut() {
+        cognitoHelper.signOut(signOutError = {
+            Timber.d("SignOut Error")
+        })
+        viewModelScope.launch {
+            dataStorePreferences.setAuthToken("")
+        }
+        countDownTimer.discardTimer()
+        popAndNavigateTo(
+            Screen.SignInScreen.route,
+            Screen.HomeScreen.route
+        )
     }
 
     data class UIState(
@@ -52,7 +88,8 @@ class ProfileViewModel @Inject constructor(
         val idBrand: Int? = null,
         val pkUser: String? = null,
         val firstName : String? = null,
-        val countryCode : String? = null
+        val countryCode : String? = null,
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -60,6 +97,13 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetProfileInfo -> getProfileInfo()
             is UIEvent.OnUpdateProfileClick -> navigateToPersonalInfoScreen()
+            is UIEvent.OnUpdateProfileClick -> Timber.d("navigate to update profile screen")
+            is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
+            is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
+            is UIEvent.OnSettingsClick -> Timber.d("navigate to settings screen")
+            is UIEvent.OnHelpClick -> Timber.d("navigate to help screen")
+            is UIEvent.OnInviteFriendsClick -> Timber.d("navigate to invite friends screen")
+            is UIEvent.OnLogoutClick -> signOutDialogConfirmation()
 
         }
     }

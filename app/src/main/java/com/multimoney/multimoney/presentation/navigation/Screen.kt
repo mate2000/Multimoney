@@ -58,6 +58,7 @@ const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
+const val PAYMENT_SMART_ROUTE = "payment_smart_route"
 
 const val ID_BRAND = "id_brand"
 
@@ -222,6 +223,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SmartMovementsScreen : Screen(
         "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
         "smart_movements_screen"
+    )
+
+    // Payment Smart
+    object PaymentSmartCardsScreen : Screen(
+        "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "payment_smart_cards_screen"
     )
 
     // TestNavGraph Screens

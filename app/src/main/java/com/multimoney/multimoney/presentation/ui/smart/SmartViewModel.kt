@@ -506,8 +506,10 @@ class SmartViewModel @Inject constructor(
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
 
-        data class OnUseDataValueChange(val accountSmartData: AccountSmartData?, val idBrand: Int? = null) : UIEvent()
-
+        data class OnUseDataValueChange(
+            val accountSmartData: AccountSmartData?,
+            val idBrand: Int? = null
+        ) : UIEvent()
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
 
         data class OnCallSaveAutomatedSmartAccount(val accountSmartData: AccountSmartData?) :

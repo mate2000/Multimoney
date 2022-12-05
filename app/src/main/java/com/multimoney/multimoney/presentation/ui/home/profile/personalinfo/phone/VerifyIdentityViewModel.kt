@@ -84,9 +84,14 @@ class VerifyIdentityViewModel @Inject constructor(
         when (event) {
             is UIEvent.OnQuestionOneValueChange -> onQuestionOneValueChange(event.value)
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
-            is UIEvent.OnContinueButtonClicked -> navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}")
+            is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
 
         }
+    }
+
+    private fun onContinueButtonClicked(){
+        val sendMethod = if (uiState.questionOneValue) SEND_PHONE_METHOD else SEND_EMAIL_METHOD
+        navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}")
     }
 
     sealed class UIEvent {
@@ -94,5 +99,9 @@ class VerifyIdentityViewModel @Inject constructor(
         data class OnQuestionOneValueChange(val value: Boolean) : UIEvent()
         object OnContinueButtonClicked : UIEvent()
         object OnNavigateBack : UIEvent()
+    }
+    companion object{
+        const val SEND_PHONE_METHOD = "PHONE"
+        const val SEND_EMAIL_METHOD = "EMAIL"
     }
 }

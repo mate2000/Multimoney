@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,15 +17,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
@@ -90,7 +99,11 @@ private fun ChangePhoneScreenContent(
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
             )
+
             PhoneTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
                 value = viewModel.uiState.newPhoneNumber,
                 onValueChange = {
                     viewModel.onUIEvent(
@@ -101,13 +114,12 @@ private fun ChangePhoneScreenContent(
                     )
                 },
                 onDebounceValidation = {
-                    viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnValidatePhone(viewModel.uiState.phoneCode))
+                    viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnValidatePhone(viewModel.uiState.countryCode))
                 },
                 keyboardActions = KeyboardActions(onDone = {
                     focusManager.clearFocus()
                 }),
                 labelText = stringResource(id = R.string.profile_new_phone_number),
-                modifier = Modifier.padding(top = 24.dp),
                 isRequired = true,
                 isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
                 isError = viewModel.uiState.phoneNumberError.first,

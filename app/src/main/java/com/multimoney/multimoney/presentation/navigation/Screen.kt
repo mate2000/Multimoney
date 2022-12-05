@@ -101,7 +101,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ProfileChangePhoneScreen : Screen("profile_change_phone_screen/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
         "profile_change_phone_screen")
 
-    object ProfileValidateOTPScreen : Screen("profile_validate_otp_screen/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}",
+    object ProfileValidateOTPScreen : Screen("profile_validate_otp_screen/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}",
         "profile_validate_otp_screen")
 
 

@@ -1,6 +1,7 @@
 package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.security.CatalogType
+import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
@@ -11,6 +12,7 @@ import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateAccount
+import com.multimoney.domain.model.security.ValidateOTP
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -149,4 +151,16 @@ interface SecurityRepository {
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ): Flow<MultimoneyResult<QuickActions?>>
+
+    suspend fun mutationValidateOTP(
+        email : String,
+        otp : String
+    ): Flow<MultimoneyResult<ValidateOTP>>
+
+    suspend fun mutationChangePhone(
+        identification : String,
+        phone : String,
+        pkUser : String,
+        idBrand : Int
+    ): Flow<MultimoneyResult<ChangePhone>>
 }

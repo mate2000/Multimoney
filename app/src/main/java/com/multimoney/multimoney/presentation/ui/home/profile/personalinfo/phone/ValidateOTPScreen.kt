@@ -1,26 +1,37 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone
 
-import android.util.Log
+import android.app.Activity
+import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.phone.SmsRetriever
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.Status
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -28,17 +39,21 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
+import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 
 
 @Preview
@@ -48,6 +63,24 @@ fun ValidateOTPScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ValidateOTPViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+    val phoneNumberChangedToastText =
+        stringResource(id = R.string.profile_phone_number_changed_toast)
+
+    // Create start activity result for SMS Retrieve
+    val launchSmsActivityResult =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data: Intent? = result.data
+            when (result.resultCode) {
+                Activity.RESULT_OK -> {
+                    data?.apply {
+                        getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)?.let {
+                            viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnGetOtpFromMessage(it))
+                        }
+                    }
+                }
+            }
+        }
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
@@ -76,24 +109,12 @@ fun ValidateOTPScreen(
                 id = R.string.whatsapp_deep_link,
                 SignUpViewModel.PHONE_HARDCODED
             ),
-            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend)
+            getDialogTextByCountry(viewModel = viewModel)
         )
     )
 
-
-    LaunchedEffect(key1 = true){
-        viewModel.onUIEvent(
-            ValidateOTPViewModel.UIEvent.OnCallMutationSendPinProcess(
-                viewModel.uiState.identification ?: "",
-                viewModel.uiState.firstName ?: "",
-                viewModel.uiState.email ?: "",
-                viewModel.uiState.phoneNumber ?: "",
-                SignUpOtpViewModel.SEND_METHOD_PHONE,
-                viewModel.uiState.pkUser ?: "",
-                viewModel.uiState.idBrand?: 0,
-                viewModel.uiState.email ?: ""
-            )
-        )
+    LaunchedEffect(key1 = true) {
+        requestOTP(viewModel)
     }
 
     LaunchedEffect(true) {
@@ -104,7 +125,8 @@ fun ValidateOTPScreen(
                     onUIEvent(ValidateOTPViewModel.UIEvent.OnCallMutationSendPinProcessSuccess(it))
                 }
             }.onMessage {
-                    viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false, DialogParameters(
+                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false,
+                    DialogParameters(
                         titleResource = R.string.sign_up_email_blocked_dialog_title,
                         description = viewModel.userBlockedForMaxAttend,
                         isActive = mutableStateOf(true),
@@ -115,26 +137,61 @@ fun ValidateOTPScreen(
                         }
                     )))
             }.onFailure {
-                Log.e("TAG","failure")
                 viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnLoadingValueChange(false))
             }.onLoading {
-                Log.e("TAG","loading")
                 viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnLoadingValueChange(true))
             }
         }
     }
 
+    LaunchedEffect(key1 = true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent -> {
+                    Toast.makeText(context, phoneNumberChangedToastText, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+    
+    //full screen dialog
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(id = R.string.profile_error_changing_phone_title),
+            descriptionString = getAlertTextByCountry(viewModel),
+            buttonTextResource = R.string.profile_error_changing_phone_button,
+            isLeftButtonVisible = false,
+            isRightButtonVisible = false,
+            onButtonClick = {
+                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnNavigateBack)
+            }
+        )
+    }
 
+    // Start SMS Retriever client
+    SmsRetriever.getClient(LocalContext.current).startSmsUserConsent(null)
+
+    SystemBroadcastReceiver(SmsRetriever.SMS_RETRIEVED_ACTION) { intent ->
+        val extras = intent?.extras
+        val status = extras?.get(SmsRetriever.EXTRA_STATUS) as Status
+        when (status.statusCode) {
+            CommonStatusCodes.SUCCESS -> {
+                val messageIntent =
+                    extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
+                launchSmsActivityResult.launch(messageIntent)
+            }
+        }
+    }
 }
 
 @Composable
-fun ValidateOTPContent(viewModel: ValidateOTPViewModel){
+fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
     ConstraintLayout(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        val (topNavBar, otpField, timerText,titleText,headerText,continueButton) = createRefs()
+        val (topNavBar, otpField, timerText, titleText, headerText, continueButton, statusText) = createRefs()
 
         TopNavBar(
             modifier = Modifier.constrainAs(topNavBar) {
@@ -163,8 +220,48 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel){
                 .constrainAs(headerText) {
                     top.linkTo(titleText.bottom)
                 },
-            text = stringResource(id = R.string.profile_enter_the_code_sent_to_template,viewModel.uiState.phoneNumber ?: "" )
+            text = getTextByCountry(viewModel),
+            style = Typography.body2
         )
+
+        when (viewModel.uiState.messageStatus) {
+            OTPMessageStatus.RESEND_OTP, OTPMessageStatus.RESEND_OTP_AGAIN, null -> {
+                ClickableText(
+                    text = AnnotatedString(stringResource(id = R.string.profile_otp_resend)),
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 16.dp)
+                        .constrainAs(statusText) {
+                            top.linkTo(headerText.bottom, margin = 12.dp)
+                        }
+                        .fillMaxWidth(),
+                    style = Typography.body2.copy(
+                        textDecoration = TextDecoration.Underline,
+                        color = MultimoneyTheme.colors.textLink
+                    ),
+                    onClick = {
+                        requestOTP(viewModel)
+                    }
+                )
+            }
+            OTPMessageStatus.COULD_NOT_VERIFY_ID -> {
+                ClickableText(
+                    text = AnnotatedString(stringResource(id = R.string.profile_couldnt_verify_identity)),
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 16.dp)
+                        .constrainAs(statusText) {
+                            top.linkTo(headerText.bottom, margin = 12.dp)
+                        }
+                        .fillMaxWidth(),
+                    style = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.textAlertColor
+                    ),
+                    onClick = {
+                        requestOTP(viewModel)
+                    }
+                )
+            }
+        }
+
         OtpTextField(
             value = viewModel.uiState.otp,
             onValueChange = {
@@ -175,23 +272,24 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel){
             placeHolder = stringResource(id = R.string.sign_up_otp_code_placeholder),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp)
+                .padding(top = 32.dp, start = 32.dp, end = 32.dp)
                 .constrainAs(otpField) {
-                    top.linkTo(headerText.bottom)
+                    top.linkTo(statusText.bottom)
                 },
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_otp_code_required),
             isError = viewModel.uiState.otpError.first,
             errorMessage = stringResource(id = viewModel.uiState.otpError.second)
         )
+
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .constrainAs(timerText) {
                 top.linkTo(otpField.bottom)
-            }){
+            }) {
             Text(
-                text = stringResource(id = R.string.profile_code_expires_in_template , viewModel.uiState.remainingTimeText),
+                text = getStatusMessage(viewModel),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 32.dp)
@@ -201,7 +299,6 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel){
                     fontWeight = FontWeight.SemiBold
                 )
             )
-
         }
 
         CustomButton(
@@ -216,10 +313,68 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel){
             text = stringResource(id = R.string.profile_send_code),
             enable = viewModel.isFormValid(),
             onClick = {
-               // viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnContinueButtonClicked)
+                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnContinueButtonClicked)
             }
         )
-
     }
+}
 
+@Composable
+fun getStatusMessage(viewModel: ValidateOTPViewModel): String {
+    return when (viewModel.uiState.phaseCount) {
+        ValidateOTPViewModel.PHASE_ONE -> stringResource(
+            id = R.string.profile_code_expires_in_template,
+            viewModel.uiState.remainingTimeText
+        )
+        null -> stringResource(id = R.string.empty)
+        else -> stringResource(
+            id = R.string.profile_code_resend_expires_in_template,
+            viewModel.uiState.remainingTimeText
+        )
+    }
+}
+
+@Composable
+fun getTextByCountry(viewModel: ValidateOTPViewModel): String {
+    val destination =
+        if (viewModel.uiState.sendMethod == SEND_METHOD_PHONE) viewModel.uiState.phoneNumber else viewModel.uiState.email
+    return when (viewModel.uiState.idBrand) {
+        Brand.Guatemala.id -> stringResource(
+            id = R.string.profile_enter_the_code_sent_to_template_gt,
+            destination ?: ""
+        )
+        else -> stringResource(
+            id = R.string.profile_enter_the_code_sent_to_template,
+            destination ?: ""
+        )
+    }
+}
+
+fun requestOTP(viewModel: ValidateOTPViewModel) {
+    viewModel.onUIEvent(
+        ValidateOTPViewModel.UIEvent.OnCallMutationSendPinProcess(
+            viewModel.uiState.identification ?: "",
+            viewModel.uiState.firstName ?: "",
+            viewModel.uiState.email ?: "",
+            viewModel.uiState.phoneNumber ?: "",
+            viewModel.uiState.sendMethod ?: "",
+            viewModel.uiState.pkUser ?: "",
+            viewModel.uiState.idBrand ?: 0,
+            viewModel.uiState.email ?: ""
+        )
+    )
+}
+@Composable
+fun getAlertTextByCountry(viewModel: ValidateOTPViewModel): String{
+    return when (viewModel.uiState.idBrand){
+        Brand.Guatemala.id -> stringResource(id = R.string.profile_error_changing_phone_gt)
+        else -> stringResource(id = R.string.profile_error_changing_phone)
+    }
+}
+@Composable
+fun getDialogTextByCountry(viewModel: ValidateOTPViewModel): String {
+    return when (viewModel.uiState.idBrand) {
+        Brand.Guatemala.id -> stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_gt)
+        else -> stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts)
+    }
 }

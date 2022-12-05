@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -86,7 +87,7 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
             )
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = stringResource(id = R.string.profile_where_do_you_want_to_receive_the_code),
+                text = getTextByCountry(viewModel = viewModel),
                 style = Typography.body2.copy(fontWeight = FontWeight.Light),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
@@ -129,5 +130,12 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
                 viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnContinueButtonClicked)
             }
         )
+    }
+}
+@Composable
+fun getTextByCountry(viewModel: VerifyIdentityViewModel):String{
+    return when (viewModel.uiState.idBrand){
+        Brand.Guatemala.id -> stringResource(id = R.string.profile_where_do_you_want_to_receive_the_code_gt)
+        else -> stringResource(id = R.string.profile_where_do_you_want_to_receive_the_code)
     }
 }

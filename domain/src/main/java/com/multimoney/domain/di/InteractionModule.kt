@@ -80,6 +80,8 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
+import com.multimoney.domain.interaction.security.MutationChangePhoneUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
@@ -90,6 +92,8 @@ import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseC
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationValidateOTPUseCase
+import com.multimoney.domain.interaction.security.MutationValidateOTPUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseCase
@@ -412,4 +416,14 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelationshipUseCaseImpl(smartAccountRepository: SmartAccountRepository): QueryRelationshipUseCase =
         QueryRelationshipUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationValidateOTPUseCase(securityRepository: SecurityRepository): MutationValidateOTPUseCase =
+        MutationValidateOTPUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationChangePhoneUseCase(securityRepository: SecurityRepository): MutationChangePhoneUseCase =
+        MutationChangePhoneUseCaseImpl(securityRepository)
 }

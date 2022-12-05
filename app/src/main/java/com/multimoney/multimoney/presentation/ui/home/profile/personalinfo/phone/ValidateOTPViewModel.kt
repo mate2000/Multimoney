@@ -1,15 +1,23 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
+import com.multimoney.domain.interaction.security.MutationValidateOTPUseCase
+import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.SendPinProcess
+import com.multimoney.domain.model.security.ValidateOTP
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.IDENTIFICATION
@@ -21,10 +29,10 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,6 +43,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -46,6 +55,8 @@ import kotlin.time.DurationUnit
 class ValidateOTPViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
+    private val mutationValidateOTPUseCase: MutationValidateOTPUseCase,
+    private val mutationChangePhoneUseCase: MutationChangePhoneUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -58,7 +69,6 @@ class ValidateOTPViewModel @Inject constructor(
         private set
 
     data class UIState(
-
         val idBrand: Int? = null,
         val identification: String? = null,
         val email: String? = null,
@@ -68,21 +78,19 @@ class ValidateOTPViewModel @Inject constructor(
         val firstName: String? = null,
         val sendMethod: String? = null,
         val isLoading: Boolean = true,
-
+        var isAlertResultVisible: Boolean = false,
         // Fields
         val otp: String = "",
         val otpResend: String? = "",
         val otpError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
-
         val isTimerRunning: Boolean = false,
         // Interactions
-        val phaseCount: Int = SignUpOtpViewModel.PHASE_ONE,
+        val phaseCount: Int? = null,
+        val messageStatus: OTPMessageStatus? = null,
         val remainingTime: Duration = TIMER_DURATION.seconds,
         val remainingTimeText: String = remainingTime.format(),
         val isOtpFromSms: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-
-
     )
 
     init {
@@ -93,14 +101,14 @@ class ValidateOTPViewModel @Inject constructor(
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             pkUser = savedStateHandle[PK_USER],
             firstName = savedStateHandle[FIRST_NAME],
-            sendMethod = savedStateHandle[SEND_METHOD],
-            userName = savedStateHandle[USER]
+            userName = savedStateHandle[USER],
+            sendMethod = savedStateHandle[SEND_METHOD]
         )
     }
 
     private fun initializeTimer(
-        phaseCount: Int = uiState.phaseCount,
-        totalTime: Long = SignUpOtpViewModel.TIMER_DURATION,
+        phaseCount: Int?,
+        totalTime: Long = TIMER_DURATION,
     ) {
         val newRemainingTime = totalTime.seconds
         uiState = uiState.copy(
@@ -113,17 +121,14 @@ class ValidateOTPViewModel @Inject constructor(
     }
 
     fun isFormValid() =
-
-            uiState.otp.trim()
-                .isNotEmpty() && uiState.otp.trim().length == SignUpOtpViewModel.TOTAL_DIGITS
-
+        uiState.otp.trim()
+            .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS
 
 
     private fun onOtpValueChange(value: String) {
         uiState = uiState.copy(
             otp = value, isOtpFromSms = false, otpError = Pair(false, R.string.error_empty)
         )
-
         isFormValid()
     }
 
@@ -145,12 +150,6 @@ class ValidateOTPViewModel @Inject constructor(
         }
     }
 
-    init {
-        uiState = uiState.copy(
-            idBrand = savedStateHandle[ID_BRAND]
-        )
-    }
-
     private fun getOtpFromMessage(message: String) {
         val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
         if (otpMatcher.find()) {
@@ -164,26 +163,34 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun isTimerTick() = uiState.remainingTime.inWholeSeconds > 0 && uiState.isTimerRunning
     private fun onTimerTick() {
-        val newRemainingTime = uiState.remainingTime.minus(SignUpOtpViewModel.TIMER_DELAY.seconds)
+        val newRemainingTime = uiState.remainingTime.minus(TIMER_DELAY.seconds)
         uiState = uiState.copy(
             remainingTime = newRemainingTime, remainingTimeText = newRemainingTime.format()
         )
     }
 
     private fun onTimerFinish() {
-        val newRemainingTime = uiState.remainingTime.plus(SignUpOtpViewModel.TIMER_DURATION.seconds)
+        val newRemainingTime = uiState.remainingTime.plus(TIMER_DURATION.seconds)
         uiState = uiState.copy(
             isTimerRunning = false,
             remainingTime = newRemainingTime,
             remainingTimeText = newRemainingTime.format(),
-            phaseCount = uiState.phaseCount.plus(1)
         )
+        updateMessageStatus()
+    }
+
+    private fun updateMessageStatus() {
+        when (uiState.phaseCount) {
+            1 -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP)
+            2 -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP_AGAIN)
+            3, null -> uiState = uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
+        }
     }
 
     private fun onExecuteTimer() {
         tickerFlow(
-            period = SignUpOtpViewModel.TIMER_DELAY.seconds,
-            initialDelay = SignUpOtpViewModel.TIMER_DELAY.seconds,
+            period = TIMER_DELAY.seconds,
+            initialDelay = TIMER_DELAY.seconds,
             duration = uiState.remainingTime.toLong(DurationUnit.SECONDS).seconds
         ).takeWhile { uiState.isTimerRunning }.map {
             LocalDateTime.now()
@@ -201,7 +208,9 @@ class ValidateOTPViewModel @Inject constructor(
     private fun onCallMutationSendPinProcessSuccess(pinProcess: SendPinProcess?) {
         uiState = uiState.copy(otpResend = pinProcess?.nextType)
         initializeTimer(
-            totalTime = pinProcess?.pinExpirationTime?.toLong() ?: SignUpOtpViewModel.TIMER_DURATION
+            totalTime = pinProcess?.pinExpirationTime?.toLong()
+                ?: TIMER_DURATION,
+            phaseCount = pinProcess?.numberOfPinForwards?.toInt() ?: 1
         )
         onExecuteTimer()
     }
@@ -210,8 +219,58 @@ class ValidateOTPViewModel @Inject constructor(
         this.linkWhatsapp = linkWhatsapp
         this.userBlockedForMaxAttend = userBlockedForMaxAttend
     }
-    private fun onNavigateToLogin(){
+
+    private fun onNavigateToLogin() {
         //TODO
+    }
+
+    private fun onValidateOTP(email: String?, otp: String) = executeUseCase {
+        mutationValidateOTPUseCase.invoke(email.toString(), otp).collectLatest {
+            processValidateOTPResult(it)
+        }
+    }
+
+    private fun onChangePhone(identification: String, phone: String, pkUser: String, idBrand: Int) =
+        executeUseCase {
+            mutationChangePhoneUseCase.invoke(identification, phone, pkUser, idBrand)
+                .collectLatest {
+                    processChangePhoneResult(it)
+                }
+        }
+
+
+    private fun processChangePhoneResult(result: MultimoneyResult<ChangePhone>) {
+        result.onSuccess {
+            uiState = uiState.copy(isLoading = false)
+            viewModelScope.launch {
+                dataStorePreferences.setUserPhoneNumber(uiState.phoneNumber ?: "")
+                navigateBack(Screen.HomeScreen.route, isRestart = true)
+                emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
+            }
+        }
+            .onMessage { uiState = uiState.copy(isLoading = false) }
+            .onFailure { uiState = uiState.copy(isLoading = false, isAlertResultVisible = true) }
+            .onLoading { uiState = uiState.copy(isLoading = true) }
+    }
+
+    private fun processValidateOTPResult(result: MultimoneyResult<ValidateOTP?>) {
+        result.onSuccess {
+            onChangePhone(
+                uiState.identification.toString(),
+                uiState.phoneNumber.toString(),
+                uiState.pkUser ?: "",
+                uiState.idBrand ?: 0
+            )
+        }.onMessage {
+            uiState = uiState.copy(
+                isLoading = false,
+                otpError = Pair(true, R.string.profile_error_phone_code_not_valid)
+            )
+        }
+            .onFailure {
+                uiState = uiState.copy(isLoading = false, isAlertResultVisible = true)
+            }
+            .onLoading { uiState = uiState.copy(isLoading = true) }
     }
 
     fun onUIEvent(event: UIEvent) {
@@ -235,10 +294,14 @@ class ValidateOTPViewModel @Inject constructor(
                 event.pinProcess
             )
             is UIEvent.OnOtpValueChange -> onOtpValueChange(event.value)
-            is UIEvent.OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
             is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is UIEvent.OnFailureWithDialog -> uiState =
-                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+                uiState.copy(
+                    isLoading = event.isLoading,
+                    openDialog = event.openDialog,
+                    messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
+                )
+            is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
         }
     }
 
@@ -249,7 +312,6 @@ class ValidateOTPViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnNavigateToLogin : UIEvent()
-
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
         data class OnCallMutationSendPinProcess(
             val identification: String,
@@ -270,20 +332,17 @@ class ValidateOTPViewModel @Inject constructor(
             UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-
-
-        data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()
-
         data class OnOtpValueChange(val value: String) : UIEvent()
-
         object OnValidateForm : UIEvent()
-
         object OnNavigateBack : UIEvent()
+        object OnContinueButtonClicked : UIEvent()
 
     }
 
     companion object {
+        const val PHASE_ONE = 1
+        const val TOTAL_DIGITS = 4
         const val TIMER_DURATION = 0L
-
+        const val TIMER_DELAY = 1L
     }
 }

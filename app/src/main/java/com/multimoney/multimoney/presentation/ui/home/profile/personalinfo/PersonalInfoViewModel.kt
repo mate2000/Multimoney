@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.model.security.UserData
@@ -15,6 +16,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,16 +58,14 @@ class PersonalInfoViewModel @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND],
             pkUser = savedStateHandle[PK_USER],
             identification = savedStateHandle[IDENTIFICATION],
-            email = savedStateHandle[EMAIL],
+            email = savedStateHandle.get<String>(EMAIL)?.trim()?.lowercase(Locale.getDefault()),
             firstName = savedStateHandle[FIRST_NAME]
         )
     }
-
-
+    
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnNavigateToEditPhone : UIEvent()
 
     }
-
 }

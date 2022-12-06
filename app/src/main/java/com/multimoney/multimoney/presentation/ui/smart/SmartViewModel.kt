@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -9,14 +10,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SmartAccountStatus
+import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartData
+import com.multimoney.domain.model.accountsmart.Beneficiary
+import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -59,7 +63,6 @@ import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -67,7 +70,6 @@ class SmartViewModel @Inject constructor(
     private val queryStepByStepUseCase: QueryStepByStepUseCase,
     private val mutationGlobalRequestUseCase: MutationGlobalRequestUseCase,
     private val mutationInitialRequestUseCase: MutationInitialRequestUseCase,
-    private val dataStorePreferences: DataStorePreferences,
     private val mutationSaveSmartAccount: MutationSaveAutomatedSmartAccountUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
@@ -113,15 +115,17 @@ class SmartViewModel @Inject constructor(
         statusOnfido = savedStateHandle[ONFIDO_STATUS] ?: ""
     }
 
-    // FIXME, this is the logic to list the data, it should be handled in another ticket
     private fun callQueryStepByStepUseCase() = executeUseCase {
         queryStepByStepUseCase.invoke(
             user = accountSmartData?.user ?: "",
             idBrand = accountSmartData?.idBrand ?: 0,
-            idRequest = 264
+            idRequest = globalRequest
         ).collectLatest { result ->
-            dataStorePreferences.getIdBrand().first()
-            result.onSuccess {
+            result.onSuccess { stepByStep ->
+                stepByStep?.let {
+                    Log.d("tellStepByStep", "list step by step: $it")
+                    preLoadDataOnListStepByStep(it)
+                }
                 onUIEvent(OnLoadingValueChange(false))
             }
             result.onFailure {
@@ -141,6 +145,46 @@ class SmartViewModel @Inject constructor(
         }
     }
 
+    private fun preLoadDataOnListStepByStep(stepByStep: StepByStep) {
+        accountSmartData = accountSmartData?.copy(
+            pkUser = pkUser,
+            status = SmartStatus.Search.getIdByName(stepByStep.statusRequest),
+            idProfessionType = stepByStep.idProfessionType,
+            idCivilStatusType = stepByStep.idMaritalStatus?.toLong(),
+            birthday = stepByStep.birthdate.orEmpty(),
+            expirationDate = stepByStep.expirationDate,
+            idGender = stepByStep.idGenre?.toLong(),
+            idAddressLevel1 = stepByStep.idAddressLevel1?.toLong(),
+            idAddressLevel2 = stepByStep.idAddressLevel2?.toLong(),
+            idAddressLevel3 = stepByStep.idAddressLevel3?.toLong(),
+            positionJob = stepByStep.positionJob,
+            idEconomicActivity = stepByStep.idEconomicActivity?.toLong(),
+            institutionPension = stepByStep.institutionalPesion.orEmpty(),
+            income = stepByStep.income,
+            addressDetail = stepByStep.addressDetail,
+            user = user,
+            idBrand = idBrandAsInt,
+            currentStep = stepByStep.currentStep,
+            aboutCompany = stepByStep.aboutCompany,
+            companyName = stepByStep.nameCompany,
+            specifiesIncomeSource =stepByStep.specifiesIncomeSource,
+            listBeneficiaries = stepByStep.beneficiary.orEmpty(),
+            entrepreneurship = stepByStep.entrepreneurship.orEmpty(),
+            legalID = stepByStep.legalID,
+            isPEP = stepByStep.isPEP,
+            isUSCitizen = stepByStep.isUSCitizen,
+            isActivityOfArt15 = stepByStep.isActivityOfArt15,
+            isUSTaxPayer = stepByStep.isUSTaxPayer,
+            isTaxPayer = stepByStep.isTaxPayer,
+            idJobLevel1 = stepByStep.idJobLevel1,
+            idJobLevel2 = stepByStep.idJobLevel2,
+            idJobLevel3 = stepByStep.idJobLevel3,
+        )
+
+        // update the current step coming from the backend in order to navigate to the proper screen
+        uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+    }
+
     private fun callMutationInitialRequestUseCase() = executeUseCase(
         action = {
             mutationInitialRequestUseCase.invoke(
@@ -151,6 +195,7 @@ class SmartViewModel @Inject constructor(
                 result.onSuccess {
                     globalRequest = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
+                    callQueryStepByStepUseCase()
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -209,11 +254,12 @@ class SmartViewModel @Inject constructor(
                 isPEP = accountSmartData?.isPEP ?: false,
                 isUSTaxPayer = accountSmartData?.isUSTaxPayer ?: false,
                 isTaxPayer = accountSmartData?.isTaxPayer ?: false,
-                beneficiaries = accountSmartData?.listBeneficiaries ?: listOf(),
+                beneficiaries = accountSmartData?.listBeneficiaries.orEmpty(),
                 idJobLevel2 = accountSmartData?.idJobLevel2 ?: 0,
                 idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
+                    Log.d("tellStepByStep", "save step by step: ${it.toString()}")
                     if (isLastStep) {
                         globalRequest = it?.idGlobalRequest ?: 0
                         callMutationSaveSmartAccount()
@@ -510,6 +556,7 @@ class SmartViewModel @Inject constructor(
             val accountSmartData: AccountSmartData?,
             val idBrand: Int? = null
         ) : UIEvent()
+
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
 
         data class OnCallSaveAutomatedSmartAccount(val accountSmartData: AccountSmartData?) :

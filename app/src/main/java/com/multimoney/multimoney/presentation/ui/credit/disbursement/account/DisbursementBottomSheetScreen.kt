@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnProcessCreditExtension
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -88,8 +87,6 @@ fun DisbursementBottomSheetScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            // dateText = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel, BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS),
-
             Text(
                 text = getDetailTextsDisbursement(R.string.disbursement_bottom_sheet_quota_to_pay, viewModel.getQuotaTotalFormatted()),
                 textAlign = TextAlign.Start
@@ -121,7 +118,7 @@ fun getDetailTextsDisbursement(descriptionResource: Int, value: String) =
         withStyle(
             style = Typography.body2.toSpanStyle()
                 .copy(
-                    color = WhiteTransparency70
+                    color = MultimoneyTheme.colors.quickActionLabelColor
                 )
         ) {
             append(
@@ -132,7 +129,7 @@ fun getDetailTextsDisbursement(descriptionResource: Int, value: String) =
         withStyle(
             style = Typography.body2.toSpanStyle()
                 .copy(
-                    color = WhiteTransparency70,
+                    color = MultimoneyTheme.colors.quickActionLabelColor,
                     fontWeight = FontWeight.SemiBold
                 )
         ) {

@@ -197,7 +197,7 @@ class DisbursementAccountViewModel @Inject constructor(
 
     private fun onProcessCreditExtension() = executeUseCase {
         mutationProcessCreditExtensionDetailUseCase.invoke(
-            user = identification?.toString() ?: "",
+            user = identification ?: "",
             pkUser = pkUser ?: 0,
             idBrand = idBrand,
             idFlowControl = fkFlowControl ?: 0,
@@ -208,7 +208,7 @@ class DisbursementAccountViewModel @Inject constructor(
             idLoanForm = ID_LOAN_FORM_HARDCODED,
             loanForm = LOAN_FORM_HARDCODED,
             idLoanClient = idLoanClient.toInt(),
-            phoneNumber = dataStorePreferences.getUserPhoneNumber().first(), // TODO validate
+            phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
             userEmail = user
         ).collectLatest { result ->
             result.onSuccess {

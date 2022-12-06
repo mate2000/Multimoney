@@ -226,6 +226,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_movements_screen"
     )
 
+    object SmartPaymentAccountScreen : Screen("smart_payment_screen")
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")

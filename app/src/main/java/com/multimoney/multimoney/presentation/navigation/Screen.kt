@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
@@ -26,11 +27,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVI
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
@@ -205,13 +206,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentLocationDetailsScreen : Screen(
-        "payment_location_details_screen/{$POINT_NAME}/{$POINT_ADDRESS}/{$POINT_SCHEDULE}/{$POINT_LATITUDE}/{$POINT_LONGITUDE}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$ID_BRAND}",
+        "payment_location_details_screen/{$POINT_NAME}/{$POINT_ADDRESS}/{$POINT_ADDRESS_DESCRIPTION}/{$POINT_SCHEDULE}/{$POINT_LATITUDE}/{$POINT_LONGITUDE}/{$PAYMENT_AMOUNT}/{$CREDIT_NUMBER}/{$ID_BRAND}",
         "payment_location_details_screen"
     )
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}",
         "smart_screen"
     )
 

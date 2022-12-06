@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.navigation.BottomNavItem
 import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavGraph
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -71,7 +71,7 @@ fun HomeScreen(
     val quickActionsModalBottomSheetState =
         rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
-    val activity = (LocalContext.current as? Activity)
+    val context = LocalContext.current
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
@@ -141,7 +141,7 @@ fun HomeScreen(
                 }
             }
             else -> {
-                activity?.finish()
+                context.findActivity()?.finish()
             }
         }
     }

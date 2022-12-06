@@ -84,6 +84,12 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 wording = viewModel.uiState.userStatus?.infoCredit?.wording
                             )
                         }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_EL_SALVADOR_MANUAL_PROCESS, this) -> {
+                            CardCreditFirmedAndOnfidoPending()
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.CREDIT_PEP_PROCESS, this) -> {
+                            CardCreditFirmedAndOnfidoPending()
+                        }
                         viewModel.evaluateCardCondition(ProductViewModel.CREDIT_FIRM_INCOMPLETE, this) -> {
                             CardWithCreditInProcess(
                                 type = CreditProcessFirmIncomplete,

@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
@@ -443,6 +444,9 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onCreateMultimoneyVisa() {
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -500,6 +504,7 @@ class ProductViewModel @Inject constructor(
             is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
+            is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa()
         }
     }
 
@@ -556,6 +561,7 @@ class ProductViewModel @Inject constructor(
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
+        object OnCreateMultimoneyVisa : UIEvent()
     }
 
     companion object {

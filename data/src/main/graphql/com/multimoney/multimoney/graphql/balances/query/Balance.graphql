@@ -17,6 +17,7 @@ query Balance(
         }
     ) {
         pagare
+        moneda
         resumen {
             id_Moneda
             moneda
@@ -45,6 +46,7 @@ query Balance(
         }
         limite_credito
         limite_credito_label
+        moneda_Default
         plazo
     }
     balanceAccountSmart(

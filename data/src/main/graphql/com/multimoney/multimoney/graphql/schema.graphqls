@@ -2214,7 +2214,7 @@ type HistoricalBalanceClient {
 input HistoricalBalanceClientDtoInput {
   identification: String!
 
-  baseAsset: String!
+  baseAsset: String
 
   startDate: String!
 
@@ -4883,6 +4883,12 @@ type ProcessTransferVisaToSmart {
   numeroReferencia: String!
 
   numeroReferenciaVisa: String!
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input ProcessTransferVisaToSmartDtoInput {
@@ -5532,6 +5538,8 @@ type CryptoAccount {
   statusFirm: String!
 
   status: Int!
+
+  profileEnable: Boolean
 
   wording: Wording
 }

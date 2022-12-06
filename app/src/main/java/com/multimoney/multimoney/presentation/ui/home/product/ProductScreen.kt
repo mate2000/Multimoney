@@ -45,6 +45,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCa
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
@@ -236,7 +237,7 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text =  viewModel.uiState.userStatus?.wording?.textTwo ?: "",
+                    text = viewModel.uiState.userStatus?.wording?.textTwo ?: "",
                     style = Typography.h5.copy(
                         fontSize = 28.sp,
                         letterSpacing = 0.4.sp,
@@ -376,7 +377,8 @@ fun ProductFooter(
                         viewModel.onUIEvent(
                             OnNavigateToVisaActivateScreen
                         )
-                    }
+                    },
+                    onCreateMultimoneyVisa = { viewModel.onUIEvent(OnCreateMultimoneyVisa) }
                 )
                 ProductType.Smart.value -> SmartFooter()
                 ProductType.Crypto.value -> CryptoFooter()

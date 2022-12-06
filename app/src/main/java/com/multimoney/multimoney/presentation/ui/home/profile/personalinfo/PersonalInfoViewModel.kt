@@ -27,13 +27,19 @@ class PersonalInfoViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
 
-    fun onUIEvent(uiEvent: UIEvent) {
-        when (uiEvent) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
-            is UIEvent.OnNavigateToEditPhone -> navigateToEditPhone()
-            is UIEvent.OnNavigateToEditEmail -> navigateToEditEmail()
-        }
+    init {
+        uiState = uiState.copy(
+            phoneNumber = savedStateHandle[PHONE_NUMBER],
+            idBrand = savedStateHandle[ID_BRAND],
+            pkUser = savedStateHandle[PK_USER],
+            identification = savedStateHandle[IDENTIFICATION],
+            email = savedStateHandle.get<String>(EMAIL)?.trim()?.lowercase(Locale.getDefault()),
+            firstName = savedStateHandle[FIRST_NAME],
+            userName = savedStateHandle[USER_NAME]
+        )
     }
 
     private fun navigateToEditEmail() {
@@ -56,24 +62,17 @@ class PersonalInfoViewModel @Inject constructor(
         val idBrand: Int? = null,
     )
 
-    var uiState by mutableStateOf(UIState())
-
-    init {
-        uiState = uiState.copy(
-            phoneNumber = savedStateHandle[PHONE_NUMBER],
-            idBrand = savedStateHandle[ID_BRAND],
-            pkUser = savedStateHandle[PK_USER],
-            identification = savedStateHandle[IDENTIFICATION],
-            email = savedStateHandle.get<String>(EMAIL)?.trim()?.lowercase(Locale.getDefault()),
-            firstName = savedStateHandle[FIRST_NAME],
-            userName = savedStateHandle[USER_NAME]
-        )
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateToEditPhone -> navigateToEditPhone()
+            is UIEvent.OnNavigateToEditEmail -> navigateToEditEmail()
+        }
     }
     
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnNavigateToEditPhone : UIEvent()
         object OnNavigateToEditEmail : UIEvent()
-
     }
 }

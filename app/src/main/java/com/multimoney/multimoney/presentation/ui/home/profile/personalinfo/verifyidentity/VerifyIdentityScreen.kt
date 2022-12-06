@@ -30,7 +30,6 @@ import com.multimoney.multimoney.presentation.uielement.RadioButtonQuestion
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
-
 @Preview
 @Composable
 fun VerifyIdentityScreen(
@@ -45,10 +44,7 @@ fun VerifyIdentityScreen(
     BackHandler {
         viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnNavigateBack)
     }
-
-    //viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnStart(phoneCode = selectedCountry.countryPhoneCode))
     VerifyIdentityContent(viewModel = viewModel)
-
 }
 
 @Composable
@@ -65,7 +61,7 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
                 top.linkTo(parent.top)
             },
             onLeftButtonClick = {
-                //   viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnNavigateBack)
+                   viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnNavigateBack)
             },
             isRightButtonVisible = false
         )
@@ -88,7 +84,7 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
             )
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = getTextByCountry(viewModel = viewModel),
+                text = stringResource(id = viewModel.uiState.titleResource) ,
                 style = Typography.body2.copy(fontWeight = FontWeight.Light),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
@@ -160,12 +156,5 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
                 viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnContinueButtonClicked)
             }
         )
-    }
-}
-@Composable
-fun getTextByCountry(viewModel: VerifyIdentityViewModel):String{
-    return when (viewModel.uiState.idBrand){
-        Brand.Guatemala.id -> stringResource(id = R.string.profile_where_do_you_want_to_receive_the_code_gt)
-        else -> stringResource(id = R.string.profile_where_do_you_want_to_receive_the_code)
     }
 }

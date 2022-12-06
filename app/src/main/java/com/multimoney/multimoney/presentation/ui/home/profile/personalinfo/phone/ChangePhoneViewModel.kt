@@ -29,22 +29,7 @@ class ChangePhoneViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
-
-    data class UIState(
-        // Fields
-        val userName: String? = null,
-        val email: String? = null,
-        val identification: String? = null,
-        val phoneNumber: String? = null,
-        val newPhoneNumber: String? = null,
-        val idBrand: Int? = null,
-        val firstName: String? = null,
-        val pkUser: String? = null,
-        val phoneCode: String = "",
-        val countryCode: String? = null,
-        val phoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_phone_not_valid),
-        val isButtonEnabled: Boolean = false
-    )
+        private set
 
     init {
         uiState = uiState.copy(
@@ -86,9 +71,9 @@ class ChangePhoneViewModel @Inject constructor(
 
     private fun initCountryCode(): String {
         return when (savedStateHandle.get<Int>(ID_BRAND)) {
-            Brand.Guatemala.id -> "gt"
-            Brand.CostaRica.id -> "cr"
-            Brand.ElSalvador.id -> "sv"
+            Brand.Guatemala.id -> Brand.Guatemala.countryCode
+            Brand.CostaRica.id -> Brand.CostaRica.countryCode
+            Brand.ElSalvador.id -> Brand.ElSalvador.countryCode
             else -> ""
         }
     }
@@ -126,6 +111,22 @@ class ChangePhoneViewModel @Inject constructor(
         navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
+    data class UIState(
+        // Fields
+        val userName: String? = null,
+        val email: String? = null,
+        val identification: String? = null,
+        val phoneNumber: String? = null,
+        val newPhoneNumber: String? = null,
+        val idBrand: Int? = null,
+        val firstName: String? = null,
+        val pkUser: String? = null,
+        val phoneCode: String = "",
+        val countryCode: String? = null,
+        val phoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_phone_not_valid),
+        val isButtonEnabled: Boolean = false
+    )
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnUserPhoneValueChanged -> onUserPhoneValueChanged(
@@ -155,6 +156,5 @@ class ChangePhoneViewModel @Inject constructor(
         object OnContinueButtonClicked : UIEvent()
         object OnNavigateBack : UIEvent()
     }
-
 }
 

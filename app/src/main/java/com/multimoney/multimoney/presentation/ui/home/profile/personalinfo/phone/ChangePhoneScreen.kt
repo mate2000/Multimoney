@@ -101,7 +101,7 @@ private fun ChangePhoneScreenContent(
                     viewModel.onUIEvent(
                         ChangePhoneViewModel.UIEvent.OnUserPhoneValueChanged(
                             phoneNumber = it,
-                            countryCode = viewModel.uiState.countryCode ?: "",
+                            countryCode = viewModel.uiState.countryCode.orEmpty(),
                         )
                     )
                 },

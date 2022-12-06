@@ -29,7 +29,6 @@ fun PersonalInfoScreen(
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
-        //viewModel.onUIEvent(ProfileViewModel.UIEvent.OnGetProfileInfo)
     }
 
     BackHandler {

@@ -71,7 +71,7 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             viewModel.apply {
                 ProfileHeader(
-                    userName = uiState.userName,
+                    userName = uiState.userName ?: "",
                     email = uiState.email ?: "",
                     phoneNumber = uiState.phoneNumber.toString(),
                     onUpdateClick = { onUIEvent(OnUpdateProfileClick) }

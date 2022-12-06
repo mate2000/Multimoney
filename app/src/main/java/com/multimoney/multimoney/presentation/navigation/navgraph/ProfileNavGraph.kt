@@ -14,7 +14,7 @@ import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.PersonalInfoScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.email.ChangeEmailScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
-import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ValidateOTPScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {

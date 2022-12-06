@@ -17,6 +17,8 @@ import timber.log.Timber
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
@@ -38,13 +40,13 @@ class ProfileViewModel @Inject constructor(
         private set
 
 
-    private fun getProfileInfo() = viewModelScope.launch {
+    private fun getProfileInfo()  {
         uiState = uiState.copy(
-            userName = dataStorePreferences.getUserName().first(),
+            userName = savedStateHandle[USER_NAME],
             email = savedStateHandle[EMAIL],
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             identification = savedStateHandle[IDENTIFICATION],
-            pkUser = dataStorePreferences.getPkUser().first(),
+            pkUser = savedStateHandle[PK_USER],
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
             firstName = savedStateHandle[FIRST_NAME]
         )
@@ -84,7 +86,7 @@ class ProfileViewModel @Inject constructor(
 
     data class UIState(
         // Fields
-        val userName: String = "",
+        val userName: String? = null,
         val email: String? = null,
         val phoneNumber: String? = null,
         val identification : String? = null,

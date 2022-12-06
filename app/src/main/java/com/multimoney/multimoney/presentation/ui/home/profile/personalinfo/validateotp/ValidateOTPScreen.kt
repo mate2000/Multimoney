@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone
+package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp
 
 import android.app.Activity
 import android.content.Intent
@@ -31,8 +31,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
-import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -41,9 +39,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
-import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -113,7 +109,7 @@ fun ValidateOTPScreen(
                 id = R.string.whatsapp_deep_link,
                 SignUpViewModel.PHONE_HARDCODED
             ),
-            getDialogTextByCountry(viewModel = viewModel)
+            stringResource(viewModel.uiState.dialogTextResource)
         )
     )
 
@@ -138,7 +134,7 @@ fun ValidateOTPScreen(
                         positiveResource = R.string.contact,
                         negativeResource = R.string.cancel,
                         negativeAction = {
-                            viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnNavigateToLogin)
+                            viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnNavigateTLogOut)
                         }
                     )))
             }.onFailure {
@@ -166,7 +162,7 @@ fun ValidateOTPScreen(
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
             titleString = stringResource(id = R.string.profile_error_changing_phone_title),
-            descriptionString = getAlertTextByCountry(viewModel),
+            descriptionString = stringResource(viewModel.uiState.alertTextResource),
             buttonTextResource = R.string.profile_error_changing_phone_button,
             isLeftButtonVisible = false,
             isRightButtonVisible = false,
@@ -228,7 +224,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 .constrainAs(headerText) {
                     top.linkTo(titleText.bottom)
                 },
-            text = getTextByCountry(viewModel),
+            text = stringResource(id = viewModel.uiState.enterTheCodeTextResource,viewModel.uiState.destination?: ""),
             style = Typography.body2
         )
 
@@ -297,7 +293,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 top.linkTo(otpField.bottom)
             }) {
             Text(
-                text = getStatusMessage(viewModel),
+                text = stringResource(id = viewModel.uiState.statusTextResource,viewModel.uiState.remainingTimeText),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 32.dp)
@@ -327,37 +323,6 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
     }
 }
 
-@Composable
-fun getStatusMessage(viewModel: ValidateOTPViewModel): String {
-    return when (viewModel.uiState.phaseCount) {
-        ValidateOTPViewModel.PHASE_ONE -> stringResource(
-            id = R.string.profile_code_expires_in_template,
-            viewModel.uiState.remainingTimeText
-        )
-        null -> stringResource(id = R.string.empty)
-        else -> stringResource(
-            id = R.string.profile_code_resend_expires_in_template,
-            viewModel.uiState.remainingTimeText
-        )
-    }
-}
-
-@Composable
-fun getTextByCountry(viewModel: ValidateOTPViewModel): String {
-    val destination =
-        if (viewModel.uiState.sendMethod == SEND_METHOD_PHONE) viewModel.uiState.phoneNumber else viewModel.uiState.email
-    return when (viewModel.uiState.idBrand) {
-        Brand.Guatemala.id -> stringResource(
-            id = R.string.profile_enter_the_code_sent_to_template_gt,
-            destination ?: ""
-        )
-        else -> stringResource(
-            id = R.string.profile_enter_the_code_sent_to_template,
-            destination ?: ""
-        )
-    }
-}
-
 fun requestOTP(viewModel: ValidateOTPViewModel) {
     viewModel.onUIEvent(
         ValidateOTPViewModel.UIEvent.OnCallMutationSendPinProcess(
@@ -371,18 +336,4 @@ fun requestOTP(viewModel: ValidateOTPViewModel) {
             viewModel.uiState.email ?: ""
         )
     )
-}
-@Composable
-fun getAlertTextByCountry(viewModel: ValidateOTPViewModel): String{
-    return when (viewModel.uiState.idBrand){
-        Brand.Guatemala.id -> stringResource(id = R.string.profile_error_changing_phone_gt)
-        else -> stringResource(id = R.string.profile_error_changing_phone)
-    }
-}
-@Composable
-fun getDialogTextByCountry(viewModel: ValidateOTPViewModel): String {
-    return when (viewModel.uiState.idBrand) {
-        Brand.Guatemala.id ->  if (viewModel.uiState.changingField == FieldToChange.PHONE.value) stringResource(id = R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt) else stringResource(id = R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt)
-        else -> if (viewModel.uiState.changingField == FieldToChange.PHONE.value) stringResource(id = R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone) else stringResource(id = R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email)
-    }
 }

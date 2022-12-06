@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FieldToChange
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CHANGING_FIELD
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -24,29 +26,11 @@ import javax.inject.Inject
 @HiltViewModel
 class VerifyIdentityViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
-    data class UIState(
-        // Fields
-        val userName: String? = null,
-        val phoneNumber: String? = null,
-        val newPhoneNumber: String? = null,
-        val newEmail : String? = null,
-        val identification: String? = null,
-        val idBrand: Int? = null,
-        val phoneCode: String = "",
-        val email : String? = null,
-        val countryCode: String? = null,
-        val isButtonEnabled: Boolean = false,
-        val questionOneValue: Boolean = true,
-        val questionTwoValue: Boolean = false,
-        val firstName : String? = null,
-        val pkUser : String? = null,
-        val changingField : String? = null
-        )
-
     var uiState by mutableStateOf(UIState())
+        private set
 
     init {
         uiState = uiState.copy(
@@ -60,6 +44,17 @@ class VerifyIdentityViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             changingField = savedStateHandle[CHANGING_FIELD],
             newEmail = savedStateHandle[NEW_EMAIL]
+        )
+        getTextResources()
+    }
+
+    private fun getTextResources() {
+        uiState = uiState.copy(
+            titleResource = when (uiState.idBrand) {
+                Brand.ElSalvador.id -> R.string.disbursement_account_sv_title
+                Brand.Guatemala.id -> R.string.disbursement_account_gt_title
+                else -> R.string.disbursement_account_cr_title
+            }
         )
     }
 
@@ -80,6 +75,26 @@ class VerifyIdentityViewModel @Inject constructor(
         }
         navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.changingField}/${newValue}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}")
     }
+
+    data class UIState(
+        // Fields
+        val userName: String? = null,
+        val phoneNumber: String? = null,
+        val newPhoneNumber: String? = null,
+        val newEmail : String? = null,
+        val identification: String? = null,
+        val idBrand: Int? = null,
+        val phoneCode: String = "",
+        val email : String? = null,
+        val countryCode: String? = null,
+        val isButtonEnabled: Boolean = false,
+        val questionOneValue: Boolean = true,
+        val questionTwoValue: Boolean = false,
+        val firstName : String? = null,
+        val pkUser : String? = null,
+        val changingField : String? = null,
+        val titleResource: Int = R.string.empty,
+        )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {

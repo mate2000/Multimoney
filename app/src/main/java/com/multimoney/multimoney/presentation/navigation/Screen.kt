@@ -95,7 +95,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // HomeNavGraph Screens
     object HomeScreen : Screen("home_screen")
 
-    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}",
+    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen")
 
     object ProfilePersonalInfoScreen : Screen("profile_personal_info_screen/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
@@ -112,7 +112,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object ProfileChangeEmailScreen : Screen("profile_change_email_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
         "profile_change_email_screen")
-    
+
     object ProfileValidateOTPScreen : Screen("profile_validate_otp_screen/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}",
         "profile_validate_otp_screen")
 

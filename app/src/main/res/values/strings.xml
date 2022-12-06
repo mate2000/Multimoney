@@ -7,6 +7,7 @@
     <string name="button_continue" translatable="false">Continuar</string>
     <string name="registration" translatable="false">Registrarme</string>
     <string name="sign_in" translatable="false">Iniciar sesión</string>
+    <string name="something_went_wrong" translatable="false">Ha ocurrido un error</string>
     <string name="label_email" translatable="false">Correo electrónico</string>
     <string name="finalize" translatable="false">Finalizar</string>
     <string name="accept" translatable="false">Aceptar</string>

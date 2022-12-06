@@ -106,10 +106,22 @@ query Balance(
         }
     ) {
         cardInfo {
+            cardToken
             cardNumber
+            expDate
+            holderName
+            status
+            blockType
+            cvalidation
+            type
         }
+        sALDO_FLOTANTE
+        pERMITE_DESBLOQUEO
         eSTADO
         cOMISION_DESEMBOLSO
         tASA_INTERES
+        pLAZO
+        nOMBRE_COMPLETO
+        rEMISION
     }
 }

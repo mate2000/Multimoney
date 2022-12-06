@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
@@ -48,7 +49,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
-    private val helper: ShareHelper
+    private val helper: ShareHelper,
+    private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase
 ) : BaseViewModel(true) {
 
     // UIState

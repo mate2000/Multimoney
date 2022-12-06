@@ -5490,6 +5490,8 @@ type CryptoAccount {
 
   status: Int!
 
+  profileEnable: Boolean
+
   wording: Wording
 }
 

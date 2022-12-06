@@ -419,7 +419,7 @@ fun ProductFooterExpanded(
                     balance = viewModel.balanceCredit,
                     actionMarket = { /*send to all coins screen*/ },
                     actionWallet = { /*send to "my wallet"*/ },
-                    noBalanceAction = {},
+                    noBalanceAction = { /*no balance action*/ },
                     hasBalanceAction = { /*go to smart origination*/ }
                 )
             }

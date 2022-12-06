@@ -62,6 +62,7 @@ private fun ValidateUserStatusQuery.InfoBankAccount.mapToDomainModel() = InfoBan
 private fun ValidateUserStatusQuery.InfoCrypto.mapToDomainModel() = InfoCrypto(
     status = status,
     statusFirm = statusFirm,
+    profileEnable = profileEnable,
     wording = wording?.mapToDomainModel()
 )
 

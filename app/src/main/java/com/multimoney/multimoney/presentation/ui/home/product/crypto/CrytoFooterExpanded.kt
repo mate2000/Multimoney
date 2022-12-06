@@ -34,14 +34,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.multimoney.data.util.catalog.CryptoAccountStatus
-import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.presentation.theme.BlackTransparency10
-import com.multimoney.multimoney.presentation.theme.ComplementaryBlack
 import com.multimoney.multimoney.presentation.theme.ComplementaryBlack2
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
@@ -60,9 +56,8 @@ fun CryptoFooterExpanded(
     hasBalanceAction: () -> Unit
 ) {
 
-    if (userStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status) {
-        val cryptoStatus = userStatus.infoCrypto?.status ?: 0
-        if (cryptoStatus == CryptoAccountStatus.ACTIVE.status) {
+    userStatus?.infoCrypto?.profileEnable?.let {
+        if (!it) {
             CryptoFooterExpandedContent(
                 balance,
                 actionMarket,
@@ -159,41 +154,39 @@ fun ButtonsSection(
 }
 
 @Composable
-fun NoticeSection(showNoticeSection: Boolean = true) {
-    if (showNoticeSection) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(16.dp),
-            elevation = 0.dp,
-            backgroundColor = ComplementaryBlack2
+fun NoticeSection() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = 0.dp,
+        backgroundColor = ComplementaryBlack2
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Image(
-                    modifier = Modifier.padding(16.dp),
-                    painter = painterResource(id = R.drawable.ic_crypto_empty_state_notice),
-                    //tint = GrayScale300,
-                    contentDescription = null
-                )
-                Text(
-                    text = stringResource(R.string.crypto_footer_expanded_notice_title),
-                    modifier = Modifier.padding(bottom = 4.dp),
-                    style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.labelText
-                )
-                Text(
-                    text = stringResource(R.string.crypto_footer_expanded_notice_description),
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    style = Typography.subtitle2,
-                    color = MultimoneyTheme.colors.labelText,
-                    textAlign = TextAlign.Center
-                )
-            }
+            Image(
+                modifier = Modifier.padding(16.dp),
+                painter = painterResource(id = R.drawable.ic_crypto_empty_state_notice),
+                //tint = GrayScale300,
+                contentDescription = null
+            )
+            Text(
+                text = stringResource(R.string.crypto_footer_expanded_notice_title),
+                modifier = Modifier.padding(bottom = 4.dp),
+                style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.labelText
+            )
+            Text(
+                text = stringResource(R.string.crypto_footer_expanded_notice_description),
+                modifier = Modifier.padding(bottom = 16.dp),
+                style = Typography.subtitle2,
+                color = MultimoneyTheme.colors.labelText,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

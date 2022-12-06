@@ -10,7 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.addnewaccountsuccess.AddNewAccountSuccessScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditrequestsuccess.CreditRequestSuccessScreen
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoScreen
@@ -124,9 +124,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 }
             )
         }
-        // Disburse Add New Account Success
-        composable(route = Screen.AddNewAccountSuccessScreen.route) {
-            AddNewAccountSuccessScreen(
+        composable(route = Screen.CreditRequestSuccessScreen.route) {
+            CreditRequestSuccessScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

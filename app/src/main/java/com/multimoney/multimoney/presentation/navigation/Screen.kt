@@ -110,12 +110,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "credit_screen"
     )
 
-    // Disbursement Add New Account Success
-    object AddNewAccountSuccessScreen : Screen(
-        route = "add_new_account_success_screen",
-        baseRoute = "add_new_account_success_screen"
-    )
-
     object CreditOnfidoScreen : Screen(
         "credit_onfido_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}/{$EVICERTIA_STATUS}",
         "credit_onfido_screen"
@@ -124,6 +118,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SignDocumentProcessScreen : Screen(
         "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
         "sign_document_process_screen"
+    )
+
+    object CreditRequestSuccessScreen : Screen(
+        route = "credit_request_success_screen",
+        baseRoute = "credit_request_success_screen"
     )
 
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")

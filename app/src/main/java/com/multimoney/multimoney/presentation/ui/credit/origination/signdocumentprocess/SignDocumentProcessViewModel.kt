@@ -143,7 +143,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                     if (idBrand == Brand.CostaRica.id && idPrint != ID_PRINT_EMPTY) {
                         navigateToProcessingTransaction()
                     } else {
-                        // todo navigate to success screen
+                        onNavigateToSuccessScreen()
                     }
                 }
             }
@@ -198,6 +198,13 @@ class SignDocumentProcessViewModel @Inject constructor(
         emitBaseEvent(SimulateUserInteraction)
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
+            popTo = Screen.SignDocumentProcessScreen.route
+        )
+    }
+
+    private fun onNavigateToSuccessScreen() {
+        popAndNavigateTo(
+            route = Screen.CreditRequestSuccessScreen.route,
             popTo = Screen.SignDocumentProcessScreen.route
         )
     }

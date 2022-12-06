@@ -20,6 +20,7 @@ import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
 import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
@@ -595,6 +596,45 @@ class CreditRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data ->
             if (data.saveCreditExtensionDetail?.status == null || data.saveCreditExtensionDetail.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
+    override suspend fun mutationProcessCreditExtensionDetail(
+        user: String,
+        pkUser: Int,
+        idBrand: Int,
+        idFlowControl: Any,
+        currency: String,
+        accountNumber: String,
+        bankAccount: String,
+        idBankAccount: Any,
+        idLoanForm: Any,
+        loanForm: String,
+        idLoanClient: Int,
+        phoneNumber: String,
+        userEmail: String
+    ): Flow<MultimoneyResult<ProcessCreditExtensionDetail?>> = fetchData(
+        apolloCall = graphqlApi.mutationProcessCreditExtensionDetail(
+            user,
+            pkUser,
+            idBrand,
+            idFlowControl,
+            currency,
+            accountNumber,
+            bankAccount,
+            idBankAccount,
+            idLoanForm,
+            loanForm,
+            idLoanClient,
+            phoneNumber,
+            userEmail
+        ),
+        apolloCallMapper = { data ->
+            if (data.processCreditExtensionDetail?.status == null || data.processCreditExtensionDetail.status == 0) {
                 Success(data.mapToDomainModel())
             } else {
                 Message(data.mapToDomainModel())

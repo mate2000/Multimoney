@@ -1,0 +1,38 @@
+mutation ProcessCreditExtensionDetail(
+  $user: String!,
+  $pkUser: Int!,
+  $idBrand: Int!,
+  $idFlowControl: Long!,
+  $currency: String!,
+  $accountNumber: String!,
+  $bankAccount: String!,
+  $idBankAccount: Long!,
+  $idLoanForm: Short!,
+  $loanForm: String!,
+  $idLoanClient: Int!,
+  $phoneNumber: String!,
+  $userEmail: String!
+) {
+  processCreditExtensionDetail(
+    processCreditExtensionDetailInput: {
+      user: $user,
+      pkUser: $pkUser,
+      idBrand: $idBrand,
+      idFlowControl: $idFlowControl,
+      currency: $currency,
+      accountNumber: $accountNumber,
+      bankAccount: $bankAccount,
+      idBankAccount: $idBankAccount,
+      idLoanForm: $idLoanForm,
+      loanForm: $loanForm,
+      idLoanClient: $idLoanClient
+      phoneNumber: $phoneNumber,
+      userEmail: $userEmail
+    }
+  ) {
+    id_Prestamo
+    status
+    message
+    detail
+  }
+}

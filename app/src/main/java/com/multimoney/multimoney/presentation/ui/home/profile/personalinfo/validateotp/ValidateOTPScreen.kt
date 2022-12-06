@@ -53,12 +53,12 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 
-
 @Preview
 @Composable
 fun ValidateOTPScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: ValidateOTPViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -66,6 +66,11 @@ fun ValidateOTPScreen(
         stringResource(id = R.string.profile_phone_number_changed_toast)
     val emailChangedToastText =
         stringResource(id = R.string.profile_email_changed_toast)
+    val whatsAppLink = stringResource(
+        id = R.string.whatsapp_deep_link,
+        SignUpViewModel.PHONE_HARDCODED
+    )
+
 
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
@@ -82,7 +87,7 @@ fun ValidateOTPScreen(
             }
         }
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate )
     }
 
     BackHandler {
@@ -135,6 +140,9 @@ fun ValidateOTPScreen(
                         negativeResource = R.string.cancel,
                         negativeAction = {
                             viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnNavigateTLogOut)
+                        },
+                        positiveAction = {
+                            viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(context,whatsAppLink))
                         }
                     )))
             }.onFailure {

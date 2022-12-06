@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,7 +77,7 @@ class ValidateOTPViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
-    private var linkWhatsapp = ""
+    var linkWhatsapp = ""
     var userBlockedForMaxAttend = ""
 
     // UIState
@@ -252,6 +254,11 @@ class ValidateOTPViewModel @Inject constructor(
             )
     }
 
+    private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
+        context.openWhatsAppDeepLink(whatsAppLink)
+        onNavigateBack()
+    }
+
     private fun onValidateOTP(email: String?, otp: String) = executeUseCase {
         mutationValidateOTPUseCase.invoke(email.toString(), otp).collectLatest {
             processValidateOTPResult(it)
@@ -381,12 +388,16 @@ class ValidateOTPViewModel @Inject constructor(
         val destination :String? = null
 
         )
+    private fun onNavigateBack(){
+        navigateBack(Screen.HomeScreen.route, isRestart = true)
+    }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends)
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isRestart = true)
+            is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnNavigateTLogOut -> onLogout()
+            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context,event.whatsAppLink)
             is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(event.message)
             is UIEvent.OnCallMutationSendPinProcess -> callMutationSendPinProcess(
                 event.identification,
@@ -411,6 +422,7 @@ class ValidateOTPViewModel @Inject constructor(
                     messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
                 )
             is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
+
         }
     }
 
@@ -441,6 +453,7 @@ class ValidateOTPViewModel @Inject constructor(
             UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        data class OnOpenWhatsappLink(val context : Context, val whatsAppLink: String) : UIEvent()
         data class OnOtpValueChange(val value: String) : UIEvent()
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()

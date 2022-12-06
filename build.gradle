@@ -21,6 +21,14 @@ buildscript {
                 basic(BasicAuthentication)
             }
         }
+
+        maven {
+            url = "https://nexus-public.novopayment.net/repository/maven-tokenization/"
+            credentials {
+                username = System.env.NOVO_DEPENDENCY_USER ? "${System.env.NOVO_DEPENDENCY_USER}" : properties.dependencyUser
+                password = System.env.NOVO_DEPENDENCY_PASSWORD ? "${System.env.NOVO_DEPENDENCY_PASSWORD}" : properties.dependencyPassword
+            }
+        }
     }
     dependencies {
         classpath hilt.plugin

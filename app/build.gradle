@@ -211,6 +211,9 @@ dependencies {
     implementation paging3.paging3_runtime
     implementation paging3.paging3_compose
 
+    // Novo
+    debugImplementation novo.novo_dev
+    productionImplementation novo.novo_prod
 }
 
 dexguard {

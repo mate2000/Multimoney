@@ -5,32 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.Companion.ADDRESS_MAX_LENGHT
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel
-import com.multimoney.multimoney.presentation.util.DECIMAL_REGEX
+import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
-class IndProfessionalViewModel @Inject constructor(
-
-) : BaseViewModel(true) {
+class IndProfessionalViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
     data class UIState(
         var incomeAmount: String = "",
         var address: String = "",
-        var amountError: Pair<Boolean, Int> = Pair(
-            false,
-            R.string.smart_own_business_monthly_income_required
-        ),
-        var addressError: Pair<Boolean, Int> = Pair(
-            false,
-            R.string.smart_ind_professional_address_required
-        )
+        var addressError: Pair<Boolean, Int> = Pair(false, R.string.empty)
     )
 
     sealed class UIEvent {
@@ -52,20 +41,24 @@ class IndProfessionalViewModel @Inject constructor(
     }
 
     private fun incomeAmountChange(income: String) {
-        if (Pattern.matches(DECIMAL_REGEX, income) || income.isEmpty()) {
+        if (validateDecimalIncome(income)) {
             uiState = uiState.copy(incomeAmount = income)
         }
         onValidateForm()
     }
 
     private fun addressValueChanged(address: String) {
-        uiState = if (address.length < ADDRESS_MAX_LENGHT) {
-            uiState.copy(address = address)
+        uiState = if (address.length <= ADDRESS_MAX_LENGTH) {
+            uiState.copy(
+                address = address,
+                addressError = Pair(false, R.string.empty)
+            )
         } else {
             uiState.copy(
+                address = address,
                 addressError = Pair(
                     true,
-                    R.string.smart_own_business_description_max_char_error
+                    R.string.you_have_exceeded_the_max_characters_error
                 )
             )
         }
@@ -74,6 +67,8 @@ class IndProfessionalViewModel @Inject constructor(
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
-    fun isFormValid(): Boolean =
-        uiState.incomeAmount.isNotBlank() && uiState.address.isNotBlank()
+    fun isFormValid() = uiState.incomeAmount.isNotBlank() &&
+        uiState.address.isNotBlank() &&
+        uiState.incomeAmount.toFloat() > MIN_INCOME &&
+        uiState.addressError.first.not()
 }

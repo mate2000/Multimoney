@@ -20,9 +20,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.SmartSteps.Four
 import com.multimoney.data.util.catalog.SmartSteps.Search
-import com.multimoney.data.util.catalog.SmartSteps.Three
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -30,14 +28,20 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.BaseEvent.OnRequestError
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnCompanyNameChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionThreeValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionTwoValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnWorkingAddressChange
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
@@ -53,6 +57,7 @@ fun FormalSalariedSvScreen(
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueVisible(true))
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+        viewModel.onUiEvent(OnGetUserData(sharedViewModel.user, sharedViewModel.idBrandAsInt))
 
         sharedViewModel.onUIEvent(
             OnSetNavigation(
@@ -64,20 +69,30 @@ fun FormalSalariedSvScreen(
                                 income = viewModel.uiState.salary.toFloat(),
                                 companyName = viewModel.uiState.companyName,
                                 positionJob = viewModel.uiState.profession,
+                                idJobLevel2 = viewModel.uiState.divisionTwoSelected?.id?.toLong() ?: 0,
+                                idJobLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong() ?: 0,
                                 currentStep = Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
                     )
                 },
                 overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
-                nextStep = Four.id,
-                previousStep = Three.id
+                nextStep = sourceIncomeSharedViewModel.getNextStep(sharedViewModel.idBrandAsInt),
+                previousStep = sourceIncomeSharedViewModel.getPreviousStep(sharedViewModel.idBrandAsInt)
             )
         )
+
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
                     OnContinueEnable(event.isFormValid)
+                )
+
+                is OnRequestError -> sharedViewModel.onUIEvent(
+                    OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = event.dialogParameters
+                    )
                 )
             }
         }
@@ -94,7 +109,10 @@ fun FormalSalariedSvScreen(
 }
 
 @Composable
-fun FormalSalariedSvContent(viewModel: FormalSalariedSvViewModel, idBrand: Int) {
+fun FormalSalariedSvContent(
+    viewModel: FormalSalariedSvViewModel,
+    idBrand: Int
+) {
     val focusManager = LocalFocusManager.current
     val currencySymbol = stringResource(idBrand.getCurrencySymbol())
 
@@ -111,6 +129,7 @@ fun FormalSalariedSvContent(viewModel: FormalSalariedSvViewModel, idBrand: Int) 
                 color = MultimoneyTheme.colors.text
             )
         )
+
         CustomOutlinedTextField(
             value = viewModel.uiState.companyName,
             onValueChange = { viewModel.onUiEvent(OnCompanyNameChange(it)) },
@@ -125,6 +144,7 @@ fun FormalSalariedSvContent(viewModel: FormalSalariedSvViewModel, idBrand: Int) 
             isRequiredMessage = stringResource(R.string.smart_salaried_company_name_required),
             modifier = Modifier.padding(top = 24.dp)
         )
+
         CustomOutlinedTextField(
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUiEvent(OnProfessionChange(it)) },
@@ -139,6 +159,7 @@ fun FormalSalariedSvContent(viewModel: FormalSalariedSvViewModel, idBrand: Int) 
             isRequiredMessage = stringResource(R.string.smart_salaried_profession_required),
             modifier = Modifier.padding(top = 16.dp)
         )
+
         CustomOutlinedTextField(
             value = viewModel.uiState.salary,
             onValueChange = { viewModel.onUiEvent(OnSalaryChange(it)) },
@@ -151,11 +172,38 @@ fun FormalSalariedSvContent(viewModel: FormalSalariedSvViewModel, idBrand: Int) 
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             leadingIcon = R.drawable.ic_money_gray,
-            placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
+            placeHolder = stringResource(R.string.smart_salaried_salary_placeholder, currencySymbol),
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_salaried_average_salary_required),
             modifier = Modifier.padding(top = 16.dp)
         )
+
+        CustomDropdown(
+            items = viewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() } ?: listOf(),
+            value = viewModel.uiState.divisionTwoSelected?.name ?: stringResource(R.string.empty),
+            onValueChange = {
+                viewModel.onUiEvent(
+                    OnDivisionTwoValueChange(divisionTwo = it)
+                )
+            },
+            labelText = stringResource(R.string.credit_address_state),
+            placeHolder = stringResource(id = R.string.select),
+            modifier = Modifier.padding(top = 16.dp)
+        )
+
+        CustomDropdown(
+            items = viewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() } ?: listOf(),
+            value = viewModel.uiState.divisionThreeSelected?.name ?: stringResource(R.string.empty),
+            onValueChange = {
+                viewModel.onUiEvent(
+                    OnDivisionThreeValueChange(divisionThree = it)
+                )
+            },
+            labelText = stringResource(R.string.credit_address_municipality),
+            placeHolder = stringResource(id = R.string.select),
+            modifier = Modifier.padding(top = 16.dp)
+        )
+
         CustomOutlinedTextField(
             value = viewModel.uiState.workingAddress,
             onValueChange = { viewModel.onUiEvent(OnWorkingAddressChange(it)) },

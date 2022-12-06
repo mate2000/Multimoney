@@ -17,31 +17,46 @@ import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.CreditContractEventSubscription
+import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionAmountQuery
+import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionMessageQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
+import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
+import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
+import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
+import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
+import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
+import com.multimoney.data.networking.graphql.apollomodel.SaveAutomatedSmartAccountMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
+import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
@@ -73,54 +88,42 @@ class GraphqlApi @Inject constructor(
         accountStatus: Int,
         cryptoStatus: Int,
         cardStatus: Int
-    ): ApolloCall<BalanceQuery.Data> =
-        apolloAuthorizedClient.query(
-            BalanceQuery(
-                user,
-                identification,
-                idBrand,
-                idClient,
-                idLoanClient,
-                creditStatus,
-                accountStatus,
-                cryptoStatus,
-                cardStatus
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<BalanceQuery.Data> = apolloAuthorizedClient.query(
+        BalanceQuery(
+            user, identification, idBrand, idClient, idLoanClient, creditStatus, accountStatus, cryptoStatus, cardStatus
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // Credit
     fun queryCreditOffer(
         pkUser: Int,
         idBrand: Int
     ): ApolloCall<CreditOfferQuery.Data> =
-        apolloAuthorizedClient.query(CreditOfferQuery(pkUser, idBrand))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(CreditOfferQuery(pkUser, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryPaymentAmount(
         amount: Int,
-        months: String,
+        months: String?,
         idProduct: String,
         currencySymbol: String,
         user: String,
         idBrand: Int
-    ): ApolloCall<PaymentAmountQuery.Data> =
-        apolloAuthorizedClient.query(
-            PaymentAmountQuery(
-                amount,
-                months,
-                idProduct,
-                currencySymbol,
-                user,
-                idBrand
-            )
+    ): ApolloCall<PaymentAmountQuery.Data> = apolloAuthorizedClient.query(
+        PaymentAmountQuery(
+            amount,
+            months ?: "",
+            idProduct,
+            currencySymbol,
+            user,
+            idBrand
         )
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditApplication(
         idUserRequest: Int,
         pkUser: Int,
         descPromotion: String,
-        interestRate: String,
+        interestRate: String?,
         symbolCurrency: String,
         descCurrency: String,
         idProduct: Int,
@@ -136,50 +139,47 @@ class GraphqlApi @Inject constructor(
         creditLimit: Double,
         tractAmount: Double,
         currentStep: String
-    ): ApolloCall<SaveCreditApplicationMutation.Data> =
-        apolloAuthorizedClient.mutation(
-            SaveCreditApplicationMutation(
-                idUserRequest,
-                pkUser,
-                descPromotion,
-                interestRate,
-                symbolCurrency,
-                descCurrency,
-                idProduct,
-                idPromotion,
-                months,
-                commissionPercentage,
-                paymentDate,
-                paymentAmount,
-                user,
-                idBrand,
-                selectedAmount,
-                minimumAmount,
-                creditLimit,
-                tractAmount,
-                currentStep
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<SaveCreditApplicationMutation.Data> = apolloAuthorizedClient.mutation(
+        SaveCreditApplicationMutation(
+            idUserRequest,
+            pkUser,
+            descPromotion,
+            interestRate ?: "",
+            symbolCurrency,
+            descCurrency,
+            idProduct,
+            idPromotion,
+            months,
+            commissionPercentage,
+            paymentDate,
+            paymentAmount,
+            user,
+            idBrand,
+            selectedAmount,
+            minimumAmount,
+            creditLimit,
+            tractAmount,
+            currentStep
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryScreenConfig(
         pkUser: Int,
         user: String,
         idBrand: Int,
         idUserRequest: Int
-    ): ApolloCall<ScreenConfigQuery.Data> =
-        apolloAuthorizedClient.query(
-            ScreenConfigQuery(pkUser, user, idBrand, idUserRequest)
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<ScreenConfigQuery.Data> = apolloAuthorizedClient.query(
+        ScreenConfigQuery(pkUser, user, idBrand, idUserRequest)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryHomeProvince(
         pkUser: Int,
         user: String,
         idBrand: Int,
         idUserRequest: Int
-    ): ApolloCall<HomeProvinceQuery.Data> =
-        apolloAuthorizedClient.query(
-            HomeProvinceQuery(pkUser, user, idBrand, idUserRequest)
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<HomeProvinceQuery.Data> = apolloAuthorizedClient.query(
+        HomeProvinceQuery(pkUser, user, idBrand, idUserRequest)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryHomeCanton(
         pkUser: Int,
@@ -187,10 +187,9 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         fkCatalogIdentifier: String,
         idUserRequest: Int
-    ): ApolloCall<HomeCantonQuery.Data> =
-        apolloAuthorizedClient.query(
-            HomeCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<HomeCantonQuery.Data> = apolloAuthorizedClient.query(
+        HomeCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryHomeDistrict(
         pkUser: Int,
@@ -198,20 +197,18 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         fkCatalogIdentifier: String,
         idUserRequest: Int
-    ): ApolloCall<HomeDistrictQuery.Data> =
-        apolloAuthorizedClient.query(
-            HomeDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<HomeDistrictQuery.Data> = apolloAuthorizedClient.query(
+        HomeDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCompanyProvince(
         pkUser: Int,
         user: String,
         idBrand: Int,
         idUserRequest: Int
-    ): ApolloCall<CompanyProvinceQuery.Data> =
-        apolloAuthorizedClient.query(
-            CompanyProvinceQuery(pkUser, user, idBrand, idUserRequest)
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<CompanyProvinceQuery.Data> = apolloAuthorizedClient.query(
+        CompanyProvinceQuery(pkUser, user, idBrand, idUserRequest)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCompanyCanton(
         pkUser: Int,
@@ -219,10 +216,9 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         fkCatalogIdentifier: String,
         idUserRequest: Int
-    ): ApolloCall<CompanyCantonQuery.Data> =
-        apolloAuthorizedClient.query(
-            CompanyCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<CompanyCantonQuery.Data> = apolloAuthorizedClient.query(
+        CompanyCantonQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryCompanyDistrict(
         pkUser: Int,
@@ -230,10 +226,9 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         fkCatalogIdentifier: String,
         idUserRequest: Int
-    ): ApolloCall<CompanyDistrictQuery.Data> =
-        apolloAuthorizedClient.query(
-            CompanyDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<CompanyDistrictQuery.Data> = apolloAuthorizedClient.query(
+        CompanyDistrictQuery(pkUser, user, idBrand, fkCatalogIdentifier, idUserRequest)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditFlowStep(
         user: String,
@@ -242,17 +237,16 @@ class GraphqlApi @Inject constructor(
         idLogUserRequest: Int,
         idUser: Int,
         currentStep: String
-    ): ApolloCall<SaveCreditFlowInputMutation.Data> =
-        apolloAuthorizedClient.mutation(
-            SaveCreditFlowInputMutation(
-                user,
-                idBrand,
-                infoQuestion.map { it.mapToApolloModel() },
-                idLogUserRequest,
-                idUser,
-                currentStep
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<SaveCreditFlowInputMutation.Data> = apolloAuthorizedClient.mutation(
+        SaveCreditFlowInputMutation(
+            user,
+            idBrand,
+            infoQuestion.map { it.mapToApolloModel() },
+            idLogUserRequest,
+            idUser,
+            currentStep
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryProfession(
         pkUser: Int,
@@ -276,53 +270,61 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int,
         systemInDarkTheme: Boolean
-    ): ApolloCall<TermsAndConditionsQuery.Data> =
-        apolloAuthorizedClient.query(
-            TermsAndConditionsQuery(
-                user,
-                idBrand,
-                systemInDarkTheme
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<TermsAndConditionsQuery.Data> = apolloAuthorizedClient.query(
+        TermsAndConditionsQuery(
+            user,
+            idBrand,
+            systemInDarkTheme
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryGetClientBankAccount(
         user: String,
         idBrand: Int,
         idClient: Int,
         idLoanClient: Int
-    ): ApolloCall<GetClientBankAccountQuery.Data> =
-        apolloAuthorizedClient.query(
-            GetClientBankAccountQuery(
-                user,
-                idBrand,
-                idClient,
-                idLoanClient
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<GetClientBankAccountQuery.Data> = apolloAuthorizedClient.query(
+        GetClientBankAccountQuery(
+            user,
+            idBrand,
+            idClient,
+            idLoanClient
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryListCardsVD(
+        user: String,
+        idBrand: Int,
+        identification: String
+    ): ApolloCall<ListCardVDQuery.Data> = apolloAuthorizedClient.query(
+        ListCardVDQuery(
+            identification,
+            user,
+            idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryBanksAndRegularExpression(
         pkUser: Int,
         user: String,
         idBrand: Int,
         idUserRequest: Int
-    ): ApolloCall<BanksAndRegularExpressionQuery.Data> =
-        apolloAuthorizedClient.query(
-            BanksAndRegularExpressionQuery(
-                pkUser,
-                user,
-                idBrand,
-                idUserRequest
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<BanksAndRegularExpressionQuery.Data> = apolloAuthorizedClient.query(
+        BanksAndRegularExpressionQuery(
+            pkUser,
+            user,
+            idBrand,
+            idUserRequest
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryGetPaymentPoints(
         idBrand: Int
-    ): ApolloCall<GetPaymentPointsQuery.Data> =
-        apolloAuthorizedClient.query(
-            GetPaymentPointsQuery(
-                idBrand
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<GetPaymentPointsQuery.Data> = apolloAuthorizedClient.query(
+        GetPaymentPointsQuery(
+            idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryGetExchangeCreditRate(
         idBrand: Int,
@@ -331,18 +333,16 @@ class GraphqlApi @Inject constructor(
         idOriginCurrency: String,
         idDestinationCurrency: String,
         amount: Double
-    ): ApolloCall<GetExchangeRateCreditQuery.Data> =
-        apolloAuthorizedClient.query(
-            GetExchangeRateCreditQuery(
-                idBrand,
-                user,
-                identification,
-                idOriginCurrency,
-                idDestinationCurrency,
-                amount
-            )
+    ): ApolloCall<GetExchangeRateCreditQuery.Data> = apolloAuthorizedClient.query(
+        GetExchangeRateCreditQuery(
+            idBrand,
+            user,
+            identification,
+            idOriginCurrency,
+            idDestinationCurrency,
+            amount
         )
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationProcessPaymentList(
         user: String,
@@ -356,22 +356,45 @@ class GraphqlApi @Inject constructor(
         description: String,
         destinyAccount: List<DestinyAccount>,
         amount: Any
-    ): ApolloCall<ProccessPaymentListMutation.Data> =
-        apolloAuthorizedClient.mutation(
-            ProccessPaymentListMutation(
-                user,
-                idBrand,
-                customerId,
-                identification,
-                originAccountNumber,
-                destinyAccountNumber,
-                currencyId,
-                customerName,
-                description,
-                destinyAccount.map { it.mapToApolloModel() },
-                amount
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<ProccessPaymentListMutation.Data> = apolloAuthorizedClient.mutation(
+        ProccessPaymentListMutation(
+            user,
+            idBrand,
+            customerId,
+            identification,
+            originAccountNumber,
+            destinyAccountNumber,
+            currencyId,
+            customerName,
+            description,
+            destinyAccount.map { it.mapToApolloModel() },
+            amount
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun subscriptionCreditContractEvent(
+        idPrint: Long,
+        idBrand: Int
+    ): ApolloCall<CreditContractEventSubscription.Data> = apolloAuthorizedClient.subscription(
+        CreditContractEventSubscription(
+            idPrint,
+            idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveCreditOperation(
+        idUserRequest: Long,
+        pkUser: Long,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<SaveCreditOperationMutation.Data> = apolloAuthorizedClient.mutation(
+        SaveCreditOperationMutation(
+            idUserRequest,
+            pkUser,
+            user,
+            idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationActivatedClientAutomaticDebit(
         user: String,
@@ -381,16 +404,34 @@ class GraphqlApi @Inject constructor(
         origin: String,
         idAccount: Long,
         idCurrency: Int
-    ): ApolloCall<ActivatedClientAutomaticDebitMutation.Data> =
+    ): ApolloCall<ActivatedClientAutomaticDebitMutation.Data> = apolloAuthorizedClient.mutation(
+        ActivatedClientAutomaticDebitMutation(
+            user,
+            idBrand,
+            idClient,
+            idLoanClient,
+            origin,
+            idAccount,
+            idCurrency
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationDeactivatedClientAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        origin: String,
+        idAccount: Long
+    ): ApolloCall<DeactivatedClientAutomaticDebitMutation.Data> =
         apolloAuthorizedClient.mutation(
-            ActivatedClientAutomaticDebitMutation(
+            DeactivatedClientAutomaticDebitMutation(
                 user,
                 idBrand,
                 idClient,
                 idLoanClient,
                 origin,
-                idAccount,
-                idCurrency
+                idAccount
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -399,15 +440,109 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         idClient: Int,
         idLoanClient: Int
-    ): ApolloCall<GetClientAutomaticDebitQuery.Data> =
-        apolloAuthorizedClient.query(
-            GetClientAutomaticDebitQuery(
+    ): ApolloCall<GetClientAutomaticDebitQuery.Data> = apolloAuthorizedClient.query(
+        GetClientAutomaticDebitQuery(
+            user,
+            idBrand,
+            idClient,
+            idLoanClient
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCreditExtensionAmount(
+        idClient: Long,
+        currency: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CreditExtensionAmountQuery.Data> =
+        apolloAuthorizedClient.query(CreditExtensionAmountQuery(idClient, currency, user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCreditExtensionMessage(
+        idClient: Long,
+        currency: String,
+        user: String,
+        idBrand: Int,
+        amountRequest: Double,
+        idLoanClient: Long,
+        quotaMax: Double,
+        idProductBase: Int,
+        cicle: Int
+    ): ApolloCall<CreditExtensionMessageQuery.Data> = apolloAuthorizedClient.query(
+        CreditExtensionMessageQuery(
+            idClient, currency, user, idBrand, amountRequest, idLoanClient, quotaMax, idProductBase, cicle
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveCreditExtensionDetail(
+        pkUser: Int,
+        idBrand: Int,
+        user: String,
+        accountNumber: String,
+        amount: Double,
+        month: Int,
+        pkPromotionMonth: Int,
+        nextPaymentDate: String,
+        quota: Double,
+        quotaTotal: Double,
+        comissionDisbursement: Double,
+        rateInterestNormalLoan: Double,
+        rateInterestNormalRegular: Double,
+        cicle: Int,
+        idProduct: Int,
+        descriptionPromotionTerm: String,
+        pkPromotion: Int
+    ): ApolloCall<SaveCreditExtensionDetailMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveCreditExtensionDetailMutation(
+                pkUser,
+                Optional.Present(idBrand),
                 user,
-                idBrand,
-                idClient,
-                idLoanClient
+                accountNumber,
+                amount,
+                month,
+                pkPromotionMonth,
+                nextPaymentDate,
+                quota,
+                quotaTotal,
+                comissionDisbursement,
+                rateInterestNormalLoan,
+                rateInterestNormalRegular,
+                cicle,
+                idProduct,
+                descriptionPromotionTerm,
+                pkPromotion
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSendCreditContractEvent(
+        idImpresion: Long,
+        idBrand: Int,
+        link: String,
+        active: Boolean,
+        statusEvicertia: String,
+        statusOnfido: String,
+        currentStep: String
+    ): ApolloCall<SendCreditContractEventMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SendCreditContractEventMutation(
+                idImpresion,
+                idBrand,
+                Optional.Present(link),
+                active,
+                statusEvicertia,
+                statusOnfido,
+                currentStep
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetInfoDeposit(
+        idBrand: Int,
+        idPrint: Long,
+        user: String
+    ): ApolloCall<GetInfoDepositQuery.Data> = apolloAuthorizedClient.query(
+        GetInfoDepositQuery(Optional.Present(idBrand), idPrint, Optional.Present(user))
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // Security
     fun queryValidateUserExists(
@@ -435,9 +570,9 @@ class GraphqlApi @Inject constructor(
             idDocument,
             identification,
             firstName,
-            secondName,
+            Optional.Present(secondName),
             firstSurname,
-            secondSurname
+            Optional.Present(secondSurname)
         )
     ).fetchPolicy(
         FetchPolicy.NetworkOnly
@@ -463,15 +598,15 @@ class GraphqlApi @Inject constructor(
             pkUser,
             user,
             email,
-            phoneNumber,
-            fullName,
-            firstName,
-            secondName,
-            lastName,
-            secondLastName,
-            nationality,
-            identification,
-            countryCode,
+            Optional.Present(phoneNumber),
+            Optional.Present(fullName),
+            Optional.Present(firstName),
+            Optional.Present(secondName),
+            Optional.Present(lastName),
+            Optional.Present(secondLastName),
+            Optional.Present(nationality),
+            Optional.Present(identification),
+            Optional.Present(countryCode),
             currentStep,
             idBrand
         )
@@ -485,40 +620,37 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int
     ): ApolloCall<ValidationSecurityQuery.Data> =
-        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand))
-            .fetchPolicy(
-                FetchPolicy.NetworkOnly
-            )
+        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand)).fetchPolicy(
+            FetchPolicy.NetworkOnly
+        )
 
     fun queryValidateUserStatus(
         pkUser: Int,
         identification: String,
         email: String,
         idBrand: Int
-    ): ApolloCall<ValidateUserStatusQuery.Data> =
-        apolloAuthorizedClient.query(
-            ValidateUserStatusQuery(
-                pkUser,
-                identification,
-                email,
-                idBrand
-            )
-        ).fetchPolicy(
-            FetchPolicy.NetworkOnly
+    ): ApolloCall<ValidateUserStatusQuery.Data> = apolloAuthorizedClient.query(
+        ValidateUserStatusQuery(
+            pkUser,
+            identification,
+            email,
+            idBrand
         )
+    ).fetchPolicy(
+        FetchPolicy.NetworkOnly
+    )
 
     fun queryDataInformationClient(
         identification: String,
         idBrand: Int,
         user: String
-    ): ApolloCall<DataInformationClientQuery.Data> =
-        apolloAuthorizedClient.query(
-            DataInformationClientQuery(
-                identification,
-                idBrand,
-                user
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<DataInformationClientQuery.Data> = apolloAuthorizedClient.query(
+        DataInformationClientQuery(
+            identification,
+            idBrand,
+            user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSendPinProcess(
         identification: String,
@@ -573,14 +705,14 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<ValidatePinQuery.Data> = apolloAuthorizedClient.query(
         ValidatePinQuery(
             idBrand,
-            appSource,
+            Optional.Present(appSource),
             pkUser.toInt(),
-            ip,
+            Optional.Present(ip),
             pinSecurity,
-            telephone,
-            sendValidatePin,
-            flowOrigination,
-            userCreate
+            Optional.Present(telephone),
+            Optional.Present(sendValidatePin),
+            Optional.Present(flowOrigination),
+            Optional.Present(userCreate)
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -607,47 +739,82 @@ class GraphqlApi @Inject constructor(
         identification: String,
         user: String,
         idBrand: Int
-    ): ApolloCall<ValidateBankAccountQuery.Data> =
-        apolloAuthorizedClient.query(
-            ValidateBankAccountQuery(
-                account,
-                identification,
-                user,
-                idBrand
-            )
+    ): ApolloCall<ValidateBankAccountQuery.Data> = apolloAuthorizedClient.query(
+        ValidateBankAccountQuery(
+            account,
+            identification,
+            user,
+            idBrand
         )
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryGetCompanyNameByIdentification(
         identification: String,
         idBrand: Int,
         user: String
-    ): ApolloCall<GetCompanyNameByIdentificationQuery.Data> =
-        apolloAuthorizedClient.query(
-            GetCompanyNameByIdentificationQuery(identification, idBrand, user)
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+    ): ApolloCall<GetCompanyNameByIdentificationQuery.Data> = apolloAuthorizedClient.query(
+        GetCompanyNameByIdentificationQuery(identification, idBrand, user)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationOnfidoCheckProcess(
+        identification: String,
+        applicantId: String,
+        currentFlow: String,
+        pkUser: Long,
+        userRequestId: Long,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<OnfidoCheckProcessMutation.Data> = apolloAuthorizedClient.mutation(
+        OnfidoCheckProcessMutation(
+            identification,
+            applicantId,
+            currentFlow,
+            pkUser,
+            userRequestId,
+            idBrand,
+            user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // SmartAccount
+    fun queryGetCoreBankMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        monthDate: String?
+    ): ApolloCall<GetCoreBankMovementsQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetCoreBankMovementsQuery(
+                user,
+                idBrand,
+                identificationNumber,
+                accountToken,
+                pageNumber,
+                pageSize,
+                Optional.Present(monthDate)
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryCivilStatus(
         pkUser: String,
         idBrand: Int
     ): ApolloCall<CivilStatusQuery.Data> =
-        apolloAuthorizedClient.query(CivilStatusQuery(pkUser, idBrand))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(CivilStatusQuery(pkUser, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryProfessionSmart(
         pkUser: String,
         idBrand: Int
     ): ApolloCall<ProfessionSmartQuery.Data> =
-        apolloAuthorizedClient.query(ProfessionSmartQuery(pkUser, idBrand))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(ProfessionSmartQuery(pkUser, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryAddressLevelOne(
         user: String,
         idBrand: Int
     ): ApolloCall<AddressLevel1Query.Data> =
-        apolloAuthorizedClient.query(AddressLevel1Query(user, idBrand))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(AddressLevel1Query(user, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryAddressLevelTwo(
         user: String,
@@ -662,31 +829,27 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         idAddressLevel1: String,
         idAddressLevel2: String
-    ): ApolloCall<AddressLevel3Query.Data> =
-        apolloAuthorizedClient.query(
-            AddressLevel3Query(
-                user,
-                idBrand,
-                idAddressLevel1,
-                idAddressLevel2
-            )
+    ): ApolloCall<AddressLevel3Query.Data> = apolloAuthorizedClient.query(
+        AddressLevel3Query(
+            user,
+            idBrand,
+            idAddressLevel1,
+            idAddressLevel2
         )
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryNationality(
         user: String,
         idBrand: Int
     ): ApolloCall<NationalityQuery.Data> =
-        apolloAuthorizedClient.query(NationalityQuery(user, idBrand))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(NationalityQuery(user, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryStepByStep(
         user: String,
         idBrand: Int,
         idRequest: Int
     ): ApolloCall<StepByStepQuery.Data> =
-        apolloAuthorizedClient.query(StepByStepQuery(user, idBrand, idRequest))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(StepByStepQuery(user, idBrand, idRequest)).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationGlobalRequest(
         pkUser: Int,
@@ -717,7 +880,9 @@ class GraphqlApi @Inject constructor(
         isPEP: Boolean,
         isUSTaxPayer: Boolean,
         isTaxPayer: Boolean,
-        beneficiaries: List<Beneficiary>
+        beneficiaries: List<Beneficiary>,
+        idJobLevel2: Long,
+        idJobLevel3: Long
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloAuthorizedClient.mutation(
             GlobalRequestMutation(
@@ -730,7 +895,7 @@ class GraphqlApi @Inject constructor(
                 expirationDate,
                 idGender,
                 idCivilStatusType,
-                companyName,
+                Optional.Present(companyName),
                 aboutCompany,
                 institutionPension,
                 idAddressLevel3,
@@ -749,13 +914,32 @@ class GraphqlApi @Inject constructor(
                 isPEP,
                 isUSTaxPayer,
                 isTaxPayer,
-                beneficiaries.map { beneficiary ->
-                    BeneficiaryRequestDtoInput(
-                        fullName = Optional.presentIfNotNull(beneficiary.fullName),
-                        relationship = Optional.presentIfNotNull(beneficiary.relationship.toString()),
-                        allocationPercentage = Optional.presentIfNotNull(beneficiary.allocationPercentage)
-                    )
-                }
+                Optional.Present(
+                    beneficiaries.map { beneficiary ->
+                        BeneficiaryRequestDtoInput(
+                            fullName = Optional.presentIfNotNull(beneficiary.fullName),
+                            relationship = Optional.presentIfNotNull(beneficiary.relationship.toString()),
+                            allocationPercentage = Optional.presentIfNotNull(beneficiary.allocationPercentage)
+                        )
+                    }
+                ),
+                idJobLevel2,
+                idJobLevel3
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveAutomatedSmartAccount(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        idRequest: Long
+    ): ApolloCall<SaveAutomatedSmartAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveAutomatedSmartAccountMutation(
+                user,
+                idBrand,
+                identificationNumber,
+                idRequest
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -763,14 +947,64 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int
     ): ApolloCall<GeneralEconomicActivityQuery.Data> =
-        apolloAuthorizedClient.query(GeneralEconomicActivityQuery(user, idBrand))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(GeneralEconomicActivityQuery(user, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryRelationship(
         user: String,
         idBrand: Int,
-        option: Int,
+        option: Int
     ): ApolloCall<RelationshipQuery.Data> =
-        apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option))
+        apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option)).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationInitialRequestSmartAccount(
+        pkUser: Long,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<InitialRequestSmartAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(InitialRequestSmartAccountMutation(pkUser, idBrand, user))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetQuickActions(
+        idBrand: Int,
+        pkUser: Int,
+        identification: String,
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCriptoStatus: Int
+    ): ApolloCall<QuickActionsQuery.Data> =
+        apolloAuthorizedClient.query(
+            QuickActionsQuery(
+                idBrand,
+                pkUser,
+                identification,
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCriptoStatus
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveClientBankAccount(
+        idClient: Long,
+        idBank: Int,
+        accountNumber: String,
+        idCurrency: Int,
+        idAccountType: Int?,
+        idLoanClient: Long,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<SaveClientBankAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveClientBankAccountMutation(
+                idClient = idClient,
+                id_Banco = idBank,
+                numeroCuenta = accountNumber,
+                id_Moneda = idCurrency,
+                id_Tipo_Cuenta = idAccountType?.let { Optional.Present(it) } ?: run { Optional.Absent },
+                idLoanClient = idLoanClient,
+                user = user,
+                idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

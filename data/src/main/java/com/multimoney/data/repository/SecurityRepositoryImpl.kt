@@ -8,7 +8,9 @@ import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
+import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
+import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidatePin
@@ -168,6 +170,7 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
+
     override suspend fun mutationSendPinProcess(
         identification: String,
         firstName: String,
@@ -210,6 +213,29 @@ class SecurityRepositoryImpl @Inject constructor(
             lastNames,
             identification,
             applicationId,
+            idBrand,
+            user
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationOnFidoCheckProcess(
+        identification: String,
+        applicantId: String,
+        currentFlow: String,
+        pkUser: Long,
+        userRequestId: Long,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<OnfidoCheckProcess>> = fetchData(
+        apolloCall = graphqlApi.mutationOnfidoCheckProcess(
+            identification,
+            applicantId,
+            currentFlow,
+            pkUser,
+            userRequestId,
             idBrand,
             user
         ),
@@ -290,4 +316,28 @@ class SecurityRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
+    override suspend fun queryGetQuickActions(
+        idBrand: Int,
+        pkUser: Int,
+        identification: String,
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCriptoStatus: Int
+    ): Flow<MultimoneyResult<QuickActions?>> =
+        fetchData(
+            apolloCall = graphqlApi.queryGetQuickActions(
+                idBrand,
+                pkUser,
+                identification,
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCriptoStatus
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
 }

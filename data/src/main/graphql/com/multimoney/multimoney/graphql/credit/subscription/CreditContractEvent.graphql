@@ -1,0 +1,11 @@
+subscription CreditContractEvent($idPrint: Long!, $idBrand:Int!){
+  creditContractEvent(input: {  idPrint: $idPrint, idBrand: $idBrand }) {
+    idPrint
+    idBrand
+    link
+    statusEvicertia
+    statusOnfido
+    active
+    currentStep
+  }
+}

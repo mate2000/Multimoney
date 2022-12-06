@@ -76,7 +76,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 Guatemala.country -> uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
                     (uiState.personalDocumentValue.length == CostaRicaId.documentSize || uiState.personalDocumentValue.length == CostaRicaDimex.documentSize) &&
-                    !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && uiState.dataInformationClient?.name != null
+                    !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && ((uiState.firstNameValue.isNotEmpty() && uiState.firstLastNameValue.isNotEmpty()) || uiState.dataInformationClient?.name?.isNotEmpty() == true)
                 else -> false
             }
         )
@@ -120,20 +120,16 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     documentFormat = documentCatalog.format,
                     identificationValueType = documentType
                 )
-                documentLength =
+                documentLength = if (documentCatalog.format.isNotEmpty()) {
                     documentCatalog.format.count { documentCatalog.format.last() == it }
+                } else {
+                    Int.MAX_VALUE
+                }
             }
         }
         if (isFromBackend.not()) {
-            uiState = uiState.copy(
-                personalDocumentValue = "",
-                dataInformationClient = null,
-                firstNameValue = "",
-                secondNameValue = "",
-                firstLastNameValue = "",
-                secondLastNameValue = "",
-                fullNameValue = ""
-            )
+            cleanUIForIdentification()
+            isFormValid()
         }
     }
 
@@ -147,12 +143,14 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
         if (status.first.not()) {
             closeKeyboard = true
-            callQueryDataInformationClient(
-                uiState.personalDocumentValue,
-                onSuccessCountry?.countryList?.get(uiState.countryList.indexOf(uiState.nationalityValue))?.idBrand
-                    ?: 0,
-                user
-            )
+            if (uiState.identificationValueType == CrDocuments.IdDocument.document) {
+                callQueryDataInformationClient(
+                    uiState.personalDocumentValue,
+                    onSuccessCountry?.countryList?.get(uiState.countryList.indexOf(uiState.nationalityValue))?.idBrand
+                        ?: 0,
+                    user
+                )
+            }
         } else {
             if (uiState.dataInformationClient?.name.isNullOrBlank().not()) {
                 uiState = uiState.copy(dataInformationClient = null)
@@ -271,7 +269,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0,
             onLoadingValueChange
         )
-        cleanUI()
+        cleanUIForNationality()
         updateNationality.invoke(
             onSuccessCountry?.countryList?.get(nationality)?.countryPrefix ?: "",
             onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0
@@ -322,18 +320,30 @@ class SignUpPersonalDataViewModel @Inject constructor(
         isFormValid()
     }
 
-    private fun cleanUI() {
+    private fun cleanUIForNationality() {
         uiState = uiState.copy(
             identificationValueType = "",
-            personalIdError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
-            nameError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
-            lastNameError = Pair(false, R.string.sign_up_personal_data_id_sv_required),
+            personalIdError = Pair(false, R.string.sign_up_personal_data_id_required),
+            nameError = Pair(false, R.string.sign_up_personal_data_id_required),
+            lastNameError = Pair(false, R.string.sign_up_personal_data_id_required),
             personalDocumentValue = "",
             firstNameValue = "",
             secondNameValue = "",
             firstLastNameValue = "",
             secondLastNameValue = "",
             closeKeyboard = false
+        )
+    }
+
+    private fun cleanUIForIdentification() {
+        uiState = uiState.copy(
+            personalDocumentValue = "",
+            dataInformationClient = null,
+            firstNameValue = "",
+            secondNameValue = "",
+            firstLastNameValue = "",
+            secondLastNameValue = "",
+            fullNameValue = ""
         )
     }
 
@@ -434,7 +444,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     ElSalvador.country -> validDui(uiState.personalDocumentValue)
                     else -> validId(
                         Guatemala.documentSize,
-                        R.string.sign_up_personal_data_dpi_gt_not_valid,
+                        R.string.sign_up_personal_data_id_not_valid,
                         uiState.personalDocumentValue.length
                     )
                 }
@@ -469,7 +479,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val dataInformationClient: ClientInfoCr? = null,
         val personalIdError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.sign_up_personal_data_id_sv_required
+            R.string.sign_up_personal_data_id_required
         ),
 
         val nameError: Pair<Boolean, Int> = Pair(false, 0),

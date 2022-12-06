@@ -2,10 +2,12 @@ package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.security.CatalogType
 import com.multimoney.domain.model.security.ClientInfoCr
-import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.Company
+import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
+import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
+import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateAccount
@@ -96,6 +98,16 @@ interface SecurityRepository {
         user: String
     ): Flow<MultimoneyResult<OnfidoToken?>>
 
+    suspend fun mutationOnFidoCheckProcess(
+        identification: String,
+        applicantId: String,
+        currentFlow: String,
+        pkUser: Long,
+        userRequestId: Long,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<OnfidoCheckProcess>>
+
     suspend fun queryValidatePin(
         idBrand: Int,
         appSource: Int,
@@ -127,4 +139,14 @@ interface SecurityRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<ValidateAccount?>>
+
+    suspend fun queryGetQuickActions(
+        idBrand: Int,
+        pkUser: Int,
+        identification: String,
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCriptoStatus: Int
+    ): Flow<MultimoneyResult<QuickActions?>>
 }

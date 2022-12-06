@@ -4,8 +4,10 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,8 +68,8 @@ fun OtherIncomeScreen(
                     )
                 },
                 overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
-                nextStep = SmartSteps.Four.id,
-                previousStep = SmartSteps.Two.id
+                nextStep = sourceIncomeSharedViewModel.getNextStep(sharedViewModel.idBrandAsInt),
+                previousStep = sourceIncomeSharedViewModel.getPreviousStep(sharedViewModel.idBrandAsInt)
             )
         )
         viewModel.baseEvent.collect { event ->
@@ -98,6 +100,7 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
             text = stringResource(R.string.smart_other_title),
@@ -123,7 +126,7 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
             isTextArea = true,
             isError = viewModel.uiState.sourceError.first,
             errorMessage = stringResource(viewModel.uiState.sourceError.second),
-            isRequiredMessage = stringResource(R.string.smart_other_source_of_income_required),
+            isRequiredMessage = stringResource(R.string.smart_other_source_of_income_required)
         )
 
         CustomOutlinedTextField(
@@ -140,10 +143,12 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
+            placeHolder = stringResource(
+                if (idBrand == Brand.ElSalvador.id) R.string.smart_other_income_sv_placeholder else R.string.smart_other_income_cr_placeholder
+            ),
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
-            isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required),
+            isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required)
         )
     }
 }

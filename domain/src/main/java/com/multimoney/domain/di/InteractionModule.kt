@@ -2,6 +2,10 @@ package com.multimoney.domain.di
 
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationInitialUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -12,6 +16,10 @@ import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryGeneralEconomicActivityUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCaseUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
@@ -24,12 +32,20 @@ import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
+import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveCreditExtensionDetailUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveCreditExtensionDetailUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditFlowStepUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCase
+import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
@@ -38,6 +54,10 @@ import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyDistrictUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCase
 import com.multimoney.domain.interaction.credit.QueryCompanyProvinceUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCreditExtensionAmountUseCase
+import com.multimoney.domain.interaction.credit.QueryCreditExtensionAmountUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryCreditExtensionMessageUseCase
+import com.multimoney.domain.interaction.credit.QueryCreditExtensionMessageUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
@@ -46,6 +66,8 @@ import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryGetInfoDepositUseCase
+import com.multimoney.domain.interaction.credit.QueryGetInfoDepositUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeCantonUseCase
@@ -54,6 +76,8 @@ import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryListCardVDUseCase
+import com.multimoney.domain.interaction.credit.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryOccupationUseCase
 import com.multimoney.domain.interaction.credit.QueryOccupationUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
@@ -62,10 +86,16 @@ import com.multimoney.domain.interaction.credit.QueryProfessionsUseCase
 import com.multimoney.domain.interaction.credit.QueryProfessionsUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCaseImpl
+import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCase
+import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
+import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -82,6 +112,8 @@ import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUs
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
+import com.multimoney.domain.interaction.security.QueryGetQuickActionsImpl
+import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
@@ -139,6 +171,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideQueryGetQuickActions(securityRepository: SecurityRepository): QueryGetQuickActionsUseCase =
+        QueryGetQuickActionsImpl(securityRepository)
+
+    @Provides
+    @Singleton
     fun provideMutationSendPinProcessUseCase(securityRepository: SecurityRepository): MutationSendPinProcessUseCase =
         MutationSendPinProcessUseCaseImpl(securityRepository)
 
@@ -171,6 +208,16 @@ class InteractionModule {
     @Singleton
     fun provideQueryCompanyNameByIdentityUseCase(securityRepository: SecurityRepository): QueryCompanyNameByIdentityUseCase =
         QueryCompanyNameByIdentityUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryValidateBankAccountUseCase(securityRepository: SecurityRepository): QueryValidateBankAccountUseCase =
+        QueryValidateBankAccountUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutableOnfidoCheckProcess(securityRepository: SecurityRepository): MutationOnfidoCheckProcessUseCase =
+        MutationOnfidoCheckProcessUseCaseImpl(securityRepository)
 
     // Balance
 
@@ -258,8 +305,8 @@ class InteractionModule {
 
     @Provides
     @Singleton
-    fun provideQueryValidateBankAccountUseCase(securityRepository: SecurityRepository): QueryValidateBankAccountUseCase =
-        QueryValidateBankAccountUseCaseImpl(securityRepository)
+    fun provideQueryListCardVDUseCase(creditRepository: CreditRepository): QueryListCardVDUseCase =
+        QueryListCardVDUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton
@@ -273,15 +320,80 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideQueryGetExchangeRateUseCase(creditRepository: CreditRepository): QueryGetExchangeRateCreditUseCase =
+        QueryGetExchangeRateCreditUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationProcessPaymentListUseCase(creditRepository: CreditRepository): MutationProcessPaymentListUseCase =
+        MutationProcessPaymentListUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideSubscriptionCreditContractEvent(creditRepository: CreditRepository): SubscriptionCreditContractEventUseCase =
+        SubscriptionCreditContractEventUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutableSaveCreditOperation(creditRepository: CreditRepository): MutationSaveCreditOperationUseCase =
+        MutationSaveCreditOperationUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
     fun provideMutationActivateClientAutomaticDebitUseCase(creditRepository: CreditRepository): MutationActivateClientAutomaticDebitUseCase =
         MutationActivateClientAutomaticDebitUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationDeactivateClientAutomaticDebitUseCase(creditRepository: CreditRepository): MutationDeactivateClientAutomaticDebitUseCase =
+        MutationDeactivateClientAutomaticDebitUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton
     fun provideGetClientAutomaticDebitUseCase(creditRepository: CreditRepository): QueryGetClientAutomaticDebitUseCase =
         QueryGetClientAutomaticDebitUseCaseImpl(creditRepository)
 
+    @Provides
+    @Singleton
+    fun provideQueryCreditExtensionAmountUseCase(creditRepository: CreditRepository): QueryCreditExtensionAmountUseCase =
+        QueryCreditExtensionAmountUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryCreditExtensionMessageUseCase(creditRepository: CreditRepository): QueryCreditExtensionMessageUseCase =
+        QueryCreditExtensionMessageUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveCreditExtensionDetailUseCase(creditRepository: CreditRepository): MutationSaveCreditExtensionDetailUseCase =
+        MutationSaveCreditExtensionDetailUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveClientBankAccountUseCase(creditRepository: CreditRepository): MutationSaveClientBankAccountUseCase =
+        MutationSaveClientBankAccountUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationCreditContractEventUseCase(creditRepository: CreditRepository): MutationSendCreditContractEventUseCase =
+        MutationSendCreditContractEventUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetInfoDepositUseCase(creditRepository: CreditRepository): QueryGetInfoDepositUseCase =
+        QueryGetInfoDepositUseCaseImpl(creditRepository)
+
     // Smart
+
+    @Provides
+    @Singleton
+    fun provideQueryGetCoreBankMovementsUseCase(smartAccountRepository: SmartAccountRepository): QueryGetCoreBankMovementsUseCase =
+        QueryGetCoreBankMovementsUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetPagedSmartMovementsUseCase(smartAccountRepository: SmartAccountRepository): QueryGetPagedSmartMovementsUseCase =
+        QueryGetPagedSmartMovementsUseCaseUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton
@@ -310,6 +422,16 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationInitialRequestUseCase(smartAccountRepository: SmartAccountRepository): MutationInitialRequestUseCase =
+        MutationInitialUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveAutomatedSmartAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationSaveAutomatedSmartAccountUseCase =
+        MutationSaveAutomatedSmartAccountUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryAddressLevelOneUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelOneUseCase =
         QueryAddressLevelOneUseCaseImpl(smartAccountRepository)
 
@@ -327,16 +449,6 @@ class InteractionModule {
     @Singleton
     fun provideQueryGeneralEconomicActivityUseCase(smartAccountRepository: SmartAccountRepository): QueryGeneralEconomicActivityUseCase =
         QueryGeneralEconomicActivityUseCaseImpl(smartAccountRepository)
-
-    @Provides
-    @Singleton
-    fun provideQueryGetExchangeRateUseCase(creditRepository: CreditRepository): QueryGetExchangeRateCreditUseCase =
-        QueryGetExchangeRateCreditUseCaseImpl(creditRepository)
-
-    @Provides
-    @Singleton
-    fun provideMutationProcessPaymentListUseCase(creditRepository: CreditRepository): MutationProcessPaymentListUseCase =
-        MutationProcessPaymentListUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton

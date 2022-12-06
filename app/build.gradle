@@ -196,12 +196,21 @@ dependencies {
     // Slider
     implementation slider.slider
 
+    // VISA
+    implementation appcompat.appcompat
+    implementation visa.visa
+
     // Common Test
     testImplementation common_test.junit
     androidTestImplementation common_test.ext_junit
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
+
+    // Paging
+    implementation paging3.paging3_runtime
+    implementation paging3.paging3_compose
+
 }
 
 dexguard {

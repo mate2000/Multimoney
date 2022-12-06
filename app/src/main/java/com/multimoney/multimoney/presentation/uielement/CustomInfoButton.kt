@@ -36,10 +36,13 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 @Preview
 fun CustomInfoButton(
     modifier: Modifier = Modifier,
-    startIcon: Int = R.drawable.ic_payment_fee_icon,
+    imageModifier: Modifier = Modifier,
+    startIcon: Int? = R.drawable.ic_payment_fee_icon,
     title: String = "",
     subtitle: String = "",
+    subtitle2: String = "",
     endIcon: Int? = R.drawable.ic_right_chevron,
+    shouldCenterEndIcon: Boolean = true,
     onClick: () -> Unit = {},
     onEndIconClick: () -> Unit = {},
     enable: Boolean = true
@@ -85,22 +88,29 @@ fun CustomInfoButton(
         enabled = enable
     ) {
         ConstraintLayout(Modifier.background(background).fillMaxWidth()) {
-            val (startIconId, titleId, subTitleId, endIconId) = createRefs()
-            Image(
-                painter = painterResource(id = startIcon),
-                contentDescription = "",
-                modifier = Modifier.constrainAs(startIconId) {
-                    top.linkTo(parent.top, margin = 17.dp)
-                    start.linkTo(parent.start, margin = 18.dp)
-                    bottom.linkTo(parent.bottom, margin = 17.dp)
-                }
-            )
+            val (startIconId, titleId, subTitleId, subTitle2Id, endIconId) = createRefs()
+            if (startIcon != null) {
+                Image(
+                    painter = painterResource(id = startIcon),
+                    contentDescription = "",
+                    modifier = imageModifier.constrainAs(startIconId) {
+                        top.linkTo(parent.top, margin = 17.dp)
+                        start.linkTo(parent.start, margin = 18.dp)
+                        bottom.linkTo(parent.bottom, margin = 17.dp)
+                    }
+                )
+            }
             if (subtitle.isNotEmpty()) {
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-                        top.linkTo(startIconId.top)
-                        start.linkTo(startIconId.end, margin = 22.dp)
+                        if (startIcon != null) {
+                            top.linkTo(startIconId.top)
+                            start.linkTo(startIconId.end, margin = 22.dp)
+                        } else {
+                            top.linkTo(parent.top, margin = 16.dp)
+                            start.linkTo(parent.start, margin = 16.dp)
+                        }
                         if (endIcon != null) {
                             end.linkTo(endIconId.start, margin = 16.dp)
                         } else {
@@ -125,12 +135,29 @@ fun CustomInfoButton(
                     style = Typography.caption,
                     color = subtitleColor
                 )
+                if (subtitle2.isNotEmpty()) {
+                    Text(
+                        text = subtitle2,
+                        modifier = Modifier.constrainAs(subTitle2Id) {
+                            top.linkTo(subTitleId.bottom, margin = 4.dp)
+                            start.linkTo(subTitleId.start)
+                            bottom.linkTo(parent.bottom, margin = 16.dp)
+                        },
+                        style = Typography.caption,
+                        color = subtitleColor
+                    )
+                }
             } else {
                 Text(
                     text = title,
                     modifier = Modifier.constrainAs(titleId) {
-                        top.linkTo(startIconId.top, margin = 4.dp)
-                        start.linkTo(startIconId.end, margin = 16.dp)
+                        if (startIcon != null) {
+                            top.linkTo(startIconId.top, margin = 4.dp)
+                            start.linkTo(startIconId.end, margin = 16.dp)
+                        } else {
+                            top.linkTo(parent.top, margin = 4.dp)
+                            start.linkTo(parent.start, margin = 16.dp)
+                        }
                         if (endIcon != null) {
                             end.linkTo(endIconId.start, margin = 16.dp)
                         } else {
@@ -149,9 +176,14 @@ fun CustomInfoButton(
                 Image(
                     painter = painterResource(id = endIcon),
                     modifier = Modifier.constrainAs(endIconId) {
-                        top.linkTo(parent.top)
+                        if (shouldCenterEndIcon) {
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        } else {
+                            // align the icon to the top
+                            top.linkTo(parent.top, 17.dp)
+                        }
                         end.linkTo(parent.end, margin = 12.dp)
-                        bottom.linkTo(parent.bottom)
                     }.clickable {
                         onEndIconClick()
                     },

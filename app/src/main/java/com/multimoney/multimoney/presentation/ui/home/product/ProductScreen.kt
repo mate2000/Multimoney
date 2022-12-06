@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,130 +10,148 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
-import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditStatus
-import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_IDENTITY_INCOMPLETE
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INFO_INCOMPLETE
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_INITIAL_CARD
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_MAX_ATTEMPTS
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.CREDIT_REJECTED
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetIdBrand
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProductClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CardCreditMaxAttempts
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CardGTWithoutCredit
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CardOfferSmartProduct
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CardSmartProduct
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CardWithCreditInProcess
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStarted
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditApprovedOrStartedStatus.CreditStatusApproved
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditDetail
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditProcessOnFidoIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditProcessStarted.CreditStartProcessIncomplete
-import com.multimoney.multimoney.presentation.ui.home.product.credit.OngoingCredit
-import com.multimoney.multimoney.presentation.ui.home.product.skeleton.ProductScreenSkeleton
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.uielement.BoxVisaType.CreditCard
-import com.multimoney.multimoney.presentation.uielement.BoxVisaType.RequestCreditCard
-import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
-import com.multimoney.multimoney.presentation.uielement.CustomButton
-import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditHeaderExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoContent
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooter
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoHeaderExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartHeaderExpanded
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
-import com.multimoney.multimoney.presentation.uielement.TOTAL_PAGES
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun ProductScreen(
-    isRestart: Boolean = true,
+    sharedViewModel: HomeViewModel,
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
-    viewModel.apply {
-        isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
-            if (isOnRestart) {
-                onUIEvent(OnGetIdBrand)
-                executeNavigation(onNavigate = onNavigate)
-            }
-            onDispose {
-                isOnRestart = false
-            }
-        }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val deleteAutomaticPaymentToastText = stringResource(id = R.string.automatic_payment_edit_bottom_sheet_delete_toast)
+
+    viewModel.onUIEvent(
+        OnSetUserData(
+            idBrand = sharedViewModel.uiState.idBrand,
+            balanceCredit = sharedViewModel.uiState.balance,
+            pkUser = sharedViewModel.uiState.pkUser,
+            identification = sharedViewModel.uiState.identification,
+            email = sharedViewModel.uiState.email,
+            userName = sharedViewModel.uiState.userName,
+            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            productPageList = sharedViewModel.uiState.productPageList,
+            smartMovements = sharedViewModel.uiState.smartMovementsList
+        )
+    )
+    LaunchedEffect(key1 = true) {
+        viewModel.executeNavigation(onNavigate = onNavigate)
     }
 
-    LaunchedEffect(true) {
-        viewModel.baseEvent.collect { event ->
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.baseEvent.collect { event ->
             when (event) {
-                is ProductViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
-                    event.millisInFuture
-                )
+                is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
+                    coroutineScope.launch {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnQuickActionClicked(event.flow))
+                    }
+                }
+                is HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent -> {
+                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen)
+                }
+                is HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent -> {
+                    viewModel.onUIEvent(
+                        OnDeleteAutomaticPayment {
+                            sharedViewModel.onUIEvent(
+                                OnCallMutationDeactivateClientAutomaticDebit
+                            )
+                        }
+                    )
+                }
+                is OnDeleteAutomaticPaymentToastEvent -> {
+                    Toast.makeText(context, deleteAutomaticPaymentToastText, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
 
     // Pager
-    val productPagerState = rememberPagerState()
-    val bottomPagerState = rememberPagerState()
+    val headerExpandedPagerState = rememberPagerState()
+    val contentPagerState = rememberPagerState()
+    val footerPagerState = rememberPagerState()
+    val footerExpandedPagerState = rememberPagerState()
 
-    LaunchedEffect(key1 = productPagerState.currentPage) {
-        bottomPagerState.animateScrollToPage(productPagerState.currentPage)
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(OnMyProductPageChange(contentPagerState))
+    }
+
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
+        headerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
+        footerPagerState.animateScrollToPage(contentPagerState.currentPage)
+    }
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
+        footerExpandedPagerState.animateScrollToPage(contentPagerState.currentPage)
     }
 
     // todo we have to send the pages to the view pager when the back return
-    if (viewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
+    if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
         ProductScreenSkeleton()
     } else {
         Column(
@@ -141,149 +160,64 @@ fun ProductScreen(
                 .background(MultimoneyTheme.colors.background)
         ) {
             MotionLayoutMM(
-                mainHeader = {
-                    TipsAndOffer(
-                        modifier = Modifier.padding(start = 16.dp, top = 20.dp),
-                        viewModel = viewModel
-                    )
+                header = {
+                    ProductHeader(viewModel = viewModel)
                 },
-                secondaryHeader = { backPressed ->
-                    Box(
-                        contentAlignment = Alignment.TopCenter,
+                headerExpanded = { backPressed ->
+                    ProductHeaderExpanded(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(MultimoneyTheme.colors.background)
-                    ) {
-                        TopNavBar(
-                            isRightButtonVisible = false,
-                            onLeftButtonClick = {
-                                backPressed()
-                            }
-                        )
-                    }
-                },
-                content = { modifier, headerText ->
-                    Products(
-                        modifier = modifier,
-                        pages = NUMBER_PAGES,
-                        state = productPagerState,
+                            .background(MultimoneyTheme.colors.background),
+                        state = headerExpandedPagerState,
                         viewModel = viewModel,
-                        headerText
+                        backPressed = backPressed
+                    )
+                },
+                content = { modifier ->
+                    ProductContent(
+                        modifier = modifier,
+                        state = contentPagerState,
+                        viewModel = viewModel
                     )
                 },
                 footer = {
-                    ProductExtras(
+                    ProductFooter(
                         modifier = Modifier.padding(top = 16.dp),
-                        pages = NUMBER_PAGES,
-                        state = bottomPagerState,
+                        state = footerPagerState,
                         viewModel = viewModel
                     )
                 },
-                secondaryFooter = {
-                    ConstraintLayout(
-                        Modifier.fillMaxSize()
-                    ) {
-                        val (content, buttons) = createRefs()
-
-                        Column(
-                            Modifier
-                                .verticalScroll(rememberScrollState())
-                                .constrainAs(content) {
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                    top.linkTo(parent.top)
-                                    bottom.linkTo(buttons.top)
-                                    height = Dimension.fillToConstraints
-                                }
-                        ) {
-                            Divider(color = MultimoneyTheme.colors.dividerWhite30)
-                            Spacer(modifier = Modifier.height(24.dp))
-                            CreditCardView(viewModel = viewModel)
-                            Spacer(modifier = Modifier.height(24.dp))
-                            CreditDetail(
-                                modifier = Modifier
-                                    .background(MultimoneyTheme.colors.creditDetailBackground)
-                                    .wrapContentSize(),
-                                viewModel = viewModel
-                            )
-                        }
-                        CtaButtons(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .constrainAs(buttons) {
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                    bottom.linkTo(parent.bottom)
-                                },
-                            onClickPay = { viewModel.onUIEvent(OnNavigateToPaymentProcess) },
-                            onClickDisbursement = { viewModel.onUIEvent(OnNavigateToCreditScreen) },
-                            canDisburse = viewModel.uiState.hasBalance
-                        )
-                    }
-                }, isExpanded = viewModel.uiState.isExpanded,
+                footerExpanded = {
+                    ProductFooterExpanded(
+                        modifier = Modifier.padding(top = 16.dp),
+                        state = footerExpandedPagerState,
+                        viewModel = viewModel,
+                        sharedViewModel = sharedViewModel
+                    )
+                },
+                isExpanded = viewModel.uiState.isExpanded,
                 updateIsExpanded = { isExpanded ->
                     viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
                 },
-                totalPages = TOTAL_PAGES
+                forceExpanded = sharedViewModel.uiState.forceIsExpanded,
+                updateForceExpanded = { forceExpanded ->
+                    sharedViewModel.onUIEvent(OnMyProductClick(forceExpanded))
+                }
             )
         }
-        LoadingIndicator(viewModel.uiState.isLoading)
     }
+
+    LoadingIndicator(sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded)
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
-    }
-}
-
-@Composable
-fun CtaButtons(
-    canDisburse: Boolean,
-    modifier: Modifier,
-    onClickPay: () -> Unit = {},
-    onClickDisbursement: () -> Unit = {}
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        if (canDisburse) {
-            CustomButton(
-                text = stringResource(R.string.home_pay_fee_button_text),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp),
-                buttonType = CustomButtonType.PrimarySecondary,
-                onClick = {
-                    onClickPay()
-                }
-            )
-            Spacer(Modifier.width(16.dp))
-            CustomButton(
-                text = stringResource(R.string.home_disburse_button_text),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp),
-                onClick = {
-                    onClickDisbursement()
-                }
-            )
-        } else {
-            CustomButton(
-                text = stringResource(R.string.home_pay_fee_button_text),
-                modifier = Modifier
-                    .weight(1f)
-                    .height(48.dp),
-                onClick = {
-                    onClickPay()
-                }
-            )
-        }
     }
 }
 
@@ -296,13 +230,13 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
         ) {
             Column {
                 Text(
-                    text = "Buen día",
+                    text = viewModel.uiState.userStatus?.wording?.textOne ?: "",
                     style = Typography.h6.copy(letterSpacing = 0.38.sp),
                     color = MultimoneyTheme.colors.labelText
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = "User Name",
+                    text =  viewModel.uiState.userStatus?.wording?.textTwo ?: "",
                     style = Typography.h5.copy(
                         fontSize = 28.sp,
                         letterSpacing = 0.4.sp,
@@ -324,9 +258,7 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
                     painter = painterResource(R.drawable.ic_profile),
                     modifier = Modifier
                         .padding(start = 16.dp, end = 2.dp)
-                        .clickable {
-                            // todo action
-                        },
+                        .clickable { viewModel.onUIEvent(OnNavigateToProfileScreen) },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )
@@ -344,79 +276,75 @@ fun TipsAndOffer(modifier: Modifier, viewModel: ProductViewModel) {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Products(
-    modifier: Modifier,
-    pages: Int,
-    state: PagerState,
-    viewModel: ProductViewModel,
-    headerText: Int
+fun ProductHeader(
+    viewModel: ProductViewModel
 ) {
-    Column(modifier = modifier) {
-        // TODO add dynamic titles when other products are implemented
+    Column {
+        TipsAndOffer(
+            modifier = Modifier.padding(start = 16.dp, top = 20.dp),
+            viewModel = viewModel
+        )
         Text(
-            text = stringResource(id = if (headerText == 0) R.string.home_credit_title else headerText),
-            modifier = Modifier.padding(horizontal = 16.dp),
-            style = if (headerText == 0) Typography.h5.copy(fontWeight = FontWeight.SemiBold) else Typography.body1.copy(
+            text = stringResource(id = R.string.home_product_header_title),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp),
+            style = Typography.body1.copy(
                 fontWeight = FontWeight.SemiBold
             ),
             color = MultimoneyTheme.colors.labelText
         )
-        var pagesSize = 0
+    }
+}
 
-        pagesSize += (viewModel.balanceCredit?.balanceCredit?.size
-            ?: 0) + (viewModel.balanceCredit?.balanceAccountSmart?.size ?: 0)
-
-        pagesSize += if (viewModel.uiState.userStatus?.infoBankAccount?.status == SmartAccountStatus.NO_EXIST.status) 1 else 0
-        pagesSize += if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.NO_EXIST.status) 1 else 0
-
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductHeaderExpanded(
+    modifier: Modifier,
+    state: PagerState,
+    viewModel: ProductViewModel,
+    backPressed: () -> Unit
+) {
+    Column(modifier = modifier) {
         HorizontalPager(
-            count = pagesSize,
-            modifier = Modifier.padding(top = 8.dp),
-            state = state
-        ) { page ->
-            // todo add the logic for the others pages
-            if (page <= (viewModel.balanceCredit?.balanceCredit?.lastIndex ?: 0)) {
-                CreditProduct(viewModel = viewModel)
-            } else {
-                viewModel.balanceCredit?.balanceAccountSmart?.let {
-                    if (it.isNotEmpty()) {
-                        CustomProductBackground(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.Secondary
-                        ) {
-                            CardSmartProduct(
-                                currency = it[page.minus(
-                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                )]?.currencyCode ?: "",
-                                profitMonthly = it[page.minus(
-                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                )]?.gainedInterest.toString(),
-                                profitTotal = it[page.minus(
-                                    viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                )]?.totalBalance.toString()
-                            )
-                        }
-                    } else {
-                        CustomProductBackground(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.Secondary
-                        ) {
-                            CardOfferSmartProduct() {
-                                viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
-                            }
-                        }
-                    }
-                }
+            count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            state = state,
+            userScrollEnabled = false
+        ) {
+            when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
+                ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
+                ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
+                ProductType.Crypto.value -> CryptoHeaderExpanded { backPressed() }
             }
         }
+    }
+}
 
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductContent(
+    modifier: Modifier,
+    state: PagerState,
+    viewModel: ProductViewModel
+) {
+    Column(modifier = modifier) {
+        HorizontalPager(
+            count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            modifier = Modifier.padding(top = 8.dp),
+            state = state
+        ) { currentPage ->
+            when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
+                ProductType.Credit.value -> CreditContent(viewModel = viewModel)
+                ProductType.Smart.value -> SmartContent(viewModel = viewModel, currentPage)
+                ProductType.Crypto.value -> CryptoContent(
+                    userStatus = viewModel.uiState.userStatus,
+                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount
+                )
+            }
+        }
         Spacer(modifier = Modifier.padding(4.dp))
-
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             CustomDotsIndicator(
-                totalDots = pagesSize,
+                totalDots = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
                 selectedIndex = state.currentPage,
                 selectedColor = GrayScale200,
                 unSelectedColor = GrayScale600,
@@ -426,107 +354,32 @@ fun Products(
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun CreditProduct(viewModel: ProductViewModel) {
-    val context = LocalContext.current
-    val whatsAppLink = stringResource(
-        id = R.string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
-    )
-
-    viewModel.uiState.userStatus?.apply {
-        when (infoCredit?.status) {
-            CreditStatus.EXIST_IN_CORE.status -> {
-                CustomProductBackground(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    type = Primary
-                ) {
-                    OngoingCredit(viewModel)
-                }
-            }
-            CreditStatus.APPROVED_CREDIT.status, CreditStatus.CREDIT_PRE_APPROVED.status -> {
-                CustomProductBackground(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp),
-                    type = Primary
-                ) {
-                    when {
-                        viewModel.evaluateCardCondition(CREDIT_INITIAL_CARD, this) -> {
-                            val infoPreApprove =
-                                viewModel.uiState.userStatus?.infoCredit?.infoPreApprove?.infoProducts?.first()
-                            CreditApprovedOrStarted(
-                                creditApprovedOrStartedStatus = CreditStatusApproved,
-                                infoPreApprove?.amountAvailableFormat,
-                                viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                                }
-                            )
-                        }
-                        viewModel.evaluateCardCondition(CREDIT_MAX_ATTEMPTS, this) -> {
-                            CardCreditMaxAttempts(
-                                action = {
-                                    viewModel.onUIEvent(
-                                        ProductViewModel.UIEvent.OnMaxAttemptsCardClick(
-                                            whatsAppLink = whatsAppLink,
-                                            context = context
-                                        )
-                                    )
-                                }
-                            )
-                        }
-                        viewModel.evaluateCardCondition(CREDIT_IDENTITY_INCOMPLETE, this) -> {
-                            CardWithCreditInProcess(
-                                type = CreditProcessOnFidoIncomplete,
-                                action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                                }
-                            )
-                        }
-                        viewModel.evaluateCardCondition(CREDIT_INFO_INCOMPLETE, this) -> {
-                            CardWithCreditInProcess(
-                                type = CreditStartProcessIncomplete,
-                                action = {
-                                    viewModel.onUIEvent(OnNavigateToCreditScreen)
-                                }
-                            )
-                        }
-                        viewModel.evaluateCardCondition(CREDIT_REJECTED, this) -> {
-                            CardWithCreditInProcess(
-                                type = CreditStartProcessIncomplete,
-                                action = {
-                                    viewModel.onUIEvent(OnProductClick(whatsAppLink, context))
-                                }
-                            )
-                        }
-                        else -> {
-                            // no show card
-                        }
+fun ProductFooter(
+    modifier: Modifier,
+    state: PagerState,
+    viewModel: ProductViewModel
+) {
+    Column(modifier = modifier) {
+        HorizontalPager(
+            count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            state = state,
+            userScrollEnabled = false
+        ) {
+            when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
+                ProductType.Credit.value -> CreditFooter(
+                    uiState = viewModel.uiState,
+                    balance = viewModel.balanceCredit,
+                    onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
+                    onNavigateToVisaActivateScreen = {
+                        viewModel.onUIEvent(
+                            OnNavigateToVisaActivateScreen
+                        )
                     }
-                }
-            }
-            CreditStatus.CREDIT_REJECTED.status, CreditStatus.CREDIT_NOT_PRE_APPROVED.status -> {
-                when (viewModel.uiState.idBrand) {
-                    Brand.Guatemala.id.toString() -> {
-                        CustomProductBackground(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp),
-                            type = Primary
-                        ) {
-                            CardGTWithoutCredit(action = {
-                                viewModel.onUIEvent(
-                                    OnProductClick(
-                                        whatsAppLink,
-                                        context
-                                    )
-                                )
-                            })
-                        }
-                    }
-                    else -> {
-                        // no show card
-                    }
-                }
+                )
+                ProductType.Smart.value -> SmartFooter()
+                ProductType.Crypto.value -> CryptoFooter()
             }
         }
     }
@@ -534,42 +387,29 @@ fun CreditProduct(viewModel: ProductViewModel) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun ProductExtras(
+fun ProductFooterExpanded(
     modifier: Modifier,
-    pages: Int = 1,
     state: PagerState,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
 ) {
     Column(modifier = modifier) {
-        HorizontalPager(count = pages, state = state) {
-            CreditCardView(viewModel = viewModel)
-        }
-    }
-}
-
-@Composable
-fun CreditCardView(viewModel: ProductViewModel) {
-    if (viewModel.uiState.userStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
-        viewModel.balanceCredit?.balanceCardInformation?.cardInformation?.let { cardInformation ->
-            CustomBoxVisaBackground(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                onClick = {
-                    viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
-                },
-                type = CreditCard(cardInformation.cardNumber ?: "")
-            )
-        } ?: run {
-            CustomBoxVisaBackground(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                onClick = {
-                    viewModel.onUIEvent(OnNavigateToVisaActivateScreen)
-                },
-                type = RequestCreditCard
-            )
+        HorizontalPager(
+            count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            state = state,
+            userScrollEnabled = false
+        ) {
+            when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
+                ProductType.Credit.value -> CreditFooterExpanded(
+                    viewModel = viewModel,
+                    sharedViewModel = sharedViewModel
+                )
+                ProductType.Smart.value -> SmartFooterExpanded(
+                    viewModel = viewModel,
+                    currentPage
+                )
+                ProductType.Crypto.value -> CryptoFooterExpanded()
+            }
         }
     }
 }
@@ -585,8 +425,6 @@ fun TipAndOfferItem(viewModel: ProductViewModel, creditOfferAndTip: CreditOfferA
                     // TODO, mocking the first item in order to navigate to the smart origination flow
                     if (creditOfferAndTip.id == "1") {
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
-                    } else {
-                        viewModel.onUIEvent(OnNavigateToCreditScreen)
                     }
                 }
         ) {
@@ -637,87 +475,3 @@ fun TipBox(content: @Composable () -> Unit) {
         content()
     }
 }
-
-@Composable
-fun ProductDetails(viewModel: ProductViewModel) {
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-            .padding(horizontal = 16.dp)
-    ) {
-        Row(Modifier.fillMaxWidth()) {
-            Text(
-                text = stringResource(R.string.home_product_movement_title),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .weight(0.6f),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            ClickableText(
-                text = AnnotatedString(stringResource(R.string.home_product_check_all)),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .weight(0.4f),
-                style = Typography.button.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.labelText
-                ),
-                onClick = {
-                    // TODO implement event when views added
-                }
-            )
-            LazyColumn {
-                items(viewModel.getProductMovement()) { movement ->
-                    ProductMovement(
-                        title = movement.title,
-                        date = movement.date,
-                        value = movement.amount
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ProductMovement(title: String, date: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp, top = 8.dp)
-    ) {
-        Column(modifier = Modifier.weight(0.8f)) {
-            Text(
-                text = title,
-                style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            Text(
-                text = date,
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-        }
-        Row(Modifier.weight(0.2f)) {
-            CustomImage(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                drawableResource = R.drawable.ic_close
-            )
-            Text(
-                text = value,
-                style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-        }
-    }
-    Divider(
-        color = MultimoneyTheme.colors.bottomNavigationDividerColor,
-        thickness = 1.dp,
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-private const val NUMBER_PAGES = 2
-private const val PAGE_ZERO = 0

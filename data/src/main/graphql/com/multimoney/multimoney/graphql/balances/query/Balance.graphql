@@ -35,6 +35,11 @@ query Balance(
             cuenta_Iban
             saldo_Monto_Cancelar
             dias_Vencidos
+            estado_Ampli
+            producto_Activo
+            aplica_Debito_Aut
+            debito_Aut_Activo
+            vDDebito_Aut_Activo
         }
         limite_credito
         limite_credito_label
@@ -49,9 +54,27 @@ query Balance(
         }
     ) {
         accounts {
-            currencyCode
+            code
+            message
             totalBalance
+            averageBalance
+            accountNumber
+            tokenNumber
+            productType
+            currencyCode
+            email
+            phoneNumber
+            accountStatus
+            customerId
             gainedInterest
+            activeBroker
+            ibanAccountNumber
+            idCurrencyAccount
+            fullNameCustomer
+            visaDirectId
+            visaDirectUser
+            totalInterest
+            tokenNumber
         }
         request {
             statusFirm
@@ -84,5 +107,7 @@ query Balance(
             cardNumber
         }
         eSTADO
+        cOMISION_DESEMBOLSO
+        tASA_INTERES
     }
 }

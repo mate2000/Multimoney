@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
+import com.multimoney.multimoney.presentation.util.MIN_INCOME
+import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -32,7 +34,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
                 companyDescriptionValue = description,
                 companyDescriptionError = Pair(
                     true,
-                    R.string.smart_own_business_description_max_char_error
+                    R.string.you_have_exceeded_the_max_characters_error
                 )
             )
         }
@@ -40,16 +42,19 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     }
 
     private fun onMonthlyIncomeValueChange(monthlyIncome: String) {
-        uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
+        if (validateDecimalIncome(monthlyIncome)) {
+            uiState = uiState.copy(monthlyIncomeValue = monthlyIncome)
+        }
         onValidateForm()
     }
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
     fun isFormValid() = uiState.companyNameValue.isNotBlank() &&
-            uiState.companyDescriptionValue.isNotBlank() &&
-            !uiState.companyDescriptionError.first
-            && uiState.monthlyIncomeValue.isNotBlank()
+        uiState.companyDescriptionValue.isNotBlank() &&
+        !uiState.companyDescriptionError.first &&
+        uiState.monthlyIncomeValue.isNotBlank() &&
+        uiState.monthlyIncomeValue.toFloat() > MIN_INCOME
 
     data class UIState(
         // Interactions
@@ -59,7 +64,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
         val isLoading: Boolean = false,
         var companyDescriptionError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.smart_own_business_description_max_char_error
+            R.string.you_have_exceeded_the_max_characters_error
         )
     )
 

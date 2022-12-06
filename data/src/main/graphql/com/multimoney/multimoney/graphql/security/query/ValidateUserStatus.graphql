@@ -24,6 +24,11 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
             vISADirect_Usuario
             statusOnfido
             fecha_ultimo_acceso
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
         infoCredit {
             idClient
@@ -38,9 +43,15 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
                     amountAvailableFormat
                     symbolCurrency
                 }
+                idPrint
                 selectedAmount
                 statusFirm
                 currentStep
+            }
+            wording {
+                textOne
+                textTwo
+                cTA
             }
         }
         infoVirtualCard {
@@ -49,9 +60,26 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
         infoBankAccount {
             statusFirm
             status
+            infoRequest {
+                idRequestSysde
+                idRequestGlobal
+                currentStep
+                statusRequest
+            }
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
         infoCrypto {
             status
+            statusFirm
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
     }
 }

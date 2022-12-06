@@ -9,21 +9,21 @@ interface MutationSaveCreditApplicationUseCase {
         idUserRequest: Int,
         pkUser: Int,
         descPromotion: String,
-        interestRate: String,
+        interestRate: String?,
         symbolCurrency: String,
         descCurrency: String,
         idProduct: Int,
         idPromotion: Int,
-        months: String,
-        commissionPercentage: String,
+        months: String?,
+        commissionPercentage: String?,
         paymentDate: String,
         paymentAmount: String,
         user: String,
         idBrand: Int,
         selectedAmount: Double,
-        minimumAmount: Double,
-        creditLimit: Double,
-        tractAmount: Double,
-        currentStep:String
+        minimumAmount: Double?,
+        creditLimit: Double?,
+        tractAmount: Double?,
+        currentStep: String
     ): Flow<MultimoneyResult<CreditApplication?>>
 }

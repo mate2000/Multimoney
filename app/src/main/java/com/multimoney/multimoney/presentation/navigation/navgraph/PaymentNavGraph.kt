@@ -10,12 +10,15 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PAYMENT_CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.CardVDNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.ClientBankAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.PaymentMethodListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SummaryListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.TransferAccountNavType
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardsListScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.PaymentLocationDetailsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
@@ -31,10 +34,18 @@ const val ID_CLIENT = "id_client"
 const val NAME_CLIENT = "name_client"
 const val ID_LOAN_CLIENT = "id_loan_client"
 const val SUMMARY_LIST = "summary_list"
+const val CARD_SELECTED = "summary_list"
 const val CLIENT_BANK_ACCOUNT = "client_bank_account"
 const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
+const val REFERENCE_NUMBER = "reference_number"
+const val CURRENT_AMOUNT_VALUE = "current_amount_value"
+const val PAYMENT_LABEL = "currency"
+const val SHOULD_DISPLAY_EXCHANGE_RATE = "should_display_exchange_rate"
+const val IS_AUTOMATIC_PAYMENT_CHECKED = "is_automated_payment_checked"
+const val IS_MULTI_CURRENCY = "is_multi_currency"
+const val EXCHANGE_RATE_LABEL = "exchange_rate_label"
 const val PAYMENT_AMOUNT = "payment_amount"
 const val PAYMENT_ID = "payment_id"
 const val PAYMENT_DATE = "payment_date"
@@ -45,6 +56,7 @@ const val PREVIOUS_SCREEN = "previous_screen"
 // Payment maps location parameters
 const val POINT_NAME = "point_name"
 const val POINT_ADDRESS = "point_address"
+const val POINT_ADDRESS_DESCRIPTION = "point_address_description"
 const val POINT_SCHEDULE = "point_schedule"
 const val POINT_LATITUDE = "point_latitude"
 const val POINT_LONGITUDE = "point_longitude"
@@ -55,7 +67,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         route = PAYMENT_CREDIT_ROUTE
     ) {
         composable(
-            Screen.PaymentFeeScreen.route,
+            route = Screen.PaymentFeeScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -68,12 +80,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(SUMMARY_LIST) {
                     type = SummaryListNavType()
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(NAME_CLIENT) {
-                    type = NavType.StringType
                 }
             )
         ) {
@@ -92,7 +98,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.PaymentAccountScreen.route,
+            route = Screen.PaymentAccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -105,12 +111,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(SUMMARY_LIST) {
                     type = SummaryListNavType()
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(NAME_CLIENT) {
-                    type = NavType.StringType
                 }
             )
         ) {
@@ -164,7 +164,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.PaymentScheduleScreen.route,
+            route = Screen.PaymentScheduleScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -201,7 +201,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.PaymentScheduleAccountScreen.route,
+            route = Screen.PaymentScheduleAccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -244,6 +244,15 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(CLIENT_BANK_ACCOUNT) {
                     type = ClientBankAccountNavType()
+                },
+                navArgument(SHOULD_DISPLAY_EXCHANGE_RATE) {
+                    type = NavType.BoolType
+                },
+                navArgument(IS_MULTI_CURRENCY) {
+                    type = NavType.BoolType
+                },
+                navArgument(IS_AUTOMATIC_PAYMENT_CHECKED) {
+                    type = NavType.BoolType
                 }
             )
         ) {
@@ -272,6 +281,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(TRANSFER_ACCOUNT) {
                     type = TransferAccountNavType()
+                },
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
                 }
             )
         ) {
@@ -319,6 +331,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         ) {
             PaymentPointsScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = { navController.navigate(it.route) },
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
@@ -340,6 +353,55 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         ) {
             PaymentLocationDetailsScreen(
                 onNavigate = { navController.navigate(it.route) },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.PaymentCardsListScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            PaymentCardsListScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.PaymentAmountCardsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(CARD_SELECTED) {
+                    type = CardVDNavType()
+                }
+            )
+        ) {
+            PaymentAmountCardScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(

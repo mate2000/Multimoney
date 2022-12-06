@@ -170,7 +170,7 @@ ext {
     ]
 
     // OnFido
-    onfido_version = "12.2.0"
+    onfido_version = "12.3.1"
 
     onfido = [
             capture: "com.onfido.sdk.capture:onfido-capture-sdk:${onfido_version}"
@@ -274,11 +274,31 @@ ext {
             slider: "com.github.SmartToolFactory:Compose-Colorful-Sliders:$slider_version"
     ]
 
-    //HtmlText
+    // VISA
+    appcompat_version = "28.0.0"
+    visa_version = "master"
+    appcompat = [
+            appcompat: "com.android.support:appcompat-v7:$appcompat_version"
+    ]
+    visa = [
+            visa: "com.github.Akrostechnologies:react-native-visa-sensory-branding:$visa_version"
+    ]
+
+    // HtmlText
     htmlText_version = "1.0.2"
     htmlText = [
             htmlText: "com.github.ireward:compose-html:$htmlText_version"
     ]
+
+    // Paging 3
+    paging3_version = "3.1.1"
+    compose_paging3_version = "1.0.0-alpha14"
+
+    paging3 = [
+            paging3_runtime: "androidx.paging:paging-runtime:$paging3_version",
+            paging3_compose: "androidx.paging:paging-compose:$compose_paging3_version"
+    ]
+
 
     // Common Test
     junit_version = "4.13.2"

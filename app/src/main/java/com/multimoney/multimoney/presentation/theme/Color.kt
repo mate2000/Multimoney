@@ -171,7 +171,8 @@ data class MultimoneyColors(
     val smartCardTrending: Color,
     val gradientOneVoucher: Color,
     val gradientTwoVoucher: Color,
-    val iconTintVoucher: Color
+    val iconTintVoucher: Color,
+    val textAlertColor: Color
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -207,13 +208,14 @@ val DarkColorPalette = MultimoneyColors(
     arrowColor = Primary400,
     progressBackground = SemanticPositive800,
     progressPercentage = DefaultWhite,
-    productChipBackground = SemanticPositive700,
+    productChipBackground = BlackTransparency16,
     creditDetailBackground = GrayScale700,
     smartCardPlus = Secondary300,
     smartCardTrending = WhiteTransparency80,
     gradientOneVoucher = GradientGrey1,
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40,
+    textAlertColor = SemanticNegative400
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -249,13 +251,14 @@ val LightColorPalette = MultimoneyColors(
     arrowColor = Primary400,
     progressBackground = SemanticPositive800,
     progressPercentage = DefaultWhite,
-    productChipBackground = SemanticPositive700,
+    productChipBackground = BlackTransparency16,
     creditDetailBackground = GrayScale700,
     smartCardPlus = Secondary300,
     smartCardTrending = WhiteTransparency80,
     gradientOneVoucher = GradientGrey1,
     gradientTwoVoucher = GradientGrey2,
-    iconTintVoucher = WhiteTransparency40
+    iconTintVoucher = WhiteTransparency40,
+    textAlertColor = SemanticNegative400
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

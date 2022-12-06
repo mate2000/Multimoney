@@ -29,18 +29,21 @@ android {
             minifyEnabled false
             shrinkResources false
             buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "WEBSOCKET_URL", System.env.PRODUCTION_WEBSOCKET_URL ? "\"${System.env.PRODUCTION_WEBSOCKET_URL}\"" : properties.websocketUrl
             buildConfigField "String", "DATA_STORE_KEY", System.env.PRODUCTION_DATA_STORE_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_KEY}\"" : properties.dataStoreKey
             buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
         staging {
             testCoverageEnabled true
             buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : properties.apiUrlStaging
+            buildConfigField "String", "WEBSOCKET_URL", System.env.STAGING_WEBSOCKET_URL ? "\"${System.env.STAGING_WEBSOCKET_URL}\"" : properties.websocketUrlStaging
             buildConfigField "String", "DATA_STORE_KEY", System.env.STAGING_DATA_STORE_KEY ? "\"${System.env.STAGING_DATA_STORE_KEY}\"" : properties.dataStoreKey
             buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.STAGING_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.STAGING_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
         debug {
             testCoverageEnabled true
             buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : properties.apiUrl
+            buildConfigField "String", "WEBSOCKET_URL", System.env.DEVELOPMENT_WEBSOCKET_URL ? "\"${System.env.DEVELOPMENT_WEBSOCKET_URL}\"" : properties.websocketUrl
             buildConfigField "String", "DATA_STORE_KEY", System.env.DEVELOPMENT_DATA_STORE_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_KEY}\"" : properties.dataStoreKey
             buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
         }
@@ -59,7 +62,6 @@ apollo {
     service("graphql") {
         sourceFolder.set("com/multimoney/multimoney/graphql")
         packageName.set("com.multimoney.data.networking.graphql.apollomodel")
-        generateOptionalOperationVariables.set(false)
     }
 }
 
@@ -107,4 +109,8 @@ dependencies {
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
+
+    // Paging
+    implementation paging3.paging3_runtime
+
 }

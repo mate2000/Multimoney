@@ -220,7 +220,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_onfido_screen"
     )
 
-    object SmartPaymentScreen : Screen("smart_payment",)
+    object SmartPaymentScreen : Screen("smart_payment")
 
     object SavingMethodTransferScreen : Screen("saving_method_transfer_screen")
 

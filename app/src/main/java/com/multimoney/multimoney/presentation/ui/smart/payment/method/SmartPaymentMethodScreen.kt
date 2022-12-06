@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,9 +16,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
-import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -43,12 +42,13 @@ fun SmartPaymentMethodScreen(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
             isRightButtonVisible = false
         )
-        PaymentOptions(viewModel)
+        PaymentOptions({ viewModel.onUIEvent(OnTransferSelected) },
+            { viewModel.onUIEvent(OnVisaSelected) }))
     }
 }
 
 @Composable
-fun PaymentOptions(viewModel: SmartPaymentMethodViewModel) {
+fun PaymentOptions(onTransferClick: () -> Unit, onVisaClick: () -> Unit) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
@@ -66,7 +66,7 @@ fun PaymentOptions(viewModel: SmartPaymentMethodViewModel) {
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_transfer,
             onEndIconClick = {
-                viewModel.onUIEvent(UIEvent.OnTransferSelected)
+                onTransferClick()
             }
         )
 
@@ -78,7 +78,7 @@ fun PaymentOptions(viewModel: SmartPaymentMethodViewModel) {
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_visa,
             onEndIconClick = {
-                viewModel.onUIEvent(UIEvent.OnVisaSelected)
+                onVisaClick()
             }
         )
     }

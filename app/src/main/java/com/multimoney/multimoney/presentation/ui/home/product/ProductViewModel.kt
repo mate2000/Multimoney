@@ -496,12 +496,9 @@ class ProductViewModel @Inject constructor(
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
             is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
-<<<<<<< HEAD
-            is OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
-=======
+            is OnMiniCardsClicked -> onQuickActionClicked(uiEvent.flow)
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
->>>>>>> develop
         }
     }
 
@@ -558,11 +555,8 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
-<<<<<<< HEAD
         data class OnMiniCardsClicked(val flow: String) : UIEvent()
-=======
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
->>>>>>> develop
     }
 
     companion object {

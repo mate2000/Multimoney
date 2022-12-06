@@ -974,27 +974,6 @@ class GraphqlApi @Inject constructor(
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ): ApolloCall<QuickActionsQuery.Data> =
-<<<<<<< HEAD
-        apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
-
-    fun queryMiniCards(
-        infoCreditStatus:Boolean,
-        infoVirtualCardStatus:Boolean,
-        infoBankAccountStatus:Boolean,
-        infoCrypto:Boolean,
-        userEmail:String,
-        idBrand:Int
-    ): ApolloCall<ListMiniCardsQuery.Data> =
-        apolloAuthorizedClient.query(ListMiniCardsQuery(
-            infoCreditStatus,
-            infoVirtualCardStatus,
-            infoBankAccountStatus,
-            infoCrypto,
-            userEmail,
-            idBrand
-        )).fetchPolicy(FetchPolicy.NetworkOnly)
-=======
         apolloAuthorizedClient.query(
             QuickActionsQuery(
                 idBrand,
@@ -1004,6 +983,25 @@ class GraphqlApi @Inject constructor(
                 infoVirtualCardStatus,
                 infoBankAccountStatus,
                 infoCriptoStatus
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryMiniCards(
+        infoCreditStatus:Boolean,
+        infoVirtualCardStatus:Boolean,
+        infoBankAccountStatus:Boolean,
+        infoCrypto:Boolean,
+        userEmail:String,
+        idBrand:Int
+    ): ApolloCall<ListMiniCardsQuery.Data> =
+        apolloAuthorizedClient.query(
+            ListMiniCardsQuery(
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCrypto,
+                userEmail,
+                idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1029,5 +1027,4 @@ class GraphqlApi @Inject constructor(
                 idBrand = idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
->>>>>>> develop
 }

@@ -5959,17 +5959,11 @@ type CheckAccountResult {
 
   visaDirectUser: String
 
-  totalInterest: Decimal!
+  totalInterest: Decimal
 
-<<<<<<< HEAD
-  month: String!
-
-  rate: Decimal!
-=======
   month: String
 
   rate: Decimal
->>>>>>> develop
 }
 
 type PromissoryNoteResumeMobile {

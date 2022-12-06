@@ -34,6 +34,7 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
+import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
@@ -44,6 +45,7 @@ import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
@@ -275,14 +277,14 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.query(OcupationsQuery(pkUser, user, idBrand, idUserRequest))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
-    /*fun queryEmploymentSituation(
+    fun queryEmploymentSituation(
         pkUser: Int,
         user: String,
         idBrand: Int,
         idUserRequest: Int
-    ): ApolloCall<Emplo> =
-        apolloAuthorizedClient.query(OcupationsQuery(pkUser, user, idBrand, idUserRequest))
-            .fetchPolicy(FetchPolicy.NetworkOnly)*/
+    ): ApolloCall<EmploymentSituationQuery.Data> =
+        apolloAuthorizedClient.query(EmploymentSituationQuery(pkUser, user, idBrand, idUserRequest))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationTermsAndConditions(
         user: String,
@@ -855,4 +857,17 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<RelationshipQuery.Data> =
         apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveCreditOffer(
+        pkUser: Long,
+        idUserRequest: Long,
+        idBrand: Int,
+    ): ApolloCall<SaveCreditOfferMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveCreditOfferMutation(
+                pkUser = pkUser,
+                idUserRequest = idUserRequest,
+                idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

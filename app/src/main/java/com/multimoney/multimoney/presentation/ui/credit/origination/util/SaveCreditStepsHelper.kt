@@ -223,6 +223,36 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(creditInfoQuestionTaxPayerExternal)
     }
 
+    // Save additional questions for non-pre approved  flow
+    fun saveAdditionalQuestionsForNonPreApprovedFlow(
+        user: String?,
+        birthDate: String,
+        monthlyIncomeValue: String,
+        employmentSituation: CreditCatalog?,
+        employmentSituationSelected: CreditCatalogOption?
+    ) {
+        val monthlyIncomeQuestion = getScreenConfigQuestion(SALARY, monthlyIncomeValue)
+        saveScreenQuestionData(textQuestion(
+            user = user,
+            value = monthlyIncomeValue,
+            textQuestionData = monthlyIncomeQuestion
+        ))
+
+        val birthDateQuestion = getScreenConfigQuestion(BIRTH_DATE, birthDate)
+        saveScreenQuestionData(textQuestion(
+            user = user,
+            value = birthDate,
+            textQuestionData = birthDateQuestion
+        ))
+
+        saveScreenQuestionData(selectionQuestion(
+            user = user,
+            selectionQuestionData = employmentSituation,
+            selectionQuestionOption = employmentSituationSelected
+        ))
+    }
+
+
     /**
      * This function is use to save all the questions that the value will be got from a textField
      */
@@ -295,7 +325,7 @@ class SaveCreditStepsHelper @Inject constructor() {
             maximumAmount = selectionQuestionData?.maximumAmount ?: "",
             description = selectionQuestionOption?.description ?: "",
             valueCatalogue = selectionQuestionData?.valueCatalog ?: "",
-            idIdentificatorCatalogue = selectionQuestionOption?.pkCatalog
+            idIdentificatorCatalogue = if ((selectionQuestionData?.isCatalogBrandOffice == true) && (selectionQuestionData.useValue == true)){ "1" } else { selectionQuestionOption?.pkCatalog }
         )
     }
 
@@ -314,5 +344,7 @@ class SaveCreditStepsHelper @Inject constructor() {
         const val POLITICALLY_EXPOSED_PERSON = "PEP"
         const val TAX_PAYER_USA = "TAX_PAYER_USA"
         const val TAX_PAYER_EXTERNAL = "TAX_PAYER_EXTERNAL"
+        const val BIRTH_DATE = "Fecha de nacimiento"
+        const val EMPLOYMENT_SITUATION = "Situación laboral"
     }
 }

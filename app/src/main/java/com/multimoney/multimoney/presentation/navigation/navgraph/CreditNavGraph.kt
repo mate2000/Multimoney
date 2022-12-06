@@ -116,7 +116,14 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.AnswerQuestionsScreen.route) {
+        composable(
+            route = Screen.AnswerQuestionsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.IntType },
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+            )
+        ) {
             AnswerQuestionsScreen(
                 onNavigate = {
                     navController.navigate(it.route)

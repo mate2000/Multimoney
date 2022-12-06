@@ -422,6 +422,8 @@
     <string name="disbursement_answer_questions_title_sv" translatable="false">Contános sobre vos</string>
     <string name="disbursement_answer_questions_birthdate_label" translatable="false">Fecha de nacimiento</string>
     <string name="disbursement_answer_questions_birthdate_placeholder" translatable="false">00 | 00 | 0000</string>
+    <string name="disbursement_answer_questions_birthdate_minus_120_error" translatable="false">Validá tu fecha de nacimiento</string>
+    <string name="disbursement_answer_questions_birthdate_minus_18_error" translatable="false">Debes ser mayor de 18 años</string>
     <string name="disbursement_answer_questions_birthdate_required" translatable="false">Fecha de nacimiento requerida</string>
     <string name="disbursement_answer_questions_income_label" translatable="false">Ingreso mensual</string>
     <string name="disbursement_answer_questions_income_placeholder" translatable="false">$000</string>

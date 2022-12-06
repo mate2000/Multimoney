@@ -88,7 +88,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // AnswerQuestionsScreen
     object AnswerQuestionsScreen : Screen(
-        "answer_questions_screen",
+        "answer_questions_screen/{$PK_USER}/{$EMAIL}/{$ID_BRAND}/{$ID_USER_REQUEST}",
         "answer_questions_screen"
     )
 

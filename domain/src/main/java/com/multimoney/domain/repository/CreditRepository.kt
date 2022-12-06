@@ -1,20 +1,6 @@
 package com.multimoney.domain.repository
 
-import com.multimoney.domain.model.credit.AutomaticDebit
-import com.multimoney.domain.model.credit.BanksAndRegularExpression
-import com.multimoney.domain.model.credit.ClientBankAccount
-import com.multimoney.domain.model.credit.CreditApplication
-import com.multimoney.domain.model.credit.CreditCatalog
-import com.multimoney.domain.model.credit.CreditContractEvent
-import com.multimoney.domain.model.credit.CreditInfoQuestion
-import com.multimoney.domain.model.credit.CreditOffer
-import com.multimoney.domain.model.credit.DestinyAccount
-import com.multimoney.domain.model.credit.ExchangeRate
-import com.multimoney.domain.model.credit.PaymentAmount
-import com.multimoney.domain.model.credit.PaymentPoint
-import com.multimoney.domain.model.credit.ProcessPaymentList
-import com.multimoney.domain.model.credit.SaveCreditFlowStep
-import com.multimoney.domain.model.credit.SaveCreditOperation
+import com.multimoney.domain.model.credit.*
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -122,6 +108,13 @@ interface CreditRepository {
         idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
+    suspend fun queryEmploymentSituation(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
     suspend fun mutationSaveCreditFlowStep(
         user: String,
         idBrand: Int,
@@ -130,6 +123,12 @@ interface CreditRepository {
         idUser: Int,
         currentStep: String
     ): Flow<MultimoneyResult<SaveCreditFlowStep?>>
+
+    suspend fun mutationSaveCreditOffer(
+        pkUser: Long,
+        idUserRequest: Long,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveCreditOffer>>
 
     suspend fun mutationTermsAndConditions(
         user: String,

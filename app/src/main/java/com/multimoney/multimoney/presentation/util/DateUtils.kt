@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.util
 
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Calendar
 import java.util.Locale
 import java.util.Date
@@ -54,6 +55,11 @@ fun getCurrentDate(time : Date) : String{
 
 fun getCurrentTime(time : Date) : String{
     return SHORT_TIME_FORMAT.format(time)
+}
+
+fun getCurrentDateMinusYears(years: Long): LocalDate{
+    val today = LocalDate.now()
+    return today.minusYears(years)
 }
 
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"

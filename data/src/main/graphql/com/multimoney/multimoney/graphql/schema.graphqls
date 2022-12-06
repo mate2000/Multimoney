@@ -3306,7 +3306,7 @@ input SaveAutomatedSmartAccountDtoInput {
 }
 
 type ACHTransfer {
-  result: ObjectSendMoneyACH!
+  result: ObjectSendMoneyACH
 
   status: Int
 
@@ -3348,7 +3348,7 @@ input ACHTransferByPhoneDtoInput {
 }
 
 type ProcessLocalTransfer {
-  result: ProcessLocalTransferResult!
+  result: ProcessLocalTransferResult
 
   status: Int
 
@@ -3426,7 +3426,7 @@ input ManageSinpeAccountDtoInput {
 }
 
 type SinpeTransfer {
-  result: OBjectSendMoneySinpe!
+  result: OBjectSendMoneySinpe
 
   status: Int
 
@@ -3474,7 +3474,7 @@ input SinpeTransferDtoInput {
 }
 
 type Transfer365 {
-  result: ObjectSendMoney365!
+  result: ObjectSendMoney365
 
   status: Int
 
@@ -5392,17 +5392,17 @@ input questionsDataInput {
 }
 
 type ObjectSendMoney365 {
-  bankAuthorization: Authorization!
+  bankAuthorization: Authorization
 
-  transfer365: Transfer!
+  transfer365: Transfer
 
-  bankTransferRegistration: RegisterOperation!
+  bankTransferRegistration: RegisterOperation
 
-  coreBanking: ProcessCore!
+  coreBanking: ProcessCore
 }
 
 type OBjectSendMoneySinpe {
-  nUMERO_REFERENCIA_INTERNO: String!
+  nUMERO_REFERENCIA_INTERNO: String
 }
 
 type ManageSinpeAccountResult {
@@ -5410,19 +5410,19 @@ type ManageSinpeAccountResult {
 }
 
 type ProcessLocalTransferResult {
-  authorization: String!
+  authorization: String
 
-  currentBalance: Decimal!
+  currentBalance: Decimal
 
-  destinationTitularName: String!
+  destinationTitularName: String
 
-  originAccountNumber: String!
+  originAccountNumber: String
 }
 
 type ObjectSendMoneyACH {
-  bankAuthorization: Authorization!
+  bankAuthorization: Authorization
 
-  coreBanking: ProcessCore!
+  coreBanking: ProcessCore
 }
 
 type SaveAutomatedSmartAccountResult {
@@ -5961,9 +5961,15 @@ type CheckAccountResult {
 
   totalInterest: Decimal!
 
+<<<<<<< HEAD
   month: String!
 
   rate: Decimal!
+=======
+  month: String
+
+  rate: Decimal
+>>>>>>> develop
 }
 
 type PromissoryNoteResumeMobile {
@@ -6453,29 +6459,29 @@ type CurrencyConfigurationType {
 }
 
 type ProcessCore {
-  transferDetail: TransferDetailObj!
+  transferDetail: TransferDetailObj
 }
 
 type RegisterOperation {
-  status: Int!
+  status: Int
 
-  message: String!
+  message: String
 }
 
 type Transfer {
-  status: Int!
+  status: Int
 
-  message: String!
+  message: String
 }
 
 type Authorization {
-  status: Int!
+  status: Int
 
-  authorizationId: String!
+  authorizationId: String
 
-  message: String!
+  message: String
 
-  outHours: Boolean!
+  outHours: Boolean
 }
 
 type expirationDate {
@@ -6485,21 +6491,21 @@ type expirationDate {
 }
 
 type TransferDetailObj {
-  originName: String!
+  originName: String
 
-  originAccount: String!
+  originAccount: String
 
-  destinationBank: String!
+  destinationBank: String
 
-  destinationName: String!
+  destinationName: String
 
-  destinationAccount: String!
+  destinationAccount: String
 
-  amount: Decimal!
+  amount: Decimal
 
-  emailSent: Int!
+  emailSent: Int
 
-  typeAccountDescription: String!
+  typeAccountDescription: String
 }
 
 type TransferMethodConfigurationType {

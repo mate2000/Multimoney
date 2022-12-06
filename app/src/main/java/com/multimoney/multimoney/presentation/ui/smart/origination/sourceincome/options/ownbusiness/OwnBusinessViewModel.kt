@@ -34,7 +34,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
                 companyDescriptionValue = description,
                 companyDescriptionError = Pair(
                     true,
-                    R.string.smart_own_business_description_max_char_error
+                    R.string.you_have_exceeded_the_max_characters_error
                 )
             )
         }
@@ -64,7 +64,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
         val isLoading: Boolean = false,
         var companyDescriptionError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.smart_own_business_description_max_char_error
+            R.string.you_have_exceeded_the_max_characters_error
         )
     )
 

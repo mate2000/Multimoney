@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import androidx.paging.PagingData
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
@@ -8,18 +9,43 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SaveSmartAccount
+import com.multimoney.domain.model.accountsmart.SmartMovement
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
 interface SmartAccountRepository {
 
+    suspend fun queryGetCoreBankMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        monthDate: String?
+    ): Flow<MultimoneyResult<SmartMovementsResult?>>
+
+    suspend fun getPagedMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageSize: Int,
+        monthDate: String?
+    ): Flow<PagingData<SmartMovement>>
+
     suspend fun queryCivilStatus(
         pkUser: String,
         idBrand: Int
     ): Flow<MultimoneyResult<CivilStatusResult?>>
 
-    suspend fun queryProfessionsSmart(pkUser: String, idBrand: Int): Flow<MultimoneyResult<Professions?>>
+    suspend fun queryProfessionsSmart(
+        pkUser: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<Professions?>>
 
     suspend fun queryAddressLevelOne(
         user: String,
@@ -84,6 +110,13 @@ interface SmartAccountRepository {
         idJobLevel3: Long
     ): Flow<MultimoneyResult<GlobalRequest?>>
 
+    suspend fun mutationSaveAutomatedSmartAccount(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        idRequest: Long
+    ): Flow<MultimoneyResult<SaveSmartAccount?>>
+
     suspend fun queryGeneralEconomicActivity(
         user: String,
         idBrand: Int
@@ -94,4 +127,10 @@ interface SmartAccountRepository {
         idBrand: Int,
         option: Int
     ): Flow<MultimoneyResult<RelationshipData>>
+
+    suspend fun mutationInitialRequestSmartAccount(
+        pkUser: Long,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<GlobalRequest?>>
 }

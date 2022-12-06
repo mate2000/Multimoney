@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation
 
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
@@ -11,6 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
@@ -24,11 +26,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVI
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
@@ -56,6 +58,7 @@ const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
+const val PAYMENT_SMART_ROUTE = "payment_smart_route"
 
 const val ID_BRAND = "id_brand"
 
@@ -87,13 +90,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // DisbursementNavGraph Screens
     object DisbursementAmountScreen : Screen(
-        "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}",
+        "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}/{$ID_USER_REQUEST}/{$IDENTIFICATION}",
         "disbursement_amount_screen"
     )
 
     object DisbursementAccountScreen : Screen(
-        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}",
+        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}/{$PK_USER}/{$ID_USER_REQUEST}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}/{$IDENTIFICATION}",
         "disbursement_account_screen"
+    )
+
+    object DisbursementAddAccountScreen : Screen(
+        "disbursement_add_account_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$ID_USER_REQUEST}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}",
+        "disbursement_add_account_screen"
     )
 
     // CreditNavGraph Screens
@@ -113,7 +121,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
-    object ProcessingTransactionScreen : Screen("processing_transaction_screen")
+
+    object ProcessingTransactionScreen : Screen(
+        "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
+        "processing_transaction_screen"
+    )
+
     object OnfidoAndEvicertiaErrorsScreen : Screen(
         "onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
         "onfido_and_evicertia_errors_screen"
@@ -127,6 +140,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object HomeBNScreen : Screen("home_bn_screen")
     object QuickActionBNScreen : Screen("quick_action_bt_screen")
     object ProductsBNScreen : Screen("products_bt_screen")
+
+    // Add Iban Account
+    object AddIbanAccountScreen : Screen(
+        "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "add_iban_account_screen"
+    )
 
     // Payment Credit
     object PaymentFeeScreen : Screen(
@@ -186,14 +205,30 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentLocationDetailsScreen : Screen(
-        "payment_location_details_screen/{$POINT_NAME}/{$POINT_ADDRESS}/{$POINT_SCHEDULE}/{$POINT_LATITUDE}/{$POINT_LONGITUDE}/{$PAYMENT_AMOUNT}/{$PAYMENT_ID}/{$ID_BRAND}",
+        "payment_location_details_screen/{$POINT_NAME}/{$POINT_ADDRESS}/{$POINT_ADDRESS_DESCRIPTION}/{$POINT_SCHEDULE}/{$POINT_LATITUDE}/{$POINT_LONGITUDE}/{$PAYMENT_AMOUNT}/{$CREDIT_NUMBER}/{$ID_BRAND}",
         "payment_location_details_screen"
     )
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}",
         "smart_screen"
+    )
+
+    object SmartOnfidoScreen : Screen(
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}",
+        "smart_onfido_screen"
+    )
+
+    object SmartMovementsScreen : Screen(
+        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
+        "smart_movements_screen"
+    )
+
+    // Payment Smart
+    object PaymentSmartCardsScreen : Screen(
+        "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "payment_smart_cards_screen"
     )
 
     // TestNavGraph Screens

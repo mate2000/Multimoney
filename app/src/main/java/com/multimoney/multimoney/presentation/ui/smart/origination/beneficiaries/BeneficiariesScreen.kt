@@ -15,8 +15,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -34,6 +36,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.BaseEvent.OnFormValidateCompleted
@@ -43,9 +46,12 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnBeneficiaryFullNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnCallQueryRelationshipUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnEditBeneficiaryClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnPercentageValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRemoveBeneficiaryClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.edit.EditBeneficiaryBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -133,7 +139,19 @@ fun BeneficiariesScreen(
         modifier = generalModifier
     ) {
         if (beneficiaryViewModel.uiState.addBeneficiaryState) BeneficiaryForm(beneficiaryViewModel)
-        else BeneficiaryList(beneficiaryViewModel)
+        else BeneficiaryList(beneficiaryViewModel, sharedViewModel)
+    }
+
+    if (beneficiaryViewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = beneficiaryViewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = beneficiaryViewModel.uiState.openDialog.descriptionResource),
+            negativeButtonText = stringResource(id = beneficiaryViewModel.uiState.openDialog.negativeResource),
+            positiveButtonText = stringResource(id = beneficiaryViewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = beneficiaryViewModel.uiState.openDialog.isActive,
+            onNegativeAction = beneficiaryViewModel.uiState.openDialog.negativeAction,
+            onPositiveAction = beneficiaryViewModel.uiState.openDialog.positiveAction,
+        )
     }
 
     BackHandler {
@@ -190,24 +208,26 @@ fun BeneficiaryForm(viewModel: BeneficiariesViewModel) {
         labelText = stringResource(id = string.smart_account_beneficiaries_percentage),
         modifier = Modifier.padding(top = 16.dp)
     )
-
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource),
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
-        )
-    }
     viewModel.onUIEvent(OnValidateForm)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BeneficiaryList(
-    viewModel: BeneficiariesViewModel = hiltViewModel()
+    viewModel: BeneficiariesViewModel = hiltViewModel(),
+    sharedViewModel: SmartViewModel
 ) {
     OnContinueEnable(true)
+
+    viewModel.apply {
+        if (uiState.showOptionsModal) {
+            if (!sharedViewModel.uiState.bottomSheetState.isVisible) {
+                sharedViewModel.onUIEvent(OnClickBottomSheet)
+                uiState.showOptionsModal = false
+            }
+        }
+    }
+
     viewModel.uiState.beneficiaryList.let { beneficiaries ->
         LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
             items(beneficiaries) { beneficiary ->
@@ -219,12 +239,29 @@ fun BeneficiaryList(
                     subtitle = stringResource(
                         id = string.smart_account_beneficiary_content,
                         beneficiary.strRelationship ?: "",
-                        beneficiary.allocationPercentage ?: ""
+                        "${beneficiary.allocationPercentage}%"
                     ),
                     endIcon = R.drawable.ic_options,
                     startIcon = R.drawable.ic_beneficiary,
                     onEndIconClick = {
-                        // TODO Implement bottom sheet
+                        sharedViewModel.onUIEvent(OnClickBottomSheet)
+                        sharedViewModel.uiState.bottomSheet = {
+                            EditBeneficiaryBottomSheet(
+                                coroutineScope = rememberCoroutineScope(),
+                                modalBottomSheetState = sharedViewModel.uiState.bottomSheetState,
+                                onEditClick = {
+                                    viewModel.onUIEvent(OnEditBeneficiaryClick(beneficiary))
+                                },
+                                onRemoveClick = {
+                                    viewModel.onUIEvent(OnRemoveBeneficiaryClick(beneficiary))
+                                },
+                                onBackClick = {
+                                    if (sharedViewModel.uiState.bottomSheetState.isVisible) {
+                                        sharedViewModel.onUIEvent(OnClickBottomSheet)
+                                    }
+                                }
+                            )
+                        }
                     }
                 )
             }

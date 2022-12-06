@@ -120,9 +120,7 @@ fun OwnBusinessTitleScreenContent(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            isError = viewModel.uiState.businessNameError.first,
-            errorMessage = stringResource(viewModel.uiState.businessNameError.second),
-            isRequired = true
+            isRequiredMessage = stringResource(R.string.smart_business_personal_name_required)
         )
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 24.dp),
@@ -138,12 +136,10 @@ fun OwnBusinessTitleScreenContent(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
+            placeHolder = stringResource(R.string.smart_decimal_income_placeholder, currencySymbol),
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
-            isError = viewModel.uiState.amountError.first,
-            errorMessage = stringResource(viewModel.uiState.amountError.second),
-            isRequired = true
+            isRequiredMessage = stringResource(R.string.smart_business_personal_income_label_required)
         )
     }
 }

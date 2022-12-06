@@ -58,6 +58,7 @@ const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
+const val PAYMENT_SMART_ROUTE = "payment_smart_route"
 
 const val ID_BRAND = "id_brand"
 
@@ -140,6 +141,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object QuickActionBNScreen : Screen("quick_action_bt_screen")
     object ProductsBNScreen : Screen("products_bt_screen")
 
+    // Add Iban Account
+    object AddIbanAccountScreen : Screen(
+        "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "add_iban_account_screen"
+    )
+
     // Payment Credit
     object PaymentFeeScreen : Screen(
         "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}",
@@ -206,6 +213,22 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SmartScreen : Screen(
         "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}",
         "smart_screen"
+    )
+
+    object SmartOnfidoScreen : Screen(
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}",
+        "smart_onfido_screen"
+    )
+
+    object SmartMovementsScreen : Screen(
+        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
+        "smart_movements_screen"
+    )
+
+    // Payment Smart
+    object PaymentSmartCardsScreen : Screen(
+        "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "payment_smart_cards_screen"
     )
 
     // TestNavGraph Screens

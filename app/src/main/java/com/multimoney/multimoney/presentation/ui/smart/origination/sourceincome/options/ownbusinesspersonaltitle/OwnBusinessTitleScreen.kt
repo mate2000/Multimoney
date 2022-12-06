@@ -136,7 +136,7 @@ fun OwnBusinessTitleScreenContent(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
+            placeHolder = stringResource(R.string.smart_decimal_income_placeholder, currencySymbol),
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_business_personal_income_label_required)

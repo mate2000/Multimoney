@@ -9,6 +9,7 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
@@ -108,6 +109,13 @@ interface SmartAccountRepository {
         idJobLevel2: Long,
         idJobLevel3: Long
     ): Flow<MultimoneyResult<GlobalRequest?>>
+
+    suspend fun mutationSaveAutomatedSmartAccount(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        idRequest: Long
+    ): Flow<MultimoneyResult<SaveSmartAccount?>>
 
     suspend fun queryGeneralEconomicActivity(
         user: String,

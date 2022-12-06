@@ -535,7 +535,7 @@ class CreditRepositoryImpl @Inject constructor(
         idBank: Int,
         accountNumber: String,
         idCurrency: Int,
-        idAccountType: Int,
+        idAccountType: Int?,
         idLoanClient: Long,
         user: String,
         idBrand: Int

@@ -1,0 +1,20 @@
+query GetHistoricClientBalance(
+    $user: String,
+    $idBrand: Int,
+    $identification: String!,
+    $baseAsset: String!,
+    $starDate: String!,
+    $endDate: String!
+){
+    historicalBalanceClient(historicalBalanceClientInput: {
+        user: $user,
+        idBrand: $idBrand,
+        identification: $identification,
+        baseAsset: $baseAsset,
+        startDate: $starDate,
+        endDate: $endDate
+    }) {
+        convertedBalance,
+        date
+    }
+}

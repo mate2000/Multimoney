@@ -178,7 +178,8 @@ fun ProductScreen(
                     ProductContent(
                         modifier = modifier,
                         state = contentPagerState,
-                        viewModel = viewModel
+                        viewModel = viewModel,
+                        sharedViewModel = sharedViewModel
                     )
                 },
                 footer = {
@@ -325,7 +326,8 @@ fun ProductHeaderExpanded(
 fun ProductContent(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
@@ -339,7 +341,9 @@ fun ProductContent(
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
-                    openCryptoHomeAction = { /*open card action*/ }
+                    openActionEnable = !sharedViewModel.uiState.forceIsExpanded,
+                    openCryptoHomeAction = { sharedViewModel.onUIEvent(OnMyProductClick(true)) },
+                    openSmartCryptoAction = { /*open smart origination*/ }
                 )
             }
         }

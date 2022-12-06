@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product.crypto
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,7 +21,9 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 fun CryptoContent(
     userStatus: ValidateUserStatus?,
     cryptoBalance: BalanceCryptoAccount?,
-    openCryptoHomeAction: () -> Unit = {}
+    openActionEnable: Boolean = false,
+    openCryptoHomeAction: () -> Unit = {},
+    openSmartCryptoAction: () -> Unit = {}
 ) {
     when (userStatus?.infoBankAccount?.status) {
 
@@ -30,39 +33,40 @@ fun CryptoContent(
                     if (cryptoBalance == null) {
                         //show balance 0 card
                         CustomProductBackground(
-                            modifier = Modifier.padding(horizontal = 16.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .clickable(enabled = openActionEnable) { openCryptoHomeAction.invoke() },
                             type = ProductBackGroundType.ComplementaryTwo
                         ) {
                             CryptoCardWithBalance(
                                 isBalanceNullOrZero = true,
                                 cryptoBalance = stringResource(id = R.string.home_crypto_card_with_balance_zero_text),
-                                action = openCryptoHomeAction
                             )
                         }
                         return
                     }
                     //show card with balance and gains/loses
                     CustomProductBackground(
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable(enabled = openActionEnable) { openCryptoHomeAction.invoke() },
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
                         CryptoCardWithBalance(
-                            isActionEnable = true,
-                            cryptoBalance = cryptoBalance.toString(),
-                            action = openCryptoHomeAction
+                            cryptoBalance = cryptoBalance.toString()
                         )
                     }
                 }
                 CryptoAccountStatus.INACTIVE.status -> {
                     //show offer card with action
                     CustomProductBackground(
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable { openSmartCryptoAction.invoke() },
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
                         CryptoCardDiscoverCrypto(
-                            wording = userStatus.infoCrypto?.wording,
-                            isActionEnable = true,
-                            action = openCryptoHomeAction
+                            wording = userStatus.infoCrypto?.wording
                         )
                     }
                 }
@@ -86,13 +90,13 @@ fun CryptoContent(
             }
             //show offer card without action
             CustomProductBackground(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .clickable { openSmartCryptoAction.invoke() },
                 type = ProductBackGroundType.ComplementaryTwo
             ) {
                 CryptoCardDiscoverCrypto(
-                    wording = userStatus.infoCrypto?.wording,
-                    isActionEnable = true,
-                    action = openCryptoHomeAction
+                    wording = userStatus.infoCrypto?.wording
                 )
             }
         }

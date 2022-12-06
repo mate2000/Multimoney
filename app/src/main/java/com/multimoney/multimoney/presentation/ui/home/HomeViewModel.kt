@@ -12,10 +12,12 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
+import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.QuickAction
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -50,6 +52,8 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.getCurrentDateString
+import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -63,6 +67,7 @@ class HomeViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
+    private val queryGetHistoricalClientBalanceUseCase: GetHistoricalClientBalanceUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
     private val querytGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
@@ -163,6 +168,38 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun callQueryGetHistoricalBalanceUseCase(
+        user: String?,
+        idBrand: Int?,
+        identification: String
+    ) = executeUseCase {
+        queryGetHistoricalClientBalanceUseCase.invoke(
+            user,
+            idBrand,
+            identification,
+            baseAsset = "BTC",
+            startDate = getCurrentDateString(),
+            endDate = getCurrentDateString()
+        ).collectLatest { result ->
+            result.onSuccess { historicBalance ->
+                historicBalance?.let {
+                    if (uiState.configurationVersion != null && uiState.balance != null) {
+                        uiState = uiState.copy(isLoading = false)
+                    }
+                    uiState = uiState.copy(
+                        cryptoHistoricalBalance = it.historicalBalanceClient
+                    )
+                }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
     private fun setBalance(balance: Balance) {
         val productPageList = mutableListOf<ProductPage>()
 
@@ -246,6 +283,8 @@ class HomeViewModel @Inject constructor(
         uiState = uiState.copy(balance = balance, productPageList = productPageList)
     }
 
+
+
     private fun callQueryGetConfigurationVersion(
         idBrand: Int
     ) = executeUseCase {
@@ -310,6 +349,11 @@ class HomeViewModel @Inject constructor(
                     infoVirtualCardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0,
                     infoCriptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
+                )
+                callQueryGetHistoricalBalanceUseCase(
+                    user = validateUserStatus?.infoUser?.userName,
+                    identification = identification,
+                    idBrand = idBrand
                 )
             }
             result.onFailure {
@@ -410,6 +454,7 @@ class HomeViewModel @Inject constructor(
         var configurationVersion: ConfigurationVersion? = null,
         var validateUserStatus: ValidateUserStatus? = null,
         var balance: Balance? = null,
+        var cryptoHistoricalBalance: List<HistoricalBalanceClient> = emptyList(),
         var idBrand: String = "",
         var pkUser: String = "",
         var identification: String = "",

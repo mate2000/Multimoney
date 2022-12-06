@@ -41,6 +41,8 @@ import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency10
+import com.multimoney.multimoney.presentation.theme.ComplementaryBlack
+import com.multimoney.multimoney.presentation.theme.ComplementaryBlack2
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale700
@@ -165,7 +167,7 @@ fun NoticeSection(showNoticeSection: Boolean = true) {
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             shape = RoundedCornerShape(16.dp),
             elevation = 0.dp,
-            backgroundColor = BlackTransparency10
+            backgroundColor = ComplementaryBlack2
         ) {
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),

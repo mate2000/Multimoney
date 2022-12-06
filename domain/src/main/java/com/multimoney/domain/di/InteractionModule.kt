@@ -80,6 +80,10 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.crypto.CryptoCurrencyMovementUseCase
+import com.multimoney.domain.interaction.crypto.CryptoCurrencyMovementUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
+import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
@@ -114,6 +118,7 @@ import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
+import com.multimoney.domain.repository.CryptoRepository
 import com.multimoney.domain.repository.SecurityRepository
 import com.multimoney.domain.repository.SmartAccountRepository
 import dagger.Module
@@ -412,4 +417,16 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelationshipUseCaseImpl(smartAccountRepository: SmartAccountRepository): QueryRelationshipUseCase =
         QueryRelationshipUseCaseImpl(smartAccountRepository)
+
+    // Crypto
+
+    @Provides
+    @Singleton
+    fun provideQueryCryptoCurrencyMovement(cryptoRepository: CryptoRepository): CryptoCurrencyMovementUseCase =
+        CryptoCurrencyMovementUseCaseImpl(cryptoRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetHistoricalClientBalance(cryptoRepository: CryptoRepository): GetHistoricalClientBalanceUseCase =
+        GetHistoricalClientBalanceUseCaseImpl(cryptoRepository)
 }

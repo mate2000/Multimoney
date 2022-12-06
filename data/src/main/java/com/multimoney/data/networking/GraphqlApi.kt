@@ -21,6 +21,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CreditContractEventSub
 import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionMessageQuery
 import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
+import com.multimoney.data.networking.graphql.apollomodel.CryptoCurrencyMovementQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
@@ -30,6 +31,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdenti
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
@@ -971,4 +973,44 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<QuickActionsQuery.Data> =
         apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    // Crypto
+
+    fun queryGetCryptoCurrencyMovements(
+        user: String?,
+        idBrand: Int?,
+        identification: String,
+        market: String?,
+        order_time_begin: Any?,
+        order_time_end: Any?
+    ): ApolloCall<CryptoCurrencyMovementQuery.Data> =
+        apolloAuthorizedClient.query(
+            CryptoCurrencyMovementQuery(
+                user,
+                idBrand,
+                identification,
+                market,
+                order_time_begin,
+                order_time_end
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetHistoricalClientBalance(
+        user: String?,
+        idBrand: Int?,
+        identification: String,
+        baseAsset: String,
+        startDate: String,
+        endDate: String
+    ): ApolloCall<GetHistoricClientBalanceQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetHistoricClientBalanceQuery(
+                user,
+                idBrand,
+                identification,
+                baseAsset,
+                startDate,
+                endDate
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,19 +16,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.graphics.HomeCryptoGraphic
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 
 @Composable
-fun CryptoCardDiscoverCrypto(
-    wording: Wording?,
-    isActionEnable: Boolean = false,
-    action: () -> Unit = {}
-) {
+fun CryptoCardDiscoverCrypto(wording: Wording?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,9 +52,7 @@ fun CryptoCardDiscoverCrypto(
             contentAlignment = Alignment.Center
         ) {
             Column(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .clickable(enabled = isActionEnable) { action.invoke() },
+                modifier = Modifier.wrapContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CustomImage(
@@ -119,8 +114,7 @@ fun CryptoCardSmartInProcess(
 fun CryptoCardWithBalance(
     cryptoBalance: String,
     isBalanceNullOrZero: Boolean = false,
-    isActionEnable: Boolean = false,
-    action: () -> Unit = {}
+    clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList()
 ) {
     Column(
         modifier = Modifier
@@ -132,9 +126,6 @@ fun CryptoCardWithBalance(
                 end = 16.dp,
                 bottom = if (isBalanceNullOrZero) 136.dp else 0.dp
             )
-            .clickable(enabled = isActionEnable) {
-                action.invoke()
-            }
     ) {
         Text(
             text = stringResource(id = R.string.home_crypto_card_with_balance_title),
@@ -151,13 +142,9 @@ fun CryptoCardWithBalance(
                 color = MultimoneyTheme.colors.text
             )
         )
-        if (!isBalanceNullOrZero) {
+        if (clientCryptoBalanceHistory.isNotEmpty()) {
             //box for now, todo: show graphics gains/loses, show chip gains/losses
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(136.dp)
-            )
+            HomeCryptoGraphic(clientCryptoBalanceHistory = clientCryptoBalanceHistory)
             /* chip gains/losses
             Box(
                 modifier = Modifier.fillMaxWidth(),

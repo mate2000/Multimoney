@@ -17,7 +17,8 @@ private fun ValidateUserStatusQuery.ValidateUserStatus.mapToDomainModel() = Vali
     infoCredit = infoCredit.mapToDomainModel(),
     infoBankAccount = infoBankAccount.mapToDomainModel(),
     infoCrypto = infoCrypto.mapToDomainModel(),
-    infoVirtualCard = infoVirtualCard.mapToDomainModel()
+    infoVirtualCard = infoVirtualCard.mapToDomainModel(),
+    wording = infoUser.wording?.mapToDomainModel()
 )
 
 private fun ValidateUserStatusQuery.InfoUser.mapToDomainModel() = InfoUser(
@@ -85,6 +86,12 @@ private fun ValidateUserStatusQuery.Wording1.mapToDomainModel() = Wording(
 )
 
 private fun ValidateUserStatusQuery.Wording2.mapToDomainModel() = Wording(
+    textOne = textOne,
+    textTwo = textTwo,
+    cTA = cTA
+)
+
+private fun ValidateUserStatusQuery.Wording3.mapToDomainModel() = Wording(
     textOne = textOne,
     textTwo = textTwo,
     cTA = cTA

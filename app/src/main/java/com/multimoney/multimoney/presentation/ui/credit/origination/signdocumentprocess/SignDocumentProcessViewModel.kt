@@ -41,8 +41,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENE
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignDocumentProcessViewModel @Inject constructor(
@@ -90,7 +90,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
-        if (idBrand != Brand.ElSalvador.id) {
+        if (idBrand != Brand.ElSalvador.id && idPrint != ID_PRINT_EMPTY) {
             onListenCreditContractEventSubscription(idPrint, idBrand)
         }
     }
@@ -140,7 +140,7 @@ class SignDocumentProcessViewModel @Inject constructor(
             VALIDATE_IDENTITY.value -> {
                 emitBaseEvent(SimulateUserInteraction)
                 if (creditContractEvent?.active == true) {
-                    if (idBrand == Brand.CostaRica.id) {
+                    if (idBrand == Brand.CostaRica.id && idPrint != ID_PRINT_EMPTY) {
                         navigateToProcessingTransaction()
                     } else {
                         // todo navigate to success screen
@@ -240,5 +240,6 @@ class SignDocumentProcessViewModel @Inject constructor(
         const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val TIME_TO_WAIT_VALIDATE_SMART_IDENTITY_IN_MILLI_SECOND = 30000L
+        const val ID_PRINT_EMPTY = 0L
     }
 }

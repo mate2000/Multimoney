@@ -18,23 +18,23 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
  *
  * Parameters:
  * @param modifier: Apply style.
- * @param canDisburse: Enable and disable disbursement button.
+ * @param canSendMoney: Enable and disable SendMoney button.
  * @param onClickPay: Action to be executed on click pay button.
- * @param onClickDisbursement: Action to be executed on click disbursement button.
+ * @param onClickSendMoney: Action to be executed on click SendMoney button.
  * **/
 
 @Composable
 fun SmartCtaButtons(
     modifier: Modifier,
-    canDisburse: Boolean,
+    canSendMoney: Boolean,
     onClickPay: () -> Unit = {},
-    onClickDisbursement: () -> Unit = {}
+    onClickSendMoney: () -> Unit = {}
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (canDisburse) {
+        if (canSendMoney) {
             CustomButton(
                 text = stringResource(string.home_send_money_button_text),
                 modifier = Modifier
@@ -42,7 +42,7 @@ fun SmartCtaButtons(
                     .height(48.dp),
                 buttonType = PrimarySecondary,
                 onClick = {
-                    onClickPay()
+                    onClickSendMoney()
                 }
             )
             Spacer(Modifier.width(16.dp))
@@ -52,7 +52,7 @@ fun SmartCtaButtons(
                     .weight(1f)
                     .height(48.dp),
                 onClick = {
-                    onClickDisbursement()
+                    onClickPay()
                 }
             )
         } else {

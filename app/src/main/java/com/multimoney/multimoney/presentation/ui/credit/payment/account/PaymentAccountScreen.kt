@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.account
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
@@ -110,8 +109,6 @@ fun PaymentAccountContent(
 fun PaymentAccountEmptyState(
     viewModel: PaymentAccountViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -137,7 +134,7 @@ fun PaymentAccountEmptyState(
             )
         }
         CustomButton(
-            onClick = { Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show() },
+            onClick = { viewModel.onUIEvent(OnAddAccountClick) },
             text = stringResource(id = R.string.payment_account_create),
             modifier = Modifier
                 .padding(vertical = 40.dp, horizontal = 16.dp)
@@ -152,8 +149,6 @@ fun PaymentAccountEmptyState(
 fun PaymentAccountList(
     viewModel: PaymentAccountViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-
     viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
         LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
             items(clientBankAccountList) { clientBankAccount ->
@@ -179,9 +174,7 @@ fun PaymentAccountList(
         modifier = Modifier
             .padding(top = 32.dp)
             .fillMaxWidth(),
-        onClick = {
-            Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
-        },
+        onClick = { viewModel.onUIEvent(OnAddAccountClick) },
         buttonType = CustomButtonType.PrimaryTertiary,
         trailingIcon = R.drawable.ic_plus
     )

@@ -2,6 +2,8 @@ package com.multimoney.domain.di
 
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationInitialUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
@@ -422,6 +424,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationInitialRequestUseCase(smartAccountRepository: SmartAccountRepository): MutationInitialRequestUseCase =
         MutationInitialUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveAutomatedSmartAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationSaveAutomatedSmartAccountUseCase =
+        MutationSaveAutomatedSmartAccountUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

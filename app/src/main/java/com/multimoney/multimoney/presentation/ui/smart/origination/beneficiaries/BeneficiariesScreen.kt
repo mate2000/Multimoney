@@ -149,6 +149,7 @@ fun BeneficiariesScreen(
             negativeButtonText = stringResource(id = beneficiaryViewModel.uiState.openDialog.negativeResource),
             positiveButtonText = stringResource(id = beneficiaryViewModel.uiState.openDialog.positiveResource),
             openDialogCustom = beneficiaryViewModel.uiState.openDialog.isActive,
+            onNegativeAction = beneficiaryViewModel.uiState.openDialog.negativeAction,
             onPositiveAction = beneficiaryViewModel.uiState.openDialog.positiveAction,
         )
     }
@@ -217,6 +218,16 @@ fun BeneficiaryList(
     sharedViewModel: SmartViewModel
 ) {
     OnContinueEnable(true)
+
+    viewModel.apply {
+        if (uiState.showOptionsModal) {
+            if (!sharedViewModel.uiState.bottomSheetState.isVisible) {
+                sharedViewModel.onUIEvent(OnClickBottomSheet)
+                uiState.showOptionsModal = false
+            }
+        }
+    }
+
     viewModel.uiState.beneficiaryList.let { beneficiaries ->
         LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
             items(beneficiaries) { beneficiary ->

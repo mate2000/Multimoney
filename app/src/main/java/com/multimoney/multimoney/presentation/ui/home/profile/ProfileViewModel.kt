@@ -9,11 +9,14 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand.Guatemala
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import timber.log.Timber
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
@@ -38,9 +41,9 @@ class ProfileViewModel @Inject constructor(
     private fun getProfileInfo() = viewModelScope.launch {
         uiState = uiState.copy(
             userName = dataStorePreferences.getUserName().first(),
-            email = dataStorePreferences.getUserEmail().first(),
-            phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
-            identification = dataStorePreferences.getIdentification().first(),
+            email = savedStateHandle[EMAIL],
+            phoneNumber = savedStateHandle[PHONE_NUMBER],
+            identification = savedStateHandle[IDENTIFICATION],
             pkUser = dataStorePreferences.getPkUser().first(),
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
             firstName = savedStateHandle[FIRST_NAME]
@@ -82,9 +85,9 @@ class ProfileViewModel @Inject constructor(
     data class UIState(
         // Fields
         val userName: String = "",
-        val email: String = "",
-        val phoneNumber: String = "",
-        val identification : String = "",
+        val email: String? = null,
+        val phoneNumber: String? = null,
+        val identification : String? = null,
         val idBrand: Int? = null,
         val pkUser: String? = null,
         val firstName : String? = null,
@@ -97,7 +100,6 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnGetProfileInfo -> getProfileInfo()
             is UIEvent.OnUpdateProfileClick -> navigateToPersonalInfoScreen()
-            is UIEvent.OnUpdateProfileClick -> Timber.d("navigate to update profile screen")
             is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
             is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
             is UIEvent.OnSettingsClick -> Timber.d("navigate to settings screen")

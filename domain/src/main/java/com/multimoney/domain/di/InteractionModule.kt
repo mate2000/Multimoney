@@ -94,6 +94,8 @@ import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
+import com.multimoney.domain.interaction.security.MutationChangeEmailUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
@@ -468,4 +470,9 @@ class InteractionModule {
     @Singleton
     fun provideMutationChangePhoneUseCase(securityRepository: SecurityRepository): MutationChangePhoneUseCase =
         MutationChangePhoneUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationChangeEmailUseCase(securityRepository: SecurityRepository): MutationChangeEmailUseCase =
+        MutationChangeEmailUseCaseImpl(securityRepository)
 }

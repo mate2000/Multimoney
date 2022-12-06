@@ -7,15 +7,16 @@ import androidx.lifecycle.SavedStateHandle
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -122,7 +123,7 @@ class ChangePhoneViewModel @Inject constructor(
     }
 
     private fun onContinueButtonClicked() {
-        navigateTo("${Screen.ProfileVerifyIdentityScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/{${uiState.email}}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     fun onUIEvent(event: UIEvent) {

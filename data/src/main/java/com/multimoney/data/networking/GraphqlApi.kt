@@ -13,6 +13,7 @@ import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
+import com.multimoney.data.networking.graphql.apollomodel.ChangeEmailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ChangePhoneMutation
 import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
@@ -73,7 +74,6 @@ import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryReques
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.credit.CreditInfoQuestion
 import com.multimoney.domain.model.credit.DestinyAccount
-import com.multimoney.domain.model.security.ValidateOTP
 import javax.inject.Inject
 
 class GraphqlApi @Inject constructor(
@@ -994,6 +994,19 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<ChangePhoneMutation.Data> =
         apolloAuthorizedClient.mutation(ChangePhoneMutation(identification,phone,pkUser,idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationChangeEmail(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ChangeEmailMutation.Data> =
+        apolloAuthorizedClient.mutation(ChangeEmailMutation(pkUser,identification,email,registerId,changeUser,idBrand,user))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
 
 
     fun mutationSaveClientBankAccount(

@@ -223,7 +223,7 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/${email}/${uiState.userStatus?.infoUser?.phone}/${identification}")
     }
 
     private fun onNavigateToSmartMovements(accountToken: String) =

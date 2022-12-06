@@ -64,7 +64,9 @@ fun PersonalInfoContent(viewModel : PersonalInfoViewModel){
                 title = stringResource(R.string.profile_change_email_address),
                 startIcon = R.drawable.ic_envelope,
                 endIcon = R.drawable.ic_right_chevron,
-                onClick = { }
+                onClick = {
+                    viewModel.onUIEvent(PersonalInfoViewModel.UIEvent.OnNavigateToEditEmail)
+                }
             )
             CustomItemRow(
                 title = stringResource(R.string.profile_change_phone),
@@ -74,22 +76,7 @@ fun PersonalInfoContent(viewModel : PersonalInfoViewModel){
                     viewModel.onUIEvent(PersonalInfoViewModel.UIEvent.OnNavigateToEditPhone)
                 }
             )
-//            viewModel.apply {
-//                ProfileHeader(
-//                    userName = uiState.userName,
-//                    email = uiState.userEmail,
-//                    phoneNumber = uiState.phoneNumber,
-//                    onUpdateClick = { onUIEvent(ProfileViewModel.UIEvent.OnUpdateProfileClick) }
-//                )
-//                ProfileOptions(
-//                    uiState = uiState,
-//                    onMyAccountsClick = { onUIEvent(ProfileViewModel.UIEvent.OnMyAccountsClick) },
-//                    onMyCardsClick = { onUIEvent(ProfileViewModel.UIEvent.OnMyCardsClick) },
-//                    onSettingsClick = { onUIEvent(ProfileViewModel.UIEvent.OnSettingsClick) },
-//                    onHelpClick = { onUIEvent(ProfileViewModel.UIEvent.OnHelpClick) },
-//                    onLogoutClick = { onUIEvent(ProfileViewModel.UIEvent.OnLogoutClick) }
-//                )
-//            }
+
         }
     }
 }

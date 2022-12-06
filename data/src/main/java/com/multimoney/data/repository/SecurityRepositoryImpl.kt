@@ -4,6 +4,7 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.domain.model.security.CatalogType
+import com.multimoney.domain.model.security.ChangeEmail
 import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
@@ -362,6 +363,22 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<ChangePhone>> =
         fetchData(
             apolloCall = graphqlApi.mutationChangePhone(identification,phone,pkUser,idBrand),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun mutationChangeEmail(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ChangeEmail>>  =
+        fetchData(
+            apolloCall = graphqlApi.mutationChangeEmail(pkUser,identification,email,registerId,changeUser,user,idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

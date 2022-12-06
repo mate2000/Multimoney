@@ -12,9 +12,10 @@ import com.multimoney.multimoney.presentation.navigation.PROFILE_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.PersonalInfoScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.email.ChangeEmailScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ValidateOTPScreen
-import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.VerifyIdentityScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -48,7 +49,6 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 }
             )
         }
-
         composable(
             Screen.ProfilePersonalInfoScreen.route,
             arguments = listOf(
@@ -58,6 +58,29 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             )
         ) {
             PersonalInfoScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
+        composable(
+            Screen.ProfileChangeEmailScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND){
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            ChangeEmailScreen(
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(
@@ -96,7 +119,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         }
 
         composable(
-            Screen.ProfileVerifyIdentityScreen.route,
+            Screen.ProfileVerifyIdentityPhoneScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND){
                     type = NavType.IntType
@@ -117,7 +140,28 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 }
             )
         }
-
+        composable(
+            Screen.ProfileVerifyIdentityEmailScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND){
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            VerifyIdentityScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
         composable(
             Screen.ProfileValidateOTPScreen.route,
             arguments = listOf(

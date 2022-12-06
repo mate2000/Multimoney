@@ -1,15 +1,17 @@
-package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone
+package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.FieldToChange
+import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationValidateOTPUseCase
+import com.multimoney.domain.model.security.ChangeEmail
 import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.ValidateOTP
@@ -20,13 +22,15 @@ import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.CHANGING_FIELD
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.NEW_VALUE
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.SEND_METHOD
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -57,6 +61,7 @@ class ValidateOTPViewModel @Inject constructor(
     private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
     private val mutationValidateOTPUseCase: MutationValidateOTPUseCase,
     private val mutationChangePhoneUseCase: MutationChangePhoneUseCase,
+    private val mutationChangeEmailUseCase: MutationChangeEmailUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -76,6 +81,7 @@ class ValidateOTPViewModel @Inject constructor(
         val userName: String? = null,
         val phoneNumber: String? = null,
         val firstName: String? = null,
+        val newValue : String? = null,
         val sendMethod: String? = null,
         val isLoading: Boolean = true,
         var isAlertResultVisible: Boolean = false,
@@ -91,6 +97,7 @@ class ValidateOTPViewModel @Inject constructor(
         val remainingTimeText: String = remainingTime.format(),
         val isOtpFromSms: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
+        val changingField: String? = null
     )
 
     init {
@@ -102,7 +109,9 @@ class ValidateOTPViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             firstName = savedStateHandle[FIRST_NAME],
             userName = savedStateHandle[USER],
-            sendMethod = savedStateHandle[SEND_METHOD]
+            sendMethod = savedStateHandle[SEND_METHOD],
+            changingField = savedStateHandle[CHANGING_FIELD],
+            newValue = savedStateHandle[NEW_VALUE]
         )
     }
 
@@ -238,14 +247,36 @@ class ValidateOTPViewModel @Inject constructor(
                 }
         }
 
+    private fun onChangeEmail(pkUser: Int, identification: String, email: String, registerId: Int,
+                              changeUser: Boolean, user: String, idBrand: Int) =
+        executeUseCase {
+            mutationChangeEmailUseCase.invoke(pkUser,identification,email,registerId,changeUser,user,idBrand)
+                .collectLatest {
+                    processChangeEmailResult(it)
+                }
+        }
+
 
     private fun processChangePhoneResult(result: MultimoneyResult<ChangePhone>) {
         result.onSuccess {
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
-                dataStorePreferences.setUserPhoneNumber(uiState.phoneNumber ?: "")
+                dataStorePreferences.setUserPhoneNumber(uiState.newValue ?: "")
                 navigateBack(Screen.HomeScreen.route, isRestart = true)
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
+            }
+        }
+            .onMessage { uiState = uiState.copy(isLoading = false) }
+            .onFailure { uiState = uiState.copy(isLoading = false, isAlertResultVisible = true) }
+            .onLoading { uiState = uiState.copy(isLoading = true) }
+    }
+    private fun processChangeEmailResult(result: MultimoneyResult<ChangeEmail>) {
+        result.onSuccess {
+            uiState = uiState.copy(isLoading = false)
+            viewModelScope.launch {
+                dataStorePreferences.setUserEmail(uiState.newValue ?: "")
+                navigateBack(Screen.HomeScreen.route, isRestart = true)
+                emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
         }
             .onMessage { uiState = uiState.copy(isLoading = false) }
@@ -255,12 +286,28 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun processValidateOTPResult(result: MultimoneyResult<ValidateOTP?>) {
         result.onSuccess {
-            onChangePhone(
-                uiState.identification.toString(),
-                uiState.phoneNumber.toString(),
-                uiState.pkUser ?: "",
-                uiState.idBrand ?: 0
-            )
+            when (uiState.changingField){
+                FieldToChange.PHONE.value ->{
+                    onChangePhone(
+                        uiState.identification.toString(),
+                        uiState.newValue.toString(),
+                        uiState.pkUser ?: "",
+                        uiState.idBrand ?: 0
+                    )
+                }
+                else -> {
+                    onChangeEmail(
+                        uiState.pkUser?.toInt()?: 0,
+                        uiState.identification.toString(),
+                        uiState.newValue.toString(),
+                        0,
+                        false,
+                        uiState.userName ?: "",
+                        uiState.idBrand ?: 0
+                    )
+                }
+            }
+
         }.onMessage {
             uiState = uiState.copy(
                 isLoading = false,

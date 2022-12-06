@@ -32,6 +32,7 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -40,6 +41,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
@@ -66,6 +68,8 @@ fun ValidateOTPScreen(
     val context = LocalContext.current
     val phoneNumberChangedToastText =
         stringResource(id = R.string.profile_phone_number_changed_toast)
+    val emailChangedToastText =
+        stringResource(id = R.string.profile_email_changed_toast)
 
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
@@ -125,7 +129,8 @@ fun ValidateOTPScreen(
                     onUIEvent(ValidateOTPViewModel.UIEvent.OnCallMutationSendPinProcessSuccess(it))
                 }
             }.onMessage {
-                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false,
+                viewModel.onUIEvent(
+                    ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false,
                     DialogParameters(
                         titleResource = R.string.sign_up_email_blocked_dialog_title,
                         description = viewModel.userBlockedForMaxAttend,
@@ -149,6 +154,9 @@ fun ValidateOTPScreen(
             when (event) {
                 is HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent -> {
                     Toast.makeText(context, phoneNumberChangedToastText, Toast.LENGTH_LONG).show()
+                }
+                is HomeViewModel.BaseEvent.OnEmailChangedToastEvent -> {
+                    Toast.makeText(context, emailChangedToastText, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -374,7 +382,7 @@ fun getAlertTextByCountry(viewModel: ValidateOTPViewModel): String{
 @Composable
 fun getDialogTextByCountry(viewModel: ValidateOTPViewModel): String {
     return when (viewModel.uiState.idBrand) {
-        Brand.Guatemala.id -> stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_gt)
-        else -> stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts)
+        Brand.Guatemala.id ->  if (viewModel.uiState.changingField == FieldToChange.PHONE.value) stringResource(id = R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt) else stringResource(id = R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt)
+        else -> if (viewModel.uiState.changingField == FieldToChange.PHONE.value) stringResource(id = R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone) else stringResource(id = R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email)
     }
 }

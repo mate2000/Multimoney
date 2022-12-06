@@ -1,6 +1,7 @@
 package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.security.CatalogType
+import com.multimoney.domain.model.security.ChangeEmail
 import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
@@ -163,4 +164,14 @@ interface SecurityRepository {
         pkUser : String,
         idBrand : Int
     ): Flow<MultimoneyResult<ChangePhone>>
+
+    suspend fun mutationChangeEmail(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ChangeEmail>>
 }

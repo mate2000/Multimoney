@@ -287,26 +287,25 @@ class DisbursementAccountViewModel @Inject constructor(
 
     fun getCurrentAmountFormatted() =
         "${idCurrency?.getCurrency()?.symbol ?: ""}${
-            selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getCurrentAmountExchangedFormatted() =
         "${uiState.clientBankAccountSelected?.idCurrency?.getCurrency()?.symbol ?: ""}${
-            uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString().stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString().stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getExchangeRateFormatted() =
         "${idCurrency?.getCurrency()?.symbol ?: ""}${
-            uiState.exchangeRateLabel.toString().stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        uiState.exchangeRateLabel.toString().stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getQuotaTotalFormatted() =
         "${idCurrency?.getCurrency()?.symbol ?: ""}${
-            quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
+        quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
         }"
 
     fun getQuotaNextDateFormatted() = getCardDateFormat(nextPaymentDate, BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS, API_DATE_FORMAT)
-
 
     data class UIState(
         // Interactions

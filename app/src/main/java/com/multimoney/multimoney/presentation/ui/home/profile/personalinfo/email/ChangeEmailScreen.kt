@@ -155,7 +155,7 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
             text = stringResource(id = R.string.profile_change_email_button),
-            enable = viewModel.uiState.userEmailError.first.not(),
+            enable = viewModel.uiState.isButtonEnabled,
             onClick = {
                 viewModel.onUIEvent(ChangeEmailViewModel.UIEvent.OnContinueButtonClicked)
             }

@@ -78,18 +78,30 @@ class ChangeEmailViewModel @Inject constructor(
         navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
-    private fun isFormValid() = emitBaseEvent(
-        ChangeEmailViewModel.BaseEvent.OnFormValidateCompleted(
-            when {
-                uiState.newEmail?.isBlank() == true -> false
-                uiState.newEmailConfirmation?.isBlank() == true -> false
-                isEmailValid(uiState.newEmail).not() -> false
-                isEmailValid(uiState.newEmailConfirmation).not() -> false
-                uiState.newEmail.equals(uiState.newEmailConfirmation).not() -> false
-                else -> true
+    private fun isFormValid() {
+
+        uiState = when {
+            uiState.newEmail?.isBlank() == true -> {
+                uiState.copy(isButtonEnabled = false)
             }
-        )
-    )
+            uiState . newEmailConfirmation ?. isBlank () == true -> {
+                uiState.copy(isButtonEnabled = false)
+            }
+            isEmailValid(uiState.newEmail).not() -> {
+                uiState.copy(isButtonEnabled = false)
+            }
+            isEmailValid(uiState.newEmailConfirmation).not() -> {
+                uiState.copy(isButtonEnabled = false)
+            }
+            uiState.newEmail.equals(uiState.newEmailConfirmation).not() -> {
+                uiState.copy(isButtonEnabled = false)
+            }
+            else -> {
+                uiState.copy(isButtonEnabled = true)
+            }
+        }
+    }
+
 
 
     private fun isUserEmailValid() {

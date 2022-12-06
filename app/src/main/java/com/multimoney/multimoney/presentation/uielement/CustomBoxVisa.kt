@@ -30,7 +30,6 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -49,8 +48,7 @@ fun CustomBoxVisaBackground(
     onClick: (type: BoxVisaType) -> Unit = {},
     shape: Shape = RoundedCornerShape(20.dp),
     isEnable: Boolean = true,
-    type: BoxVisaType = RequestCreditCard,
-    idBrand: Int = 0
+    type: BoxVisaType = RequestCreditCard
 ) {
     val textColor: Color
     val startIconColor: Color
@@ -90,7 +88,7 @@ fun CustomBoxVisaBackground(
                     endIconColor = WhiteTransparency40
                 }
             }
-            contentButton = { RequestCreditCardContent(textColor, endIconColor, idBrand) }
+            contentButton = { RequestCreditCardContent(textColor, endIconColor) }
         }
         is CreditCard -> {
             if (isSystemInDarkTheme()) {
@@ -119,7 +117,7 @@ fun CustomBoxVisaBackground(
                 }
             }
             contentButton = {
-                CreditCardContent(type.text, textColor, startIconColor, endIconColor, idBrand)
+                CreditCardContent(type.text, textColor, startIconColor, endIconColor)
             }
         }
     }
@@ -155,8 +153,7 @@ fun CreditCardContent(
     cardNumber: String,
     textColor: Color,
     startIconColor: Color,
-    endIconColor: Color,
-    idBrand: Int
+    endIconColor: Color
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -196,11 +193,7 @@ fun CreditCardContent(
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-fun RequestCreditCardContent(textColor: Color, endIconColor: Color, idBrand: Int) {
-    val cardMessageResource = if (idBrand == Brand.Guatemala.id)
-        R.string.home_active_credit_card_label_gt
-    else
-        R.string.home_active_credit_card_label_sv
+fun RequestCreditCardContent(textColor: Color, endIconColor: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -208,7 +201,7 @@ fun RequestCreditCardContent(textColor: Color, endIconColor: Color, idBrand: Int
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(id = cardMessageResource),
+            text = stringResource(id = R.string.home_active_credit_card_label),
             modifier = Modifier.padding(vertical = 18.dp),
             style = Typography.body2.copy(
                 fontWeight = FontWeight.SemiBold,

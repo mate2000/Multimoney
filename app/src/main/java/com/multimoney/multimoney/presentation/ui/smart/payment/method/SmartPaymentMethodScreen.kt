@@ -42,13 +42,18 @@ fun SmartPaymentMethodScreen(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
             isRightButtonVisible = false
         )
-        PaymentOptions({ viewModel.onUIEvent(OnTransferSelected) },
-            { viewModel.onUIEvent(OnVisaSelected) }))
+        PaymentOptions(
+            onTransferClick = { viewModel.onUIEvent(OnTransferSelected) },
+            onVisaClick = { viewModel.onUIEvent(OnVisaSelected) }
+        )
     }
 }
 
 @Composable
-fun PaymentOptions(onTransferClick: () -> Unit, onVisaClick: () -> Unit) {
+fun PaymentOptions(
+    onTransferClick: () -> Unit,
+    onVisaClick: () -> Unit
+) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
@@ -65,9 +70,7 @@ fun PaymentOptions(onTransferClick: () -> Unit, onVisaClick: () -> Unit) {
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_transfer,
-            onEndIconClick = {
-                onTransferClick()
-            }
+            onEndIconClick = onTransferClick
         )
 
         CustomInfoButton(
@@ -77,9 +80,7 @@ fun PaymentOptions(onTransferClick: () -> Unit, onVisaClick: () -> Unit) {
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_visa,
-            onEndIconClick = {
-                onVisaClick()
-            }
+            onEndIconClick = onVisaClick
         )
     }
 }

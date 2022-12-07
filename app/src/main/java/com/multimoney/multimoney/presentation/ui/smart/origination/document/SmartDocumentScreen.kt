@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.util.collectSmartStepByStepData
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_DAY
@@ -62,6 +63,12 @@ fun SmartDocumentScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.baseEvent.collectSmartStepByStepData {
+            viewModel.onUIEvent(UIEvent.OnLoadCurrentStepData(it))
+        }
+    }
 
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
@@ -143,7 +150,6 @@ fun SmartDocumentScreen(
                 sharedViewModel.accountSmartData?.idBrand ?: 0
             )
         )
-
         viewModel.onUIEvent(OnValidateForm)
     }
 
@@ -200,7 +206,12 @@ fun SmartDocumentScreen(
 
                         val calendarValidation = Calendar.getInstance()
                         calendarValidation.set(year, month, day)
-                        viewModel.onUIEvent(OnBirthDateValueChange(date, LocalDate.of(year, month, day)))
+                        viewModel.onUIEvent(
+                            OnBirthDateValueChange(
+                                date,
+                                LocalDate.of(year, month, day)
+                            )
+                        )
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),

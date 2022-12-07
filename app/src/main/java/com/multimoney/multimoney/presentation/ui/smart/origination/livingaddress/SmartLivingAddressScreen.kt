@@ -58,7 +58,10 @@ fun SmartLivAddressScreen(
                                 idAddressLevel2 = viewModel.uiState.divisionTwoSelected?.id?.toLong()
                                     ?: 0,
                                 idAddressLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong()
-                                    ?: 0
+                                    ?: 0,
+                                currentStep = SmartSteps.Search.getNameById(
+                                    sharedViewModel.uiState.currentStep
+                                )
                             )
                         )
                     )

@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
@@ -19,7 +18,6 @@ import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseC
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartData
-import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -124,7 +122,7 @@ class SmartViewModel @Inject constructor(
             result.onSuccess { stepByStep ->
                 stepByStep?.let {
                     Log.d("tellStepByStep", "list step by step: $it")
-                    preLoadDataOnListStepByStep(it)
+                    navigateToScreenOnStepFetched(it)
                 }
                 onUIEvent(OnLoadingValueChange(false))
             }
@@ -145,8 +143,15 @@ class SmartViewModel @Inject constructor(
         }
     }
 
-    private fun preLoadDataOnListStepByStep(stepByStep: StepByStep) {
-        accountSmartData = accountSmartData?.copy(
+    /**
+     * this function will collect the data coming from the backend and will be set on the
+     * AccountSmartData object, then an event will be sent to the smart origination step
+     * by step screens in order to preload the data on the current UI and also to navigate
+     * to the right step.
+     */
+    private fun navigateToScreenOnStepFetched(stepByStep: StepByStep) {
+        // setting up the data coming from the backend
+        accountSmartData = AccountSmartData(
             pkUser = pkUser,
             status = SmartStatus.Search.getIdByName(stepByStep.statusRequest),
             idProfessionType = stepByStep.idProfessionType,
@@ -154,6 +159,9 @@ class SmartViewModel @Inject constructor(
             birthday = stepByStep.birthdate.orEmpty(),
             expirationDate = stepByStep.expirationDate,
             idGender = stepByStep.idGenre?.toLong(),
+            strGenre = stepByStep.strGenre,
+            stringProfessionType = stepByStep.stringProfessionType,
+            strMaritalStatus = stepByStep.strMaritalStatus,
             idAddressLevel1 = stepByStep.idAddressLevel1?.toLong(),
             idAddressLevel2 = stepByStep.idAddressLevel2?.toLong(),
             idAddressLevel3 = stepByStep.idAddressLevel3?.toLong(),
@@ -180,6 +188,10 @@ class SmartViewModel @Inject constructor(
             idJobLevel2 = stepByStep.idJobLevel2,
             idJobLevel3 = stepByStep.idJobLevel3,
         )
+
+        // before navigating, send an event to all children from the origination flow
+        // in order to obtain the data and update in on the UI accordingly
+        emitBaseEvent(BaseEvent.OnListStepByStepFetched(accountSmartData))
 
         // update the current step coming from the backend in order to navigate to the proper screen
         uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
@@ -540,8 +552,6 @@ class SmartViewModel @Inject constructor(
             val previousStep: Int
         ) : UIEvent()
 
-        object OnNavigateToContinueValidatingIdentity : UIEvent()
-
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
         data class OnContinueVisible(
@@ -552,11 +562,6 @@ class SmartViewModel @Inject constructor(
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
 
-        data class OnUseDataValueChange(
-            val accountSmartData: AccountSmartData?,
-            val idBrand: Int? = null
-        ) : UIEvent()
-
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
 
         data class OnCallSaveAutomatedSmartAccount(val accountSmartData: AccountSmartData?) :
@@ -565,6 +570,10 @@ class SmartViewModel @Inject constructor(
         object OnClickBottomSheet : UIEvent()
 
         object OnCallMutationInitialRequest : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        data class OnListStepByStepFetched(val accountSmartData: AccountSmartData?) : BaseEvent()
     }
 
     companion object {

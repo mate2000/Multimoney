@@ -48,6 +48,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
 
 // Route
 const val LOGIN_ROUTE = "log_in_route"
@@ -221,9 +222,16 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_onfido_screen"
     )
 
-    object SmartPaymentScreen : Screen("smart_payment")
+    object SmartPaymentScreen : Screen(
+        "smart_payment/{$USER_SMART_ACCOUNT}",
+        "smart_payment"
+    )
 
-    object SavingMethodTransferScreen : Screen("saving_method_transfer_screen")
+
+    object SavingMethodTransferScreen : Screen(
+        route = "saving_method_transfer_screen/{$USER_SMART_ACCOUNT}",
+        baseRoute = "saving_method_transfer_screen"
+    )
 
     object SmartMovementsScreen : Screen(
         "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",

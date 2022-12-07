@@ -24,6 +24,7 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
         Modifier.fillMaxSize()
     ) {
         val (content, buttons) = createRefs()
+        val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
 
         Column(
             Modifier
@@ -38,7 +39,6 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
         ) {
             viewModel.balanceCredit?.balanceAccountSmart?.let {
                 if (it.isNotEmpty()) {
-                    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
                     SmartAccountDetail(
                         modifier = Modifier
                             .background(MultimoneyTheme.colors.creditDetailBackground)
@@ -68,7 +68,11 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
                     bottom.linkTo(parent.bottom)
                 },
             onClickPay = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow) },
-            onClickSendMoney = { viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow) },
+            onClickSendMoney = {
+                viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow(
+                    viewModel.balanceCredit?.balanceAccountSmart?.get(index)
+                ))
+            },
             canSendMoney = viewModel.canSendMoney(
                 viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
             )

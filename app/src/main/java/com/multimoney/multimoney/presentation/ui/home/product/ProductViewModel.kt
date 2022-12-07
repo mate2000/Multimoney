@@ -8,6 +8,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
@@ -463,7 +464,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.creditStep)
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
-            is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
+            is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen(uiEvent.account)
             is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen()
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
@@ -507,11 +508,8 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
-    private fun onNavigateToSendMoneyScreen() {
-        // TODO: Navigate to SendMoney screen
-
-        // FIXME, mocking the navigation until the previous screen is done.
-        navigateTo(Screen.SavingMethodTransferScreen.route)
+    private fun onNavigateToSendMoneyScreen(account: Account?) {
+        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
     }
 
     sealed class UIEvent {
@@ -529,7 +527,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToVisaActivateScreen : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
-        object OnNavigateToSendMoneyFlow : UIEvent()
+        data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
         object OnNavigateToPaymentSmartFlow : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnProgressCalculation : UIEvent()

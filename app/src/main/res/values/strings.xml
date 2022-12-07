@@ -717,7 +717,6 @@
     <string name="saving_method_transfer_account_type_label" translatable="false">Tipo de cuenta</string>
     <string name="saving_method_transfer_saving_account" translatable="false">Cuenta de ahorro</string>
     <string name="saving_method_transfer_account" translatable="false">Número de cuenta</string>
-    <string name="saving_method_transfer_account_number" translatable="false">789098754678</string>
     <string name="saving_method_transfer_account_number_copied" translatable="false">Número de cuenta copiada</string>
 
     <!-- Payment Amount -->

@@ -70,7 +70,8 @@ fun PaymentOptions(
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_transfer,
-            onEndIconClick = onTransferClick
+            onEndIconClick = onTransferClick,
+            onClick = onTransferClick
         )
 
         CustomInfoButton(
@@ -80,7 +81,8 @@ fun PaymentOptions(
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_visa,
-            onEndIconClick = onVisaClick
+            onEndIconClick = onVisaClick,
+            onClick = onVisaClick
         )
     }
 }

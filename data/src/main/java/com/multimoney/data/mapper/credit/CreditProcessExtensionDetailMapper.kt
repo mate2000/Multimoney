@@ -11,6 +11,7 @@ private fun ProcessCreditExtensionDetailMutation.ProcessCreditExtensionDetail.ma
 )
 
 private fun ProcessCreditExtensionDetailMutation.ProcessCreditExtensionDetail.mapToDomainModel() = ProcessCreditExtensionDetail(
+    reference = pagare,
     loanId = id_Prestamo,
     messageError = mapMessageToDomainModel()
 )

@@ -874,4 +874,19 @@
     <string name="disbursement_bottom_sheet_quota_to_pay"  translatable="false">Cuota mensual consolidada</string>
     <string name="disbursement_bottom_sheet_next_payment_date"  translatable="false">Fecha del siguiente pago</string>
 
+    <!-- Disbursement Voucher -->
+    <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
+    <string name="disbursement_voucher_schedule_payment" translatable="false">Programar pago automático</string>
+    <string name="disbursement_voucher_shared_button" translatable="false">Compartir</string>
+    <string name="disbursement_voucher_amount_to_pay_label" translatable="false">Monto elegido</string>
+    <string name="disbursement_voucher_exchange_rate_label" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_voucher_reference_number_label" translatable="false">N° de pagaré</string>
+    <string name="disbursement_voucher_from_label" translatable="false">Desde</string>
+    <string name="disbursement_voucher_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="disbursement_voucher_you_have_received" translatable="false">Has recibido</string>
+    <string name="disbursement_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
+    <string name="disbursement_account_masked_text" translatable="false">••••</string>
+    <string name="disbursement_voucher_exchange_type" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_voucher_amount_to_disburse" translatable="false">Monto elegido</string>
+
 </resources>

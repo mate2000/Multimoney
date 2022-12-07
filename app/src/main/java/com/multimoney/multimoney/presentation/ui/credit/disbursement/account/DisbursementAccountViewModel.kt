@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
@@ -43,6 +44,7 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.Dis
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateToDisbursementAddAccount
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateToVoucher
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnProcessCreditExtension
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnShowDisbursementBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnSuccessProcessCreditExtension
@@ -158,18 +160,11 @@ class DisbursementAccountViewModel @Inject constructor(
         }
     }
 
-    private fun onSuccessProcessCreditExtension() {
+    private fun onSuccessProcessCreditExtension(referenceNumber: String?) {
         onUIEvent(OnLoadingValueChange(false))
         onUIEvent(OnHideDisbursementBottomSheet)
         if (idBrand == Brand.CostaRica.id) {
-            // TODO navigate to voucher instead of this screen
-            uiState = uiState.copy(
-                isAlertResultVisible = true,
-                alertResultIconResource = R.drawable.ic_success_symbol,
-                alertResultTitleResource = R.string.disbursement_account_process_success_title,
-                alertResultDescriptionResource = R.string.disbursement_account_process_success_description,
-                alertButtonTextResource = R.string.understood
-            )
+            onUIEvent(OnNavigateToVoucher(referenceNumber))
         } else {
             uiState = uiState.copy(
                 isAlertResultVisible = true,
@@ -212,7 +207,7 @@ class DisbursementAccountViewModel @Inject constructor(
             userEmail = user
         ).collectLatest { result ->
             result.onSuccess {
-                onUIEvent(OnSuccessProcessCreditExtension)
+                onUIEvent(OnSuccessProcessCreditExtension(it?.reference))
             }.onMessage {
                 onUIEvent(OnMessageProcessCreditExtension(it?.messageError))
             }.onFailure {
@@ -270,6 +265,14 @@ class DisbursementAccountViewModel @Inject constructor(
     private fun onHideDisbursementBottomSheet() {
         uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
     }
+
+    private fun onNavigateToVoucher(referenceNumber: String?) = navigateTo(
+        route = "${Screen.DisbursementVoucherScreen.baseRoute}/${encodeData(uiState.clientBankAccountSelected)}/${if (shouldDisplayExchangeRate()) {
+            getCurrentAmountExchangedFormatted()
+        } else {
+            getCurrentAmountFormatted()
+        }}/${getExchangeRateFormatted()}/${shouldDisplayExchangeRate()}/${referenceNumber ?: ""}/${getCurrentAmountFormatted()}"
+    )
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.DisbursementAmountScreen.route, isRestart = false)
 
@@ -337,15 +340,17 @@ class DisbursementAccountViewModel @Inject constructor(
             is OnShowDisbursementBottomSheet -> onShowPaymentBottomSheet()
             is OnHideDisbursementBottomSheet -> onHideDisbursementBottomSheet()
             is OnCallQueryGetExchangeRateCredit -> onCallQueryGetExchangeRate()
-            is OnSuccessProcessCreditExtension -> onSuccessProcessCreditExtension()
+            is OnSuccessProcessCreditExtension -> onSuccessProcessCreditExtension(uiEvent.reference)
             is OnMessageProcessCreditExtension -> onMessageProcessCreditExtension(uiEvent.error)
             is OnProcessCreditExtension -> onProcessCreditExtension()
+            is OnNavigateToVoucher -> onNavigateToVoucher(uiEvent.reference)
         }
     }
 
     sealed class UIEvent {
         object OnCallQueryGetClientBankAccount : UIEvent()
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
+        data class OnNavigateToVoucher(val reference: String?) : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnNavigateBackHome : UIEvent()
         object OnNavigateToDisbursementAddAccount : UIEvent()
@@ -353,7 +358,7 @@ class DisbursementAccountViewModel @Inject constructor(
         object OnShowDisbursementBottomSheet : UIEvent()
         object OnHideDisbursementBottomSheet : UIEvent()
         object OnCallQueryGetExchangeRateCredit : UIEvent()
-        object OnSuccessProcessCreditExtension : UIEvent()
+        data class OnSuccessProcessCreditExtension(val reference: String?) : UIEvent()
         object OnProcessCreditExtension : UIEvent()
         data class OnMessageProcessCreditExtension(val error: MessageError?) : UIEvent()
     }

@@ -10,6 +10,7 @@ import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
@@ -45,6 +46,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMiniCardsClicked
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
@@ -528,13 +530,12 @@ class ProductViewModel @Inject constructor(
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var productPageList: List<ProductPage>? = null,
-        var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
         val onGoingCreditCardTitle: Int = R.string.home_product_title,
         val isCreditAvailable: Boolean = false,
         val canExpandCredit: Boolean = false,
-        val scheduleChipIconResource: Int? = null
+        val scheduleChipIconResource: Int? = null,
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -546,8 +547,8 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
-            is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen()
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
+            is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is OnSetUserData -> onSetUserData(
@@ -578,10 +579,20 @@ class ProductViewModel @Inject constructor(
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
             is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
+            is OnMiniCardsClicked -> onQuickActionClicked(uiEvent.flow)
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa()
         }
+    }
+
+    private fun onNavigateToPaymentSmartScreen(account: Account?) {
+        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
+    }
+
+    private fun onNavigateToSendMoneyScreen() {
+        // FIXME: Navigate to correct payment flow screen
+        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
     sealed class UIEvent {
@@ -600,7 +611,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
         object OnNavigateToSendMoneyFlow : UIEvent()
-        object OnNavigateToPaymentSmartFlow : UIEvent()
+        data class OnNavigateToPaymentSmartFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
@@ -628,6 +639,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
+        data class OnMiniCardsClicked(val flow: String) : UIEvent()
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
         object OnCreateMultimoneyVisa : UIEvent()
     }

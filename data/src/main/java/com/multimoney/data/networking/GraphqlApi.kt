@@ -41,16 +41,19 @@ import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
 import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
+import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
+import com.multimoney.data.networking.graphql.apollomodel.SaveAutomatedSmartAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDetailMutation
@@ -535,6 +538,39 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationProcessCreditExtensionDetail(
+        user: String,
+        pkUser: Int,
+        idBrand: Int,
+        idFlowControl: Any,
+        currency: String,
+        accountNumber: String,
+        bankAccount: String,
+        idBankAccount: Any,
+        idLoanForm: Any,
+        loanForm: String,
+        idLoanClient: Int,
+        phoneNumber: String,
+        userEmail: String
+    ): ApolloCall<ProcessCreditExtensionDetailMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ProcessCreditExtensionDetailMutation(
+                user,
+                pkUser,
+                idBrand,
+                idFlowControl,
+                currency,
+                accountNumber,
+                bankAccount,
+                idBankAccount,
+                idLoanForm,
+                loanForm,
+                idLoanClient,
+                phoneNumber,
+                userEmail
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun mutationSendCreditContractEvent(
         idImpresion: Long,
         idBrand: Int,
@@ -797,7 +833,6 @@ class GraphqlApi @Inject constructor(
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // SmartAccount
-
     fun queryGetCoreBankMovements(
         user: String,
         idBrand: Int,
@@ -949,6 +984,21 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationSaveAutomatedSmartAccount(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        idRequest: Long
+    ): ApolloCall<SaveAutomatedSmartAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveAutomatedSmartAccountMutation(
+                user,
+                idBrand,
+                identificationNumber,
+                idRequest
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryGeneralEconomicActivity(
         user: String,
         idBrand: Int
@@ -989,8 +1039,26 @@ class GraphqlApi @Inject constructor(
                 infoBankAccountStatus,
                 infoCriptoStatus
             )
-        )
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryMiniCards(
+        infoCreditStatus:Boolean,
+        infoVirtualCardStatus:Boolean,
+        infoBankAccountStatus:Boolean,
+        infoCrypto:Boolean,
+        userEmail:String,
+        idBrand:Int
+    ): ApolloCall<ListMiniCardsQuery.Data> =
+        apolloAuthorizedClient.query(
+            ListMiniCardsQuery(
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCrypto,
+                userEmail,
+                idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveClientBankAccount(
         idClient: Long,

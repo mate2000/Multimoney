@@ -221,10 +221,14 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_onfido_screen"
     )
 
+    object SavingMethodTransferScreen : Screen("saving_method_transfer_screen")
+
     object SmartMovementsScreen : Screen(
         "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
         "smart_movements_screen"
     )
+
+    object SmartPaymentAccountScreen : Screen("smart_payment_screen")
 
     // Payment Smart
     object PaymentSmartCardsScreen : Screen(

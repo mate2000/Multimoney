@@ -464,8 +464,8 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.creditStep)
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
-            is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen(uiEvent.account)
-            is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen()
+            is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
+            is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
@@ -503,13 +503,13 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToPaymentSmartScreen() {
-        // FIXME: Navigate to correct payment flow screen
-        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+    private fun onNavigateToPaymentSmartScreen(account: Account?) {
+        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
     }
 
-    private fun onNavigateToSendMoneyScreen(account: Account?) {
-        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
+    private fun onNavigateToSendMoneyScreen() {
+        // FIXME: Navigate to correct payment flow screen
+        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
     sealed class UIEvent {
@@ -527,8 +527,8 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToVisaActivateScreen : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
-        data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
-        object OnNavigateToPaymentSmartFlow : UIEvent()
+        object OnNavigateToSendMoneyFlow : UIEvent()
+        data class OnNavigateToPaymentSmartFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()

@@ -10,7 +10,9 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PAYMENT_SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
 
 fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
     navigation(
@@ -41,6 +43,28 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     )
                 }
             )
+        }
+        composable(
+            Screen.SmartPaymentScreen.route
+        ) {
+            SmartPaymentMethodScreen(onNavigate = {
+                navController.navigate(it.route)
+            }, onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
+        }
+        composable(
+            route = Screen.SmartPaymentAccountScreen.route
+        ) {
+            SmartPaymentAccountScreen(onNavigate = {
+                navController.navigate(it.route)
+            }, onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
     }
 }

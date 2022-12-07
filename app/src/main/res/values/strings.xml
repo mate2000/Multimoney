@@ -856,6 +856,11 @@
     <!-- Payment Amount Card -->
     <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
 
+    <!-- Payment method -->
+    <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>
+    <string name="payment_method_transfer" translatable="false">Transferencia bancaria</string>
+    <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
+
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">¿A cuál Multimoney Smart querés abonar?</string>
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>

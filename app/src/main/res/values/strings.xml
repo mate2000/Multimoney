@@ -44,6 +44,7 @@
     <string name="common_options" translatable="false">Opciones</string>
     <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
+    <string name="common_go_home" translatable="false">Ir al inicio</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -708,6 +709,17 @@
     <string name="payment_options_transfer_close_dialog_title" translatable="false">¿Estás seguro que querés salir? </string>
     <string name="payment_options_transfer_close_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
 
+    <!-- Smart Saving Method - Transfer -->
+    <string name="saving_method_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>
+    <string name="saving_method_transfer_disclaimer" translatable="false">La transferencia se verá reflejada en 48 horas hábiles</string>
+    <string name="saving_method_transfer_bank" translatable="false">Banco</string>
+    <string name="saving_method_transfer_bank_name" translatable="false">SAC Gente</string>
+    <string name="saving_method_transfer_account_type_label" translatable="false">Tipo de cuenta</string>
+    <string name="saving_method_transfer_saving_account" translatable="false">Cuenta de ahorro</string>
+    <string name="saving_method_transfer_account" translatable="false">Número de cuenta</string>
+    <string name="saving_method_transfer_account_number" translatable="false">789098754678</string>
+    <string name="saving_method_transfer_account_number_copied" translatable="false">Número de cuenta copiada</string>
+
     <!-- Payment Amount -->
     <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
     <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
@@ -766,6 +778,9 @@
     <string name="disbursement_account_sv_title" translatable="false">¿Dónde querés recibir tu crédito?</string>
     <string name="disbursement_account_gt_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
     <string name="disbursement_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
+    <string name="disbursement_account_process_success_title" translatable="false">¡Tu solicitud fue \nenviada con éxito!</string>
+    <string name="disbursement_account_process_success_description" translatable="false">Te notificaremos cuando tu \ndesembolso haya sido realizado</string>
+    <string name="disbursement_account_process_error_button" translatable="false">Ir al inicio</string>
 
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
@@ -840,5 +855,23 @@
 
     <!-- Payment Amount Card -->
     <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
+
+    <!-- Payment method -->
+    <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>
+    <string name="payment_method_transfer" translatable="false">Transferencia bancaria</string>
+    <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
+
+    <!-- Payment Account -->
+    <string name="payment_account_title" translatable="false">¿A cuál Multimoney Smart querés abonar?</string>
+    <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
+    <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
+
+    <!-- Disbursement Bottom Sheet -->
+    <string name="disbursement_bottom_sheet_title" translatable="false">Monto a desembolsar</string>
+    <string name="disbursement_bottom_sheet_account" translatable="false">En tu cuenta</string>
+    <string name="disbursement_bottom_sheet_button" translatable="false">Realizar desembolso</string>
+    <string name="disbursement_bottom_sheet_exchange_rate" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_bottom_sheet_quota_to_pay"  translatable="false">Cuota mensual consolidada</string>
+    <string name="disbursement_bottom_sheet_next_payment_date"  translatable="false">Fecha del siguiente pago</string>
 
 </resources>

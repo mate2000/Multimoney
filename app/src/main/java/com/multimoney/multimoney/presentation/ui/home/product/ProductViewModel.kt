@@ -503,7 +503,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToPaymentSmartScreen() {
         // FIXME: Navigate to correct payment flow screen
-        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+        navigateTo("${Screen.SmartPaymentCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
     private fun onNavigateToSendMoneyScreen() {

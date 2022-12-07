@@ -65,7 +65,9 @@ class SmartPaymentCardsViewModel @Inject constructor(
     }
 
     private fun onCardSelected(cardSelected: CardVisaDirect) {
-        // todo navigate
+        navigateTo(
+            "${Screen.SmartPaymentSuccessScreen.baseRoute}/${"$"}/${"500"}/${"true"}/${"300694.10"}/${"601.95 "}/${"12345****0980"}/${"74598621"}"
+        )
     }
 
     private fun onAddCard() {

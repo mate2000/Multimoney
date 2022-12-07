@@ -5,9 +5,11 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENCY_SYMBOL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -58,7 +60,7 @@ const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
-const val PAYMENT_SMART_ROUTE = "payment_smart_route"
+const val SMART_PAYMENT_ROUTE = "smart_payment_route"
 
 const val ID_BRAND = "id_brand"
 
@@ -226,9 +228,14 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     // Payment Smart
-    object PaymentSmartCardsScreen : Screen(
-        "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
-        "payment_smart_cards_screen"
+    object SmartPaymentCardsScreen : Screen(
+        "smart_payment_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "smart_payment_cards_screen"
+    )
+
+    object SmartPaymentSuccessScreen : Screen(
+        "smart_payment_success_screen/{$CURRENCY_SYMBOL}/{$PAYMENT_AMOUNT}/{$IS_MULTI_CURRENCY}/{$EXCHANGE_AMOUNT}/{$EXCHANGE_RATE_LABEL}/{$CARD_SELECTED}/{$REFERENCE_NUMBER}",
+        "smart_payment_success_screen"
     )
 
     // TestNavGraph Screens

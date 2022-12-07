@@ -118,8 +118,6 @@ class ProductViewModel @Inject constructor(
     private fun setValidateUserStatus(userStatus: ValidateUserStatus?) {
         lastStep = CreditStep.Search.getIdByName(userStatus?.infoCredit?.infoPreApprove?.currentStep)
         uiState = uiState.copy(userStatus = userStatus)
-
-
     }
 
     private fun onNavigateToCreditScreen(creditStep: String) {

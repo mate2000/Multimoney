@@ -10,6 +10,7 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -32,6 +33,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_SECOND_TIME
@@ -143,11 +146,23 @@ class SignDocumentProcessViewModel @Inject constructor(
                     if (idBrand == Brand.CostaRica.id && idPrint != ID_PRINT_EMPTY) {
                         navigateToProcessingTransaction()
                     } else {
-                        // todo navigate to success screen
+                        setSuccessAlertResult()
                     }
                 }
             }
         }
+    }
+
+    private fun setSuccessAlertResult() {
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultSuccess = true,
+            alertResultIconResource = R.drawable.ic_success_symbol,
+            alertResultTitleResource = R.string.credit_request_sent_successfully,
+            alertResultDescription = "",
+            alertResultDescriptionResource = R.string.credit_request_info_verification_wait,
+            alertResultButtonResource = R.string.understood,
+        )
     }
 
     private fun handleOnfidoStatus(
@@ -206,7 +221,14 @@ class SignDocumentProcessViewModel @Inject constructor(
         // Interactions
         val signDocumentProcessStep: String = GENERATE_DOCUMENT_STEP.value,
         val dialogParameters: DialogParameters = DialogParameters(),
-        val signDocumentUrl: String = ""
+        val signDocumentUrl: String = "",
+        val isAlertResultSuccess: Boolean = true,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = 0,
+        val alertResultTitleResource: Int = R.string.empty,
+        val alertResultDescription: String = "",
+        val alertResultDescriptionResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty,
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -218,6 +240,8 @@ class SignDocumentProcessViewModel @Inject constructor(
             is OnShowDialogInformation -> createDialog()
             is OnNavigateToHome -> onNavigateToHome()
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
+            is OnAlertButtonClick -> onNavigateToHome()
+            is OnAlertCloseClick -> onNavigateToHome()
         }
     }
 
@@ -229,6 +253,8 @@ class SignDocumentProcessViewModel @Inject constructor(
         data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
         object OnNavigateToHome : UIEvent()
         object OnNavigateToContinueValidatingIdentity : UIEvent()
+        object OnAlertButtonClick : UIEvent()
+        object OnAlertCloseClick : UIEvent()
     }
 
     sealed class BaseEvent {

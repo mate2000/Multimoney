@@ -16,6 +16,7 @@ private fun SaveCreditExtensionDetailMutation.SaveCreditExtensionDetail.mapToDom
     quotaMaximum = cuota_Maxima,
     selectedAmount = monto_Seleccionado,
     nextPayment = proximo_Pago.toString(),
+    fkFlowControl = fk_Suv_Mtr_Control_Flujo.toString().toInt(),
     messageError = mapMessageToDomainModel()
 )
 

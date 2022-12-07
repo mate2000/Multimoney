@@ -61,7 +61,7 @@ fun PersonalInfoContent(viewModel : PersonalInfoViewModel){
             )
             CustomItemRow(
                 title = stringResource(R.string.profile_change_email_address),
-                startIcon = R.drawable.ic_envelope,
+                startIcon = R.drawable.ic_envelop_gray,
                 endIcon = R.drawable.ic_right_chevron,
                 onClick = {
                     viewModel.onUIEvent(PersonalInfoViewModel.UIEvent.OnNavigateToEditEmail)

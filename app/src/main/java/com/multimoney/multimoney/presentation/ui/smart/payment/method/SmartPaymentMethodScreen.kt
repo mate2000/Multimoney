@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.method
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,11 +27,11 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Composable
 fun SmartPaymentMethodScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartPaymentMethodViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -47,6 +48,7 @@ fun SmartPaymentMethodScreen(
             onVisaClick = { viewModel.onUIEvent(OnVisaSelected) }
         )
     }
+    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
 }
 
 @Composable

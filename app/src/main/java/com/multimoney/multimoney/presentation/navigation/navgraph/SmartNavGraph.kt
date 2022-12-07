@@ -48,24 +48,6 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                 }
             })
         }
-        composable(Screen.SavingMethodTransferScreen.route) {
-            SavingMethodTransferScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
-            )
-        }
         composable(
             Screen.SmartMovementsScreen.route,
             arguments = listOf(

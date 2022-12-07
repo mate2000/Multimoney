@@ -14,24 +14,24 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPayme
 import javax.inject.Inject
 
 class SmartPaymentMethodViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
-
-    // stateLess
-    var userSmartAccount : String = ""
 
     // uiState
     var uiState by mutableStateOf(UIState())
         private set
+
+    // stateLess
+    var userSmartAccount : String = ""
 
     init {
         userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""
     }
 
     private fun onNavigateBack() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartPaymentScreen.route
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = false
         )
     }
 

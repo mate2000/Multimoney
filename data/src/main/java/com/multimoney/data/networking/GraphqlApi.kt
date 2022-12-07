@@ -48,6 +48,7 @@ import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMuta
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
@@ -516,6 +517,39 @@ class GraphqlApi @Inject constructor(
                 idProduct,
                 descriptionPromotionTerm,
                 pkPromotion
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationProcessCreditExtensionDetail(
+        user: String,
+        pkUser: Int,
+        idBrand: Int,
+        idFlowControl: Any,
+        currency: String,
+        accountNumber: String,
+        bankAccount: String,
+        idBankAccount: Any,
+        idLoanForm: Any,
+        loanForm: String,
+        idLoanClient: Int,
+        phoneNumber: String,
+        userEmail: String
+    ): ApolloCall<ProcessCreditExtensionDetailMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ProcessCreditExtensionDetailMutation(
+                user,
+                pkUser,
+                idBrand,
+                idFlowControl,
+                currency,
+                accountNumber,
+                bankAccount,
+                idBankAccount,
+                idLoanForm,
+                loanForm,
+                idLoanClient,
+                phoneNumber,
+                userEmail
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

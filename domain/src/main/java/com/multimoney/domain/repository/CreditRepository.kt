@@ -17,6 +17,7 @@ import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
 import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
@@ -266,6 +267,22 @@ interface CreditRepository {
         descriptionPromotionTerm: String,
         pkPromotion: Int
     ): Flow<MultimoneyResult<CreditExtensionDetail?>>
+
+    suspend fun mutationProcessCreditExtensionDetail(
+        user: String,
+        pkUser: Int,
+        idBrand: Int,
+        idFlowControl: Any,
+        currency: String,
+        accountNumber: String,
+        bankAccount: String,
+        idBankAccount: Any,
+        idLoanForm: Any,
+        loanForm: String,
+        idLoanClient: Int,
+        phoneNumber: String,
+        userEmail: String
+    ): Flow<MultimoneyResult<ProcessCreditExtensionDetail?>>
 
     suspend fun mutationSendCreditContractEvent(
         idImpresion: Long,

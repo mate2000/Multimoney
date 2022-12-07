@@ -8,6 +8,8 @@ import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
+import com.multimoney.domain.model.security.MiniCards
+import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
@@ -335,6 +337,28 @@ class SecurityRepositoryImpl @Inject constructor(
                 infoVirtualCardStatus,
                 infoBankAccountStatus,
                 infoCriptoStatus
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun queryHomeMiniCards(
+        infoCreditStatus: Boolean,
+        infoVirtualCardStatus: Boolean,
+        infoBankAccountStatus: Boolean,
+        infoCripto: Boolean,
+        userEmail: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<MiniCards>> =
+        fetchData(
+            apolloCall = graphqlApi.queryMiniCards(
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCripto,
+                userEmail,
+                idBrand
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

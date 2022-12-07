@@ -10,6 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
@@ -95,7 +96,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object DisbursementAccountScreen : Screen(
-        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}/{$PK_USER}/{$ID_USER_REQUEST}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}/{$IDENTIFICATION}",
+        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}/{$PK_USER}/{$ID_USER_REQUEST}/{$IDENTIFICATION}/{$CREDIT_NUMBER}/{$FK_FLOW_CONTROL}/{$ID_CURRENCY}/{$ID_LOAN_CLIENT}",
         "disbursement_account_screen"
     )
 
@@ -228,6 +229,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
         "smart_movements_screen"
     )
+
+    object SmartPaymentAccountScreen : Screen("smart_payment_screen")
 
     // Payment Smart
     object PaymentSmartCardsScreen : Screen(

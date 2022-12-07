@@ -796,7 +796,8 @@
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
-
+    <string name="approved_by_onfido_title" translatable="false">¡Tu Multimoney Smart ya está activa!</string>
+    <string name="approved_by_onfido_buttton_text" translatable="false">Hacer mi perimer abono</string>
 
     <!-- Credit Schedule Automatic Payment -->
     <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>

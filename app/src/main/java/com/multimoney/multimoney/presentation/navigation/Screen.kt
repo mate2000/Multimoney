@@ -120,11 +120,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_document_process_screen"
     )
 
-    object CreditRequestSuccessScreen : Screen(
-        route = "credit_request_success_screen",
-        baseRoute = "credit_request_success_screen"
-    )
-
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
 
     object ProcessingTransactionScreen : Screen(

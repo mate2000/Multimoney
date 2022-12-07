@@ -42,6 +42,7 @@ mutation SaveCreditExtensionDetail($pkUser: Int!,
         cuota_Maxima
         monto_Seleccionado
         proximo_Pago
+        fk_Suv_Mtr_Control_Flujo
         status
         message
         detail

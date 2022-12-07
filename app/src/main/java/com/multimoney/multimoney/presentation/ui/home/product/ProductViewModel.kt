@@ -226,7 +226,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToVisaActivateScreen() =
-        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoCredit?.idClient}/$identification/${uiState.userStatus?.infoCredit?.idLoanClient}/$email")
 
     private fun onNavigateToHomeMultimoneyVisa() =
         navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}")

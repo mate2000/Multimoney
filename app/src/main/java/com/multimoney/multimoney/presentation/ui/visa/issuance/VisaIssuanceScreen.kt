@@ -23,6 +23,8 @@ import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewM
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -92,5 +94,15 @@ fun VisaIssuanceScreen(
                 buttonType = PrimaryPrimary
             )
         }
+    }
+
+    LoadingIndicator(viewModel.uiState.isLoading)
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description,
+            openDialogCustom = viewModel.uiState.openDialog.isActive
+        )
     }
 }

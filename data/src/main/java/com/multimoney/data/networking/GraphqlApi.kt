@@ -10,6 +10,7 @@ import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomat
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
+import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
@@ -93,6 +94,25 @@ class GraphqlApi @Inject constructor(
             user, identification, idBrand, idClient, idLoanClient, creditStatus, accountStatus, cryptoStatus, cardStatus
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryBalanceCardInformation(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        cardStatus: Int
+    ): ApolloCall<BalanceCardInformationQuery.Data> =
+        apolloAuthorizedClient.query(
+            BalanceCardInformationQuery(
+                user,
+                identification,
+                idBrand,
+                idClient,
+                idLoanClient,
+                cardStatus
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // Credit
     fun queryCreditOffer(

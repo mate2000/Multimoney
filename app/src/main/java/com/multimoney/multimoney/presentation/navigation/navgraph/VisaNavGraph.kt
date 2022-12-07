@@ -4,6 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
@@ -15,7 +17,11 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
         startDestination = Screen.VisaIssuanceScreen.route,
         route = VISA_ROUTE
     ) {
-        composable(route = Screen.VisaIssuanceScreen.route) { navBackStackEntry ->
+        composable(route = Screen.VisaIssuanceScreen.route, arguments = listOf(
+            navArgument(ID_BRAND){ },
+            navArgument(ID_CLIENT){},
+            navArgument(ID_LOAN_CLIENT){}
+        )) { navBackStackEntry ->
             VisaIssuanceScreen(
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)

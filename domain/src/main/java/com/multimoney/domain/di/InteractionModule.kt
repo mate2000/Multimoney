@@ -26,6 +26,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCaseImpl
+import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
+import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCaseImpl
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCase
@@ -226,6 +228,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryBalanceUseCase(balanceRepository: BalanceRepository): QueryBalanceUseCase =
         QueryBalanceUseCaseImpl(balanceRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryBalanceCardInformationUseCase(balanceRepository: BalanceRepository): QueryBalanceCardInformationUseCase =
+        QueryBalanceCardInformationUseCaseImpl(balanceRepository)
 
     // Credit
 

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface QueryCardIssuanceNVUseCase {
     suspend operator fun invoke(
         idClient: Long,
-        requestType: String,
+        requestType: String = "",
         identification: String,
         idLoanClient: Int,
         user: String,

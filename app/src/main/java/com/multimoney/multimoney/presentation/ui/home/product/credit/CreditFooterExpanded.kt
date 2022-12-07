@@ -20,8 +20,8 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditCtaButtons
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditDetail
@@ -56,7 +56,7 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
             CreditVisa(
                 uiState = viewModel.uiState,
                 balance = viewModel.balanceCredit,
-                onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToVisaActivateScreen) },
+                onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToHomeMultimoneyVisa) },
                 onCreateMultimoneyVisa = { viewModel.onUIEvent(OnCreateMultimoneyVisa) }
             )
             Spacer(modifier = Modifier.height(24.dp))

@@ -48,9 +48,9 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.C
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
@@ -373,11 +373,7 @@ fun ProductFooter(
                     uiState = viewModel.uiState,
                     balance = viewModel.balanceCredit,
                     onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
-                    onNavigateToVisaActivateScreen = {
-                        viewModel.onUIEvent(
-                            OnNavigateToVisaActivateScreen
-                        )
-                    },
+                    onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToHomeMultimoneyVisa) },
                     onCreateMultimoneyVisa = { viewModel.onUIEvent(OnCreateMultimoneyVisa) }
                 )
                 ProductType.Smart.value -> SmartFooter()

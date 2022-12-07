@@ -52,6 +52,7 @@ const val PAYMENT_DATE = "payment_date"
 const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
 const val IS_EDIT_PAYMENT_SCHEDULE = "is_edit_payment_schedule"
 const val PREVIOUS_SCREEN = "previous_screen"
+const val CARD_INFORMATION_STATUS ="card_information_status"
 
 // Payment maps location parameters
 const val POINT_NAME = "point_name"

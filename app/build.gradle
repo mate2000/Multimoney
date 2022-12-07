@@ -212,7 +212,9 @@ dependencies {
     implementation paging3.paging3_compose
 
     // Novo
-    debugImplementation novo.novo_dev
+    debugImplementation(novo.novo_dev) {
+        exclude group: "com.novopayment.sdk.android", module: "visa-sensory-branding"
+    }
     productionImplementation novo.novo_prod
 }
 

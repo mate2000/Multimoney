@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
@@ -57,7 +58,8 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val helper: ShareHelper,
     private val nfcHelper: NfcHelper,
-    private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase
+    private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
+    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -226,10 +228,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToVisaActivateScreen() =
-        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoCredit?.idClient}/$identification/${uiState.userStatus?.infoCredit?.idLoanClient}/$email")
+        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}")
 
     private fun onNavigateToHomeMultimoneyVisa() =
-        navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}")
 
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
@@ -464,12 +466,7 @@ class ProductViewModel @Inject constructor(
                 idBrand = uiState.idBrand.toInt()
             ).collectLatest { result ->
                 result.onSuccess {
-                    if (nfcHelper.isNfcSupported()) {
-                        onNavigateToVisaActivateScreen()
-                    } else {
-                        onNavigateToHomeMultimoneyVisa()
-                    }
-                    uiState = uiState.copy(isLoading = false)
+                    onCallQueryBalanceCardInformation()
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -479,7 +476,40 @@ class ProductViewModel @Inject constructor(
                         )
                     )
                 }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
+    }
+
+    private fun onCallQueryBalanceCardInformation() {
+        executeUseCase {
+            balanceCardInformationUseCase.invoke(
+                email,
+                identification,
+                uiState.idBrand.toInt(),
+                uiState.userStatus?.infoUser?.idClient ?: 0,
+                uiState.userStatus?.infoCredit?.idLoanClient ?: 0,
+                CARD_INFORMATION_STATUS
+            ).collectLatest { result ->
+                result.onSuccess {
+                    balanceCredit?.balanceCardInformation = it
                     uiState = uiState.copy(isLoading = false)
+                    if (nfcHelper.isNfcSupported()) {
+                        onNavigateToVisaActivateScreen()
+                    } else {
+                        onNavigateToHomeMultimoneyVisa()
+                    }
+                }.onFailure {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
                 }
             }
         }
@@ -622,5 +652,6 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_PEP_PROCESS = "CREDIT_PEP_PROCESS"
         const val SEPARATOR = " + "
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
+        private const val CARD_INFORMATION_STATUS = 1
     }
 }

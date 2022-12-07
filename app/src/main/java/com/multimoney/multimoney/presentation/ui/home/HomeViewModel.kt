@@ -352,7 +352,7 @@ class HomeViewModel @Inject constructor(
                     creditStatus = validateUserStatus?.infoCredit?.status ?: 0,
                     accountStatus = validateUserStatus?.infoBankAccount?.status ?: 0,
                     cryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
-                    cardStatus = 0 // TODO, the API doesn't support this yet
+                    cardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
                 callQueryGetQuickActions(
                     idBrand = idBrand,
@@ -413,7 +413,7 @@ class HomeViewModel @Inject constructor(
                     creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
                     accountStatus = uiState.validateUserStatus?.infoBankAccount?.status ?: 0,
                     cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
-                    cardStatus = 0 // TODO, the API doesn't support this yet
+                    cardStatus = uiState.validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
                 emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
             }

@@ -21,11 +21,14 @@ fun CreditVisa(
     uiState: UIState,
     balance: Balance?,
     onNavigateToVisaActivateScreen: () -> Unit = {},
-    onCreateMultimoneyVisa: () -> Unit = {}
+    onCreateMultimoneyVisa: () -> Unit = {},
+    isExpanded: Boolean = false
 ) {
     if (uiState.userStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status && balance?.getFirstSummary()?.applyCommerce == true && balance.getFirstSummary()?.applyCreateCard == true) {
-        Divider(color = MultimoneyTheme.colors.dividerWhite30)
-        Spacer(modifier = Modifier.height(24.dp))
+        if (isExpanded) {
+            Divider(color = MultimoneyTheme.colors.dividerWhite30)
+            Spacer(modifier = Modifier.height(24.dp))
+        }
         balance.balanceCardInformation?.cardInformation?.let { cardInformation ->
             CustomBoxVisaBackground(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),

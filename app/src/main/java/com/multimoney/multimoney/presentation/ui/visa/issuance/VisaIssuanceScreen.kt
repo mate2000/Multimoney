@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,8 +24,6 @@ import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewM
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -34,6 +33,8 @@ fun VisaIssuanceScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaIssuanceViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
@@ -88,21 +89,11 @@ fun VisaIssuanceScreen(
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
                 onClick = {
-                    viewModel.onUIEvent(OnIssuanceClick)
+                    viewModel.onUIEvent(OnIssuanceClick(context = context))
                 },
                 text = stringResource(id = R.string.activate),
                 buttonType = PrimaryPrimary
             )
         }
-    }
-
-    LoadingIndicator(viewModel.uiState.isLoading)
-
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = viewModel.uiState.openDialog.description,
-            openDialogCustom = viewModel.uiState.openDialog.isActive
-        )
     }
 }

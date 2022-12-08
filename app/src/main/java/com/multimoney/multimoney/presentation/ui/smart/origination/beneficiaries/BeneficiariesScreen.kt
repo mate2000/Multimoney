@@ -50,6 +50,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnPercentageValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRemoveBeneficiaryClick
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.edit.EditBeneficiaryBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -64,6 +65,11 @@ fun BeneficiariesScreen(
     beneficiaryViewModel: BeneficiariesViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(true) {
+        beneficiaryViewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    }
+
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         beneficiaryViewModel.baseEvent.collect { event ->

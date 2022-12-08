@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCloseCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
@@ -52,8 +53,8 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -441,17 +442,18 @@ class ProductViewModel @Inject constructor(
                     onCallQueryBalanceCardInformation(onLoadingValueChange)
                 }.onFailure {
                     onLoadingValueChange(false)
-                    uiState = uiState.copy(
-                        openDialog = DialogParameters(
-                            description = it.getError().toString(),
-                            isActive = mutableStateOf(true)
-                        )
-                    )
+                    uiState = uiState.copy(showCardIssuanceError = true)
                 }.onLoading {
                     onLoadingValueChange(true)
                 }
             }
         }
+    }
+
+    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.Guatemala.id) {
+        R.string.card_issuance_error_description_gt
+    } else {
+        R.string.card_issuance_error_description
     }
 
     private fun onCallQueryBalanceCardInformation(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -497,7 +499,8 @@ class ProductViewModel @Inject constructor(
         val onGoingCreditCardTitle: Int = R.string.home_product_title,
         val isCreditAvailable: Boolean = false,
         val canExpandCredit: Boolean = false,
-        val scheduleChipIconResource: Int? = null
+        val scheduleChipIconResource: Int? = null,
+        val showCardIssuanceError: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -548,6 +551,7 @@ class ProductViewModel @Inject constructor(
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
+            is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
         }
     }
 
@@ -609,6 +613,7 @@ class ProductViewModel @Inject constructor(
         data class OnMiniCardsClicked(val flow: String) : UIEvent()
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
         data class OnCreateMultimoneyVisa(val onLoadingValueChange: (isLoading: Boolean) -> Unit) : UIEvent()
+        object OnCloseCardIssuanceError : UIEvent()
     }
 
     companion object {

@@ -253,6 +253,11 @@
     <string name="home_my_products_title_crypto" translatable="false">Cripto</string>
     <string name="home_my_products_label_crypto" translatable="false">Cripto</string>
 
+    <!-- Card Issuance Error -->
+    <string name="card_issuance_error_title" translatable="false">No hemos podido activar tu tarjeta</string>
+    <string name="card_issuance_error_description_gt" translatable="false">Inténtalo más tarde</string>
+    <string name="card_issuance_error_description" translatable="false">Intentálo más tarde</string>
+
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
     <string name="home_product_not_approved_description" translatable="false">La mejor tasa del 3.5\%; anual sin restricciones</string>

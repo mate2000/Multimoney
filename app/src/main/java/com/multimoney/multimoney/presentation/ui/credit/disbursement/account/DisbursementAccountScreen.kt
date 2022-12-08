@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.Dis
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateToDisbursementAddAccount
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -37,6 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getCurrency
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
@@ -174,6 +176,17 @@ fun PaymentAccountList(
             viewModel.onUIEvent(OnNavigateToDisbursementAddAccount)
         },
         buttonType = CustomButtonType.PrimaryTertiary,
-        trailingIcon = R.drawable.ic_plus
+        trailingIcon = R.drawable.ic_plus,
+        enable = (viewModel.uiState.clientBankAccountList?.size ?: 0) < 6
     )
+
+    if ((viewModel.uiState.clientBankAccountList?.size ?: 0) >= 6) {
+        CustomInformativeText(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 32.dp),
+            leadingIcon = R.drawable.ic_information,
+            text = stringResource(id = R.string.disbursement_account_max_number_disclaimer),
+            textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
+            leadingIconClick = { viewModel.onUIEvent(OnDisclaimerClick) }
+        )
+    }
 }

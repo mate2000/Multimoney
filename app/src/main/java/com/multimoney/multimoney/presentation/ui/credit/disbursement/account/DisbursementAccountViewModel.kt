@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.Dis
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnProcessCreditExtension
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnShowDisbursementBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnSuccessProcessCreditExtension
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS
@@ -285,6 +286,17 @@ class DisbursementAccountViewModel @Inject constructor(
         )
     }
 
+    private fun onMaxAccountNumberDialog() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.disbursement_account_max_number_title,
+                descriptionResource = R.string.disbursement_account_max_number_description,
+                positiveResource = R.string.understood,
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     fun getCurrentAmountFormatted() =
         "${idCurrency?.getCurrency()?.symbol ?: ""}${
         selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
@@ -340,6 +352,7 @@ class DisbursementAccountViewModel @Inject constructor(
             is OnSuccessProcessCreditExtension -> onSuccessProcessCreditExtension()
             is OnMessageProcessCreditExtension -> onMessageProcessCreditExtension(uiEvent.error)
             is OnProcessCreditExtension -> onProcessCreditExtension()
+            is OnDisclaimerClick -> onMaxAccountNumberDialog()
         }
     }
 
@@ -356,6 +369,7 @@ class DisbursementAccountViewModel @Inject constructor(
         object OnSuccessProcessCreditExtension : UIEvent()
         object OnProcessCreditExtension : UIEvent()
         data class OnMessageProcessCreditExtension(val error: MessageError?) : UIEvent()
+        object OnDisclaimerClick : UIEvent()
     }
 
     companion object {

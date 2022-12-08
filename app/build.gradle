@@ -51,23 +51,26 @@ android {
         production {
             minifyEnabled false
             shrinkResources false
+            applicationIdSuffix ".cr"
             buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : properties.sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.PRODUCTION_ONFIDO_API_TOKEN ? "\"${System.env.PRODUCTION_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
         }
         staging {
-            applicationIdSuffix ".sv"
+            applicationIdSuffix ".dev"
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : properties.sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
+            buildConfigField "String", "ONFIDO_APPLICATION_ID",  properties.onfidoApplicationId
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.STAGING_ADJUST_APP_TOKEN ? "\"${System.env.STAGING_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
             signingConfig signingConfigs.debug
         }
         debug {
-            applicationIdSuffix ".sv"
+            applicationIdSuffix ".dev"
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : properties.sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.DEVELOPMENT_ONFIDO_API_TOKEN ? "\"${System.env.DEVELOPMENT_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
+            buildConfigField "String", "ONFIDO_APPLICATION_ID",  properties.onfidoApplicationId
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.DEVELOPMENT_ADJUST_APP_TOKEN ? "\"${System.env.DEVELOPMENT_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
         }
     }
@@ -227,16 +230,6 @@ dexguard {
     license = "../dexguard-license.txt"
 
     configurations {
-//        debug {
-//            defaultConfiguration 'dexguard-debug.pro'
-//            configuration 'dexguard-project.txt'
-//            configuration 'proguard-project.txt'
-//        }
-        staging {
-            defaultConfiguration 'dexguard-debug.pro'
-            configuration 'dexguard-project.txt'
-            configuration 'proguard-project.txt'
-        }
         production {
             defaultConfiguration 'dexguard-release-aggressive.pro'
             configuration 'dexguard-project.txt'

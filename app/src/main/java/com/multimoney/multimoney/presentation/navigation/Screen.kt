@@ -1,8 +1,8 @@
 package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
-import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
@@ -239,7 +239,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_payment/{$USER_SMART_ACCOUNT}",
         "smart_payment"
     )
-
 
     object SavingMethodTransferScreen : Screen(
         route = "saving_method_transfer_screen/{$USER_SMART_ACCOUNT}",

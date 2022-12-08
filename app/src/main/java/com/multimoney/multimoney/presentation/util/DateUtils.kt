@@ -38,12 +38,12 @@ fun getCurrentDateString() = getPickedDateAsString(
 fun getCurrentDateTimeString(dateTimeFormatter: DateTimeFormatter) =
     LocalDateTime.now().format(dateTimeFormatter).toString()
 
-fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
+fun getCardDateFormat(date: String?, newFormat: SimpleDateFormat = BAR_DIVIDER_FORMAT, oldFormat: SimpleDateFormat = SHORT_DATE_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
         try {
-            val dateFormatted = SHORT_DATE_FORMAT.parse(date)
+            val dateFormatted = oldFormat.parse(date)
             dateFormatted?.let {
-                format.format(dateFormatted)
+                newFormat.format(dateFormatted)
             } ?: run {
                 ""
             }

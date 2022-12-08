@@ -43,7 +43,7 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AppFlow
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_SMART_IDENTITY
+import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
 import com.multimoney.multimoney.presentation.util.onfido.OnFidoHelper
 import com.onfido.android.sdk.capture.ExitCode
 import com.onfido.android.sdk.capture.Onfido.OnfidoResultListener
@@ -224,10 +224,10 @@ class SmartOnfidoViewModel @Inject constructor(
 
     private fun navigateToCorrectScreen() {
         val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
-            VALIDATE_SMART_IDENTITY.value
+            VALIDATE_IDENTITY.value
         } else {
             if (evicertiaStatus.lowercase() == CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
-                VALIDATE_SMART_IDENTITY.value
+                VALIDATE_IDENTITY.value
             } else {
                 GENERATE_DOCUMENT_STEP.value
             }

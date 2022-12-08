@@ -2,7 +2,7 @@ package com.multimoney.multimoney
 
 import android.app.Application
 import androidx.work.Configuration
-import com.multimoney.multimoney.presentation.ui.home.product.credit.workmanager.DownloadAccountStatementWorkerProvider
+import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.DownloadCreditMovementsWorkerProvider
 import com.multimoney.multimoney.util.AdjustHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import com.multimoney.multimoney.util.SentryHelper
@@ -22,7 +22,7 @@ open class MultimoneyApplication : Application(), Configuration.Provider {
     lateinit var cognitoHelper: CognitoHelper
 
     @Inject
-    lateinit var downloadAccountStatementWorkerProvider: DownloadAccountStatementWorkerProvider
+    lateinit var downloadCreditMovementsWorkerProvider: DownloadCreditMovementsWorkerProvider
 
     override fun onCreate() {
         super.onCreate()
@@ -34,7 +34,7 @@ open class MultimoneyApplication : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
-            .setWorkerFactory(downloadAccountStatementWorkerProvider)
+            .setWorkerFactory(downloadCreditMovementsWorkerProvider)
             .setMinimumLoggingLevel(android.util.Log.DEBUG)
             .build()
 

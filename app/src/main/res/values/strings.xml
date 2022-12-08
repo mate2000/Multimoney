@@ -44,6 +44,7 @@
     <string name="common_options" translatable="false">Opciones</string>
     <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
+    <string name="common_go_home" translatable="false">Ir al inicio</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -280,7 +281,7 @@
     <string name="home_product_credit_signature_missing_description" translatable="false">Firmá el contrato para que podás empezar a disfrutar de tu crédito.</string>
     <string name="home_product_credit_signature_missing_action" translatable="false">Firmar</string>
     <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
-    <string name="home_product_check_all" translatable="false">Ver todos</string>
+    <string name="home_product_check_all" translatable="false">Ver Todos</string>
     <string name="home_product_title" translatable="false">Disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
     <string name="home_product_expiration" translatable="false">Vence</string>
@@ -310,6 +311,11 @@
     <string name="profile_invite_friends" translatable="false">Invitar amigos</string>
     <string name="profile_logout" translatable="false">Cerrar Sesión</string>
 
+    <!-- Sign Out -->
+    <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
+    <string name="sign_out_dialog_title_gt" translatable="false">¿Estás seguro que quieres cerrar sesión?</string>
+    <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
+
     <!-- Home Product Header -->
     <string name="home_product_header_title" translatable="false">Mis Productos</string>
 
@@ -333,9 +339,10 @@
 
     <!-- quick actions bottom sheet -->
     <string name="quick_action_bottom_sheet_title" translatable="false">¿Qué querés hacer?</string>
+    <string name="quick_action_bottom_sheet_title_gt" translatable="false">¿Qué quieres hacer?</string>
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
     <string name="quick_action_bottom_sheet_smart_section" translatable="false">Smart</string>
-    <string name="quick_action_bottom_sheet_crypto_section" translatable="false">Crypto</string>
+    <string name="quick_action_bottom_sheet_crypto_section" translatable="false">Cripto</string>
     <string name="quick_action_bottom_sheet_credit_pay_fee" translatable="false">Pagar cuota</string>
     <string name="quick_action_bottom_sheet_credit_disburse_available" translatable="false">Desembolsar disponible</string>
     <string name="quick_action_bottom_sheet_credit_pay_at_business" translatable="false">Pagar en comercio</string>
@@ -525,6 +532,7 @@
     <string name="visa_card_cr_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_gt_dialog_description_available" translatable="false">Recuerda que puedes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_available_amount" translatable="false">Disponible %s</string>
+    <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
@@ -543,9 +551,9 @@
     <string name="credit_detail_client" translatable="false">Cliente</string>
     <string name="credit_detail_iban_number" translatable="false">Numero de cuenta IBAN</string>
 
-    <!-- Disbursement Request Sent-->
-    <string name="disbursement_request_sent_successfully" translatable="false">Tu solicitud fue \nenviada \nexitosamente</string>
-    <string name="disbursement_info_verification_wait" translatable="false">Estamos verificando tus datos, pronto te daremos una respuesta</string>
+    <!-- Credit Request Success -->
+    <string name="credit_request_sent_successfully" translatable="false">Tu solicitud fue \nenviada \nexitosamente</string>
+    <string name="credit_request_info_verification_wait" translatable="false">Estamos verificando tus datos, pronto te daremos una respuesta</string>
 
     <!-- Payment Fee -->
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>
@@ -701,6 +709,16 @@
     <string name="payment_options_transfer_close_dialog_title" translatable="false">¿Estás seguro que querés salir? </string>
     <string name="payment_options_transfer_close_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
 
+    <!-- Smart Saving Method - Transfer -->
+    <string name="saving_method_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>
+    <string name="saving_method_transfer_disclaimer" translatable="false">La transferencia se verá reflejada en 48 horas hábiles</string>
+    <string name="saving_method_transfer_bank" translatable="false">Banco</string>
+    <string name="saving_method_transfer_bank_name" translatable="false">SAC Gente</string>
+    <string name="saving_method_transfer_account_type_label" translatable="false">Tipo de cuenta</string>
+    <string name="saving_method_transfer_saving_account" translatable="false">Cuenta de ahorro</string>
+    <string name="saving_method_transfer_account" translatable="false">Número de cuenta</string>
+    <string name="saving_method_transfer_account_number_copied" translatable="false">Número de cuenta copiada</string>
+
     <!-- Payment Amount -->
     <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
     <string name="payment_amount_min_amount" translatable="false">Pagar mínimo</string>
@@ -759,6 +777,9 @@
     <string name="disbursement_account_sv_title" translatable="false">¿Dónde querés recibir tu crédito?</string>
     <string name="disbursement_account_gt_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
     <string name="disbursement_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
+    <string name="disbursement_account_process_success_title" translatable="false">¡Tu solicitud fue \nenviada con éxito!</string>
+    <string name="disbursement_account_process_success_description" translatable="false">Te notificaremos cuando tu \ndesembolso haya sido realizado</string>
+    <string name="disbursement_account_process_error_button" translatable="false">Ir al inicio</string>
 
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
@@ -829,20 +850,57 @@
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
     <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+    <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
     <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
 
+    <!-- Payment method -->
+    <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>
+    <string name="payment_method_transfer" translatable="false">Transferencia bancaria</string>
+    <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
+
+    <!-- Payment Account -->
+    <string name="payment_account_title" translatable="false">¿A cuál Multimoney Smart querés abonar?</string>
+    <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
+    <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
+
+    <!-- Disbursement Bottom Sheet -->
+    <string name="disbursement_bottom_sheet_title" translatable="false">Monto a desembolsar</string>
+    <string name="disbursement_bottom_sheet_account" translatable="false">En tu cuenta</string>
+    <string name="disbursement_bottom_sheet_button" translatable="false">Realizar desembolso</string>
+    <string name="disbursement_bottom_sheet_exchange_rate" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_bottom_sheet_quota_to_pay"  translatable="false">Cuota mensual consolidada</string>
+    <string name="disbursement_bottom_sheet_next_payment_date"  translatable="false">Fecha del siguiente pago</string>
+
+    <!-- Disbursement Voucher -->
+    <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
+    <string name="disbursement_voucher_schedule_payment" translatable="false">Programar pago automático</string>
+    <string name="disbursement_voucher_shared_button" translatable="false">Compartir</string>
+    <string name="disbursement_voucher_amount_to_pay_label" translatable="false">Monto elegido</string>
+    <string name="disbursement_voucher_exchange_rate_label" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_voucher_reference_number_label" translatable="false">N° de pagaré</string>
+    <string name="disbursement_voucher_from_label" translatable="false">Desde</string>
+    <string name="disbursement_voucher_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="disbursement_voucher_you_have_received" translatable="false">Has recibido</string>
+    <string name="disbursement_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
+    <string name="disbursement_account_masked_text" translatable="false">••••</string>
+    <string name="disbursement_voucher_exchange_type" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_voucher_amount_to_disburse" translatable="false">Monto elegido</string>
+
+    <!-- Credit Movements -->
+    <string name="credit_movements_download_button" translatable="false">Descargar estado de cuenta</string>
+
     <!-- Download Account Statement Worker -->
-    <string name="download_account_statement_worker_channel_name" translatable="false">Descargar estado de cuenta</string>
-    <string name="download_account_statement_worker_channel_description" translatable="false">Estado de descarga de estado de cuenta</string>
-    <string name="download_account_statement_worker_push_title_download" translatable="false">Descargando</string>
-    <string name="download_account_statement_worker_push_description_download" translatable="false">El estado de cuenta se esta descargando...</string>
-    <string name="download_account_statement_worker_push_title_error" translatable="false">Error</string>
-    <string name="download_account_statement_worker_push_description_error" translatable="false">Hubo un error en la descarga del estado de cuenta</string>
-    <string name="download_account_statement_worker_push_toast_description_error" translatable="false">El estado de cuenta no se pudo abrir</string>
-    <string name="download_account_statement_worker_push_title_success" translatable="false">Abrir</string>
-    <string name="download_account_statement_worker_push_description_success" translatable="false">Abrir estado de cuenta</string>
-    <string name="download_account_statement_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
+    <string name="download_credit_movements_worker_channel_name" translatable="false">Descargar estado de cuenta</string>
+    <string name="download_credit_movements_worker_channel_description" translatable="false">Estado de descarga de estado de cuenta</string>
+    <string name="download_credit_movements_worker_push_title_download" translatable="false">Descargando</string>
+    <string name="download_credit_movements_worker_push_description_download" translatable="false">El estado de cuenta se esta descargando...</string>
+    <string name="download_credit_movements_worker_push_title_error" translatable="false">Error</string>
+    <string name="download_credit_movements_worker_push_description_error" translatable="false">Hubo un error en la descarga del estado de cuenta</string>
+    <string name="download_credit_movements_worker_push_toast_description_error" translatable="false">El estado de cuenta no se pudo abrir</string>
+    <string name="download_credit_movements_worker_push_title_success" translatable="false">Abrir</string>
+    <string name="download_credit_movements_worker_push_description_success" translatable="false">Abrir estado de cuenta</string>
+    <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
 </resources>

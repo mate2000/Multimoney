@@ -1,0 +1,19 @@
+mutation SaveAutomatedSmartAccount(
+    $user: String!,
+    $idBrand: Int!,
+    $identificationNumber: String!,
+    $idRequest: Long!
+){
+    saveAutomatedSmartAccount(
+        saveAutomatedSmartAccountInput: {
+            user: $user
+            idBrand: $idBrand
+            identificationNumber: $identificationNumber
+            idRequest: $idRequest
+        }
+    ) {
+        result {
+            message
+        }
+    }
+}

@@ -80,6 +80,7 @@ fun CustomLabelDescRow(
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(top = 8.dp)
                 .height(1.dp),
             color = WhiteTransparency50
         )

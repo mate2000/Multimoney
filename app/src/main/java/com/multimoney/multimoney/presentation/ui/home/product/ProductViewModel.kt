@@ -8,6 +8,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
@@ -25,6 +26,8 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMiniCardsClicked
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
@@ -123,7 +126,6 @@ class ProductViewModel @Inject constructor(
             CREDIT_FIRM_INCOMPLETE, CREDIT_ONFIDO_REJECTED, CREDIT_FIRM_REJECTED -> {
                 // todo call the new endpoint to get the evicertia url
             }
-
             else -> {
                 navigateTo(
                     "${Screen.CreditScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
@@ -231,6 +233,11 @@ class ProductViewModel @Inject constructor(
         context.openWhatsAppDeepLink(whatsAppLink)
     }
 
+    private fun onNavigateToCreditMovements() {
+        val infoCredit = uiState.userStatus?.infoCredit
+        navigateTo("${Screen.CreditMovementsScreen.baseRoute}/${uiState.idBrand}/${infoCredit?.idLoanClient ?: 0}/$email/${balanceCredit?.getFirstCredit()?.creditNumber}")
+    }
+
     private fun getProgress() {
         productProgress = (
             balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
@@ -248,6 +255,8 @@ class ProductViewModel @Inject constructor(
             ) > 0
         ) R.string.home_product_expired else R.string.home_product_expiration
     }
+
+    private fun getIfIsPep() = uiState.userStatus?.infoCredit?.infoPreApprove?.status == PENDING_TO_CHECK_STATUS
 
     fun evaluateCardCondition(action: String, validateUserStatus: ValidateUserStatus): Boolean {
         validateUserStatus.apply {
@@ -268,6 +277,14 @@ class ProductViewModel @Inject constructor(
                     infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status && (
                         CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id
                         )
+                }
+
+                CREDIT_EL_SALVADOR_MANUAL_PROCESS -> {
+                    uiState.idBrand.toInt() == Brand.ElSalvador.id && infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status
+                }
+
+                CREDIT_PEP_PROCESS -> {
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status && infoCredit?.infoPreApprove?.idPrint == 0L && getIfIsPep()
                 }
 
                 CREDIT_FIRM_INCOMPLETE -> {
@@ -432,12 +449,20 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToPaymentSmartScreen(account: Account?) {
+        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
+    }
+
+    private fun onNavigateToSendMoneyScreen() {
+        // FIXME: Navigate to correct payment flow screen
+        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var productPageList: List<ProductPage>? = null,
-        var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
         val onGoingCreditCardTitle: Int = R.string.home_product_title,
@@ -455,7 +480,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
-            is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen()
+            is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
             is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
@@ -487,17 +512,11 @@ class ProductViewModel @Inject constructor(
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
             is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
+            is OnMiniCardsClicked -> onQuickActionClicked(uiEvent.flow)
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
+            is OnNavigateToCreditMovementsScreen -> onNavigateToCreditMovements()
         }
-    }
-
-    private fun onNavigateToPaymentSmartScreen() {
-        // TODO: Navigate to PaymentSmart screen
-    }
-
-    private fun onNavigateToSendMoneyScreen() {
-        // TODO: Navigate to SendMoney screen
     }
 
     sealed class UIEvent {
@@ -516,8 +535,9 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
         object OnNavigateToSendMoneyFlow : UIEvent()
-        object OnNavigateToPaymentSmartFlow : UIEvent()
+        data class OnNavigateToPaymentSmartFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
+        object OnNavigateToCreditMovementsScreen : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
@@ -544,6 +564,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnQuickActionClicked(val flow: String) : UIEvent()
+        data class OnMiniCardsClicked(val flow: String) : UIEvent()
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
     }
 
@@ -563,6 +584,9 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_ONFIDO_REJECTED = "CREDT_ONFIFO_REJECTED"
         const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
         const val CREDIT_ERROR_CREATE_ACCOUNT = "CREDIT_ERROR_CREATE_ACCOUNT"
+        const val CREDIT_EL_SALVADOR_MANUAL_PROCESS = "CREDIT_EL_SALVADOR_MANUAL_PROCESS"
+        const val CREDIT_PEP_PROCESS = "CREDIT_PEP_PROCESS"
         const val SEPARATOR = " + "
+        const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
     }
 }

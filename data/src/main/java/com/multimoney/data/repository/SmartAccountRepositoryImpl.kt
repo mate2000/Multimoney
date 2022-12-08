@@ -18,6 +18,7 @@ import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
+import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -231,6 +232,23 @@ class SmartAccountRepositoryImpl @Inject constructor(
         ),
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
+
+    override suspend fun mutationSaveAutomatedSmartAccount(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        idRequest: Long
+    ): Flow<MultimoneyResult<SaveSmartAccount?>> {
+        return fetchData(
+            apolloCall = graphqlApi.mutationSaveAutomatedSmartAccount(
+                user,
+                idBrand,
+                identificationNumber,
+                idRequest
+            ),
+            apolloCallMapper = { data -> Success(data.mapToDomainModel())}
+        )
+    }
 
     /**
      * fetch the list of the source of income catalog for the account smart flow

@@ -1,15 +1,18 @@
 package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
+import com.multimoney.multimoney.presentation.navigation.navgraph.DISBURSEMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
@@ -47,6 +50,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
 
 // Route
 const val LOGIN_ROUTE = "log_in_route"
@@ -58,6 +62,7 @@ const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
+const val PAYMENT_SMART_ROUTE = "payment_smart_route"
 
 const val ID_BRAND = "id_brand"
 
@@ -94,7 +99,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object DisbursementAccountScreen : Screen(
-        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}/{$PK_USER}/{$ID_USER_REQUEST}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}/{$IDENTIFICATION}",
+        "disbursement_account_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$NEXT_PAYMENT_DATE}/{$QUOTA_TOTAL}/{$SELECTED_AMOUNT}/{$PK_USER}/{$ID_USER_REQUEST}/{$IDENTIFICATION}/{$CREDIT_NUMBER}/{$FK_FLOW_CONTROL}/{$ID_CURRENCY}/{$ID_LOAN_CLIENT}",
         "disbursement_account_screen"
     )
 
@@ -103,10 +108,21 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "disbursement_add_account_screen"
     )
 
+    object DisbursementVoucherScreen :
+        Screen(
+            route = "disbursement_voucher_screen/{$CLIENT_BANK_ACCOUNT}/{$DISBURSEMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$REFERENCE_NUMBER}/{$AMOUNT_ORIGINAL_LABEL}",
+            "disbursement_voucher_screen"
+        )
+
     // CreditNavGraph Screens
     object CreditScreen : Screen(
         "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}",
         "credit_screen"
+    )
+
+    object CreditMovementsScreen : Screen(
+        "credit_movements_screen/{$ID_BRAND}/{$ID_LOAN_CLIENT}/{$USER}/{$CREDIT_NUMBER}",
+        "credit_movements_screen"
     )
 
     object CreditOnfidoScreen : Screen(
@@ -219,9 +235,27 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_onfido_screen"
     )
 
+    object SmartPaymentScreen : Screen(
+        "smart_payment/{$USER_SMART_ACCOUNT}",
+        "smart_payment"
+    )
+
+    object SavingMethodTransferScreen : Screen(
+        route = "saving_method_transfer_screen/{$USER_SMART_ACCOUNT}",
+        baseRoute = "saving_method_transfer_screen"
+    )
+
     object SmartMovementsScreen : Screen(
         "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
         "smart_movements_screen"
+    )
+
+    object SmartPaymentAccountScreen : Screen("smart_payment_screen")
+
+    // Payment Smart
+    object PaymentSmartCardsScreen : Screen(
+        "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "payment_smart_cards_screen"
     )
 
     // TestNavGraph Screens

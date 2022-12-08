@@ -22,7 +22,8 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
-                })
+                }
+            )
         ) {
             ProfileScreen(
                 onPopBackStack = {
@@ -35,6 +36,11 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 },
                 onNavigate = {
                     navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
             )
         }

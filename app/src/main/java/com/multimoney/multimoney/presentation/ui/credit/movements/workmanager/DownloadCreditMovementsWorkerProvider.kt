@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.home.product.credit.workmanager
+package com.multimoney.multimoney.presentation.ui.credit.movements.workmanager
 
 import android.content.Context
 import androidx.work.ListenableWorker
@@ -8,7 +8,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCase
 import javax.inject.Inject
 
-class DownloadAccountStatementWorkerProvider @Inject constructor(
+class DownloadCreditMovementsWorkerProvider @Inject constructor(
     private val preferences: DataStorePreferences,
     private val queryAccountStatementUseCase: QueryAccountStatementUseCase
 ) : WorkerFactory() {
@@ -18,7 +18,7 @@ class DownloadAccountStatementWorkerProvider @Inject constructor(
         workerClassName: String,
         workerParameters: WorkerParameters
     ): ListenableWorker {
-        return DownloadAccountStatementWorker(
+        return DownloadCreditMovementsWorker(
             context = appContext,
             workerParameters = workerParameters,
             preferences = preferences,

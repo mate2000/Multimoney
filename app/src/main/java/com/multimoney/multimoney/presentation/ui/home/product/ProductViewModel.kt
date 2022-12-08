@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
@@ -135,11 +136,19 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToSmartFlow() {
-        navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
-                "${uiState.userStatus?.infoUser?.firstName}/" +
-                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}"
-        )
+    private fun onNavigateToSmartFlow(smartStep : String) {
+        when(smartStep) {
+            SMART_ONFIDO_REJECTED -> {
+                // TODO get the new evicertia url
+            }
+            else -> {
+                navigateTo("${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
+                        "${uiState.userStatus?.infoUser?.firstName}/" +
+                        "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}"
+                )
+            }
+        }
+
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -267,6 +276,12 @@ class ProductViewModel @Inject constructor(
                     infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status && (
                         CreditStep.Search.getIdByName(infoCredit?.infoPreApprove?.currentStep) == CreditStep.Eight.id
                         )
+                }
+
+                SMART_IDENTITY_INCOMPLETE -> {
+                    infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status && (
+                            SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
+                            )
                 }
 
                 CREDIT_FIRM_INCOMPLETE -> {
@@ -451,7 +466,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> setValidateUserStatus(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.creditStep)
-            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
+            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow(uiEvent.smartStep)
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
             is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen()
@@ -509,7 +524,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
-        object OnNavigateToSmartOriginationFlow : UIEvent()
+        data class OnNavigateToSmartOriginationFlow(val smartStep: String) : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
@@ -563,5 +578,8 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_ONFIDO_MAX_ATTEMPTS = "CREDIT_ONFIDO_MAX_ATTEMPTS"
         const val CREDIT_ERROR_CREATE_ACCOUNT = "CREDIT_ERROR_CREATE_ACCOUNT"
         const val SEPARATOR = " + "
+        // Smart
+        const val SMART_IDENTITY_INCOMPLETE = "SAMART_IDENTITY_INCOMPLETE"
+        const val SMART_ONFIDO_REJECTED = "SMART_ONFIFO_REJECTED"
     }
 }

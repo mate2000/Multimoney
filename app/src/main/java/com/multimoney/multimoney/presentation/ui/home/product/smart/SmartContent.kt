@@ -18,7 +18,7 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
 
     viewModel.uiState.userStatus?.apply {
         when (infoBankAccount?.status) {
-            SmartAccountStatus.EXIST_IN_CORE.status -> {
+            SmartAccountStatus.EXIST_IN_CORE.status, SmartAccountStatus.WITHOUT_OPERATION.status -> {
                 viewModel.balanceCredit?.balanceAccountSmart?.let {
                     if (it.isNotEmpty()) {
                         val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)

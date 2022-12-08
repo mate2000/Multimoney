@@ -120,6 +120,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "credit_screen"
     )
 
+    object CreditMovementsScreen : Screen(
+        "credit_movements_screen/{$ID_BRAND}/{$ID_LOAN_CLIENT}",
+        "credit_movements_screen"
+    )
+
     object CreditOnfidoScreen : Screen(
         "credit_onfido_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}/{$EVICERTIA_STATUS}",
         "credit_onfido_screen"
@@ -234,7 +239,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_payment/{$USER_SMART_ACCOUNT}",
         "smart_payment"
     )
-
 
     object SavingMethodTransferScreen : Screen(
         route = "saving_method_transfer_screen/{$USER_SMART_ACCOUNT}",

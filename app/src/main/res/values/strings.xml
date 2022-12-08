@@ -281,7 +281,7 @@
     <string name="home_product_credit_signature_missing_description" translatable="false">Firmá el contrato para que podás empezar a disfrutar de tu crédito.</string>
     <string name="home_product_credit_signature_missing_action" translatable="false">Firmar</string>
     <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
-    <string name="home_product_check_all" translatable="false">Ver todos</string>
+    <string name="home_product_check_all" translatable="false">Ver Todos</string>
     <string name="home_product_title" translatable="false">Disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
     <string name="home_product_expiration" translatable="false">Vence</string>
@@ -887,5 +887,8 @@
     <string name="disbursement_account_masked_text" translatable="false">••••</string>
     <string name="disbursement_voucher_exchange_type" translatable="false">Tipo de cambio</string>
     <string name="disbursement_voucher_amount_to_disburse" translatable="false">Monto elegido</string>
+
+    <!-- Credit Movements -->
+    <string name="credit_movements_download_button" translatable="false">Descargar estado de cuenta</string>
 
 </resources>

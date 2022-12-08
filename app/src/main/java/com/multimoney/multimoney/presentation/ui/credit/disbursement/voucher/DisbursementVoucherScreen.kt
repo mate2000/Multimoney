@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher
+package com.multimoney.multimoney.presentation.ui.credit.disbursement.voucher
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,12 +42,10 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.voucher.DisbursementVoucherViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.voucher.DisbursementVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.VoucherAccountInfo
@@ -59,10 +57,10 @@ import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
 @Preview
-fun PaymentVoucherScreen(
+fun DisbursementVoucherScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: PaymentVoucherViewModel = hiltViewModel()
+    viewModel: DisbursementVoucherViewModel = hiltViewModel()
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
@@ -122,7 +120,7 @@ fun PaymentVoucherScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = stringResource(string.payment_voucher_transaction_success),
+                            text = stringResource(string.disbursement_voucher_transaction_success),
                             modifier = Modifier.padding(top = 16.dp),
                             style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                             color = MultimoneyTheme.colors.text
@@ -138,7 +136,7 @@ fun PaymentVoucherScreen(
                                     )
                                 }
                             },
-                            text = stringResource(string.payment_voucher_shared_button),
+                            text = stringResource(string.disbursement_voucher_shared_button),
                             modifier = Modifier
                                 .padding(
                                     start = 24.dp,
@@ -155,36 +153,19 @@ fun PaymentVoucherScreen(
                             buttonType = CustomButtonType.PrimaryTertiary
                         )
                         Text(
-                            text = stringResource(string.payment_voucher_you_have_paid),
+                            text = stringResource(string.disbursement_voucher_you_have_received),
                             modifier = Modifier.padding(top = 12.dp),
                             style = Typography.body1,
                             color = MultimoneyTheme.colors.text
                         )
 
-                        if (viewModel.isMultiCurrency == true) {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = viewModel.currentAmountValueString ?: "",
-                                style = Typography.h4.copy(fontWeight = FontWeight.W600),
-                                color = MultimoneyTheme.colors.text,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = viewModel.paymentLabel ?: "x",
-                                style = Typography.body2.copy(fontWeight = FontWeight.W600),
-                                color = MultimoneyTheme.colors.text,
-                                textAlign = TextAlign.Center
-                            )
-                        } else {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = viewModel.currentAmountValueString ?: "",
-                                style = Typography.h4.copy(fontWeight = FontWeight.W600),
-                                color = MultimoneyTheme.colors.text,
-                                textAlign = TextAlign.Center
-                            )
-                        }
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = viewModel.disbursementLabel ?: "",
+                            style = Typography.h4.copy(fontWeight = FontWeight.W600),
+                            color = MultimoneyTheme.colors.text,
+                            textAlign = TextAlign.Center
+                        )
                     }
                     Box(
                         Modifier
@@ -193,7 +174,7 @@ fun PaymentVoucherScreen(
                             .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 10.dp))
                     )
                     Text(
-                        text = stringResource(string.payment_voucher_from_label),
+                        text = stringResource(string.disbursement_voucher_from_label),
                         modifier = Modifier.padding(top = 16.dp, start = 24.dp),
                         style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.labelText
@@ -202,29 +183,30 @@ fun PaymentVoucherScreen(
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = drawable.ic_bank,
-                        title = stringResource(string.payment_voucher_origin_account_label),
+                        title = stringResource(string.disbursement_voucher_origin_account_label),
                         subTitle = getMaskedAccount(
                             viewModel.clientBankAccount?.accountNumber ?: "",
-                            stringResource(id = string.payment_account_masked_text)
+                            stringResource(id = string.disbursement_account_masked_text)
                         )
                     )
 
                     VoucherNumberInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
-                        title = stringResource(string.payment_voucher_reference_number_label),
-                        subTitle = viewModel.referenceNumber ?: ""
+                        title = stringResource(string.disbursement_voucher_reference_number_label),
+                        subTitle = viewModel.reference ?: ""
                     )
 
                     if (viewModel.shouldDisplayExchangeRate == true) {
                         Spacer(modifier = Modifier.height(32.dp))
                         VoucherCurrencyExchangeInfo(
-                            leftTitleResource = string.payment_amount_bottom_sheet_exchange_type,
-                            rightTitleResource = string.payment_amount_bottom_sheet_amount_to_debit,
+                            leftTitleResource = string.disbursement_voucher_exchange_type,
+                            rightTitleResource = string.disbursement_voucher_amount_to_disburse,
                             exchangeRateText = viewModel.exchangeRateLabel.toString(),
-                            convertedAmountText = viewModel.uiState.exchangeConvertedAmount.toString()
+                            convertedAmountText = viewModel.amountInCurrencyLabel ?: ""
                         )
                     }
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -253,22 +235,6 @@ fun PaymentVoucherScreen(
                     }
                 }
             }
-        }
-        if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
-            CustomButton(
-                onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
-                text = stringResource(string.payment_voucher_schedule_payment),
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 32.dp,
-                        top = 16.dp
-                    )
-                    .fillMaxWidth()
-                    .height(48.dp),
-                buttonType = PrimaryPrimary
-            )
         }
     }
 }

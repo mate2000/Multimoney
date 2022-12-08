@@ -1,10 +1,13 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.independentprofessional
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel
 import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
@@ -25,6 +28,7 @@ class IndProfessionalViewModel @Inject constructor() : BaseViewModel(true) {
     sealed class UIEvent {
         data class OnIncomeAmountChange(val income: String) : UIEvent()
         data class OnJobAddressValueChange(val address: String) : UIEvent()
+        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 
@@ -36,7 +40,20 @@ class IndProfessionalViewModel @Inject constructor() : BaseViewModel(true) {
         when (uiEvent) {
             is UIEvent.OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
             is UIEvent.OnJobAddressValueChange -> addressValueChanged(uiEvent.address)
+            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(uiEvent.accountSmartData)
             is UIEvent.OnValidateForm -> onValidateForm()
+        }
+    }
+
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        Log.d("tellCollected", "collected in other income: $accountSmartData")
+        accountSmartData?.let {
+            incomeAmountChange(it.income.toString())
+            addressValueChanged(it.fullJobAddress.orEmpty())
         }
     }
 

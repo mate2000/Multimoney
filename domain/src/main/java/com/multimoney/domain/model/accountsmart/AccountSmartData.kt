@@ -24,6 +24,7 @@ data class AccountSmartData(
     var idEconomicActivity: Long? = 0,
     var institutionPension: String = "",
     var income: Float? = 0.0f,
+    var fullJobAddress: String? = "",
     var addressDetail: String? = "",
     var user: String? = "",
     var idBrand: Int? = 0,

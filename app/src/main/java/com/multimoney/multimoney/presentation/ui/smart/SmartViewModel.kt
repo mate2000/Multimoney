@@ -254,6 +254,7 @@ class SmartViewModel @Inject constructor(
                 }.orEmpty(),
                 idGender = accountSmartData?.idGender ?: 0,
                 companyName = accountSmartData?.companyName.orEmpty(),
+                fullJobAddress = accountSmartData?.companyName.orEmpty(),
                 aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
                 institutionPension = accountSmartData?.institutionPension.orEmpty(),
                 specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
@@ -580,5 +581,6 @@ class SmartViewModel @Inject constructor(
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
         const val STEP_BY_STEP_EVENT_DELAY = 1500L
+        const val ONE_SEC_DELAY = 1000L
     }
 }

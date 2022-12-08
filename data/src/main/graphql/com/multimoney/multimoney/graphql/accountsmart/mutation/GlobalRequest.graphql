@@ -16,6 +16,7 @@ mutation GlobalRequest(
     $idEconomicActivity: Long!,
     $income: Float!,
     $addressDetail: String!,
+    #$fullJobAddress: String!, // FIXME
     $user: String!,
     $idBrand: Int!,
     $currentStep: String!,
@@ -49,6 +50,7 @@ mutation GlobalRequest(
         idEconomicActivity : $idEconomicActivity
         income : $income
         addressDetail: $addressDetail
+        #fullJobAddress: $addressDetail
         user: $user
         idBrand: $idBrand
         currentStep: $currentStep

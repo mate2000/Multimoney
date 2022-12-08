@@ -487,10 +487,6 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToPaymentSmartScreen() {
-        // TODO: Navigate to PaymentSmart screen
-    }
-
     data class UIState(
         // Fields
         var idBrand: String = "0",

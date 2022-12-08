@@ -1,9 +1,13 @@
 package com.multimoney.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
+import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
@@ -12,6 +16,9 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SmartMovement
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
+import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -22,6 +29,54 @@ import javax.inject.Inject
 class SmartAccountRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
 ) : BaseRepository(), SmartAccountRepository {
+
+    override suspend fun queryGetCoreBankMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageNumber: Int,
+        pageSize: Int,
+        monthDate: String?
+    ): Flow<MultimoneyResult<SmartMovementsResult?>> =
+        fetchData(
+            apolloCall = graphqlApi.queryGetCoreBankMovements(
+                user,
+                idBrand,
+                identificationNumber,
+                accountToken,
+                pageNumber,
+                pageSize,
+                monthDate
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun getPagedMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        accountToken: Long,
+        pageSize: Int,
+        monthDate: String?
+    ): Flow<PagingData<SmartMovement>> {
+        return Pager(
+            config = PagingConfig(pageSize),
+            pagingSourceFactory = {
+                SmartMovementsPagingSource(
+                    graphqlApi,
+                    user,
+                    idBrand,
+                    identificationNumber,
+                    accountToken,
+                    pageSize,
+                    monthDate
+                )
+            }
+        ).flow
+    }
 
     override suspend fun queryCivilStatus(
         pkUser: String,
@@ -178,6 +233,23 @@ class SmartAccountRepositoryImpl @Inject constructor(
         apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
     )
 
+    override suspend fun mutationSaveAutomatedSmartAccount(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        idRequest: Long
+    ): Flow<MultimoneyResult<SaveSmartAccount?>> {
+        return fetchData(
+            apolloCall = graphqlApi.mutationSaveAutomatedSmartAccount(
+                user,
+                idBrand,
+                identificationNumber,
+                idRequest
+            ),
+            apolloCallMapper = { data -> Success(data.mapToDomainModel())}
+        )
+    }
+
     /**
      * fetch the list of the source of income catalog for the account smart flow
      */
@@ -200,5 +272,20 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.queryRelationship(user, idBrand, option),
             apolloCallMapper = { data -> Success(data.mapToDomain()) }
         )
+    }
+
+    override suspend fun mutationInitialRequestSmartAccount(
+        pkUser: Long,
+        idBrand: Int,
+        user: String
+    ): Flow<MultimoneyResult<GlobalRequest?>> {
+        return fetchData(
+            apolloCall = graphqlApi.mutationInitialRequestSmartAccount(
+                pkUser,
+                idBrand,
+                user
+            ), apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            })
     }
 }

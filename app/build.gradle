@@ -130,6 +130,7 @@ dependencies {
     implementation compose.livedata
     androidTestImplementation compose.test
     implementation compose.extended_icons
+    implementation compose.coil
 
     // Hilt
     implementation hilt.android
@@ -206,6 +207,11 @@ dependencies {
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
+
+    // Paging
+    implementation paging3.paging3_runtime
+    implementation paging3.paging3_compose
+
 }
 
 dexguard {

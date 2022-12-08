@@ -37,9 +37,11 @@ fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
                     type = ProductBackGroundType.Secondary
                 ) {
                     CardInactiveSmartProduct(
-                        it?.textOne.toString(), it?.textTwo.toString(), it?.cTA.toString()
+                        it?.textOne.toString(),
+                        it?.textTwo.toString(),
+                        it?.cTA.toString()
                     ) {
-                        //TODO add navigation according to status
+                        // TODO add navigation according to status
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
                     }
                 }

@@ -51,6 +51,7 @@ ext {
     // Compose
     compose_version = "1.3.0-alpha02"
     compose_compiler_version = "1.2.0-rc02"
+    coil_version = "2.2.2"
 
     compose = [
             ui        : "androidx.compose.ui:ui:$compose_version",
@@ -61,6 +62,7 @@ ext {
             livedata  : "androidx.compose.runtime:runtime-livedata:${compose_version}",
             test      : "androidx.compose.ui:ui-test-junit4:$compose_version",
             extended_icons: "androidx.compose.material:material-icons-extended:$compose_version",
+            coil: "io.coil-kt:coil-compose:$coil_version"
     ]
 
     // Room
@@ -284,11 +286,21 @@ ext {
             visa: "com.github.Akrostechnologies:react-native-visa-sensory-branding:$visa_version"
     ]
 
-    //HtmlText
+    // HtmlText
     htmlText_version = "1.0.2"
     htmlText = [
             htmlText: "com.github.ireward:compose-html:$htmlText_version"
     ]
+
+    // Paging 3
+    paging3_version = "3.1.1"
+    compose_paging3_version = "1.0.0-alpha14"
+
+    paging3 = [
+            paging3_runtime: "androidx.paging:paging-runtime:$paging3_version",
+            paging3_compose: "androidx.paging:paging-compose:$compose_paging3_version"
+    ]
+
 
     // Common Test
     junit_version = "4.13.2"

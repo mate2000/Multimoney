@@ -20,10 +20,13 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -81,10 +84,12 @@ class DisbursementAmountViewModel @Inject constructor(
     private var idBrand: Int? = null
     private var user: String? = ""
     private var idClient: Int? = null
+    private var identification: String? = null
     private var currencyItems: List<Int>? = listOf()
     private var summary: List<Summary>? = listOf()
     private var pkUser: Int? = null
     private var creditNumber: String? = null
+    private var idUserRequest: Int? = null
     private var creditExtensionAmount: CreditExtensionAmount? = null
     private var creditExtensionMessage: CreditExtensionMessage? = null
     private var creditExtensionDetail: CreditExtensionDetail? = null
@@ -97,6 +102,8 @@ class DisbursementAmountViewModel @Inject constructor(
         currencyItems = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList()?.map { it.idCurrency ?: 0 }
         pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
         creditNumber = savedStateHandle[CREDIT_NUMBER]
+        idUserRequest = savedStateHandle[ID_USER_REQUEST]
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
     }
 
     private fun onStart() {
@@ -273,11 +280,7 @@ class DisbursementAmountViewModel @Inject constructor(
                 )
                 creditExtensionDetail = it
                 navigateTo(
-                    route = "${Screen.DisbursementAccountScreen.baseRoute}/$idBrand/$user/$idClient/${
-                    encodeData(
-                        summary
-                    )
-                    }/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}"
+                    route = "${Screen.DisbursementAccountScreen.baseRoute}/$idBrand/$user/$idClient/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/${pkUser?.toString() ?: ""}/${idUserRequest ?: 0}/$identification/$creditNumber/${it?.fkFlowControl ?: 0}/${currencyItems?.get(uiState.currencyIndex)}/${creditExtensionAmount?.idLoanClient ?: 0}"
                 )
             }.onFailure {
                 uiState = uiState.copy(

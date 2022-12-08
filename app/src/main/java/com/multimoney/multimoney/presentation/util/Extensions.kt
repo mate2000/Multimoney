@@ -110,6 +110,15 @@ fun String.getCurrencySymbol(): Int {
     }
 }
 
+fun String.getCurrency(): CurrencyType {
+    return when (this) {
+        Colon.currency -> Colon
+        Dollar.currency -> Dollar
+        Quetzal.currency -> Quetzal
+        else -> All
+    }
+}
+
 // Payment
 fun String.getPaymentMethodType(): PaymentMethodType {
     return when (this) {
@@ -135,6 +144,9 @@ fun Color.toHexCode(): String {
     val blue = this.blue * 255
     return String.format(HEX_FORMAT, red.toInt(), green.toInt(), blue.toInt())
 }
+
+val Int.boolean
+    get() = this == 1
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"

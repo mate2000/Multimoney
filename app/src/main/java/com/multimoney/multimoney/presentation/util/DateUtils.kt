@@ -33,12 +33,12 @@ fun getCurrentDateString() = getPickedDateAsString(
     YEAR_MONTH_DAY_PATTERN
 )
 
-fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
+fun getCardDateFormat(date: String?, newFormat: SimpleDateFormat = BAR_DIVIDER_FORMAT, oldFormat: SimpleDateFormat = SHORT_DATE_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
         try {
-            val dateFormatted = SHORT_DATE_FORMAT.parse(date)
+            val dateFormatted = oldFormat.parse(date)
             dateFormatted?.let {
-                format.format(dateFormatted)
+                newFormat.format(dateFormatted)
             } ?: run {
                 ""
             }
@@ -82,6 +82,19 @@ fun getCurrentDate(time: Date): String {
 
 fun getCurrentTime(time: Date): String {
     return SHORT_TIME_FORMAT.format(time)
+}
+
+fun parseApiDateToCardDate(date: String?): String {
+    return if (date.isNullOrEmpty().not()) {
+        val dateFormatted = date?.let { API_DATE_FORMAT.parse(it) }
+        dateFormatted?.let {
+            BAR_DIVIDER_FORMAT.format(dateFormatted)
+        } ?: run {
+            ""
+        }
+    } else {
+        ""
+    }
 }
 
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"

@@ -37,7 +37,6 @@
     <string name="dollar_symbol" translatable="false">$</string>
     <string name="colon_symbol" translatable="false">₡</string>
     <string name="quetzal_symbol" translatable="false">Q</string>
-    <string name="decimal_income_placeholder" translatable="false">%s 00,000.00</string>
     <string name="not_applicable" translatable="false">NA</string>
     <string name="common_leave" translatable="false">Abandonar</string>
     <string name="common_try_again" translatable="false">Volver a intentar</string>
@@ -45,6 +44,7 @@
     <string name="common_options" translatable="false">Opciones</string>
     <string name="common_remove" translatable="false">Eliminar</string>
     <string name="not_defined" translatable="false">Not Defined</string>
+    <string name="common_go_home" translatable="false">Ir al inicio</string>
     <string-array name="options_yes_no">
         <item>Si</item>
         <item>No</item>
@@ -134,7 +134,7 @@
     <string name="sign_up_otp_code_not_valid" translatable="false">Código de verificación incorrecto</string>
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
-    <!-- Sign Up Personal GetHistoricalClientBalance -->
+    <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s inválido</string>
     <string name="sign_up_personal_data_id_required" translatable="false">Número de %s requerido</string>
     <string name="sign_up_personal_data_nationality_header" translatable="false">¿Cuáles son tus datos personales?</string>
@@ -311,6 +311,11 @@
     <string name="profile_invite_friends" translatable="false">Invitar amigos</string>
     <string name="profile_logout" translatable="false">Cerrar Sesión</string>
 
+    <!-- Sign Out -->
+    <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
+    <string name="sign_out_dialog_title_gt" translatable="false">¿Estás seguro que quieres cerrar sesión?</string>
+    <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
+
     <!-- Home Product Header -->
     <string name="home_product_header_title" translatable="false">Mis Productos</string>
 
@@ -333,14 +338,24 @@
     <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
     <string name="crypto_footer_expanded_send_crypto_label" translatable="false">Enviar</string>
 
+    <!-- Home Smart - Account Details -->
+    <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>
+    <string name="smart_account_detail_cr_account_label" translatable="false">IBAN | %s</string>
+    <string name="smart_account_detail_gained_interest_label" translatable="false">Interés anual</string>
+    <string name="smart_account_detail_total_balance_label" translatable="false">Ganancia total a la fecha</string>
+    <string name="smart_account_detail_gained_interest" translatable="false">%s%%</string>
+    <string name="smart_account_detail_gained_interest_mock" translatable="false">3.25%</string>
+    <string name="smart_account_detail_total_balance" translatable="false">%s %s</string>
+
     <!-- my products bottom sheet -->
     <string name="my_products_bottom_sheet_title" translatable="false">Mis Productos</string>
 
     <!-- quick actions bottom sheet -->
     <string name="quick_action_bottom_sheet_title" translatable="false">¿Qué querés hacer?</string>
+    <string name="quick_action_bottom_sheet_title_gt" translatable="false">¿Qué quieres hacer?</string>
     <string name="quick_action_bottom_sheet_credit_section" translatable="false">Crédito</string>
     <string name="quick_action_bottom_sheet_smart_section" translatable="false">Smart</string>
-    <string name="quick_action_bottom_sheet_crypto_section" translatable="false">Crypto</string>
+    <string name="quick_action_bottom_sheet_crypto_section" translatable="false">Cripto</string>
     <string name="quick_action_bottom_sheet_credit_pay_fee" translatable="false">Pagar cuota</string>
     <string name="quick_action_bottom_sheet_credit_disburse_available" translatable="false">Desembolsar disponible</string>
     <string name="quick_action_bottom_sheet_credit_pay_at_business" translatable="false">Pagar en comercio</string>
@@ -503,6 +518,10 @@
     <string name="sign_document_reject_description" translatable="false">Si querés finalizar la solicitud de tu crédito debés firmar el contrato</string>
     <string name="sign_document_reject_description_gt" translatable="false">Si quieres finalizar la solicitud de tu crédito debés firmar el contrato</string>
 
+    <!-- Origination Voucher -->
+    <string name="origination_voucher_amount" translatable="false">Has recibido</string>
+    <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
+
     <!-- Visa -->
     <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>
     <string name="visa_cvv_label" translatable="false">CVV</string>
@@ -526,7 +545,7 @@
     <string name="visa_card_cr_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_gt_dialog_description_available" translatable="false">Recuerda que puedes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_available_amount" translatable="false">Disponible %s</string>
-
+    <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
@@ -545,6 +564,10 @@
     <string name="credit_detail_client" translatable="false">Cliente</string>
     <string name="credit_detail_iban_number" translatable="false">Numero de cuenta IBAN</string>
 
+    <!-- Credit Request Success -->
+    <string name="credit_request_sent_successfully" translatable="false">Tu solicitud fue \nenviada \nexitosamente</string>
+    <string name="credit_request_info_verification_wait" translatable="false">Estamos verificando tus datos, pronto te daremos una respuesta</string>
+
     <!-- Payment Fee -->
     <string name="payment_fee_title" translatable="false">Pagar al instante</string>
     <string name="payment_fee_one_option" translatable="false">Cuota en</string>
@@ -560,6 +583,10 @@
     <string name="payment_account_different_currency_dialog_title" translatable="false">Se aplicará el tipo de cambio</string>
     <string name="payment_account_different_currency_dialog_description" translatable="false">La cuenta que seleccionaste es de una moneda diferente a la de la cuota.</string>
     <string name="payment_account_empty_state_description" translatable="false">Agregá una cuenta para \npodás realizar tus pagos</string>
+
+    <!-- Add iban account Screen -->
+    <string name="add_iban_account_disbursement_tile" translatable="false">¿En cuál cuenta IBAN querés recibir tu dinero?</string>
+    <string name="add_iban_account_payment_tile" translatable="false">¿Con cuál cuenta IBAN querés realizar tu pago?</string>
 
     <!-- Iban account Screen -->
     <string name="iban_account_tile" translatable="false">¿En cuál cuenta IBAN querés recibir tu dinero?</string>
@@ -607,11 +634,12 @@
     <string name="smart_account_formal_placeholder" translatable="false">₡0000.000,0</string>
     <string name="smart_account_formal_select_profession" translatable="false">Selecciona tu profesión</string>
     <string name="smart_account_no_internet_error_description" translatable="false">No pudimos guardar tu información por un problema de conexión</string>
+    <string name="smart_decimal_income_placeholder" translatable="false">%s 00,000.00</string>
 
     <!-- Smart Account - Beneficiary -->
     <string name="smart_account_beneficiaries_title" translatable="false">Mis beneficiarios</string>
     <string name="smart_account_beneficiaries_percentage" translatable="false">Porcentaje a otorgar (%)</string>
-    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario</string>
+    <string name="smart_account_add_beneficiaries" translatable="false">Agregar beneficiario +</string>
     <string name="smart_account_beneficiary_content" translatable="false">%1$s | %2$s</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_title" translatable="false">Superaste el máximo permitido</string>
     <string name="smart_account_beneficiary_max_percentage_dialog_subtitle" translatable="false">El porcentaje máximo a otorgar es 100%</string>
@@ -642,6 +670,8 @@
     <string name="smart_other_title" translatable="false">Otro</string>
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
+    <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
+    <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
     <!--Smart Account - Own Business On Personal basis-->
     <string name="smart_business_personal_basis_title" translatable="false">Negocio propio en sociedad</string>
@@ -659,10 +689,11 @@
 
     <!--Smart Account - Salaried SV-->
     <string name="smart_salaried_title" translatable="false">Asalariado</string>
-    <string name="smart_salaried_working_address" translatable="false">Dirección laboral</string>
+    <string name="smart_salaried_working_address" translatable="false">Dirección laboral completa</string>
     <string name="smart_salaried_working_address_required" translatable="false">Dirección requerida</string>
     <string name="smart_salaried_average_salary" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_salaried_average_salary_required" translatable="false">Ingresos requeridos</string>
+    <string name="smart_salaried_salary_placeholder" translatable="false">%s 0.00</string>
     <string name="smart_salaried_profession" translatable="false">Cargo que desempeña</string>
     <string name="smart_salaried_profession_required" translatable="false">Cargo requerido</string>
     <string name="smart_salaried_company_name" translatable="false">Nombre de la empresa</string>
@@ -690,6 +721,16 @@
     <string name="payment_options_transfer_go_home" translatable="false">Ir al inicio</string>
     <string name="payment_options_transfer_close_dialog_title" translatable="false">¿Estás seguro que querés salir? </string>
     <string name="payment_options_transfer_close_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
+
+    <!-- Smart Saving Method - Transfer -->
+    <string name="saving_method_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>
+    <string name="saving_method_transfer_disclaimer" translatable="false">La transferencia se verá reflejada en 48 horas hábiles</string>
+    <string name="saving_method_transfer_bank" translatable="false">Banco</string>
+    <string name="saving_method_transfer_bank_name" translatable="false">SAC Gente</string>
+    <string name="saving_method_transfer_account_type_label" translatable="false">Tipo de cuenta</string>
+    <string name="saving_method_transfer_saving_account" translatable="false">Cuenta de ahorro</string>
+    <string name="saving_method_transfer_account" translatable="false">Número de cuenta</string>
+    <string name="saving_method_transfer_account_number_copied" translatable="false">Número de cuenta copiada</string>
 
     <!-- Payment Amount -->
     <string name="payment_amount_title" translatable="false">¿Cuánto querés pagar?</string>
@@ -749,6 +790,9 @@
     <string name="disbursement_account_sv_title" translatable="false">¿Dónde querés recibir tu crédito?</string>
     <string name="disbursement_account_gt_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
     <string name="disbursement_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
+    <string name="disbursement_account_process_success_title" translatable="false">¡Tu solicitud fue \nenviada con éxito!</string>
+    <string name="disbursement_account_process_success_description" translatable="false">Te notificaremos cuando tu \ndesembolso haya sido realizado</string>
+    <string name="disbursement_account_process_error_button" translatable="false">Ir al inicio</string>
 
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
@@ -819,8 +863,27 @@
     <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
     <string name="payment_cards_list_title" translatable="false">Tarjetas Visa</string>
+    <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
     <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
+
+    <!-- Payment method -->
+    <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>
+    <string name="payment_method_transfer" translatable="false">Transferencia bancaria</string>
+    <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
+
+    <!-- Payment Account -->
+    <string name="payment_account_title" translatable="false">¿A cuál Multimoney Smart querés abonar?</string>
+    <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
+    <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
+
+    <!-- Disbursement Bottom Sheet -->
+    <string name="disbursement_bottom_sheet_title" translatable="false">Monto a desembolsar</string>
+    <string name="disbursement_bottom_sheet_account" translatable="false">En tu cuenta</string>
+    <string name="disbursement_bottom_sheet_button" translatable="false">Realizar desembolso</string>
+    <string name="disbursement_bottom_sheet_exchange_rate" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_bottom_sheet_quota_to_pay"  translatable="false">Cuota mensual consolidada</string>
+    <string name="disbursement_bottom_sheet_next_payment_date"  translatable="false">Fecha del siguiente pago</string>
 
 </resources>

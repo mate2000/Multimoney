@@ -9,16 +9,20 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
+import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
+import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ConfigurationVersion
+import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.QuickAction
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.catalog.ConfigurationPlatform
@@ -43,21 +47,25 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBo
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
+import com.multimoney.multimoney.presentation.util.INDEX_ONE
+import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.boolean
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
-import com.multimoney.multimoney.presentation.util.getCurrentDateString
-import com.multimoney.multimoney.presentation.util.getPickedDateAsString
+import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -69,9 +77,12 @@ class HomeViewModel @Inject constructor(
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetHistoricalClientBalanceUseCase: GetHistoricalClientBalanceUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
-    private val querytGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
+    private val queryMiniCardsUseCase: QueryMiniCardsUseCase,
+    private val queryGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
-    private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase
+    private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase,
+    private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
+    private val cognitoHelper: CognitoHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -97,6 +108,42 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun onGetSmartMovements(
+        user: String,
+        idBrand: Int,
+        identificationNumber: String,
+        tokenNumber: Long
+    ) {
+        executeUseCase {
+            queryGetCoreBankMovements.invoke(
+                user = user,
+                idBrand = idBrand,
+                identificationNumber = identificationNumber,
+                accountToken = tokenNumber,
+                pageNumber = INDEX_ONE,
+                pageSize = LAST_THREE,
+                monthDate = null
+            ).collectLatest { result ->
+                result.onSuccess {
+                    it?.let { movements ->
+                        movements.accountToken = tokenNumber
+                        uiState = uiState.copy(
+                            smartMovementsList = uiState.smartMovementsList + movements,
+                            isLoading = false
+                        )
+                    }
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+                result.onFailure {
+                    onFailure(it)
+                    uiState = uiState.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
     private fun callQueryGetQuickActions(
         idBrand: Int,
         pkUser: Int,
@@ -106,7 +153,7 @@ class HomeViewModel @Inject constructor(
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ) = executeUseCase {
-        querytGetQuickActionsUseCase.invoke(
+        queryGetQuickActionsUseCase.invoke(
             idBrand = idBrand,
             pkUser = pkUser,
             identification = identification,
@@ -124,6 +171,43 @@ class HomeViewModel @Inject constructor(
                         quickActions = it.quickActions
                     )
                 }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun callQueryGetMiniCards(
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCryptoStatus: Int,
+        idBrand: Int,
+        email: String
+    ) = executeUseCase {
+        queryMiniCardsUseCase.invoke(
+            infoCreditStatus = infoCreditStatus.boolean,
+            infoVirtualCardStatus = infoVirtualCardStatus.boolean,
+            infoBankAccountStatus = infoBankAccountStatus.boolean,
+            infoCrypto = infoCryptoStatus.boolean,
+            userEmail = email,
+            idBrand = idBrand,
+        ).collectLatest { result ->
+            result.onSuccess { miniCards ->
+                if (
+                    uiState.configurationVersion != null
+                    && uiState.balance != null
+                    && uiState.quickActions != null
+                ) {
+                    uiState = uiState.copy(isLoading = false)
+                }
+                uiState = uiState.copy(
+                    miniCardList = miniCards.miniCardsList.toMutableList().sortedBy { it.priority }
+                )
             }
             result.onFailure {
                 onFailure(it)
@@ -243,6 +327,13 @@ class HomeViewModel @Inject constructor(
                             }
                         )
                     )
+
+                    onGetSmartMovements(
+                        uiState.userName,
+                        uiState.idBrand.toInt(),
+                        uiState.identification,
+                        account?.tokenNumber?.toLongOrNull() ?: 0
+                    )
                 }
                 // If user has smart activated he can enable crypto
                 productPageList.add(
@@ -282,8 +373,6 @@ class HomeViewModel @Inject constructor(
         }
         uiState = uiState.copy(balance = balance, productPageList = productPageList)
     }
-
-
 
     private fun callQueryGetConfigurationVersion(
         idBrand: Int
@@ -348,6 +437,14 @@ class HomeViewModel @Inject constructor(
                     infoCreditStatus = validateUserStatus?.infoCredit?.status ?: 0,
                     infoVirtualCardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0,
                     infoCriptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
+                    infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
+                )
+                callQueryGetMiniCards(
+                    idBrand = idBrand,
+                    email = email,
+                    infoCreditStatus = validateUserStatus?.infoCredit?.status ?: 0,
+                    infoVirtualCardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0,
+                    infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
                 callQueryGetHistoricalBalanceUseCase(
@@ -446,11 +543,26 @@ class HomeViewModel @Inject constructor(
         emitBaseEvent(BaseEvent.OnQuickActionClicked(flow))
     }
 
+    private fun signOut() {
+        cognitoHelper.signOut(signOutError = {
+            Timber.d("SignOut Error")
+        })
+        viewModelScope.launch {
+            dataStorePreferences.setAuthToken("")
+        }
+        countDownTimer.discardTimer()
+        popAndNavigateTo(
+            Screen.SignInScreen.route,
+            Screen.HomeScreen.route
+        )
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var quickActions: List<QuickAction>? = null,
+        var miniCardList: List<MiniCardsItem>? = null,
         var configurationVersion: ConfigurationVersion? = null,
         var validateUserStatus: ValidateUserStatus? = null,
         var balance: Balance? = null,
@@ -462,15 +574,22 @@ class HomeViewModel @Inject constructor(
         var userName: String = "",
         var forceIsExpanded: Boolean = false,
         var productScreenPagerState: PagerState? = null,
-        var productPageList: List<ProductPage> = emptyList()
+        var productPageList: List<ProductPage> = emptyList(),
+        val smartMovementsList: List<SmartMovementsResult> = emptyList()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnBottomNavigationItemClick -> navigation(uiEvent.innerNavHostController, uiEvent.route)
-            is OnSignOut -> popAndNavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route)
+            is OnSignOut -> signOut()
             is OnSetUserData -> onsetUserData()
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
+            is OnGetSmartMovements -> onGetSmartMovements(
+                uiEvent.user,
+                uiEvent.idBrand,
+                uiEvent.identificationNumber,
+                uiEvent.tokenNumber
+            )
             is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
             is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
             is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
@@ -485,6 +604,13 @@ class HomeViewModel @Inject constructor(
         data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
         data class OnBottomNavigationItemClick(val innerNavHostController: NavHostController, val route: String) :
             UIEvent()
+
+        data class OnGetSmartMovements(
+            val user: String,
+            val idBrand: Int,
+            val identificationNumber: String,
+            val tokenNumber: Long
+        ) : UIEvent()
 
         data class OnMyProductClick(val expand: Boolean) : UIEvent()
         data class OnMyProductPageChange(val page: PagerState) : UIEvent()
@@ -503,6 +629,7 @@ class HomeViewModel @Inject constructor(
         object OnOpenMyProductsBottomSheet : BaseEvent()
         data class OnStartCountDownTimer(val millisInFuture: Long?)
         data class OnQuickActionClicked(val flow: String)
+        data class OnMiniCardsClicked(val flow: String)
         object OnShowAutomaticPaymentEditBottomSheet : BaseEvent()
         object OnHideAutomaticPaymentEditBottomSheet : BaseEvent()
         object OnEditAutomaticPaymentEvent : BaseEvent()

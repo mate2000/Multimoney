@@ -40,9 +40,9 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryProfessionUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCivilStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.ui.smart.origination.util.collectSmartStepByStepData
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.BIRTH_DATE_MIN_DAY
@@ -55,6 +55,7 @@ import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun SmartDocumentScreen(
@@ -65,9 +66,7 @@ fun SmartDocumentScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        sharedViewModel.baseEvent.collectSmartStepByStepData {
-            viewModel.onUIEvent(UIEvent.OnLoadCurrentStepData(it))
-        }
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartSharedFlow.first()))
     }
 
     LaunchedEffect(key1 = true) {

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.document
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -224,6 +225,7 @@ class SmartDocumentViewModel @Inject constructor(
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        Log.d("tellCollected", "collected in smart document: $accountSmartData")
         uiState = uiState.copy(
             birthdate = getDayFromString(accountSmartData?.birthday, API_DATE_FORMAT),
             expirationDate = getDayFromString(accountSmartData?.expirationDate, API_DATE_FORMAT)

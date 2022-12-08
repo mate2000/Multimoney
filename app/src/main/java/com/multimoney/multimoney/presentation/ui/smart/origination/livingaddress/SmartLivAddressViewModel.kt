@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +8,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.accountsmart.Address
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
@@ -20,8 +22,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress
 import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartLivAddressViewModel @Inject constructor(
@@ -72,6 +74,19 @@ class SmartLivAddressViewModel @Inject constructor(
                     )
                 )
             }
+            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(uiEvent.accountSmartData)
+        }
+    }
+
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        Log.d("tellCollected", "collected in Smart Living Address: $accountSmartData")
+        accountSmartData?.let {
+            onDivisionTwoValueChange(it.strAddressLevel2, Pair(true, it.strAddressLevel3.orEmpty()))
+            onAddressValueChange(it.addressDetail.orEmpty())
         }
     }
 
@@ -122,7 +137,7 @@ class SmartLivAddressViewModel @Inject constructor(
         }
     }
 
-    private fun getDivisionThree() {
+    private fun getDivisionThree(isFromFirstFetch: Pair<Boolean, String>?) {
         executeUseCase {
             uiState.divisionOneSelected?.code?.let { divOne ->
                 uiState.divisionTwoSelected?.code?.let { divTwo ->
@@ -133,9 +148,12 @@ class SmartLivAddressViewModel @Inject constructor(
                         idAddressLevelTwo = divTwo
                     ).collectLatest {
                         it.onSuccess { addressList ->
-                            uiState = uiState.copy(
-                                divisionThreeList = addressList?.addresses
-                            )
+                            uiState = uiState.copy(divisionThreeList = addressList?.addresses)
+
+                            // update the second address field after getting the first address list
+                            if (isFromFirstFetch?.first == true) {
+                                onDivisionThreeValueChange(isFromFirstFetch.second)
+                            }
                         }
                     }
                 }
@@ -155,14 +173,14 @@ class SmartLivAddressViewModel @Inject constructor(
         getDivisionTwo()
     }
 
-    private fun onDivisionTwoValueChange(divisionTwo: String?) {
+    private fun onDivisionTwoValueChange(divisionTwo: String?, isFromFirstFetch: Pair<Boolean, String>? = null) {
         // reset selection of division three
         uiState = uiState.copy(
             divisionTwoSelected = uiState.divisionTwoList?.find { it?.name == divisionTwo },
             divisionThreeSelected = null,
             divisionThreeList = listOf()
         )
-        getDivisionThree()
+        getDivisionThree(isFromFirstFetch)
     }
 
     private fun onDivisionThreeValueChange(divisionThree: String?) {
@@ -198,10 +216,10 @@ class SmartLivAddressViewModel @Inject constructor(
     }
 
     fun isFormValid() = uiState.divisionOneSelected != null &&
-        uiState.divisionTwoSelected != null &&
-        uiState.divisionThreeSelected != null &&
-        uiState.address.isNotEmpty() &&
-        uiState.addressError.first.not()
+            uiState.divisionTwoSelected != null &&
+            uiState.divisionThreeSelected != null &&
+            uiState.address.isNotEmpty() &&
+            uiState.addressError.first.not()
 
     sealed class UIEvent {
         data class OnGetUserData(
@@ -230,6 +248,10 @@ class SmartLivAddressViewModel @Inject constructor(
 
         data class OnNotApplicable(
             val value: String
+        ) : UIEvent()
+
+        data class OnLoadCurrentStepData(
+            val accountSmartData: AccountSmartData?
         ) : UIEvent()
     }
 

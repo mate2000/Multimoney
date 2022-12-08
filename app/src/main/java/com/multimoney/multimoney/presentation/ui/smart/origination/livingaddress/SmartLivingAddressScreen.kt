@@ -24,8 +24,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress.SmartLivAddressViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun SmartLivAddressScreen(
@@ -34,6 +36,10 @@ fun SmartLivAddressScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartSharedFlow.first()))
+    }
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
@@ -59,6 +65,7 @@ fun SmartLivAddressScreen(
                                     ?: 0,
                                 idAddressLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong()
                                     ?: 0,
+                                addressDetail = viewModel.uiState.address,
                                 currentStep = SmartSteps.Search.getNameById(
                                     sharedViewModel.uiState.currentStep
                                 )

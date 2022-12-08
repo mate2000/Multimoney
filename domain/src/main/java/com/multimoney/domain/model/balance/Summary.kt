@@ -26,5 +26,7 @@ data class Summary(
     val isProductActive: Boolean?,
     val applyAutomaticDebit: Boolean?,
     val automaticDebitEnabled: Boolean?,
-    val visaAutomaticDebitEnabled: Boolean?
+    val visaAutomaticDebitEnabled: Boolean?,
+    val applyCommerce: Boolean?,
+    val applyCreateCard: Boolean?
 ) : Parcelable

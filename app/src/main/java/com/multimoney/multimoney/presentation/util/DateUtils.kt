@@ -4,7 +4,9 @@ import com.multimoney.multimoney.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Period
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -32,6 +34,9 @@ fun getCurrentDateString() = getPickedDateAsString(
     Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
     YEAR_MONTH_DAY_PATTERN
 )
+
+fun getCurrentDateTimeString(dateTimeFormatter: DateTimeFormatter) =
+    LocalDateTime.now().format(dateTimeFormatter).toString()
 
 fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
@@ -111,3 +116,4 @@ val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
 val BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS = SimpleDateFormat("dd | MM | yy", Locale.getDefault())
+val DATE_TIME_DOCUMENTS_FORMAT = DateTimeFormatter.ofPattern("ddMMyyHHmmss")

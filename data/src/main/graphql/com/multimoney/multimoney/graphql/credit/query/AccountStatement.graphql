@@ -1,0 +1,7 @@
+query AccountStatement($creditNumber: String!, $user: String!, $idBrand: Int!){
+    accountStatement(
+        accountStatementInput: { pagare: $creditNumber, user: $user, idBrand: $idBrand }
+    ) {
+        bytePDF
+    }
+}

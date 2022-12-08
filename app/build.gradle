@@ -93,6 +93,10 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes true
+}
+
 dependencies {
 
     implementation project(path: ':data')
@@ -135,6 +139,11 @@ dependencies {
     implementation hilt.android
     kapt hilt.compiler
     implementation hilt.navigation
+    implementation hilt.common
+    implementation hilt.work
+
+    // Work Manager
+    implementation work_manager.runtime
 
     // Coroutines
     implementation coroutines.android

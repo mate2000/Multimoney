@@ -75,13 +75,22 @@ ext {
 
     // Hilt
     hilt_version = "2.40.5"
-    hilt_navigation_version = "1.0.0"
+    hilt_androidx_version = "1.0.0"
 
     hilt = [
             plugin    : "com.google.dagger:hilt-android-gradle-plugin:${hilt_version}",
             android   : "com.google.dagger:hilt-android:${hilt_version}",
             compiler  : "com.google.dagger:hilt-android-compiler:${hilt_version}",
-            navigation: "androidx.hilt:hilt-navigation-compose:${hilt_navigation_version}"
+            navigation: "androidx.hilt:hilt-navigation-compose:${hilt_androidx_version}",
+            common: "androidx.hilt:hilt-common:${hilt_androidx_version}",
+            work: "androidx.hilt:hilt-work:${hilt_androidx_version}"
+    ]
+
+    // Work Manager
+    workmanager_version = "2.7.1"
+
+    work_manager = [
+            runtime    : "androidx.work:work-runtime-ktx:${workmanager_version}"
     ]
 
     // Coroutines

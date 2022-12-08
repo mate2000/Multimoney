@@ -57,7 +57,13 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
                 uiState = viewModel.uiState,
                 balance = viewModel.balanceCredit,
                 onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToHomeMultimoneyVisa) },
-                onCreateMultimoneyVisa = { viewModel.onUIEvent(OnCreateMultimoneyVisa) },
+                onCreateMultimoneyVisa = {
+                    viewModel.onUIEvent(
+                        OnCreateMultimoneyVisa(onLoadingValueChange = {
+                            sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnLoadingValueChanged(it))
+                        })
+                    )
+                },
                 isExpanded = true
             )
             Spacer(modifier = Modifier.height(24.dp))

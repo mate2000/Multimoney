@@ -192,13 +192,13 @@ class HomeViewModel @Inject constructor(
             infoBankAccountStatus = infoBankAccountStatus.boolean,
             infoCrypto = infoCryptoStatus.boolean,
             userEmail = email,
-            idBrand = idBrand,
+            idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { miniCards ->
                 if (
-                    uiState.configurationVersion != null
-                    && uiState.balance != null
-                    && uiState.quickActions != null
+                    uiState.configurationVersion != null &&
+                    uiState.balance != null &&
+                    uiState.quickActions != null
                 ) {
                     uiState = uiState.copy(isLoading = false)
                 }
@@ -556,6 +556,7 @@ class HomeViewModel @Inject constructor(
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
             is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnLoadingValueChanged -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
         }
     }
 
@@ -581,6 +582,7 @@ class HomeViewModel @Inject constructor(
         object OnEditAutomaticPayment : UIEvent()
         object OnDeleteAutomaticPayment : UIEvent()
         object OnCallMutationDeactivateClientAutomaticDebit : UIEvent()
+        data class OnLoadingValueChanged(val isLoading: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

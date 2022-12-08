@@ -1042,12 +1042,12 @@ class GraphqlApi @Inject constructor(
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryMiniCards(
-        infoCreditStatus:Boolean,
-        infoVirtualCardStatus:Boolean,
-        infoBankAccountStatus:Boolean,
-        infoCrypto:Boolean,
-        userEmail:String,
-        idBrand:Int
+        infoCreditStatus: Boolean,
+        infoVirtualCardStatus: Boolean,
+        infoBankAccountStatus: Boolean,
+        infoCrypto: Boolean,
+        userEmail: String,
+        idBrand: Int
     ): ApolloCall<ListMiniCardsQuery.Data> =
         apolloAuthorizedClient.query(
             ListMiniCardsQuery(
@@ -1102,5 +1102,5 @@ class GraphqlApi @Inject constructor(
                 Optional.Present(idBrand),
                 Optional.Present(user)
             )
-        )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

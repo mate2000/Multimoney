@@ -112,7 +112,14 @@ fun ProductScreen(
             when (event) {
                 is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
                     coroutineScope.launch {
-                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnQuickActionClicked(event.flow))
+                        viewModel.onUIEvent(
+                            ProductViewModel.UIEvent.OnQuickActionClicked(
+                                event.flow,
+                                onLoadingValueChange = {
+                                    sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnLoadingValueChanged(it))
+                                }
+                            )
+                        )
                     }
                 }
                 is HomeViewModel.BaseEvent.OnMiniCardsClicked -> {
@@ -193,7 +200,8 @@ fun ProductScreen(
                     ProductFooter(
                         modifier = Modifier.padding(top = 16.dp),
                         state = footerPagerState,
-                        viewModel = viewModel
+                        viewModel = viewModel,
+                        sharedViewModel = sharedViewModel
                     )
                 },
                 footerExpanded = {
@@ -229,7 +237,6 @@ fun ProductScreen(
         )
     }
 }
-
 
 @Composable
 fun TipsAndOffer(
@@ -377,7 +384,8 @@ fun ProductContent(
 fun ProductFooter(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
@@ -391,7 +399,13 @@ fun ProductFooter(
                     balance = viewModel.balanceCredit,
                     onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
                     onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToHomeMultimoneyVisa) },
-                    onCreateMultimoneyVisa = { viewModel.onUIEvent(OnCreateMultimoneyVisa) }
+                    onCreateMultimoneyVisa = {
+                        viewModel.onUIEvent(
+                            OnCreateMultimoneyVisa(onLoadingValueChange = {
+                                sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnLoadingValueChanged(it))
+                            })
+                        )
+                    }
                 )
                 ProductType.Smart.value -> SmartFooter()
                 ProductType.Crypto.value -> CryptoFooter()

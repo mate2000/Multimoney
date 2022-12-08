@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
@@ -61,10 +60,7 @@ import com.multimoney.multimoney.presentation.util.getCurrentDateString
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -94,7 +90,6 @@ class SmartViewModel @Inject constructor(
     private var overridePreviousAction: (() -> Unit)? = null
     private var closeDialogDescription: String = ""
     var accountSmartData: AccountSmartData? = null
-    val accountSmartSharedFlow = MutableSharedFlow<AccountSmartData>()
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
     private var globalRequest: Int = 0
@@ -198,13 +193,6 @@ class SmartViewModel @Inject constructor(
 
         // update the current step coming from the backend in order to navigate to the proper screen
         uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
-
-        // after navigating, send an event to all children from the origination flow
-        // in order to obtain the data and update in on the UI accordingly
-        viewModelScope.launch {
-            delay(STEP_BY_STEP_EVENT_DELAY)
-            accountSmartData?.let { accountSmartSharedFlow.emit(it) }
-        }
     }
 
     private fun callMutationInitialRequestUseCase() = executeUseCase(
@@ -591,6 +579,6 @@ class SmartViewModel @Inject constructor(
         const val SMART_INDICATOR_CR_TOTAL_STEPS = 3
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
-        const val STEP_BY_STEP_EVENT_DELAY = 200L
+        const val STEP_BY_STEP_EVENT_DELAY = 1500L
     }
 }

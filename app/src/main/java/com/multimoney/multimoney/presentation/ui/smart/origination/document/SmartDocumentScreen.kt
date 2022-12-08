@@ -31,6 +31,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.STEP_BY_STEP_EVENT_DELAY
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
@@ -55,6 +56,7 @@ import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 
 @Composable
@@ -66,7 +68,8 @@ fun SmartDocumentScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartSharedFlow.first()))
+        delay(STEP_BY_STEP_EVENT_DELAY)
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
     }
 
     LaunchedEffect(key1 = true) {

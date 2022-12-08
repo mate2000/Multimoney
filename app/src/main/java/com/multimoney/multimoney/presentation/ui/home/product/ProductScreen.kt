@@ -424,7 +424,7 @@ fun TipAndOfferItem(viewModel: ProductViewModel, creditOfferAndTip: CreditOfferA
                     // TODO: Call appropriate screen when all flows are available
                     // TODO, mocking the first item in order to navigate to the smart origination flow
                     if (creditOfferAndTip.id == "1") {
-                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow())
                     }
                 }
         ) {

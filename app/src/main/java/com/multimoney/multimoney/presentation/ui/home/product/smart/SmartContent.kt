@@ -18,7 +18,7 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
 
     viewModel.uiState.userStatus?.apply {
         when (infoBankAccount?.status) {
-            SmartAccountStatus.EXIST_IN_CORE.status, SmartAccountStatus.WITHOUT_OPERATION.status -> {
+            SmartAccountStatus.EXIST_IN_CORE.status -> {
                 viewModel.balanceCredit?.balanceAccountSmart?.let {
                     if (it.isNotEmpty()) {
                         val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
@@ -35,43 +35,64 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                     }
                 }
             }
-            // TODO refactor to show the initial card
             SmartAccountStatus.NO_EXIST.status -> {
-                viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
-                    CustomProductBackground(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.Secondary
-                    ) {
-                        CardInactiveSmartProduct(
-                            it?.textOne.toString(),
-                            it?.textTwo.toString(),
-                            it?.cTA.toString()
-                        ) {
-                            // TODO add navigation according to status
-                            viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow("flow"))
-                        }
-                    }
-                }
-            }
-            SmartAccountStatus.SMART_PRE_APPROVED.status, SmartAccountStatus.APPROVED_SMART.status -> {
                 CustomProductBackground(
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
-                    type = ProductBackGroundType.Primary
+                    type = ProductBackGroundType.Secondary
                 ){
                     when {
+                        viewModel.evaluateCardCondition(ProductViewModel.SMART_INITIAL_CARD, this) -> {
+                            viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
+                                    CardInactiveSmartProduct(
+                                        it?.textOne.toString(),
+                                        it?.textTwo.toString(),
+                                        it?.cTA.toString()
+                                    ) {
+                                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(ProductViewModel.SMART_INITIAL_CARD))
+                                    }
+                            }
+                        }
                         viewModel.evaluateCardCondition(ProductViewModel.SMART_IDENTITY_INCOMPLETE, this) -> {
                             CardWithSmartInProcess(
-                                type = SmartProcessStarted.SmartStartProcessIncomplete,
+                                type = SmartProcessStarted.SmartProcessOnFidoIncomplete,
                                 action = {
                                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(ProductViewModel.SMART_IDENTITY_INCOMPLETE))
                                 },
                                 wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
                             )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.SMART_ONFIDO_REJECTED, this) -> {
+                            CardWithSmartInProcess(
+                                type = SmartProcessStarted.SmartProcessOnfidoReject,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(ProductViewModel.SMART_ONFIDO_REJECTED))
+                                },
+                                wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
 
+                            )
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.SMART_APPROVED_BY_ONFIDO, this) -> {
+                            viewModel.balanceCredit?.balanceAccountSmart?.let {
+                                if (it.isNotEmpty()) {
+                                    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                                    CustomProductBackground(
+                                        modifier = Modifier.padding(horizontal = 16.dp),
+                                        type = ProductBackGroundType.Secondary
+                                    ) {
+                                        CardSmartProduct(
+                                            currency = it[index]?.currencyCode ?: "",
+                                            profitMonthly = it[index]?.gainedInterest.toString(),
+                                            profitTotal = it[index]?.totalBalance.toString()
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+
             }
         }
     }

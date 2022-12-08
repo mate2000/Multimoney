@@ -100,7 +100,7 @@ fun CryptoFooterExpandedContent(
             noBalanceAction = noBalanceAction,
             hasBalanceAction = hasBalanceAction
         )
-        Divider(modifier = Modifier.fillMaxWidth(), color = GrayScale500)
+        //todo delete this if necessary Divider(modifier = Modifier.fillMaxWidth(), color = GrayScale500)
     }
 }
 

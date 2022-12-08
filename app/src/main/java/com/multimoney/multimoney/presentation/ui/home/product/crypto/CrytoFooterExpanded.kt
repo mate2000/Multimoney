@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -56,22 +57,22 @@ fun CryptoFooterExpanded(
     hasBalanceAction: () -> Unit
 ) {
 
-    userStatus?.infoCrypto?.profileEnable?.let {
-        if (!it) {
-            CryptoFooterExpandedContent(
-                balance,
-                actionMarket,
-                actionWallet,
-                noBalanceAction,
-                hasBalanceAction
-            )
-        }
+    if (userStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status) {
+        CryptoFooterExpandedContent(
+            balance,
+            userStatus.infoCrypto?.profileEnable,
+            actionMarket,
+            actionWallet,
+            noBalanceAction,
+            hasBalanceAction
+        )
     }
 }
 
 @Composable
 fun CryptoFooterExpandedContent(
     balance: Balance?,
+    profileEnable: Boolean?,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
@@ -83,14 +84,19 @@ fun CryptoFooterExpandedContent(
 
     Column {
         ButtonsSection(
-            walletEnable = false,
+            walletEnable = profileEnable ?: false,
             actionMarket = actionMarket,
             actionWallet = actionWallet
         )
-        NoticeSection()
+        profileEnable?.let {
+            if (!it) {
+                NoticeSection()
+            }
+        }
         Divider(modifier = Modifier.fillMaxWidth(), color = GrayScale500)
         CryptoActionsSection(
             hasSmartBalance = hasSmartBalance,
+            enableCryptoActions = profileEnable ?: false,
             noBalanceAction = noBalanceAction,
             hasBalanceAction = hasBalanceAction
         )
@@ -193,7 +199,7 @@ fun NoticeSection() {
 
 @Composable
 fun CryptoActionsSection(
-    hasSmartBalance: Boolean = false,
+    hasSmartBalance: Boolean,
     enableCryptoActions: Boolean = false,
     noBalanceAction: () -> Unit = {},
     hasBalanceAction: () -> Unit = {}
@@ -208,12 +214,7 @@ fun CryptoActionsSection(
                 enable = true,
                 title = stringResource(id = R.string.crypto_footer_expanded_buy_crypto_label),
                 icon = R.drawable.ic_shopping_cart_add,
-                action = if (hasSmartBalance) {
-                    hasBalanceAction
-                } else {
-                    noBalanceAction
-                    // open modal too
-                }
+                action = if (hasSmartBalance) hasBalanceAction else noBalanceAction
             )
         }
         item {
@@ -292,8 +293,6 @@ fun verifyIfHasSmartBalance(balanceAccountSmart: List<Account?>?): Boolean {
     if (balanceAccountSmart.isNullOrEmpty()) {
         return false
     }
-    return when (balanceAccountSmart.first()?.totalBalance) {
-        null -> false
-        else -> true
-    }
+    val balances = balanceAccountSmart.map { it?.totalBalance ?: 0.0 }
+    return balances.sum() > 0.0
 }

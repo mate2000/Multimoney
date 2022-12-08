@@ -253,8 +253,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun callQueryGetHistoricalBalanceUseCase(
-        user: String?,
-        idBrand: Int?,
+        user: String,
+        idBrand: Int,
         identification: String
     ) = executeUseCase {
         queryGetHistoricalClientBalanceUseCase.invoke(
@@ -262,8 +262,8 @@ class HomeViewModel @Inject constructor(
             idBrand,
             identification,
             baseAsset = "BTC",
-            startDate = getCurrentDateString(),
-            endDate = getCurrentDateString()
+            startDate = "2021-08-30",
+            endDate = "2022-12-7"
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
                 historicBalance?.let {
@@ -448,7 +448,7 @@ class HomeViewModel @Inject constructor(
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
                 callQueryGetHistoricalBalanceUseCase(
-                    user = validateUserStatus?.infoUser?.userName,
+                    user = email,
                     identification = identification,
                     idBrand = idBrand
                 )

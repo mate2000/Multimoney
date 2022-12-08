@@ -136,11 +136,11 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToSmartFlow() {
+    private fun onNavigateToSmartFlow(comingFromCrypto: Boolean = false) {
         navigateTo(
             "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
                 "${uiState.userStatus?.infoUser?.firstName}/" +
-                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}"
+                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/${comingFromCrypto}"
         )
     }
 
@@ -224,6 +224,12 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
     }
+
+    private fun onNavigateToSmartPaymentAccountScreen() =
+        navigateTo(Screen.SmartPaymentAccountScreen.route)
+
+    private fun onNavigateToSmartPaymentMethodScreen() =
+        navigateTo(Screen.SmartPaymentScreen.route)
 
     private fun onNavigateToSmartMovements(accountToken: String) =
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
@@ -443,6 +449,19 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onCartButtonClickWithoutSmartBalance(onSavingCLick: () -> Unit) {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.crypto_footer_expanded_dialog_title,
+                descriptionResource = R.string.crypto_footer_expanded_dialog_description,
+                positiveResource = R.string.crypto_footer_expanded_dialog_btn_saving,
+                negativeResource = R.string.crypto_footer_expanded_dialog_btn_cancel,
+                positiveAction = { onSavingCLick() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -462,7 +481,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> setValidateUserStatus(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.creditStep)
-            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
+            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow(comingFromCrypto = uiEvent.comingFromCrypto)
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
             is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
@@ -500,6 +519,9 @@ class ProductViewModel @Inject constructor(
             is OnMiniCardsClicked -> onQuickActionClicked(uiEvent.flow)
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
+            is UIEvent.OnCartButtonClickWithoutSmartBalance -> onCartButtonClickWithoutSmartBalance(uiEvent.onSavingCLick)
+            is UIEvent.OnNavigateToSmartPaymentAccountScreen -> onNavigateToSmartPaymentAccountScreen()
+            is UIEvent.OnNavigateToSmartPaymentMethodScreen -> onNavigateToSmartPaymentMethodScreen()
         }
     }
 
@@ -522,7 +544,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
-        object OnNavigateToSmartOriginationFlow : UIEvent()
+        data class OnNavigateToSmartOriginationFlow(val comingFromCrypto: Boolean = false) : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
@@ -535,6 +557,8 @@ class ProductViewModel @Inject constructor(
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
         object OnChipQuotaClick : UIEvent()
         object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
+        object OnNavigateToSmartPaymentAccountScreen : UIEvent()
+        object OnNavigateToSmartPaymentMethodScreen : UIEvent()
 
         data class OnSetUserData(
             val idBrand: String,
@@ -558,6 +582,7 @@ class ProductViewModel @Inject constructor(
         data class OnQuickActionClicked(val flow: String) : UIEvent()
         data class OnMiniCardsClicked(val flow: String) : UIEvent()
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
+        data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
     }
 
     companion object {

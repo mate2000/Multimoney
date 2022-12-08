@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -141,7 +142,7 @@ fun HomeScreen(
                 }
             }
             else -> {
-                context.findActivity()?.finish()
+                activity?.finish()
             }
         }
     }

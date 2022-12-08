@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface GetHistoricalClientBalanceUseCase {
     suspend operator fun invoke(
-        user: String?,
-        idBrand: Int?,
+        user: String,
+        idBrand: Int,
         identification: String,
         baseAsset: String,
         startDate: String,

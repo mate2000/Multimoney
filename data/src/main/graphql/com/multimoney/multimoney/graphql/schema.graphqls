@@ -2220,9 +2220,9 @@ input HistoricalBalanceClientDtoInput {
 
   endDate: String!
 
-  idBrand: Int
+  idBrand: Int!
 
-  user: String
+  user: String!
 }
 
 type CryptoHistoricalPrice {

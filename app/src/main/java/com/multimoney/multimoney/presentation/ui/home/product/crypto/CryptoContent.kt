@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardDiscoverCrypto
@@ -21,6 +22,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 fun CryptoContent(
     userStatus: ValidateUserStatus?,
     cryptoBalance: BalanceCryptoAccount?,
+    clientBalanceHistory: List<HistoricalBalanceClient>,
     openActionEnable: Boolean = false,
     openCryptoHomeAction: () -> Unit = {},
     openSmartCryptoAction: () -> Unit = {}
@@ -53,7 +55,8 @@ fun CryptoContent(
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
                         CryptoCardWithBalance(
-                            cryptoBalance = cryptoBalance.toString()
+                            cryptoBalance = cryptoBalance.globalBalance.toString(),
+                            clientCryptoBalanceHistory = clientBalanceHistory
                         )
                     }
                 }

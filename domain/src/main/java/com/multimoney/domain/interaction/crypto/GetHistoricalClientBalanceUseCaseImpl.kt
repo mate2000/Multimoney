@@ -9,8 +9,8 @@ class GetHistoricalClientBalanceUseCaseImpl(val repository: CryptoRepository) :
     GetHistoricalClientBalanceUseCase {
 
     override suspend fun invoke(
-        user: String?,
-        idBrand: Int?,
+        user: String,
+        idBrand: Int,
         identification: String,
         baseAsset: String,
         startDate: String,

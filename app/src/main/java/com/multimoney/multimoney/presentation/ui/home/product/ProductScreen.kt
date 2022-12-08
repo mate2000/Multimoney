@@ -36,6 +36,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.GrayScale200
@@ -51,7 +52,10 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.C
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
@@ -358,8 +362,11 @@ fun ProductContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
                     openActionEnable = !sharedViewModel.uiState.forceIsExpanded,
+                    clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openCryptoHomeAction = { sharedViewModel.onUIEvent(OnMyProductClick(true)) },
-                    openSmartCryptoAction = { /*open smart origination*/ }
+                    openSmartCryptoAction = {
+                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(true))
+                    }
                 )
             }
         }
@@ -435,8 +442,25 @@ fun ProductFooterExpanded(
                     balance = viewModel.balanceCredit,
                     actionMarket = { /*send to all coins screen*/ },
                     actionWallet = { /*send to "my wallet"*/ },
-                    noBalanceAction = { /*no balance action*/ },
-                    hasBalanceAction = { /*go to smart origination*/ }
+                    noBalanceAction = {
+                        when(viewModel.uiState.idBrand) {
+                            Brand.CostaRica.id.toString() -> {
+                                viewModel.onUIEvent(
+                                    ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance {
+                                        viewModel.onUIEvent(OnNavigateToSmartPaymentAccountScreen)
+                                    }
+                                )
+                            }
+                            Brand.ElSalvador.id.toString() -> {
+                                viewModel.onUIEvent(
+                                    ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance {
+                                        viewModel.onUIEvent(OnNavigateToSmartPaymentMethodScreen)
+                                    }
+                                )
+                            }
+                        }
+                    },
+                    hasBalanceAction = { /*go to buy crypto flow*/ }
                 )
             }
         }

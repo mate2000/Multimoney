@@ -337,6 +337,10 @@
     <string name="crypto_footer_expanded_sell_crypto_label" translatable="false">Vender</string>
     <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
     <string name="crypto_footer_expanded_send_crypto_label" translatable="false">Enviar</string>
+    <string name="crypto_footer_expanded_dialog_title" translatable="false">Compra con Smart</string>
+    <string name="crypto_footer_expanded_dialog_description" translatable="false">Para poder comprar criptomonedas debes hacerlo con los fondos de tu cuenta Smart</string>
+    <string name="crypto_footer_expanded_dialog_btn_cancel" translatable="false">Cancelar</string>
+    <string name="crypto_footer_expanded_dialog_btn_saving" translatable="false">Ahorrar</string>
 
     <!-- Home Smart - Account Details -->
     <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>

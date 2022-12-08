@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 
+//todo setting up all graphics components
 @Composable
 fun HomeCryptoGraphic(
     clientCryptoBalanceHistory: List<HistoricalBalanceClient>
@@ -39,16 +40,11 @@ fun HomeCryptoGraphic(
         }
         drawPath(
             path = path,
-            color = Color.Blue,
+            color = Color.Green,
             style = Stroke(
                 width = 10f,
                 pathEffect = PathEffect.cornerPathEffect(180.0f)
             )
         )
     }
-}
-
-@Composable
-fun CryptoGraphic() {
-
 }

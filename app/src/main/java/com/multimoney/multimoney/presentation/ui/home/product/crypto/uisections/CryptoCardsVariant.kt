@@ -124,7 +124,7 @@ fun CryptoCardWithBalance(
                 top = 24.dp,
                 start = 16.dp,
                 end = 16.dp,
-                bottom = if (isBalanceNullOrZero) 136.dp else 0.dp
+                bottom = if (clientCryptoBalanceHistory.isEmpty()) 136.dp else 0.dp
             )
     ) {
         Text(

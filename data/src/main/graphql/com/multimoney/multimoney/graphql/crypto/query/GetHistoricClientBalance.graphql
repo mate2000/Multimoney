@@ -1,6 +1,6 @@
 query GetHistoricClientBalance(
-    $user: String,
-    $idBrand: Int,
+    $user: String!,
+    $idBrand: Int!,
     $identification: String!,
     $baseAsset: String!,
     $starDate: String!,

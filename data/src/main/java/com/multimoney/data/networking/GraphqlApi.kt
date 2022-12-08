@@ -1062,14 +1062,12 @@ class GraphqlApi @Inject constructor(
                 idBrand = idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
-        apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     // Crypto
 
     fun queryGetHistoricalClientBalance(
-        user: String?,
-        idBrand: Int?,
+        user: String,
+        idBrand: Int,
         identification: String,
         baseAsset: String,
         startDate: String,

@@ -23,12 +23,11 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRemoveBeneficiaryClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.hasNumbersAndSpecialCharacters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class BeneficiariesViewModel @Inject constructor(
@@ -174,7 +173,9 @@ class BeneficiariesViewModel @Inject constructor(
     private fun validateForm() {
         emitBaseEvent(
             OnFormValidateCompleted(
-                isFormValid = uiState.beneficiaryFullName.isNotBlank() && uiState.percentage.isNotBlank() && uiState.relationship.isNotBlank()
+                isFormValid = uiState.beneficiaryFullName.isNotBlank() &&
+                        uiState.percentage.isNotBlank() &&
+                        uiState.relationship.isNotBlank()
             )
         )
     }
@@ -186,16 +187,13 @@ class BeneficiariesViewModel @Inject constructor(
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         Log.d("tellCollected", "collected in beneficiary screen: $accountSmartData")
         accountSmartData?.let {
-
             uiState = uiState.copy(
                 addBeneficiaryState = false,
+                addBeneficiaryOption = accountSmartData.listBeneficiaries?.isNotEmpty() == true,
                 beneficiaryList = accountSmartData.listBeneficiaries ?: emptyList(),
-                totalPercentage = 100,
+                totalPercentage = MAX_PERCENTAGE,
             )
-
-//            onCompanyNameValueChange(it.companyName.orEmpty())
-//            onCompanyDescriptionValueChange(it.aboutCompany.orEmpty())
-//            onMonthlyIncomeValueChange(it.income.toString())
+            validatePercentage()
         }
     }
 
@@ -215,6 +213,7 @@ class BeneficiariesViewModel @Inject constructor(
             is OnPercentageValueChange -> onPercentageValueChange(event.percentage)
             is OnNextActionClick -> event.nextStepAction()
             is OnValidateForm -> validateForm()
+            is UIEvent.OnValidatePercentage -> validatePercentage()
             is OnAddBeneficiaryStateChange -> onAddBeneficiaryStateChange(
                 event.status,
                 event.beneficiary
@@ -261,6 +260,7 @@ class BeneficiariesViewModel @Inject constructor(
         data class OnAddBeneficiaryOptionChange(val option: Boolean) : UIEvent()
         data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
         object OnValidateForm : UIEvent()
+        object OnValidatePercentage : UIEvent()
     }
 
     sealed class BaseEvent {

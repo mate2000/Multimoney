@@ -4,6 +4,7 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.balances.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.BalanceRepository
@@ -35,6 +36,27 @@ class BalanceRepositoryImpl @Inject constructor(
             creditStatus,
             accountStatus,
             cryptoStatus,
+            cardStatus
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryBalanceCardInformation(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        cardStatus: Int
+    ): Flow<MultimoneyResult<BalanceCardInformation?>> = fetchData(
+        apolloCall = graphqlApi.queryBalanceCardInformation(
+            user,
+            identification,
+            idBrand,
+            idClient,
+            idLoanClient,
             cardStatus
         ),
         apolloCallMapper = { data ->

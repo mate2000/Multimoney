@@ -6,12 +6,15 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
+import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
+import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
 import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.ChangeEmailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ChangePhoneMutation
@@ -98,6 +101,25 @@ class GraphqlApi @Inject constructor(
             user, identification, idBrand, idClient, idLoanClient, creditStatus, accountStatus, cryptoStatus, cardStatus
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryBalanceCardInformation(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        cardStatus: Int
+    ): ApolloCall<BalanceCardInformationQuery.Data> =
+        apolloAuthorizedClient.query(
+            BalanceCardInformationQuery(
+                user,
+                identification,
+                idBrand,
+                idClient,
+                idLoanClient,
+                cardStatus
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // Credit
     fun queryCreditOffer(
@@ -814,6 +836,18 @@ class GraphqlApi @Inject constructor(
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun queryAccountStatement(
+        creditNumber: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<AccountStatementQuery.Data> = apolloAuthorizedClient.query(
+        AccountStatementQuery(
+            creditNumber = creditNumber,
+            user = user,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     // SmartAccount
     fun queryGetCoreBankMovements(
         user: String,
@@ -1045,12 +1079,12 @@ class GraphqlApi @Inject constructor(
 
 
     fun queryMiniCards(
-        infoCreditStatus:Boolean,
-        infoVirtualCardStatus:Boolean,
-        infoBankAccountStatus:Boolean,
-        infoCrypto:Boolean,
-        userEmail:String,
-        idBrand:Int
+        infoCreditStatus: Boolean,
+        infoVirtualCardStatus: Boolean,
+        infoBankAccountStatus: Boolean,
+        infoCrypto: Boolean,
+        userEmail: String,
+        idBrand: Int
     ): ApolloCall<ListMiniCardsQuery.Data> =
         apolloAuthorizedClient.query(
             ListMiniCardsQuery(
@@ -1083,6 +1117,27 @@ class GraphqlApi @Inject constructor(
                 idLoanClient = idLoanClient,
                 user = user,
                 idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    // Multimoney Visa
+
+    fun queryCardIssuanceNV(
+        idClient: Long,
+        requestType: String,
+        identification: String,
+        idLoanClient: Int,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<CardIssuanceNVQuery.Data> =
+        apolloAuthorizedClient.query(
+            CardIssuanceNVQuery(
+                idClient,
+                requestType,
+                identification,
+                idLoanClient,
+                Optional.Present(idBrand),
+                Optional.Present(user)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

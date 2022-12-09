@@ -6,27 +6,37 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
 import javax.inject.Inject
 
-class SmartPaymentMethodViewModel @Inject constructor() : BaseViewModel(true) {
+class SmartPaymentMethodViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle
+) : BaseViewModel(true) {
+
     // uiState
     var uiState by mutableStateOf(UIState())
         private set
 
+    // stateLess
+    var userSmartAccount : String = ""
+
+    init {
+        userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""
+    }
+
     private fun onNavigateBack() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartPaymentScreen.route
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = false
         )
     }
 
-    //TODO Implement transfer navigation
     private fun navigateToTransferScreen() {
-
+        navigateTo("${Screen.SavingMethodTransferScreen.baseRoute}/$userSmartAccount")
     }
 
     //TODO Implement visa navigation

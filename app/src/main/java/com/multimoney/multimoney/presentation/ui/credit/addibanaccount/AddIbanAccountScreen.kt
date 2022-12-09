@@ -135,8 +135,8 @@ fun AddIbanAccountScreen(
                     canShowNonErrorMessage = true,
                     showInfo = viewModel.uiState.accountInformation.first,
                     infoMessage = stringResource(id = viewModel.uiState.accountInformation.second),
-                    isError = viewModel.uiState.accountError.first,
-                    errorMessage = viewModel.uiState.validationError
+                    isError = viewModel.uiState.accountError.first || viewModel.uiState.validationError?.first == true,
+                    errorMessage = viewModel.uiState.validationError?.second
                         ?: stringResource(id = viewModel.uiState.accountError.second),
                     customTransformation = MaskVisualTransformation(
                         VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.mask,

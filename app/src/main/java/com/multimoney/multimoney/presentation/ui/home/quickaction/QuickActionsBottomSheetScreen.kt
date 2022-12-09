@@ -170,7 +170,7 @@ fun QuickActionsRow(
             }
     ) {
         if (quickActions != null) {
-            quickActionItemWidth = widthIs.times(0.2857f)
+            quickActionItemWidth = widthIs.times(0.29f)
             items(quickActions.count()) { index ->
                 QuickActionItem(
                     viewModel.getSmartQuickAction(
@@ -204,7 +204,7 @@ fun QuickActionItem(
     Column(
         modifier = Modifier
             .width(itemWidth)
-            .padding(end = 16.dp),
+            .padding(end = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(

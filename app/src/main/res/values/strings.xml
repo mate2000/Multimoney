@@ -255,6 +255,11 @@
     <string name="home_my_products_title_crypto" translatable="false">Cripto</string>
     <string name="home_my_products_label_crypto" translatable="false">Cripto</string>
 
+    <!-- Card Issuance Error -->
+    <string name="card_issuance_error_title" translatable="false">No hemos podido activar tu tarjeta</string>
+    <string name="card_issuance_error_description_gt" translatable="false">Inténtalo más tarde</string>
+    <string name="card_issuance_error_description" translatable="false">Intentálo más tarde</string>
+
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
     <string name="home_product_not_approved_description" translatable="false">La mejor tasa del 3.5\%; anual sin restricciones</string>
@@ -283,7 +288,7 @@
     <string name="home_product_credit_signature_missing_description" translatable="false">Firmá el contrato para que podás empezar a disfrutar de tu crédito.</string>
     <string name="home_product_credit_signature_missing_action" translatable="false">Firmar</string>
     <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
-    <string name="home_product_check_all" translatable="false">Ver todos</string>
+    <string name="home_product_check_all" translatable="false">Ver Todos</string>
     <string name="home_product_title" translatable="false">Disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
     <string name="home_product_expiration" translatable="false">Vence</string>
@@ -422,6 +427,8 @@
     <string name="credit_amount_terms_and_condition_title" translatable="false">Términos y\nCondiciones</string>
     <string name="credit_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
     <string name="credit_amount_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
+    <string name="credit_amount_disbursement_exit_confirm_title" translatable="false">¿Seguro que querés abandonar el proceso?</string>
+    <string name="credit_amount_disbursement_exit_confirm_description" translatable="false">Deberás volver a ingresar todos tus datos para desembolsar tu disponible.</string>
 
     <!-- Credit Bank-->
     <string name="credit_bank_title" translatable="false">¿Dónde querés recibir tu dinero?</string>
@@ -757,7 +764,6 @@
     <string name="saving_method_transfer_account_type_label" translatable="false">Tipo de cuenta</string>
     <string name="saving_method_transfer_saving_account" translatable="false">Cuenta de ahorro</string>
     <string name="saving_method_transfer_account" translatable="false">Número de cuenta</string>
-    <string name="saving_method_transfer_account_number" translatable="false">789098754678</string>
     <string name="saving_method_transfer_account_number_copied" translatable="false">Número de cuenta copiada</string>
 
     <!-- Payment Amount -->
@@ -913,5 +919,35 @@
     <string name="disbursement_bottom_sheet_exchange_rate" translatable="false">Tipo de cambio</string>
     <string name="disbursement_bottom_sheet_quota_to_pay"  translatable="false">Cuota mensual consolidada</string>
     <string name="disbursement_bottom_sheet_next_payment_date"  translatable="false">Fecha del siguiente pago</string>
+
+    <!-- Disbursement Voucher -->
+    <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
+    <string name="disbursement_voucher_schedule_payment" translatable="false">Programar pago automático</string>
+    <string name="disbursement_voucher_shared_button" translatable="false">Compartir</string>
+    <string name="disbursement_voucher_amount_to_pay_label" translatable="false">Monto elegido</string>
+    <string name="disbursement_voucher_exchange_rate_label" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_voucher_reference_number_label" translatable="false">N° de pagaré</string>
+    <string name="disbursement_voucher_from_label" translatable="false">Desde</string>
+    <string name="disbursement_voucher_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="disbursement_voucher_you_have_received" translatable="false">Has recibido</string>
+    <string name="disbursement_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
+    <string name="disbursement_account_masked_text" translatable="false">••••</string>
+    <string name="disbursement_voucher_exchange_type" translatable="false">Tipo de cambio</string>
+    <string name="disbursement_voucher_amount_to_disburse" translatable="false">Monto elegido</string>
+
+    <!-- Credit Movements -->
+    <string name="credit_movements_download_button" translatable="false">Descargar estado de cuenta</string>
+
+    <!-- Download Account Statement Worker -->
+    <string name="download_credit_movements_worker_channel_name" translatable="false">Descargar estado de cuenta</string>
+    <string name="download_credit_movements_worker_channel_description" translatable="false">Estado de descarga de estado de cuenta</string>
+    <string name="download_credit_movements_worker_push_title_download" translatable="false">Descargando</string>
+    <string name="download_credit_movements_worker_push_description_download" translatable="false">El estado de cuenta se esta descargando...</string>
+    <string name="download_credit_movements_worker_push_title_error" translatable="false">Error</string>
+    <string name="download_credit_movements_worker_push_description_error" translatable="false">Hubo un error en la descarga del estado de cuenta</string>
+    <string name="download_credit_movements_worker_push_toast_description_error" translatable="false">El estado de cuenta no se pudo abrir</string>
+    <string name="download_credit_movements_worker_push_title_success" translatable="false">Abrir</string>
+    <string name="download_credit_movements_worker_push_description_success" translatable="false">Abrir estado de cuenta</string>
+    <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
 </resources>

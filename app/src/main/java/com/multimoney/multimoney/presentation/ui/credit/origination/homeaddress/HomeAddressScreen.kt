@@ -96,7 +96,11 @@ fun HomeAddressScreen(
                     )
                 },
                 nextStep = CreditStep.Seven.id,
-                previousStep = CreditStep.Five.id
+                previousStep = if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {
+                    CreditStep.Four.id
+                } else {
+                    CreditStep.Five.id
+                }
             )
         )
         viewModel.onUIEvent(OnFormValid)

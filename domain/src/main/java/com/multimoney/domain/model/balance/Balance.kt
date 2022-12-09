@@ -4,7 +4,7 @@ data class Balance(
     val balanceCredit: List<BalanceCredit?>?,
     val balanceAccountSmart: List<Account?>?,
     val balanceCryptoAccount: BalanceCryptoAccount?,
-    val balanceCardInformation: BalanceCardInformation?
+    var balanceCardInformation: BalanceCardInformation?
 ) {
     fun getFirstCredit() = balanceCredit?.firstOrNull()
 

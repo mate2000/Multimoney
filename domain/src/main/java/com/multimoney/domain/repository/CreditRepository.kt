@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.CardVisaDirect
@@ -310,4 +311,10 @@ interface CreditRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<SaveClientBankAccount?>>
+
+    suspend fun queryAccountStatement(
+        creditNumber: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<AccountStatement?>>
 }

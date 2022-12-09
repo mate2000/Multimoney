@@ -21,7 +21,8 @@ fun CreditFooter(
     uiState: UIState,
     balance: Balance?,
     onNavigateToDisbursement: () -> Unit,
-    onNavigateToVisaActivateScreen: () -> Unit
+    onNavigateToVisaActivateScreen: () -> Unit,
+    onCreateMultimoneyVisa: () -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         if (uiState.canExpandCredit) {
@@ -38,7 +39,8 @@ fun CreditFooter(
         CreditVisa(
             uiState = uiState,
             balance = balance,
-            onNavigateToVisaActivateScreen = { onNavigateToVisaActivateScreen() }
+            onNavigateToVisaActivateScreen = { onNavigateToVisaActivateScreen() },
+            onCreateMultimoneyVisa = { onCreateMultimoneyVisa() }
         )
     }
 }

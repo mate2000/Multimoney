@@ -1,0 +1,16 @@
+query CardIssuanceNV($idClient:Long! $requestType:String!, $identification:String!, $idLoanClient:Int!, $idBrand:Int, $user:String){
+  cardIssuanceNV(
+    cardIssuanceNVInput: {
+      idClient: $idClient
+      requestType: $requestType
+      identification: $identification
+      idLoanClient: $idLoanClient,
+      idBrand: $idBrand,
+      user: $user
+    }
+  ) {
+    rc
+    msg
+    processedAt
+  }
+}

@@ -32,6 +32,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQu
 import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetCountryContactQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
@@ -1115,5 +1116,13 @@ class GraphqlApi @Inject constructor(
                 Optional.Present(idBrand),
                 Optional.Present(user)
             )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryCountryContact(
+        user: String,
+        idBrand: Int
+    ): ApolloCall<GetCountryContactQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetCountryContactQuery(user, idBrand)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

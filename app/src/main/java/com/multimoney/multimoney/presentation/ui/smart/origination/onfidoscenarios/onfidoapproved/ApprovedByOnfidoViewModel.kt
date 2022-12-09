@@ -11,7 +11,6 @@ import javax.inject.Inject
 class ApprovedByOnfidoViewModel @Inject constructor() : BaseViewModel(true) {
 
     private fun onNavigateToHome() {
-        // TODO navigate to  home (onfido scenario 7)
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
             popTo = Screen.ContinueValidatingOnfidoScreen.route // define screen!!

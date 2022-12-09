@@ -38,13 +38,14 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
         ) {
             viewModel.balanceCredit?.balanceAccountSmart?.let {
                 if (it.isNotEmpty()) {
-                    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                    //val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                    val smartIndex = viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex ?:0
                     SmartAccountDetail(
                         modifier = Modifier
                             .background(MultimoneyTheme.colors.creditDetailBackground)
                             .wrapContentSize(),
                         uiState = viewModel.uiState,
-                        account = it[index],
+                        account = it[smartIndex],
                         onShareIbanAccount = { clientLabel: String, accountLabel: String, ibanAccount: String ->
                             viewModel.onUIEvent(
                                 ProductViewModel.UIEvent.OnShareIbanAccount(
@@ -55,7 +56,7 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
                             )
                         }
                     )
-                    SmartMovementsLatest(viewModel, index)
+                    SmartMovementsLatest(viewModel, smartIndex)
                 }
             }
         }

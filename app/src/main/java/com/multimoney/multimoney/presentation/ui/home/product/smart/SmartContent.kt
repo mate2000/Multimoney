@@ -31,15 +31,16 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
             SmartAccountStatus.EXIST_IN_CORE.status -> {
                 viewModel.balanceCredit?.balanceAccountSmart?.let {
                     if (it.isNotEmpty()) {
-                        val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                        val smartIndex = viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex ?:0
+                        //val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
                         CustomProductBackground(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             type = ProductBackGroundType.Secondary
                         ) {
                             CardSmartProduct(
-                                currency = it[index]?.currencyCode ?: "",
-                                profitMonthly = it[index]?.gainedInterest.toString(),
-                                profitTotal = it[index]?.totalBalance.toString()
+                                currency = it[smartIndex]?.currencyCode ?: "",
+                                profitMonthly = it[smartIndex]?.gainedInterest.toString(),
+                                profitTotal = it[smartIndex]?.totalBalance.toString()
                             )
                         }
                     }

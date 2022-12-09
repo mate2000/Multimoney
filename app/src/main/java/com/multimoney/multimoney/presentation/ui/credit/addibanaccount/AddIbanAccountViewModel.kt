@@ -115,7 +115,7 @@ class AddIbanAccountViewModel @Inject constructor(
                                 uiState.copy(
                                     accountError = Pair(false, R.string.empty),
                                     accountInformation = Pair(false, R.string.empty),
-                                    validationError = response.responseMessage.capitalized()
+                                    validationError = Pair(true, response.responseMessage.capitalized())
                                 )
                         }
                     }
@@ -199,7 +199,7 @@ class AddIbanAccountViewModel @Inject constructor(
         val accountError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val accountInformation: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val isFormValid: Boolean = false,
-        val validationError: String? = null,
+        val validationError: Pair<Boolean, String>? = Pair(false, ""),
         val ibanSuccess: Boolean = false,
         val isLoading: Boolean = false,
         val dialogParameters: DialogParameters = DialogParameters()

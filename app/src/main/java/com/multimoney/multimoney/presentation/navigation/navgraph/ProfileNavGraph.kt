@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.PROFILE_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -41,6 +42,25 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
+                }
+            )
+        }
+        composable(
+            Screen.HelpScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            HelpScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

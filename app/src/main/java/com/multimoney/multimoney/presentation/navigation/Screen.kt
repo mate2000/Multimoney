@@ -93,6 +93,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object ProfileScreen : Screen("profile_screen/{$ID_BRAND}", "profile_screen")
 
+    // Profile Sub-Screens
+    object HelpScreen : Screen("help_screen/{$ID_BRAND}", "help_screen")
+
     // DisbursementNavGraph Screens
     object DisbursementAmountScreen : Screen(
         "disbursement_amount_screen/{$ID_BRAND}/{$USER}/{$ID_CLIENT}/{$SUMMARY_LIST}/{$PK_USER}/{$CREDIT_NUMBER}/{$ID_USER_REQUEST}/{$IDENTIFICATION}",

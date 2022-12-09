@@ -68,6 +68,10 @@ class ProfileViewModel @Inject constructor(
         )
     }
 
+    private fun navigateToHelpAndInformation () {
+        navigateTo(Screen.HelpScreen.route)
+    }
+
     data class UIState(
         // Fields
         val userName: String = "",
@@ -85,7 +89,7 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
             is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
             is UIEvent.OnSettingsClick -> Timber.d("navigate to settings screen")
-            is UIEvent.OnHelpClick -> Timber.d("navigate to help screen")
+            is UIEvent.OnHelpClick -> navigateToHelpAndInformation()
             is UIEvent.OnInviteFriendsClick -> Timber.d("navigate to invite friends screen")
             is UIEvent.OnLogoutClick -> signOutDialogConfirmation()
         }

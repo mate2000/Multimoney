@@ -895,4 +895,11 @@
     <string name="disbursement_voucher_exchange_type" translatable="false">Tipo de cambio</string>
     <string name="disbursement_voucher_amount_to_disburse" translatable="false">Monto elegido</string>
 
+    <!-- Profile Help And Information Section -->
+    <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>
+    <string name="profile_help_chat_with_us_label" translatable="false">Chatear con nosotros</string>
+    <string name="profile_help_call_attention_center_label" translatable="false">Llamar a centro de atención</string>
+    <string name="profile_help_faq_label" translatable="false">Preguntas frecuentes</string>
+    <string name="profile_help_terms_and_conditions_label" translatable="false">Términos y condiciones</string>
+
 </resources>

@@ -69,7 +69,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun navigateToHelpAndInformation () {
-        navigateTo(Screen.HelpScreen.route)
+        navigateTo("${Screen.HelpScreen.baseRoute}/${uiState.idBrand}")
     }
 
     data class UIState(

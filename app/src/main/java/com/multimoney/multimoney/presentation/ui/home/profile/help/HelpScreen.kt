@@ -6,21 +6,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnCallToAttentionCenterClick
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnChatWithUsClick
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnFAQClick
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnGetContactInfo
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnTermsAndConditionsClick
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomItemRow
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
@@ -34,6 +40,19 @@ fun HelpScreen(
             onPopBackStack = onPopBackStack
         )
         viewModel.onUIEvent(OnGetContactInfo)
+    }
+
+    LoadingIndicator(viewModel.uiState.isLoading)
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 
     HelpScreenContent(viewModel)
@@ -71,8 +90,15 @@ fun HelpOptions(
             .padding(start = 16.dp, end = 16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        Text(
+            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+            text = stringResource(R.string.profile_help_and_info_title),
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.labelText,
+            textAlign = TextAlign.Left
+        )
         CustomItemRow(
-            title = stringResource(R.string.profile_help_and_info_title),
+            title = stringResource(R.string.profile_help_chat_with_us_label),
             startIcon = R.drawable.ic_chat_bot,
             endIcon = R.drawable.ic_right_chevron,
             onClick = onChatWithUsClick,
@@ -89,13 +115,15 @@ fun HelpOptions(
             title = stringResource(R.string.profile_help_faq_label),
             startIcon = R.drawable.ic_help,
             endIcon = R.drawable.ic_right_chevron,
-            onClick = onFAQClick
+            onClick = onFAQClick,
+            startIconColor = MultimoneyTheme.colors.text
         )
         CustomItemRow(
             title = stringResource(R.string.profile_help_terms_and_conditions_label),
             startIcon = R.drawable.ic_document,
-            shouldShowDivider = false,
-            onClick = onTermsAndConditions
+            onClick = onTermsAndConditions,
+            endIcon = R.drawable.ic_right_chevron,
+            startIconColor = MultimoneyTheme.colors.text
         )
     }
 }

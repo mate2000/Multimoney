@@ -27,23 +27,7 @@ class ChangeEmailViewModel @Inject constructor(
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
-
-    data class UIState(
-        // Fields
-        val userName: String? = null,
-        val email: String? = null,
-        val newEmail: String? = null,
-        val newEmailConfirmation: String? = null,
-        val identification: String? = null,
-        val phoneNumber: String? = null,
-        val newPhoneNumber: String? = null,
-        val idBrand: Int? = null,
-        val firstName: String? = null,
-        val pkUser: String? = null,
-        val phoneCode: String = "",
-        val isButtonEnabled: Boolean = false,
-        val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_email_required),
-    )
+        private set
 
     init {
         uiState = uiState.copy(
@@ -57,22 +41,6 @@ class ChangeEmailViewModel @Inject constructor(
         )
     }
 
-
-    fun onUIEvent(event: ChangeEmailViewModel.UIEvent) {
-        when (event) {
-            is ChangeEmailViewModel.UIEvent.OnUserEmailValueChange -> onUserEmailChange(event.newEmail)
-            is ChangeEmailViewModel.UIEvent.OnUserEmailConfirmationValueChange -> onUserEmailConfirmationChange(
-                event.newEmailConfirmation
-            )
-            is ChangeEmailViewModel.UIEvent.OnValidateUserEmail -> isUserEmailValid()
-            is ChangeEmailViewModel.UIEvent.OnValidateUserEmailConfirmation -> isUserEmailConfirmationValid()
-            is ChangeEmailViewModel.UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
-            is ChangeEmailViewModel.UIEvent.OnNavigateBack -> navigateBack(
-                Screen.HomeScreen.route,
-                false
-            )
-        }
-    }
 
     private fun onContinueButtonClicked() {
         navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
@@ -101,8 +69,6 @@ class ChangeEmailViewModel @Inject constructor(
             }
         }
     }
-
-
 
     private fun isUserEmailValid() {
         if (isEmailValid(uiState.newEmail).not()) {
@@ -146,6 +112,39 @@ class ChangeEmailViewModel @Inject constructor(
         uiState = uiState.copy(newEmailConfirmation = newEmailConfirmation)
         clearUserEmailError()
         isFormValid()
+    }
+
+    data class UIState(
+        // Fields
+        val userName: String? = null,
+        val email: String? = null,
+        val newEmail: String? = null,
+        val newEmailConfirmation: String? = null,
+        val identification: String? = null,
+        val phoneNumber: String? = null,
+        val newPhoneNumber: String? = null,
+        val idBrand: Int? = null,
+        val firstName: String? = null,
+        val pkUser: String? = null,
+        val phoneCode: String = "",
+        val isButtonEnabled: Boolean = false,
+        val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_email_required),
+    )
+
+    fun onUIEvent(event: ChangeEmailViewModel.UIEvent) {
+        when (event) {
+            is ChangeEmailViewModel.UIEvent.OnUserEmailValueChange -> onUserEmailChange(event.newEmail)
+            is ChangeEmailViewModel.UIEvent.OnUserEmailConfirmationValueChange -> onUserEmailConfirmationChange(
+                event.newEmailConfirmation
+            )
+            is ChangeEmailViewModel.UIEvent.OnValidateUserEmail -> isUserEmailValid()
+            is ChangeEmailViewModel.UIEvent.OnValidateUserEmailConfirmation -> isUserEmailConfirmationValid()
+            is ChangeEmailViewModel.UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
+            is ChangeEmailViewModel.UIEvent.OnNavigateBack -> navigateBack(
+                Screen.HomeScreen.route,
+                false
+            )
+        }
     }
 
     sealed class UIEvent {

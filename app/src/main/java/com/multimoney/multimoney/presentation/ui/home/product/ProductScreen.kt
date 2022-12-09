@@ -38,6 +38,8 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -48,11 +50,13 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCa
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCloseCardIssuanceError
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
@@ -67,6 +71,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartHeaderExpanded
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -111,7 +116,14 @@ fun ProductScreen(
             when (event) {
                 is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
                     coroutineScope.launch {
-                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnQuickActionClicked(event.flow))
+                        viewModel.onUIEvent(
+                            ProductViewModel.UIEvent.OnQuickActionClicked(
+                                event.flow,
+                                onLoadingValueChange = {
+                                    sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnLoadingValueChanged(it))
+                                }
+                            )
+                        )
                     }
                 }
                 is HomeViewModel.BaseEvent.OnMiniCardsClicked -> {
@@ -192,7 +204,8 @@ fun ProductScreen(
                     ProductFooter(
                         modifier = Modifier.padding(top = 16.dp),
                         state = footerPagerState,
-                        viewModel = viewModel
+                        viewModel = viewModel,
+                        sharedViewModel = sharedViewModel
                     )
                 },
                 footerExpanded = {
@@ -215,6 +228,18 @@ fun ProductScreen(
         }
     }
 
+    if (viewModel.uiState.showCardIssuanceError) {
+        AlertResult(
+            iconResource = drawable.ic_error_symbol,
+            titleResource = string.card_issuance_error_title,
+            descriptionResource = viewModel.getCardIssuanceDescriptionError(),
+            buttonTextResource = string.understood,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseCardIssuanceError) },
+            onButtonClick = { viewModel.onUIEvent(OnCloseCardIssuanceError) }
+        )
+    }
+
     LoadingIndicator(sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded)
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -228,7 +253,6 @@ fun ProductScreen(
         )
     }
 }
-
 
 @Composable
 fun TipsAndOffer(
@@ -376,7 +400,8 @@ fun ProductContent(
 fun ProductFooter(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
@@ -389,9 +414,12 @@ fun ProductFooter(
                     uiState = viewModel.uiState,
                     balance = viewModel.balanceCredit,
                     onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
-                    onNavigateToVisaActivateScreen = {
+                    onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToHomeMultimoneyVisa) },
+                    onCreateMultimoneyVisa = {
                         viewModel.onUIEvent(
-                            OnNavigateToVisaActivateScreen
+                            OnCreateMultimoneyVisa(onLoadingValueChange = {
+                                sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnLoadingValueChanged(it))
+                            })
                         )
                     }
                 )

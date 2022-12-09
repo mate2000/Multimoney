@@ -282,7 +282,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_movements_screen"
     )
 
-    object SmartPaymentAccountScreen : Screen("smart_payment_screen")
+    object SmartPaymentAccountScreen : Screen(
+        "smart_payment_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "smart_payment_screen"
+    )
 
     // Payment Smart
     object PaymentSmartCardsScreen : Screen(

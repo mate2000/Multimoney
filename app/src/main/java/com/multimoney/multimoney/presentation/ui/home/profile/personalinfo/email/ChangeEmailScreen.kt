@@ -47,6 +47,8 @@ fun ChangeEmailScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ChangeEmailViewModel = hiltViewModel()
 ) {
+
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
@@ -112,7 +114,6 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
                 isRequired = true,
                 isError = viewModel.uiState.userEmailError.first,
                 isRequiredMessage = stringResource(id = R.string.sign_up_email_required),
-
             )
             // Fields
             CustomOutlinedTextField(

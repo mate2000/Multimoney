@@ -30,13 +30,11 @@ fun PersonalInfoScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }
-
     BackHandler {
         viewModel.onUIEvent(PersonalInfoViewModel.UIEvent.OnNavigateBack)
     }
         PersonalInfoContent(viewModel)
 }
-
 
 @Composable
 fun PersonalInfoContent(viewModel : PersonalInfoViewModel){
@@ -75,7 +73,6 @@ fun PersonalInfoContent(viewModel : PersonalInfoViewModel){
                     viewModel.onUIEvent(PersonalInfoViewModel.UIEvent.OnNavigateToEditPhone)
                 }
             )
-
         }
     }
 }

@@ -41,7 +41,6 @@ class ChangeEmailViewModel @Inject constructor(
         )
     }
 
-
     private fun onContinueButtonClicked() {
         navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }

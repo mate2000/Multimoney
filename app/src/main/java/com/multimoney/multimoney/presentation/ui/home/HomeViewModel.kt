@@ -393,7 +393,7 @@ class HomeViewModel @Inject constructor(
                     creditStatus = validateUserStatus?.infoCredit?.status ?: 0,
                     accountStatus = validateUserStatus?.infoBankAccount?.status ?: 0,
                     cryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
-                    cardStatus = 0 // TODO, the API doesn't support this yet
+                    cardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
                 callQueryGetQuickActions(
                     idBrand = idBrand,
@@ -462,7 +462,7 @@ class HomeViewModel @Inject constructor(
                     creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
                     accountStatus = uiState.validateUserStatus?.infoBankAccount?.status ?: 0,
                     cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
-                    cardStatus = 0 // TODO, the API doesn't support this yet
+                    cardStatus = uiState.validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
                 emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
             }
@@ -556,6 +556,7 @@ class HomeViewModel @Inject constructor(
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
             is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnLoadingValueChanged -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
         }
     }
 
@@ -581,6 +582,7 @@ class HomeViewModel @Inject constructor(
         object OnEditAutomaticPayment : UIEvent()
         object OnDeleteAutomaticPayment : UIEvent()
         object OnCallMutationDeactivateClientAutomaticDebit : UIEvent()
+        data class OnLoadingValueChanged(val isLoading: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

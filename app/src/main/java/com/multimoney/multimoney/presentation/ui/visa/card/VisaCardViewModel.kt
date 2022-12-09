@@ -7,15 +7,17 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.data.util.catalog.Brand.Guatemala
+import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNfcAvailable
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,9 +30,11 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
 
     // Stateless
     private var idBrand: Int = 0
+    private var balanceCardInformation: BalanceCardInformation? = null
 
     init {
-        idBrand = savedStateHandle.get<String>(ID_BRAND)?.toInt() ?: 0
+        idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
+        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
     }
 
     private fun onAvailableAmountClick() {

@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
@@ -148,8 +149,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     // VisaNavGraph
-    object VisaIssuanceScreen : Screen("visa_issuance_screen/{$ID_BRAND}", "visa_issuance_screen")
-    object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}", "visa_card_screen")
+    object VisaIssuanceScreen : Screen(
+        "visa_issuance_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}",
+        "visa_issuance_screen"
+    )
+
+    object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")

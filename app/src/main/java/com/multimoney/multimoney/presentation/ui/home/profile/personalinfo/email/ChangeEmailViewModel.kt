@@ -47,7 +47,6 @@ class ChangeEmailViewModel @Inject constructor(
     }
 
     private fun isFormValid() {
-
         uiState = when {
             uiState.newEmail?.isBlank() == true -> {
                 uiState.copy(isButtonEnabled = false)

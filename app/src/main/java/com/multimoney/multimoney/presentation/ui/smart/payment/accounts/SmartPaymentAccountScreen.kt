@@ -45,7 +45,8 @@ fun SmartPaymentAccountScreen(
         )
         PaymentOptions(
             onColonClick = { viewModel.onUIEvent(OnColonSelected) },
-            onDollarClick = { viewModel.onUIEvent(OnColonSelected) })
+            onDollarClick = { viewModel.onUIEvent(OnColonSelected) }
+        )
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)

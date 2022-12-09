@@ -16,10 +16,11 @@ import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
+import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
-import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.StepByStep
+import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SmartAccountRepository
@@ -246,9 +247,35 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 identificationNumber,
                 idRequest
             ),
-            apolloCallMapper = { data -> Success(data.mapToDomainModel())}
+            apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
         )
     }
+
+    override suspend fun mutationProcessTransferVisaToSmartVD(
+        idCard: Long,
+        tokenNumber: Long,
+        identification: String,
+        amount: String,
+        currency: Int,
+        description: String,
+        cardMasked: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<VisaSmartPayment?>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationProcessTransferVisaToSmartVD(
+                idCard,
+                tokenNumber,
+                identification,
+                amount,
+                currency,
+                description,
+                cardMasked,
+                user,
+                idBrand
+            ),
+            apolloCallMapper = { data -> Success(data.mapToDomainModel()) }
+        )
 
     /**
      * fetch the list of the source of income catalog for the account smart flow
@@ -284,8 +311,10 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 pkUser,
                 idBrand,
                 user
-            ), apolloCallMapper = { data ->
+            ),
+            apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
     }
 }

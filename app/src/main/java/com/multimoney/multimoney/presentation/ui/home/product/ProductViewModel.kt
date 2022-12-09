@@ -439,8 +439,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSendMoneyScreen() {
-        // FIXME: Navigate to correct payment flow screen
-        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+        // todo add navigation to send money screen
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {

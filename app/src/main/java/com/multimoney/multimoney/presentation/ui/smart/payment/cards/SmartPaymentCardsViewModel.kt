@@ -1,9 +1,15 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.cards
 
+import android.util.Log
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue.Expanded
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
 import com.multimoney.domain.interaction.credit.QueryListCardVDUseCase
 import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.domain.model.util.onFailure
@@ -15,18 +21,21 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallProcessTransferVisaToSmart
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
 class SmartPaymentCardsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val queryListCards: QueryListCardVDUseCase
+    private val queryListCards: QueryListCardVDUseCase,
+    private val processTransferVisaToSmart: MutationProcessTransferVisaToSmartVDUseCase
 ) : BaseViewModel(true) {
     // uiState
     var uiState by mutableStateOf(UIState())
@@ -35,14 +44,16 @@ class SmartPaymentCardsViewModel @Inject constructor(
     // Stateless
     private var user: String = savedStateHandle[USER] ?: ""
     private var idBrand: Int = savedStateHandle[ID_BRAND] ?: 0
-    private var identification: String? = savedStateHandle[IDENTIFICATION] ?: ""
+    private var identification: String = savedStateHandle[IDENTIFICATION] ?: ""
+    private var idCurrency: Int = 2
+    private var tokenNumber: Long = 52959856
 
     private fun onCallQueryGetClientCardsUseCase() {
         executeUseCase {
             queryListCards.invoke(
                 user = user,
                 idBrand = idBrand,
-                identification = identification ?: ""
+                identification = identification
             ).collectLatest { result ->
                 result.onSuccess { cardsList ->
                     uiState = uiState.copy(
@@ -64,8 +75,48 @@ class SmartPaymentCardsViewModel @Inject constructor(
         }
     }
 
+    private fun onCallProcessTransferVisaToSmart() {
+        executeUseCase {
+            processTransferVisaToSmart.invoke(
+                uiState.idCard, // idCard,
+                tokenNumber, // tokenNumber,
+                identification,
+                uiState.amount, // amount,
+                idCurrency, // currency,
+                DEFAULT_DESCRIPTION, // description,
+                uiState.cardMasked, // cardMasked,
+                user,
+                idBrand
+            ).collectLatest { result ->
+                result.onSuccess {
+                    Log.d("SmartPayment", "Success: ${it?.referenceNumberVisa}")
+                }
+                result.onFailure {
+                    Log.d("SmartPayment", "Failure: ${it?.getError()}")
+                }
+                result.onLoading {
+                    Log.d("SmartPayment", "Loading Payment")
+                }
+            }
+        }
+    }
+
     private fun onCardSelected(cardSelected: CardVisaDirect) {
-        // todo navigate
+        uiState = uiState.copy(
+            idCard = cardSelected.idCard?.toLong() ?: 0,
+            cardMasked = (cardSelected.cardMaskedNumber ?: ""),
+            cardBankName = cardSelected.detail ?: "",
+            bottomSheetState = ModalBottomSheetState(Expanded)
+        )
+
+        // fixme navigate to amount screen
+        // navigateTo("${Screen. ROUTE }/${idBrand} +
+        // /${user} +
+        // /${tokenNumber} +
+        // /${identification} +
+        // /${uiState.amount} +
+        // /${idCurrency} +
+        // /${uiState.cardMasked} +
     }
 
     private fun onAddCard() {
@@ -81,7 +132,15 @@ class SmartPaymentCardsViewModel @Inject constructor(
         val cardVDList: List<CardVisaDirect?> = emptyList(),
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val isVisaAnimationVisible: Boolean = false
+        val isVisaAnimationVisible: Boolean = false,
+        val currency: String = "$",
+        val amount: String = "500",
+        val cardBankName: String = "",
+        val exchangeRate: String = "609.06",
+        val exchangeAmount: String = "300621.24",
+        val idCard: Long = 43,
+        val cardMasked: String = "123***1234",
+        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -90,6 +149,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
             is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase()
             is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
             is OnAddCard -> onAddCard()
+            is OnCallProcessTransferVisaToSmart -> onCallProcessTransferVisaToSmart()
         }
     }
 
@@ -97,7 +157,12 @@ class SmartPaymentCardsViewModel @Inject constructor(
         class OnCardSelected(val cardSelected: CardVisaDirect) : UIEvent()
         object OnCallQueryGetClientCards : UIEvent()
         object OnAddCard : UIEvent()
-
         object OnNavigateBack : UIEvent()
+
+        object OnCallProcessTransferVisaToSmart : UIEvent()
+    }
+
+    companion object {
+        const val DEFAULT_DESCRIPTION = "Deposito a cuenta smart"
     }
 }

@@ -22,7 +22,7 @@ class SmartPaymentMethodViewModel @Inject constructor(
         private set
 
     // stateLess
-    var userSmartAccount : String = ""
+    var userSmartAccount: String = ""
 
     init {
         userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""
@@ -39,9 +39,9 @@ class SmartPaymentMethodViewModel @Inject constructor(
         navigateTo("${Screen.SavingMethodTransferScreen.baseRoute}/$userSmartAccount")
     }
 
-    //TODO Implement visa navigation
+    // TODO Implement visa navigation
     private fun navigateToVisaScreen() {
-
+        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/${"a"}/${uiState.idBrand}/${"identification"}")
     }
 
     fun onUIEvent(uiEvent: UIEvent) {

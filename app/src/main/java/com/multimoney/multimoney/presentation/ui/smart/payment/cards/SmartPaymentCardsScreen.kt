@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +34,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SmartPaymentCardsScreen(
     isRestart: Boolean = true,
@@ -63,6 +66,11 @@ fun SmartPaymentCardsScreen(
         )
         PaymentCardsListContent(viewModel)
     }
+    SmartPaymentConfirmBottomSheet(
+        rememberCoroutineScope(),
+        viewModel.uiState.bottomSheetState,
+        viewModel
+    )
 }
 
 @Composable

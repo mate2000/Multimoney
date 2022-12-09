@@ -20,9 +20,11 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPay
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnDollarSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
+@HiltViewModel
 class SmartPaymentAccountViewModel @Inject constructor(
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     savedStateHandle: SavedStateHandle

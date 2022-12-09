@@ -3,6 +3,7 @@ package com.multimoney.data.repository
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
+import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.CardVisaDirect
@@ -654,6 +655,17 @@ class CreditRepositoryImpl @Inject constructor(
             } else {
                 Message(data.mapToDomainModel())
             }
+        }
+    )
+
+    override suspend fun queryAccountStatement(
+        creditNumber: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<AccountStatement?>> = fetchData(
+        apolloCall = graphqlApi.queryAccountStatement(creditNumber = creditNumber, user = user, idBrand = idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
         }
     )
 }

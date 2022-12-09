@@ -2,12 +2,12 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'dagger.hilt.android.plugin'
-    id 'kotlin-kapt'
     id 'com.google.firebase.firebase-perf'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
     id 'dexguard'
     id 'applanga'
+    id 'kotlin-kapt'
 }
 apply from: '../dependencies.gradle'
 
@@ -96,6 +96,10 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes true
+}
+
 dependencies {
 
     implementation project(path: ':data')
@@ -139,6 +143,11 @@ dependencies {
     implementation hilt.android
     kapt hilt.compiler
     implementation hilt.navigation
+    implementation hilt.common
+    implementation hilt.work
+
+    // Work Manager
+    implementation work_manager.runtime
 
     // Coroutines
     implementation coroutines.android

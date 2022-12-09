@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
@@ -829,6 +830,18 @@ class GraphqlApi @Inject constructor(
             userRequestId,
             idBrand,
             user
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryAccountStatement(
+        creditNumber: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<AccountStatementQuery.Data> = apolloAuthorizedClient.query(
+        AccountStatementQuery(
+            creditNumber = creditNumber,
+            user = user,
+            idBrand = idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

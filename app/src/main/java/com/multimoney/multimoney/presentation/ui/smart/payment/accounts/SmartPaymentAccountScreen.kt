@@ -43,7 +43,8 @@ fun SmartPaymentAccountScreen(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
             isRightButtonVisible = false
         )
-        PaymentOptions(onColonClick = { viewModel.onUIEvent(OnColonSelected) },
+        PaymentOptions(
+            onColonClick = { viewModel.onUIEvent(OnColonSelected) },
             onDollarClick = { viewModel.onUIEvent(OnColonSelected) })
     }
 

@@ -78,6 +78,7 @@ class ProductViewModel @Inject constructor(
     var email: String = ""
     var userName: String = ""
     var productProgress = 0F
+    val firstName : String? = null
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
 
@@ -237,7 +238,7 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}")
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/${email}/${uiState.userStatus?.infoUser?.phone}/${identification}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
     }
 
     private fun onNavigateToSmartMovements(accountToken: String) =
@@ -515,6 +516,7 @@ class ProductViewModel @Inject constructor(
         val isCreditAvailable: Boolean = false,
         val canExpandCredit: Boolean = false,
         val scheduleChipIconResource: Int? = null,
+        val phoneNumber : String? = null,
         val showCardIssuanceError: Boolean = false
     )
 
@@ -583,6 +585,7 @@ class ProductViewModel @Inject constructor(
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToSmartOriginationFlow : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
+        object OnNavigateToVisaActivateScreen : UIEvent()
         object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToDisbursement : UIEvent()

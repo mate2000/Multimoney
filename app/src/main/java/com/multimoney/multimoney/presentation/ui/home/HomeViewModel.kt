@@ -596,5 +596,8 @@ class HomeViewModel @Inject constructor(
         object OnEditAutomaticPaymentEvent : BaseEvent()
         object OnDeleteAutomaticPaymentEvent : BaseEvent()
         object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
+        object OnPhoneNumberChangedToastEvent : BaseEvent()
+        object OnEmailChangedToastEvent : BaseEvent()
+
     }
 }

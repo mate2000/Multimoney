@@ -40,8 +40,6 @@ import com.multimoney.domain.interaction.credit.MutationProcessCreditExtensionDe
 import com.multimoney.domain.interaction.credit.MutationProcessCreditExtensionDetailUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCaseImpl
-import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
-import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditExtensionDetailUseCase
@@ -98,6 +96,12 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
+import com.multimoney.domain.interaction.security.MutationChangePhoneUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
+import com.multimoney.domain.interaction.security.MutationChangeEmailUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCase
@@ -110,6 +114,8 @@ import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseC
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationValidateOTPUseCase
+import com.multimoney.domain.interaction.security.MutationValidateOTPUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCase
 import com.multimoney.domain.interaction.security.QueryCatalogDocumentTypeUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseCase
@@ -480,6 +486,21 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelationshipUseCaseImpl(smartAccountRepository: SmartAccountRepository): QueryRelationshipUseCase =
         QueryRelationshipUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationValidateOTPUseCase(securityRepository: SecurityRepository): MutationValidateOTPUseCase =
+        MutationValidateOTPUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationChangePhoneUseCase(securityRepository: SecurityRepository): MutationChangePhoneUseCase =
+        MutationChangePhoneUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationChangeEmailUseCase(securityRepository: SecurityRepository): MutationChangeEmailUseCase =
+        MutationChangeEmailUseCaseImpl(securityRepository)
 
     @Provides
     @Singleton

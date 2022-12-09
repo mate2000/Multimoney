@@ -16,6 +16,8 @@ import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
 import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
+import com.multimoney.data.networking.graphql.apollomodel.ChangeEmailMutation
+import com.multimoney.data.networking.graphql.apollomodel.ChangePhoneMutation
 import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.CompanyDistrictQuery
@@ -68,6 +70,7 @@ import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuer
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
+import com.multimoney.data.networking.graphql.apollomodel.ValidateOTPMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
@@ -1042,17 +1045,38 @@ class GraphqlApi @Inject constructor(
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ): ApolloCall<QuickActionsQuery.Data> =
-        apolloAuthorizedClient.query(
-            QuickActionsQuery(
-                idBrand,
-                pkUser,
-                identification,
-                infoCreditStatus,
-                infoVirtualCardStatus,
-                infoBankAccountStatus,
-                infoCriptoStatus
-            )
-        ).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationValidateOTP(
+        email : String,
+        otp : String
+    ): ApolloCall<ValidateOTPMutation.Data> =
+        apolloAuthorizedClient.mutation(ValidateOTPMutation(email,otp))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationChangePhone(
+        identification : String,
+        phone : String,
+        pkUser : String,
+        idBrand : Int
+    ): ApolloCall<ChangePhoneMutation.Data> =
+        apolloAuthorizedClient.mutation(ChangePhoneMutation(identification,phone,pkUser,idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationChangeEmail(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ChangeEmailMutation.Data> =
+        apolloAuthorizedClient.mutation(ChangeEmailMutation(pkUser,identification,email,registerId,changeUser,idBrand,user))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
+
+
 
     fun queryMiniCards(
         infoCreditStatus: Boolean,

@@ -63,10 +63,10 @@ class AddIbanAccountViewModel @Inject constructor(
 
     private fun onStart() {
         uiState = uiState.copy(
-            title = if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {
-                R.string.add_iban_account_disbursement_tile
-            } else {
-                R.string.add_iban_account_payment_tile
+            title = when (previousScreen) {
+                Screen.DisbursementAccountScreen.baseRoute -> R.string.add_iban_account_disbursement_tile
+                Screen.SmartPaymentAccountScreen.baseRoute -> R.string.payment_account_iban_title
+                else -> R.string.add_iban_account_payment_tile
             }
         )
     }
@@ -97,7 +97,7 @@ class AddIbanAccountViewModel @Inject constructor(
             account = "${Brand.CostaRica.iban}${uiState.accountNumber}",
             identification = identification.orEmpty(),
             user = user.orEmpty(),
-            idBrand = idBrand ?: 0
+            idBrand = idBrand?.toInt() ?: 0
         ).collectLatest {
             it.onSuccess { account ->
                 account?.let { response ->
@@ -151,7 +151,7 @@ class AddIbanAccountViewModel @Inject constructor(
             idAccountType = null,
             idLoanClient = idLoanClient?.toLong() ?: 0,
             user = user.orEmpty(),
-            idBrand = idBrand ?: 0
+            idBrand = idBrand?.toInt() ?: 0
         ).collectLatest { result ->
             result.onSuccess {
                 if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {

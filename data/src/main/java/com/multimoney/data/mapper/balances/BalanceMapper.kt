@@ -57,7 +57,7 @@ private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(globalBalance = globalBalance.toString().toDouble())
 
 private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
-    BalanceCardInformation(cardInformation = CardInformation(cardInfo.cardNumber))
+    BalanceCardInformation(cardInformation = CardInformation(cardInfo?.cardNumber))
 
 fun BalanceQuery.Data.mapToDomainModel() =
     Balance(

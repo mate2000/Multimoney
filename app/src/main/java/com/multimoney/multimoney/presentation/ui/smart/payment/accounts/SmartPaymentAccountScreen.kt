@@ -32,6 +32,10 @@ fun SmartPaymentAccountScreen(
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
     }
 
+    LaunchedEffect(key1 = true) {
+        viewModel.executeNavigation(onNavigate = onNavigate)
+    }
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -41,17 +45,13 @@ fun SmartPaymentAccountScreen(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
             isRightButtonVisible = false
         )
-        PaymentOptions(
-            onColonClick = { viewModel.onUIEvent(OnColonSelected) },
-            onDollarClick = { viewModel.onUIEvent(OnColonSelected) }
-        )
+        PaymentOptions(viewModel = viewModel)
     }
 }
 
 @Composable
 fun PaymentOptions(
-    onColonClick: () -> Unit,
-    onDollarClick: () -> Unit
+    viewModel: SmartPaymentAccountViewModel = hiltViewModel()
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
@@ -69,7 +69,7 @@ fun PaymentOptions(
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_colon,
-            onEndIconClick = onColonClick
+            onClick = { viewModel.onUIEvent(OnColonSelected) }
         )
 
         CustomInfoButton(
@@ -79,7 +79,7 @@ fun PaymentOptions(
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_dollar,
-            onEndIconClick = onDollarClick
+            onClick = { viewModel.onUIEvent(OnColonSelected) }
         )
     }
 }

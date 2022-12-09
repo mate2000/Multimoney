@@ -443,37 +443,38 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun callMutationDeactivateClientAutomaticDebitUseCase(origin: String, idAccount: Long) = executeUseCase {
-        mutationDeactivateClientAutomaticDebitUseCase.invoke(
-            user = uiState.email,
-            idBrand = uiState.idBrand.toInt(),
-            idClient = uiState.validateUserStatus?.infoUser?.idClient?.toLong() ?: 0,
-            idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient?.toLong() ?: 0,
-            origin = origin,
-            idAccount = idAccount
-        ).collectLatest { result ->
-            result.onSuccess {
-                callQueryBalanceUseCase(
-                    user = uiState.email,
-                    identification = uiState.identification,
-                    idBrand = uiState.idBrand.toInt(),
-                    idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
-                    idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0,
-                    creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
-                    accountStatus = uiState.validateUserStatus?.infoBankAccount?.status ?: 0,
-                    cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
-                    cardStatus = 0 // TODO, the API doesn't support this yet
-                )
-                emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
-            }
-            result.onFailure {
-                onFailure(it)
-            }
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true)
+    private fun callMutationDeactivateClientAutomaticDebitUseCase(origin: String, idAccount: Long) =
+        executeUseCase {
+            mutationDeactivateClientAutomaticDebitUseCase.invoke(
+                user = uiState.email,
+                idBrand = uiState.idBrand.toInt(),
+                idClient = uiState.validateUserStatus?.infoUser?.idClient?.toLong() ?: 0,
+                idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient?.toLong() ?: 0,
+                origin = origin,
+                idAccount = idAccount
+            ).collectLatest { result ->
+                result.onSuccess {
+                    callQueryBalanceUseCase(
+                        user = uiState.email,
+                        identification = uiState.identification,
+                        idBrand = uiState.idBrand.toInt(),
+                        idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
+                        idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0,
+                        creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
+                        accountStatus = uiState.validateUserStatus?.infoBankAccount?.status ?: 0,
+                        cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
+                        cardStatus = 0 // TODO, the API doesn't support this yet
+                    )
+                    emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
+                }
+                result.onFailure {
+                    onFailure(it)
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
             }
         }
-    }
 
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
@@ -539,7 +540,10 @@ class HomeViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnBottomNavigationItemClick -> navigation(uiEvent.innerNavHostController, uiEvent.route)
+            is OnBottomNavigationItemClick -> navigation(
+                uiEvent.innerNavHostController,
+                uiEvent.route
+            )
             is OnSignOut -> signOut()
             is OnSetUserData -> onsetUserData()
             is UIEvent.OnOpenQuickActionFlow -> openQuickActionFlow(flow = uiEvent.flow)
@@ -555,13 +559,17 @@ class HomeViewModel @Inject constructor(
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
-            is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnMyProductPageChange -> uiState =
+                uiState.copy(productScreenPagerState = uiEvent.page)
         }
     }
 
     sealed class UIEvent {
         data class OnOpenQuickActionFlow(val flow: String) : UIEvent()
-        data class OnBottomNavigationItemClick(val innerNavHostController: NavHostController, val route: String) :
+        data class OnBottomNavigationItemClick(
+            val innerNavHostController: NavHostController,
+            val route: String
+        ) :
             UIEvent()
 
         data class OnGetSmartMovements(

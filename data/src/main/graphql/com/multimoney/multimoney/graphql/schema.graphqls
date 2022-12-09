@@ -417,6 +417,11 @@ type Query {
   quickActions(quickActionsInput: QuickActionsDtoInput!): [QuickActions!]!
 
   """
+  Security
+  """
+  userPhoneMobileGet(userPhoneMobileGetInput: UserPhoneMobileGetDtoInput!): UserEventMobile!
+
+  """
   VirtualCard
   """
   listCardVD(listCardVDInput: ListCardDtoInput!): [ListCard!]!
@@ -718,6 +723,11 @@ type Mutation {
   changePhone(changePhoneInputType: ChangePhoneDtoInput!): ChangePhone!
 
   changeEmail(changeEmailInputType: ChangeEmailDtoInput!): ChangeEmail!
+
+  """
+  Security
+  """
+  userPhoneMobileSave(userPhoneMobileSaveInput: UserPhoneMobileSaveDtoInput!): UserEventMobile!
 
   """
   VirtualCard
@@ -1598,29 +1608,29 @@ input balanceCryptoInput {
 }
 
 type CardInformation {
-  rc: String!
+  rc: String
 
-  msg: String!
+  msg: String
 
-  cardInfo: CardInfo!
+  cardInfo: CardInfo
 
-  processedAt: String!
+  processedAt: String
 
-  sALDO_FLOTANTE: String!
+  sALDO_FLOTANTE: String
 
-  pERMITE_DESBLOQUEO: Boolean!
+  pERMITE_DESBLOQUEO: Boolean
 
-  cOMISION_DESEMBOLSO: String!
+  cOMISION_DESEMBOLSO: String
 
-  tASA_INTERES: String!
+  tASA_INTERES: String
 
-  pLAZO: String!
+  pLAZO: String
 
-  nOMBRE_COMPLETO: String!
+  nOMBRE_COMPLETO: String
 
-  eSTADO: String!
+  eSTADO: String
 
-  rEMISION: Boolean!
+  rEMISION: Boolean
 }
 
 input balanceCardInformationInput {
@@ -2214,7 +2224,7 @@ type HistoricalBalanceClient {
 input HistoricalBalanceClientDtoInput {
   identification: String!
 
-  baseAsset: String!
+  baseAsset: String
 
   startDate: String!
 
@@ -2547,6 +2557,8 @@ input ValidateBankAccountDtoInput {
   account: String!
 
   identification: String!
+
+  queryType: String
 
   idBrand: Int
 
@@ -2939,6 +2951,48 @@ input QuickActionsDtoInput {
   user: String
 }
 
+type UserEventMobile {
+  pK_SUV_LOG_USUARIO_EVENTO_MOBILE: Long!
+
+  fK_SUV_MTR_USUARIO: Int!
+
+  plataforma: String!
+
+  uuid: String!
+
+  version_Dispositivo: String!
+
+  manofactura: String!
+
+  nombre_Dispositivo: String!
+
+  numero_Serie: String!
+
+  direccion_Ip: String!
+
+  latitud: String!
+
+  longitud: String!
+
+  tokenNotificationsPush: String!
+
+  dISPOSITIVO_TARJETA: String!
+
+  iD_BILLETERA_TARJETA: String!
+}
+
+input UserPhoneMobileGetDtoInput {
+  manufacture: String!
+
+  serialNumber: String!
+
+  pkUser: String!
+
+  idBrand: Int
+
+  user: String
+}
+
 type ListCard {
   idCard: Long!
 
@@ -3010,11 +3064,19 @@ input FloatingMovementsDtoInput {
 }
 
 type CardIssuance {
-  rc: String!
+  rc: String
 
-  msg: String!
+  msg: String
 
-  processedAt: String!
+  user: CardIssuanceUserResponse
+
+  processedAt: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input CardIssuanceDtoInput {
@@ -4746,6 +4808,22 @@ input ChangeEmailDtoInput {
 
   changeUser: Boolean!
 
+  pkUser: String!
+
+  idBrand: Int
+
+  user: String
+}
+
+input UserPhoneMobileSaveDtoInput {
+  manufacture: String!
+
+  serialNumber: String!
+
+  idWalletCard: String!
+
+  pkUser: String!
+
   idBrand: Int
 
   user: String
@@ -4880,9 +4958,15 @@ input MicroDepositDtoInput {
 }
 
 type ProcessTransferVisaToSmart {
-  numeroReferencia: String!
+  numeroReferencia: String
 
-  numeroReferenciaVisa: String!
+  numeroReferenciaVisa: String
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input ProcessTransferVisaToSmartDtoInput {
@@ -5493,6 +5577,16 @@ type GlobalRequest_Response_Result {
   isCrosseling: Short!
 }
 
+type CardIssuanceUserResponse {
+  cardToken: String
+
+  userToken: String
+
+  cardNumebr: String
+
+  dueDate: String
+}
+
 enum ValidateUserStatusOnCreditRequestInfo {
   NONE
 
@@ -5532,6 +5626,8 @@ type CryptoAccount {
   statusFirm: String!
 
   status: Int!
+
+  profileEnable: Boolean
 
   wording: Wording
 }
@@ -5871,7 +5967,7 @@ type PRODUCTO {
 }
 
 type CardInfo {
-  cardToken: String!
+  cardToken: String
 
   cardNumber: String
 

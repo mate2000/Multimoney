@@ -1,14 +1,18 @@
 package com.multimoney.multimoney.presentation.ui.visa.issuance
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnIssuanceClick
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.NfcHelper
@@ -16,7 +20,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class VisaIssuanceViewModel @Inject constructor(savedStateHandle: SavedStateHandle, private val nfcHelper: NfcHelper) :
+class VisaIssuanceViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val nfcHelper: NfcHelper
+) :
     BaseViewModel(true) {
 
     // uiState
@@ -25,9 +32,11 @@ class VisaIssuanceViewModel @Inject constructor(savedStateHandle: SavedStateHand
 
     // Stateless
     private var idBrand: Int = 0
+    private var balanceCardInformation: BalanceCardInformation? = null
 
     init {
-        idBrand = savedStateHandle.get<String>(ID_BRAND)?.toInt() ?: 0
+        idBrand = savedStateHandle.get<Int>(ID_BRAND) ?: 0
+        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
         getTextResources()
     }
 
@@ -82,15 +91,12 @@ class VisaIssuanceViewModel @Inject constructor(savedStateHandle: SavedStateHand
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
-            is OnIssuanceClick -> popAndNavigateTo(
-                "${Screen.VisaCardScreen.baseRoute}/$idBrand",
-                Screen.VisaIssuanceScreen.route
-            )
+            is OnIssuanceClick -> Toast.makeText(uiEvent.context, "Topkenizar tarjeta", Toast.LENGTH_SHORT).show()
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
-        object OnIssuanceClick : UIEvent()
+        data class OnIssuanceClick(val context: Context) : UIEvent()
     }
 }

@@ -8,5 +8,6 @@ data class CreditExtensionDetail(
     val quotaMaximum: String?,
     val selectedAmount: String?,
     val nextPayment: String?,
+    val fkFlowControl: Int,
     val messageError: MessageError
 )

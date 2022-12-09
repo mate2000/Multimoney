@@ -1,0 +1,25 @@
+query ListMiniCards(
+    $infoCreditStatus:Boolean!,
+    $infoVirtualCardStatus:Boolean!,
+    $infoBankAccountStatus:Boolean!,
+    $infoCripto:Boolean!,
+    $userEmail:String!,
+    $idBrand:Int!
+)
+{
+    minicards(
+        minicardsInput: {
+            infoCreditStatus: $infoCreditStatus
+            infoVirtualCardStatus: $infoVirtualCardStatus
+            infoBankAccountStatus: $infoBankAccountStatus
+            infoCriptoStatus: $infoCripto
+            user: $userEmail
+            idBrand: $idBrand
+        }
+    ) {
+        prioridad
+        tipo
+        imagenUrl
+        deeplink
+    }
+}

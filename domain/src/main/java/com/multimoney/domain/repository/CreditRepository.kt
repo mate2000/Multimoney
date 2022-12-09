@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.CardVisaDirect
@@ -17,6 +18,7 @@ import com.multimoney.domain.model.credit.ExchangeRate
 import com.multimoney.domain.model.credit.GetInfoDeposit
 import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
 import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
@@ -267,6 +269,22 @@ interface CreditRepository {
         pkPromotion: Int
     ): Flow<MultimoneyResult<CreditExtensionDetail?>>
 
+    suspend fun mutationProcessCreditExtensionDetail(
+        user: String,
+        pkUser: Int,
+        idBrand: Int,
+        idFlowControl: Any,
+        currency: String,
+        accountNumber: String,
+        bankAccount: String,
+        idBankAccount: Any,
+        idLoanForm: Any,
+        loanForm: String,
+        idLoanClient: Int,
+        phoneNumber: String,
+        userEmail: String
+    ): Flow<MultimoneyResult<ProcessCreditExtensionDetail?>>
+
     suspend fun mutationSendCreditContractEvent(
         idImpresion: Long,
         idBrand: Int,
@@ -293,4 +311,10 @@ interface CreditRepository {
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<SaveClientBankAccount?>>
+
+    suspend fun queryAccountStatement(
+        creditNumber: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<AccountStatement?>>
 }

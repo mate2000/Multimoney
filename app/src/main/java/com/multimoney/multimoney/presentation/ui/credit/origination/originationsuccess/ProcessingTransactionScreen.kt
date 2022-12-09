@@ -44,14 +44,14 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCallQueryGetInfoDebit
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.originationsuccess.ProcessingTransactionViewModel.UIEvent.OnSharedVoucherImage
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.InfoItem
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.InfoItemAccount
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.VoucherAccountInfo
+import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
@@ -178,10 +178,9 @@ fun ProcessingTransactionScreen(
                         color = MultimoneyTheme.colors.labelText
                     )
 
-                    InfoItemAccount(
+                    VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = drawable.ic_bank,
-                        tintIcon = MultimoneyTheme.colors.iconTintVoucher,
                         title = stringResource(string.origination_voucher_destiny_account),
                         subTitle = getMaskedAccount(
                             viewModel.uiState.infoDeposit?.accountNumber ?: "",
@@ -189,10 +188,9 @@ fun ProcessingTransactionScreen(
                         )
                     )
 
-                    InfoItem(
+                    VoucherNumberInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
-                        tintIcon = MultimoneyTheme.colors.iconTintVoucher,
                         title = stringResource(string.payment_voucher_reference_number_label),
                         subTitle = viewModel.uiState.infoDeposit?.referenceNumber ?: ""
                     )

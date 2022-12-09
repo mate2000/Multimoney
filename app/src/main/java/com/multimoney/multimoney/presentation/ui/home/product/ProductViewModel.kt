@@ -7,14 +7,19 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
+import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
+import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
-import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -22,33 +27,42 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCloseCardIssuanceError
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMiniCardsClicked
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
+import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
-    private val helper: ShareHelper
+    private val helper: ShareHelper,
+    private val nfcHelper: NfcHelper,
+    private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
+    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -217,7 +231,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToVisaActivateScreen() =
-        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}")
+
+    private fun onNavigateToHomeMultimoneyVisa() =
+        navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}")
 
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}")
@@ -228,6 +245,11 @@ class ProductViewModel @Inject constructor(
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
+    }
+
+    private fun onNavigateToCreditMovements() {
+        val infoCredit = uiState.userStatus?.infoCredit
+        navigateTo("${Screen.CreditMovementsScreen.baseRoute}/${uiState.idBrand}/${infoCredit?.idLoanClient ?: 0}/$email/${balanceCredit?.getFirstCredit()?.creditNumber}")
     }
 
     private fun getProgress() {
@@ -328,35 +350,6 @@ class ProductViewModel @Inject constructor(
             }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
         )
 
-    fun getCreditOfferAndTips(): List<CreditOfferAndTip> {
-        return listOf(
-            CreditOfferAndTip(
-                "1",
-                "Ahorra Smart",
-                "La mejor tasa del 3.5% anual",
-                "Solicitar",
-                "",
-                ""
-            ),
-            CreditOfferAndTip(
-                "2",
-                "Solicitar Credito",
-                "4,000",
-                "Solicitar",
-                "",
-                ""
-            ),
-            CreditOfferAndTip(
-                "3",
-                "Solicitar Credito",
-                "4,000",
-                "Solicitar",
-                "",
-                ""
-            )
-        )
-    }
-
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
         var amount = ""
         balanceCredit?.forEach { balance ->
@@ -421,9 +414,9 @@ class ProductViewModel @Inject constructor(
         return amount
     }
 
-    private fun onQuickActionClicked(flow: String) {
+    private fun onQuickActionClicked(flow: String, onLoadingValueChange: (isLoading: Boolean) -> Unit) {
         when (flow) {
-            QuickActionFlow.ACTIVATE_MM_VISA.flow -> onNavigateToVisaActivateScreen()
+            QuickActionFlow.ACTIVATE_MM_VISA.flow -> onCreateMultimoneyVisa(onLoadingValueChange)
             QuickActionFlow.PAY_FEE.flow -> onNavigateToPaymentScreen()
         }
     }
@@ -441,18 +434,88 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToPaymentSmartScreen(account: Account?) {
+        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
+    }
+
+    private fun onNavigateToSendMoneyScreen() {
+        // FIXME: Navigate to correct payment flow screen
+        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+    }
+
+    private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
+        // todo request token to know if the user already has a device enrolled
+        executeUseCase {
+            cardIssuanceNVUseCase.invoke(
+                idClient = uiState.userStatus?.infoUser?.idClient?.toLong() ?: 0,
+                identification = identification,
+                idLoanClient = uiState.userStatus?.infoCredit?.idLoanClient ?: 0,
+                user = email,
+                idBrand = uiState.idBrand.toInt()
+            ).collectLatest { result ->
+                result.onSuccess {
+                    onCallQueryBalanceCardInformation(onLoadingValueChange)
+                }.onFailure {
+                    onLoadingValueChange(false)
+                    uiState = uiState.copy(showCardIssuanceError = true)
+                }.onLoading {
+                    onLoadingValueChange(true)
+                }
+            }
+        }
+    }
+
+    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.Guatemala.id) {
+        R.string.card_issuance_error_description_gt
+    } else {
+        R.string.card_issuance_error_description
+    }
+
+    private fun onCallQueryBalanceCardInformation(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
+        executeUseCase {
+            balanceCardInformationUseCase.invoke(
+                email,
+                identification,
+                uiState.idBrand.toInt(),
+                uiState.userStatus?.infoUser?.idClient ?: 0,
+                uiState.userStatus?.infoCredit?.idLoanClient ?: 0,
+                CARD_INFORMATION_STATUS
+            ).collectLatest { result ->
+                result.onSuccess {
+                    balanceCredit?.balanceCardInformation = it
+                    onLoadingValueChange(false)
+                    if (nfcHelper.isNfcSupported()) {
+                        onNavigateToVisaActivateScreen()
+                    } else {
+                        onNavigateToHomeMultimoneyVisa()
+                    }
+                }.onFailure {
+                    onLoadingValueChange(false)
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onLoading {
+                    onLoadingValueChange(true)
+                }
+            }
+        }
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
         var userStatus: ValidateUserStatus? = null,
         var productPageList: List<ProductPage>? = null,
-        var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isExpanded: Boolean = false,
         val onGoingCreditCardTitle: Int = R.string.home_product_title,
         val isCreditAvailable: Boolean = false,
         val canExpandCredit: Boolean = false,
-        val scheduleChipIconResource: Int? = null
+        val scheduleChipIconResource: Int? = null,
+        val showCardIssuanceError: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -464,8 +527,8 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
-            is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen()
-            is OnNavigateToVisaActivateScreen -> onNavigateToVisaActivateScreen()
+            is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
+            is UIEvent.OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is OnSetUserData -> onSetUserData(
@@ -495,19 +558,17 @@ class ProductViewModel @Inject constructor(
             is IsPaymentExpired -> isExpired()
             is OnChipQuotaClick -> onChipQuotaClick()
             is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
-            is UIEvent.OnQuickActionClicked -> onQuickActionClicked(uiEvent.flow)
+            is UIEvent.OnQuickActionClicked -> onQuickActionClicked(
+                flow = uiEvent.flow,
+                onLoadingValueChange = uiEvent.onLoadingValueChange
+            )
+            is OnMiniCardsClicked -> onQuickActionClicked(flow = uiEvent.flow, onLoadingValueChange = {})
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
+            is OnNavigateToCreditMovementsScreen -> onNavigateToCreditMovements()
+            is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
+            is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
         }
-    }
-
-    private fun onNavigateToPaymentSmartScreen() {
-        // FIXME: Navigate to correct payment flow screen
-        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
-    }
-
-    private fun onNavigateToSendMoneyScreen() {
-        // TODO: Navigate to SendMoney screen
     }
 
     sealed class UIEvent {
@@ -522,12 +583,13 @@ class ProductViewModel @Inject constructor(
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
         object OnNavigateToSmartOriginationFlow : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
-        object OnNavigateToVisaActivateScreen : UIEvent()
+        object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
         object OnNavigateToSendMoneyFlow : UIEvent()
-        object OnNavigateToPaymentSmartFlow : UIEvent()
+        data class OnNavigateToPaymentSmartFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
+        object OnNavigateToCreditMovementsScreen : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
@@ -553,8 +615,13 @@ class ProductViewModel @Inject constructor(
             val ibanAccount: String
         ) : UIEvent()
 
-        data class OnQuickActionClicked(val flow: String) : UIEvent()
+        data class OnQuickActionClicked(val flow: String, val onLoadingValueChange: (isLoading: Boolean) -> Unit) :
+            UIEvent()
+
+        data class OnMiniCardsClicked(val flow: String) : UIEvent()
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
+        data class OnCreateMultimoneyVisa(val onLoadingValueChange: (isLoading: Boolean) -> Unit) : UIEvent()
+        object OnCloseCardIssuanceError : UIEvent()
     }
 
     companion object {
@@ -577,5 +644,6 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_PEP_PROCESS = "CREDIT_PEP_PROCESS"
         const val SEPARATOR = " + "
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
+        private const val CARD_INFORMATION_STATUS = 1
     }
 }

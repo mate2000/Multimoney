@@ -15,10 +15,12 @@ import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomati
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
+import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.security.ConfigurationVersion
+import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.QuickAction
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.catalog.ConfigurationPlatform
@@ -51,6 +53,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSi
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.boolean
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
@@ -71,6 +74,7 @@ class HomeViewModel @Inject constructor(
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
+    private val queryMiniCardsUseCase: QueryMiniCardsUseCase,
     private val queryGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
     private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase,
@@ -164,6 +168,43 @@ class HomeViewModel @Inject constructor(
                         quickActions = it.quickActions
                     )
                 }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun callQueryGetMiniCards(
+        infoCreditStatus: Int,
+        infoVirtualCardStatus: Int,
+        infoBankAccountStatus: Int,
+        infoCryptoStatus: Int,
+        idBrand: Int,
+        email: String
+    ) = executeUseCase {
+        queryMiniCardsUseCase.invoke(
+            infoCreditStatus = infoCreditStatus.boolean,
+            infoVirtualCardStatus = infoVirtualCardStatus.boolean,
+            infoBankAccountStatus = infoBankAccountStatus.boolean,
+            infoCrypto = infoCryptoStatus.boolean,
+            userEmail = email,
+            idBrand = idBrand
+        ).collectLatest { result ->
+            result.onSuccess { miniCards ->
+                if (
+                    uiState.configurationVersion != null &&
+                    uiState.balance != null &&
+                    uiState.quickActions != null
+                ) {
+                    uiState = uiState.copy(isLoading = false)
+                }
+                uiState = uiState.copy(
+                    miniCardList = miniCards.miniCardsList.toMutableList().sortedBy { it.priority }
+                )
             }
             result.onFailure {
                 onFailure(it)
@@ -352,7 +393,7 @@ class HomeViewModel @Inject constructor(
                     creditStatus = validateUserStatus?.infoCredit?.status ?: 0,
                     accountStatus = validateUserStatus?.infoBankAccount?.status ?: 0,
                     cryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
-                    cardStatus = 0 // TODO, the API doesn't support this yet
+                    cardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
                 callQueryGetQuickActions(
                     idBrand = idBrand,
@@ -361,6 +402,14 @@ class HomeViewModel @Inject constructor(
                     infoCreditStatus = validateUserStatus?.infoCredit?.status ?: 0,
                     infoVirtualCardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0,
                     infoCriptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
+                    infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
+                )
+                callQueryGetMiniCards(
+                    idBrand = idBrand,
+                    email = email,
+                    infoCreditStatus = validateUserStatus?.infoCredit?.status ?: 0,
+                    infoVirtualCardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0,
+                    infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
             }
@@ -413,7 +462,7 @@ class HomeViewModel @Inject constructor(
                     creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
                     accountStatus = uiState.validateUserStatus?.infoBankAccount?.status ?: 0,
                     cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
-                    cardStatus = 0 // TODO, the API doesn't support this yet
+                    cardStatus = uiState.validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
                 emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
             }
@@ -473,6 +522,7 @@ class HomeViewModel @Inject constructor(
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         var quickActions: List<QuickAction>? = null,
+        var miniCardList: List<MiniCardsItem>? = null,
         var configurationVersion: ConfigurationVersion? = null,
         var validateUserStatus: ValidateUserStatus? = null,
         var balance: Balance? = null,
@@ -506,6 +556,7 @@ class HomeViewModel @Inject constructor(
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
             is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnLoadingValueChanged -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
         }
     }
 
@@ -531,6 +582,7 @@ class HomeViewModel @Inject constructor(
         object OnEditAutomaticPayment : UIEvent()
         object OnDeleteAutomaticPayment : UIEvent()
         object OnCallMutationDeactivateClientAutomaticDebit : UIEvent()
+        data class OnLoadingValueChanged(val isLoading: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -538,6 +590,7 @@ class HomeViewModel @Inject constructor(
         object OnOpenMyProductsBottomSheet : BaseEvent()
         data class OnStartCountDownTimer(val millisInFuture: Long?)
         data class OnQuickActionClicked(val flow: String)
+        data class OnMiniCardsClicked(val flow: String)
         object OnShowAutomaticPaymentEditBottomSheet : BaseEvent()
         object OnHideAutomaticPaymentEditBottomSheet : BaseEvent()
         object OnEditAutomaticPaymentEvent : BaseEvent()

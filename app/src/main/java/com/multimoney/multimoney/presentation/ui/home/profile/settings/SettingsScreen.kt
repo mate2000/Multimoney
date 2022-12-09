@@ -99,15 +99,6 @@ fun SettingsContent(viewModel: SettingsViewModel) {
                 onClick = {
                 }
             )
-            //Not to ve available yet
-//            CustomItemRow(
-//                title = stringResource(R.string.profile_notifications),
-//                startIcon = R.drawable.ic_notification,
-//                endIcon = R.drawable.ic_right_chevron,
-//                onClick = {
-//                    //  viewModel.onUIEvent(PersonalInfoViewModel.UIEvent.OnNavigateToEditPhone)
-//                }
-//            )
         }
     }
 }
@@ -157,7 +148,6 @@ fun BiometricsCustomRow(viewModel: SettingsViewModel) {
                 if (!newState) {
                     viewModel.onUIEvent(SettingsViewModel.UIEvent.OnShowConfirmationDialog)
                 }
-                //isOn.value = newState
             },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Primary500,

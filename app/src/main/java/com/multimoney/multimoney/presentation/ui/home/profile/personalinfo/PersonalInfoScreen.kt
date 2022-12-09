@@ -37,7 +37,6 @@ fun PersonalInfoScreen(
         PersonalInfoContent(viewModel)
 }
 
-
 @Composable
 fun PersonalInfoContent(viewModel : PersonalInfoViewModel){
     Column(

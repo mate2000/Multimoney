@@ -16,6 +16,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsLatest
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
@@ -90,6 +91,7 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
                     )
                 }
             )
+            CreditMovementsLatest(viewModel)
         }
         CreditCtaButtons(
             modifier = Modifier

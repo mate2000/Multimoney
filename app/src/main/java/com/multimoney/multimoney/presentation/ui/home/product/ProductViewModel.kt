@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMiniCardsClicked
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
@@ -53,8 +54,8 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -253,6 +254,11 @@ class ProductViewModel @Inject constructor(
         context.openWhatsAppDeepLink(whatsAppLink)
     }
 
+    private fun onNavigateToCreditMovements() {
+        val infoCredit = uiState.userStatus?.infoCredit
+        navigateTo("${Screen.CreditMovementsScreen.baseRoute}/${uiState.idBrand}/${infoCredit?.idLoanClient ?: 0}/$email/${balanceCredit?.getFirstCredit()?.creditNumber}")
+    }
+
     private fun getProgress() {
         productProgress = (
                 balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
@@ -437,6 +443,15 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun onNavigateToPaymentSmartScreen(account: Account?) {
+        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
+    }
+
+    private fun onNavigateToSendMoneyScreen() {
+        // FIXME: Navigate to correct payment flow screen
+        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+    }
+
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
         // todo request token to know if the user already has a device enrolled
         executeUseCase {
@@ -559,18 +574,10 @@ class ProductViewModel @Inject constructor(
             is OnMiniCardsClicked -> onQuickActionClicked(flow = uiEvent.flow, onLoadingValueChange = {})
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
+            is OnNavigateToCreditMovementsScreen -> onNavigateToCreditMovements()
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
         }
-    }
-
-    private fun onNavigateToPaymentSmartScreen(account: Account?) {
-        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
-    }
-
-    private fun onNavigateToSendMoneyScreen() {
-        // FIXME: Navigate to correct payment flow screen
-        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
     }
 
     sealed class UIEvent {
@@ -591,6 +598,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToSendMoneyFlow : UIEvent()
         data class OnNavigateToPaymentSmartFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
+        object OnNavigateToCreditMovementsScreen : UIEvent()
         object OnProgressCalculation : UIEvent()
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()

@@ -135,11 +135,12 @@ interface SmartAccountRepository {
         user: String
     ): Flow<MultimoneyResult<GlobalRequest?>>
 
-    suspend fun querySinpeAccount(user: String,
-                                  idBrand: Int,
-                                  identification: String,
-                                  country: String,
-                                  idAccount: Long,
-                                  accountNumber: String
-    ):Flow<MultimoneyResult<SinpeAccountResult?>>
+    suspend fun querySinpeAccount(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        country: String,
+        idAccount: Long,
+        accountNumber: String
+    ): Flow<MultimoneyResult<SinpeAccountResult?>>
 }

@@ -270,11 +270,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun isExpired() {
-        isExpiredTitle = if ((
-                    balanceCredit?.getFirstSummary()?.daysExpired
-                        ?: 0
-                    ) > 0
-        ) R.string.home_product_expired else R.string.home_product_expiration
+        isExpiredTitle = if ((balanceCredit?.getFirstSummary()?.daysExpired ?: 0) > 0) R.string.home_product_expired else R.string.home_product_expiration
     }
 
     private fun getIfIsPep() =

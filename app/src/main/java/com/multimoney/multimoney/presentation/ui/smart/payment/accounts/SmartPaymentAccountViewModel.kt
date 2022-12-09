@@ -28,8 +28,7 @@ import javax.inject.Inject
 class SmartPaymentAccountViewModel @Inject constructor(
     private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     savedStateHandle: SavedStateHandle
-) :
-    BaseViewModel(true) {
+) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())

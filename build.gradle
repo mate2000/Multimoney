@@ -1,23 +1,11 @@
 buildscript {
     apply from: 'dependencies.gradle'
     repositories {
-        // gradle properties
-        def properties = new Properties()
-        properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
-
-        maven {
-            url = "https://nexus-public.novopayment.net/repository/maven-public/"
-            credentials {
-                username = System.env.NOVO_DEPENDENCY_USER ? "${System.env.NOVO_DEPENDENCY_USER}" : properties.dependencyUser
-                password = System.env.NOVO_DEPENDENCY_PASSWORD ? "${System.env.NOVO_DEPENDENCY_PASSWORD}" : properties.dependencyPassword
-            }
-        }
-
         maven {
             // For the DexGuard Gradle plugin jar.
             credentials {
-                username = System.env.DEXGUARD_USERNAME ? "${System.env.DEXGUARD_USERNAME}" : properties.dexGuardUserName
-                password = System.env.DEXGUARD_PASSWORD ? "${System.env.DEXGUARD_PASSWORD}" : properties.dexGuardPassword
+                username = System.env.DEXGUARD_USERNAME ? "${System.env.DEXGUARD_USERNAME}" : dexGuardUserName
+                password = System.env.DEXGUARD_PASSWORD ? "${System.env.DEXGUARD_PASSWORD}" : dexGuardPassword
             }
             url "https://maven.guardsquare.com"
             // Only search for artifacts with groupId "com.guardsquare.*",

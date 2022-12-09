@@ -121,6 +121,19 @@ class DisbursementAmountViewModel @Inject constructor(
 
     private fun onCloseClick() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
+    private fun onExitConfirmDialog(){
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = string.credit_amount_disbursement_exit_confirm_title,
+                descriptionResource = string.credit_amount_disbursement_exit_confirm_description,
+                negativeResource = string.common_leave,
+                positiveResource = string.button_continue,
+                negativeAction = { onCloseClick() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     private fun isFormValid() {
         uiState = uiState.copy(
             isFormValid = when {
@@ -411,7 +424,7 @@ class DisbursementAmountViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnStart -> onStart()
-            is OnCloseClick -> onCloseClick()
+            is OnCloseClick -> onExitConfirmDialog()
             is OnValidateForm -> isFormValid()
             is OnDisbursementValueChange -> uiState = uiState.copy(disbursement = uiEvent.value)
             is OnDisbursementValueChangeFinished -> onDisbursementValueChangeFinished(uiEvent.value)

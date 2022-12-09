@@ -46,6 +46,8 @@ fun ChangeEmailScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: ChangeEmailViewModel = hiltViewModel()
 ) {
+
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
     }

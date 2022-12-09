@@ -71,7 +71,6 @@ fun ValidateOTPScreen(
         SignUpViewModel.PHONE_HARDCODED
     )
 
-    // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val data: Intent? = result.data
@@ -148,7 +147,6 @@ fun ValidateOTPScreen(
                         description = it.getError() ?: "",
                         isActive = mutableStateOf(true),
                         positiveResource = R.string.button_continue,
-                        positiveAction = {}
                     ))
 
             }.onLoading {

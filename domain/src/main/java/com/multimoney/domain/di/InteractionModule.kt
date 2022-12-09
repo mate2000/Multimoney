@@ -20,6 +20,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsU
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCaseUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
@@ -40,8 +42,6 @@ import com.multimoney.domain.interaction.credit.MutationProcessCreditExtensionDe
 import com.multimoney.domain.interaction.credit.MutationProcessCreditExtensionDetailUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCaseImpl
-import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
-import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditExtensionDetailUseCase
@@ -512,4 +512,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryCardIssuanceUseCase(multimoneyVisaRepository: MultimoneyVisaRepository): QueryCardIssuanceNVUseCase =
         QueryCardIssuanceNVUseCaseImpl(multimoneyVisaRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryListSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): QueryListSinpeAccountUseCase =
+        QueryListSinpeAccountUseCaseImpl(smartAccountRepository)
 }

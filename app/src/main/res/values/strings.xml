@@ -921,6 +921,9 @@
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
     <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
 
+    <!-- IBAN Account -->
+    <string name="payment_account_iban_title" translatable="false">¿En qué cuenta IBAN querés recibir tu dinero?</string>
+
     <!-- Disbursement Bottom Sheet -->
     <string name="disbursement_bottom_sheet_title" translatable="false">Monto a desembolsar</string>
     <string name="disbursement_bottom_sheet_account" translatable="false">En tu cuenta</string>

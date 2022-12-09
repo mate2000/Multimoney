@@ -50,10 +50,10 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             CreditScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                })
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
 
         composable(

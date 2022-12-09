@@ -272,6 +272,7 @@
     <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
     <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
+    <string name="home_smart_product_process_accept_contract_description" translatable="false">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
     <string name="home_product_credit_not_completed_title" translatable="false">Tu solicitud está en proceso</string>
@@ -797,10 +798,10 @@
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
     <string name="approved_by_onfido_title" translatable="false">¡Tu Multimoney Smart ya está activa!</string>
-    <string name="approved_by_onfido_buttton_text" translatable="false">Hacer mi perimer abono</string>
+    <string name="approved_by_onfido_buttton_text" translatable="false">Hacer mi primer abono</string>
     <string name="rejected_by_onfido_title" translatable="false">No pudimos validar tu identidad</string>
     <string name="rejected_by_onfido_buttton_text" translatable="false">Validar mi identidad</string>
-    <string name="smart_continue_validating_identity_title" translatable="false">Ya casi tienen tu Multimoney Smart</string>
+    <string name="smart_continue_validating_identity_title" translatable="false">Ya casi tenés tu Multimoney Smart</string>
     <string name="smart_rejected_by_onfido_subtitle" translatable="false">Inténtalo nuevamente</string>
 
     <!-- Credit Schedule Automatic Payment -->

@@ -3,18 +3,28 @@ package com.multimoney.multimoney.presentation.ui.home.product.smart
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.SmartAccountStatus
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardInactiveSmartProduct
+import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartFirmedAndOnfidoPending
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardWithSmartInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartProcessStarted
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 
 @Composable
 fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
+    val context = LocalContext.current
+    val whatsAppLink = stringResource(
+        id = R.string.whatsapp_deep_link,
+        SignUpViewModel.PHONE_HARDCODED
+    )
 
     viewModel.uiState.userStatus?.apply {
         when (infoBankAccount?.status) {
@@ -62,6 +72,10 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                                 wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
                             )
                         }
+
+                        viewModel.evaluateCardCondition(ProductViewModel.SMART_FIRMED_ONFIDO_PENDING, this) -> {
+                            CardSmartFirmedAndOnfidoPending()
+                        }
                         viewModel.evaluateCardCondition(ProductViewModel.SMART_ONFIDO_REJECTED, this) -> {
                             CardWithSmartInProcess(
                                 type = SmartProcessStarted.SmartProcessOnfidoReject,
@@ -89,6 +103,21 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                                     }
                                 }
                             }
+                        }
+                        viewModel.evaluateCardCondition(ProductViewModel.SMART_ONFIDO_MAX_ATTEMPTS, this) -> {
+                            CardWithSmartInProcess(
+                                type = SmartProcessStarted.SmartProcessOnfidoMaxAttempts,
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(
+                                        ProductViewModel.UIEvent.OnMaxAttemptsCardClick(
+                                            whatsAppLink = whatsAppLink,
+                                            context = context
+                                        )
+                                    )
+                                },
+                                wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
+                            )
                         }
                     }
                 }

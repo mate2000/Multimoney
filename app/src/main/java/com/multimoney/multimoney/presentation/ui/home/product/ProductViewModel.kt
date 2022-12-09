@@ -265,7 +265,7 @@ class ProductViewModel @Inject constructor(
                         infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
                         (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
-                       
+
                 SMART_INITIAL_CARD -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
                             infoBankAccount?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
@@ -300,6 +300,11 @@ class ProductViewModel @Inject constructor(
                         infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
                 }
 
+                SMART_FIRMED_ONFIDO_PENDING -> {
+                    infoBankAccount?.statusFirm  == CreditOnFidoOrFirmStatus.FIRMED.status &&
+                            infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
+                }
+
                 CREDIT_FIRM_REJECTED -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
                 }
@@ -321,6 +326,10 @@ class ProductViewModel @Inject constructor(
                 }
 
                 CREDIT_ONFIDO_MAX_ATTEMPTS -> {
+                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
+                }
+
+                SMART_ONFIDO_MAX_ATTEMPTS -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
 
@@ -597,5 +606,7 @@ class ProductViewModel @Inject constructor(
         const val SMART_ONFIDO_REJECTED = "SMART_ONFIFO_REJECTED"
         const val SMART_INITIAL_CARD = "SMART_INITIAL_CARD"
         const val SMART_APPROVED_BY_ONFIDO = "SMART_APPROVED_BY_ONFIDO"
+        const val SMART_ONFIDO_MAX_ATTEMPTS = "SMART_ONFIDO_MAX_ATTEMPTS"
+        const val SMART_FIRMED_ONFIDO_PENDING = "SMART_FIRMED_ONFIDO_PENDING"
     }
 }

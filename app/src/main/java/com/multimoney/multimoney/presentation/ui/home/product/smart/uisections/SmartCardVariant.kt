@@ -192,6 +192,47 @@ fun CardSmartProduct(
 
 @Composable
 @Preview
+fun CardSmartFirmedAndOnfidoPending() {
+    val backgroundShip: Color = if (isSystemInDarkTheme()) {
+        BlackTransparency20
+    } else {
+        WhiteTransparency10
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+    ) {
+        CustomInformativeChip(
+            text = stringResource(id = R.string.home_my_products_title_smart),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = backgroundShip,
+            startIcon = R.drawable.ic_warning
+        )
+        Text(
+            text = stringResource(id = R.string.smart_continue_validating_identity_title),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = stringResource(id = R.string.home_smart_product_process_accept_contract_description),
+            modifier = Modifier.padding(top = 8.dp, bottom = 73.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+    }
+}
+
+@Composable
+@Preview
 fun CardWithSmartInProcess(
     type: SmartProcessStarted = SmartProcessStarted.SmartProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
@@ -290,6 +331,6 @@ sealed class SmartProcessStarted {
     object CreditProcessFirmReject : SmartProcessStarted()
     object CreditProcessFirmMaxAttempts : SmartProcessStarted()
     object SmartProcessOnfidoReject : SmartProcessStarted()
-    object CreditProcessOnfidoMaxAttempts : SmartProcessStarted()
+    object SmartProcessOnfidoMaxAttempts : SmartProcessStarted()
     object CreditProcessCreateAccountFailure : SmartProcessStarted()
 }

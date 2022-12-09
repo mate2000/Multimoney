@@ -11,10 +11,6 @@ plugins {
 }
 apply from: '../dependencies.gradle'
 
-// gradle properties
-def properties = new Properties()
-properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
-
 android {
     compileSdk compile_sdk_version
 
@@ -37,14 +33,14 @@ android {
         minSdk min_sdk_version
         targetSdk target_sdk_version
         versionCode getVersionCode()
-        versionName System.getenv("VERSION_NAME") ? String.valueOf(System.getenv("VERSION_NAME")) : properties.versionName
+        versionName System.getenv("VERSION_NAME") ? String.valueOf(System.getenv("VERSION_NAME")) : versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
 
-        buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : properties.appEnvironment
+        buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : appEnvironment
     }
 
     buildTypes {
@@ -52,26 +48,26 @@ android {
             minifyEnabled false
             shrinkResources false
             applicationIdSuffix ".cr"
-            buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : properties.sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.PRODUCTION_ONFIDO_API_TOKEN ? "\"${System.env.PRODUCTION_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
-            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
+            buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : sentryDsn
+            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.PRODUCTION_ONFIDO_API_TOKEN ? "\"${System.env.PRODUCTION_ONFIDO_API_TOKEN}\"" : onfidoApiToken
+            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : adjustAppToken
         }
         staging {
             applicationIdSuffix ".dev"
             testCoverageEnabled true
-            buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : properties.sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
-            buildConfigField "String", "ONFIDO_APPLICATION_ID",  properties.onfidoApplicationId
-            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.STAGING_ADJUST_APP_TOKEN ? "\"${System.env.STAGING_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
+            buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : sentryDsn
+            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : onfidoApiToken
+            buildConfigField "String", "ONFIDO_APPLICATION_ID",  onfidoApplicationId
+            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.STAGING_ADJUST_APP_TOKEN ? "\"${System.env.STAGING_ADJUST_APP_TOKEN}\"" : adjustAppToken
             signingConfig signingConfigs.debug
         }
         debug {
             applicationIdSuffix ".dev"
             testCoverageEnabled true
-            buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : properties.sentryDsn
-            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.DEVELOPMENT_ONFIDO_API_TOKEN ? "\"${System.env.DEVELOPMENT_ONFIDO_API_TOKEN}\"" : properties.onfidoApiToken
-            buildConfigField "String", "ONFIDO_APPLICATION_ID",  properties.onfidoApplicationId
-            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.DEVELOPMENT_ADJUST_APP_TOKEN ? "\"${System.env.DEVELOPMENT_ADJUST_APP_TOKEN}\"" : properties.adjustAppToken
+            buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : sentryDsn
+            buildConfigField "String", "ONFIDO_API_TOKEN", System.env.DEVELOPMENT_ONFIDO_API_TOKEN ? "\"${System.env.DEVELOPMENT_ONFIDO_API_TOKEN}\"" : onfidoApiToken
+            buildConfigField "String", "ONFIDO_APPLICATION_ID",  onfidoApplicationId
+            buildConfigField "String", "ADJUST_APP_TOKEN", System.env.DEVELOPMENT_ADJUST_APP_TOKEN ? "\"${System.env.DEVELOPMENT_ADJUST_APP_TOKEN}\"" : adjustAppToken
         }
     }
     compileOptions {

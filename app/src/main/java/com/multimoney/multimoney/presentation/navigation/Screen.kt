@@ -75,7 +75,6 @@ const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE= "new_value"
 
-
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
 

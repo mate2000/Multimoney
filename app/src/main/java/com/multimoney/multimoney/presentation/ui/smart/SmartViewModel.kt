@@ -165,6 +165,7 @@ class SmartViewModel @Inject constructor(
             idAddressLevel1 = stepByStep.idAddressLevel1?.toLong(),
             idAddressLevel2 = stepByStep.idAddressLevel2?.toLong(),
             idAddressLevel3 = stepByStep.idAddressLevel3?.toLong(),
+            strAddressLevel1 = stepByStep.strAddressLevel1,
             strAddressLevel2 = stepByStep.strAddressLevel2,
             strAddressLevel3 = stepByStep.strAddressLevel3,
             positionJob = stepByStep.positionJob,
@@ -569,10 +570,6 @@ class SmartViewModel @Inject constructor(
         object OnClickBottomSheet : UIEvent()
 
         object OnCallMutationInitialRequest : UIEvent()
-    }
-
-    sealed class BaseEvent {
-        data class OnListStepByStepFetched(val accountSmartData: AccountSmartData?) : BaseEvent()
     }
 
     companion object {

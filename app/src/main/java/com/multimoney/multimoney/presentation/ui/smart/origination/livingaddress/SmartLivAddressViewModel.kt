@@ -39,6 +39,8 @@ class SmartLivAddressViewModel @Inject constructor(
     // Stateless
     var user = ""
     var idBrand = 0
+    var divisionTwo: String? = null
+    var divisionThree: String? = null
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
@@ -85,7 +87,13 @@ class SmartLivAddressViewModel @Inject constructor(
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         Log.d("tellCollected", "collected in Smart Living Address: $accountSmartData")
         accountSmartData?.let {
-            onDivisionTwoValueChange(it.strAddressLevel2, Pair(true, it.strAddressLevel3.orEmpty()))
+            divisionTwo = it.strAddressLevel2
+            divisionThree = it.strAddressLevel3
+            if (it.idBrand == Brand.CostaRica.id) {
+                onDivisionOneValueChange(it.strAddressLevel1)
+            } else {
+                onDivisionTwoValueChange(it.strAddressLevel2)
+            }
             onAddressValueChange(it.addressDetail.orEmpty())
         }
     }
@@ -131,13 +139,18 @@ class SmartLivAddressViewModel @Inject constructor(
                         uiState = uiState.copy(
                             divisionTwoList = addressList?.addresses
                         )
+
+                        // update the second address field after getting the first address list
+                        if (divisionTwo != null) {
+                            onDivisionTwoValueChange(divisionTwo)
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun getDivisionThree(isFromFirstFetch: Pair<Boolean, String>?) {
+    private fun getDivisionThree() {
         executeUseCase {
             uiState.divisionOneSelected?.code?.let { divOne ->
                 uiState.divisionTwoSelected?.code?.let { divTwo ->
@@ -151,8 +164,8 @@ class SmartLivAddressViewModel @Inject constructor(
                             uiState = uiState.copy(divisionThreeList = addressList?.addresses)
 
                             // update the second address field after getting the first address list
-                            if (isFromFirstFetch?.first == true) {
-                                onDivisionThreeValueChange(isFromFirstFetch.second)
+                            if (divisionThree != null) {
+                                onDivisionThreeValueChange(divisionThree)
                             }
                         }
                     }
@@ -173,14 +186,14 @@ class SmartLivAddressViewModel @Inject constructor(
         getDivisionTwo()
     }
 
-    private fun onDivisionTwoValueChange(divisionTwo: String?, isFromFirstFetch: Pair<Boolean, String>? = null) {
+    private fun onDivisionTwoValueChange(divisionTwo: String?) {
         // reset selection of division three
         uiState = uiState.copy(
             divisionTwoSelected = uiState.divisionTwoList?.find { it?.name == divisionTwo },
             divisionThreeSelected = null,
             divisionThreeList = listOf()
         )
-        getDivisionThree(isFromFirstFetch)
+        getDivisionThree()
     }
 
     private fun onDivisionThreeValueChange(divisionThree: String?) {

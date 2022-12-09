@@ -15,6 +15,7 @@ data class AccountSmartData(
     val strGenre: String? = "",
     val strMaritalStatus: String? = "",
     val stringProfessionType: String? = "",
+    val strAddressLevel1: String? = "",
     val strAddressLevel2: String? = "",
     val strAddressLevel3: String? = "",
     var idAddressLevel1: Long? = 0,

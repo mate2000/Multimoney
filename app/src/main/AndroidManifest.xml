@@ -21,7 +21,7 @@
         android:theme="@style/Theme.Multimoney"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
-        tools:replace="android:supportsRtl">
+        tools:replace="android:supportsRtl|android:allowBackup">
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
@@ -74,7 +74,7 @@
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove"></provider>
+            tools:node="remove"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

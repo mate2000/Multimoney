@@ -66,6 +66,15 @@ const val TEST_ROUTE = "test_route"
 const val PAYMENT_SMART_ROUTE = "payment_smart_route"
 
 const val ID_BRAND = "id_brand"
+const val PHONE_NUMBER = "phone_number"
+const val NEW_PHONE_NUMBER = "new_phone_number"
+const val EMAIL = "email"
+const val USER_NAME = "user_name"
+const val SEND_METHOD = "send_method"
+const val NEW_EMAIL = "new_email"
+const val CHANGING_FIELD = "changing_field"
+const val NEW_VALUE= "new_value"
+
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -91,7 +100,26 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // HomeNavGraph Screens
     object HomeScreen : Screen("home_screen")
 
-    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}", "profile_screen")
+    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
+        "profile_screen")
+
+    object ProfilePersonalInfoScreen : Screen("profile_personal_info_screen/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_personal_info_screen")
+
+    object ProfileVerifyIdentityPhoneScreen : Screen("profile_verify_identity_phone_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$NEW_PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_verify_identity_phone_screen")
+
+    object ProfileVerifyIdentityEmailScreen : Screen("profile_verify_identity_email_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$NEW_EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_verify_identity_email_screen")
+
+    object ProfileChangePhoneScreen : Screen("profile_change_phone_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_change_phone_screen")
+
+    object ProfileChangeEmailScreen : Screen("profile_change_email_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_change_email_screen")
+
+    object ProfileValidateOTPScreen : Screen("profile_validate_otp_screen/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}",
+        "profile_validate_otp_screen")
 
     // Profile Sub-Screens
     object HelpScreen : Screen("help_screen/{$ID_BRAND}", "help_screen")
@@ -258,7 +286,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_movements_screen"
     )
 
-    object SmartPaymentAccountScreen : Screen("smart_payment_screen")
+    object SmartPaymentAccountScreen : Screen(
+        "smart_payment_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "smart_payment_screen"
+    )
 
     // Payment Smart
     object PaymentSmartCardsScreen : Screen(

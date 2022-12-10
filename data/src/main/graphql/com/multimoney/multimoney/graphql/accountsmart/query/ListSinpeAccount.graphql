@@ -1,0 +1,31 @@
+query listSinpeAccount(
+    $user: String!,
+    $idBrand: Int!,
+    $identification: String!,
+    $country: String!,
+    $idAccount: Long!,
+    $accountNumber: String!
+) {
+    listSinpeAccount(
+        listSinpeAccountInput: {
+            user: $user,
+            idBrand: $idBrand,
+            identification: $identification,
+            country: $country,
+            id_account: $idAccount,
+            account_number: $accountNumber
+        }
+    ) {
+        result {
+            accountId: id_Cuenta
+            country: pais
+            bank: banco
+            clientIdentification: cliente_Identificacion
+            sinpeAccount: cuenta_Sinpe
+            active: activo
+            currencyId: id_Moneda
+            currency: moneda
+            nameAccount: nombre_Cuenta
+        }
+    }
+}

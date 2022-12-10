@@ -307,7 +307,8 @@ ext {
 
     paging3 = [
             paging3_runtime: "androidx.paging:paging-runtime:$paging3_version",
-            paging3_compose: "androidx.paging:paging-compose:$compose_paging3_version"
+            paging3_compose: "androidx.paging:paging-compose:$compose_paging3_version",
+            common : "androidx.paging:paging-common-ktx:$paging3_version"
     ]
 
     // Novo payment

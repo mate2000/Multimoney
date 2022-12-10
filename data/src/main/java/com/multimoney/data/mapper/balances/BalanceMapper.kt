@@ -58,26 +58,25 @@ private fun BalanceQuery.Account.mapToDomainModel() =
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(globalBalance = globalBalance.toString().toDouble())
 
-private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
-    BalanceCardInformation(
-        cardInformation = CardInformation(
-            cardToken = cardInfo.cardToken,
-            cardNumber = cardInfo.cardNumber,
-            expDate = cardInfo.expDate,
-            holderName = cardInfo.holderName,
-            status = cardInfo.status,
-            blockType = cardInfo.blockType,
-            cValidation = cardInfo.cvalidation,
-            type = cardInfo.type
-        ),
-        floatingBalance = sALDO_FLOTANTE,
-        allowUnLock = pERMITE_DESBLOQUEO,
-        disbursementCommission = cOMISION_DESEMBOLSO,
-        interestRate = tASA_INTERES,
-        term = pLAZO,
-        fullName = nOMBRE_COMPLETO,
-        remission = rEMISION
-    )
+private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCardInformation(
+    cardInformation = CardInformation(
+        cardToken = cardInfo.cardToken,
+        cardNumber = cardInfo.cardNumber,
+        expDate = cardInfo.expDate,
+        holderName = cardInfo.holderName,
+        status = cardInfo.status,
+        blockType = cardInfo.blockType,
+        cValidation = cardInfo.cvalidation,
+        type = cardInfo.type
+    ),
+    floatingBalance = sALDO_FLOTANTE,
+    allowUnLock = pERMITE_DESBLOQUEO,
+    disbursementCommission = cOMISION_DESEMBOLSO,
+    interestRate = tASA_INTERES,
+    term = pLAZO,
+    fullName = nOMBRE_COMPLETO,
+    remission = rEMISION
+)
 
 fun BalanceQuery.Data.mapToDomainModel() =
     Balance(

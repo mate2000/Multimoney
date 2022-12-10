@@ -375,5 +375,6 @@ class DisbursementAccountViewModel @Inject constructor(
     companion object {
         private const val ID_LOAN_FORM_HARDCODED = 4 // TODO Change to 1-4 depending on preferences user previously selected (new HU)
         private const val LOAN_FORM_HARDCODED = "Transferencia" // TODO Change to Transferencia-PEX depending on preferences user previously selected (new HU)
+        const val MAX_ACCOUNT_NUMBER = 3
     }
 }

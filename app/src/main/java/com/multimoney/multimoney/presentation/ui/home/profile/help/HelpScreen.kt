@@ -1,5 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.help
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +12,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +34,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
 fun HelpScreen(
@@ -60,6 +66,7 @@ fun HelpScreen(
 
 @Composable
 fun HelpScreenContent(viewModel: HelpScreenViewModel = hiltViewModel()) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -70,9 +77,60 @@ fun HelpScreenContent(viewModel: HelpScreenViewModel = hiltViewModel()) {
             isRightButtonVisible = false
         )
         HelpOptions(
-            onChatWithUsClick = { viewModel.onUIEvent(OnChatWithUsClick) },
-            onCallAttentionCenterClick = { viewModel.onUIEvent(OnCallToAttentionCenterClick) },
-            onFAQClick = { viewModel.onUIEvent(OnFAQClick) },
+            onChatWithUsClick = {
+                viewModel.onUIEvent(OnChatWithUsClick { whatsAppIntent ->
+                    openIntent(
+                        context = context,
+                        intent = whatsAppIntent,
+                        onFailure = { errorMessage ->
+                            viewModel.onUIEvent(
+                                HelpScreenViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading = false, openDialog = DialogParameters(
+                                        description = errorMessage ?: "",
+                                        isActive = mutableStateOf(true)
+                                    )
+                                )
+                            )
+                        }
+                    )
+                })
+            },
+            onCallAttentionCenterClick = {
+                viewModel.onUIEvent(OnCallToAttentionCenterClick { phoneIntent ->
+                    openIntent(
+                        context = context,
+                        intent = phoneIntent,
+                        onFailure = { errorMessage ->
+                            viewModel.onUIEvent(
+                                HelpScreenViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading = false, openDialog = DialogParameters(
+                                        description = errorMessage ?: "",
+                                        isActive = mutableStateOf(true)
+                                    )
+                                )
+                            )
+                        }
+                    )
+                })
+            },
+            onFAQClick = {
+                viewModel.onUIEvent(OnFAQClick { faqIntent ->
+                    openIntent(
+                        context = context,
+                        intent = faqIntent,
+                        onFailure = { errorMessage ->
+                            viewModel.onUIEvent(
+                                HelpScreenViewModel.UIEvent.OnFailureWithDialog(
+                                    isLoading = false, openDialog = DialogParameters(
+                                        description = errorMessage ?: "",
+                                        isActive = mutableStateOf(true)
+                                    )
+                                )
+                            )
+                        }
+                    )
+                })
+            },
             onTermsAndConditions = { viewModel.onUIEvent(OnTermsAndConditionsClick) }
         )
     }
@@ -125,5 +183,15 @@ fun HelpOptions(
             endIcon = R.drawable.ic_right_chevron,
             startIconColor = MultimoneyTheme.colors.text
         )
+    }
+}
+
+fun openIntent(context: Context, intent: Intent, onFailure: (error: String?) -> Unit) {
+    try {
+        context.startActivity(intent)
+    } catch (s: SecurityException) {
+        onFailure(s.message)
+    } catch (noActivity: ActivityNotFoundException) {
+        onFailure(noActivity.message)
     }
 }

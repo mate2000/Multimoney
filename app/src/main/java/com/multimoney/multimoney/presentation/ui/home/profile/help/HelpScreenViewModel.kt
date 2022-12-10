@@ -1,10 +1,13 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.help
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.model.profile.CountryContact
 import com.multimoney.domain.model.util.onFailure
@@ -31,14 +34,22 @@ class HelpScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
+    // stateless
+    // Todo remove this values, this are for testing purposes
+    private var contactCountryInfo: CountryContact? = CountryContact(
+        whatsappLink = "https://api.whatsapp.com/send/?phone=50325651069&text&type=phone_number&app_absent=0",
+        customerServicesPhone = "22459000"
+    )
+    private val idBrand = savedStateHandle[ID_BRAND] ?: 0
+
     private fun getContactInfo() =
         executeUseCase {
             queryCountryContactUseCase.invoke(
                 user = dataStorePreferences.getUserName().first(),
-                idBrand = savedStateHandle[ID_BRAND] ?: 0
+                idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { contactInfo ->
-                    uiState = uiState.copy(contactInfo = contactInfo)
+                    contactCountryInfo = contactInfo
                     uiState = uiState.copy(isLoading = false)
                 }
                 result.onFailure {
@@ -60,8 +71,30 @@ class HelpScreenViewModel @Inject constructor(
             }
         }
 
+    private fun callAttentionCenter(openIntent: (Intent) -> Unit) {
+        val uri = Uri.parse(TEL_PREFIX + contactCountryInfo?.customerServicesPhone)
+        val intent = Intent(Intent.ACTION_DIAL, uri)
+        openIntent(intent)
+    }
+
+    private fun openWhatsappLink(openIntent: (Intent) -> Unit) {
+        val uri = Uri.parse(contactCountryInfo?.whatsappLink)
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        openIntent(intent)
+    }
+
+    private fun openFAQ(openIntent: (Intent) -> Unit) {
+        val uri = when (idBrand) {
+            Brand.Guatemala.id -> Uri.parse(FAQ_LINK_GT)
+            Brand.ElSalvador.id -> Uri.parse(FAQ_LINK_SV)
+            Brand.CostaRica.id -> Uri.parse(FAQ_LINK_CR)
+            else -> null
+        }
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        openIntent(intent)
+    }
+
     data class UIState(
-        val contactInfo: CountryContact? = null,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )
@@ -70,9 +103,10 @@ class HelpScreenViewModel @Inject constructor(
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileScreen.route, false)
             is UIEvent.OnGetContactInfo -> getContactInfo()
-            is UIEvent.OnChatWithUsClick -> Timber.d("Open Whatsapp")
-            is UIEvent.OnCallToAttentionCenterClick -> Timber.d("Open phone")
-            is UIEvent.OnFAQClick -> Timber.d("Open FAQ website")
+            is UIEvent.OnChatWithUsClick -> openWhatsappLink(uiEvent.openWhatsAppIntent)
+            is UIEvent.OnCallToAttentionCenterClick -> callAttentionCenter(uiEvent.openPhoneIntent)
+            is UIEvent.OnFAQClick -> openFAQ(uiEvent.openFAQIntent)
+            // Todo add terms and conditions action
             is UIEvent.OnTermsAndConditionsClick -> Timber.d("Open Terms Website")
             is UIEvent.OnFailureWithDialog ->
                 uiState =
@@ -83,11 +117,18 @@ class HelpScreenViewModel @Inject constructor(
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnGetContactInfo : UIEvent()
-        object OnChatWithUsClick : UIEvent()
-        object OnCallToAttentionCenterClick : UIEvent()
-        object OnFAQClick : UIEvent()
+        data class OnChatWithUsClick(val openWhatsAppIntent: (Intent) -> Unit) : UIEvent()
+        data class OnCallToAttentionCenterClick(val openPhoneIntent: (Intent) -> Unit) : UIEvent()
+        data class OnFAQClick(val openFAQIntent: (Intent) -> Unit) : UIEvent()
         object OnTermsAndConditionsClick : UIEvent()
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
+    }
+
+    companion object {
+        const val TEL_PREFIX = "tel:"
+        const val FAQ_LINK_GT = "https://www.multimoney.com/gt/preguntas-frecuentes"
+        const val FAQ_LINK_SV = "https://www.multimoney.com/sv/preguntas-frecuentes"
+        const val FAQ_LINK_CR = "https://www.multimoney.com/cr/preguntas-frecuentes"
     }
 }

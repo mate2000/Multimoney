@@ -5,8 +5,7 @@ import com.multimoney.domain.model.profile.CountryContact
 
 private fun GetCountryContactQuery.GetCountryContact.mapToDomainModel() = CountryContact(
     whatsappLink = this.whatsappLink,
-    customerServicesPhone = this.customerServicesPhone,
-    customerServicesEmail = this.customerServicesEmail
+    customerServicesPhone = this.customerServicesPhone
 )
 
 fun GetCountryContactQuery.Data.mapToDomainModel() = getCountryContact.mapToDomainModel()

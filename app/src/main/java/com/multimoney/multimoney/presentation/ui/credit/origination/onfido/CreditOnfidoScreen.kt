@@ -32,7 +32,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.Companion.PACKAGE_NAME
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -108,7 +107,6 @@ fun CreditOnfidoScreen(
                                                 firstName = viewModel.firstName,
                                                 lastName = viewModel.lastName,
                                                 identification = viewModel.identification,
-                                                applicationId = PACKAGE_NAME,
                                                 user = viewModel.email,
                                                 injectNewToken = refreshToken
                                             )
@@ -143,7 +141,6 @@ fun CreditOnfidoScreen(
                 firstName = viewModel.firstName,
                 lastName = viewModel.lastName,
                 identification = viewModel.identification,
-                PACKAGE_NAME,
                 user = viewModel.email
             )
         )

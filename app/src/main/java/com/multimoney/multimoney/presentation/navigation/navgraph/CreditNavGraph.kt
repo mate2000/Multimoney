@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
+import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
@@ -49,10 +50,10 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             CreditScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                })
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
 
         composable(
@@ -148,6 +149,25 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
+                }
+            )
+        }
+        composable(
+            route = Screen.CreditMovementsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            CreditMovementsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
             )
         }

@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
@@ -53,16 +54,18 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
+import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
     private val helper: ShareHelper,
     private val nfcHelper: NfcHelper,
     private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
-    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase
+    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
+    private val novoHelper: NovoHelper
 ) : BaseViewModel(true) {
 
     // UIState
@@ -504,6 +507,12 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun onConfigNovoSdk() {
+        if (nfcHelper.isNfcSupported()) {
+            novoHelper.configureNovoSdk()
+        }
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -568,6 +577,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToCreditMovementsScreen -> onNavigateToCreditMovements()
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
+            is OnNoVoConfig -> onConfigNovoSdk()
         }
     }
 
@@ -622,6 +632,7 @@ class ProductViewModel @Inject constructor(
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
         data class OnCreateMultimoneyVisa(val onLoadingValueChange: (isLoading: Boolean) -> Unit) : UIEvent()
         object OnCloseCardIssuanceError : UIEvent()
+        object OnNoVoConfig : UIEvent()
     }
 
     companion object {

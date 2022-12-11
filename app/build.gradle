@@ -45,10 +45,10 @@ android {
 
     signingConfigs {
         production {
-            keyAlias System.env.KEYSTORE_ALIAS ? System.env.KEYSTORE_ALIAS : keystoreAlias
-            keyPassword System.env.KEY_PASSWORD ? System.env.KEY_PASSWORD : keyPassword
-            storeFile rootProject.file(System.env.ANDROID_KEYSTORE_PATH ? System.env.ANDROID_KEYSTORE_PATH : keystorePath)
-            storePassword System.env.KEYSTORE_PASSWORD ? System.env.KEYSTORE_PASSWORD : keystorePassword
+            keyAlias System.env.KEYSTORE_ALIAS ? System.env.KEYSTORE_ALIAS : keystoreAliasMM
+            keyPassword System.env.KEY_PASSWORD ? System.env.KEY_PASSWORD : keyPasswordMM
+            storeFile rootProject.file(System.env.ANDROID_KEYSTORE_PATH ? System.env.ANDROID_KEYSTORE_PATH : keystorePathMM)
+            storePassword System.env.KEYSTORE_PASSWORD ? System.env.KEYSTORE_PASSWORD : keystorePasswordMM
         }
     }
 

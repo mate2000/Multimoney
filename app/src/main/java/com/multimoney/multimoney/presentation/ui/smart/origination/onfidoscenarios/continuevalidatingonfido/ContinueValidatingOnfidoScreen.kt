@@ -14,7 +14,7 @@ fun ContinueValidatingOnfidoScreen(
    viewModel: ContinueValidatingOnfidoViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-        // TODO: add the viewModel.executeNavigation
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
 
     AlertResult(

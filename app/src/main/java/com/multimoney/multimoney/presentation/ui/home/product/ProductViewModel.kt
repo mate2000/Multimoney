@@ -271,7 +271,7 @@ class ProductViewModel @Inject constructor(
                 SMART_INITIAL_CARD -> {
                     infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING.status &&
                             infoBankAccount?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
-                            (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == CREDIT_STEP_PRE_APPROVED)
+                            (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == SMART_STEP_PENDING)
                 }
 
                 CREDIT_INFO_INCOMPLETE -> {
@@ -610,5 +610,6 @@ class ProductViewModel @Inject constructor(
         const val SMART_APPROVED_BY_ONFIDO = "SMART_APPROVED_BY_ONFIDO"
         const val SMART_ONFIDO_MAX_ATTEMPTS = "SMART_ONFIDO_MAX_ATTEMPTS"
         const val SMART_FIRMED_ONFIDO_PENDING = "SMART_FIRMED_ONFIDO_PENDING"
+        const val SMART_STEP_PENDING = "SMART_STEP_PENDING"
     }
 }

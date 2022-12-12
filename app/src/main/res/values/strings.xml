@@ -480,7 +480,9 @@
     <string name="onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
     <string name="onfido_rejected_action" translatable="false">Confirmar mi identidad</string>
     <string name="onfido_rejected_action_second_time" translatable="false">Contactar</string>
-
+    <string name="smart_onfido_rejected_second_time_title" translatable="false"> No fue posible verificar tu identidad</string>
+    <string name="smart_onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
+    <string name="smart_onfido_rejected_action_second_time" translatable="false">Contactar</string>
     <!-- Sign Credit Web View -->
     <string name="sign_credit_dialog_title" translatable="false">Necesitamos tu firma en la siguiente pantalla</string>
     <string name="sign_credit_dialog_description" translatable="false">Por favor, realizala según las indicaciones.</string>

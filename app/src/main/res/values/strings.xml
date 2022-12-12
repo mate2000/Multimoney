@@ -962,4 +962,7 @@
     <string name="download_credit_movements_worker_push_description_success" translatable="false">Abrir estado de cuenta</string>
     <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
+    <!-- Smart Saving Amount -->
+    <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
+
 </resources>

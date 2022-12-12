@@ -39,6 +39,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQ
 import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
@@ -156,6 +157,23 @@ class GraphqlApi @Inject constructor(
             idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetPromissoryNoteDetail(
+        idBrand: Int,
+        idLoanClient: Int,
+        pageNumber: Int,
+        pageSize: Int,
+        option: String
+    ): ApolloCall<GetPromissoryNoteDetailQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetPromissoryNoteDetailQuery(
+                idBrand,
+                idLoanClient,
+                pageNumber,
+                pageSize,
+                option
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditApplication(
         idUserRequest: Int,

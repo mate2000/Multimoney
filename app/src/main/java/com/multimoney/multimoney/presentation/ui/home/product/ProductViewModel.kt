@@ -15,6 +15,8 @@ import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
+import com.multimoney.domain.model.credit.CreditMovementsResult
+import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
@@ -81,6 +83,7 @@ class ProductViewModel @Inject constructor(
     val firstName : String? = null
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
+    var creditMovements: List<CreditMovementsResult> = emptyList()
 
     private fun onSetUserData(
         idBrand: String,
@@ -92,7 +95,8 @@ class ProductViewModel @Inject constructor(
         validateUserStatus: ValidateUserStatus?,
         configurationVersion: ConfigurationVersion?,
         productPageList: List<ProductPage>,
-        smartMovements: List<SmartMovementsResult>
+        smartMovements: List<SmartMovementsResult>,
+        creditMovements: List<CreditMovementsResult>
     ) {
         this.pkUser = pkUser
         this.identification = identification
@@ -103,6 +107,7 @@ class ProductViewModel @Inject constructor(
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
         this.smartMovementsList = smartMovements
+        this.creditMovements = creditMovements
     }
 
     private fun setBalance(balance: Balance?) {
@@ -567,7 +572,8 @@ class ProductViewModel @Inject constructor(
                 validateUserStatus = uiEvent.validateUserStatus,
                 configurationVersion = uiEvent.configurationVersion,
                 productPageList = uiEvent.productPageList,
-                smartMovements = uiEvent.smartMovements
+                smartMovements = uiEvent.smartMovements,
+                creditMovements = uiEvent.creditMovements
             )
             is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -638,7 +644,8 @@ class ProductViewModel @Inject constructor(
             val validateUserStatus: ValidateUserStatus?,
             val configurationVersion: ConfigurationVersion?,
             val productPageList: List<ProductPage>,
-            val smartMovements: List<SmartMovementsResult>
+            val smartMovements: List<SmartMovementsResult>,
+            val creditMovements: List<CreditMovementsResult>
         ) : UIEvent()
 
         data class OnShareIbanAccount(

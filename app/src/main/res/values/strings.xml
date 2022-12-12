@@ -859,6 +859,9 @@
     <string name="disbursement_account_process_success_title" translatable="false">¡Tu solicitud fue \nenviada con éxito!</string>
     <string name="disbursement_account_process_success_description" translatable="false">Te notificaremos cuando tu \ndesembolso haya sido realizado</string>
     <string name="disbursement_account_process_error_button" translatable="false">Ir al inicio</string>
+    <string name="disbursement_account_max_number_disclaimer" translatable="false">Llegaste al máximo de cuentas registradas</string>
+    <string name="disbursement_account_max_number_title" translatable="false">Máximo de cuentas registradas</string>
+    <string name="disbursement_account_max_number_description" translatable="false">Puedes eliminar una cuenta desde configuraciones para poder agregar una nueva.</string>
 
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
@@ -972,6 +975,8 @@
 
     <!-- Credit Movements -->
     <string name="credit_movements_download_button" translatable="false">Descargar estado de cuenta</string>
+    <string name="credit_movements_empty_state_title" translatable="false">Sin registros de movimientos</string>
+    <string name="credit_movements_empty_state_description" translatable="false">Aún no has realizado una transacción.</string>
 
     <!-- Download Account Statement Worker -->
     <string name="download_credit_movements_worker_channel_name" translatable="false">Descargar estado de cuenta</string>

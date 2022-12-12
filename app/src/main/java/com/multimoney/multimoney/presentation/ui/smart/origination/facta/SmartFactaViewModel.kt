@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.facta
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -90,7 +89,6 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        Log.d("tellCollected", "collected in facta screen: $accountSmartData")
         accountSmartData?.let {
             onIsPEPChange(it.isPEP ?: false, it.idBrand)
             onIsUSCitizenChange(it.isUSCitizen?: false, it.idBrand)

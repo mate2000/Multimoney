@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.accountsmart.ProfessionSmart
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -12,6 +13,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnValidateForm
@@ -19,8 +21,8 @@ import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseCase: QueryProfessionUseCase) :
@@ -80,6 +82,17 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
             }
         }
 
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        accountSmartData?.let {
+            onAmountValueChange(it.income.toString())
+            onProfessionValueChange(it.stringProfessionType.toString())
+        }
+    }
+
     data class UIState(
         // Fields
         val profession: String = "",
@@ -98,6 +111,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
                 uiState =
                     uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
+            is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
         }
     }
 
@@ -109,6 +123,7 @@ class SmartCrSalaryViewModel @Inject constructor(private val queryProfessionUseC
             UIEvent()
 
         data class OnCallQueryProfessionUseCase(val user: String, val idBrand: Int) : UIEvent()
+        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 

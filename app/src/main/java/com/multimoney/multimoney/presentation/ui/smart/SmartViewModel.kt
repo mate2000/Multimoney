@@ -255,7 +255,7 @@ class SmartViewModel @Inject constructor(
                 }.orEmpty(),
                 idGender = accountSmartData?.idGender ?: 0,
                 companyName = accountSmartData?.companyName.orEmpty(),
-                fullJobAddress = accountSmartData?.companyName.orEmpty(),
+                fullJobAddress = accountSmartData?.fullJobAddress.orEmpty(),
                 aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
                 institutionPension = accountSmartData?.institutionPension.orEmpty(),
                 specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",

@@ -973,7 +973,7 @@ class GraphqlApi @Inject constructor(
                 idEconomicActivity,
                 income,
                 addressDetail,
-               // fullJobAddress,
+                fullJobAddress,
                 user,
                 idBrand,
                 currentStep,

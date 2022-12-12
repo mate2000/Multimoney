@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue

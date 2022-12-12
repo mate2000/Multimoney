@@ -61,14 +61,14 @@ private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
 private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
     BalanceCardInformation(
         cardInformation = CardInformation(
-            cardToken = cardInfo.cardToken,
-            cardNumber = cardInfo.cardNumber,
-            expDate = cardInfo.expDate,
-            holderName = cardInfo.holderName,
-            status = cardInfo.status,
-            blockType = cardInfo.blockType,
-            cValidation = cardInfo.cvalidation,
-            type = cardInfo.type
+            cardToken = cardInfo?.cardToken,
+            cardNumber = cardInfo?.cardNumber,
+            expDate = cardInfo?.expDate,
+            holderName = cardInfo?.holderName,
+            status = cardInfo?.status,
+            blockType = cardInfo?.blockType,
+            cValidation = cardInfo?.cvalidation,
+            type = cardInfo?.type
         ),
         floatingBalance = sALDO_FLOTANTE,
         allowUnLock = pERMITE_DESBLOQUEO,

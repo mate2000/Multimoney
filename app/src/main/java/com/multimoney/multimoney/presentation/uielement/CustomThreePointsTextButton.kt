@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.solver.widgets.Optimizer
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
@@ -48,8 +47,7 @@ fun CustomThreePointsTextButton(
                 .fillMaxWidth()
                 .clickable {
                     onClick()
-                },
-            optimizationLevel = Optimizer.OPTIMIZATION_DIRECT
+                }
         ) {
             val (icon, title) = createRefs()
             Image(

@@ -58,6 +58,7 @@ fun ProfileScreen(
 
 @Composable
 fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -70,9 +71,9 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             viewModel.apply {
                 ProfileHeader(
-                    userName = uiState.userName,
-                    email = uiState.userEmail,
-                    phoneNumber = uiState.phoneNumber,
+                    userName = uiState.userName ?: "",
+                    email = uiState.email ?: "",
+                    phoneNumber = uiState.phoneNumber.toString(),
                     onUpdateClick = { onUIEvent(OnUpdateProfileClick) }
                 )
                 ProfileOptions(

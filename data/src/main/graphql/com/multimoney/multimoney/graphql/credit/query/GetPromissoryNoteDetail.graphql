@@ -1,0 +1,39 @@
+query GetPromissoryNoteDetail(
+    $idBrand:Int!,
+    $idLoanClient: Long!,
+    $pageNumber: Int!,
+    $pageSize: Int!,
+    $option: String!
+) {
+  getPromissoryNoteDetail(
+    promissoryNoteDetailInput: {
+      idLoanClient: $idLoanClient
+      option: $option
+      idBrand: $idBrand
+      pageNumber: $pageNumber
+      pageSize: $pageSize
+    }
+  ) {
+    totalRecords
+    pageNumber
+    pageSize
+    values {
+      title,
+      values_Transactions {
+        tipo
+        fecha_Aplicacion
+        monto
+        id_Prestamo
+        fecha_Inicio
+        fecha_Fin
+        fecha_Aplicacion_Label
+        monto_Label
+        moneda
+        mes
+        indicador
+        tipo_Transaccion
+        id_Tipo_Transaccion
+      }
+    }
+  }
+}

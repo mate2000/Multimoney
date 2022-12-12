@@ -34,7 +34,9 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             isProductActive = it.producto_Activo,
             applyAutomaticDebit = it.aplica_Debito_Aut,
             automaticDebitEnabled = it.debito_Aut_Activo,
-            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo
+            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo,
+            applyCommerce = it.aplica_Ampli_Comercio,
+            applyCreateCard = it.aplica_Crear_Tarjeta
         )
     },
     creditLimit = limite_credito,
@@ -74,8 +76,25 @@ private fun BalanceQuery.Item.mapToDomainModel() = BalanceCryptoAccountItems(
     url_image = url_image.toString()
 )
 
-private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
-    BalanceCardInformation(cardInformation = CardInformation(cardInfo.cardNumber))
+private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCardInformation(
+    cardInformation = CardInformation(
+        cardToken = cardInfo.cardToken,
+        cardNumber = cardInfo.cardNumber,
+        expDate = cardInfo.expDate,
+        holderName = cardInfo.holderName,
+        status = cardInfo.status,
+        blockType = cardInfo.blockType,
+        cValidation = cardInfo.cvalidation,
+        type = cardInfo.type
+    ),
+    floatingBalance = sALDO_FLOTANTE,
+    allowUnLock = pERMITE_DESBLOQUEO,
+    disbursementCommission = cOMISION_DESEMBOLSO,
+    interestRate = tASA_INTERES,
+    term = pLAZO,
+    fullName = nOMBRE_COMPLETO,
+    remission = rEMISION
+)
 
 fun BalanceQuery.Data.mapToDomainModel() =
     Balance(

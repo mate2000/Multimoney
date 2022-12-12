@@ -247,7 +247,7 @@
     <string name="home_pay_button_text" translatable="false">Abonar</string>
     <string name="home_my_products_title" translatable="false">Mi billetera Multimoney</string>
     <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
-    <string name="home_my_products_title_credit" translatable="false">Credito</string>
+    <string name="home_my_products_title_credit" translatable="false">Crédito</string>
     <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
     <string name="home_my_products_title_smart" translatable="false">Smart</string>
     <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
@@ -378,6 +378,29 @@
 
     <!-- Home Smart Header Expanded-->
     <string name="home_product_smart_header_expanded_title" translatable="false">Mi Cuenta Smart</string>
+
+    <!--Crypto-->
+    <string name="crypto_finish_smart_alert_title" translatable="false">¡Tu cuenta Cripto y Smart están activas!</string>
+    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart</string>
+    <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
+    <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
+
+    <!-- Home Crypto Header Expanded-->
+    <string name="home_crypto_header_expanded_title" translatable="false">Mi Cripto</string>
+
+    <!-- Home Credit Footer Expanded-->
+    <string name="crypto_footer_expanded_btn_wallet" translatable="false">Mi portafolio</string>
+    <string name="crypto_footer_expanded_btn_market" translatable="false">Mercado</string>
+    <string name="crypto_footer_expanded_notice_title" translatable="false">Empezá a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en Portafolio y comprá desde el Mercado</string>
+    <string name="crypto_footer_expanded_buy_crypto_label" translatable="false">Comprar</string>
+    <string name="crypto_footer_expanded_sell_crypto_label" translatable="false">Vender</string>
+    <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
+    <string name="crypto_footer_expanded_send_crypto_label" translatable="false">Enviar</string>
+    <string name="crypto_footer_expanded_dialog_title" translatable="false">Compra con Smart</string>
+    <string name="crypto_footer_expanded_dialog_description" translatable="false">Para poder comprar criptomonedas debes hacerlo con los fondos de tu cuenta Smart</string>
+    <string name="crypto_footer_expanded_dialog_btn_cancel" translatable="false">Cancelar</string>
+    <string name="crypto_footer_expanded_dialog_btn_saving" translatable="false">Ahorrar</string>
 
     <!-- Home Smart - Account Details -->
     <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>

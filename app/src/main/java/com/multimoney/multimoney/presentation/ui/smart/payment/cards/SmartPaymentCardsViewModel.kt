@@ -110,6 +110,9 @@ class SmartPaymentCardsViewModel @Inject constructor(
             cardBankName = cardSelected.detail ?: "",
             bottomSheetState = ModalBottomSheetState(Expanded)
         )
+        navigateTo(
+            "${Screen.SmartPaymentSuccessScreen.baseRoute}/${"$"}/${"500"}/${"true"}/${"300694.10"}/${"601.95 "}/${"12345****0980"}/${"74598621"}"
+        )
         // fixme navigate to amount screen
         // navigateTo("${Screen. ROUTE }/${idBrand} +
         // /${user} +

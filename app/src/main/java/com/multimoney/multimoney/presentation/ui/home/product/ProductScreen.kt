@@ -290,7 +290,7 @@ fun TipsAndOffer(
             }
             Row {
                 Icon(
-                    painter = painterResource(R.drawable.ic_notification),
+                    painter = painterResource(R.drawable.ic_notification_large),
                     modifier = Modifier.clickable {
                         // todo action
                     },

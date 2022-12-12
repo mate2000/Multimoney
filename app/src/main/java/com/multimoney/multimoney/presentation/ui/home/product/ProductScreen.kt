@@ -295,7 +295,10 @@ fun TipsAndOffer(
                     painter = painterResource(R.drawable.ic_profile),
                     modifier = Modifier
                         .padding(start = 16.dp, end = 2.dp)
-                        .clickable { viewModel.onUIEvent(OnNavigateToProfileScreen) },
+                        .clickable {
+                            viewModel.onUIEvent(OnNavigateToDisbursement)
+                            //viewModel.onUIEvent(OnNavigateToProfileScreen)
+                            },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )

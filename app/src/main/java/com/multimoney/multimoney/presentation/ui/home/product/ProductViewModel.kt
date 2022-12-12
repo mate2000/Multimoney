@@ -357,12 +357,16 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToDisbursement() =
         navigateTo(
+            Screen.AnswerQuestionsScreen.baseRoute + "/" + pkUser + "/" + email + "/" + uiState.idBrand + "/" + (uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest
+                ?: 0)
+        )
+        /*navigateTo(
             route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
                 encodeData(
                     balanceCredit?.getFirstCredit()?.summary
                 )
             }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
-        )
+        )*/
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
         var amount = ""

@@ -7,7 +7,8 @@ import com.multimoney.domain.model.credit.CreditCatalogOption
 private fun EmploymentSituationQuery.SubOpcione.mapToDomainModel() = CreditCatalogOption(
     description = descripcion,
     pkCatalog = pk_Identificador_Catalogo,
-    fkCatalog = fk_Identificador_Catalogo
+    fkCatalog = fk_Identificador_Catalogo,
+    valueCatalog = valor_Catalogo
 )
 
 private fun EmploymentSituationQuery.EmploymentSituation.mapToDomainModel() = CreditCatalog(

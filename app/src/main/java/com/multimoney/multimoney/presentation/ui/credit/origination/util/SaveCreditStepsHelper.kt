@@ -324,8 +324,23 @@ class SaveCreditStepsHelper @Inject constructor() {
             useValue = selectionQuestionData?.useValue,
             maximumAmount = selectionQuestionData?.maximumAmount ?: "",
             description = selectionQuestionOption?.description ?: "",
-            valueCatalogue = selectionQuestionData?.valueCatalog ?: "",
-            idIdentificatorCatalogue = if ((selectionQuestionData?.isCatalogBrandOffice == true) && (selectionQuestionData.useValue == true)){ "1" } else { selectionQuestionOption?.pkCatalog }
+            valueCatalogue = if (selectionQuestionData?.isCatalogBrandOffice ?: false .and(
+                    selectionQuestionData?.useValue == true
+                )
+            ) {
+                selectionQuestionOption?.valueCatalog ?: ""
+            } else {
+                ""
+            },
+            idIdentificatorCatalogue = if (selectionQuestionData?.isCatalogBrandOffice?.not()
+                    ?: false .or(
+                        selectionQuestionData?.useValue?.not() == true
+                    )
+            ) {
+                selectionQuestionOption?.pkCatalog ?: "0"
+            } else {
+                "0"
+            }
         )
     }
 

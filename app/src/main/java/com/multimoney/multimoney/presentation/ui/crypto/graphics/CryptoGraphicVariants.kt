@@ -19,7 +19,7 @@ fun HomeCryptoGraphic(
     clientCryptoBalanceHistory: List<HistoricalBalanceClient>
 ) {
 
-    val listX = clientCryptoBalanceHistory.mapTo(arrayListOf()) { it.convertedBalance }
+    val historicalBalanceXLine = clientCryptoBalanceHistory.mapTo(arrayListOf()) { it.convertedBalance }
 
     Canvas(
         modifier = Modifier
@@ -29,14 +29,14 @@ fun HomeCryptoGraphic(
     ) {
         val width = size.width.toDouble()
         val height = size.height.toDouble()
-        val step = width / listX.size
-        val max = listX.maxOrNull() ?: 0.0
-        val min = listX.minOrNull() ?: 0.0
+        val step = width / historicalBalanceXLine.size
+        val max = historicalBalanceXLine.maxOrNull() ?: 0.0
+        val min = historicalBalanceXLine.minOrNull() ?: 0.0
         val stepY = height / (max - min)
         val path = Path()
-        path.moveTo(0f, (height - (listX[0] - min) * stepY).toFloat())
-        for (i in 1 until listX.size) {
-            path.lineTo((i * step).toFloat(), (height - (listX[i] - min) * stepY).toFloat())
+        path.moveTo(0f, (height - (historicalBalanceXLine[0] - min) * stepY).toFloat())
+        for (i in 1 until historicalBalanceXLine.size) {
+            path.lineTo((i * step).toFloat(), (height - (historicalBalanceXLine[i] - min) * stepY).toFloat())
         }
         drawPath(
             path = path,

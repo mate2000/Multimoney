@@ -51,16 +51,18 @@ ext {
     // Compose
     compose_version = "1.3.0-alpha02"
     compose_compiler_version = "1.2.0-rc02"
+    coil_version = "2.2.2"
 
     compose = [
-            ui        : "androidx.compose.ui:ui:$compose_version",
-            util      : "androidx.compose.ui:ui-util:$compose_version",
-            material  : "androidx.compose.material:material:$compose_version",
-            tooling   : "androidx.compose.ui:ui-tooling:$compose_version",
-            foundation: "androidx.compose.foundation:foundation:$compose_version",
-            livedata  : "androidx.compose.runtime:runtime-livedata:${compose_version}",
-            test      : "androidx.compose.ui:ui-test-junit4:$compose_version",
+            ui            : "androidx.compose.ui:ui:$compose_version",
+            util          : "androidx.compose.ui:ui-util:$compose_version",
+            material      : "androidx.compose.material:material:$compose_version",
+            tooling       : "androidx.compose.ui:ui-tooling:$compose_version",
+            foundation    : "androidx.compose.foundation:foundation:$compose_version",
+            livedata      : "androidx.compose.runtime:runtime-livedata:${compose_version}",
+            test          : "androidx.compose.ui:ui-test-junit4:$compose_version",
             extended_icons: "androidx.compose.material:material-icons-extended:$compose_version",
+            coil: "io.coil-kt:coil-compose:$coil_version"
     ]
 
     // Room
@@ -75,13 +77,22 @@ ext {
 
     // Hilt
     hilt_version = "2.40.5"
-    hilt_navigation_version = "1.0.0"
+    hilt_androidx_version = "1.0.0"
 
     hilt = [
             plugin    : "com.google.dagger:hilt-android-gradle-plugin:${hilt_version}",
             android   : "com.google.dagger:hilt-android:${hilt_version}",
             compiler  : "com.google.dagger:hilt-android-compiler:${hilt_version}",
-            navigation: "androidx.hilt:hilt-navigation-compose:${hilt_navigation_version}"
+            navigation: "androidx.hilt:hilt-navigation-compose:${hilt_androidx_version}",
+            common: "androidx.hilt:hilt-common:${hilt_androidx_version}",
+            work: "androidx.hilt:hilt-work:${hilt_androidx_version}"
+    ]
+
+    // Work Manager
+    workmanager_version = "2.7.1"
+
+    work_manager = [
+            runtime    : "androidx.work:work-runtime-ktx:${workmanager_version}"
     ]
 
     // Coroutines
@@ -296,9 +307,17 @@ ext {
 
     paging3 = [
             paging3_runtime: "androidx.paging:paging-runtime:$paging3_version",
-            paging3_compose: "androidx.paging:paging-compose:$compose_paging3_version"
+            paging3_compose: "androidx.paging:paging-compose:$compose_paging3_version",
+            common : "androidx.paging:paging-common-ktx:$paging3_version"
     ]
 
+    // Novo payment
+    novo_payment_version = "1.4.0"
+
+    novo = [
+            novo_dev : "com.novopayment.sdk.android:vts-sandbox:$novo_payment_version",
+            novo_prod: "com.novopayment.sdk.android:vts:$novo_payment_version"
+    ]
 
     // Common Test
     junit_version = "4.13.2"

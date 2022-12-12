@@ -23,7 +23,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 
 @Composable
 fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
-    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+    val index = currentPage.minus(1)
     CustomProductBackground(
         modifier = Modifier.padding(horizontal = 16.dp),
         type = ProductBackGroundType.Secondary
@@ -58,8 +58,11 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                     it?.textTwo.toString(),
                     it?.cTA.toString()
                 ) {
-                    // TODO add navigation according to status
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
+                    viewModel.onUIEvent(
+                        ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(
+                            false
+                        )
+                    )
                 }
             }
         } else if (viewModel.uiState.userStatus?.infoBankAccount?.status?.equals(SmartAccountStatus.EXIST_IN_CORE.status) == true) {

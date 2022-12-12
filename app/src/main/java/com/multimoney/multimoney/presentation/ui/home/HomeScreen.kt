@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,8 +71,8 @@ fun HomeScreen(
     val automaticPaymentEditBottomSheetState = rememberModalBottomSheetState(Hidden)
     val quickActionsModalBottomSheetState =
         rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
-    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
-    val context = LocalContext.current
+    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
+    val activity = LocalContext.current.findActivity()
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(
@@ -149,7 +150,7 @@ fun HomeScreen(
                 }
             }
             else -> {
-                context.findActivity()?.finish()
+                activity?.finish()
             }
         }
     }

@@ -12,15 +12,14 @@ class SmartRejectedByOnfidoViewModel @Inject constructor() : BaseViewModel(true)
 
     private fun onNavigateToHome() {
         popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.ContinueValidatingOnfidoScreen.route // define screen!!
+            route = Screen.HomeScreen.route, popTo = Screen.ContinueValidatingOnfidoScreen.route
         )
     }
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnNavigateToHome -> onNavigateToHome()
-            is OnValidateIdentity ->  onValidateIdentity()
+            is OnValidateIdentity -> onValidateIdentity()
         }
     }
 

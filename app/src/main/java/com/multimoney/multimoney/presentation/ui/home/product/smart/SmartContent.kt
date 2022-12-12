@@ -22,8 +22,7 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
     val context = LocalContext.current
     val whatsAppLink = stringResource(
-        id = R.string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
+        id = R.string.whatsapp_deep_link, SignUpViewModel.PHONE_HARDCODED
     )
 
     viewModel.uiState.userStatus?.apply {
@@ -31,8 +30,9 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
             SmartAccountStatus.EXIST_IN_CORE.status -> {
                 viewModel.balanceCredit?.balanceAccountSmart?.let {
                     if (it.isNotEmpty()) {
-                        val smartIndex = viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex ?:0
-                        //val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                        val smartIndex =
+                            viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+                                ?: 0
                         CustomProductBackground(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             type = ProductBackGroundType.Secondary
@@ -48,50 +48,69 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
             }
             SmartAccountStatus.NO_EXIST.status -> {
                 CustomProductBackground(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                     type = ProductBackGroundType.Secondary
-                ){
+                ) {
                     when {
-                        viewModel.evaluateCardCondition(ProductViewModel.SMART_INITIAL_CARD, this) -> {
-                            viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
-                                    CardInactiveSmartProduct(
-                                        it?.textOne.toString(),
-                                        it?.textTwo.toString(),
-                                        it?.cTA.toString()
-                                    ) {
-                                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(ProductViewModel.SMART_INITIAL_CARD))
-                                    }
+                        viewModel.evaluateCardCondition(
+                            ProductViewModel.SMART_INITIAL_CARD, this
+                        ) -> {
+                            viewModel.uiState.userStatus?.infoBankAccount?.wording?.let {
+                                CardInactiveSmartProduct(
+                                    it.textOne, it.textTwo, it.cTA
+                                ) {
+                                    viewModel.onUIEvent(
+                                        ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(
+                                            ProductViewModel.SMART_INITIAL_CARD
+                                        )
+                                    )
+                                }
                             }
                         }
-                        viewModel.evaluateCardCondition(ProductViewModel.SMART_IDENTITY_INCOMPLETE, this) -> {
+                        viewModel.evaluateCardCondition(
+                            ProductViewModel.SMART_IDENTITY_INCOMPLETE, this
+                        ) -> {
                             CardWithSmartInProcess(
-                                type = SmartProcessStarted.SmartProcessOnFidoIncomplete,
-                                action = {
-                                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(ProductViewModel.SMART_IDENTITY_INCOMPLETE))
-                                },
-                                wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
+                                type = SmartProcessStarted.SmartProcessOnFidoIncomplete, action = {
+                                    viewModel.onUIEvent(
+                                        ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(
+                                            ProductViewModel.SMART_IDENTITY_INCOMPLETE
+                                        )
+                                    )
+                                }, wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
                             )
                         }
 
-                        viewModel.evaluateCardCondition(ProductViewModel.SMART_FIRMED_ONFIDO_PENDING, this) -> {
+                        viewModel.evaluateCardCondition(
+                            ProductViewModel.SMART_FIRMED_ONFIDO_PENDING, this
+                        ) -> {
                             CardSmartFirmedAndOnfidoPending()
                         }
-                        viewModel.evaluateCardCondition(ProductViewModel.SMART_ONFIDO_REJECTED, this) -> {
+                        viewModel.evaluateCardCondition(
+                            ProductViewModel.SMART_ONFIDO_REJECTED, this
+                        ) -> {
                             CardWithSmartInProcess(
                                 type = SmartProcessStarted.SmartProcessOnfidoReject,
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
-                                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(ProductViewModel.SMART_ONFIDO_REJECTED))
+                                    viewModel.onUIEvent(
+                                        ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(
+                                            ProductViewModel.SMART_ONFIDO_REJECTED
+                                        )
+                                    )
                                 },
                                 wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
 
                             )
                         }
-                        viewModel.evaluateCardCondition(ProductViewModel.SMART_APPROVED_BY_ONFIDO, this) -> {
+                        viewModel.evaluateCardCondition(
+                            ProductViewModel.SMART_APPROVED_BY_ONFIDO, this
+                        ) -> {
                             viewModel.balanceCredit?.balanceAccountSmart?.let {
                                 if (it.isNotEmpty()) {
-                                    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+                                    val index = currentPage.minus(
+                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
+                                    )
                                     CustomProductBackground(
                                         modifier = Modifier.padding(horizontal = 16.dp),
                                         type = ProductBackGroundType.Secondary
@@ -105,15 +124,16 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                                 }
                             }
                         }
-                        viewModel.evaluateCardCondition(ProductViewModel.SMART_ONFIDO_MAX_ATTEMPTS, this) -> {
+                        viewModel.evaluateCardCondition(
+                            ProductViewModel.SMART_ONFIDO_MAX_ATTEMPTS, this
+                        ) -> {
                             CardWithSmartInProcess(
                                 type = SmartProcessStarted.SmartProcessOnfidoMaxAttempts,
                                 idBrand = viewModel.uiState.idBrand.toInt(),
                                 action = {
                                     viewModel.onUIEvent(
                                         ProductViewModel.UIEvent.OnMaxAttemptsCardClick(
-                                            whatsAppLink = whatsAppLink,
-                                            context = context
+                                            whatsAppLink = whatsAppLink, context = context
                                         )
                                     )
                                 },
@@ -126,5 +146,4 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
             }
         }
     }
-
 }

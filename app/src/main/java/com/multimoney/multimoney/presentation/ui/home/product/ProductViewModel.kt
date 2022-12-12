@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
@@ -116,6 +117,7 @@ class ProductViewModel @Inject constructor(
 
     private fun setValidateUserStatus(userStatus: ValidateUserStatus?) {
         lastStep = CreditStep.Search.getIdByName(userStatus?.infoCredit?.infoPreApprove?.currentStep)
+        val smartLastStep = SmartSteps.Search.getIdByName(userStatus?.infoBankAccount?.infoRequest?.currentStep)
         uiState = uiState.copy(userStatus = userStatus)
     }
 
@@ -267,7 +269,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 SMART_INITIAL_CARD -> {
-                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
+                    infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING.status &&
                             infoBankAccount?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
                             (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == CREDIT_STEP_PRE_APPROVED)
                 }
@@ -285,7 +287,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 SMART_IDENTITY_INCOMPLETE -> {
-                    infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.APPROVED.status && (
+                    infoUser?.statusOnfido != SmartOnFidoOrFirmStatus.APPROVED.status && (
                             SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
                             )
                 }
@@ -301,8 +303,8 @@ class ProductViewModel @Inject constructor(
                 }
 
                 SMART_FIRMED_ONFIDO_PENDING -> {
-                    infoBankAccount?.statusFirm  == CreditOnFidoOrFirmStatus.FIRMED.status &&
-                            infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
+                    infoBankAccount?.statusFirm  == SmartOnFidoOrFirmStatus.FIRMED.status &&
+                            infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING?.status
                 }
 
                 CREDIT_FIRM_REJECTED -> {
@@ -310,7 +312,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 SMART_APPROVED_BY_ONFIDO -> {
-                    infoUser?.statusOnfido  == CreditOnFidoOrFirmStatus.APPROVED.status
+                    infoUser?.statusOnfido  == SmartOnFidoOrFirmStatus.APPROVED.status
                 }
 
                 CREDIT_FIRM_MAX_ATTEMPTS -> {
@@ -322,7 +324,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 SMART_ONFIDO_REJECTED -> {
-                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.REJECTED.status
+                    infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.REJECTED.status
                 }
 
                 CREDIT_ONFIDO_MAX_ATTEMPTS -> {
@@ -330,7 +332,7 @@ class ProductViewModel @Inject constructor(
                 }
 
                 SMART_ONFIDO_MAX_ATTEMPTS -> {
-                    infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
+                    infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
 
                 CREDIT_ERROR_CREATE_ACCOUNT -> {

@@ -265,7 +265,7 @@ class HomeViewModel @Inject constructor(
             idBrand,
             identification,
             baseAsset = baseAsset,
-            startDate = getPreviousDate(),
+            startDate = getPreviousDate(1),
             endDate = getCurrentDateYMDPattern()
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
@@ -450,11 +450,12 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
+                //todo change "BTC" when asset are ready in BE
                 callQueryGetHistoricalBalanceUseCase(
                     user = email,
                     identification = identification,
                     idBrand = idBrand,
-                    baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
+                    baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: "BTC"
                 )
             }
             result.onFailure {

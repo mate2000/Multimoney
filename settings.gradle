@@ -6,6 +6,7 @@ pluginManagement {
         maven { url 'https://maven.applanga.com/' }
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -13,6 +14,13 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url 'https://maven.applanga.com/' }
         maven { url 'https://jitpack.io' }
+        maven {
+            url "https://nexus-public.novopayment.net/repository/maven-public/"
+            credentials {
+                username = System.env.NOVO_DEPENDENCY_USER ? "${System.env.NOVO_DEPENDENCY_USER}" : dependencyUser
+                password = System.env.NOVO_DEPENDENCY_PASSWORD ? "${System.env.NOVO_DEPENDENCY_PASSWORD}" : dependencyPassword
+            }
+        }
     }
 }
 rootProject.name = "Multimoney"

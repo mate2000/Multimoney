@@ -1,8 +1,13 @@
 package com.multimoney.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
+import com.multimoney.data.paging.CreditMovementsPagingSource
+import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.CardVisaDirect
@@ -14,6 +19,7 @@ import com.multimoney.domain.model.credit.CreditExtensionAmount
 import com.multimoney.domain.model.credit.CreditExtensionDetail
 import com.multimoney.domain.model.credit.CreditExtensionMessage
 import com.multimoney.domain.model.credit.CreditInfoQuestion
+import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.domain.model.credit.CreditOffer
 import com.multimoney.domain.model.credit.DestinyAccount
 import com.multimoney.domain.model.credit.ExchangeRate
@@ -22,6 +28,7 @@ import com.multimoney.domain.model.credit.PaymentAmount
 import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
 import com.multimoney.domain.model.credit.ProcessPaymentList
+import com.multimoney.domain.model.credit.PromissoryNoteDetail
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
@@ -56,6 +63,39 @@ class CreditRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
+    override suspend fun queryGetPromissoryNoteDetail(
+        idBrand: Int,
+        idLoanClient: Int,
+        pageNumber: Int,
+        pageSize: Int,
+        option: String
+    ): Flow<MultimoneyResult<PromissoryNoteDetail?>> = fetchData(
+        apolloCall = graphqlApi.queryGetPromissoryNoteDetail(idBrand, idLoanClient, pageNumber, pageSize, option),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun getPagedCreditMovements(
+        idBrand: Int,
+        idLoanClient: Int,
+        pageSize: Int,
+        option: String
+    ): Flow<PagingData<CreditMovement>> {
+        return Pager(
+            config = PagingConfig(pageSize),
+            pagingSourceFactory = {
+                CreditMovementsPagingSource(
+                    graphqlApi,
+                    idBrand,
+                    idLoanClient,
+                    option,
+                    pageSize
+                )
+            }
+        ).flow
+    }
 
     override suspend fun mutationSaveCreditApplication(
         idUserRequest: Int,
@@ -654,6 +694,17 @@ class CreditRepositoryImpl @Inject constructor(
             } else {
                 Message(data.mapToDomainModel())
             }
+        }
+    )
+
+    override suspend fun queryAccountStatement(
+        creditNumber: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<AccountStatement?>> = fetchData(
+        apolloCall = graphqlApi.queryAccountStatement(creditNumber = creditNumber, user = user, idBrand = idBrand),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
         }
     )
 }

@@ -972,6 +972,8 @@
 
     <!-- Credit Movements -->
     <string name="credit_movements_download_button" translatable="false">Descargar estado de cuenta</string>
+    <string name="credit_movements_empty_state_title" translatable="false">Sin registros de movimientos</string>
+    <string name="credit_movements_empty_state_description" translatable="false">Aún no has realizado una transacción.</string>
 
     <!-- Download Account Statement Worker -->
     <string name="download_credit_movements_worker_channel_name" translatable="false">Descargar estado de cuenta</string>

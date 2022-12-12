@@ -2220,9 +2220,9 @@ input HistoricalBalanceClientDtoInput {
 
     endDate: String!
 
-    idBrand: Int
+  idBrand: Int!
 
-    user: String
+  user: String!
 }
 
 type CryptoHistoricalPrice {
@@ -5541,7 +5541,7 @@ type CryptoAccount {
 
     profileEnable: Boolean
 
-    wording: Wording
+  wording: Wording
 }
 
 type BankAccount {

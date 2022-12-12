@@ -15,6 +15,8 @@ import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
+import com.multimoney.domain.model.credit.CreditMovementsResult
+import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
@@ -81,6 +83,7 @@ class ProductViewModel @Inject constructor(
     val firstName : String? = null
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
+    var creditMovements: List<CreditMovementsResult> = emptyList()
 
     private fun onSetUserData(
         idBrand: String,
@@ -92,7 +95,8 @@ class ProductViewModel @Inject constructor(
         validateUserStatus: ValidateUserStatus?,
         configurationVersion: ConfigurationVersion?,
         productPageList: List<ProductPage>,
-        smartMovements: List<SmartMovementsResult>
+        smartMovements: List<SmartMovementsResult>,
+        creditMovements: List<CreditMovementsResult>
     ) {
         this.pkUser = pkUser
         this.identification = identification
@@ -103,6 +107,7 @@ class ProductViewModel @Inject constructor(
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
         this.smartMovementsList = smartMovements
+        this.creditMovements = creditMovements
     }
 
     private fun setBalance(balance: Balance?) {
@@ -151,11 +156,11 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToSmartFlow() {
+    private fun onNavigateToSmartFlow(comingFromCrypto: Boolean = false) {
         navigateTo(
             "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
-                    "${uiState.userStatus?.infoUser?.firstName}/" +
-                    "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}"
+                "${uiState.userStatus?.infoUser?.firstName}/" +
+                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/${comingFromCrypto}"
         )
     }
 
@@ -247,6 +252,12 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/${email}/${uiState.userStatus?.infoUser?.phone}/${identification}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
     }
+
+    private fun onNavigateToSmartPaymentAccountScreen() =
+        navigateTo(Screen.SmartPaymentAccountScreen.route)
+
+    private fun onNavigateToSmartPaymentMethodScreen() =
+        navigateTo(Screen.SmartPaymentScreen.route)
 
     private fun onNavigateToSmartMovements(accountToken: String) =
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
@@ -510,6 +521,19 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun onCartButtonClickWithoutSmartBalance(onSavingCLick: () -> Unit) {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.crypto_footer_expanded_dialog_title,
+                descriptionResource = R.string.crypto_footer_expanded_dialog_description,
+                positiveResource = R.string.crypto_footer_expanded_dialog_btn_saving,
+                negativeResource = R.string.crypto_footer_expanded_dialog_btn_cancel,
+                positiveAction = { onSavingCLick() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -531,7 +555,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> setValidateUserStatus(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.creditStep)
-            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow()
+            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow(comingFromCrypto = uiEvent.comingFromCrypto)
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
@@ -548,7 +572,8 @@ class ProductViewModel @Inject constructor(
                 validateUserStatus = uiEvent.validateUserStatus,
                 configurationVersion = uiEvent.configurationVersion,
                 productPageList = uiEvent.productPageList,
-                smartMovements = uiEvent.smartMovements
+                smartMovements = uiEvent.smartMovements,
+                creditMovements = uiEvent.creditMovements
             )
             is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -572,6 +597,9 @@ class ProductViewModel @Inject constructor(
             is OnMiniCardsClicked -> onQuickActionClicked(flow = uiEvent.flow, onLoadingValueChange = {})
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
+            is UIEvent.OnCartButtonClickWithoutSmartBalance -> onCartButtonClickWithoutSmartBalance(uiEvent.onSavingCLick)
+            is UIEvent.OnNavigateToSmartPaymentAccountScreen -> onNavigateToSmartPaymentAccountScreen()
+            is UIEvent.OnNavigateToSmartPaymentMethodScreen -> onNavigateToSmartPaymentMethodScreen()
             is OnNavigateToCreditMovementsScreen -> onNavigateToCreditMovements()
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
@@ -588,7 +616,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
-        object OnNavigateToSmartOriginationFlow : UIEvent()
+        data class OnNavigateToSmartOriginationFlow(val comingFromCrypto: Boolean = false) : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
         object OnNavigateToProfileScreen: UIEvent()
@@ -603,6 +631,8 @@ class ProductViewModel @Inject constructor(
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
         object OnChipQuotaClick : UIEvent()
         object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
+        object OnNavigateToSmartPaymentAccountScreen : UIEvent()
+        object OnNavigateToSmartPaymentMethodScreen : UIEvent()
 
         data class OnSetUserData(
             val idBrand: String,
@@ -614,7 +644,8 @@ class ProductViewModel @Inject constructor(
             val validateUserStatus: ValidateUserStatus?,
             val configurationVersion: ConfigurationVersion?,
             val productPageList: List<ProductPage>,
-            val smartMovements: List<SmartMovementsResult>
+            val smartMovements: List<SmartMovementsResult>,
+            val creditMovements: List<CreditMovementsResult>
         ) : UIEvent()
 
         data class OnShareIbanAccount(
@@ -630,6 +661,7 @@ class ProductViewModel @Inject constructor(
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
         data class OnCreateMultimoneyVisa(val onLoadingValueChange: (isLoading: Boolean) -> Unit) : UIEvent()
         object OnCloseCardIssuanceError : UIEvent()
+        data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
     }
 
     companion object {

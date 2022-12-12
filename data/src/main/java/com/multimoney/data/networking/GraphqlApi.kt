@@ -36,8 +36,10 @@ import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersio
 import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
 import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
@@ -155,6 +157,23 @@ class GraphqlApi @Inject constructor(
             idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryGetPromissoryNoteDetail(
+        idBrand: Int,
+        idLoanClient: Int,
+        pageNumber: Int,
+        pageSize: Int,
+        option: String
+    ): ApolloCall<GetPromissoryNoteDetailQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetPromissoryNoteDetailQuery(
+                idBrand,
+                idLoanClient,
+                pageNumber,
+                pageSize,
+                option
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditApplication(
         idUserRequest: Int,
@@ -1184,6 +1203,27 @@ class GraphqlApi @Inject constructor(
                 country,
                 idAccount,
                 accountNumber
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    // Crypto
+
+    fun queryGetHistoricalClientBalance(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        baseAsset: String,
+        startDate: String,
+        endDate: String
+    ): ApolloCall<GetHistoricClientBalanceQuery.Data> =
+        apolloAuthorizedClient.query(
+            GetHistoricClientBalanceQuery(
+                user,
+                idBrand,
+                identification,
+                baseAsset,
+                startDate,
+                endDate
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

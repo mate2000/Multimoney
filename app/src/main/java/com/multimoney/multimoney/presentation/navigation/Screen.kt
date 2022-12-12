@@ -241,7 +241,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartPaymentScreen : Screen(
-        "smart_payment/{$USER_SMART_ACCOUNT}",
+        "smart_payment/{$USER_SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
         "smart_payment"
     )
 
@@ -251,7 +251,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartMovementsScreen : Screen(
-        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}",
+        "smart_movements_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}",
         "smart_movements_screen"
     )
 
@@ -259,7 +259,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Payment Smart
     object PaymentSmartCardsScreen : Screen(
-        "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}",
         "payment_smart_cards_screen"
     )
 

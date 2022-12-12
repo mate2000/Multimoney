@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.navigation.navgraph
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.NavType.Companion
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
@@ -17,15 +18,36 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMe
 
 fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
     navigation(
-        startDestination = Screen.PaymentSmartCardsScreen.route,
+        startDestination = Screen.SmartPaymentScreen.route,
         route = PAYMENT_SMART_ROUTE
     ) {
         composable(
+            Screen.SmartPaymentScreen.route,
+            arguments = listOf(
+                navArgument(ID_CURRENCY) { type = NavType.IntType }
+            )
+        ) {
+            SmartPaymentMethodScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                }, onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                })
+        }
+        composable(
             Screen.PaymentSmartCardsScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND) {
-                    type = NavType.IntType
-                }
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ACCOUNT_TOKEN) { type = NavType.LongType },
+                navArgument(ID_CURRENCY) { type = NavType.IntType }
             )
         ) {
             SmartPaymentCardsScreen(
@@ -44,24 +66,6 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                     )
                 }
             )
-        }
-        composable(
-            Screen.SmartPaymentScreen.route
-        ) {
-            SmartPaymentMethodScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                }, onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                })
         }
         composable(
             route = Screen.SmartPaymentAccountScreen.route

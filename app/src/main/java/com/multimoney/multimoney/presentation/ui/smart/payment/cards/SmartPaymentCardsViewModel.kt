@@ -18,7 +18,9 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallProcessTransferVisaToSmart
@@ -45,8 +47,8 @@ class SmartPaymentCardsViewModel @Inject constructor(
     private var user: String = savedStateHandle[USER] ?: ""
     private var idBrand: Int = savedStateHandle[ID_BRAND] ?: 0
     private var identification: String = savedStateHandle[IDENTIFICATION] ?: ""
-    private var idCurrency: Int = 2
-    private var tokenNumber: Long = 52959856
+    private var idCurrency: Int = savedStateHandle[ID_CURRENCY] ?: 0
+    private var tokenNumber: Long = savedStateHandle[ACCOUNT_TOKEN] ?: 0
 
     private fun onCallQueryGetClientCardsUseCase() {
         executeUseCase {

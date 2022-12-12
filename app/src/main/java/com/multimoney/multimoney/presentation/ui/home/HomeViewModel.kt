@@ -494,7 +494,7 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
-                //todo change "BTC" when asset are ready in BE
+                // todo change "BTC" when asset are ready in BE
                 callQueryGetHistoricalBalanceUseCase(
                     user = email,
                     identification = identification,
@@ -654,10 +654,12 @@ class HomeViewModel @Inject constructor(
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
-            is UIEvent.OnMyProductPageChange -> uiState =
-                uiState.copy(productScreenPagerState = uiEvent.page)
-            is UIEvent.OnLoadingValueChanged -> uiState =
-                uiState.copy(isLoading = uiEvent.isLoading)
+            is UIEvent.OnMyProductPageChange ->
+                uiState =
+                    uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnLoadingValueChanged ->
+                uiState =
+                    uiState.copy(isLoading = uiEvent.isLoading)
         }
     }
 
@@ -707,6 +709,5 @@ class HomeViewModel @Inject constructor(
         object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
         object OnPhoneNumberChangedToastEvent : BaseEvent()
         object OnEmailChangedToastEvent : BaseEvent()
-
     }
 }

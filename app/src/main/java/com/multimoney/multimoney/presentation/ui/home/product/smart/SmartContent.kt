@@ -11,6 +11,10 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.OVER_COUNTER
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
 import com.multimoney.data.util.catalog.SmartAccountStatus
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CANCELED
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest.SENT
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardInactiveSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartProduct
@@ -24,13 +28,29 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
         modifier = Modifier.padding(horizontal = 16.dp),
         type = ProductBackGroundType.Secondary
     ) {
-        if (viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(PENDING.status) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(
+        if (viewModel.uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest?.equals(
+                SmartAccountStatusRequest.PENDING.status
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest?.equals(
+                SENT.status
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest?.equals(
+                CANCELED.status
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest?.equals(
+                CREATED.status
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(
+                PENDING.status
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(
                 APPROVED.status
-            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(FIRMED.status) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(
+                FIRMED.status
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(
                 REJECTED.status
             ) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(
                 OVER_COUNTER.status
-            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(FAILED.status) == true
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.statusFirm?.equals(
+                FAILED.status
+            ) == true || viewModel.uiState.userStatus?.infoBankAccount?.status?.equals(
+                SmartAccountStatus.NO_EXIST.status
+            ) == true
         ) {
             viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
                 CardInactiveSmartProduct(
@@ -42,30 +62,14 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
                 }
             }
-        } else {
-            when (viewModel.uiState.userStatus?.infoBankAccount?.status) {
-                SmartAccountStatus.EXIST_IN_CORE.status -> {
-                    viewModel.balanceCredit?.balanceAccountSmart?.let {
-                        if (it.isNotEmpty()) {
-                            CardSmartProduct(
-                                currency = it[index]?.currencyCode ?: "",
-                                profitMonthly = it[index]?.gainedInterest.toString(),
-                                profitTotal = it[index]?.totalBalance.toString()
-                            )
-                        }
-                    }
-                }
-                SmartAccountStatus.NO_EXIST.status -> {
-                    viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
-                        CardInactiveSmartProduct(
-                            it?.textOne.toString(),
-                            it?.textTwo.toString(),
-                            it?.cTA.toString()
-                        ) {
-                            // TODO add navigation according to status
-                            viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow)
-                        }
-                    }
+        } else if (viewModel.uiState.userStatus?.infoBankAccount?.status?.equals(SmartAccountStatus.EXIST_IN_CORE.status) == true) {
+            viewModel.balanceCredit?.balanceAccountSmart?.let {
+                if (it.isNotEmpty()) {
+                    CardSmartProduct(
+                        currency = it[index]?.currencyCode ?: "",
+                        profitMonthly = it[index]?.gainedInterest.toString(),
+                        profitTotal = it[index]?.totalBalance.toString()
+                    )
                 }
             }
         }

@@ -60,6 +60,8 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -255,15 +257,16 @@ class HomeViewModel @Inject constructor(
     private fun callQueryGetHistoricalBalanceUseCase(
         user: String,
         idBrand: Int,
-        identification: String
+        identification: String,
+        baseAsset: String
     ) = executeUseCase {
         queryGetHistoricalClientBalanceUseCase.invoke(
             user,
             idBrand,
             identification,
-            baseAsset = "BTC",
-            startDate = "2021-08-30",
-            endDate = "2022-12-7"
+            baseAsset = baseAsset,
+            startDate = getPreviousDate(),
+            endDate = getCurrentDateYMDPattern()
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
                 historicBalance?.let {
@@ -450,7 +453,8 @@ class HomeViewModel @Inject constructor(
                 callQueryGetHistoricalBalanceUseCase(
                     user = email,
                     identification = identification,
-                    idBrand = idBrand
+                    idBrand = idBrand,
+                    baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
                 )
             }
             result.onFailure {

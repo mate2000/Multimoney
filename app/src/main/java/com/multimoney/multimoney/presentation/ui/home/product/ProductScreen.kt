@@ -99,7 +99,8 @@ fun ProductScreen(
             validateUserStatus = sharedViewModel.uiState.validateUserStatus,
             configurationVersion = sharedViewModel.uiState.configurationVersion,
             productPageList = sharedViewModel.uiState.productPageList,
-            smartMovements = sharedViewModel.uiState.smartMovementsList
+            smartMovements = sharedViewModel.uiState.smartMovementsList,
+            creditMovements = sharedViewModel.uiState.creditMovementsList
         )
     )
     LaunchedEffect(key1 = true) {
@@ -228,7 +229,6 @@ fun ProductScreen(
         )
     }
 }
-
 
 @Composable
 fun TipsAndOffer(

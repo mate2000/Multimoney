@@ -4,9 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
-import com.multimoney.domain.model.accountsmart.SmartMovement
+import androidx.paging.cachedIn
+import com.multimoney.domain.interaction.credit.QueryGetPagedCreditMovementsUseCase
+import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -16,6 +18,8 @@ import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnGetMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnIsLoadingChange
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnNavigateBackToHome
+import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
+import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +28,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreditMovementsViewModel @Inject constructor(
-    private val queryGetPagedSmartMovements: QueryGetPagedSmartMovementsUseCase,
+    private val queryGetPagedCreditMovements: QueryGetPagedCreditMovementsUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -38,16 +42,14 @@ class CreditMovementsViewModel @Inject constructor(
 
     private fun onGetSmartMovements() {
         executeUseCase {
-            /*uiState = uiState.copy( TODO
-                movementsPage = queryGetPagedSmartMovements.invoke(
-                    user = user,
+            uiState = uiState.copy(
+                movementsPage = queryGetPagedCreditMovements.invoke(
                     idBrand = idBrand,
-                    identificationNumber = identification,
-                    accountToken = accountToken.toLongOrNull() ?: 0,
+                    idLoanClient = idLoanClient,
                     pageSize = PAGE_SIZE,
-                    monthDate = null
+                    option = OPTION_BTN_6
                 ).cachedIn(viewModelScope)
-            )*/
+            )
         }
     }
 
@@ -92,6 +94,6 @@ class CreditMovementsViewModel @Inject constructor(
         // Fields
         var isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
-        val movementsPage: Flow<PagingData<SmartMovement>> = flowOf()
+        val movementsPage: Flow<PagingData<CreditMovement>> = flowOf()
     )
 }

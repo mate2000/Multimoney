@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,12 +15,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.multimoney.domain.model.accountsmart.SmartMovement
+import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -28,7 +31,6 @@ import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnGetMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnIsLoadingChange
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnNavigateBackToHome
-import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementDisplayer
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -57,9 +59,9 @@ fun CreditMovementsScreen(
             .padding(16.dp)
     ) {
         TopNavBar(
-            isLeftButtonVisible = true,
-            isRightButtonVisible = false,
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBackToHome) }
+            isLeftButtonVisible = false,
+            isRightButtonVisible = true,
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackToHome) }
         )
 
         Column(
@@ -70,10 +72,12 @@ fun CreditMovementsScreen(
             Column {
                 Text(
                     text = stringResource(R.string.home_product_movement_title),
-                    style = Typography.h4.copy(
-                        color = MultimoneyTheme.colors.text
+                    style = Typography.h5.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
                     ),
-                    modifier = Modifier.padding(vertical = 24.dp)
+                    modifier = Modifier.padding(vertical = 24.dp),
+                    textAlign = TextAlign.Left
                 )
 
                 if (viewModel.uiState.openDialog.isActive.value) {
@@ -128,11 +132,11 @@ fun CreditMovementsScreen(
 }
 
 @Composable
-fun MovementsList(smartMoves: LazyPagingItems<SmartMovement>) {
+fun MovementsList(creditMoves: LazyPagingItems<CreditMovement>) {
     LazyColumn {
-        items(items = smartMoves) {
+        items(items = creditMoves) {
             it?.let {
-                SmartMovementDisplayer(it)
+                CreditMovementItem(it)
             }
         }
     }

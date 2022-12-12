@@ -890,5 +890,7 @@
 
     <!-- Credit Movements -->
     <string name="credit_movements_download_button" translatable="false">Descargar estado de cuenta</string>
+    <string name="credit_movements_empty_state_title" translatable="false">Sin registros de movimientos</string>
+    <string name="credit_movements_empty_state_description" translatable="false">Aún no has realizado una transacción.</string>
 
 </resources>

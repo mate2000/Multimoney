@@ -13,12 +13,14 @@ import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsU
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
+import com.multimoney.domain.interaction.credit.QueryGetPromissoryNoteDetail
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.credit.CreditMovementsResult
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.QuickAction
@@ -45,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBo
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetCreditMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
@@ -53,6 +56,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSi
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
 import com.multimoney.multimoney.presentation.util.boolean
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -79,6 +83,7 @@ class HomeViewModel @Inject constructor(
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
     private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase,
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
+    private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
     private val cognitoHelper: CognitoHelper
 ) : BaseViewModel(true) {
 
@@ -126,6 +131,37 @@ class HomeViewModel @Inject constructor(
                         movements.accountToken = tokenNumber
                         uiState = uiState.copy(
                             smartMovementsList = uiState.smartMovementsList + movements,
+                            isLoading = false
+                        )
+                    }
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+                result.onFailure {
+                    onFailure(it)
+                    uiState = uiState.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
+    private fun onGetCreditMovements(
+        idBrand: Int,
+        idLoanClient: Int
+    ) {
+        executeUseCase {
+            queryGetPromissoryNoteDetail.invoke(
+                idBrand = idBrand,
+                idLoanClient = idLoanClient,
+                pageNumber = INDEX_ONE,
+                pageSize = LAST_THREE,
+                option = OPTION_BTN_6
+            ).collectLatest { result ->
+                result.onSuccess {
+                    it?.let { promissoryNote ->
+                        uiState = uiState.copy(
+                            creditMovementsList = promissoryNote.movementsResultList ?: emptyList(),
                             isLoading = false
                         )
                     }
@@ -192,13 +228,13 @@ class HomeViewModel @Inject constructor(
             infoBankAccountStatus = infoBankAccountStatus.boolean,
             infoCrypto = infoCryptoStatus.boolean,
             userEmail = email,
-            idBrand = idBrand,
+            idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess { miniCards ->
                 if (
-                    uiState.configurationVersion != null
-                    && uiState.balance != null
-                    && uiState.quickActions != null
+                    uiState.configurationVersion != null &&
+                    uiState.balance != null &&
+                    uiState.quickActions != null
                 ) {
                     uiState = uiState.copy(isLoading = false)
                 }
@@ -293,11 +329,19 @@ class HomeViewModel @Inject constructor(
                         )
                     )
 
-                    onGetSmartMovements(
-                        uiState.userName,
-                        uiState.idBrand.toInt(),
-                        uiState.identification,
-                        account?.tokenNumber?.toLongOrNull() ?: 0
+                    onUIEvent(
+                        OnGetSmartMovements(
+                            uiState.userName,
+                            uiState.idBrand.toInt(),
+                            uiState.identification,
+                            account?.tokenNumber?.toLongOrNull() ?: 0
+                        )
+                    )
+                    onUIEvent(
+                        OnGetCreditMovements(
+                            uiState.idBrand.toInt(),
+                            uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+                        )
                     )
                 }
                 // If user has smart activated he can enable crypto
@@ -534,7 +578,8 @@ class HomeViewModel @Inject constructor(
         var forceIsExpanded: Boolean = false,
         var productScreenPagerState: PagerState? = null,
         var productPageList: List<ProductPage> = emptyList(),
-        val smartMovementsList: List<SmartMovementsResult> = emptyList()
+        val smartMovementsList: List<SmartMovementsResult> = emptyList(),
+        val creditMovementsList: List<CreditMovementsResult> = emptyList()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -548,6 +593,10 @@ class HomeViewModel @Inject constructor(
                 uiEvent.idBrand,
                 uiEvent.identificationNumber,
                 uiEvent.tokenNumber
+            )
+            is OnGetCreditMovements -> onGetCreditMovements(
+                uiEvent.idBrand,
+                uiEvent.idLoanClient
             )
             is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
             is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
@@ -569,6 +618,11 @@ class HomeViewModel @Inject constructor(
             val idBrand: Int,
             val identificationNumber: String,
             val tokenNumber: Long
+        ) : UIEvent()
+
+        data class OnGetCreditMovements(
+            val idBrand: Int,
+            val idLoanClient: Int
         ) : UIEvent()
 
         data class OnMyProductClick(val expand: Boolean) : UIEvent()

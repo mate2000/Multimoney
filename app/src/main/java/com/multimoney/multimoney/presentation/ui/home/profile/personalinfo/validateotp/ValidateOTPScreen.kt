@@ -86,6 +86,7 @@ fun ValidateOTPScreen(
         }
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate )
+        requestOTP(viewModel)
     }
 
     BackHandler {
@@ -115,10 +116,6 @@ fun ValidateOTPScreen(
             stringResource(viewModel.uiState.dialogTextResource)
         )
     )
-
-    LaunchedEffect(key1 = true) {
-        requestOTP(viewModel)
-    }
 
     LaunchedEffect(true) {
         viewModel.onCallMutationSendPinProcessEvent.collect { event ->

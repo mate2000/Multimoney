@@ -319,6 +319,10 @@
     <string name="profile_logout" translatable="false">Cerrar Sesión</string>
     <string name="profile_personal_info_title" translatable="false">Datos personales</string>
     <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
+    <string name="profile_change_password" translatable="false">Cambio de contarseña</string>
+    <string name="profile_notifications" translatable="false">Notificationes</string>
+    <string name="profile_biometrics" translatable="false">Biométricos</string>
+    <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>
     <string name="profile_change_phone" translatable="false">Cambio de teléfono</string>
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
@@ -355,6 +359,11 @@
     <string name="profile_we_will_send_you_a_code_to_your_email" translatable="false">Te enviaremos un código de verificación para confirmar tu nuevo correo</string>
     <string name="profile_email_check_format_error" translatable="false">Revisa formato. Debe contener "@" y "."</string>
     <string name="profile_emails_does_not_match_error" translatable="false">Los correos electrónicos no coinciden</string>
+    <string name="profile_sure_to_deactivate_biometrics_gt" translatable="false">¿Estás seguro que quieres desactivar tus biométricos?</string>
+    <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
+    <string name="profile_you_can_try_later_biometrics_gt" translatable="false">Puedes volver a configurarlo cuando quieras</string>
+    <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
+
 
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>

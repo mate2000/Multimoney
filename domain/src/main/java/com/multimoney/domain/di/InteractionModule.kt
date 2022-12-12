@@ -106,6 +106,10 @@ import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCaseImpl
+import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
+import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -148,6 +152,7 @@ import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
+import com.multimoney.domain.repository.CryptoRepository
 import com.multimoney.domain.repository.MultimoneyVisaRepository
 import com.multimoney.domain.repository.SecurityRepository
 import com.multimoney.domain.repository.SmartAccountRepository
@@ -533,4 +538,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryListSinpeAccountUseCase(smartAccountRepository: SmartAccountRepository): QueryListSinpeAccountUseCase =
         QueryListSinpeAccountUseCaseImpl(smartAccountRepository)
+
+    // Crypto
+
+    @Provides
+    @Singleton
+    fun provideQueryGetHistoricalClientBalance(cryptoRepository: CryptoRepository): GetHistoricalClientBalanceUseCase =
+        GetHistoricalClientBalanceUseCaseImpl(cryptoRepository)
 }

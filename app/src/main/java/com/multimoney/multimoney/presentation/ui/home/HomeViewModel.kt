@@ -14,6 +14,7 @@ import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPromissoryNoteDetail
+import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
@@ -21,6 +22,7 @@ import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.credit.CreditMovementsResult
+import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.QuickAction
@@ -62,6 +64,8 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -77,6 +81,7 @@ class HomeViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
+    private val queryGetHistoricalClientBalanceUseCase: GetHistoricalClientBalanceUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
     private val queryMiniCardsUseCase: QueryMiniCardsUseCase,
     private val queryGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
@@ -285,6 +290,39 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun callQueryGetHistoricalBalanceUseCase(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        baseAsset: String
+    ) = executeUseCase {
+        queryGetHistoricalClientBalanceUseCase.invoke(
+            user,
+            idBrand,
+            identification,
+            baseAsset = baseAsset,
+            startDate = getPreviousDate(1),
+            endDate = getCurrentDateYMDPattern()
+        ).collectLatest { result ->
+            result.onSuccess { historicBalance ->
+                historicBalance?.let {
+                    if (uiState.configurationVersion != null && uiState.balance != null) {
+                        uiState = uiState.copy(isLoading = false)
+                    }
+                    uiState = uiState.copy(
+                        cryptoHistoricalBalance = it.historicalBalanceClient
+                    )
+                }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
     private fun setBalance(balance: Balance) {
         val productPageList = mutableListOf<ProductPage>()
 
@@ -456,6 +494,13 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
+                //todo change "BTC" when asset are ready in BE
+                callQueryGetHistoricalBalanceUseCase(
+                    user = email,
+                    identification = identification,
+                    idBrand = idBrand,
+                    baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: "BTC"
+                )
             }
             result.onFailure {
                 onFailure(it)
@@ -571,6 +616,7 @@ class HomeViewModel @Inject constructor(
         var configurationVersion: ConfigurationVersion? = null,
         var validateUserStatus: ValidateUserStatus? = null,
         var balance: Balance? = null,
+        var cryptoHistoricalBalance: List<HistoricalBalanceClient> = emptyList(),
         var idBrand: String = "",
         var pkUser: String = "",
         var identification: String = "",

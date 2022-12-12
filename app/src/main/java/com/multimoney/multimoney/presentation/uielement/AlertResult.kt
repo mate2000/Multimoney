@@ -38,6 +38,9 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
  * @param onLeftButtonClick: Action left button TopNavBar's
  * @param onRightButtonClick: Action right button TopNavBar's
  * @param onButtonClick: Action to execute when button is clicked
+ * @param isBottomTextButtonVisible: Make text button on the bottom visible
+ * @param bottomTextButtonString: Result button text resource
+ * @param onTextButtonClick: Action to execute when text button is clicked
  */
 
 @Composable
@@ -50,12 +53,15 @@ fun AlertResult(
     descriptionString: String = "",
     buttonTextResource: Int = R.string.empty,
     buttonTextString: Int = R.string.empty,
+    bottomTextButtonString: Int = R.string.empty,
     isTopNavBarVisible: Boolean = true,
     isLeftButtonVisible: Boolean = true,
     isRightButtonVisible: Boolean = true,
+    isBottomTextButtonVisible: Boolean = false,
     onLeftButtonClick: () -> Unit = {},
     onRightButtonClick: () -> Unit = {},
-    onButtonClick: () -> Unit = {}
+    onButtonClick: () -> Unit = {},
+    onTextButtonClick: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -74,7 +80,8 @@ fun AlertResult(
 
         Column(
             modifier = Modifier
-                .wrapContentHeight().fillMaxWidth(),
+                .wrapContentHeight()
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -112,5 +119,11 @@ fun AlertResult(
             text = stringResource(id = buttonTextResource),
             buttonType = PrimaryPrimary
         )
+        if (isBottomTextButtonVisible) {
+            CustomTextButton(
+                textResource = bottomTextButtonString,
+                onClick = onTextButtonClick
+            )
+        }
     }
 }

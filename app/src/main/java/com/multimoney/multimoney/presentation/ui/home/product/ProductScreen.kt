@@ -36,6 +36,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
@@ -56,7 +57,11 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
@@ -198,7 +203,8 @@ fun ProductScreen(
                     ProductContent(
                         modifier = modifier,
                         state = contentPagerState,
-                        viewModel = viewModel
+                        viewModel = viewModel,
+                        sharedViewModel = sharedViewModel
                     )
                 },
                 footer = {
@@ -366,20 +372,27 @@ fun ProductHeaderExpanded(
 fun ProductContent(
     modifier: Modifier,
     state: PagerState,
-    viewModel: ProductViewModel
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
 ) {
     Column(modifier = modifier) {
         HorizontalPager(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             modifier = Modifier.padding(top = 8.dp),
             state = state
-        ) { currentPage ->
+        ) {
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
                 ProductType.Smart.value -> SmartContent(viewModel = viewModel, currentPage)
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
-                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount
+                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
+                    openActionEnable = !sharedViewModel.uiState.forceIsExpanded,
+                    clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
+                    openCryptoHomeAction = { sharedViewModel.onUIEvent(OnMyProductClick(true)) },
+                    openSmartCryptoAction = {
+                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(true))
+                    }
                 )
             }
         }
@@ -454,7 +467,31 @@ fun ProductFooterExpanded(
                     viewModel = viewModel,
                     currentPage
                 )
-                ProductType.Crypto.value -> CryptoFooterExpanded()
+                ProductType.Crypto.value -> CryptoFooterExpanded(
+                    userStatus = viewModel.uiState.userStatus,
+                    balance = viewModel.balanceCredit,
+                    actionMarket = { /* todo send to all coins screen*/ },
+                    actionWallet = { /*todo send to "my wallet"*/ },
+                    noBalanceAction = {
+                        when(viewModel.uiState.idBrand) {
+                            Brand.CostaRica.id.toString() -> {
+                                viewModel.onUIEvent(
+                                    ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance {
+                                        viewModel.onUIEvent(OnNavigateToSmartPaymentAccountScreen)
+                                    }
+                                )
+                            }
+                            Brand.ElSalvador.id.toString() -> {
+                                viewModel.onUIEvent(
+                                    ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance {
+                                        viewModel.onUIEvent(OnNavigateToSmartPaymentMethodScreen)
+                                    }
+                                )
+                            }
+                        }
+                    },
+                    hasBalanceAction = { /*todo go to buy crypto flow*/ }
+                )
             }
         }
     }

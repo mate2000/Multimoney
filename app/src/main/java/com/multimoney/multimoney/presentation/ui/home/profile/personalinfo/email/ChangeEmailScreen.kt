@@ -39,7 +39,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 
-
 @Preview
 @Composable
 fun ChangeEmailScreen(
@@ -61,7 +60,6 @@ fun ChangeEmailScreen(
 @Composable
 private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
     val focusManager = LocalFocusManager.current
-
     ConstraintLayout(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)

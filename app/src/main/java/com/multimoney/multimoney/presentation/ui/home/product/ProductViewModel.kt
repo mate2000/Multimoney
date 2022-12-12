@@ -439,7 +439,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPaymentSmartScreen(account: Account?) {
-        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}/{$userName}/{${uiState.idBrand}}/{$identification}/{${account?.tokenNumber}}/{${account?.idCurrencyAccount}}")
+        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}/$userName/${uiState.idBrand}/$identification/${account?.tokenNumber}/${account?.idCurrencyAccount}")
     }
 
     private fun onNavigateToSendMoneyScreen() {

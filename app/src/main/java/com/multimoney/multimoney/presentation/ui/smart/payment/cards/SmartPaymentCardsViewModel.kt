@@ -80,13 +80,13 @@ class SmartPaymentCardsViewModel @Inject constructor(
     private fun onCallProcessTransferVisaToSmart() {
         executeUseCase {
             processTransferVisaToSmart.invoke(
-                uiState.idCard, // idCard,
-                tokenNumber, // tokenNumber,
+                uiState.idCard,
+                tokenNumber,
                 identification,
-                uiState.amount, // amount,
-                idCurrency, // currency,
-                DEFAULT_DESCRIPTION, // description,
-                uiState.cardMasked, // cardMasked,
+                uiState.amount,
+                idCurrency,
+                DEFAULT_DESCRIPTION,
+                uiState.cardMasked,
                 user,
                 idBrand
             ).collectLatest { result ->
@@ -110,7 +110,6 @@ class SmartPaymentCardsViewModel @Inject constructor(
             cardBankName = cardSelected.detail ?: "",
             bottomSheetState = ModalBottomSheetState(Expanded)
         )
-
         // fixme navigate to amount screen
         // navigateTo("${Screen. ROUTE }/${idBrand} +
         // /${user} +
@@ -138,10 +137,10 @@ class SmartPaymentCardsViewModel @Inject constructor(
         val currency: String = "$",
         val amount: String = "500",
         val cardBankName: String = "",
-        val exchangeRate: String = "609.06",
-        val exchangeAmount: String = "300621.24",
-        val idCard: Long = 43,
-        val cardMasked: String = "123***1234",
+        val exchangeRate: String = "",
+        val exchangeAmount: String = "",
+        val idCard: Long = 0,
+        val cardMasked: String = "",
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
     )
 

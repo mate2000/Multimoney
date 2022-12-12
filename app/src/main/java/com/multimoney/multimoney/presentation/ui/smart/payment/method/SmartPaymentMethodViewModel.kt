@@ -33,7 +33,7 @@ class SmartPaymentMethodViewModel @Inject constructor(
     var idBrand: String = savedStateHandle[ID_BRAND] ?: ""
     var identification: String = savedStateHandle[IDENTIFICATION] ?: ""
     var accountToken: String = savedStateHandle[ACCOUNT_TOKEN] ?: ""
-    var currencyId: String = savedStateHandle[ID_CURRENCY] ?: ""
+    var currencyId: Int = savedStateHandle[ID_CURRENCY] ?: 0
 
     init {
         userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""

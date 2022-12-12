@@ -15,6 +15,12 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
@@ -23,6 +29,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPo
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.net.URLEncoder
@@ -56,15 +63,26 @@ class PaymentPointsViewModel @Inject constructor(
         pointSchedule: String,
         pointLatitude: String,
         pointLongitude: String
-    ) =
-        navigateTo(
-            route = "${Screen.PaymentLocationDetailsScreen.baseRoute}/$pointName/${
-            URLEncoder.encode(
-                pointAddress,
-                StandardCharsets.UTF_8.name()
+    ) = navigateTo(
+        route = Screen.PaymentLocationDetailsScreen.baseRoute
+            .plus(getNavParam(POINT_NAME, pointName))
+            .plus(
+                getNavParam(
+                    POINT_ADDRESS,
+                    URLEncoder.encode(
+                        pointAddress,
+                        StandardCharsets.UTF_8.name()
+                    )
+                )
             )
-            }/$pointAddressDescription}/$pointSchedule/$pointLatitude/$pointLongitude/$paymentAmount/$creditNumber/$idBrand"
-        )
+            .plus(getNavParam(POINT_ADDRESS_DESCRIPTION, pointAddressDescription))
+            .plus(getNavParam(POINT_SCHEDULE, pointSchedule))
+            .plus(getNavParam(POINT_LATITUDE, pointLatitude))
+            .plus(getNavParam(POINT_LONGITUDE, pointLongitude))
+            .plus(getNavParam(PAYMENT_AMOUNT, paymentAmount))
+            .plus(getNavParam(CREDIT_NUMBER, creditNumber))
+            .plus(getNavParam(ID_BRAND, idBrand))
+    )
 
     private fun onQueryValueChange(value: String) {
         uiState = uiState.copy(

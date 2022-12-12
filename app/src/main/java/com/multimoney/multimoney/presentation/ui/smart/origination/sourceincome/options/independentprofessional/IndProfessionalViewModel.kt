@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel
 import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome

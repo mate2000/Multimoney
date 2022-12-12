@@ -1,13 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
@@ -25,7 +23,6 @@ class OtherIncomeViewModel @Inject constructor() : BaseViewModel(true) {
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        Log.d("tellCollected", "collected in other income: $accountSmartData")
         accountSmartData?.let {
             incomeSourceChange(it.specifiesIncomeSource.orEmpty())
             incomeAmountChange(it.income.toString())

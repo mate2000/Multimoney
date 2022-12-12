@@ -185,7 +185,6 @@ class FormalSalariedSvViewModel @Inject constructor(
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         divisionTwoId = accountSmartData?.idJobLevel2
         divisionThreeId = accountSmartData?.idJobLevel3
-        Log.d("tellCollected", "collected in own business: $accountSmartData")
         accountSmartData?.let {
             onCompanyNameChange(it.companyName.orEmpty())
             onProfessionChange(it.positionJob.orEmpty())

@@ -57,7 +57,6 @@ import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 
 @Composable
 fun SmartDocumentScreen(
@@ -67,7 +66,7 @@ fun SmartDocumentScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(true) {
         delay(STEP_BY_STEP_EVENT_DELAY)
         viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
     }

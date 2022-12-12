@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 
 @Composable
 fun SmartLivAddressScreen(

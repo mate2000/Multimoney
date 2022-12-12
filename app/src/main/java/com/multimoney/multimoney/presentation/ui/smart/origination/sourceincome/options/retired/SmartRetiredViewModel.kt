@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -33,7 +32,6 @@ class SmartRetiredViewModel : BaseViewModel(true) {
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        Log.d("tellCollected", "collected in own business: $accountSmartData")
         accountSmartData?.let {
             onInstitutionValueChange(it.institutionPension)
             onAmountValueChange(it.income.toString())

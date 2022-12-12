@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -61,6 +60,7 @@ import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -121,7 +121,7 @@ class SmartViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { stepByStep ->
                 stepByStep?.let {
-                    Log.d("tellStepByStep", "list step by step: $it")
+                    Timber.d("callQueryStepByStepUseCase(): $it")
                     navigateToScreenOnStepFetched(it)
                 }
                 onUIEvent(OnLoadingValueChange(false))
@@ -271,7 +271,6 @@ class SmartViewModel @Inject constructor(
                 idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
-                    Log.d("tellStepByStep", "save step by step: ${it.toString()}")
                     if (isLastStep) {
                         globalRequest = it?.idGlobalRequest ?: 0
                         callMutationSaveSmartAccount()

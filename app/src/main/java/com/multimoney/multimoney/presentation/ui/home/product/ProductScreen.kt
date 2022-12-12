@@ -379,7 +379,7 @@ fun ProductContent(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             modifier = Modifier.padding(top = 8.dp),
             state = state
-        ) { currentPage ->
+        ) {
             when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
                 ProductType.Smart.value -> SmartContent(viewModel = viewModel, currentPage)

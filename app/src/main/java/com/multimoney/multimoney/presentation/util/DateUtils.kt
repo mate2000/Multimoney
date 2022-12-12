@@ -83,23 +83,12 @@ fun onBirthDateAgeValidation(pickedDate: LocalDate): Pair<Boolean, Int> {
 
 fun getCurrentDateYMDPattern(): String {
     val date = LocalDate.now()
-    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern(YEAR_MONTH_DAY_PATTERN)
-    return date.format(formatters)
+    return date.toString()
 }
 
-fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
-    val date = LocalDate.now()
-    when(dateFilter) {
-        FilterDate.YESTERDAY -> date.minusDays(1)
-        FilterDate.LAST_7_DAYS -> date.minusDays(7)
-        FilterDate.LAST_30_DAYS -> date.minusDays(30)
-        FilterDate.LAST_90_DAYS -> date.minusDays(90)
-        FilterDate.LAST_180_DAYS -> date.minusDays(180)
-        FilterDate.LAST_365_DAYS -> date.minusDays(365)
-    }
-
-    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern(YEAR_MONTH_DAY_PATTERN)
-    return date.format(formatters)
+fun getPreviousDate(daysToSubtract: Long): String {
+    val date = LocalDate.now().minusDays(daysToSubtract)
+    return date.toString()
 }
 
 fun getCurrentDate(time: Date): String {
@@ -121,15 +110,6 @@ fun parseApiDateToCardDate(date: String?): String {
     } else {
         ""
     }
-}
-
-enum class FilterDate {
-    YESTERDAY,
-    LAST_7_DAYS,
-    LAST_30_DAYS,
-    LAST_90_DAYS,
-    LAST_180_DAYS,
-    LAST_365_DAYS
 }
 
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"

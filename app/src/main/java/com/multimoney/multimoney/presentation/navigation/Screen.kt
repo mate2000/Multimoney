@@ -156,6 +156,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
 
+    object VisaTokenizationWaitingScreen : Screen("visa_tokenization_screen/{$ID_BRAND}", "visa_tokenization_screen")
+
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")
     object QuickActionBNScreen : Screen("quick_action_bt_screen")

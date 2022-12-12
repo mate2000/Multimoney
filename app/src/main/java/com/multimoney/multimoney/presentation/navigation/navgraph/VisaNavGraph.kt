@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.BalanceCardInformationNavType
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScreen
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingScreen
 
 const val BALANCE_CARD_INFORMATION = "balance_card_information"
 
@@ -67,5 +68,20 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 }
             )
         }
+    }
+    composable(
+        route = Screen.VisaTokenizationWaitingScreen.route,
+        arguments = listOf(
+            navArgument(ID_BRAND) {
+                type = NavType.IntType
+            }
+        )
+    ) {
+        VisaTokenizationWaitingScreen(onPopAndNavigate = {
+            navController.navigate(it.route) {
+                launchSingleTop = true
+                popUpTo(it.popTo) { inclusive = true }
+            }
+        })
     }
 }

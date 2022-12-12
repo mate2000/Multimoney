@@ -541,6 +541,18 @@
     <string name="visa_card_available_amount" translatable="false">Disponible %s</string>
     <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
 
+    <!-- visa tokenization waiting -->
+    <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
+    <string name="visa_tokenization_waiting_description_one" translatable="false">Tu tarjeta\nestá segura en tu teléfono</string>
+    <string name="visa_tokenization_waiting_description_two_first" translatable="false">Podrás</string>
+    <string name="visa_tokenization_waiting_description_two_bold" translatable="false">utilizar tu línea de crédito</string>
+    <string name="visa_tokenization_waiting_description_two_second" translatable="false">\npara hacer compras físicas y en línea</string>
+    <string name="visa_tokenization_waiting_description_three_bold" translatable="false">Podés pagar con tu teléfono</string>
+    <string name="visa_tokenization_waiting_description_three" translatable="false">\no con los datos de tu tarjeta</string>
+    <string name="visa_tokenization_waiting_description_three_bold_gt" translatable="false">Puedes pagar con tu teléfono</string>
+    <string name="visa_tokenization_waiting_description_three_gt" translatable="false">\no con los datos de tu tarjeta</string>
+    <string name="visa_tokenization_waiting_loading_label" translatable="false">Activando tu tarjeta…</string>
+
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>
     <string name="credit_glad_to_see_you_gt" translatable="false">¡Nos alegra que regreses!</string>

@@ -7,6 +7,7 @@
     <string name="button_continue" translatable="false">Continuar</string>
     <string name="registration" translatable="false">Registrarme</string>
     <string name="sign_in" translatable="false">Iniciar sesión</string>
+    <string name="something_went_wrong" translatable="false">Ha ocurrido un error</string>
     <string name="label_email" translatable="false">Correo electrónico</string>
     <string name="finalize" translatable="false">Finalizar</string>
     <string name="accept" translatable="false">Aceptar</string>
@@ -132,7 +133,8 @@
     <string name="sign_up_otp_code_placeholder" translatable="false">0</string>
     <string name="sign_up_otp_code_required" translatable="false">Código de verificación requerido</string>
     <string name="sign_up_otp_code_not_valid" translatable="false">Código de verificación incorrecto</string>
-    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
 
     <!-- Sign Up Personal Data -->
     <string name="sign_up_personal_data_id_not_valid" translatable="false">Número de %s inválido</string>
@@ -253,6 +255,11 @@
     <string name="home_my_products_title_crypto" translatable="false">Cripto</string>
     <string name="home_my_products_label_crypto" translatable="false">Cripto</string>
 
+    <!-- Card Issuance Error -->
+    <string name="card_issuance_error_title" translatable="false">No hemos podido activar tu tarjeta</string>
+    <string name="card_issuance_error_description_gt" translatable="false">Inténtalo más tarde</string>
+    <string name="card_issuance_error_description" translatable="false">Intentálo más tarde</string>
+
     <!-- Home Product -->
     <string name="home_product_not_approved_title" translatable="false">Gana ahorrando smart</string>
     <string name="home_product_not_approved_description" translatable="false">La mejor tasa del 3.5\%; anual sin restricciones</string>
@@ -310,6 +317,53 @@
     <string name="profile_help" translatable="false">Ayuda e información</string>
     <string name="profile_invite_friends" translatable="false">Invitar amigos</string>
     <string name="profile_logout" translatable="false">Cerrar Sesión</string>
+    <string name="profile_personal_info_title" translatable="false">Datos personales</string>
+    <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
+    <string name="profile_change_password" translatable="false">Cambio de contarseña</string>
+    <string name="profile_notifications" translatable="false">Notificationes</string>
+    <string name="profile_biometrics" translatable="false">Biométricos</string>
+    <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>
+    <string name="profile_change_phone" translatable="false">Cambio de teléfono</string>
+    <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
+    <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
+    <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
+    <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde quieres recibir el código?</string>
+    <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde querés recibir el código?</string>
+    <string name="profile_new_phone_number" translatable="false">Nuevo número de teléfono</string>
+    <string name="profile_we_will_send_you_a_code" translatable="false">Te envieramos un código de verificación para confirmar tu nuevo teléfono</string>
+    <string name="profile_sms_to_previous_phone" translatable="false">SMS al teléfono anterior</string>
+    <string name="profile_otp_to_previous_email" translatable="false">Correo electrónico anterior</string>
+    <string name="profile_otp_to_sms" translatable="false">SMS</string>
+    <string name="profile_to_email" translatable="false">Correo electrónico</string>
+    <string name="profile_send_code" translatable="false">Enviar código</string>
+    <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
+    <string name="profile_enter_the_code_sent_to_template_gt" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
+    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
+    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
+    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_code_expires_in_template" translatable="false">Código expira en %1$s segundos</string>
+    <string name="profile_code_resend_expires_in_template" translatable="false">Código reenviado expira en %1$s segundos</string>
+    <string name="profile_error_changing_phone_title" translatable="false">No pudimos cambiar tu teléfono</string>
+    <string name="profile_error_changing_phone" translatable="false">Lo sentimos, vuelve a intentarlo más tarde</string>
+    <string name="profile_error_changing_phone_gt" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
+    <string name="profile_error_changing_phone_button" translatable="false">Ir al inicio</string>
+    <string name="profile_phone_number_changed_toast" translatable="false">Número de teléfono modificado</string>
+    <string name="profile_email_changed_toast" translatable="false">Correo electrónico modificado</string>
+    <string name="profile_otp_resend" translatable="false">Reenviar código</string>
+    <string name="profile_couldnt_verify_identity" translatable="false">No hemos podido verificar tu identidad</string>
+    <string name="profile_error_phone_code_not_valid" translatable="false">Código de verificación inválido</string>
+    <string name="profile_new_email" translatable="false">Nuevo correo electrónico</string>
+    <string name="profile_new_email_confirmation" translatable="false">Confirmar nuevo correo electrónico</string>
+    <string name="profile_change_email_button" translatable="false">Cambiar correo electrónico</string>
+    <string name="profile_we_will_send_you_a_code_to_your_email" translatable="false">Te enviaremos un código de verificación para confirmar tu nuevo correo</string>
+    <string name="profile_email_check_format_error" translatable="false">Revisa formato. Debe contener "@" y "."</string>
+    <string name="profile_emails_does_not_match_error" translatable="false">Los correos electrónicos no coinciden</string>
+    <string name="profile_sure_to_deactivate_biometrics_gt" translatable="false">¿Estás seguro que quieres desactivar tus biométricos?</string>
+    <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
+    <string name="profile_you_can_try_later_biometrics_gt" translatable="false">Puedes volver a configurarlo cuando quieras</string>
+    <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
+
 
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
@@ -382,6 +436,8 @@
     <string name="credit_amount_terms_and_condition_title" translatable="false">Términos y\nCondiciones</string>
     <string name="credit_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
     <string name="credit_amount_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
+    <string name="credit_amount_disbursement_exit_confirm_title" translatable="false">¿Seguro que querés abandonar el proceso?</string>
+    <string name="credit_amount_disbursement_exit_confirm_description" translatable="false">Deberás volver a ingresar todos tus datos para desembolsar tu disponible.</string>
 
     <!-- Credit Bank-->
     <string name="credit_bank_title" translatable="false">¿Dónde querés recibir tu dinero?</string>
@@ -865,6 +921,9 @@
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
     <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
 
+    <!-- IBAN Account -->
+    <string name="payment_account_iban_title" translatable="false">¿En qué cuenta IBAN querés recibir tu dinero?</string>
+
     <!-- Disbursement Bottom Sheet -->
     <string name="disbursement_bottom_sheet_title" translatable="false">Monto a desembolsar</string>
     <string name="disbursement_bottom_sheet_account" translatable="false">En tu cuenta</string>
@@ -892,5 +951,17 @@
     <string name="credit_movements_download_button" translatable="false">Descargar estado de cuenta</string>
     <string name="credit_movements_empty_state_title" translatable="false">Sin registros de movimientos</string>
     <string name="credit_movements_empty_state_description" translatable="false">Aún no has realizado una transacción.</string>
+
+    <!-- Download Account Statement Worker -->
+    <string name="download_credit_movements_worker_channel_name" translatable="false">Descargar estado de cuenta</string>
+    <string name="download_credit_movements_worker_channel_description" translatable="false">Estado de descarga de estado de cuenta</string>
+    <string name="download_credit_movements_worker_push_title_download" translatable="false">Descargando</string>
+    <string name="download_credit_movements_worker_push_description_download" translatable="false">El estado de cuenta se esta descargando...</string>
+    <string name="download_credit_movements_worker_push_title_error" translatable="false">Error</string>
+    <string name="download_credit_movements_worker_push_description_error" translatable="false">Hubo un error en la descarga del estado de cuenta</string>
+    <string name="download_credit_movements_worker_push_toast_description_error" translatable="false">El estado de cuenta no se pudo abrir</string>
+    <string name="download_credit_movements_worker_push_title_success" translatable="false">Abrir</string>
+    <string name="download_credit_movements_worker_push_description_success" translatable="false">Abrir estado de cuenta</string>
+    <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
 </resources>

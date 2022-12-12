@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +33,8 @@ fun VisaIssuanceScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaIssuanceViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
@@ -86,7 +89,7 @@ fun VisaIssuanceScreen(
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
                 onClick = {
-                    viewModel.onUIEvent(OnIssuanceClick)
+                    viewModel.onUIEvent(OnIssuanceClick(context = context))
                 },
                 text = stringResource(id = R.string.activate),
                 buttonType = PrimaryPrimary

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,9 +19,10 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsLatest
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditCtaButtons
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditDetail
@@ -54,12 +54,18 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
                 ScheduleAutomaticPayment(viewModel, sharedViewModel)
                 Spacer(modifier = Modifier.height(24.dp))
             }
-            Divider(color = MultimoneyTheme.colors.dividerWhite30)
-            Spacer(modifier = Modifier.height(24.dp))
             CreditVisa(
                 uiState = viewModel.uiState,
                 balance = viewModel.balanceCredit,
-                onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToVisaActivateScreen) }
+                onNavigateToVisaActivateScreen = { viewModel.onUIEvent(OnNavigateToHomeMultimoneyVisa) },
+                onCreateMultimoneyVisa = {
+                    viewModel.onUIEvent(
+                        OnCreateMultimoneyVisa(onLoadingValueChange = {
+                            sharedViewModel.onUIEvent(HomeViewModel.UIEvent.OnLoadingValueChanged(it))
+                        })
+                    )
+                },
+                isExpanded = true
             )
             Spacer(modifier = Modifier.height(24.dp))
             CreditDetail(

@@ -9,10 +9,6 @@ plugins {
 
 apply from: '../dependencies.gradle'
 
-// gradle properties
-def properties = new Properties()
-properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
-
 android {
     compileSdk compile_sdk_version
 
@@ -28,24 +24,24 @@ android {
         production {
             minifyEnabled false
             shrinkResources false
-            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : properties.apiUrl
-            buildConfigField "String", "WEBSOCKET_URL", System.env.PRODUCTION_WEBSOCKET_URL ? "\"${System.env.PRODUCTION_WEBSOCKET_URL}\"" : properties.websocketUrl
-            buildConfigField "String", "DATA_STORE_KEY", System.env.PRODUCTION_DATA_STORE_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_KEY}\"" : properties.dataStoreKey
-            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
+            buildConfigField "String", "API_URL", System.env.PRODUCTION_API_URL ? "\"${System.env.PRODUCTION_API_URL}\"" : apiUrl
+            buildConfigField "String", "WEBSOCKET_URL", System.env.PRODUCTION_WEBSOCKET_URL ? "\"${System.env.PRODUCTION_WEBSOCKET_URL}\"" : websocketUrl
+            buildConfigField "String", "DATA_STORE_KEY", System.env.PRODUCTION_DATA_STORE_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_KEY}\"" : dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.PRODUCTION_DATA_STORE_BIOMETRIC_KEY}\"" : dataStoreBiometricKey
         }
         staging {
             testCoverageEnabled true
-            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : properties.apiUrlStaging
-            buildConfigField "String", "WEBSOCKET_URL", System.env.STAGING_WEBSOCKET_URL ? "\"${System.env.STAGING_WEBSOCKET_URL}\"" : properties.websocketUrlStaging
-            buildConfigField "String", "DATA_STORE_KEY", System.env.STAGING_DATA_STORE_KEY ? "\"${System.env.STAGING_DATA_STORE_KEY}\"" : properties.dataStoreKey
-            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.STAGING_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.STAGING_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
+            buildConfigField "String", "API_URL", System.env.STAGING_API_URL ? "\"${System.env.STAGING_API_URL}\"" : apiUrlStaging
+            buildConfigField "String", "WEBSOCKET_URL", System.env.STAGING_WEBSOCKET_URL ? "\"${System.env.STAGING_WEBSOCKET_URL}\"" : websocketUrlStaging
+            buildConfigField "String", "DATA_STORE_KEY", System.env.STAGING_DATA_STORE_KEY ? "\"${System.env.STAGING_DATA_STORE_KEY}\"" : dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.STAGING_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.STAGING_DATA_STORE_BIOMETRIC_KEY}\"" : dataStoreBiometricKey
         }
         debug {
             testCoverageEnabled true
-            buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : properties.apiUrl
-            buildConfigField "String", "WEBSOCKET_URL", System.env.DEVELOPMENT_WEBSOCKET_URL ? "\"${System.env.DEVELOPMENT_WEBSOCKET_URL}\"" : properties.websocketUrl
-            buildConfigField "String", "DATA_STORE_KEY", System.env.DEVELOPMENT_DATA_STORE_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_KEY}\"" : properties.dataStoreKey
-            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY}\"" : properties.dataStoreBiometricKey
+            buildConfigField "String", "API_URL", System.env.DEVELOPMENT_API_URL ? "\"${System.env.DEVELOPMENT_API_URL}\"" : apiUrl
+            buildConfigField "String", "WEBSOCKET_URL", System.env.DEVELOPMENT_WEBSOCKET_URL ? "\"${System.env.DEVELOPMENT_WEBSOCKET_URL}\"" : websocketUrl
+            buildConfigField "String", "DATA_STORE_KEY", System.env.DEVELOPMENT_DATA_STORE_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_KEY}\"" : dataStoreKey
+            buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY ? "\"${System.env.DEVELOPMENT_DATA_STORE_BIOMETRIC_KEY}\"" : dataStoreBiometricKey
         }
     }
     compileOptions {
@@ -74,6 +70,7 @@ dependencies {
 
     // Room
     implementation room.runtime
+
     kapt room.compiler
     implementation room.ktx
     testImplementation room.testing
@@ -112,5 +109,7 @@ dependencies {
 
     // Paging
     implementation paging3.paging3_runtime
+    implementation paging3.common
+
 
 }

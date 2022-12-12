@@ -33,7 +33,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 @Composable
 fun CreditMovementsLatest(viewModel: ProductViewModel) {
     val movesResult = mutableListOf<CreditMovement>()
-    /*viewModel.creditMovements.let { movementResultList ->
+    viewModel.creditMovements.let { movementResultList ->
         movementResultList.forEach { creditMovementsResult ->
             creditMovementsResult.result?.let {
                 movesResult.addAll(it)
@@ -41,7 +41,7 @@ fun CreditMovementsLatest(viewModel: ProductViewModel) {
         }
     }
 
-    movesResult.take(MAX_HOME_CREDIT_MOVEMENTS_RECORDS)*/
+    movesResult.take(MAX_HOME_CREDIT_MOVEMENTS_RECORDS)
 
     Column(
         Modifier.fillMaxWidth().padding(16.dp)

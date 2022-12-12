@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +24,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.multimoney.domain.model.credit.CreditMovement
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
+import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -31,6 +35,8 @@ import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnGetMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnIsLoadingChange
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnNavigateBackToHome
+import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.DownloadCreditMovementsWorker
+import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementDisplayer
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -45,11 +51,29 @@ fun CreditMovementsScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: CreditMovementsViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
         viewModel.isOnRestart = false
         viewModel.onUIEvent(OnGetMovement)
     }
+
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is CreditMovementsViewModel.BaseEvent.OnStartDownloadCreditMovementsWorker -> {
+                    WorkManager.getInstance(context)
+                        .enqueueUniqueWork(
+                            DownloadCreditMovementsWorker.DOWNLOAD_CREDIT_MOVEMENTS_WORKER_NAME,
+                            ExistingWorkPolicy.REPLACE,
+                            event.oneTimeRequest
+                        )
+                }
+            }
+        }
+    }
+
     val smartMoves = viewModel.uiState.movementsPage.collectAsLazyPagingItems()
 
     Column(

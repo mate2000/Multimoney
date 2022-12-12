@@ -10,9 +10,12 @@ import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.signdocument.SignDocumentScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.validateidentity.ValidateIdentityScreen
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
@@ -40,18 +43,34 @@ fun SignDocumentProcessScreen(
         }
     }
 
-    when (viewModel.uiState.signDocumentProcessStep) {
-        GENERATE_DOCUMENT_STEP.value -> {
-            DocumentGenerationScreen(viewModel = viewModel)
+    if (viewModel.uiState.isAlertResultVisible){
+        viewModel.uiState.apply {
+            AlertResult(
+                iconResource = alertResultIconResource,
+                titleResource = alertResultTitleResource,
+                descriptionResource = alertResultDescriptionResource,
+                buttonTextResource = alertResultButtonResource,
+                isTopNavBarVisible = true,
+                isRightButtonVisible = true,
+                isLeftButtonVisible = false,
+                onRightButtonClick = { viewModel.onUIEvent(OnAlertCloseClick) },
+                onButtonClick = { viewModel.onUIEvent(OnAlertButtonClick) }
+            )
         }
-        SIGN_DOCUMENTS_STEP.value -> {
-            SignDocumentScreen(viewModel = viewModel)
-            LaunchedEffect(key1 = true) {
-                viewModel.onUIEvent(OnShowDialogInformation)
+    } else {
+        when (viewModel.uiState.signDocumentProcessStep) {
+            GENERATE_DOCUMENT_STEP.value -> {
+                DocumentGenerationScreen(viewModel = viewModel)
             }
-        }
-        VALIDATE_IDENTITY.value -> {
-            ValidateIdentityScreen(viewModel = viewModel)
+            SIGN_DOCUMENTS_STEP.value -> {
+                SignDocumentScreen(viewModel = viewModel)
+                LaunchedEffect(key1 = true) {
+                    viewModel.onUIEvent(OnShowDialogInformation)
+                }
+            }
+            VALIDATE_IDENTITY.value -> {
+                ValidateIdentityScreen(viewModel = viewModel)
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,22 +14,32 @@ import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.navigation.BottomNavItem
 import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavGraph
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnHideAutomaticPaymentEditBottomSheet
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnShowAutomaticPaymentEditBottomSheet
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.myproducts.MyProductsBottomSheetScreen
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.AutomaticPaymentEditBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.quickaction.QuickActionBottomSheetScreen
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer.OnCountDownTimerFinish
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.launch
@@ -38,16 +47,31 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
+    isRestart: Boolean = true,
     navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    viewModel.apply {
+        isOnRestart = isRestart
+        DisposableEffect(isOnRestart) {
+            if (isOnRestart) {
+                onUIEvent(OnSetUserData)
+            }
+            onDispose {
+                isOnRestart = false
+            }
+        }
+    }
+
     val innerNavController = rememberNavController()
     val coroutineScope = rememberCoroutineScope()
-    val quickActionsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val automaticPaymentEditBottomSheetState = rememberModalBottomSheetState(Hidden)
+    val quickActionsModalBottomSheetState =
+        rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
     val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
-    val activity = (LocalContext.current as? Activity)
+    val context = LocalContext.current
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
@@ -68,18 +92,41 @@ fun HomeScreen(
                         myProductsModalBottomSheetState.show()
                     }
                 }
+                is HomeViewModel.BaseEvent.OnStartCountDownTimer -> viewModel.countDownTimer.startTimer(
+                    event.millisInFuture
+                )
+                is OnShowAutomaticPaymentEditBottomSheet -> {
+                    coroutineScope.launch {
+                        automaticPaymentEditBottomSheetState.show()
+                    }
+                }
+                is OnHideAutomaticPaymentEditBottomSheet -> {
+                    coroutineScope.launch {
+                        automaticPaymentEditBottomSheetState.hide()
+                    }
+                }
             }
         }
     }
 
     Scaffold(bottomBar = { MMBottomNavigation(navController = innerNavController, viewModel) }) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
-            HomeInsideNavGraph(navController = navController, innerNavController = innerNavController)
+            HomeInsideNavGraph(
+                sharedViewModel = viewModel,
+                navController = navController,
+                innerNavController = innerNavController
+            )
         }
     }
 
     QuickActionBottomSheetScreen(viewModel, coroutineScope, quickActionsModalBottomSheetState)
     MyProductsBottomSheetScreen(viewModel, coroutineScope, myProductsModalBottomSheetState)
+    AutomaticPaymentEditBottomSheet(
+        coroutineScope = coroutineScope,
+        modalBottomSheetState = automaticPaymentEditBottomSheetState,
+        onEditClick = { viewModel.onUIEvent(OnEditAutomaticPayment) },
+        onDeleteClick = { viewModel.onUIEvent(OnDeleteAutomaticPayment) }
+    )
 
     BackHandler {
         when {
@@ -94,9 +141,19 @@ fun HomeScreen(
                 }
             }
             else -> {
-                activity?.finish()
+                context.findActivity()?.finish()
             }
         }
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }
 

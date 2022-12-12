@@ -14,6 +14,7 @@ import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -84,6 +85,7 @@ class CreditOnfidoViewModel @Inject constructor(
     var idPrint: Long = 0
     var evicertiaUrl: String = ""
     var evicertiaStatus: String = ""
+    var applicantId: String? = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -110,7 +112,6 @@ class CreditOnfidoViewModel @Inject constructor(
         names: String,
         lastNames: String,
         identification: String,
-        applicationId: String,
         user: String,
         injectNewToken: (String?) -> Unit
     ) {
@@ -119,11 +120,12 @@ class CreditOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                applicationId,
+                getApplicationId(),
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
                 result.onSuccess {
+                    applicantId = it?.applicantId
                     injectNewToken(it?.sdkToken ?: "")
                 }
                 result.onFailure {
@@ -137,7 +139,6 @@ class CreditOnfidoViewModel @Inject constructor(
         names: String,
         lastNames: String,
         identification: String,
-        applicationId: String,
         user: String
     ) {
         viewModelScope.launch {
@@ -145,12 +146,20 @@ class CreditOnfidoViewModel @Inject constructor(
                 names,
                 lastNames,
                 identification,
-                applicationId,
+                getApplicationId(),
                 Brand.CostaRica.id,
                 user
             ).collectLatest { result ->
                 onFidoTokenEvent.emit(result)
             }
+        }
+    }
+
+    private fun getApplicationId(): String {
+        return if (BuildConfig.DEBUG) {
+            BuildConfig.ONFIDO_APPLICATION_ID
+        } else {
+            BuildConfig.APPLICATION_ID
         }
     }
 
@@ -200,7 +209,7 @@ class CreditOnfidoViewModel @Inject constructor(
         executeUseCase {
             mutationOnfidoCheckProcessUseCase.invoke(
                 identification,
-                PACKAGE_NAME,
+                applicantId ?: "",
                 AppFlow.CREDIT_ORIGINATION.flow,
                 pkUser,
                 idUserRequest,
@@ -214,12 +223,12 @@ class CreditOnfidoViewModel @Inject constructor(
                     // nothing to do here
                 }
             }
-            navigateToCorrectScreen()
         }
+        navigateToCorrectScreen()
     }
 
     private fun navigateToCorrectScreen() {
-        val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
+        val signDocumentStep = if (idBrand == Brand.ElSalvador.id || idPrint == ID_PRINT_EMPTY) {
             VALIDATE_IDENTITY.value
         } else {
             if (evicertiaStatus.lowercase() == CreditOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
@@ -268,7 +277,6 @@ class CreditOnfidoViewModel @Inject constructor(
                 event.firstName,
                 event.lastName,
                 event.identification,
-                event.applicationId,
                 event.user
             )
 
@@ -276,7 +284,7 @@ class CreditOnfidoViewModel @Inject constructor(
                 event.firstName,
                 event.lastName,
                 event.identification,
-                event.applicationId,
+
                 event.user,
                 event.injectNewToken
             )
@@ -304,7 +312,6 @@ class CreditOnfidoViewModel @Inject constructor(
             val firstName: String,
             val lastName: String,
             val identification: String,
-            val applicationId: String,
             val user: String
         ) : UIEvent()
 
@@ -318,7 +325,6 @@ class CreditOnfidoViewModel @Inject constructor(
             val lastName: String,
             val identification: String,
             val user: String,
-            val applicationId: String,
             val injectNewToken: (String?) -> Unit
         ) : UIEvent()
 
@@ -332,6 +338,6 @@ class CreditOnfidoViewModel @Inject constructor(
     }
 
     companion object {
-        const val PACKAGE_NAME = "com.multimoney.multimoney.sv"
+        const val ID_PRINT_EMPTY = 0L
     }
 }

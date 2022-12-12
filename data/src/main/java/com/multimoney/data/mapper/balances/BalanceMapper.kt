@@ -28,28 +28,55 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             ibanAccount = it.cuenta_Iban,
             monthlyQuota = it.cuota_Mensual.toString(),
             balanceAmountCancel = it.saldo_Monto_Cancelar.toString(),
-            daysExpired = it.dias_Vencidos
+            daysExpired = it.dias_Vencidos,
+            canExpandState = it.estado_Ampli,
+            isProductActive = it.producto_Activo,
+            applyAutomaticDebit = it.aplica_Debito_Aut,
+            automaticDebitEnabled = it.debito_Aut_Activo,
+            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo,
+            applyCommerce = it.aplica_Ampli_Comercio,
+            applyCreateCard = it.aplica_Crear_Tarjeta
         )
     },
     creditLimit = limite_credito,
     creditLimitLabel = limite_credito_label,
     creditNumber = pagare,
-    term = plazo,
-    canExpandCredit = puede_Ampliar
+    term = plazo
 )
 
 private fun BalanceQuery.Account.mapToDomainModel() =
     Account(
         totalBalance = totalBalance.toString().toDouble(),
         currencyCode = currencyCode,
-        gainedInterest = gainedInterest.toString().toDouble()
+        gainedInterest = gainedInterest.toString().toDouble(),
+        accountNumber = accountNumber,
+        ibanAccountNumber = ibanAccountNumber,
+        totalInterest = totalInterest.toString(),
+        tokenNumber = tokenNumber
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(globalBalance = globalBalance.toString().toDouble())
 
-private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
-    BalanceCardInformation(cardInformation = CardInformation(cardInfo.cardNumber))
+private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCardInformation(
+    cardInformation = CardInformation(
+        cardToken = cardInfo.cardToken,
+        cardNumber = cardInfo.cardNumber,
+        expDate = cardInfo.expDate,
+        holderName = cardInfo.holderName,
+        status = cardInfo.status,
+        blockType = cardInfo.blockType,
+        cValidation = cardInfo.cvalidation,
+        type = cardInfo.type
+    ),
+    floatingBalance = sALDO_FLOTANTE,
+    allowUnLock = pERMITE_DESBLOQUEO,
+    disbursementCommission = cOMISION_DESEMBOLSO,
+    interestRate = tASA_INTERES,
+    term = pLAZO,
+    fullName = nOMBRE_COMPLETO,
+    remission = rEMISION
+)
 
 fun BalanceQuery.Data.mapToDomainModel() =
     Balance(

@@ -21,5 +21,12 @@ data class Summary(
     val expiredDays: Int?,
     val ibanAccount: String?,
     val balanceAmountCancel: String,
-    val daysExpired: Int
+    val daysExpired: Int,
+    val canExpandState: Boolean?,
+    val isProductActive: Boolean?,
+    val applyAutomaticDebit: Boolean?,
+    val automaticDebitEnabled: Boolean?,
+    val visaAutomaticDebitEnabled: Boolean?,
+    val applyCommerce: Boolean?,
+    val applyCreateCard: Boolean?
 ) : Parcelable

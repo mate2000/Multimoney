@@ -17,7 +17,7 @@ query Balance(
         }
     ) {
         pagare
-        puede_Ampliar
+        moneda
         resumen {
             id_Moneda
             moneda
@@ -36,9 +36,17 @@ query Balance(
             cuenta_Iban
             saldo_Monto_Cancelar
             dias_Vencidos
+            estado_Ampli
+            producto_Activo
+            aplica_Debito_Aut
+            debito_Aut_Activo
+            vDDebito_Aut_Activo
+            aplica_Crear_Tarjeta
+            aplica_Ampli_Comercio
         }
         limite_credito
         limite_credito_label
+        moneda_Default
         plazo
     }
     balanceAccountSmart(
@@ -50,9 +58,27 @@ query Balance(
         }
     ) {
         accounts {
-            currencyCode
+            code
+            message
             totalBalance
+            averageBalance
+            accountNumber
+            tokenNumber
+            productType
+            currencyCode
+            email
+            phoneNumber
+            accountStatus
+            customerId
             gainedInterest
+            activeBroker
+            ibanAccountNumber
+            idCurrencyAccount
+            fullNameCustomer
+            visaDirectId
+            visaDirectUser
+            totalInterest
+            tokenNumber
         }
         request {
             statusFirm
@@ -82,8 +108,22 @@ query Balance(
         }
     ) {
         cardInfo {
+            cardToken
             cardNumber
+            expDate
+            holderName
+            status
+            blockType
+            cvalidation
+            type
         }
+        sALDO_FLOTANTE
+        pERMITE_DESBLOQUEO
         eSTADO
+        cOMISION_DESEMBOLSO
+        tASA_INTERES
+        pLAZO
+        nOMBRE_COMPLETO
+        rEMISION
     }
 }

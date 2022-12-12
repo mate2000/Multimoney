@@ -9,10 +9,6 @@ plugins {
 
 apply from: '../dependencies.gradle'
 
-// gradle properties
-def properties = new Properties()
-properties.load(new FileInputStream(rootProject.file("gradle-custom.properties")))
-
 android {
     compileSdk compile_sdk_version
 
@@ -66,4 +62,7 @@ dependencies {
     androidTestImplementation common_test.espresso
     testImplementation common_test.robolectric
     testImplementation common_test.mockito_core
+
+    // Paging
+    implementation paging3.paging3_runtime
 }

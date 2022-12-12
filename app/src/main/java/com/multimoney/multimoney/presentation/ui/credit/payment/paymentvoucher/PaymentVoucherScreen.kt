@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -54,6 +50,9 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.VoucherAccountInfo
+import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
+import com.multimoney.multimoney.presentation.uielement.VoucherNumberInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
@@ -75,16 +74,17 @@ fun PaymentVoucherScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
+            .background(MultimoneyTheme.colors.background),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
-            viewModel.onUIEvent(OnCloseClick)
-        })
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
+            TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
+                viewModel.onUIEvent(OnCloseClick)
+            })
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -199,10 +199,9 @@ fun PaymentVoucherScreen(
                         color = MultimoneyTheme.colors.labelText
                     )
 
-                    InfoItemAccount(
+                    VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = drawable.ic_bank,
-                        tintIcon = MultimoneyTheme.colors.iconTintVoucher,
                         title = stringResource(string.payment_voucher_origin_account_label),
                         subTitle = getMaskedAccount(
                             viewModel.clientBankAccount?.accountNumber ?: "",
@@ -210,18 +209,20 @@ fun PaymentVoucherScreen(
                         )
                     )
 
-                    InfoItem(
+                    VoucherNumberInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
-                        tintIcon = MultimoneyTheme.colors.iconTintVoucher,
                         title = stringResource(string.payment_voucher_reference_number_label),
                         subTitle = viewModel.referenceNumber ?: ""
                     )
 
                     if (viewModel.shouldDisplayExchangeRate == true) {
                         Spacer(modifier = Modifier.height(32.dp))
-                        CurrencyExchangeRow(
-                            viewModel
+                        VoucherCurrencyExchangeInfo(
+                            leftTitleResource = string.payment_amount_bottom_sheet_exchange_type,
+                            rightTitleResource = string.payment_amount_bottom_sheet_amount_to_debit,
+                            exchangeRateText = viewModel.exchangeRateLabel.toString(),
+                            convertedAmountText = viewModel.uiState.exchangeConvertedAmount.toString()
                         )
                     }
                     Row(
@@ -252,134 +253,21 @@ fun PaymentVoucherScreen(
                     }
                 }
             }
-            if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
-                CustomButton(
-                    onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
-                    text = stringResource(string.payment_voucher_schedule_payment),
-                    modifier = Modifier
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = 32.dp,
-                            top = 16.dp
-                        )
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    buttonType = PrimaryPrimary
-                )
-            }
         }
-    }
-}
-
-@Composable
-fun CurrencyExchangeRow(viewModel: PaymentVoucherViewModel) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(start = 27.dp)
-    ) {
-        Icon(
-
-            painter = painterResource(id = drawable.ic_money_gray),
-            tint = MultimoneyTheme.colors.iconTintVoucher,
-            contentDescription = "",
-            modifier = Modifier.height(24.dp).width(24.dp)
-        )
-        Column(modifier = Modifier.padding(start = 13.5.dp)) {
-            Text(
-                text = stringResource(id = string.payment_amount_bottom_sheet_exchange_type),
-                style = Typography.body2.copy(fontWeight = FontWeight.W600),
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-            Text(
-                text = viewModel.exchangeRateLabel.toString(),
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-        }
-        Spacer(modifier = Modifier.width(20.dp))
-        Divider(
-            modifier = Modifier
-                .height(44.dp)
-                .width(1.dp),
-            color = MultimoneyTheme.colors.bottomNavigationDividerColor
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.padding(start = 13.5.dp)) {
-            Text(
-                text = stringResource(id = string.payment_amount_bottom_sheet_amount_to_debit),
-                style = Typography.body2.copy(fontWeight = FontWeight.W600),
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-            Text(
-                text = viewModel.uiState.exchangeConvertedAmount.toString(),
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-        }
-    }
-}
-
-@Composable
-fun InfoItem(
-    modifier: Modifier = Modifier,
-    icon: Int? = null,
-    tintIcon: Color = Color.Transparent,
-    title: String,
-    subTitle: String
-) {
-    Row(modifier = modifier) {
-        icon?.let {
-            Icon(painter = painterResource(id = it), contentDescription = "", tint = tintIcon)
-        }
-        Column(modifier = Modifier.padding(start = 13.5.dp)) {
-            Text(
-                text = title,
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            Text(
-                text = subTitle,
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.labelText
-            )
-        }
-    }
-}
-
-@Composable
-fun InfoItemAccount(
-    modifier: Modifier = Modifier,
-    icon: Int? = null,
-    tintIcon: Color = Color.Transparent,
-    title: String,
-    subTitle: String
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        icon?.let {
-            Icon(
-                painter = painterResource(id = it),
-                contentDescription = "",
-                tint = tintIcon,
-                modifier = Modifier.height(24.dp).width(24.dp).alpha(0.4f)
-            )
-        }
-        Column(modifier = Modifier.padding(start = 13.5.dp)) {
-            Text(
-                text = title,
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            Text(
-                text = subTitle,
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.labelText
+        if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
+            CustomButton(
+                onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
+                text = stringResource(string.payment_voucher_schedule_payment),
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 32.dp,
+                        top = 16.dp
+                    )
+                    .fillMaxWidth()
+                    .height(48.dp),
+                buttonType = PrimaryPrimary
             )
         }
     }

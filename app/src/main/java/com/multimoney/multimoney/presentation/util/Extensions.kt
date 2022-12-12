@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.ui.graphics.Color
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -27,7 +28,13 @@ fun Context.openWhatsAppDeepLink(link: String) {
 
 fun Context.openMapsLink(latitude: String, longitude: String) {
     val mapsIntentUri =
-        Uri.parse(String.format(resources.getString(R.string.payment_location_intent_uri_format), latitude, longitude))
+        Uri.parse(
+            String.format(
+                resources.getString(R.string.payment_location_intent_uri_format),
+                latitude,
+                longitude
+            )
+        )
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
     mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)
@@ -87,8 +94,8 @@ fun Int.getCurrencySymbol(): Int {
 
 fun String.getCurrencySymbolValue(): Int {
     return when (this) {
-        Colon.value -> R.string.dollar_symbol_value
-        Dollar.value -> R.string.colon_symbol_value
+        Colon.value -> R.string.colon_symbol_value
+        Dollar.value -> R.string.dollar_symbol_value
         Quetzal.value -> R.string.quetzal_symbol_value
         else -> R.string.empty
     }
@@ -96,10 +103,19 @@ fun String.getCurrencySymbolValue(): Int {
 
 fun String.getCurrencySymbol(): Int {
     return when (this) {
-        Colon.value -> R.string.dollar_symbol
-        Dollar.value -> R.string.colon_symbol
+        Colon.value -> R.string.colon_symbol
+        Dollar.value -> R.string.dollar_symbol
         Quetzal.value -> R.string.quetzal_symbol
         else -> R.string.empty
+    }
+}
+
+fun String.getCurrency(): CurrencyType {
+    return when (this) {
+        Colon.currency -> Colon
+        Dollar.currency -> Dollar
+        Quetzal.currency -> Quetzal
+        else -> All
     }
 }
 
@@ -117,3 +133,21 @@ fun String.getMaskedText(
     firstDigits: Int,
     lastDigits: Int
 ) = take(firstDigits).plus(maskSymbol).plus(takeLast(lastDigits))
+
+// Formatted strings
+fun String.hasNumbersAndSpecialCharacters() =
+    !this.contains(NUMBER_REGEX.toRegex()) && !this.contains(SPECIAL_CHARACTER_REGEX.toRegex())
+
+fun Color.toHexCode(): String {
+    val red = this.red * 255
+    val green = this.green * 255
+    val blue = this.blue * 255
+    return String.format(HEX_FORMAT, red.toInt(), green.toInt(), blue.toInt())
+}
+
+val Int.boolean
+    get() = this == 1
+
+private const val HEX_FORMAT = "#%02x%02x%02x"
+private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
+private const val NUMBER_REGEX = "[0-9]"

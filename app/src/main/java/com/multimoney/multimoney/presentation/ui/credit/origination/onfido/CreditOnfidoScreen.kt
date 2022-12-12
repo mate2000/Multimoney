@@ -32,7 +32,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.Companion.PACKAGE_NAME
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -43,7 +42,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnOpenOnfidoSdk
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.OnSetCloseDialogTexts
 import com.multimoney.multimoney.presentation.ui.credit.origination.onfido.CreditOnfidoViewModel.UIEvent.RefreshOnFidoToken
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -61,11 +59,6 @@ fun CreditOnfidoScreen(
     viewModel: CreditOnfidoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-
-    val whatsAppLink = stringResource(
-        id = string.whatsapp_deep_link,
-        SignUpViewModel.PHONE_HARDCODED
-    )
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
@@ -98,6 +91,7 @@ fun CreditOnfidoScreen(
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
             event.onSuccess {
+                viewModel.applicantId = it?.applicantId
                 viewModel.apply {
                     onUIEvent(
                         OnOpenOnfidoSdk(onOpenOnfidoSdk = {
@@ -113,7 +107,6 @@ fun CreditOnfidoScreen(
                                                 firstName = viewModel.firstName,
                                                 lastName = viewModel.lastName,
                                                 identification = viewModel.identification,
-                                                applicationId = PACKAGE_NAME,
                                                 user = viewModel.email,
                                                 injectNewToken = refreshToken
                                             )
@@ -148,7 +141,6 @@ fun CreditOnfidoScreen(
                 firstName = viewModel.firstName,
                 lastName = viewModel.lastName,
                 identification = viewModel.identification,
-                PACKAGE_NAME,
                 user = viewModel.email
             )
         )

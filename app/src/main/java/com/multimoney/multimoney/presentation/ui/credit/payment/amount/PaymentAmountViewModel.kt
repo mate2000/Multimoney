@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.credit.MutationActivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.MutationProcessPaymentListUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
 import com.multimoney.domain.model.balance.Summary
@@ -29,7 +30,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.credit.origination.creditamount.CreditAmountViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnAutomaticProgrammedPaymentCheckedChanged
@@ -57,7 +58,8 @@ import kotlin.math.roundToInt
 class PaymentAmountViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val mutationProcessPaymentUseCase: MutationProcessPaymentListUseCase,
-    private val queryGetExchangeRateCreditUseCase: QueryGetExchangeRateCreditUseCase
+    private val queryGetExchangeRateCreditUseCase: QueryGetExchangeRateCreditUseCase,
+    private val mutationActivateClientAutomaticDebitUseCase: MutationActivateClientAutomaticDebitUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -74,7 +76,7 @@ class PaymentAmountViewModel @Inject constructor(
     private var identification: String? = null
     private var userName: String? = null
     private var paymentDate: String? = null
-    private var referenceNumber : String? = null
+    private var referenceNumber: String? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -199,10 +201,8 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
-
-    private fun onNavigateToVoucher(
-    ) = navigateTo(
-        route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(uiState.clientBankAccount)}/$paymentDate/${ if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber"
+    private fun onNavigateToVoucher() = navigateTo(
+        route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(uiState.clientBankAccount)}/$paymentDate/${if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber"
     )
 
     private fun formattedExchangeRateLabel() = uiState.exchangeRateLabel.formattedTwoDecimalsNumber().toString()
@@ -283,9 +283,13 @@ class PaymentAmountViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     referenceNumber = it?.referenceNumberSinpe
-                    onUIEvent(OnHidePaymentBottomSheet)
-                    onLoadingValueChange(false)
-                    onUIEvent(OnNavigateToVoucher)
+                    if (uiState.isAutomaticProgrammedPaymentChecked) {
+                        onCallMutationActivateClientAutomaticDebitUseCase()
+                    } else {
+                        onUIEvent(OnHidePaymentBottomSheet)
+                        onLoadingValueChange(false)
+                        onUIEvent(OnNavigateToVoucher)
+                    }
                 }.onMessage {
                     onUIEvent(OnHidePaymentBottomSheet)
                     onLoadingValueChange(false)
@@ -306,6 +310,35 @@ class PaymentAmountViewModel @Inject constructor(
                 }
             }
         }
+
+    private fun onCallMutationActivateClientAutomaticDebitUseCase() = executeUseCase {
+        mutationActivateClientAutomaticDebitUseCase.invoke(
+            user = user.orEmpty(),
+            idBrand = idBrand ?: 0,
+            idClient = idClient?.toLong() ?: 0,
+            idLoanClient = idLoanClient?.toLong() ?: 0,
+            origin = uiState.clientBankAccount?.origin ?: "",
+            idAccount = uiState.clientBankAccount?.id?.toLong() ?: 0,
+            idCurrency = uiState.clientBankAccount?.idCurrency ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                onActivateClientAutomaticDebitResult(it?.isUpdated ?: false)
+            }.onMessage {
+                onActivateClientAutomaticDebitResult(false)
+            }.onFailure {
+                onActivateClientAutomaticDebitResult(false)
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onActivateClientAutomaticDebitResult(isAutomaticProgrammed: Boolean) {
+        onAutomaticProgrammedPaymentCheckedChanged(isAutomaticProgrammed)
+        onUIEvent(OnHidePaymentBottomSheet)
+        onLoadingValueChange(false)
+        onUIEvent(OnNavigateToVoucher)
+    }
 
     private fun getDestinyAccountNumber(idCurrency: Int?): String =
         summaryList?.find { it.idCurrency == idCurrency }?.ibanAccount ?: ""
@@ -423,7 +456,6 @@ class PaymentAmountViewModel @Inject constructor(
         object OnShowPaymentBottomSheet : UIEvent()
         object OnHidePaymentBottomSheet : UIEvent()
         object OnNavigateToVoucher : UIEvent()
-
     }
 
     companion object {

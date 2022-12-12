@@ -4,13 +4,13 @@ data class Balance(
     val balanceCredit: List<BalanceCredit?>?,
     val balanceAccountSmart: List<Account?>?,
     val balanceCryptoAccount: BalanceCryptoAccount?,
-    val balanceCardInformation: BalanceCardInformation?
+    var balanceCardInformation: BalanceCardInformation?
 ) {
     fun getFirstCredit() = balanceCredit?.firstOrNull()
 
     fun getFirstSummary() = getFirstCredit()?.summary?.firstOrNull()
 
-    fun getExpiredDays() = getFirstSummary()?.expiredDays ?: 0
+    fun getExpiredDays() = getFirstSummary()?.expiredDays ?: 1
 
     fun isBalanceCreditSummaryMultiple() = (getFirstCredit()?.summary?.size ?: 0) > 0
 }

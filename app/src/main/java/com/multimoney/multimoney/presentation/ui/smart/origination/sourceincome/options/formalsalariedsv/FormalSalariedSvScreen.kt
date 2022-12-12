@@ -20,9 +20,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.SmartSteps.Four
 import com.multimoney.data.util.catalog.SmartSteps.Search
-import com.multimoney.data.util.catalog.SmartSteps.Three
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -79,8 +77,8 @@ fun FormalSalariedSvScreen(
                     )
                 },
                 overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
-                nextStep = Four.id,
-                previousStep = Three.id
+                nextStep = sourceIncomeSharedViewModel.getNextStep(sharedViewModel.idBrandAsInt),
+                previousStep = sourceIncomeSharedViewModel.getPreviousStep(sharedViewModel.idBrandAsInt)
             )
         )
 
@@ -174,7 +172,7 @@ fun FormalSalariedSvContent(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             leadingIcon = R.drawable.ic_money_gray,
-            placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
+            placeHolder = stringResource(R.string.smart_salaried_salary_placeholder, currencySymbol),
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_salaried_average_salary_required),
             modifier = Modifier.padding(top = 16.dp)
@@ -201,7 +199,7 @@ fun FormalSalariedSvContent(
                     OnDivisionThreeValueChange(divisionThree = it)
                 )
             },
-            labelText = stringResource(R.string.credit_address_state),
+            labelText = stringResource(R.string.credit_address_municipality),
             placeHolder = stringResource(id = R.string.select),
             modifier = Modifier.padding(top = 16.dp)
         )

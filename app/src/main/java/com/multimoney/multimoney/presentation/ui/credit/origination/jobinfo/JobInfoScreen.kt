@@ -55,19 +55,27 @@ fun JobInfoScreen(
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(
-            CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
-                viewModel.onUIEvent(
-                    OnNextActionClick(
-                        user = sharedViewModel.email,
-                        nextStepAction = {
-                            sharedViewModel.onUIEvent(
-                                OnCallMutationSaveCreditFlowStep
-                            )
-                        },
-                        saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+            CreditViewModel.UIEvent.OnSetNavigation(
+                nextAction = {
+                    viewModel.onUIEvent(
+                        OnNextActionClick(
+                            user = sharedViewModel.email,
+                            nextStepAction = {
+                                sharedViewModel.onUIEvent(
+                                    OnCallMutationSaveCreditFlowStep()
+                                )
+                            },
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                        )
                     )
-                )
-            }, nextStep = CreditStep.Five.id, previousStep = CreditStep.Three.id)
+                },
+                nextStep = if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {
+                    CreditStep.Six.id
+                } else {
+                    CreditStep.Five.id
+                },
+                previousStep = CreditStep.Three.id
+            )
         )
         viewModel.baseEvent.collect { event ->
             when (event) {

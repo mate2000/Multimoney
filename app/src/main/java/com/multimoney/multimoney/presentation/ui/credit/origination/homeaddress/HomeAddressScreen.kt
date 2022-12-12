@@ -38,8 +38,8 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.
 import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressViewModel.UIEvent.OnPhoneNumberValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
+import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks.PHONE_TRANSFORMATION_MASK
 
 @Composable
 fun HomeAddressScreen(
@@ -89,14 +89,18 @@ fun HomeAddressScreen(
                         OnNextActionClick(
                             user = sharedViewModel.email,
                             nextStepAction = {
-                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep)
+                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep())
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
                     )
                 },
                 nextStep = CreditStep.Seven.id,
-                previousStep = CreditStep.Five.id
+                previousStep = if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {
+                    CreditStep.Four.id
+                } else {
+                    CreditStep.Five.id
+                }
             )
         )
         viewModel.onUIEvent(OnFormValid)

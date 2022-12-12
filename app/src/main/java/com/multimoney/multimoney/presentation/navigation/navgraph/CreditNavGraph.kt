@@ -8,8 +8,11 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.aswerquestions.AnswerQuestionsScreen
+import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
+import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
@@ -30,6 +33,7 @@ const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
+const val ID_CURRENCY = "currency"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
     navigation(
@@ -40,16 +44,17 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             route = Screen.CreditScreen.route,
             arguments = listOf(
                 navArgument(CREDIT_STEP) { type = NavType.IntType },
-                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
         ) { navBackStackEntry ->
             CreditScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                })
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
 
         composable(
@@ -92,7 +97,11 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             })
         }
         composable(
-            route = Screen.ProcessingTransactionScreen.route
+            route = Screen.ProcessingTransactionScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
+            )
         ) {
             ProcessingTransactionScreen(onPopAndNavigate = {
                 navController.navigate(it.route) {
@@ -109,6 +118,53 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(
+            route = Screen.AddIbanAccountScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            AddIbanAccountScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.CreditMovementsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            CreditMovementsScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

@@ -10,7 +10,7 @@ private fun ValidateBankAccountQuery.ValidateBankAccount.mapToDomainModel() = Va
     currency = currency,
     sellPriceDollar = sellPriceDollar,
     buyPriceDollar = buyPriceDollar,
-    bankId = bankId,
+    bankId = bankId.toString().toInt(),
     bankName = bankName
 )
 

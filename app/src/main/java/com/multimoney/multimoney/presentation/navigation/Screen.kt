@@ -75,7 +75,6 @@ const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE= "new_value"
 
-
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
 
@@ -122,6 +121,9 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "profile_validate_otp_screen")
 
     // Profile Sub-Screens
+    object ProfileSettingsScreen : Screen("profile_settings_screen/{$ID_BRAND}",
+        "profile_settings_screen")
+
     object HelpScreen : Screen("help_screen/{$ID_BRAND}", "help_screen")
 
     // DisbursementNavGraph Screens

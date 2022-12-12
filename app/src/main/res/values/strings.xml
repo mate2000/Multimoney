@@ -859,6 +859,9 @@
     <string name="disbursement_account_process_success_title" translatable="false">¡Tu solicitud fue \nenviada con éxito!</string>
     <string name="disbursement_account_process_success_description" translatable="false">Te notificaremos cuando tu \ndesembolso haya sido realizado</string>
     <string name="disbursement_account_process_error_button" translatable="false">Ir al inicio</string>
+    <string name="disbursement_account_max_number_disclaimer" translatable="false">Llegaste al máximo de cuentas registradas</string>
+    <string name="disbursement_account_max_number_title" translatable="false">Máximo de cuentas registradas</string>
+    <string name="disbursement_account_max_number_description" translatable="false">Puedes eliminar una cuenta desde configuraciones para poder agregar una nueva.</string>
 
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>

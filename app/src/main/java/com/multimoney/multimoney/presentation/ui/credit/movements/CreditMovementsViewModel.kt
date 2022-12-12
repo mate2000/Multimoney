@@ -7,16 +7,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.multimoney.domain.interaction.credit.QueryGetPagedCreditMovementsUseCase
-import com.multimoney.domain.model.credit.CreditMovement
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.workDataOf
-import com.multimoney.domain.interaction.accountsmart.QueryGetPagedSmartMovementsUseCase
-import com.multimoney.domain.model.accountsmart.SmartMovement
+import com.multimoney.domain.interaction.credit.QueryGetPagedCreditMovementsUseCase
+import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -30,7 +28,6 @@ import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnIsLoadingChange
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnNavigateBackToHome
 import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.DownloadCreditMovementsWorker
-import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters

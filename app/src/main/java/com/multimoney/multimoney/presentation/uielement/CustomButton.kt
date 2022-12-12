@@ -30,7 +30,9 @@ import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale400
 import com.multimoney.multimoney.presentation.theme.GrayScale500
+import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Primary200
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
@@ -223,6 +225,41 @@ fun CustomButton(
                 }
             }
         }
+        CustomButtonType.PrimaryQuaternary -> {
+            if (isSystemInDarkTheme()) {
+                buttonColor = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isPressed) {
+                        WhiteTransparency12
+                    } else {
+                        GrayScale700
+                    },
+                    disabledBackgroundColor = GrayScale700,
+                    disabledContentColor = GrayScale700,
+                )
+                textColor = DefaultWhite
+                arrowIconTint = if (enable) {
+                    DefaultWhite
+                } else {
+                    GrayScale700
+                }
+            } else {
+                buttonColor = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isPressed) {
+                        WhiteTransparency12
+                    } else {
+                        DefaultWhite
+                    },
+                    disabledBackgroundColor = DefaultWhite,
+                    disabledContentColor = GrayScale400,
+                )
+                textColor = DefaultBlack
+                arrowIconTint = if (enable) {
+                    GrayScale700
+                } else {
+                    GrayScale400
+                }
+            }
+        }
         else -> {
             if (isSystemInDarkTheme()) {
                 buttonColor = ButtonDefaults.buttonColors(
@@ -306,4 +343,5 @@ sealed class CustomButtonType() {
     object PrimarySecondary : CustomButtonType()
     object PrimaryTertiary : CustomButtonType()
     object PrimaryTertiaryUnderLined : CustomButtonType()
+    object PrimaryQuaternary : CustomButtonType()
 }

@@ -113,7 +113,6 @@ fun CryptoCardSmartInProcess(
 @Composable
 fun CryptoCardWithBalance(
     cryptoBalance: String,
-    isBalanceNullOrZero: Boolean = false,
     clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList()
 ) {
     Column(
@@ -142,8 +141,9 @@ fun CryptoCardWithBalance(
                 color = MultimoneyTheme.colors.text
             )
         )
-        if (clientCryptoBalanceHistory.isNotEmpty()) {
-            //box for now, todo: show graphics gains/loses, show chip gains/losses
+        // TODO box for now, show graphics gains/loses (In Process...), show chip gains/losses
+        /*if (clientCryptoBalanceHistory.isNotEmpty()) {
+
             HomeCryptoGraphic(clientCryptoBalanceHistory = clientCryptoBalanceHistory)
             /* chip gains/losses
             Box(
@@ -162,7 +162,7 @@ fun CryptoCardWithBalance(
                     startIcon = R.drawable.ic_gains_crypto
                 )
             }*/
-        }
+        }*/
     }
 }
 

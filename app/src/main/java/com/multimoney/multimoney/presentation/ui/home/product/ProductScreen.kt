@@ -440,8 +440,8 @@ fun ProductFooterExpanded(
                 ProductType.Crypto.value -> CryptoFooterExpanded(
                     userStatus = viewModel.uiState.userStatus,
                     balance = viewModel.balanceCredit,
-                    actionMarket = { /*send to all coins screen*/ },
-                    actionWallet = { /*send to "my wallet"*/ },
+                    actionMarket = { /* todo send to all coins screen*/ },
+                    actionWallet = { /*todo send to "my wallet"*/ },
                     noBalanceAction = {
                         when(viewModel.uiState.idBrand) {
                             Brand.CostaRica.id.toString() -> {
@@ -460,7 +460,7 @@ fun ProductFooterExpanded(
                             }
                         }
                     },
-                    hasBalanceAction = { /*go to buy crypto flow*/ }
+                    hasBalanceAction = { /*todo go to buy crypto flow*/ }
                 )
             }
         }

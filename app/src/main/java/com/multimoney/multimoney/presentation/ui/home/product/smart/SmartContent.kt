@@ -41,7 +41,6 @@ fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
                         it?.textTwo.toString(),
                         it?.cTA.toString()
                     ) {
-                        // TODO add navigation according to status
                         viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(false))
                     }
                 }

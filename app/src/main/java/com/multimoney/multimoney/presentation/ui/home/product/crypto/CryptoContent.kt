@@ -41,7 +41,6 @@ fun CryptoContent(
                             type = ProductBackGroundType.ComplementaryTwo
                         ) {
                             CryptoCardWithBalance(
-                                isBalanceNullOrZero = true,
                                 cryptoBalance = stringResource(id = R.string.home_crypto_card_with_balance_zero_text),
                             )
                         }

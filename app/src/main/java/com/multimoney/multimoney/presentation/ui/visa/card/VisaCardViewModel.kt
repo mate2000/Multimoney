@@ -7,14 +7,14 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.data.util.catalog.Brand.Guatemala
-import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
@@ -38,14 +38,14 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     private var pkUser: Long = 0
     private var email: String = ""
     private var phone: String = ""
-    private var balanceCardInformation: BalanceCardInformation? = null
+    private var cardInformation: CardInformation? = null
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
         pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
-        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
+        cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
         callNovoGetFavoriteCard()
     }
 
@@ -87,7 +87,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
             is OnNavigateToVisaTokenizationScreen -> navigateTo(
                 "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$email/$phone/${
                 encodeData(
-                    balanceCardInformation
+                    cardInformation
                 )
                 }"
             )

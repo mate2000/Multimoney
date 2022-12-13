@@ -249,7 +249,7 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
-                balanceCredit?.balanceCardInformation
+                balanceCredit?.balanceCardInformation?.cardInformation
             )
             }"
         )
@@ -258,7 +258,7 @@ class ProductViewModel @Inject constructor(
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
-                balanceCredit?.balanceCardInformation
+                balanceCredit?.balanceCardInformation?.cardInformation
             )
             }"
         )

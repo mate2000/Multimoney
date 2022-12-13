@@ -10,12 +10,12 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.VISA_ROUTE
-import com.multimoney.multimoney.presentation.navigation.navtype.payment.BalanceCardInformationNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.CardInformationNavType
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardScreen
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingScreen
 
-const val BALANCE_CARD_INFORMATION = "balance_card_information"
+const val CARD_INFORMATION = "card_information"
 
 fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     navigation(
@@ -26,7 +26,8 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
             route = Screen.VisaIssuanceScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(CARD_INFORMATION) { type = CardInformationNavType() }
             )
         ) { navBackStackEntry ->
             VisaIssuanceScreen(
@@ -49,7 +50,8 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
             route = Screen.VisaCardScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(CARD_INFORMATION) { type = CardInformationNavType() }
             )
         ) { navBackStackEntry ->
             VisaCardScreen(
@@ -75,9 +77,9 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     composable(
         route = Screen.VisaTokenizationWaitingScreen.route,
         arguments = listOf(
-            navArgument(ID_BRAND) {
-                type = NavType.IntType
-            }
+            navArgument(ID_BRAND) { type = NavType.IntType },
+            navArgument(PK_USER) { type = NavType.LongType },
+            navArgument(CARD_INFORMATION) { type = CardInformationNavType() }
         )
     ) {
         VisaTokenizationWaitingScreen(onPopAndNavigate = {

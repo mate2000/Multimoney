@@ -836,12 +836,14 @@ class GraphqlApi @Inject constructor(
     fun queryValidateAccount(
         account: String,
         identification: String,
+        queryType: String?,
         user: String,
         idBrand: Int
     ): ApolloCall<ValidateBankAccountQuery.Data> = apolloAuthorizedClient.query(
         ValidateBankAccountQuery(
             account,
             identification,
+            Optional.presentIfNotNull(queryType),
             user,
             idBrand
         )
@@ -1142,7 +1144,6 @@ class GraphqlApi @Inject constructor(
         )
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
-
     fun queryMiniCards(
         infoCreditStatus: Boolean,
         infoVirtualCardStatus: Boolean,
@@ -1178,8 +1179,7 @@ class GraphqlApi @Inject constructor(
                 id_Banco = idBank,
                 numeroCuenta = accountNumber,
                 id_Moneda = idCurrency,
-                id_Tipo_Cuenta = idAccountType?.let { Optional.Present(it) }
-                    ?: run { Optional.Absent },
+                id_Tipo_Cuenta = Optional.presentIfNotNull(idAccountType),
                 idLoanClient = idLoanClient,
                 user = user,
                 idBrand = idBrand

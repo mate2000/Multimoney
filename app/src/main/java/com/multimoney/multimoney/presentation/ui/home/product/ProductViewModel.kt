@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
@@ -156,14 +158,21 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToSmartFlow(comingFromCrypto: Boolean = false) {
-        navigateTo(
-            "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/" +
-                "${uiState.userStatus?.infoUser?.firstName}/" +
-                "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/${comingFromCrypto}"
-        )
-    }
 
+    private fun onNavigateToSmartFlow(smartStep : String, comingFromCrypto: Boolean = false) {
+        when (smartStep) {
+            SMART_ONFIDO_REJECTED -> {
+                // TODO get the new evicertia url
+            }
+            else -> {
+                navigateTo(
+                    "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
+                            "${uiState.userStatus?.infoUser?.firstName}/" +
+                            "${uiState.userStatus?.infoUser?.lastName}/${uiState.userStatus?.infoUser?.statusOnfido}/${comingFromCrypto}"
+                )
+            }
+        }
+    }
     private fun onNavigateToSmartSave() {
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo("${Screen.SmartPaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentAccountScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
@@ -297,6 +306,12 @@ class ProductViewModel @Inject constructor(
                             (infoCredit?.infoPreApprove?.currentStep.isNullOrEmpty() || validateUserStatus.infoCredit?.infoPreApprove?.currentStep == CREDIT_STEP_PRE_APPROVED)
                 }
 
+                SMART_INITIAL_CARD -> {
+                    infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING.status &&
+                            infoBankAccount?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
+                            (infoBankAccount?.infoRequest?.currentStep.isNullOrEmpty() || validateUserStatus.infoBankAccount?.infoRequest?.statusRequest == SMART_STEP_PENDING)
+                }
+
                 CREDIT_INFO_INCOMPLETE -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING.status &&
                             infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
@@ -317,6 +332,12 @@ class ProductViewModel @Inject constructor(
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.APPROVED.status && infoCredit?.infoPreApprove?.idPrint == 0L && getIfIsPep()
                 }
 
+                SMART_IDENTITY_INCOMPLETE -> {
+                    infoUser?.statusOnfido != SmartOnFidoOrFirmStatus.APPROVED.status && (
+                            SmartSteps.Search.getIdByName(infoBankAccount?.infoRequest?.currentStep) == SmartSteps.Six.id
+                            )
+                }
+
                 CREDIT_FIRM_INCOMPLETE -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.PENDING.status &&
                             infoUser?.statusOnfido != CreditOnFidoOrFirmStatus.PENDING.status
@@ -327,8 +348,17 @@ class ProductViewModel @Inject constructor(
                             infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.PENDING?.status
                 }
 
+                SMART_FIRMED_ONFIDO_PENDING -> {
+                    infoBankAccount?.statusFirm  == SmartOnFidoOrFirmStatus.FIRMED.status &&
+                            infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.PENDING?.status
+                }
+
                 CREDIT_FIRM_REJECTED -> {
                     infoCredit?.infoPreApprove?.statusFirm == CreditOnFidoOrFirmStatus.REJECTED.status
+                }
+
+                SMART_APPROVED_BY_ONFIDO -> {
+                    infoUser?.statusOnfido  == SmartOnFidoOrFirmStatus.APPROVED.status
                 }
 
                 CREDIT_FIRM_MAX_ATTEMPTS -> {
@@ -339,8 +369,16 @@ class ProductViewModel @Inject constructor(
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.REJECTED.status
                 }
 
+                SMART_ONFIDO_REJECTED -> {
+                    infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.REJECTED.status
+                }
+
                 CREDIT_ONFIDO_MAX_ATTEMPTS -> {
                     infoUser?.statusOnfido == CreditOnFidoOrFirmStatus.OVER_COUNTER.status
+                }
+
+                SMART_ONFIDO_MAX_ATTEMPTS -> {
+                    infoUser?.statusOnfido == SmartOnFidoOrFirmStatus.OVER_COUNTER.status
                 }
 
                 CREDIT_ERROR_CREATE_ACCOUNT -> {
@@ -555,7 +593,7 @@ class ProductViewModel @Inject constructor(
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
             is OnValidateUserSuccess -> setValidateUserStatus(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.creditStep)
-            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow(comingFromCrypto = uiEvent.comingFromCrypto)
+            is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow(uiEvent.smartStep, comingFromCrypto = uiEvent.comingFromCrypto)
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is UIEvent.OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
@@ -616,7 +654,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnLastStepChange(val lastStep: Int) : UIEvent()
-        data class OnNavigateToSmartOriginationFlow(val comingFromCrypto: Boolean = false) : UIEvent()
+        data class OnNavigateToSmartOriginationFlow(val smartStep: String = "", val comingFromCrypto: Boolean = false) : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
         object OnNavigateToVisaActivateScreen : UIEvent()
         object OnNavigateToProfileScreen: UIEvent()
@@ -683,7 +721,17 @@ class ProductViewModel @Inject constructor(
         const val CREDIT_EL_SALVADOR_MANUAL_PROCESS = "CREDIT_EL_SALVADOR_MANUAL_PROCESS"
         const val CREDIT_PEP_PROCESS = "CREDIT_PEP_PROCESS"
         const val SEPARATOR = " + "
+        // Smart
+        const val SMART_IDENTITY_INCOMPLETE = "SAMART_IDENTITY_INCOMPLETE"
+        const val SMART_ONFIDO_REJECTED = "SMART_ONFIFO_REJECTED"
+        const val SMART_INITIAL_CARD = "SMART_INITIAL_CARD"
+        const val SMART_APPROVED_BY_ONFIDO = "SMART_APPROVED_BY_ONFIDO"
+        const val SMART_ONFIDO_MAX_ATTEMPTS = "SMART_ONFIDO_MAX_ATTEMPTS"
+        const val SMART_FIRMED_ONFIDO_PENDING = "SMART_FIRMED_ONFIDO_PENDING"
+        const val SMART_STEP_PENDING = "SMART_STEP_PENDING"
+
         const val PENDING_TO_CHECK_STATUS = "Pendiente Revision"
         private const val CARD_INFORMATION_STATUS = 1
+
     }
 }

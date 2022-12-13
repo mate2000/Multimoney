@@ -240,7 +240,7 @@ fun CardWithSmartInProcess(
     wording: Wording? = Wording("", "", "")
 ) {
     val notDefinedValue = stringResource(id = R.string.not_defined)
-    var chipText = R.string.home_product_process_credit_label
+    var chipText = R.string.home_product_process_smart_label
     val title: String = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: ""
     val description: String = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: ""
     val actionText: String? = wording?.cTA?.filter { wording.textTwo != notDefinedValue }

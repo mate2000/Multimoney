@@ -89,7 +89,7 @@ fun VisaIssuanceScreen(
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
                 onClick = {
-                    viewModel.onUIEvent(OnIssuanceClick(context = context))
+                    viewModel.onUIEvent(OnIssuanceClick)
                 },
                 text = stringResource(id = R.string.activate),
                 buttonType = PrimaryPrimary

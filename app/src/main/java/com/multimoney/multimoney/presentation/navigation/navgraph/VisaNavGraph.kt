@@ -53,6 +53,9 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
             )
         ) { navBackStackEntry ->
             VisaCardScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.popBackStack(

@@ -197,13 +197,19 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen(
-        "visa_issuance_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}",
+        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}",
         "visa_issuance_screen"
     )
 
-    object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
+    object VisaCardScreen : Screen(
+        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}",
+        "visa_card_screen"
+    )
 
-    object VisaTokenizationWaitingScreen : Screen("visa_tokenization_screen/{$ID_BRAND}", "visa_tokenization_screen")
+    object VisaTokenizationWaitingScreen : Screen(
+        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$BALANCE_CARD_INFORMATION}",
+        "visa_tokenization_screen"
+    )
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")

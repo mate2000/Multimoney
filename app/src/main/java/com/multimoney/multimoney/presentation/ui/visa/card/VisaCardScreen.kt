@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.uielement.CustomButtonBig
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -32,6 +33,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun VisaCardScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaCardViewModel = hiltViewModel()
@@ -39,7 +41,11 @@ fun VisaCardScreen(
     val context = LocalContext.current
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(
+            onNavigate = onNavigate,
+            onPopBackStack = onPopBackStack,
+            onPopAndNavigate = onPopAndNavigate
+        )
     }
 
     Column(
@@ -93,18 +99,13 @@ fun VisaCardScreen(
                 modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 8.dp).fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (viewModel.uiState.isNfcAvailable) {
+                if (viewModel.uiState.isNfcAvailable && viewModel.uiState.isCardTokenize.not()) {
                     CustomButtonBig(
                         modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
                         icon = R.drawable.ic_link,
                         text = stringResource(id = R.string.link),
                         onClick = {
-                            // TODO: Execute action when implemented
-                            Toast.makeText(
-                                context,
-                                "TBD1",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            viewModel.onUIEvent(OnNavigateToVisaTokenizationScreen)
                         }
                     )
                 }

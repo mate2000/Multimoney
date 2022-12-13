@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.visa.novotokenization
 
 import android.content.pm.ActivityInfo
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.Companion.TIME_TO_WAITING_NOVO_STEP
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnPauseCountDownTimer
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -55,6 +57,7 @@ fun VisaTokenizationWaitingScreen(
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
         viewModel.onUIEvent(OnGoToNextScreen(context, color))
+        viewModel.onUIEvent(OnPauseCountDownTimer)
     }
 
     val changeStepDebounce = remember { MutableStateFlow(false) }
@@ -107,6 +110,9 @@ fun VisaTokenizationWaitingScreen(
             )
         }
     }
+
+    // this is necessary to block the systems back button
+    BackHandler(onBack = {})
 
     // this is required to execute the debounce
     val openStepFlowValue by changeStepFlow.collectAsState(false)

@@ -14,13 +14,21 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToNextScreen
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnPauseCountDownTimer
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.util.NovoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -28,7 +36,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val dataStorePreferences: DataStorePreferences
+    private val dataStorePreferences: DataStorePreferences,
+    private val mmCountDownTimer: MMCountDownTimer,
+    private val novoHelper: NovoHelper
 ) : BaseViewModel(false) {
 
     // UIState
@@ -37,10 +47,49 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
 
     // Stateless
     var currentStep = 0
+
+    // arguments
     var idBrand: Int = 0
+    var pkUser: Long = 0
+    var phone = ""
+    var novoDeviceId: String = ""
+    var email: String = ""
+    var balanceCardInformation: BalanceCardInformation? = null
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
+        email = savedStateHandle.get<String>(EMAIL) ?: ""
+        phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
+        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
+    }
+
+    private fun startTokenizationProcess() {
+        novoHelper.novoEnrollDevice(
+            pkUser.toInt(),
+            phone,
+            onSuccessEnrollDevice = {
+                novoDeviceId = it.data
+                callNovoEnrollPan()
+            },
+            onErrorEnrollDevice = {
+                // todo handle the error in the sdk
+            }
+        )
+    }
+
+    private fun callNovoEnrollPan() {
+        novoHelper.novoEnrollPan(
+            pkUser = pkUser.toInt(),
+            email = email,
+            accountNumber = balanceCardInformation?.cardInformation?.cardNumber ?: "",
+            cardName = balanceCardInformation?.cardInformation?.holderName ?: "",
+            cardCvv = balanceCardInformation?.cardInformation?.cValidation ?: "",
+            cardExpirationMonth = balanceCardInformation?.cardInformation?.expDate ?: "",
+            cardExpirationYear = balanceCardInformation?.cardInformation?.expDate ?: "",
+            onSuccessEnrollDevice = {},
+            onErrorEnrollDevice = {}
+        )
     }
 
     private fun goToNextScreen(context: Context, color: Color) {
@@ -148,12 +197,14 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         when (event) {
             is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
             is OnGoToNextScreen -> goToNextScreen(event.context, event.color)
+            is OnPauseCountDownTimer -> mmCountDownTimer.stopTimer()
         }
     }
 
     sealed class UIEvent {
         data class OnNavigateToNextScreen(val screen: String) : UIEvent()
         data class OnGoToNextScreen(val context: Context, val color: Color) : UIEvent()
+        object OnPauseCountDownTimer : UIEvent()
     }
 
     companion object {

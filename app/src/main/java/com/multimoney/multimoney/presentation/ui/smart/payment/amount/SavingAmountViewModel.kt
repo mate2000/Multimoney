@@ -9,23 +9,26 @@ import androidx.compose.runtime.setValue
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
+@OptIn(ExperimentalMaterialApi::class)
 class SavingAmountViewModel @Inject constructor() : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentSmartCardsScreen.route, isRestart = false)
+    private fun onAmountChanged(newAmount : String) {
+        uiState = uiState.copy(currentAmountValueString = newAmount)
+    }
 
-    data class UIState @OptIn(ExperimentalMaterialApi::class) constructor(
+    private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentSmartCardsScreen.route, isRestart = true)
+
+    data class UIState(
         // Interactions
-        val minimumPaymentLabel: String = "",
-        val maximumPaymentLabel: String = "",
-        val isMinimumSelected: Boolean = false,
-        val isMaximumSelected: Boolean = false,
+        val suggestedAmountSelected: SuggestedAmount? = null,
         val currency: String = "$",
         val accountCurrency: String = "$",
         val currentAmountValueString: String = "0",
@@ -40,7 +43,7 @@ class SavingAmountViewModel @Inject constructor() : BaseViewModel(true) {
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnAmountValueChange -> TODO()
+            is UIEvent.OnAmountValueChange -> onAmountChanged(uiEvent.value)
             is UIEvent.OnContinueClick -> TODO()
             is UIEvent.OnHidePaymentBottomSheet -> TODO()
             is UIEvent.OnShowPaymentBottomSheet -> TODO()

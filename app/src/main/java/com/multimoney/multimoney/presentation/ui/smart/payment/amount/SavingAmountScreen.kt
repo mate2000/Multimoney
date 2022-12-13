@@ -40,6 +40,9 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount.FIVE_HUNDRED
+import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount.TWO_HUNDRED
+import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount.ONE_THOUSAND
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
 @Composable
@@ -76,76 +79,78 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                 .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                modifier = Modifier.padding(top = 42.dp),
-                text = stringResource(id = R.string.smart_saving_amount_title),
-                style = Typography.h6.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = MultimoneyTheme.colors.labelText
-                ),
-                textAlign = TextAlign.Left
-            )
-            CurrencyAmountInput(
-                modifier = Modifier.padding(top = 24.dp),
-                value = viewModel.uiState.currentAmountValueString,
-                placeHolder = viewModel.uiState.currentAmountValueString,
-                onValueChange = {
-                    viewModel.onUIEvent(OnAmountValueChange(it))
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.clearFocus()
-                }),
-                isRequired = true,
-                isError = viewModel.uiState.currentAmountError.first,
-                errorMessage = stringResource(
-                    id = viewModel.uiState.currentAmountError.second
-                ),
-                customTransformation = CurrencyDoubleTransformation(
-                    viewModel.uiState.currency,
-                    CreditAmountViewModel.CURRENCY_SEPARATOR
+            Column {
+                Text(
+                    modifier = Modifier.padding(top = 42.dp),
+                    text = stringResource(id = R.string.smart_saving_amount_title),
+                    style = Typography.h6.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = MultimoneyTheme.colors.labelText
+                    ),
+                    textAlign = TextAlign.Left
                 )
-            )
-            Row(
-                modifier = Modifier
-                    .padding(top = 24.dp)
-                    .fillMaxWidth()
-            ) {
-                RoundedPaymentButton(
+                CurrencyAmountInput(
+                    modifier = Modifier.padding(top = 24.dp),
+                    value = viewModel.uiState.currentAmountValueString,
+                    placeHolder = viewModel.uiState.currentAmountValueString,
+                    onValueChange = {
+                        viewModel.onUIEvent(OnAmountValueChange(it))
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    isRequired = true,
+                    isError = viewModel.uiState.currentAmountError.first,
+                    errorMessage = stringResource(
+                        id = viewModel.uiState.currentAmountError.second
+                    ),
+                    customTransformation = CurrencyDoubleTransformation(
+                        viewModel.uiState.currency,
+                        CreditAmountViewModel.CURRENCY_SEPARATOR
+                    )
+                )
+                Row(
                     modifier = Modifier
-                        .weight(0.30f),
-                    onClick = { viewModel.onUIEvent(OnSuggestedAmountClick) },
-                    strokeWidth = 1.dp,
-                    roundedShapeDp = 24.dp,
-                    mainText = "$250",
-                    secondaryText = String(),
-                    isSelected = true
-                )
-                Spacer(modifier = Modifier.weight(0.05f))
-                RoundedPaymentButton(
-                    modifier = Modifier
-                        .weight(0.30f),
-                    onClick = { viewModel.onUIEvent(OnSuggestedAmountClick) },
-                    strokeWidth = 1.dp,
-                    roundedShapeDp = 24.dp,
-                    mainText = "$500",
-                    secondaryText = String(),
-                    isSelected = false
-                )
-                Spacer(modifier = Modifier.weight(0.05f))
-                RoundedPaymentButton(
-                    modifier = Modifier
-                        .weight(0.30f),
-                    onClick = { viewModel.onUIEvent(OnSuggestedAmountClick) },
-                    strokeWidth = 1.dp,
-                    roundedShapeDp = 24.dp,
-                    mainText = "$1,000",
-                    secondaryText = String(),
-                    isSelected = false
-                )
+                        .padding(top = 24.dp)
+                        .fillMaxWidth()
+                ) {
+                    RoundedPaymentButton(
+                        modifier = Modifier
+                            .weight(0.30f),
+                        onClick = { viewModel.onUIEvent(OnSuggestedAmountClick) },
+                        strokeWidth = 1.dp,
+                        roundedShapeDp = 24.dp,
+                        mainText = TWO_HUNDRED.display,
+                        secondaryText = String(),
+                        isSelected = viewModel.uiState.suggestedAmountSelected == TWO_HUNDRED
+                    )
+                    Spacer(modifier = Modifier.weight(0.05f))
+                    RoundedPaymentButton(
+                        modifier = Modifier
+                            .weight(0.30f),
+                        onClick = { viewModel.onUIEvent(OnSuggestedAmountClick) },
+                        strokeWidth = 1.dp,
+                        roundedShapeDp = 24.dp,
+                        mainText = FIVE_HUNDRED.display,
+                        secondaryText = String(),
+                        isSelected = false
+                    )
+                    Spacer(modifier = Modifier.weight(0.05f))
+                    RoundedPaymentButton(
+                        modifier = Modifier
+                            .weight(0.30f),
+                        onClick = { viewModel.onUIEvent(OnSuggestedAmountClick) },
+                        strokeWidth = 1.dp,
+                        roundedShapeDp = 24.dp,
+                        mainText = ONE_THOUSAND.display,
+                        secondaryText = String(),
+                        isSelected = false
+                    )
+                }
             }
             CustomButton(
                 modifier = Modifier

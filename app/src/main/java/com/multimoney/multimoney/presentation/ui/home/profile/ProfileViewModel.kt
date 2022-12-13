@@ -58,7 +58,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun navigateToSettingsScreen() {
-        navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
     }
 
     private fun signOutDialogConfirmation() {

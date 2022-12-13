@@ -363,6 +363,16 @@
     <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
     <string name="profile_you_can_try_later_biometrics_gt" translatable="false">Puedes volver a configurarlo cuando quieras</string>
     <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
+    <string name="profile_settings_change_password" translatable="false">Cambiar contraseña</string>
+    <string name="profile_settings_current_password" translatable="false">Contraseña actual</string>
+    <string name="profile_settings_new_password" translatable="false">Nueva contraseña</string>
+    <string name="profile_settings_confirm_new_password" translatable="false">Confirmar nueva contraseña</string>
+    <string name="profile_settings_forget_password" translatable="false">Olvidé mi contraseña</string>
+    <string name="profile_settings_change_password_button" translatable="false">Cambiar contraseña</string>
+
+
+
+
 
 
     <!-- Sign Out -->

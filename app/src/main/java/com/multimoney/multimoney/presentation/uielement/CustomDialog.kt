@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.theme.GrayScale700
 import com.multimoney.multimoney.presentation.theme.GrayScale800
 import com.multimoney.multimoney.presentation.theme.Primary400
 import com.multimoney.multimoney.presentation.theme.Primary500
+import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
 import com.multimoney.multimoney.presentation.util.gesture.detectTapAndPressUnconsumed
@@ -83,13 +84,13 @@ fun CustomDialog(
     if (isSystemInDarkTheme()) {
         titleColor = DefaultWhite
         messageColor = WhiteTransparency80
-        buttonColor = Primary400
+        buttonColor = SemanticInformative400
         iconTintColor = DefaultWhite
         backgroundColor = GrayScale700
     } else {
         titleColor = GrayScale800
         messageColor = GrayScale500
-        buttonColor = Primary500
+        buttonColor = SemanticInformative400
         iconTintColor = Primary500
         backgroundColor = DefaultWhite
     }

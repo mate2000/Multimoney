@@ -104,11 +104,11 @@ fun CustomProductBackground(
             if (isSystemInDarkTheme()) {
                 gradientOneColor = ComplementaryTwo500
                 gradientTwoColor = ComplementaryTwo500
-                gradientThreeColor = GradientComplementaryTwo
+                gradientThreeColor = ComplementaryTwo400.copy(.8f)
             } else {
                 gradientOneColor = ComplementaryTwo500
                 gradientTwoColor = ComplementaryTwo500
-                gradientThreeColor = GradientComplementaryTwo
+                gradientThreeColor = ComplementaryTwo400.copy(.8f)
             }
         }
     }

@@ -214,7 +214,6 @@ class SignUpEmailViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnUserEmailValueChange(val value: String) : UIEvent()
-
         object OnValidateForm : UIEvent()
         object OnValidateUserEmail : UIEvent()
     }

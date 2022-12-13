@@ -39,6 +39,7 @@ const val CLIENT_BANK_ACCOUNT = "client_bank_account"
 const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
+const val FK_FLOW_CONTROL = "fk_flow_control"
 const val REFERENCE_NUMBER = "reference_number"
 const val CURRENT_AMOUNT_VALUE = "current_amount_value"
 const val PAYMENT_LABEL = "currency"
@@ -52,6 +53,7 @@ const val PAYMENT_DATE = "payment_date"
 const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
 const val IS_EDIT_PAYMENT_SCHEDULE = "is_edit_payment_schedule"
 const val PREVIOUS_SCREEN = "previous_screen"
+const val USER_SMART_ACCOUNT = "user_smart_account"
 
 // Payment maps location parameters
 const val POINT_NAME = "point_name"
@@ -67,7 +69,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         route = PAYMENT_CREDIT_ROUTE
     ) {
         composable(
-            Screen.PaymentFeeScreen.route,
+            route = Screen.PaymentFeeScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -80,12 +82,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(SUMMARY_LIST) {
                     type = SummaryListNavType()
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(NAME_CLIENT) {
-                    type = NavType.StringType
                 }
             )
         ) {
@@ -104,7 +100,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.PaymentAccountScreen.route,
+            route = Screen.PaymentAccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -117,12 +113,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(SUMMARY_LIST) {
                     type = SummaryListNavType()
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(NAME_CLIENT) {
-                    type = NavType.StringType
                 }
             )
         ) {
@@ -176,7 +166,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.PaymentScheduleScreen.route,
+            route = Screen.PaymentScheduleScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -213,7 +203,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.PaymentScheduleAccountScreen.route,
+            route = Screen.PaymentScheduleAccountScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -295,9 +285,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = TransferAccountNavType()
                 },
                 navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(USER) {
                     type = NavType.StringType
                 }
             )
@@ -383,12 +370,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(USER) {
-                    type = NavType.StringType
                 }
             )
         ) {
@@ -412,12 +393,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(USER) {
-                    type = NavType.StringType
                 },
                 navArgument(CARD_SELECTED) {
                     type = CardVDNavType()

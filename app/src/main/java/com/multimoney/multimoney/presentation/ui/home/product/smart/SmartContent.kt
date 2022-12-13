@@ -19,30 +19,30 @@ import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 
 @Composable
-fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
+fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
     val context = LocalContext.current
     val whatsAppLink = stringResource(
         id = R.string.whatsapp_deep_link, SignUpViewModel.PHONE_HARDCODED
     )
 
     viewModel.uiState.userStatus?.apply {
-        when (infoBankAccount?.status) {
+        when (viewModel.uiState.userStatus?.infoBankAccount?.status) {
             SmartAccountStatus.EXIST_IN_CORE.status -> {
                 viewModel.balanceCredit?.balanceAccountSmart?.let {
                     if (it.isNotEmpty()) {
                         val smartIndex =
-                            viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
+                            viewModel.uiState.productPageList?.get(currentSmartPage)?.productSmartIndex
                                 ?: 0
-                        CustomProductBackground(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.Secondary
-                        ) {
-                            CardSmartProduct(
-                                currency = it[smartIndex]?.currencyCode ?: "",
-                                profitMonthly = it[smartIndex]?.gainedInterest.toString(),
-                                profitTotal = it[smartIndex]?.totalBalance.toString()
-                            )
-                        }
+                    }
+                    CustomProductBackground(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        type = ProductBackGroundType.Secondary
+                    ) {
+                        CardSmartProduct(
+                            currency = it[currentSmartPage.minus(1)]?.currencyCode ?: "",
+                            profitMonthly = it[currentSmartPage.minus(1)]?.gainedInterest.toString(),
+                            profitTotal = it[currentSmartPage.minus(1)]?.totalBalance.toString()
+                        )
                     }
                 }
             }
@@ -108,7 +108,7 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                         ) -> {
                             viewModel.balanceCredit?.balanceAccountSmart?.let {
                                 if (it.isNotEmpty()) {
-                                    val index = currentPage.minus(
+                                    val index = currentSmartPage.minus(
                                         viewModel.balanceCredit?.balanceCredit?.size ?: 0
                                     )
                                     CustomProductBackground(
@@ -141,8 +141,8 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                             )
                         }
                     }
-                }
 
+                }
             }
         }
     }

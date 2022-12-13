@@ -23,13 +23,14 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnGetProfileInfo
-import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnUpdateProfileClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnHelpClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnLogoutClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnMyAccountsClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnMyCardsClick
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnSettingsClick
+import com.multimoney.multimoney.presentation.ui.home.profile.ProfileViewModel.UIEvent.OnUpdateProfileClick
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -39,10 +40,15 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 fun ProfileScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.executeNavigation(
+            onPopBackStack = onPopBackStack,
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate
+        )
         viewModel.onUIEvent(OnGetProfileInfo)
     }
 
@@ -52,6 +58,7 @@ fun ProfileScreen(
 
 @Composable
 fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -64,9 +71,9 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
         Column(Modifier.verticalScroll(rememberScrollState())) {
             viewModel.apply {
                 ProfileHeader(
-                    userName = uiState.userName,
-                    email = uiState.userEmail,
-                    phoneNumber = uiState.phoneNumber,
+                    userName = uiState.userName.orEmpty(),
+                    email = uiState.email.orEmpty(),
+                    phoneNumber = uiState.phoneNumber.toString(),
                     onUpdateClick = { onUIEvent(OnUpdateProfileClick) }
                 )
                 ProfileOptions(
@@ -79,6 +86,17 @@ fun ProfileContent(viewModel: ProfileViewModel = hiltViewModel()) {
                 )
             }
         }
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource),
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }
 
@@ -117,7 +135,7 @@ fun ProfileOptions(
     onMyCardsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onHelpClick: () -> Unit,
-    onLogoutClick: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp)

@@ -24,6 +24,11 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
             vISADirect_Usuario
             statusOnfido
             fecha_ultimo_acceso
+            wording {
+                textOne
+                textTwo
+                cTA
+            }
         }
         infoCredit {
             idClient
@@ -70,6 +75,7 @@ query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String
         infoCrypto {
             status
             statusFirm
+            profileEnable
             wording {
                 textOne
                 textTwo

@@ -4,7 +4,9 @@ import com.multimoney.multimoney.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Period
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -33,12 +35,15 @@ fun getCurrentDateString() = getPickedDateAsString(
     YEAR_MONTH_DAY_PATTERN
 )
 
-fun getCardDateFormat(date: String?, format: SimpleDateFormat = BAR_DIVIDER_FORMAT): String {
+fun getCurrentDateTimeString(dateTimeFormatter: DateTimeFormatter) =
+    LocalDateTime.now().format(dateTimeFormatter).toString()
+
+fun getCardDateFormat(date: String?, newFormat: SimpleDateFormat = BAR_DIVIDER_FORMAT, oldFormat: SimpleDateFormat = SHORT_DATE_FORMAT): String {
     return if (date.isNullOrEmpty().not()) {
         try {
-            val dateFormatted = SHORT_DATE_FORMAT.parse(date)
+            val dateFormatted = oldFormat.parse(date)
             dateFormatted?.let {
-                format.format(dateFormatted)
+                newFormat.format(dateFormatted)
             } ?: run {
                 ""
             }
@@ -76,6 +81,16 @@ fun onBirthDateAgeValidation(pickedDate: LocalDate): Pair<Boolean, Int> {
     }
 }
 
+fun getCurrentDateYMDPattern(): String {
+    val date = LocalDate.now()
+    return date.toString()
+}
+
+fun getPreviousDate(daysToSubtract: Long): String {
+    val date = LocalDate.now().minusDays(daysToSubtract)
+    return date.toString()
+}
+
 fun getCurrentDate(time: Date): String {
     return BAR_DIVIDER_FORMAT.format(time)
 }
@@ -111,3 +126,4 @@ val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
 val BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS = SimpleDateFormat("dd | MM | yy", Locale.getDefault())
+val DATE_TIME_DOCUMENTS_FORMAT = DateTimeFormatter.ofPattern("ddMMyyHHmmss")

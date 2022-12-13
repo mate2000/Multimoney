@@ -143,7 +143,9 @@ fun OtherIncomeContent(viewModel: OtherIncomeViewModel, idBrand: Int) {
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            placeHolder = stringResource(R.string.decimal_income_placeholder, currencySymbol),
+            placeHolder = stringResource(
+                if (idBrand == Brand.ElSalvador.id) R.string.smart_other_income_sv_placeholder else R.string.smart_other_income_cr_placeholder
+            ),
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required)

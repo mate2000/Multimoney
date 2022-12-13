@@ -144,7 +144,7 @@ fun DisbursementAmountScreen(
                     errorMessage = stringResource(
                         id = viewModel.uiState.disbursementError.second,
                         viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
-                        viewModel.uiState.progressFactor
+                        viewModel.uiState.progressFactor.toInt()
                     ),
                     customTransformation = CurrencyIntegerTransformation(
                         viewModel.uiState.currencyItems[viewModel.uiState.currencyIndex],
@@ -231,7 +231,8 @@ fun DisbursementAmountScreen(
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction
         )
     }
 

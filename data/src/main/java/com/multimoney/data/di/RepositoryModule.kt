@@ -3,6 +3,8 @@ package com.multimoney.data.di
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.repository.BalanceRepositoryImpl
 import com.multimoney.data.repository.CreditRepositoryImpl
+import com.multimoney.data.repository.CryptoRepositoryImpl
+import com.multimoney.data.repository.MultimoneyVisaRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
 import com.multimoney.data.repository.SmartAccountRepositoryImpl
 import dagger.Module
@@ -33,4 +35,14 @@ class RepositoryModule {
     @Singleton
     fun provideAccountSmartRepository(graphqlApi: GraphqlApi) =
         SmartAccountRepositoryImpl(graphqlApi)
+
+    @Provides
+    @Singleton
+    fun provideMultimoneyVisaRepository(graphqlApi: GraphqlApi) =
+        MultimoneyVisaRepositoryImpl(graphqlApi)
+
+    @Provides
+    @Singleton
+    fun provideCryptoRepository(graphqlApi: GraphqlApi) =
+        CryptoRepositoryImpl(graphqlApi)
 }

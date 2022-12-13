@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.navigation.BottomNavItem
 import com.multimoney.multimoney.presentation.navigation.navgraph.HomeInsideNavGraph
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -70,8 +71,8 @@ fun HomeScreen(
     val automaticPaymentEditBottomSheetState = rememberModalBottomSheetState(Hidden)
     val quickActionsModalBottomSheetState =
         rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
-    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
-    val activity = (LocalContext.current as? Activity)
+    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
+    val activity = LocalContext.current.findActivity()
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)

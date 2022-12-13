@@ -2,11 +2,13 @@ package com.multimoney.data.di
 
 import com.multimoney.data.repository.BalanceRepositoryImpl
 import com.multimoney.data.repository.CreditRepositoryImpl
+import com.multimoney.data.repository.CryptoRepositoryImpl
 import com.multimoney.data.repository.MultimoneyVisaRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
 import com.multimoney.data.repository.SmartAccountRepositoryImpl
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
+import com.multimoney.domain.repository.CryptoRepository
 import com.multimoney.domain.repository.MultimoneyVisaRepository
 import com.multimoney.domain.repository.SecurityRepository
 import com.multimoney.domain.repository.SmartAccountRepository
@@ -32,4 +34,7 @@ abstract class InteractionRepositoryModule {
 
     @Binds
     abstract fun bindMultimoneyRepository(multimoneyVisaRepositoryImpl: MultimoneyVisaRepositoryImpl): MultimoneyVisaRepository
+
+    @Binds
+    abstract fun bindCryptoRepository(cryptoRepositoryImpl: CryptoRepositoryImpl): CryptoRepository
 }

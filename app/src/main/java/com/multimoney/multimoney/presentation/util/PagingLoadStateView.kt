@@ -39,3 +39,4 @@ fun PagingLoadStateView(
 const val INDEX_ONE = 1
 const val PAGE_SIZE = 10
 const val LAST_THREE = 3
+const val OPTION_BTN_6 = "btn6" // Current date - 6 months validated with PO

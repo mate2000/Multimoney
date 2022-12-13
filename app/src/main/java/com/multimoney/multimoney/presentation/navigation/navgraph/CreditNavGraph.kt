@@ -27,6 +27,7 @@ const val ID_USER_REQUEST = "id_user_request"
 const val FIRST_NAME = "name"
 const val LAST_NAME = "last_name"
 const val ONFIDO_STATUS = "onfido_status"
+const val COMING_FROM_CRYPTO = "coming_from_crypto"
 const val EVICERTIA_STATUS = "evicertia_status"
 const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
@@ -50,10 +51,10 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             CreditScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                })
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
 
         composable(

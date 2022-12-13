@@ -4,6 +4,8 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.security.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.domain.model.security.CatalogType
+import com.multimoney.domain.model.security.ChangeEmail
+import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
@@ -15,6 +17,7 @@ import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.security.ValidateOTP
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -343,6 +346,18 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
+    override suspend fun mutationValidateOTP(
+        email: String,
+        otp: String
+    ): Flow<MultimoneyResult<ValidateOTP>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationValidateOTP(email, otp),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+
     override suspend fun queryHomeMiniCards(
         infoCreditStatus: Boolean,
         infoVirtualCardStatus: Boolean,
@@ -360,6 +375,35 @@ class SecurityRepositoryImpl @Inject constructor(
                 userEmail,
                 idBrand
             ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun mutationChangePhone(
+        identification: String,
+        phone: String,
+        pkUser: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ChangePhone>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationChangePhone(identification,phone,pkUser,idBrand),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun mutationChangeEmail(
+        pkUser: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ChangeEmail>>  =
+        fetchData(
+            apolloCall = graphqlApi.mutationChangeEmail(pkUser,identification,email,registerId,changeUser,user,idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

@@ -90,7 +90,7 @@ fun SignUpOtpScreen(
                 id = R.string.whatsapp_deep_link,
                 PHONE_HARDCODED
             ),
-            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attend)
+            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts)
         )
     )
 

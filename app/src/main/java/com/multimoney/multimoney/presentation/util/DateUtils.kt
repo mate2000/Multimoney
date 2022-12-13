@@ -81,6 +81,16 @@ fun onBirthDateAgeValidation(pickedDate: LocalDate): Pair<Boolean, Int> {
     }
 }
 
+fun getCurrentDateYMDPattern(): String {
+    val date = LocalDate.now()
+    return date.toString()
+}
+
+fun getPreviousDate(daysToSubtract: Long): String {
+    val date = LocalDate.now().minusDays(daysToSubtract)
+    return date.toString()
+}
+
 fun getCurrentDate(time: Date): String {
     return BAR_DIVIDER_FORMAT.format(time)
 }

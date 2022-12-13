@@ -10,6 +10,7 @@ import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
+import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
@@ -146,4 +147,13 @@ interface SmartAccountRepository {
         idBrand: Int,
         user: String
     ): Flow<MultimoneyResult<GlobalRequest?>>
+
+    suspend fun querySinpeAccount(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        country: String,
+        idAccount: Long,
+        accountNumber: String
+    ): Flow<MultimoneyResult<SinpeAccountResult?>>
 }

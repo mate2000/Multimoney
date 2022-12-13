@@ -69,8 +69,8 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -597,15 +597,15 @@ class ProductViewModel @Inject constructor(
 
     private fun getSmartContent() {
         uiState = uiState.copy(smartContent = when (uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest) {
-                SmartAccountStatusRequest.PENDING.status, SENT.status, CANCELED.status, CREATED.status -> true
+                SmartAccountStatusRequest.PENDING.status, SENT.status, CANCELED.status, CREATED.status,
+                SMART_INITIAL_CARD,SMART_IDENTITY_INCOMPLETE, SMART_FIRMED_ONFIDO_PENDING, SMART_ONFIDO_REJECTED,
+                SMART_APPROVED_BY_ONFIDO, SMART_ONFIDO_MAX_ATTEMPTS-> true
                 else -> {
                     when (uiState.userStatus?.infoBankAccount?.statusFirm) {
                         PENDING.status, APPROVED.status, FIRMED.status, REJECTED.status, OVER_COUNTER.status, FAILED.status -> true
-                        else -> if (uiState.userStatus?.infoBankAccount?.status?.equals(SmartAccountStatus.NO_EXIST.status) == true) {
-                            true
-                        } else if (uiState.userStatus?.infoBankAccount?.status?.equals(SmartAccountStatus.EXIST_IN_CORE.status) == true) {
-                            true
-                        } else null
+                        else -> if (uiState.userStatus?.infoBankAccount?.status?.equals(SmartAccountStatus.NO_EXIST.status) == true) true
+                        else if (uiState.userStatus?.infoBankAccount?.status?.equals(SmartAccountStatus.EXIST_IN_CORE.status) == true) false
+                        else null // no exist in core
                     }
                 }
             }

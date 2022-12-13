@@ -19,30 +19,28 @@ import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 
 @Composable
-fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
+fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
     val context = LocalContext.current
     val whatsAppLink = stringResource(
         id = R.string.whatsapp_deep_link, SignUpViewModel.PHONE_HARDCODED
     )
+    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 1)
 
     viewModel.uiState.userStatus?.apply {
         when (viewModel.uiState.userStatus?.infoBankAccount?.status) {
             SmartAccountStatus.EXIST_IN_CORE.status -> {
                 viewModel.balanceCredit?.balanceAccountSmart?.let {
                     if (it.isNotEmpty()) {
-                        val smartIndex =
-                            viewModel.uiState.productPageList?.get(currentSmartPage)?.productSmartIndex
-                                ?: 0
-                    }
-                    CustomProductBackground(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.Secondary
-                    ) {
-                        CardSmartProduct(
-                            currency = it[currentSmartPage.minus(1)]?.currencyCode ?: "",
-                            profitMonthly = it[currentSmartPage.minus(1)]?.gainedInterest.toString(),
-                            profitTotal = it[currentSmartPage.minus(1)]?.totalBalance.toString()
-                        )
+                        CustomProductBackground(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            type = ProductBackGroundType.Secondary
+                        ) {
+                            CardSmartProduct(
+                                currency = it[index]?.currencyCode ?: "",
+                                profitMonthly = it[index]?.gainedInterest.toString(),
+                                profitTotal = it[index]?.totalBalance.toString()
+                            )
+                        }
                     }
                 }
             }
@@ -80,7 +78,6 @@ fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
                                 }, wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
                             )
                         }
-
                         viewModel.evaluateCardCondition(
                             ProductViewModel.SMART_FIRMED_ONFIDO_PENDING, this
                         ) -> {
@@ -100,7 +97,6 @@ fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
                                     )
                                 },
                                 wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
-
                             )
                         }
                         viewModel.evaluateCardCondition(
@@ -108,9 +104,6 @@ fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
                         ) -> {
                             viewModel.balanceCredit?.balanceAccountSmart?.let {
                                 if (it.isNotEmpty()) {
-                                    val index = currentSmartPage.minus(
-                                        viewModel.balanceCredit?.balanceCredit?.size ?: 0
-                                    )
                                     CustomProductBackground(
                                         modifier = Modifier.padding(horizontal = 16.dp),
                                         type = ProductBackGroundType.Secondary
@@ -141,7 +134,6 @@ fun SmartContent(viewModel: ProductViewModel, currentSmartPage: Int) {
                             )
                         }
                     }
-
                 }
             }
         }

@@ -13,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,12 +46,10 @@ fun SmartPaymentCardsScreen(
     // Navigation
     viewModel.apply {
         isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
+        LaunchedEffect(isOnRestart) {
             if (isOnRestart) {
                 executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
                 onUIEvent(OnCallQueryGetClientCards)
-            }
-            onDispose {
                 isOnRestart = false
             }
         }

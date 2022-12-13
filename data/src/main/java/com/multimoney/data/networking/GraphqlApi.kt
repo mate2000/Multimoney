@@ -836,12 +836,14 @@ class GraphqlApi @Inject constructor(
     fun queryValidateAccount(
         account: String,
         identification: String,
+        queryType: String?,
         user: String,
         idBrand: Int
     ): ApolloCall<ValidateBankAccountQuery.Data> = apolloAuthorizedClient.query(
         ValidateBankAccountQuery(
             account,
             identification,
+            Optional.presentIfNotNull(queryType),
             user,
             idBrand
         )
@@ -1116,23 +1118,33 @@ class GraphqlApi @Inject constructor(
         infoBankAccountStatus: Int,
         infoCriptoStatus: Int
     ): ApolloCall<QuickActionsQuery.Data> =
-        apolloAuthorizedClient.query(QuickActionsQuery(idBrand,pkUser,identification,infoCreditStatus,infoVirtualCardStatus,infoBankAccountStatus,infoCriptoStatus))
+        apolloAuthorizedClient.query(
+            QuickActionsQuery(
+                idBrand,
+                pkUser,
+                identification,
+                infoCreditStatus,
+                infoVirtualCardStatus,
+                infoBankAccountStatus,
+                infoCriptoStatus
+            )
+        )
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationValidateOTP(
-        email : String,
-        otp : String
+        email: String,
+        otp: String
     ): ApolloCall<ValidateOTPMutation.Data> =
-        apolloAuthorizedClient.mutation(ValidateOTPMutation(email,otp))
+        apolloAuthorizedClient.mutation(ValidateOTPMutation(email, otp))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationChangePhone(
-        identification : String,
-        phone : String,
-        pkUser : String,
-        idBrand : Int
+        identification: String,
+        phone: String,
+        pkUser: String,
+        idBrand: Int
     ): ApolloCall<ChangePhoneMutation.Data> =
-        apolloAuthorizedClient.mutation(ChangePhoneMutation(identification,phone,pkUser,idBrand))
+        apolloAuthorizedClient.mutation(ChangePhoneMutation(identification, phone, pkUser, idBrand))
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationChangeEmail(
@@ -1144,10 +1156,18 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int
     ): ApolloCall<ChangeEmailMutation.Data> =
-        apolloAuthorizedClient.mutation(ChangeEmailMutation(pkUser,identification,email,registerId,changeUser,idBrand,user))
+        apolloAuthorizedClient.mutation(
+            ChangeEmailMutation(
+                pkUser,
+                identification,
+                email,
+                registerId,
+                changeUser,
+                idBrand,
+                user
+            )
+        )
             .fetchPolicy(FetchPolicy.NetworkOnly)
-
-
 
     fun queryMiniCards(
         infoCreditStatus: Boolean,
@@ -1184,8 +1204,7 @@ class GraphqlApi @Inject constructor(
                 id_Banco = idBank,
                 numeroCuenta = accountNumber,
                 id_Moneda = idCurrency,
-                id_Tipo_Cuenta = idAccountType?.let { Optional.Present(it) }
-                    ?: run { Optional.Absent },
+                id_Tipo_Cuenta = Optional.presentIfNotNull(idAccountType),
                 idLoanClient = idLoanClient,
                 user = user,
                 idBrand = idBrand

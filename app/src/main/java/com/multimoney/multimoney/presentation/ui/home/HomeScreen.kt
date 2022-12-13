@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +14,6 @@ import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,11 +54,9 @@ fun HomeScreen(
 ) {
     viewModel.apply {
         isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
+        LaunchedEffect(isOnRestart) {
             if (isOnRestart) {
                 onUIEvent(OnSetUserData)
-            }
-            onDispose {
                 isOnRestart = false
             }
         }

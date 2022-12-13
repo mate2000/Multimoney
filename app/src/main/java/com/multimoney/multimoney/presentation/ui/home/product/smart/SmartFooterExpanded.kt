@@ -24,7 +24,7 @@ fun SmartFooterExpanded(viewModel: ProductViewModel, currentPage: Int) {
         Modifier.fillMaxSize()
     ) {
         val (content, buttons) = createRefs()
-        val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 0)
+        val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: 1)
 
         Column(
             Modifier

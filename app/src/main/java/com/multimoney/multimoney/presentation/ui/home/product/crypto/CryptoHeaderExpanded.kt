@@ -29,7 +29,7 @@ fun CryptoHeaderExpanded(backPressed: () -> Unit) {
             }
         )
         Text(
-            text = "Mi Cuenta Cripto",
+            text = stringResource(R.string.home_crypto_header_expanded_title),
             modifier = Modifier.padding(horizontal = 16.dp),
             style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText

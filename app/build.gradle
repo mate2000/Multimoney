@@ -33,7 +33,7 @@ android {
         minSdk min_sdk_version
         targetSdk target_sdk_version
         versionCode getVersionCode()
-        versionName System.getenv("VERSION_NAME") ? String.valueOf(System.getenv("VERSION_NAME")) : versionName
+        versionName System.getenv("VERSION_NAME") ? String.valueOf(System.getenv("VERSION_NAME")) : versionNameDebug
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

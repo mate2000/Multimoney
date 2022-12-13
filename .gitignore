@@ -33,7 +33,7 @@ amplify/backend/types/amplify-dependent-resources-ref.d.ts
 amplify/hooks/README.md
 .idea/inspectionProfiles/Project_Default.xml
 /dexguard-license.txt
-/gradle-custom.properties
+/gradle.properties
 /gradle.properties
 app/production/app-production.apk
 app/production/app-production-protected.apk

@@ -75,7 +75,7 @@ class BeneficiariesViewModel @Inject constructor(
         if (percentage.isBlank()) {
             uiState = uiState.copy(percentage = percentage)
         } else {
-            if (percentage.toInt() <= MAX_PERCENTAGE) {
+            if (percentage.toInt() in MIN_PERCENTAGE..MAX_PERCENTAGE) {
                 uiState = uiState.copy(percentage = percentage)
             }
         }
@@ -269,5 +269,6 @@ class BeneficiariesViewModel @Inject constructor(
 
     companion object {
         const val MAX_PERCENTAGE = 100
+        const val MIN_PERCENTAGE = 1
     }
 }

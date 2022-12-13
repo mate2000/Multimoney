@@ -16,11 +16,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.multimoney.domain.model.credit.CreditMovement
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.multimoney.domain.model.accountsmart.SmartMovement
@@ -80,9 +83,9 @@ fun CreditMovementsScreen(
             .padding(16.dp)
     ) {
         TopNavBar(
-            isLeftButtonVisible = true,
-            isRightButtonVisible = false,
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBackToHome) }
+            isLeftButtonVisible = false,
+            isRightButtonVisible = true,
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackToHome) }
         )
 
         Column(
@@ -93,10 +96,12 @@ fun CreditMovementsScreen(
             Column {
                 Text(
                     text = stringResource(R.string.home_product_movement_title),
-                    style = Typography.h4.copy(
-                        color = MultimoneyTheme.colors.text
+                    style = Typography.h5.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
                     ),
-                    modifier = Modifier.padding(vertical = 24.dp)
+                    modifier = Modifier.padding(vertical = 24.dp),
+                    textAlign = TextAlign.Left
                 )
 
                 if (viewModel.uiState.openDialog.isActive.value) {
@@ -151,11 +156,11 @@ fun CreditMovementsScreen(
 }
 
 @Composable
-fun MovementsList(smartMoves: LazyPagingItems<SmartMovement>) {
+fun MovementsList(creditMoves: LazyPagingItems<CreditMovement>) {
     LazyColumn {
-        items(items = smartMoves) {
+        items(items = creditMoves) {
             it?.let {
-                SmartMovementDisplayer(it)
+                CreditMovementItem(it)
             }
         }
     }

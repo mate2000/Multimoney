@@ -155,7 +155,7 @@ fun SmartCrSalaryScreen(
                         .getCurrencySymbol()
                 )
             ),
-            leadingIcon = R.drawable.ic_money_gray
+            leadingIcon = R.drawable.ic_quick_action_money
         )
 
         CustomDropdown(

@@ -46,21 +46,23 @@ import com.multimoney.multimoney.presentation.theme.Secondary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency16
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
+import com.multimoney.multimoney.presentation.util.catalog.QuickActionIconByType.SAVE_SMART
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionsProductType
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun QuickActionBottomSheetScreen(
-    shareViewModel: HomeViewModel,
+    homeSharedViewModel: HomeViewModel,
     coroutineScope: CoroutineScope,
     modalBottomSheetState: ModalBottomSheetState,
     viewModel: QuickActionsBottomSheetViewModel = hiltViewModel()
 ) {
-    if (shareViewModel.uiState.idBrand.isNotEmpty()) {
+    if (homeSharedViewModel.uiState.idBrand.isNotEmpty()) {
         CustomModalBottomSheet(
-            title = getQuickActionsHeaderTitlePerCountry(idBrand = shareViewModel.uiState.idBrand.toInt()),
+            title = getQuickActionsHeaderTitlePerCountry(idBrand = homeSharedViewModel.uiState.idBrand.toInt()),
             closeIcon = R.drawable.ic_close_bottom_sheet,
             modalBottomSheetState = modalBottomSheetState,
             coroutineScope = coroutineScope
@@ -70,7 +72,7 @@ fun QuickActionBottomSheetScreen(
                     .fillMaxWidth()
                     .padding(top = 28.dp, bottom = 16.dp)
             ) {
-                shareViewModel.uiState.quickActions?.let { quickActions ->
+                homeSharedViewModel.uiState.quickActions?.let { quickActions ->
                     val creditActions =
                         quickActions.filter { quickAction -> quickAction.productType == QuickActionsProductType.Credit.value }
                     val smartActions =
@@ -88,10 +90,10 @@ fun QuickActionBottomSheetScreen(
                             viewModel = viewModel,
                             quickActions = creditActions,
                             quickActionsBackgroundColor = Primary500,
-                            shareViewModel = shareViewModel
+                            shareViewModel = homeSharedViewModel
                         )
                     }
-                    when (shareViewModel.uiState.idBrand) {
+                    when (homeSharedViewModel.uiState.idBrand) {
                         Brand.CostaRica.id.toString(), Brand.ElSalvador.id.toString() -> {
                             // smart section
                             if(smartActions.isNotEmpty()){
@@ -110,7 +112,7 @@ fun QuickActionBottomSheetScreen(
                                     viewModel = viewModel,
                                     quickActions = smartActions,
                                     quickActionsBackgroundColor = Secondary500,
-                                    shareViewModel = shareViewModel
+                                    shareViewModel = homeSharedViewModel
                                 )
                             }
                             // crypto section
@@ -130,7 +132,7 @@ fun QuickActionBottomSheetScreen(
                                     viewModel = viewModel,
                                     quickActions = cryptoActions,
                                     quickActionsBackgroundColor = ComplementaryTwo500,
-                                    shareViewModel = shareViewModel
+                                    shareViewModel = homeSharedViewModel
                                 )
                             }
                         }
@@ -170,7 +172,7 @@ fun QuickActionsRow(
             }
     ) {
         if (quickActions != null) {
-            quickActionItemWidth = widthIs.times(0.2857f)
+            quickActionItemWidth = widthIs.times(0.29f)
             items(quickActions.count()) { index ->
                 QuickActionItem(
                     viewModel.getSmartQuickAction(
@@ -180,9 +182,6 @@ fun QuickActionsRow(
                     backgroundColor = quickActionsBackgroundColor,
                     itemWidth = quickActionItemWidth
                 ) {
-                    Log.e("Clicking", "Item")
-                    // send to savings smart screen
-
                     shareViewModel.onUIEvent(
                         HomeViewModel.UIEvent.OnOpenQuickActionFlow(
                             quickActions[index].flow
@@ -204,7 +203,7 @@ fun QuickActionItem(
     Column(
         modifier = Modifier
             .width(itemWidth)
-            .padding(end = 16.dp),
+            .padding(end = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(

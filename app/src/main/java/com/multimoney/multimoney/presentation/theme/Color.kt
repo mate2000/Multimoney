@@ -91,6 +91,7 @@ val ComplementaryGray = Color(0xB2FFFFFF)
 val ComplementaryGray2 = Color(0x99FFFFFF)
 val ComplementaryGray5 = Color(0x0DFFFFFF)
 val ComplementaryBlack = Color(0xFF212121)
+val ComplementaryBlack2 = Color(0xFF161616)
 
 // WhiteTransparency
 val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)
@@ -161,6 +162,7 @@ data class MultimoneyColors(
     val bottomNavigationIconSelectedColor: Color,
     val bottomNavigationIconUnselectedColor: Color,
     val quickActionLabelColor: Color,
+    val dividerDefaultColor: Color,
     val dotIndicatorColor: Color,
     val dotIndicatorExpired: Color,
     val arrowColor: Color,
@@ -172,7 +174,9 @@ data class MultimoneyColors(
     val gradientOneVoucher: Color,
     val gradientTwoVoucher: Color,
     val iconTintVoucher: Color,
-    val textAlertColor: Color
+    val textAlertColor: Color,
+    val homeCryptoNoticeSectionBackGround: Color,
+    val fullTransparency: Color = Color.Transparent,
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -203,6 +207,7 @@ val DarkColorPalette = MultimoneyColors(
     bottomNavigationIconSelectedColor = DefaultWhite,
     bottomNavigationIconUnselectedColor = WhiteTransparency50,
     quickActionLabelColor = WhiteTransparency70,
+    dividerDefaultColor = WhiteTransparency70,
     dotIndicatorColor = Primary400,
     dotIndicatorExpired = SemanticNegative400,
     arrowColor = Primary400,
@@ -215,7 +220,8 @@ val DarkColorPalette = MultimoneyColors(
     gradientOneVoucher = GradientGrey1,
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40,
-    textAlertColor = SemanticNegative400
+    textAlertColor = SemanticNegative400,
+    homeCryptoNoticeSectionBackGround = ComplementaryBlack2,
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -246,6 +252,7 @@ val LightColorPalette = MultimoneyColors(
     bottomNavigationIconSelectedColor = DefaultWhite,
     bottomNavigationIconUnselectedColor = WhiteTransparency50,
     quickActionLabelColor = GrayScale500,
+    dividerDefaultColor = GrayScale500,
     dotIndicatorColor = Primary400,
     dotIndicatorExpired = SemanticNegative400,
     arrowColor = Primary400,
@@ -258,7 +265,8 @@ val LightColorPalette = MultimoneyColors(
     gradientOneVoucher = GradientGrey1,
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40,
-    textAlertColor = SemanticNegative400
+    textAlertColor = SemanticNegative400,
+    homeCryptoNoticeSectionBackGround = GrayScale300,
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

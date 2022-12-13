@@ -1,5 +1,9 @@
 package com.multimoney.domain.model.security
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class UserData(
     var pkUser: String? = null,
     var userName: String? = null,
@@ -20,4 +24,4 @@ data class UserData(
     var message: String? = null,
     var status: Int? = null,
     var detail: String? = null
-)
+): Parcelable

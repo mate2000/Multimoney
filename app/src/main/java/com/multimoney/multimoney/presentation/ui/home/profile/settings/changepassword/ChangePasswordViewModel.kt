@@ -1,28 +1,24 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword
 
-import android.provider.Contacts.Intents.UI
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.amplifyframework.auth.AuthException.InvalidPasswordException
 import com.amplifyframework.auth.AuthException.NotAuthorizedException
-import com.amplifyframework.auth.AuthException.SignedOutException
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onMessage
-import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.security.ValidateSecurity
+import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeConsecutiveLetterOrNumber
 import com.multimoney.multimoney.presentation.util.noMoreThanThreeEqualConsecutiveLetterOrNumber
@@ -34,21 +30,23 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle,
-    private val cognitoHelper: CognitoHelper,
-    private val countDownTimer: MMCountDownTimer,
     private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase
 ) : BaseViewModel(true) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
+    var onPasswordSaveEvents = MutableSharedFlow<MultimoneyResult<ValidateSecurity?>>()
+    var onCognitoPasswordUpdateEvents = MutableSharedFlow<Pair<Boolean, Int>>()
 
     init {
         uiState = uiState.copy(
@@ -57,7 +55,6 @@ class ChangePasswordViewModel @Inject constructor(
             userName = savedStateHandle[USER_NAME] ?: ""
         )
     }
-
 
     private fun validatePassword() {
         uiState = uiState.copy(
@@ -131,59 +128,95 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     private fun onCurrentPasswordValueChange(password: String?) {
-        uiState = uiState.copy(currentPassword = password.toString())
+        uiState = uiState.copy(
+            currentPassword = password.toString(),
+            currentPasswordError = Pair(false, R.string.empty)
+        )
+    }
+
+    private fun cleanErrors() {
+        uiState = uiState.copy(
+            newPasswordConfirmationError = Pair(false, R.string.empty),
+            newPasswordError = Pair(false, R.string.empty),
+            currentPasswordError = Pair(false, R.string.empty)
+        )
     }
 
     private fun onUpdatePassword() = executeUseCase {
-
+        cleanErrors()
         queryValidationSecurityUseCase.invoke(
             idBrand = uiState.idBrand,
             pkUser = uiState.pkUser,
             user = uiState.userName,
             password = uiState.newPassword
         ).collectLatest { result ->
-            result.onSuccess {
-                when (it?.messageError?.status) {
-                    VALID_PASSWORD -> {
-                        Log.e("TAG", "contrasena cambiada")
-                        updatePasswordAmplify()
-                    }
-                    else -> {
-                        uiState = uiState.copy(isLoading = false)
-                        Log.e("TAG", "ya usada")
-                    }
-                }
-
-            }.onFailure {
-                uiState = uiState.copy(isLoading = false)
-            }.onLoading {
-                uiState = uiState.copy(isLoading = true)
-            }.onMessage {
-                uiState = uiState.copy(isLoading = false)
-            }
+            onPasswordSaveEvents.emit(result)
         }
-
     }
 
-    private fun updatePasswordAmplify() {
+    private fun updateCognitoStatus(message: Int) = executeUseCase {
+        onCognitoPasswordUpdateEvents.emit(Pair(true, message))
+    }
+
+    private fun onCallCognitoUpdatePassword() = executeUseCase {
         Amplify.Auth.updatePassword(uiState.currentPassword, uiState.newPassword,
             {
-                Log.e("TAG", "clave actualizada")
+                updateCognitoStatus(
+                    R.string.profile_settings_password_modified
+                )
                 uiState = uiState.copy(isLoading = false)
             }, {
                 uiState = uiState.copy(isLoading = false)
-                when (it) {
+                uiState = when (it) {
                     is NotAuthorizedException -> {
-                        Log.e("tag", "no autorizado")
+                        uiState.copy(
+                            currentPasswordError = Pair(
+                                true,
+                                R.string.profile_settings_error_wrong_current_password
+                            )
+                        )
                     }
                     is InvalidPasswordException -> {
-                        Log.e("tag", "clave invalida")
+                        uiState.copy(
+                            newPasswordConfirmationError = Pair(
+                                true,
+                                R.string.profile_settings_error_new_password_invalid
+                            ),
+                            newPasswordError = Pair(true, R.string.empty)
+                        )
                     }
                     else -> {
-                        Log.e("tag", "something went wrong ${it}")
+                        uiState.copy(
+                            isAlertResultVisible = true,
+                            alertResultTitle = R.string.profile_settings_error_we_could_not_change_your_password,
+                            alertResultDescription = R.string.profile_settings_error_we_are_sorry_try_again_later
+                        )
                     }
                 }
             })
+    }
+
+    private fun onPasswordSameAsPrevious() {
+        uiState = uiState.copy(
+            newPasswordConfirmationError = Pair(
+                true,
+                R.string.profile_settings_error_password_must_not_be_the_same
+            )
+        )
+    }
+
+    private fun onUpdateLocallyStoredPassword() {
+        viewModelScope.launch {
+            dataStorePreferences.isBiometricsEnabled(false)
+        }
+    }
+
+    private fun onUpdateLoadingState(state: Boolean) {
+        uiState = uiState.copy(isLoading = state)
+    }
+
+    private fun onShowAlertDialog() {
+        uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
     }
 
     data class UIState(
@@ -204,24 +237,31 @@ class ChangePasswordViewModel @Inject constructor(
         val idBrand: Int = 0,
         val pkUser: String = "",
         val userName: String = "",
-        val isLoading : Boolean = false,
+        val isLoading: Boolean = false,
 
         var eightCharactersMinimumState: Boolean? = null,
         var oneUppercaseState: Boolean? = null,
         var oneLowercaseState: Boolean? = null,
         var oneNumberState: Boolean? = null,
         var oneCharacterState: Boolean? = null,
+        var isAlertResultVisible: Boolean = false,
+        var alertResultTitle: Int = R.string.empty,
+        var alertResultDescription: Int = R.string.empty,
     )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileSettingsScreen.route, false)
             is UIEvent.OnNewPasswordValueChange -> onNewPasswordValueChange(event.password)
-            is UIEvent.OnNewPasswordConfirmationValueChange -> onNewPasswordConfirmationValueChange(
-                event.password
-            )
+            is UIEvent.OnNewPasswordConfirmationValueChange -> onNewPasswordConfirmationValueChange(event.password)
             is UIEvent.OnCurrentPasswordValueChange -> onCurrentPasswordValueChange(event.password)
             is UIEvent.OnUpdatePassword -> onUpdatePassword()
+            is UIEvent.OnCallCognitoUpdatePassword -> onCallCognitoUpdatePassword()
+            is UIEvent.OnPasswordSameAsPrevious -> onPasswordSameAsPrevious()
+            is UIEvent.OnUpdateLocallyStoredPassword -> onUpdateLocallyStoredPassword()
+            is UIEvent.OnUpdateLoadingState -> onUpdateLoadingState(event.state)
+            is UIEvent.OnShowAlertDialog -> onShowAlertDialog()
+            is UIEvent.OnNavigateToHome -> navigateBack(Screen.HomeScreen.route, isRestart = true)
         }
     }
 
@@ -238,12 +278,20 @@ class ChangePasswordViewModel @Inject constructor(
             val password: String?
         ) : UIEvent()
 
+        data class OnUpdateLoadingState(
+            val state: Boolean
+        ) : UIEvent()
+
         object OnNavigateBack : UIEvent()
+        object OnNavigateToHome : UIEvent()
+        object OnPasswordSameAsPrevious : UIEvent()
+        object OnShowAlertDialog : UIEvent()
+        object OnCallCognitoUpdatePassword : UIEvent()
+        object OnUpdateLocallyStoredPassword : UIEvent()
         object OnUpdatePassword : UIEvent()
     }
 
     companion object {
         const val VALID_PASSWORD = 0
     }
-
 }

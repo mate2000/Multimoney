@@ -369,6 +369,19 @@
     <string name="profile_settings_confirm_new_password" translatable="false">Confirmar nueva contraseña</string>
     <string name="profile_settings_forget_password" translatable="false">Olvidé mi contraseña</string>
     <string name="profile_settings_change_password_button" translatable="false">Cambiar contraseña</string>
+    <string name="profile_settings_password_modified" translatable="false">Contraseña modificada</string>
+    <string name="profile_settings_error_wrong_current_password" translatable="false">Contraseña actual es incorrecta</string>
+    <string name="profile_settings_error_new_password_invalid" translatable="false">Contraseña nueva no tiene el formato requerido</string>
+    <string name="profile_settings_error_new_password_something_went_wrong" translatable="false">Ha ocurrido un error</string>
+    <string name="profile_settings_error_try_again_later" translatable="false">Intentar mas tarde</string>
+    <string name="profile_settings_error_password_must_not_be_the_same" translatable="false">Tu contraseña no debe ser igual a las últimas 12 contraseñas anteriores</string>
+    <string name="profile_settings_error_we_could_not_change_your_password" translatable="false">No pudimos cambiar tu contraseña </string>
+    <string name="profile_settings_error_we_are_sorry_try_again_later" translatable="false">Lo sentimos, vuelve a intentarlo mas tarde </string>
+
+
+
+
+
 
 
 

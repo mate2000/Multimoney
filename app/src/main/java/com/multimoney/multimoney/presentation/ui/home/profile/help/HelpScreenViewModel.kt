@@ -13,6 +13,7 @@ import com.multimoney.domain.model.profile.CountryContact
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -26,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HelpScreenViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val queryCountryContactUseCase: QueryCountryContactUseCase
 ) : BaseViewModel(true) {
 
@@ -35,12 +36,10 @@ class HelpScreenViewModel @Inject constructor(
         private set
 
     // stateless
-    // Todo remove this values, this are for testing purposes
-    private var contactCountryInfo: CountryContact? = CountryContact(
-        whatsappLink = "https://api.whatsapp.com/send/?phone=50325651069&text&type=phone_number&app_absent=0",
-        customerServicesPhone = "22459000"
-    )
+    private var contactCountryInfo: CountryContact? = null
     private val idBrand = savedStateHandle[ID_BRAND] ?: 0
+    val defaultDialogParameters =
+        DialogParameters(descriptionResource = R.string.something_went_wrong)
 
     private fun getContactInfo() =
         executeUseCase {
@@ -50,79 +49,140 @@ class HelpScreenViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess { contactInfo ->
                     contactCountryInfo = contactInfo
-                    uiState = uiState.copy(isLoading = false)
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        isAlertResultVisible = false
+                    )
                 }
                 result.onFailure {
-                    onUIEvent(
-                        UIEvent.OnFailureWithDialog(
-                            isLoading = false,
-                            openDialog = DialogParameters(
-                                description = it.getError() ?: "",
-                                isActive = mutableStateOf(true)
-                            )
-                        )
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        isAlertResultVisible = true
                     )
-                    uiState = uiState.copy(isLoading = false)
                 }
                 result.onLoading {
                     uiState = uiState.copy(isLoading = true)
                 }
-
             }
         }
 
-    private fun callAttentionCenter(openIntent: (Intent) -> Unit) {
-        val uri = Uri.parse(TEL_PREFIX + contactCountryInfo?.customerServicesPhone)
-        val intent = Intent(Intent.ACTION_DIAL, uri)
-        openIntent(intent)
-    }
-
-    private fun openWhatsappLink(openIntent: (Intent) -> Unit) {
-        val uri = Uri.parse(contactCountryInfo?.whatsappLink)
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        openIntent(intent)
-    }
-
-    private fun openFAQ(openIntent: (Intent) -> Unit) {
-        val uri = when (idBrand) {
-            Brand.Guatemala.id -> Uri.parse(FAQ_LINK_GT)
-            Brand.ElSalvador.id -> Uri.parse(FAQ_LINK_SV)
-            Brand.CostaRica.id -> Uri.parse(FAQ_LINK_CR)
-            else -> null
+    private fun callAttentionCenter(
+        openIntent: (Intent) -> Unit,
+        onFailureWithDialog: (isActive: Boolean, dialogParameters: DialogParameters) -> Unit
+    ) {
+        try {
+            val phone = contactCountryInfo?.customerServicesPhone
+            phone?.let {
+                val uri = Uri.parse(TEL_PREFIX + phone)
+                val intent = Intent(Intent.ACTION_DIAL, uri)
+                openIntent(intent)
+            } ?: onFailureWithDialog(
+                false,
+                defaultDialogParameters.copy(isActive = mutableStateOf(true))
+            )
+        } catch (exception: NullPointerException) {
+            onFailureWithDialog(
+                false,
+                defaultDialogParameters.copy(isActive = mutableStateOf(true))
+            )
         }
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        openIntent(intent)
     }
+
+    private fun openWhatsappLink(
+        openIntent: (Intent) -> Unit,
+        onFailureWithDialog: (isActive: Boolean, dialogParameters: DialogParameters) -> Unit
+    ) {
+        try {
+            val uri = Uri.parse(contactCountryInfo?.whatsappLink)
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            openIntent(intent)
+        } catch (exception: NullPointerException) {
+            onFailureWithDialog(
+                false,
+                defaultDialogParameters.copy(isActive = mutableStateOf(true))
+            )
+        }
+    }
+
+    private fun openFAQ(
+        openIntent: (Intent) -> Unit,
+        onFailureWithDialog: (isActive: Boolean, dialogParameters: DialogParameters) -> Unit
+    ) {
+        try {
+            val uri = when (idBrand) {
+                Brand.Guatemala.id -> Uri.parse(FAQ_LINK_GT)
+                Brand.ElSalvador.id -> Uri.parse(FAQ_LINK_SV)
+                Brand.CostaRica.id -> Uri.parse(FAQ_LINK_CR)
+                else -> null
+            }
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            openIntent(intent)
+        } catch (exception: NullPointerException) {
+            onFailureWithDialog(
+                false,
+                defaultDialogParameters.copy(isActive = mutableStateOf(true))
+            )
+        }
+    }
+
+    private fun onNavigateBack() =
+        navigateBack(popTo = Screen.ProfileScreen.route, isRestart = false)
 
     data class UIState(
         val isLoading: Boolean = false,
+        val isAlertResultVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileScreen.route, false)
+            is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnGetContactInfo -> getContactInfo()
-            is UIEvent.OnChatWithUsClick -> openWhatsappLink(uiEvent.openWhatsAppIntent)
-            is UIEvent.OnCallToAttentionCenterClick -> callAttentionCenter(uiEvent.openPhoneIntent)
-            is UIEvent.OnFAQClick -> openFAQ(uiEvent.openFAQIntent)
+            is UIEvent.OnChatWithUsClick -> openWhatsappLink(
+                uiEvent.openWhatsAppIntent,
+                uiEvent.onFailureWithDialog
+            )
+            is UIEvent.OnCallToAttentionCenterClick -> callAttentionCenter(
+                uiEvent.openPhoneIntent,
+                uiEvent.onFailureWithDialog
+            )
+            is UIEvent.OnFAQClick -> openFAQ(uiEvent.openFAQIntent, uiEvent.onFailureWithDialog)
             // Todo add terms and conditions action
             is UIEvent.OnTermsAndConditionsClick -> Timber.d("Open Terms Website")
+            is UIEvent.OnAlertResultButtonClick -> onNavigateBack()
             is UIEvent.OnFailureWithDialog ->
                 uiState =
-                    uiState.copy(isLoading = uiEvent.isLoading, openDialog = uiEvent.openDialog)
+                    uiState.copy(
+                        isLoading = uiEvent.isLoading,
+                        openDialog = uiEvent.dialogParameters
+                    )
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnGetContactInfo : UIEvent()
-        data class OnChatWithUsClick(val openWhatsAppIntent: (Intent) -> Unit) : UIEvent()
-        data class OnCallToAttentionCenterClick(val openPhoneIntent: (Intent) -> Unit) : UIEvent()
-        data class OnFAQClick(val openFAQIntent: (Intent) -> Unit) : UIEvent()
+        data class OnChatWithUsClick(
+            val openWhatsAppIntent: (Intent) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+
+        data class OnCallToAttentionCenterClick(
+            val openPhoneIntent: (Intent) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+
+        data class OnFAQClick(
+            val openFAQIntent: (Intent) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+
         object OnTermsAndConditionsClick : UIEvent()
-        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
-            UIEvent()
+        object OnAlertResultButtonClick : UIEvent()
+        data class OnFailureWithDialog(
+            val isLoading: Boolean,
+            val dialogParameters: DialogParameters
+        ) : UIEvent()
     }
 
     companion object {

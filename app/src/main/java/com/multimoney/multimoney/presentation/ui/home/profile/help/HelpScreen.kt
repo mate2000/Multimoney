@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
@@ -29,12 +30,12 @@ import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenVie
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnGetContactInfo
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreenViewModel.UIEvent.OnTermsAndConditionsClick
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
 @Composable
 fun HelpScreen(
@@ -42,10 +43,23 @@ fun HelpScreen(
     viewModel: HelpScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-        viewModel.executeNavigation(
-            onPopBackStack = onPopBackStack
+        viewModel.apply {
+            executeNavigation(onPopBackStack = onPopBackStack)
+            onUIEvent(OnGetContactInfo)
+        }
+    }
+
+    HelpScreenContent(viewModel)
+
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(id = R.string.profile_help_error_title),
+            descriptionString = stringResource(id = R.string.profile_help_error_subtitle),
+            buttonTextResource = R.string.profile_help_error_button_label,
+            isLeftButtonVisible = false,
+            isRightButtonVisible = false,
+            onButtonClick = { viewModel.onUIEvent(HelpScreenViewModel.UIEvent.OnAlertResultButtonClick) }
         )
-        viewModel.onUIEvent(OnGetContactInfo)
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)
@@ -57,14 +71,13 @@ fun HelpScreen(
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+            onDismissAction = viewModel.uiState.openDialog.dismissAction
         )
     }
-
-    HelpScreenContent(viewModel)
 }
 
 @Composable
+@Preview
 fun HelpScreenContent(viewModel: HelpScreenViewModel = hiltViewModel()) {
     val context = LocalContext.current
     Column(
@@ -78,58 +91,76 @@ fun HelpScreenContent(viewModel: HelpScreenViewModel = hiltViewModel()) {
         )
         HelpOptions(
             onChatWithUsClick = {
-                viewModel.onUIEvent(OnChatWithUsClick { whatsAppIntent ->
-                    openIntent(
-                        context = context,
-                        intent = whatsAppIntent,
-                        onFailure = { errorMessage ->
+                viewModel.onUIEvent(OnChatWithUsClick(
+                    openWhatsAppIntent = { whatsAppIntent ->
+                        openIntent(context, whatsAppIntent) {
                             viewModel.onUIEvent(
                                 HelpScreenViewModel.UIEvent.OnFailureWithDialog(
-                                    isLoading = false, openDialog = DialogParameters(
-                                        description = errorMessage ?: "",
+                                    false,
+                                    viewModel.defaultDialogParameters.copy(
                                         isActive = mutableStateOf(true)
                                     )
                                 )
                             )
                         }
-                    )
-                })
+                    },
+                    onFailureWithDialog = { isLoading, dialogParameters ->
+                        viewModel.onUIEvent(
+                            HelpScreenViewModel.UIEvent.OnFailureWithDialog(
+                                isLoading,
+                                dialogParameters
+                            )
+                        )
+                    }
+                ))
             },
             onCallAttentionCenterClick = {
-                viewModel.onUIEvent(OnCallToAttentionCenterClick { phoneIntent ->
-                    openIntent(
-                        context = context,
-                        intent = phoneIntent,
-                        onFailure = { errorMessage ->
+                viewModel.onUIEvent(OnCallToAttentionCenterClick(
+                    openPhoneIntent = { phoneIntent ->
+                        openIntent(context, phoneIntent) {
                             viewModel.onUIEvent(
                                 HelpScreenViewModel.UIEvent.OnFailureWithDialog(
-                                    isLoading = false, openDialog = DialogParameters(
-                                        description = errorMessage ?: "",
+                                    false,
+                                    viewModel.defaultDialogParameters.copy(
                                         isActive = mutableStateOf(true)
                                     )
                                 )
                             )
                         }
-                    )
-                })
+                    },
+                    onFailureWithDialog = { isLoading, dialogParameters ->
+                        viewModel.onUIEvent(
+                            HelpScreenViewModel.UIEvent.OnFailureWithDialog(
+                                isLoading,
+                                dialogParameters
+                            )
+                        )
+                    }
+                ))
             },
             onFAQClick = {
-                viewModel.onUIEvent(OnFAQClick { faqIntent ->
-                    openIntent(
-                        context = context,
-                        intent = faqIntent,
-                        onFailure = { errorMessage ->
+                viewModel.onUIEvent(OnFAQClick(
+                    openFAQIntent = { whatsAppIntent ->
+                        openIntent(context, whatsAppIntent) {
                             viewModel.onUIEvent(
                                 HelpScreenViewModel.UIEvent.OnFailureWithDialog(
-                                    isLoading = false, openDialog = DialogParameters(
-                                        description = errorMessage ?: "",
+                                    false,
+                                    viewModel.defaultDialogParameters.copy(
                                         isActive = mutableStateOf(true)
                                     )
                                 )
                             )
                         }
-                    )
-                })
+                    },
+                    onFailureWithDialog = { isLoading, dialogParameters ->
+                        viewModel.onUIEvent(
+                            HelpScreenViewModel.UIEvent.OnFailureWithDialog(
+                                isLoading,
+                                dialogParameters
+                            )
+                        )
+                    }
+                ))
             },
             onTermsAndConditions = { viewModel.onUIEvent(OnTermsAndConditionsClick) }
         )
@@ -186,12 +217,12 @@ fun HelpOptions(
     }
 }
 
-fun openIntent(context: Context, intent: Intent, onFailure: (error: String?) -> Unit) {
+fun openIntent(context: Context, intent: Intent, onFailure: () -> Unit) {
     try {
         context.startActivity(intent)
     } catch (s: SecurityException) {
-        onFailure(s.message)
+        onFailure()
     } catch (noActivity: ActivityNotFoundException) {
-        onFailure(noActivity.message)
+        onFailure()
     }
 }

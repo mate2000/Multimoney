@@ -996,5 +996,8 @@
     <string name="profile_help_call_attention_center_label" translatable="false">Llamar a centro de atención</string>
     <string name="profile_help_faq_label" translatable="false">Preguntas frecuentes</string>
     <string name="profile_help_terms_and_conditions_label" translatable="false">Términos y condiciones</string>
+    <string name="profile_help_error_title" translatable="false">¡Oh no! hubo un error</string>
+    <string name="profile_help_error_subtitle" translatable="false">Por favor intentá de nuevo</string>
+    <string name="profile_help_error_button_label" translatable="false">Regresar</string>
 
 </resources>

@@ -92,7 +92,7 @@ class SmartViewModel @Inject constructor(
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
     var globalRequestId = 0
-    private var idPrint: Long = 1120654
+    private var idSysRequest: Long = 0
     var isOnFidoVerified = true
 
     // UIState
@@ -208,6 +208,7 @@ class SmartViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     if (isLastStep) {
+                        idSysRequest = it?.idSysRequest?.toLong() ?: 0L
                         globalRequestId = it?.idGlobalRequest ?: 0
                         callMutationSaveSmartAccount()
                     } else {
@@ -362,7 +363,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/$globalRequestId/${URL_EMPTY}",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$globalRequestId/${URL_EMPTY}",
             Screen.SmartScreen.route
         )
     }

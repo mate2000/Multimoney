@@ -6,7 +6,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.APPROVED
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FAILED
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.FIRMED
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.OVER_COUNTER
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
+import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
 import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.data.util.catalog.SmartAccountStatus
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CANCELED
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
+import com.multimoney.data.util.catalog.SmartAccountStatusRequest.SENT
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
@@ -31,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCloseCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetSmartContent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnLastStepChange
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMiniCardsClicked
@@ -545,6 +557,31 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    private fun getSmartContent() {
+        uiState = uiState.copy(
+            smartContent =
+            when (uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest) {
+                SmartAccountStatusRequest.PENDING.status, SENT.status, CANCELED.status, CREATED.status -> true
+                else -> {
+                    when (uiState.userStatus?.infoBankAccount?.statusFirm) {
+                        PENDING.status, APPROVED.status, FIRMED.status, REJECTED.status, OVER_COUNTER.status, FAILED.status -> true
+                        else -> if (uiState.userStatus?.infoBankAccount?.status?.equals(
+                                SmartAccountStatus.NO_EXIST.status
+                            ) == true
+                        ) {
+                            true
+                        } else if (uiState.userStatus?.infoBankAccount?.status?.equals(
+                                SmartAccountStatus.EXIST_IN_CORE.status
+                            ) == true
+                        ) {
+                            true
+                        } else null
+                    }
+                }
+            }
+        )
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -557,7 +594,8 @@ class ProductViewModel @Inject constructor(
         val canExpandCredit: Boolean = false,
         val scheduleChipIconResource: Int? = null,
         val phoneNumber: String? = null,
-        val showCardIssuanceError: Boolean = false
+        val showCardIssuanceError: Boolean = false,
+        val smartContent: Boolean? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -618,6 +656,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToCreditMovementsScreen -> onNavigateToCreditMovements()
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
+            is OnGetSmartContent -> getSmartContent()
         }
     }
 
@@ -650,6 +689,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
         object OnNavigateToSmartPaymentAccountScreen : UIEvent()
         object OnNavigateToSmartPaymentMethodScreen : UIEvent()
+        object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(
             val idBrand: String,

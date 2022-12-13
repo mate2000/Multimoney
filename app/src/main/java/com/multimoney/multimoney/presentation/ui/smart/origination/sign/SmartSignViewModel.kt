@@ -89,14 +89,14 @@ class SmartSignViewModel @Inject constructor(
         )
     }
 
-    private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
+    private fun onShouldCallSubscription(idRequestSys: Long, idBrand: Int) {
         if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
             uiState = uiState.copy(
                 loadingIcon = drawable.ic_multimoney_white_logo,
                 loadingTitle = string.smart_other_generating_document_title,
                 loadingSubtitle = string.smart_other_generating_document_subtitle
             )
-            onListenSmartContractEventSubscription(idBrand, idPrint)
+            onListenSmartContractEventSubscription(idBrand, idRequestSys)
         }
     }
 

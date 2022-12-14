@@ -15,6 +15,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCase
 import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -40,7 +41,8 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val mmCountDownTimer: MMCountDownTimer,
-    private val novoHelper: NovoHelper
+    private val novoHelper: NovoHelper,
+    private val mutationUserPhoneMobileSaveUseCase: MutationUserPhoneMobileSaveUseCase
 ) : BaseViewModel(false) {
 
     // UIState

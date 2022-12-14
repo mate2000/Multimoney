@@ -1,11 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
@@ -105,8 +103,8 @@ class ValidateOTPViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             dialogTextResource = when (uiState.idBrand) {
-                Brand.Guatemala.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt else R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt
-                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone else R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email
+                Brand.Guatemala.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone_gt else R.string.profile_otp_user_blocked_max_attempt_email_gt
+                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone else R.string.profile_otp_user_blocked_max_attempt_email
             },
             alertTextResource = when (uiState.idBrand) {
                 Brand.Guatemala.id -> R.string.profile_error_changing_phone_gt

@@ -299,6 +299,7 @@
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
+    <string name="home_product_process_smart_label" translatable="false">Smart</string>
 
     <!-- Credit in progress firm incomplete -->
     <string name="home_firm_incomplete_title" translatable="false">¡Sólo falta tu firma!</string>
@@ -339,10 +340,10 @@
     <string name="profile_send_code" translatable="false">Enviar código</string>
     <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
     <string name="profile_enter_the_code_sent_to_template_gt" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
-    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
-    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
-    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
-    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_phone_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_email_gt" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="profile_code_expires_in_template" translatable="false">Código expira en %1$s segundos</string>
     <string name="profile_code_resend_expires_in_template" translatable="false">Código reenviado expira en %1$s segundos</string>
     <string name="profile_error_changing_phone_title" translatable="false">No pudimos cambiar tu teléfono</string>
@@ -364,7 +365,22 @@
     <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
     <string name="profile_you_can_try_later_biometrics_gt" translatable="false">Puedes volver a configurarlo cuando quieras</string>
     <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
-    <string name="home_product_process_smart_label" translatable="false">Smart</string>
+
+    <string name="profile_settings_change_password" translatable="false">Cambiar contraseña</string>
+    <string name="profile_settings_current_password" translatable="false">Contraseña actual</string>
+    <string name="profile_settings_new_password" translatable="false">Nueva contraseña</string>
+    <string name="profile_settings_confirm_new_password" translatable="false">Confirmar nueva contraseña</string>
+    <string name="profile_settings_forget_password" translatable="false">Olvidé mi contraseña</string>
+    <string name="profile_settings_change_password_button" translatable="false">Cambiar contraseña</string>
+    <string name="profile_settings_password_modified" translatable="false">Contraseña modificada</string>
+    <string name="profile_settings_error_wrong_current_password" translatable="false">Contraseña actual es incorrecta</string>
+    <string name="profile_settings_error_new_password_invalid" translatable="false">Contraseña nueva no tiene el formato requerido</string>
+    <string name="profile_settings_error_new_password_something_went_wrong" translatable="false">Ha ocurrido un error</string>
+    <string name="profile_settings_error_try_again_later" translatable="false">Intentar mas tarde</string>
+    <string name="profile_settings_error_password_must_not_be_the_same" translatable="false">Tu contraseña no debe ser igual a las últimas 12 contraseñas anteriores</string>
+    <string name="profile_settings_error_we_could_not_change_your_password" translatable="false">No pudimos cambiar tu contraseña </string>
+    <string name="profile_settings_error_we_are_sorry_try_again_later" translatable="false">Lo sentimos, vuelve a intentarlo mas tarde </string>
+
 
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>

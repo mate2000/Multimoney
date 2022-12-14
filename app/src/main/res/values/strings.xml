@@ -328,8 +328,8 @@
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
-    <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde quieres recibir el código?</string>
-    <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde querés recibir el código?</string>
+    <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde quieres recibir el código?</string>
+    <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde querés recibir el código?</string>
     <string name="profile_new_phone_number" translatable="false">Nuevo número de teléfono</string>
     <string name="profile_we_will_send_you_a_code" translatable="false">Te envieramos un código de verificación para confirmar tu nuevo teléfono</string>
     <string name="profile_sms_to_previous_phone" translatable="false">SMS al teléfono anterior</string>

@@ -2991,7 +2991,7 @@ input UserPhoneMobileGetDtoInput {
 
   serialNumber: String!
 
-  pkUser: String!
+  pkUser: Long!
 
   idBrand: Int
 
@@ -4813,7 +4813,7 @@ input ChangeEmailDtoInput {
 
   changeUser: Boolean!
 
-  pkUser: String!
+  pkUser: Long!
 
   idBrand: Int
 
@@ -4827,7 +4827,7 @@ input UserPhoneMobileSaveDtoInput {
 
   idWalletCard: String!
 
-  pkUser: String!
+  pkUser: Long!
 
   idBrand: Int
 
@@ -6250,6 +6250,9 @@ type LocalTransferFavoriteResult {
   idCurrencyAccount: Int
 
   currencyAccount: String!
+
+  ibanNumber: String!
+
 }
 
 type TypeAccountListResponse {
@@ -6459,6 +6462,9 @@ type ObjPhone {
   id_Currency: String!
 
   currency: String!
+
+  ibanNumber: String
+
 }
 
 type PromissoryNoteTransactionMobile {

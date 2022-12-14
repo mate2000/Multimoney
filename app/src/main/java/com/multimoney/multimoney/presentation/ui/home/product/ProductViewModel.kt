@@ -80,6 +80,7 @@ class ProductViewModel @Inject constructor(
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
+    var idClient : Int = 0
     var userName: String = ""
     var productProgress = 0F
     val firstName : String? = null
@@ -106,6 +107,7 @@ class ProductViewModel @Inject constructor(
         this.userName = userName
         this.configurationVersion = configurationVersion
         uiState = uiState.copy(idBrand = idBrand, productPageList = productPageList)
+        this.idClient = validateUserStatus?.infoUser?.idClient ?: 0
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
         this.smartMovementsList = smartMovements
@@ -259,7 +261,7 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}")
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/${email}/${uiState.userStatus?.infoUser?.phone}/${identification}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/${idClient}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/${email}/${uiState.userStatus?.infoUser?.phone}/${identification}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
     }
 
     private fun onNavigateToSmartPaymentAccountScreen() =

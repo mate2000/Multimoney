@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
@@ -27,7 +28,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangePhoneViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
     var phoneNumberTransformation : PhoneNumberTransformation? = null
@@ -45,7 +45,8 @@ class ChangePhoneViewModel @Inject constructor(
             identification = savedStateHandle[IDENTIFICATION],
             countryCode = initCountryCode(),
             pkUser = savedStateHandle[PK_USER],
-            firstName = savedStateHandle[FIRST_NAME]
+            firstName = savedStateHandle[FIRST_NAME],
+            idClient = savedStateHandle[ID_CLIENT]
         )
         phoneNumberTransformation = PhoneNumberTransformation(uiState.countryCode?.uppercase().toString())
     }
@@ -116,7 +117,7 @@ class ChangePhoneViewModel @Inject constructor(
     }
 
     private fun onContinueButtonClicked() {
-        navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     data class UIState(
@@ -127,6 +128,7 @@ class ChangePhoneViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val newPhoneNumber: String? = null,
         val idBrand: Int? = null,
+        val idClient : Int? = null,
         val firstName: String? = null,
         val pkUser: String? = null,
         val phoneCode: String = "",

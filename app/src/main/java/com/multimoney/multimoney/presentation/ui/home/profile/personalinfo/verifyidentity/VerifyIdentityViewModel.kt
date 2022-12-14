@@ -19,13 +19,13 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class VerifyIdentityViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -43,7 +43,8 @@ class VerifyIdentityViewModel @Inject constructor(
             email = savedStateHandle[EMAIL],
             pkUser = savedStateHandle[PK_USER],
             changingField = savedStateHandle[CHANGING_FIELD],
-            newEmail = savedStateHandle[NEW_EMAIL]
+            newEmail = savedStateHandle[NEW_EMAIL],
+            idClient = savedStateHandle[ID_CLIENT]
         )
         getTextResources()
     }
@@ -73,7 +74,7 @@ class VerifyIdentityViewModel @Inject constructor(
             FieldToChange.PHONE.value -> uiState.newPhoneNumber
             else -> uiState.newEmail
         }
-        navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.changingField}/${newValue}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}")
+        navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${newValue}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}")
     }
 
     data class UIState(
@@ -86,6 +87,7 @@ class VerifyIdentityViewModel @Inject constructor(
         val idBrand: Int? = null,
         val phoneCode: String = "",
         val email : String? = null,
+        val idClient : Int? = null,
         val countryCode: String? = null,
         val isButtonEnabled: Boolean = false,
         val questionOneValue: Boolean = true,

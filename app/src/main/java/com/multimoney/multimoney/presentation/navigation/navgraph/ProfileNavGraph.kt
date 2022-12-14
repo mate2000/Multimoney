@@ -28,6 +28,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
+                },
+                navArgument(ID_CLIENT){
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -55,6 +58,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND){
                     type = NavType.IntType
+                },
+                navArgument(ID_CLIENT){
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -77,6 +83,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             Screen.ProfileChangeEmailScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND){
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT){
                     type = NavType.IntType
                 }
             )
@@ -146,6 +155,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND){
                     type = NavType.IntType
+                },
+                navArgument(ID_CLIENT){
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -167,6 +179,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             Screen.ProfileValidateOTPScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND){
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT){
                     type = NavType.IntType
                 }
             )

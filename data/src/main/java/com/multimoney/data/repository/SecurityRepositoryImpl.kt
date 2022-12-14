@@ -392,6 +392,7 @@ class SecurityRepositoryImpl @Inject constructor(
         )
 
     override suspend fun mutationChangeEmail(
+        idClient: Int,
         pkUser: Int,
         identification: String,
         email: String,
@@ -402,13 +403,14 @@ class SecurityRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<ChangeEmail>> =
         fetchData(
             apolloCall = graphqlApi.mutationChangeEmail(
-                pkUser,
-                identification,
-                email,
-                registerId,
-                changeUser,
-                user,
-                idBrand
+                idClient = idClient,
+                pkUser = pkUser,
+                identification = identification,
+                email = email,
+                changeUser = changeUser,
+                idBrand = idBrand,
+                user = user,
+                registerId = registerId
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

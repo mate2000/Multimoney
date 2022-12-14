@@ -58,9 +58,9 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateString
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -79,13 +79,10 @@ class SmartViewModel @Inject constructor(
     val user = savedStateHandle[USER] ?: ""
     val comingFromCrypto = savedStateHandle[COMING_FROM_CRYPTO] ?: ""
     val idBrandAsInt = idBrand.toIntOrNull() ?: DEFAULT_ID_BRAND_ERROR
-    var identification: String = ""
-    var email: String = ""
-    var firstName: String = ""
-    var lastName: String = ""
-    var idPrint: Long = 1120654
-    var linkEvicertia: String = URL_EMPTY
-    var statusOnfido: String = ""
+    val identification: String = savedStateHandle[IDENTIFICATION] ?: ""
+    val email: String = savedStateHandle[EMAIL] ?: ""
+    val firstName: String = savedStateHandle[FIRST_NAME] ?: ""
+    val lastName: String = savedStateHandle[LAST_NAME] ?: ""
 
     // Stateless
     var nextAction: () -> Unit = {}
@@ -94,12 +91,12 @@ class SmartViewModel @Inject constructor(
     var accountSmartData: AccountSmartData? = null
     private var nextStep: Int = SmartSteps.One.id
     private var previousStep: Int = SmartSteps.One.id
-    private var globalRequest: Int = 0
+    var globalRequestId = 0
+    private var idSysRequest: Long = 0
     var isOnFidoVerified = true
 
     // UIState
     var uiState by mutableStateOf(UIState())
-        private set
 
     init {
         accountSmartData = AccountSmartData(
@@ -107,12 +104,6 @@ class SmartViewModel @Inject constructor(
             idBrand = idBrandAsInt,
             user = user
         )
-
-        identification = savedStateHandle[IDENTIFICATION] ?: ""
-        email = savedStateHandle[EMAIL] ?: ""
-        firstName = savedStateHandle[FIRST_NAME] ?: ""
-        lastName = savedStateHandle[LAST_NAME] ?: ""
-        statusOnfido = savedStateHandle[ONFIDO_STATUS] ?: ""
     }
 
     // FIXME, this is the logic to list the data, it should be handled in another ticket
@@ -151,7 +142,7 @@ class SmartViewModel @Inject constructor(
                 user = accountSmartData?.user ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
-                    globalRequest = it?.idGlobalRequest ?: 0
+                    globalRequestId = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
                 }
                 result.onFailure {
@@ -217,7 +208,8 @@ class SmartViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     if (isLastStep) {
-                        globalRequest = it?.idGlobalRequest ?: 0
+                        idSysRequest = it?.idSysRequest?.toLong() ?: 0L
+                        globalRequestId = it?.idGlobalRequest ?: 0
                         callMutationSaveSmartAccount()
                     } else {
                         onUIEvent(OnLoadingValueChange(false))
@@ -250,7 +242,7 @@ class SmartViewModel @Inject constructor(
             user = user,
             idBrand = idBrandAsInt,
             identificationNumber = identification,
-            idRequest = globalRequest.toLong()
+            idRequest = globalRequestId.toLong()
         ).collectLatest { result ->
             result.onSuccess {
                 onUIEvent(OnLoadingValueChange(false))
@@ -363,10 +355,7 @@ class SmartViewModel @Inject constructor(
 
     private fun nextStep() {
         if (nextStep <= getTotalStepperCounter()) {
-            uiState = uiState.copy(
-                currentStep = nextStep,
-                isCloseVisible = nextStep >= SmartSteps.One.id
-            )
+            navigateToOnfido()
         } else {
             navigateToOnfido()
         }
@@ -374,7 +363,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idPrint/$URL_EMPTY",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$globalRequestId/${URL_EMPTY}",
             Screen.SmartScreen.route
         )
     }
@@ -512,6 +501,7 @@ class SmartViewModel @Inject constructor(
             val accountSmartData: AccountSmartData?,
             val idBrand: Int? = null
         ) : UIEvent()
+
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
 
         data class OnCallSaveAutomatedSmartAccount(val accountSmartData: AccountSmartData?) :

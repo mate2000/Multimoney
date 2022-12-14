@@ -739,6 +739,8 @@
     <string name="smart_other_title" translatable="false">Otro</string>
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
+    <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multimoney Smart</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
@@ -903,6 +905,13 @@
         <item>Si, lo soy</item>
         <item>No, no lo soy</item>
     </string-array>
+
+    <!-- Evicertia screen -->
+    <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
+    <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
+    <string name="smart_evicertia_miss_title" translatable="false">¡Te vamos a extrañar!</string>
+    <string name="smart_evicertia_miss_subtitle" translatable="false">Si querés finalizar la solicitud de tu Multimoney Smart debés firmar el contrato.</string>
+    <string name="smart_evicertia_missing_signature_title" translatable="false">Te vamos a extrañar</string>
 
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>

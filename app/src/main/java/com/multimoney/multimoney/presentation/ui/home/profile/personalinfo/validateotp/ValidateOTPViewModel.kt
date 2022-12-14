@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -95,7 +96,8 @@ class ValidateOTPViewModel @Inject constructor(
             userName = savedStateHandle[USER],
             sendMethod = savedStateHandle[SEND_METHOD],
             changingField = savedStateHandle[CHANGING_FIELD],
-            newValue = savedStateHandle[NEW_VALUE]
+            newValue = savedStateHandle[NEW_VALUE],
+            idClient = savedStateHandle[ID_CLIENT]
         )
         getTextResources()
     }
@@ -274,11 +276,12 @@ class ValidateOTPViewModel @Inject constructor(
         }
 
     private fun onChangeEmail(
-        pkUser: Int, identification: String, email: String, registerId: Int,
+        idClient : Int,pkUser: Int, identification: String, email: String, registerId: Int,
         changeUser: Boolean, user: String, idBrand: Int
     ) =
         executeUseCase {
             mutationChangeEmailUseCase.invoke(
+                idClient,
                 pkUser,
                 identification,
                 email,
@@ -333,6 +336,7 @@ class ValidateOTPViewModel @Inject constructor(
                 }
                 else -> {
                     onChangeEmail(
+                        uiState.idClient?.toInt() ?: 0,
                         uiState.pkUser?.toInt() ?: 0,
                         uiState.identification.toString(),
                         uiState.newValue.toString(),
@@ -359,6 +363,7 @@ class ValidateOTPViewModel @Inject constructor(
     data class UIState(
         val idBrand: Int? = null,
         val identification: String? = null,
+        val idClient : Int? = null,
         val email: String? = null,
         val pkUser: String? = null,
         val userName: String? = null,

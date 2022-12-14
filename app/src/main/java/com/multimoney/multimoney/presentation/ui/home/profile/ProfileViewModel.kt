@@ -17,6 +17,7 @@ import timber.log.Timber
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
@@ -48,13 +49,14 @@ class ProfileViewModel @Inject constructor(
             identification = savedStateHandle[IDENTIFICATION],
             pkUser = savedStateHandle[PK_USER],
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
-            firstName = savedStateHandle[FIRST_NAME]
+            firstName = savedStateHandle[FIRST_NAME],
+            idClient = savedStateHandle[ID_CLIENT]
         )
     }
 
 
     private fun navigateToPersonalInfoScreen() {
-        navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun signOutDialogConfirmation() {
@@ -92,6 +94,7 @@ class ProfileViewModel @Inject constructor(
         val identification : String? = null,
         val idBrand: Int? = null,
         val pkUser: String? = null,
+        val idClient : Int? = null,
         val firstName : String? = null,
         val countryCode : String? = null,
         val openDialog: DialogParameters = DialogParameters()

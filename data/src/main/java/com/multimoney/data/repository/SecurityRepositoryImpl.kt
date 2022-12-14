@@ -387,13 +387,14 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<ChangePhone>> =
         fetchData(
-            apolloCall = graphqlApi.mutationChangePhone(identification,phone,pkUser,idBrand),
+            apolloCall = graphqlApi.mutationChangePhone(identification, phone, pkUser, idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
         )
 
     override suspend fun mutationChangeEmail(
+        idClient: Int,
         pkUser: Int,
         identification: String,
         email: String,
@@ -401,9 +402,18 @@ class SecurityRepositoryImpl @Inject constructor(
         changeUser: Boolean,
         user: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<ChangeEmail>>  =
+    ): Flow<MultimoneyResult<ChangeEmail>> =
         fetchData(
-            apolloCall = graphqlApi.mutationChangeEmail(pkUser,identification,email,registerId,changeUser,user,idBrand),
+            apolloCall = graphqlApi.mutationChangeEmail(
+                idClient = idClient,
+                pkUser = pkUser,
+                identification = identification,
+                email = email,
+                changeUser = changeUser,
+                idBrand = idBrand,
+                user = user,
+                registerId = registerId
+            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

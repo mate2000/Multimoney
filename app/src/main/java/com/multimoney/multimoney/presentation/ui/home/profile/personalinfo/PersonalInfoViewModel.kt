@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
@@ -38,12 +39,13 @@ class PersonalInfoViewModel @Inject constructor(
             identification = savedStateHandle[IDENTIFICATION],
             email = savedStateHandle.get<String>(EMAIL)?.trim()?.lowercase(Locale.getDefault()),
             firstName = savedStateHandle[FIRST_NAME],
-            userName = savedStateHandle[USER_NAME]
+            userName = savedStateHandle[USER_NAME],
+            idClient = savedStateHandle[ID_CLIENT]
         )
     }
 
     private fun navigateToEditEmail() {
-        navigateTo("${Screen.ProfileChangeEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileChangeEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun navigateToEditPhone() {
@@ -60,6 +62,7 @@ class PersonalInfoViewModel @Inject constructor(
         val firstName : String? = null,
         val phoneNumber: String? = null,
         val idBrand: Int? = null,
+        val idClient : Int? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

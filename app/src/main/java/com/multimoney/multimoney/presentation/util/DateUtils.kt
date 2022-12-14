@@ -112,6 +112,15 @@ fun parseApiDateToCardDate(date: String?): String {
     }
 }
 
+enum class FilterDateByDays(val days: Long) {
+    YESTERDAY(1),
+    LAST_7_DAYS(7),
+    LAST_30_DAYS(30),
+    LAST_90_DAYS(90),
+    LAST_180_DAYS(180),
+    LAST_365_DAYS(365)
+}
+
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val BIRTH_DATE_MIN_YEAR = 1902

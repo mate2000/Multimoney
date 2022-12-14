@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +27,9 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnHidePaymentBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -32,6 +37,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.uielement.VisaAnimation
 import com.multimoney.multimoney.presentation.util.NavEvent
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun PaymentAmountCardScreen(
@@ -45,11 +51,13 @@ fun PaymentAmountCardScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+            onUIEvent(OnStart)
         }
     }
     PaymentAmountCardContent(viewModel, coroutineScope)
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun PaymentAmountCardContent(
@@ -75,8 +83,11 @@ fun PaymentAmountCardContent(
             Column {
                 Text(
                     modifier = Modifier.padding(top = 42.dp),
-                    text = stringResource(id = R.string.payment_cards_list_amount_title),
-                    style = Typography.h5.copy(fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.labelText),
+                    text = stringResource(id = R.string.payment_amount_card_title),
+                    style = Typography.h5.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = MultimoneyTheme.colors.labelText
+                    ),
                     textAlign = TextAlign.Left
                 )
             }
@@ -86,7 +97,7 @@ fun PaymentAmountCardContent(
                     .fillMaxWidth(),
                 onClick = {
                     focusManager.clearFocus()
-                    viewModel.onUIEvent(UIEvent.OnShowVisaAnimation)
+                    viewModel.onUIEvent(UIEvent.OnContinueClick)
                 },
                 text = stringResource(id = R.string.button_continue),
                 buttonType = CustomButtonType.PrimaryPrimary,
@@ -97,6 +108,21 @@ fun PaymentAmountCardContent(
 
     if (viewModel.uiState.isVisaAnimationVisible) {
         VisaAnimation { viewModel.onUIEvent(UIEvent.OnFinishVisaAnimation) }
+    }
+    PaymentAmountCardBottomSheetScreen(
+        viewModel,
+        coroutineScope,
+        viewModel.uiState.bottomSheetVisibleState
+    )
+    BackHandler {
+        when {
+            viewModel.uiState.bottomSheetVisibleState.isVisible -> {
+                coroutineScope.launch {
+                    viewModel.onUIEvent(OnHidePaymentBottomSheet)
+                }
+            }
+            else -> viewModel.onUIEvent(OnNavigateBack)
+        }
     }
     LoadingIndicator(viewModel.uiState.isLoading)
 }

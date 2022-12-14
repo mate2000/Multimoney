@@ -810,7 +810,6 @@
     <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
     <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
     <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
-    <string name="payment_amount_bottom_sheet_amount_automatic_checkbox" translatable="false">Programar pago automático</string>
     <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
@@ -935,7 +934,14 @@
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
-    <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title" translatable="false">¿Cuánto querés abonar?</string>
+
+    <!-- Payment Amount Card Bottom Sheet -->
+    <string name="payment_amount_card_bottom_sheet_title" translatable="false">Monto a abonar</string>
+    <string name="payment_amount_card_bottom_sheet_from_card" translatable="false">Desde tu tarjeta</string>
+    <string name="payment_amount_card_bottom_sheet_amount_automatic_checkbox" translatable="false">Programar pago automático</string>
+    <string name="payment_amount_card_bottom_sheet_button" translatable="false">Realizar abono</string>
+    <string name="payment_amount_card_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
 
     <!-- Payment method -->
     <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>
@@ -955,8 +961,8 @@
     <string name="disbursement_bottom_sheet_account" translatable="false">En tu cuenta</string>
     <string name="disbursement_bottom_sheet_button" translatable="false">Realizar desembolso</string>
     <string name="disbursement_bottom_sheet_exchange_rate" translatable="false">Tipo de cambio</string>
-    <string name="disbursement_bottom_sheet_quota_to_pay"  translatable="false">Cuota mensual consolidada</string>
-    <string name="disbursement_bottom_sheet_next_payment_date"  translatable="false">Fecha del siguiente pago</string>
+    <string name="disbursement_bottom_sheet_quota_to_pay" translatable="false">Cuota mensual consolidada</string>
+    <string name="disbursement_bottom_sheet_next_payment_date" translatable="false">Fecha del siguiente pago</string>
 
     <!-- Disbursement Voucher -->
     <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>

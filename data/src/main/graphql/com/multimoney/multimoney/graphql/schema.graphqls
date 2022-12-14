@@ -6252,6 +6252,7 @@ type LocalTransferFavoriteResult {
   currencyAccount: String!
 
   ibanNumber: String!
+
 }
 
 type TypeAccountListResponse {
@@ -6463,6 +6464,7 @@ type ObjPhone {
   currency: String!
 
   ibanNumber: String
+
 }
 
 type PromissoryNoteTransactionMobile {

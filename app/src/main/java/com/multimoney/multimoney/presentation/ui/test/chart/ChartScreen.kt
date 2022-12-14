@@ -65,7 +65,7 @@ fun ChartScreen() {
                     )
                 )
             }
-            val set1 = CandleDataSet(values, "Data Set")
+            val set1 = CandleDataSet(values, "GetHistoricalClientBalance Set")
             set1.setDrawIcons(false)
             set1.axisDependency = AxisDependency.LEFT
 //        set1.setColor(Color.rgb(80, 80, 80));

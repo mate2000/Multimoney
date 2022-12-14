@@ -11,7 +11,6 @@ import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.MiniCards
-import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
@@ -175,7 +174,6 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
-
     override suspend fun mutationSendPinProcess(
         identification: String,
         firstName: String,
@@ -313,10 +311,11 @@ class SecurityRepositoryImpl @Inject constructor(
     override suspend fun queryValidateBankAccount(
         account: String,
         identification: String,
+        queryType: String?,
         user: String,
         idBrand: Int
     ) = fetchData(
-        apolloCall = graphqlApi.queryValidateAccount(account, identification, user, idBrand),
+        apolloCall = graphqlApi.queryValidateAccount(account, identification, queryType, user, idBrand),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -356,7 +355,6 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
-
 
     override suspend fun queryHomeMiniCards(
         infoCreditStatus: Boolean,

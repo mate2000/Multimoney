@@ -48,6 +48,7 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.Dis
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnProcessCreditExtension
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnShowDisbursementBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnSuccessProcessCreditExtension
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS
@@ -288,6 +289,17 @@ class DisbursementAccountViewModel @Inject constructor(
         )
     }
 
+    private fun onMaxAccountNumberDialog() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.disbursement_account_max_number_title,
+                descriptionResource = R.string.disbursement_account_max_number_description,
+                positiveResource = R.string.understood,
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     fun getCurrentAmountFormatted() =
         "${idCurrency?.getCurrency()?.symbol ?: ""}${
         selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
@@ -343,6 +355,7 @@ class DisbursementAccountViewModel @Inject constructor(
             is OnSuccessProcessCreditExtension -> onSuccessProcessCreditExtension(uiEvent.reference)
             is OnMessageProcessCreditExtension -> onMessageProcessCreditExtension(uiEvent.error)
             is OnProcessCreditExtension -> onProcessCreditExtension()
+            is OnDisclaimerClick -> onMaxAccountNumberDialog()
             is OnNavigateToVoucher -> onNavigateToVoucher(uiEvent.reference)
         }
     }
@@ -361,10 +374,12 @@ class DisbursementAccountViewModel @Inject constructor(
         data class OnSuccessProcessCreditExtension(val reference: String?) : UIEvent()
         object OnProcessCreditExtension : UIEvent()
         data class OnMessageProcessCreditExtension(val error: MessageError?) : UIEvent()
+        object OnDisclaimerClick : UIEvent()
     }
 
     companion object {
         private const val ID_LOAN_FORM_HARDCODED = 4 // TODO Change to 1-4 depending on preferences user previously selected (new HU)
         private const val LOAN_FORM_HARDCODED = "Transferencia" // TODO Change to Transferencia-PEX depending on preferences user previously selected (new HU)
+        const val MAX_ACCOUNT_NUMBER = 3
     }
 }

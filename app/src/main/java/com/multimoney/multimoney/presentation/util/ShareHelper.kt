@@ -12,6 +12,7 @@ import android.view.View
 import androidx.compose.ui.geometry.Rect
 import androidx.core.content.FileProvider
 import androidx.core.graphics.applyCanvas
+import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
@@ -49,7 +50,7 @@ class ShareHelper @Inject constructor(
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            bmpUri = FileProvider.getUriForFile(context, PACKAGE_NAME.plus(PROVIDER_TYPE), file)
+            bmpUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID.plus(PROVIDER_TYPE), file)
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
@@ -93,7 +94,6 @@ class ShareHelper @Inject constructor(
         const val IMAGE_NAME = "share_image_"
         const val IMAGE_TYPE = ".png"
         const val QUALITY_FINAL = 90
-        const val PACKAGE_NAME = "com.multimoney.multimoney"
         const val PROVIDER_TYPE = ".provider"
         const val IMAGE_INTENT_SEND_TYPE = "image/*"
         const val PLANT_TEXT_SEND_TYPE = "text/plain"

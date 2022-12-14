@@ -18,7 +18,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -74,12 +74,10 @@ fun DisbursementAmountScreen(
 
     viewModel.apply {
         isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
+        LaunchedEffect(isOnRestart) {
             if (isOnRestart) {
                 viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
                 viewModel.onUIEvent(OnStart)
-            }
-            onDispose {
                 isOnRestart = false
             }
         }

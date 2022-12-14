@@ -247,7 +247,7 @@
     <string name="home_pay_button_text" translatable="false">Abonar</string>
     <string name="home_my_products_title" translatable="false">Mi billetera Multimoney</string>
     <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
-    <string name="home_my_products_title_credit" translatable="false">Credito</string>
+    <string name="home_my_products_title_credit" translatable="false">Crédito</string>
     <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
     <string name="home_my_products_title_smart" translatable="false">Smart</string>
     <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
@@ -279,6 +279,7 @@
     <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
     <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
+    <string name="home_smart_product_process_accept_contract_description" translatable="false">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
     <string name="home_product_credit_not_completed_title" translatable="false">Tu solicitud está en proceso</string>
@@ -319,6 +320,10 @@
     <string name="profile_logout" translatable="false">Cerrar Sesión</string>
     <string name="profile_personal_info_title" translatable="false">Datos personales</string>
     <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
+    <string name="profile_change_password" translatable="false">Cambio de contarseña</string>
+    <string name="profile_notifications" translatable="false">Notificationes</string>
+    <string name="profile_biometrics" translatable="false">Biométricos</string>
+    <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>
     <string name="profile_change_phone" translatable="false">Cambio de teléfono</string>
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
@@ -355,6 +360,11 @@
     <string name="profile_we_will_send_you_a_code_to_your_email" translatable="false">Te enviaremos un código de verificación para confirmar tu nuevo correo</string>
     <string name="profile_email_check_format_error" translatable="false">Revisa formato. Debe contener "@" y "."</string>
     <string name="profile_emails_does_not_match_error" translatable="false">Los correos electrónicos no coinciden</string>
+    <string name="profile_sure_to_deactivate_biometrics_gt" translatable="false">¿Estás seguro que quieres desactivar tus biométricos?</string>
+    <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
+    <string name="profile_you_can_try_later_biometrics_gt" translatable="false">Puedes volver a configurarlo cuando quieras</string>
+    <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
+    <string name="home_product_process_smart_label" translatable="false">Smart</string>
 
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
@@ -369,6 +379,29 @@
 
     <!-- Home Smart Header Expanded-->
     <string name="home_product_smart_header_expanded_title" translatable="false">Mi Cuenta Smart</string>
+
+    <!--Crypto-->
+    <string name="crypto_finish_smart_alert_title" translatable="false">¡Tu cuenta Cripto y Smart están activas!</string>
+    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart</string>
+    <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
+    <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
+
+    <!-- Home Crypto Header Expanded-->
+    <string name="home_crypto_header_expanded_title" translatable="false">Mi Cripto</string>
+
+    <!-- Home Credit Footer Expanded-->
+    <string name="crypto_footer_expanded_btn_wallet" translatable="false">Mi portafolio</string>
+    <string name="crypto_footer_expanded_btn_market" translatable="false">Mercado</string>
+    <string name="crypto_footer_expanded_notice_title" translatable="false">Empezá a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en Portafolio y comprá desde el Mercado</string>
+    <string name="crypto_footer_expanded_buy_crypto_label" translatable="false">Comprar</string>
+    <string name="crypto_footer_expanded_sell_crypto_label" translatable="false">Vender</string>
+    <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
+    <string name="crypto_footer_expanded_send_crypto_label" translatable="false">Enviar</string>
+    <string name="crypto_footer_expanded_dialog_title" translatable="false">Compra con Smart</string>
+    <string name="crypto_footer_expanded_dialog_description" translatable="false">Para poder comprar criptomonedas debes hacerlo con los fondos de tu cuenta Smart</string>
+    <string name="crypto_footer_expanded_dialog_btn_cancel" translatable="false">Cancelar</string>
+    <string name="crypto_footer_expanded_dialog_btn_saving" translatable="false">Ahorrar</string>
 
     <!-- Home Smart - Account Details -->
     <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>
@@ -532,7 +565,9 @@
     <string name="onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
     <string name="onfido_rejected_action" translatable="false">Confirmar mi identidad</string>
     <string name="onfido_rejected_action_second_time" translatable="false">Contactar</string>
-
+    <string name="smart_onfido_rejected_second_time_title" translatable="false"> No fue posible verificar tu identidad</string>
+    <string name="smart_onfido_rejected_second_time_subtitle" translatable="false">Comunícate con nosotros para activar tu crédito.</string>
+    <string name="smart_onfido_rejected_action_second_time" translatable="false">Contactar</string>
     <!-- Sign Credit Web View -->
     <string name="sign_credit_dialog_title" translatable="false">Necesitamos tu firma en la siguiente pantalla</string>
     <string name="sign_credit_dialog_description" translatable="false">Por favor, realizala según las indicaciones.</string>
@@ -827,6 +862,9 @@
     <string name="disbursement_account_process_success_title" translatable="false">¡Tu solicitud fue \nenviada con éxito!</string>
     <string name="disbursement_account_process_success_description" translatable="false">Te notificaremos cuando tu \ndesembolso haya sido realizado</string>
     <string name="disbursement_account_process_error_button" translatable="false">Ir al inicio</string>
+    <string name="disbursement_account_max_number_disclaimer" translatable="false">Llegaste al máximo de cuentas registradas</string>
+    <string name="disbursement_account_max_number_title" translatable="false">Máximo de cuentas registradas</string>
+    <string name="disbursement_account_max_number_description" translatable="false">Puedes eliminar una cuenta desde configuraciones para poder agregar una nueva.</string>
 
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
@@ -871,7 +909,12 @@
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
-
+    <string name="approved_by_onfido_title" translatable="false">¡Tu Multimoney Smart ya está activa!</string>
+    <string name="approved_by_onfido_buttton_text" translatable="false">Hacer mi primer abono</string>
+    <string name="rejected_by_onfido_title" translatable="false">No pudimos validar tu identidad</string>
+    <string name="rejected_by_onfido_buttton_text" translatable="false">Validar mi identidad</string>
+    <string name="smart_continue_validating_identity_title" translatable="false">Ya casi tenés tu Multimoney Smart</string>
+    <string name="smart_rejected_by_onfido_subtitle" translatable="false">Inténtalo nuevamente</string>
 
     <!-- Credit Schedule Automatic Payment -->
     <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>
@@ -940,6 +983,8 @@
 
     <!-- Credit Movements -->
     <string name="credit_movements_download_button" translatable="false">Descargar estado de cuenta</string>
+    <string name="credit_movements_empty_state_title" translatable="false">Sin registros de movimientos</string>
+    <string name="credit_movements_empty_state_description" translatable="false">Aún no has realizado una transacción.</string>
 
     <!-- Download Account Statement Worker -->
     <string name="download_credit_movements_worker_channel_name" translatable="false">Descargar estado de cuenta</string>

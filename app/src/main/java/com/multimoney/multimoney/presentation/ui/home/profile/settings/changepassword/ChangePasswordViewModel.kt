@@ -193,7 +193,8 @@ class ChangePasswordViewModel @Inject constructor(
                         )
                     }
                 }
-            })
+            }
+        )
     }
 
     private fun onPasswordSameAsPrevious() {
@@ -253,7 +254,9 @@ class ChangePasswordViewModel @Inject constructor(
         when (event) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileSettingsScreen.route, false)
             is UIEvent.OnNewPasswordValueChange -> onNewPasswordValueChange(event.password)
-            is UIEvent.OnNewPasswordConfirmationValueChange -> onNewPasswordConfirmationValueChange(event.password)
+            is UIEvent.OnNewPasswordConfirmationValueChange -> onNewPasswordConfirmationValueChange(
+                event.password
+            )
             is UIEvent.OnCurrentPasswordValueChange -> onCurrentPasswordValueChange(event.password)
             is UIEvent.OnUpdatePassword -> onUpdatePassword()
             is UIEvent.OnCallCognitoUpdatePassword -> onCallCognitoUpdatePassword()

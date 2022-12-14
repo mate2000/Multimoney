@@ -184,7 +184,8 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                         textDecoration = TextDecoration.Underline,
                         color = MultimoneyTheme.colors.textLink
                     ),
-                    onClick = { })
+                    onClick = { }
+                )
 
                 CustomOutlinedTextField(
                     value = viewModel.uiState.newPassword,
@@ -290,7 +291,8 @@ fun ChangePasswordContent(viewModel: ChangePasswordViewModel) {
                 enable = viewModel.uiState.isButtonEnabled,
                 onClick = {
                     viewModel.onUIEvent(ChangePasswordViewModel.UIEvent.OnUpdatePassword)
-                })
+                }
+            )
         }
     }
 }

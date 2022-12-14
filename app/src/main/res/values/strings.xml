@@ -278,6 +278,10 @@
     <string name="home_product_process_action" translatable="false">Validar identificación</string>
     <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
     <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
+    <string name="home_product_gt_sv_non_pre_approved_credit_title" translatable="false">Crédito</string>
+    <string name="home_product_sv_non_pre_approved_credit_description" translatable="false">Contestá estas preguntas para conocer si aplicás para un crédito.</string>
+    <string name="home_product_gt_non_pre_approved_credit_description" translatable="false">Contesta estas preguntas para conocer si aplicas para un crédito.</string>
+    <string name="home_product_gt_sv_non_pre_approved_credit_action" translatable="false">Contestar preguntas</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
     <string name="home_product_gt_with_out_credit_action" translatable="false">Contactar a un asesor</string>
@@ -519,17 +523,17 @@
     <string name="save_credit_operation_error_subtitle" translatable="false">Contactanos para brindarte más información</string>
     <string name="save_credit_operation_error_action" translatable="false">Escríbinos por whatsApp</string>
 
-    <!-- Disbursement Answer Questions -->
-    <string name="disbursement_answer_questions_title_gt" translatable="false">Cuéntanos de ti</string>
-    <string name="disbursement_answer_questions_title_sv" translatable="false">Contános sobre vos</string>
-    <string name="disbursement_answer_questions_birthdate_label" translatable="false">Fecha de nacimiento</string>
-    <string name="disbursement_answer_questions_birthdate_placeholder" translatable="false">00 | 00 | 0000</string>
-    <string name="disbursement_answer_questions_birthdate_minus_120_error" translatable="false">Validá tu fecha de nacimiento</string>
-    <string name="disbursement_answer_questions_birthdate_minus_18_error" translatable="false">Debes ser mayor de 18 años</string>
-    <string name="disbursement_answer_questions_birthdate_required" translatable="false">Fecha de nacimiento requerida</string>
-    <string name="disbursement_answer_questions_income_label" translatable="false">Ingreso mensual</string>
-    <string name="disbursement_answer_questions_income_placeholder" translatable="false">$000</string>
-    <string name="disbursement_answer_questions_labor_situation_label" translatable="false">Situación laboral</string>
+    <!-- Non-PreApproved Additional Questions -->
+    <string name="non_pre_approved_additional_questions_title_gt" translatable="false">Cuéntanos de ti</string>
+    <string name="non_pre_approved_additional_questions_title_sv" translatable="false">Contános sobre vos</string>
+    <string name="non_pre_approved_additional_questions_birthdate_label" translatable="false">Fecha de nacimiento</string>
+    <string name="non_pre_approved_additional_questions_birthdate_placeholder" translatable="false">00 | 00 | 0000</string>
+    <string name="non_pre_approved_additional_questions_birthdate_minus_120_error" translatable="false">Validá tu fecha de nacimiento</string>
+    <string name="non_pre_approved_additional_questions_birthdate_minus_18_error" translatable="false">Debes ser mayor de 18 años</string>
+    <string name="non_pre_approved_additional_questions_birthdate_required" translatable="false">Fecha de nacimiento requerida</string>
+    <string name="non_pre_approved_additional_questions_income_label" translatable="false">Ingreso mensual</string>
+    <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
+    <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
 
 
     <!-- Generate Document -->

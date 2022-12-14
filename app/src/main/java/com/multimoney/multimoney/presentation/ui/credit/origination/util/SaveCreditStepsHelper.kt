@@ -223,7 +223,6 @@ class SaveCreditStepsHelper @Inject constructor() {
         saveScreenQuestionData(creditInfoQuestionTaxPayerExternal)
     }
 
-    // Save additional questions for non-pre approved  flow
     fun saveAdditionalQuestionsForNonPreApprovedFlow(
         user: String?,
         birthDate: String,
@@ -359,7 +358,6 @@ class SaveCreditStepsHelper @Inject constructor() {
         const val POLITICALLY_EXPOSED_PERSON = "PEP"
         const val TAX_PAYER_USA = "TAX_PAYER_USA"
         const val TAX_PAYER_EXTERNAL = "TAX_PAYER_EXTERNAL"
-        const val BIRTH_DATE = "Fecha de nacimiento"
-        const val EMPLOYMENT_SITUATION = "Situación laboral"
+        const val BIRTH_DATE = "Fecha Nacimiento"
     }
 }

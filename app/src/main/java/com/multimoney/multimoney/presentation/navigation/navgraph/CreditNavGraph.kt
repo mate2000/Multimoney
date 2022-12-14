@@ -10,7 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.aswerquestions.AnswerQuestionsScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedScreen
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
@@ -173,21 +173,24 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            route = Screen.AnswerQuestionsScreen.route,
+            route = Screen.NonPreApprovedScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(PK_USER) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.IntType }
             )
         ) {
-            AnswerQuestionsScreen(
+            NonPreApprovedScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
             )
         }

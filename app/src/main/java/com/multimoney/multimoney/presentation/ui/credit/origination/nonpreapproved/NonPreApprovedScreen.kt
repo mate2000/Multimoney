@@ -1,9 +1,15 @@
-package com.multimoney.multimoney.presentation.ui.credit.disbursement.aswerquestions
+package com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved
 
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,18 +36,31 @@ import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.uielement.*
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.uielement.CustomDatePicker
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnBirthDateValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnPaymentAmountValueChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedViewModel.UIEvent.OnEmploymentSituationValueChanged
 
 @Composable
-fun AnswerQuestionsScreen(
+fun NonPreApprovedScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: AnswerQuestionsViewModel = hiltViewModel()
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    viewModel: NonPreApprovedViewModel = hiltViewModel()
 ) {
 
     // Properties
@@ -52,8 +71,8 @@ fun AnswerQuestionsScreen(
     // Navigation
 
     LaunchedEffect(true) {
-        //viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-        viewModel.onUIEvent(AnswerQuestionsViewModel.UIEvent.OnCallQueryEmploymentSituation)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+        viewModel.onUIEvent(OnStart)
     }
 
     // View
@@ -66,7 +85,7 @@ fun AnswerQuestionsScreen(
     ) {
         Column {
             TopBar(onBackClick = {
-                viewModel.onUIEvent(AnswerQuestionsViewModel.UIEvent.OnBackClick(focusManager))
+                viewModel.onUIEvent(OnBackClick(focusManager))
             })
             Column(
                 modifier = Modifier
@@ -78,12 +97,12 @@ fun AnswerQuestionsScreen(
                     context = context,
                     focusManager = focusManager,
                     value = viewModel.uiState.birthDate,
-                    minYear = AnswerQuestionsViewModel.BIRTH_DATE_MIN_YEAR,
-                    minMonth = AnswerQuestionsViewModel.BIRTH_DATE_MIN_MONTH,
-                    minDay = AnswerQuestionsViewModel.BIRTH_DATE_MIN_DAY,
+                    minYear = NonPreApprovedViewModel.BIRTH_DATE_MIN_YEAR,
+                    minMonth = NonPreApprovedViewModel.BIRTH_DATE_MIN_MONTH,
+                    minDay = NonPreApprovedViewModel.BIRTH_DATE_MIN_DAY,
                     onValueChange = {
                         viewModel.onUIEvent(
-                            AnswerQuestionsViewModel.UIEvent.OnBirthDateValueChange(it)
+                            OnBirthDateValueChange(it)
                         )
                     },
                     onError = viewModel.uiState.birthDateError
@@ -92,16 +111,15 @@ fun AnswerQuestionsScreen(
                     value = viewModel.uiState.paymentAmount,
                     currencySymbol = viewModel.idBrand?.getCurrencySymbol() ?: 0,
                     onValueChange = {
-                                    viewModel.onUIEvent(AnswerQuestionsViewModel.UIEvent.OnPaymentAmountValueChange(it))
+                        viewModel.onUIEvent(OnPaymentAmountValueChange(it))
                     },
-                    onError = Pair(true, 0),
                     focusManager = focusManager
                 )
                 EmploymentSituation(
                     items = viewModel.uiState.employmentSituationList,
                     value = viewModel.uiState.employmentSituationSelected,
                     onValueChange = {
-                        viewModel.onUIEvent(AnswerQuestionsViewModel.UIEvent.OnEmploymentSituationValueChanged(it))
+                        viewModel.onUIEvent(OnEmploymentSituationValueChanged(it))
                     }
                 )
             }
@@ -109,7 +127,7 @@ fun AnswerQuestionsScreen(
             Continue(
                 enable = viewModel.uiState.isContinueEnabled,
                 onClick = {
-                    viewModel.onUIEvent(AnswerQuestionsViewModel.UIEvent.OnContinueClick(focusManager))
+                    viewModel.onUIEvent(OnContinueClick(focusManager))
                 }
             )
         }
@@ -152,15 +170,13 @@ private fun MonthlyIncome(
     value: String,
     currencySymbol: Int,
     onValueChange: (String) -> Unit,
-    onError: Pair<Boolean, Int>,
     focusManager: FocusManager
 ) {
     CustomOutlinedTextField(
         value = value,
         leadingIcon = R.drawable.ic_money_voucher,
         onValueChange = {
-            //viewModel.onUIEvent(SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange(it))
-                        onValueChange(it)
+            onValueChange(it)
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
@@ -169,13 +185,17 @@ private fun MonthlyIncome(
         keyboardActions = KeyboardActions(onNext = {
             focusManager.moveFocus(FocusDirection.Down)
         }),
-        labelText = stringResource(id = R.string.disbursement_answer_questions_income_label),
+        labelText = stringResource(id = R.string.non_pre_approved_additional_questions_income_label),
         modifier = Modifier
             .padding(top = 16.dp),
-        placeHolder = stringResource(id = R.string.disbursement_answer_questions_income_placeholder),
+        placeHolder = stringResource(
+            id = R.string.non_pre_approved_additional_questions_income_placeholder,
+            stringResource(
+                id = currencySymbol
+            )
+        ),
         customTransformation = formatDecimalMoney(
             stringResource(id = currencySymbol)
-            //stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
         )
     )
 }
@@ -194,7 +214,7 @@ private fun EmploymentSituation(
         items = items,
         value = value,
         onValueChange = onValueChange,
-        labelText = stringResource(id = R.string.disbursement_answer_questions_labor_situation_label),
+        labelText = stringResource(id = R.string.non_pre_approved_additional_questions_employment_situation_label),
         placeHolder = stringResource(id = R.string.select)
     )
 }
@@ -213,7 +233,7 @@ private fun BirthDay(
     CustomDatePicker(
         context = context,
         modifier = Modifier.padding(top = 16.dp),
-        labelText = stringResource(id = R.string.disbursement_answer_questions_birthdate_label),
+        labelText = stringResource(id = R.string.non_pre_approved_additional_questions_birthdate_label),
         placeHolder = stringResource(id = R.string.credit_job_date_placeholder),
         value = value,
         minYear = minYear,
@@ -232,7 +252,7 @@ private fun BirthDay(
                     year,
                     month,
                     dayOfMonth,
-                    AnswerQuestionsViewModel.DATE_FORMAT
+                    NonPreApprovedViewModel.DATE_FORMAT
                 )
             )
         },
@@ -267,7 +287,8 @@ private fun TopBar(
     TopNavBar(
         isLeftButtonVisible = true,
         isRightButtonVisible = true,
-        onLeftButtonClick = onBackClick
+        onLeftButtonClick = onBackClick,
+        onRightButtonClick = onBackClick
     )
 }
 

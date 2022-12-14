@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration
+package com.multimoney.multimoney.presentation.ui.smart.origination.sign
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextAlign.Companion
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.multimoney.multimoney.R.drawable
@@ -27,7 +26,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.Companion.TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import kotlinx.coroutines.FlowPreview
@@ -39,15 +37,15 @@ import kotlinx.coroutines.flow.onEach
 
 @OptIn(FlowPreview::class)
 @Composable
-fun DocumentGenerationScreen(
-    viewModel: SignDocumentProcessViewModel,
+fun SmartDocumenGenerationScreen(
+    viewModel: SmartSignViewModel,
     icon: Int? = null,
     title: Int? = null,
     subtitle: Int? = null
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
-        openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND)
+        openStepDebounce.debounce(SignDocumentProcessViewModel.TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND)
             .onEach { status ->
                 viewModel.onUIEvent(OnNavigateToHome)
                 flowOf(status)
@@ -84,26 +82,8 @@ fun DocumentGenerationScreen(
                 modifier = Modifier.padding(top = 8.dp),
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.text,
-                textAlign = Companion.Center
+                textAlign = TextAlign.Center
             )
-        }
-        if (!viewModel.isSmart) {
-            Row(
-                modifier = Modifier.padding(bottom = 30.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(32.dp),
-                    color =
-                    MultimoneyTheme.colors.primary
-                )
-                Text(
-                    text = stringResource(id = string.document_generation_info),
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-            }
         }
     }
 

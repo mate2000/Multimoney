@@ -1,11 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
@@ -105,22 +103,22 @@ class ValidateOTPViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             dialogTextResource = when (uiState.idBrand) {
-                Brand.Guatemala.id ->  if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt else  R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt
-                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone else R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email
+                Brand.Guatemala.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone_gt else R.string.profile_otp_user_blocked_max_attempt_email_gt
+                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone else R.string.profile_otp_user_blocked_max_attempt_email
             },
-            alertTextResource = when(uiState.idBrand){
-                Brand.Guatemala.id ->  R.string.profile_error_changing_phone_gt
+            alertTextResource = when (uiState.idBrand) {
+                Brand.Guatemala.id -> R.string.profile_error_changing_phone_gt
                 else -> R.string.profile_error_changing_phone
             },
             destination = if (uiState.sendMethod == SignUpOtpViewModel.SEND_METHOD_PHONE) uiState.phoneNumber else uiState.email,
 
-            enterTheCodeTextResource = when(uiState.idBrand){
-                Brand.Guatemala.id ->   R.string.profile_enter_the_code_sent_to_template_gt
-                else ->  R.string.profile_enter_the_code_sent_to_template
+            enterTheCodeTextResource = when (uiState.idBrand) {
+                Brand.Guatemala.id -> R.string.profile_enter_the_code_sent_to_template_gt
+                else -> R.string.profile_enter_the_code_sent_to_template
             },
-            statusTextResource = when (uiState.phaseCount){
-                PHASE_ONE ->  R.string.profile_code_expires_in_template
-                null ->  R.string.empty
+            statusTextResource = when (uiState.phaseCount) {
+                PHASE_ONE -> R.string.profile_code_expires_in_template
+                null -> R.string.empty
                 else -> R.string.profile_code_resend_expires_in_template
             }
         )
@@ -202,7 +200,8 @@ class ValidateOTPViewModel @Inject constructor(
         when (uiState.phaseCount) {
             PHASE_ONE -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP)
             PHASE_TWO -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP_AGAIN)
-            PHASE_THREE, null -> uiState = uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
+            PHASE_THREE, null -> uiState =
+                uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
         }
     }
 
@@ -241,19 +240,17 @@ class ValidateOTPViewModel @Inject constructor(
     }
 
     private fun onLogout() {
-        Timber.d("Closing session")
-        Log.e("TAG","closing session")
         cognitoHelper.signOut(signOutError = {
-                Timber.d("SignOut Error")
-            })
-            viewModelScope.launch {
-                dataStorePreferences.setAuthToken("")
-            }
-            countDownTimer.discardTimer()
-            popAndNavigateTo(
-                Screen.SignInScreen.route,
-                Screen.HomeScreen.route
-            )
+            Timber.d("SignOut Error")
+        })
+        viewModelScope.launch {
+            dataStorePreferences.setAuthToken("")
+        }
+        countDownTimer.discardTimer()
+        popAndNavigateTo(
+            Screen.SignInScreen.route,
+            Screen.HomeScreen.route
+        )
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -390,10 +387,11 @@ class ValidateOTPViewModel @Inject constructor(
         val alertTextResource: Int = R.string.empty,
         val enterTheCodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
-        val destination :String? = null
+        val destination: String? = null
 
-        )
-    private fun onNavigateBack(){
+    )
+
+    private fun onNavigateBack() {
         navigateBack(Screen.HomeScreen.route, isRestart = true)
     }
 
@@ -402,7 +400,7 @@ class ValidateOTPViewModel @Inject constructor(
             is UIEvent.OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends)
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnNavigateTLogOut -> onLogout()
-            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context,event.whatsAppLink)
+            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context, event.whatsAppLink)
             is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(event.message)
             is UIEvent.OnCallMutationSendPinProcess -> callMutationSendPinProcess(
                 event.identification,
@@ -458,7 +456,7 @@ class ValidateOTPViewModel @Inject constructor(
             UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-        data class OnOpenWhatsappLink(val context : Context, val whatsAppLink: String) : UIEvent()
+        data class OnOpenWhatsappLink(val context: Context, val whatsAppLink: String) : UIEvent()
         data class OnOtpValueChange(val value: String) : UIEvent()
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()

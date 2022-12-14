@@ -1,5 +1,6 @@
 package com.multimoney.domain.repository
 
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import androidx.paging.PagingData
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -141,6 +142,11 @@ interface SmartAccountRepository {
         idBrand: Int,
         option: Int
     ): Flow<MultimoneyResult<RelationshipData>>
+
+    suspend fun subscriptionAccountContractEvent(
+        idBrand: Int,
+        idRequestSys: Long
+    ): Flow<MultimoneyResult<AccountSmartContractResult?>>
 
     suspend fun mutationInitialRequestSmartAccount(
         pkUser: Long,

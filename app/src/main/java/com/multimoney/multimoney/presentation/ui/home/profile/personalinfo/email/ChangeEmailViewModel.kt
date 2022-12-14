@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,11 +38,12 @@ class ChangeEmailViewModel @Inject constructor(
             identification = savedStateHandle[IDENTIFICATION],
             pkUser = savedStateHandle[PK_USER],
             firstName = savedStateHandle[FIRST_NAME],
+            idClient = savedStateHandle.get<Int>(ID_CLIENT)?.toInt()
         )
     }
 
     private fun onContinueButtonClicked() {
-        navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun isFormValid() {
@@ -121,6 +123,7 @@ class ChangeEmailViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val newPhoneNumber: String? = null,
         val idBrand: Int? = null,
+        val idClient : Int? = null,
         val firstName: String? = null,
         val pkUser: String? = null,
         val phoneCode: String = "",

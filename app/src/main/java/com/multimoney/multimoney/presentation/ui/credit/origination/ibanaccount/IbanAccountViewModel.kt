@@ -21,11 +21,12 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnUpdateUserInfo
 import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCreditStepsHelper
-import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.capitalized
+import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class IbanAccountViewModel @Inject constructor(
@@ -96,6 +97,7 @@ class IbanAccountViewModel @Inject constructor(
             queryValidateBankAccountUseCase(
                 "$idBrandIban${uiState.accountNumber}",
                 identification,
+                BankAccountType.Credit.value,
                 email,
                 idBrand
             ).collectLatest {

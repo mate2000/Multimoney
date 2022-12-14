@@ -92,8 +92,6 @@ import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeDistrictUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCase
 import com.multimoney.domain.interaction.credit.QueryHomeProvinceUseCaseImpl
-import com.multimoney.domain.interaction.credit.QueryListCardVDUseCase
-import com.multimoney.domain.interaction.credit.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryOccupationUseCase
 import com.multimoney.domain.interaction.credit.QueryOccupationUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
@@ -152,6 +150,12 @@ import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCaseImpl
+import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
 import com.multimoney.domain.repository.CryptoRepository
@@ -159,6 +163,7 @@ import com.multimoney.domain.repository.MultimoneyVisaRepository
 import com.multimoney.domain.repository.ProfileRepository
 import com.multimoney.domain.repository.SecurityRepository
 import com.multimoney.domain.repository.SmartAccountRepository
+import com.multimoney.domain.repository.VirtualCardRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -338,11 +343,6 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetClientBankAccountUseCase(creditRepository: CreditRepository): QueryGetClientBankAccountUseCase =
         QueryGetClientBankAccountUseCaseImpl(creditRepository)
-
-    @Provides
-    @Singleton
-    fun provideQueryListCardVDUseCase(creditRepository: CreditRepository): QueryListCardVDUseCase =
-        QueryListCardVDUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton
@@ -553,6 +553,25 @@ class InteractionModule {
     @Singleton
     fun provideQueryGetHistoricalClientBalance(cryptoRepository: CryptoRepository): GetHistoricalClientBalanceUseCase =
         GetHistoricalClientBalanceUseCaseImpl(cryptoRepository)
+
+    // Virtual Card
+
+    @Provides
+    @Singleton
+    fun provideQueryListCardVDUseCase(virtualCardRepository: VirtualCardRepository): QueryListCardVDUseCase =
+        QueryListCardVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationPayCreditVDUseCase(virtualCardRepository: VirtualCardRepository): MutationPayCreditVDUseCase =
+        MutationPayCreditVDUseCaseImpl(virtualCardRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationActivatedCardAutomaticDebitUseCase(virtualCardRepository: VirtualCardRepository): MutationActivatedCardAutomaticDebitUseCase =
+        MutationActivatedCardAutomaticDebitUseCaseImpl(virtualCardRepository)
+
+    // Profile
 
     @Provides
     @Singleton

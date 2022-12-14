@@ -24,7 +24,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import kotlinx.coroutines.CoroutineScope
 
@@ -70,7 +70,8 @@ fun DisbursementBottomSheetScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(72.dp),
-                startIcon = viewModel.uiState.clientBankAccountSelected?.idCurrency?.getCurrency()?.accountIcon ?: R.drawable.ic_bank_account,
+                startIcon = viewModel.uiState.clientBankAccountSelected?.idCurrency?.getCurrencyFromId()?.accountIcon
+                    ?: R.drawable.ic_bank_account,
                 title = viewModel.uiState.clientBankAccountSelected?.bankDescription ?: "",
                 subtitle = getMaskedAccount(
                     viewModel.uiState.clientBankAccountSelected?.accountNumber ?: "",
@@ -82,18 +83,27 @@ fun DisbursementBottomSheetScreen(
             Spacer(modifier = Modifier.height(60.dp))
             if (viewModel.shouldDisplayExchangeRate()) {
                 Text(
-                    text = getDetailTextsDisbursement(R.string.disbursement_bottom_sheet_exchange_rate, viewModel.getExchangeRateFormatted()),
+                    text = getDetailTextsDisbursement(
+                        R.string.disbursement_bottom_sheet_exchange_rate,
+                        viewModel.getExchangeRateFormatted()
+                    ),
                     textAlign = TextAlign.Start
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
             Text(
-                text = getDetailTextsDisbursement(R.string.disbursement_bottom_sheet_quota_to_pay, viewModel.getQuotaTotalFormatted()),
+                text = getDetailTextsDisbursement(
+                    R.string.disbursement_bottom_sheet_quota_to_pay,
+                    viewModel.getQuotaTotalFormatted()
+                ),
                 textAlign = TextAlign.Start
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = getDetailTextsDisbursement(R.string.disbursement_bottom_sheet_next_payment_date, viewModel.getQuotaNextDateFormatted()),
+                text = getDetailTextsDisbursement(
+                    R.string.disbursement_bottom_sheet_next_payment_date,
+                    viewModel.getQuotaNextDateFormatted()
+                ),
                 textAlign = TextAlign.Start
             )
             Spacer(modifier = Modifier.height(40.dp))

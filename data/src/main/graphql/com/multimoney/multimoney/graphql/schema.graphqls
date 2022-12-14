@@ -444,7 +444,7 @@ type Query {
   """
   VirtualCard
   """
-  getCardAutomaticDebit(getCardAutomaticDebitInput: CardDtoInput!): [Card!]!
+  getCardAutomaticDebit(getCardAutomaticDebitInput: CardDtoInput!): [Card]
 }
 
 type Mutation {
@@ -812,12 +812,12 @@ type Mutation {
   """
   VirtualCard
   """
-  insertCardAutomaticDebit(insertCardAutomaticDebitInput: CardDtoInput!): Card!
+  activatedCardAutomaticDebit(cardAutomaticDebitInput: CardDtoInput!): Card!
 
   """
   VirtualCard
   """
-  updateCardAutomaticDebit(cardAutomaticDebitInput: CardDtoInput!): Card!
+  deactivatedCardAutomaticDebit(cardAutomaticDebitInput: CardDtoInput!): Card!
 }
 
 type Subscription {
@@ -2984,6 +2984,12 @@ type UserEventMobile {
   dISPOSITIVO_TARJETA: String!
 
   iD_BILLETERA_TARJETA: String!
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input UserPhoneMobileGetDtoInput {
@@ -2999,27 +3005,29 @@ input UserPhoneMobileGetDtoInput {
 }
 
 type ListCard {
-  idCard: Long!
+  idCard: Long
 
-  creationDate: DateTime!
+  creationDate: DateTime
 
-  verified: Boolean!
+  verified: Boolean
 
-  detail: String!
+  detail: String
 
-  cardMasked: String!
+  cardMasked: String
 
-  verificationValue: String!
+  verificationValue: String
 
-  expirationMonth: String!
+  expirationMonth: String
 
-  expirationYear: String!
+  expirationYear: String
 
-  cardTokenId: String!
+  cardTokenId: String
 
-  currencyDescription: String!
+  currencyDescription: String
 
-  country: String!
+  country: String
+
+  default: Boolean
 }
 
 input ListCardDtoInput {
@@ -3099,33 +3107,33 @@ input CardIssuanceDtoInput {
 }
 
 type Card {
-  idCard: Long!
+  idCard: Long
 
-  creationDate: DateTime!
+  creationDate: DateTime
 
-  verified: Boolean!
+  verified: Boolean
 
-  detail: String!
+  detail: String
 
-  cardMasked: String!
+  cardMasked: String
 
-  verificationValue: String!
+  verificationValue: String
 
-  expirationMonth: String!
+  expirationMonth: String
 
-  expirationYear: String!
+  expirationYear: String
 
-  cardTokenId: String!
+  cardTokenId: String
 
-  currencyDescription: String!
+  currencyDescription: String
 
-  country: String!
+  country: String
 
-  isAutomaticDebit: Boolean!
+  isAutomaticDebit: Boolean
 
-  isUpdate: Boolean!
+  isUpdate: Boolean
 
-  fechaDebito: String!
+  fechaDebito: String
 }
 
 input CardDtoInput {
@@ -3133,19 +3141,19 @@ input CardDtoInput {
 
   id_Prestamo: Long!
 
-  action: String!
+  action: String
 
-  identifaction: String!
+  identification: String
 
-  idCard: Long!
+  idCard: Long
 
-  cardMasked: String!
+  cardMasked: String
 
-  fechaDebito: String!
+  fechaDebito: String
 
-  stateCard: Short!
+  stateCard: Short
 
-  currency: Short!
+  currency: Short
 
   idBrand: Int
 
@@ -4856,12 +4864,16 @@ type CreateCard {
   currencyDescription: String!
 
   country: String!
+
+  default: Boolean!
 }
 
 input CreateCardDtoInput {
   identification: String!
 
   cardTokenID: String!
+
+  default: Boolean!
 
   idBrand: Int
 
@@ -4876,6 +4888,8 @@ type UpdateCard {
   isApproved: Boolean!
 
   apiStatus: String!
+
+  default: Boolean!
 }
 
 input UpdateCardDtoInput {
@@ -4892,6 +4906,8 @@ input UpdateCardDtoInput {
   expirationYear: String!
 
   verificationValue: String!
+
+  default: Boolean!
 
   idBrand: Int
 
@@ -6252,7 +6268,6 @@ type LocalTransferFavoriteResult {
   currencyAccount: String!
 
   ibanNumber: String!
-
 }
 
 type TypeAccountListResponse {
@@ -6464,7 +6479,6 @@ type ObjPhone {
   currency: String!
 
   ibanNumber: String
-
 }
 
 type PromissoryNoteTransactionMobile {

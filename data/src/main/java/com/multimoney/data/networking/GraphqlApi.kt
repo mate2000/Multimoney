@@ -8,6 +8,7 @@ import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
 import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
+import com.multimoney.data.networking.graphql.apollomodel.ActivatedCardAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
 import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
@@ -54,6 +55,7 @@ import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
+import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
@@ -347,18 +349,6 @@ class GraphqlApi @Inject constructor(
             idBrand,
             idClient,
             idLoanClient
-        )
-    ).fetchPolicy(FetchPolicy.NetworkOnly)
-
-    fun queryListCardsVD(
-        user: String,
-        idBrand: Int,
-        identification: String
-    ): ApolloCall<ListCardVDQuery.Data> = apolloAuthorizedClient.query(
-        ListCardVDQuery(
-            identification,
-            user,
-            idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1156,7 +1146,6 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
-
     fun queryMiniCards(
         infoCreditStatus: Boolean,
         infoVirtualCardStatus: Boolean,
@@ -1260,6 +1249,61 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    // Virtual Card
+
+    fun queryListCardsVD(
+        user: String,
+        idBrand: Int,
+        identification: String
+    ): ApolloCall<ListCardVDQuery.Data> = apolloAuthorizedClient.query(
+        ListCardVDQuery(
+            identification,
+            user,
+            idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationPayCreditVD(
+        identification: String,
+        currency: String,
+        paymentAmount: Double,
+        operationNumber: String,
+        reference: String,
+        comment: String,
+        cardMasked: String,
+        idCard: Long,
+        idBrand: Int
+    ): ApolloCall<PayCreditVDMutation.Data> = apolloAuthorizedClient.mutation(
+        PayCreditVDMutation(
+            identification = identification,
+            currency = currency,
+            paymentAmount = paymentAmount,
+            operationNumber = operationNumber,
+            reference = reference,
+            comment = comment,
+            cardMasked = cardMasked,
+            idCard = idCard,
+            idBrand = idBrand
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationActivatedCardAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        idCard: Long,
+        cardMasked: String
+    ): ApolloCall<ActivatedCardAutomaticDebitMutation.Data> = apolloAuthorizedClient.mutation(
+        ActivatedCardAutomaticDebitMutation(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            idCard = idCard,
+            cardMasked = cardMasked
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
     // Profile sections
 
     fun queryCountryContact(

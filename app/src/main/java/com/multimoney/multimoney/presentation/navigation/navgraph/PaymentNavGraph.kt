@@ -284,8 +284,11 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(TRANSFER_ACCOUNT) {
                     type = TransferAccountNavType()
                 },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -370,6 +373,12 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -396,6 +405,12 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(CARD_SELECTED) {
                     type = CardVDNavType()
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
                 }
             )
         ) {

@@ -6,6 +6,7 @@ import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
 import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedCardAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
@@ -1072,6 +1073,16 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<InitialRequestSmartAccountMutation.Data> =
         apolloAuthorizedClient.mutation(InitialRequestSmartAccountMutation(pkUser, idBrand, user))
             .fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun subscriptionAccountSmartContractEvent(
+        idBrand: Int,
+        idRequestSys: Long
+    ): ApolloCall<AccountSmartContractEventSubscription.Data> = apolloAuthorizedClient.subscription(
+        AccountSmartContractEventSubscription(
+            idBrand,
+            idRequestSys
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryGetQuickActions(
         idBrand: Int,

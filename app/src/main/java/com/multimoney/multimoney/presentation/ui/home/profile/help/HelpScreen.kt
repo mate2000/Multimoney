@@ -1,8 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.help
 
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +33,8 @@ import com.multimoney.multimoney.presentation.uielement.CustomItemRow
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.openIntent
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
 fun HelpScreen(
@@ -93,7 +92,7 @@ fun HelpScreenContent(viewModel: HelpScreenViewModel = hiltViewModel()) {
             onChatWithUsClick = {
                 viewModel.onUIEvent(OnChatWithUsClick(
                     openWhatsAppIntent = { whatsAppIntent ->
-                        openIntent(context, whatsAppIntent) {
+                        context.openWhatsAppDeepLink(whatsAppIntent) {
                             viewModel.onUIEvent(
                                 HelpScreenViewModel.UIEvent.OnFailureWithDialog(
                                     false,
@@ -117,7 +116,7 @@ fun HelpScreenContent(viewModel: HelpScreenViewModel = hiltViewModel()) {
             onCallAttentionCenterClick = {
                 viewModel.onUIEvent(OnCallToAttentionCenterClick(
                     openPhoneIntent = { phoneIntent ->
-                        openIntent(context, phoneIntent) {
+                        context.openIntent(phoneIntent) {
                             viewModel.onUIEvent(
                                 HelpScreenViewModel.UIEvent.OnFailureWithDialog(
                                     false,
@@ -140,8 +139,8 @@ fun HelpScreenContent(viewModel: HelpScreenViewModel = hiltViewModel()) {
             },
             onFAQClick = {
                 viewModel.onUIEvent(OnFAQClick(
-                    openFAQIntent = { whatsAppIntent ->
-                        openIntent(context, whatsAppIntent) {
+                    openFAQIntent = { faqIntent ->
+                        context.openIntent(faqIntent) {
                             viewModel.onUIEvent(
                                 HelpScreenViewModel.UIEvent.OnFailureWithDialog(
                                     false,
@@ -214,15 +213,5 @@ fun HelpOptions(
             endIcon = R.drawable.ic_right_chevron,
             startIconColor = MultimoneyTheme.colors.text
         )
-    }
-}
-
-fun openIntent(context: Context, intent: Intent, onFailure: () -> Unit) {
-    try {
-        context.startActivity(intent)
-    } catch (s: SecurityException) {
-        onFailure()
-    } catch (noActivity: ActivityNotFoundException) {
-        onFailure()
     }
 }

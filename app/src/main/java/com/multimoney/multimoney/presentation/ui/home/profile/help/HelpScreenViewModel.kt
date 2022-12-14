@@ -89,19 +89,16 @@ class HelpScreenViewModel @Inject constructor(
     }
 
     private fun openWhatsappLink(
-        openIntent: (Intent) -> Unit,
+        openIntent: (String) -> Unit,
         onFailureWithDialog: (isActive: Boolean, dialogParameters: DialogParameters) -> Unit
     ) {
-        try {
-            val uri = Uri.parse(contactCountryInfo?.whatsappLink)
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            openIntent(intent)
-        } catch (exception: NullPointerException) {
-            onFailureWithDialog(
-                false,
-                defaultDialogParameters.copy(isActive = mutableStateOf(true))
-            )
-        }
+        val link = contactCountryInfo?.whatsappLink
+        link?.let {
+            openIntent(link)
+        } ?: onFailureWithDialog(
+            false,
+            defaultDialogParameters.copy(isActive = mutableStateOf(true))
+        )
     }
 
     private fun openFAQ(
@@ -163,7 +160,7 @@ class HelpScreenViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnGetContactInfo : UIEvent()
         data class OnChatWithUsClick(
-            val openWhatsAppIntent: (Intent) -> Unit,
+            val openWhatsAppIntent: (String) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
         ) : UIEvent()
 

@@ -169,6 +169,7 @@ interface SecurityRepository {
 
     suspend fun mutationChangeEmail(
         pkUser: Int,
+        idClient: Int,
         identification: String,
         email: String,
         registerId: Int,

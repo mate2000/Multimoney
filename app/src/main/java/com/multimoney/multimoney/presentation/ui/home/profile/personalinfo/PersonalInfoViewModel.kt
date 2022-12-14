@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
@@ -35,6 +36,7 @@ class PersonalInfoViewModel @Inject constructor(
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             idBrand = savedStateHandle[ID_BRAND],
             pkUser = savedStateHandle[PK_USER],
+            idClient = savedStateHandle[ID_CLIENT],
             identification = savedStateHandle[IDENTIFICATION],
             email = savedStateHandle.get<String>(EMAIL)?.trim()?.lowercase(Locale.getDefault()),
             firstName = savedStateHandle[FIRST_NAME],
@@ -43,7 +45,7 @@ class PersonalInfoViewModel @Inject constructor(
     }
 
     private fun navigateToEditEmail() {
-        navigateTo("${Screen.ProfileChangeEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileChangeEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.idClient}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun navigateToEditPhone() {
@@ -57,7 +59,8 @@ class PersonalInfoViewModel @Inject constructor(
         val email: String? = null,
         val identification: String? = null,
         val pkUser: String? = null,
-        val firstName : String? = null,
+        val idClient: Int? = null,
+        val firstName: String? = null,
         val phoneNumber: String? = null,
         val idBrand: Int? = null,
     )
@@ -69,7 +72,7 @@ class PersonalInfoViewModel @Inject constructor(
             is UIEvent.OnNavigateToEditEmail -> navigateToEditEmail()
         }
     }
-    
+
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnNavigateToEditPhone : UIEvent()

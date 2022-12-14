@@ -393,6 +393,7 @@ class SecurityRepositoryImpl @Inject constructor(
 
     override suspend fun mutationChangeEmail(
         pkUser: Int,
+        idClient: Int,
         identification: String,
         email: String,
         registerId: Int,
@@ -403,6 +404,7 @@ class SecurityRepositoryImpl @Inject constructor(
         fetchData(
             apolloCall = graphqlApi.mutationChangeEmail(
                 pkUser,
+                idClient,
                 identification,
                 email,
                 registerId,

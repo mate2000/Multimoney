@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -42,6 +43,7 @@ class VerifyIdentityViewModel @Inject constructor(
             firstName = savedStateHandle[FIRST_NAME],
             email = savedStateHandle[EMAIL],
             pkUser = savedStateHandle[PK_USER],
+            idClient = savedStateHandle[ID_CLIENT],
             changingField = savedStateHandle[CHANGING_FIELD],
             newEmail = savedStateHandle[NEW_EMAIL]
         )
@@ -64,16 +66,16 @@ class VerifyIdentityViewModel @Inject constructor(
         }
     }
 
-    private fun onContinueButtonClicked(){
-        val sendMethod = when (uiState.changingField ){
+    private fun onContinueButtonClicked() {
+        val sendMethod = when (uiState.changingField) {
             FieldToChange.PHONE.value -> if (uiState.questionOneValue) SEND_PHONE_METHOD else SEND_EMAIL_METHOD
             else -> if (uiState.questionOneValue) SEND_EMAIL_METHOD else SEND_PHONE_METHOD
         }
-        val newValue = when (uiState.changingField ){
+        val newValue = when (uiState.changingField) {
             FieldToChange.PHONE.value -> uiState.newPhoneNumber
             else -> uiState.newEmail
         }
-        navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.changingField}/${newValue}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}")
+        navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.changingField}/$newValue/$sendMethod/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idClient}/${uiState.idBrand}/${uiState.userName}")
     }
 
     data class UIState(
@@ -81,20 +83,21 @@ class VerifyIdentityViewModel @Inject constructor(
         val userName: String? = null,
         val phoneNumber: String? = null,
         val newPhoneNumber: String? = null,
-        val newEmail : String? = null,
+        val newEmail: String? = null,
         val identification: String? = null,
         val idBrand: Int? = null,
         val phoneCode: String = "",
-        val email : String? = null,
+        val email: String? = null,
         val countryCode: String? = null,
         val isButtonEnabled: Boolean = false,
         val questionOneValue: Boolean = true,
         val questionTwoValue: Boolean = false,
-        val firstName : String? = null,
-        val pkUser : String? = null,
-        val changingField : String? = null,
-        val titleResource: Int = R.string.empty,
-        )
+        val firstName: String? = null,
+        val pkUser: String? = null,
+        val idClient: Int? = null,
+        val changingField: String? = null,
+        val titleResource: Int = R.string.empty
+    )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -110,7 +113,7 @@ class VerifyIdentityViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
     }
 
-    companion object{
+    companion object {
         const val SEND_PHONE_METHOD = "PHONE"
         const val SEND_EMAIL_METHOD = "EMAIL"
     }

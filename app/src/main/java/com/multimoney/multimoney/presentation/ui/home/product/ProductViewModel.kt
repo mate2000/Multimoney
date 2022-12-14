@@ -272,7 +272,7 @@ class ProductViewModel @Inject constructor(
         )
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${pkUser}/${uiState.userStatus?.infoUser?.idClient}/${uiState.userStatus?.infoUser?.userName}")
     }
 
     private fun onNavigateToSmartPaymentAccountScreen() =

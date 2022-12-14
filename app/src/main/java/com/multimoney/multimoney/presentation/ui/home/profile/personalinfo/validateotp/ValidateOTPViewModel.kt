@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
@@ -35,6 +34,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -91,6 +91,7 @@ class ValidateOTPViewModel @Inject constructor(
             email = savedStateHandle[EMAIL],
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             pkUser = savedStateHandle[PK_USER],
+            idClient = savedStateHandle[ID_CLIENT],
             firstName = savedStateHandle[FIRST_NAME],
             userName = savedStateHandle[USER],
             sendMethod = savedStateHandle[SEND_METHOD],
@@ -103,22 +104,22 @@ class ValidateOTPViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             dialogTextResource = when (uiState.idBrand) {
-                Brand.Guatemala.id ->  if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt else  R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt
+                Brand.Guatemala.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt else R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt
                 else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone else R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email
             },
-            alertTextResource = when(uiState.idBrand){
-                Brand.Guatemala.id ->  R.string.profile_error_changing_phone_gt
+            alertTextResource = when (uiState.idBrand) {
+                Brand.Guatemala.id -> R.string.profile_error_changing_phone_gt
                 else -> R.string.profile_error_changing_phone
             },
             destination = if (uiState.sendMethod == SignUpOtpViewModel.SEND_METHOD_PHONE) uiState.phoneNumber else uiState.email,
 
-            enterTheCodeTextResource = when(uiState.idBrand){
-                Brand.Guatemala.id ->   R.string.profile_enter_the_code_sent_to_template_gt
-                else ->  R.string.profile_enter_the_code_sent_to_template
+            enterTheCodeTextResource = when (uiState.idBrand) {
+                Brand.Guatemala.id -> R.string.profile_enter_the_code_sent_to_template_gt
+                else -> R.string.profile_enter_the_code_sent_to_template
             },
-            statusTextResource = when (uiState.phaseCount){
-                PHASE_ONE ->  R.string.profile_code_expires_in_template
-                null ->  R.string.empty
+            statusTextResource = when (uiState.phaseCount) {
+                PHASE_ONE -> R.string.profile_code_expires_in_template
+                null -> R.string.empty
                 else -> R.string.profile_code_resend_expires_in_template
             }
         )
@@ -126,7 +127,7 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun initializeTimer(
         phaseCount: Int?,
-        totalTime: Long = TIMER_DURATION,
+        totalTime: Long = TIMER_DURATION
     ) {
         val newRemainingTime = totalTime.seconds
         uiState = uiState.copy(
@@ -144,7 +145,9 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun onOtpValueChange(value: String) {
         uiState = uiState.copy(
-            otp = value, isOtpFromSms = false, otpError = Pair(false, R.string.error_empty)
+            otp = value,
+            isOtpFromSms = false,
+            otpError = Pair(false, R.string.error_empty)
         )
         isFormValid()
     }
@@ -157,11 +160,18 @@ class ValidateOTPViewModel @Inject constructor(
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String,
+        user: String
     ) = executeUseCase {
         uiState = uiState.copy(isTimerRunning = false)
         mutationSendPinProcessUseCase.invoke(
-            identification, firstName, email, cellphone, sendMethod, pkUser, idBrand, user
+            identification,
+            firstName,
+            email,
+            cellphone,
+            sendMethod,
+            pkUser,
+            idBrand,
+            user
         ).collectLatest { result ->
             onCallMutationSendPinProcessEvent.emit(result)
         }
@@ -182,7 +192,8 @@ class ValidateOTPViewModel @Inject constructor(
     private fun onTimerTick() {
         val newRemainingTime = uiState.remainingTime.minus(TIMER_DELAY.seconds)
         uiState = uiState.copy(
-            remainingTime = newRemainingTime, remainingTimeText = newRemainingTime.format()
+            remainingTime = newRemainingTime,
+            remainingTimeText = newRemainingTime.format()
         )
     }
 
@@ -191,7 +202,7 @@ class ValidateOTPViewModel @Inject constructor(
         uiState = uiState.copy(
             isTimerRunning = false,
             remainingTime = newRemainingTime,
-            remainingTimeText = newRemainingTime.format(),
+            remainingTimeText = newRemainingTime.format()
         )
         updateMessageStatus()
     }
@@ -240,18 +251,18 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun onLogout() {
         Timber.d("Closing session")
-        Log.e("TAG","closing session")
+        Log.e("TAG", "closing session")
         cognitoHelper.signOut(signOutError = {
-                Timber.d("SignOut Error")
-            })
-            viewModelScope.launch {
-                dataStorePreferences.setAuthToken("")
-            }
-            countDownTimer.discardTimer()
-            popAndNavigateTo(
-                Screen.SignInScreen.route,
-                Screen.HomeScreen.route
-            )
+            Timber.d("SignOut Error")
+        })
+        viewModelScope.launch {
+            dataStorePreferences.setAuthToken("")
+        }
+        countDownTimer.discardTimer()
+        popAndNavigateTo(
+            Screen.SignInScreen.route,
+            Screen.HomeScreen.route
+        )
     }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
@@ -274,12 +285,19 @@ class ValidateOTPViewModel @Inject constructor(
         }
 
     private fun onChangeEmail(
-        pkUser: Int, identification: String, email: String, registerId: Int,
-        changeUser: Boolean, user: String, idBrand: Int
+        pkUser: Int,
+        idClient: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
     ) =
         executeUseCase {
             mutationChangeEmailUseCase.invoke(
                 pkUser,
+                idClient,
                 identification,
                 email,
                 registerId,
@@ -334,6 +352,7 @@ class ValidateOTPViewModel @Inject constructor(
                 else -> {
                     onChangeEmail(
                         uiState.pkUser?.toInt() ?: 0,
+                        uiState.idClient ?: 0,
                         uiState.identification.toString(),
                         uiState.newValue.toString(),
                         0,
@@ -343,7 +362,6 @@ class ValidateOTPViewModel @Inject constructor(
                     )
                 }
             }
-
         }.onMessage {
             uiState = uiState.copy(
                 isLoading = false,
@@ -361,6 +379,7 @@ class ValidateOTPViewModel @Inject constructor(
         val identification: String? = null,
         val email: String? = null,
         val pkUser: String? = null,
+        val idClient: Int? = null,
         val userName: String? = null,
         val phoneNumber: String? = null,
         val firstName: String? = null,
@@ -385,10 +404,11 @@ class ValidateOTPViewModel @Inject constructor(
         val alertTextResource: Int = R.string.empty,
         val enterTheCodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
-        val destination :String? = null
+        val destination: String? = null
 
-        )
-    private fun onNavigateBack(){
+    )
+
+    private fun onNavigateBack() {
         navigateBack(Screen.HomeScreen.route, isRestart = true)
     }
 
@@ -397,7 +417,7 @@ class ValidateOTPViewModel @Inject constructor(
             is UIEvent.OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends)
             is UIEvent.OnNavigateBack -> onNavigateBack()
             is UIEvent.OnNavigateTLogOut -> onLogout()
-            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context,event.whatsAppLink)
+            is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context, event.whatsAppLink)
             is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(event.message)
             is UIEvent.OnCallMutationSendPinProcess -> callMutationSendPinProcess(
                 event.identification,
@@ -415,21 +435,21 @@ class ValidateOTPViewModel @Inject constructor(
             )
             is UIEvent.OnOtpValueChange -> onOtpValueChange(event.value)
             is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
-            is UIEvent.OnFailureWithDialog -> uiState =
-                uiState.copy(
-                    isLoading = event.isLoading,
-                    openDialog = event.openDialog,
-                    messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
-                )
+            is UIEvent.OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(
+                        isLoading = event.isLoading,
+                        openDialog = event.openDialog,
+                        messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
+                    )
             is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
-
         }
     }
 
     sealed class UIEvent {
         data class OnStart(
             val linkWhatsapp: String,
-            val userBlockedForMaxAttends: String,
+            val userBlockedForMaxAttends: String
         ) : UIEvent()
 
         object OnNavigateTLogOut : UIEvent()
@@ -442,23 +462,22 @@ class ValidateOTPViewModel @Inject constructor(
             val sendMethod: String,
             val pkUser: String,
             val idBrand: Int,
-            val user: String,
+            val user: String
         ) : UIEvent()
 
         data class OnCallMutationSendPinProcessSuccess(
-            val pinProcess: SendPinProcess?,
+            val pinProcess: SendPinProcess?
         ) : UIEvent()
 
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
             UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-        data class OnOpenWhatsappLink(val context : Context, val whatsAppLink: String) : UIEvent()
+        data class OnOpenWhatsappLink(val context: Context, val whatsAppLink: String) : UIEvent()
         data class OnOtpValueChange(val value: String) : UIEvent()
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnContinueButtonClicked : UIEvent()
-
     }
 
     companion object {

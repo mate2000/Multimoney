@@ -1123,6 +1123,7 @@ class GraphqlApi @Inject constructor(
 
     fun mutationChangeEmail(
         pkUser: Int,
+        idClient: Int,
         identification: String,
         email: String,
         registerId: Int,
@@ -1133,6 +1134,7 @@ class GraphqlApi @Inject constructor(
         apolloAuthorizedClient.mutation(
             ChangeEmailMutation(
                 pkUser,
+                idClient,
                 identification,
                 email,
                 registerId,

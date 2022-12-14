@@ -28,6 +28,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -53,7 +56,10 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             Screen.ProfilePersonalInfoScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND){
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
                     type = NavType.IntType
                 }
             )
@@ -76,7 +82,10 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             Screen.ProfileChangeEmailScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND){
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
                     type = NavType.IntType
                 }
             )
@@ -99,7 +108,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             Screen.ProfileChangePhoneScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND){
+                navArgument(ID_BRAND) {
                     type = NavType.IntType
                 }
             )
@@ -122,7 +131,10 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             Screen.ProfileVerifyIdentityPhoneScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND){
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
                     type = NavType.IntType
                 }
             )
@@ -144,7 +156,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             Screen.ProfileVerifyIdentityEmailScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND){
+                navArgument(ID_BRAND) {
                     type = NavType.IntType
                 }
             )
@@ -166,7 +178,10 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             Screen.ProfileValidateOTPScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND){
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
                     type = NavType.IntType
                 }
             )
@@ -194,7 +209,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             Screen.ProfileSettingsScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND){
+                navArgument(ID_BRAND) {
                     type = NavType.IntType
                 }
             )
@@ -210,7 +225,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 },
                 onNavigate = {
                     navController.navigate(it.route)
-                },
+                }
             )
         }
     }

@@ -18,12 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.RadioButtonQuestion
@@ -61,7 +59,7 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
                 top.linkTo(parent.top)
             },
             onLeftButtonClick = {
-                   viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnNavigateBack)
+                viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnNavigateBack)
             },
             isRightButtonVisible = false
         )
@@ -84,62 +82,53 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
             )
             Text(
                 modifier = Modifier.padding(top = 8.dp),
-                text = stringResource(id = viewModel.uiState.titleResource) ,
+                text = stringResource(id = viewModel.uiState.titleResource),
                 style = Typography.body2.copy(fontWeight = FontWeight.Light),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
             )
-            when (viewModel.uiState.changingField){
-                FieldToChange.PHONE.value ->{
+            when (viewModel.uiState.changingField) {
+                FieldToChange.PHONE.value -> {
                     RadioButtonQuestion(
                         questionTextResource = R.string.empty,
                         firstButtonTextResource = R.string.profile_sms_to_previous_phone,
                         secondButtonTextResource = R.string.profile_to_email,
                         shouldHaveDisclaimer = false,
                         firstButtonIsSelected = viewModel.uiState.questionOneValue,
-                        secondButtonIsSelected = viewModel.uiState.questionOneValue.not(),
+                        secondButtonIsSelected = viewModel.uiState.questionTwoValue,
                         onFirstButtonOnClick = {
                             viewModel.onUIEvent(
-                                VerifyIdentityViewModel.UIEvent.OnQuestionOneValueChange(
-                                    true
-                                )
+                                VerifyIdentityViewModel.UIEvent.OnQuestionOneSelected(true)
                             )
                         },
                         onSecondButtonOnClick = {
                             viewModel.onUIEvent(
-                                VerifyIdentityViewModel.UIEvent.OnQuestionOneValueChange(
-                                    false
-                                )
+                                VerifyIdentityViewModel.UIEvent.OnQuestionTwoSelected(true)
                             )
                         }
                     )
                 }
-                FieldToChange.EMAIL.value ->{
+                FieldToChange.EMAIL.value -> {
                     RadioButtonQuestion(
                         questionTextResource = R.string.empty,
                         firstButtonTextResource = R.string.profile_otp_to_previous_email,
                         secondButtonTextResource = R.string.profile_otp_to_sms,
                         shouldHaveDisclaimer = false,
                         firstButtonIsSelected = viewModel.uiState.questionOneValue,
-                        secondButtonIsSelected = viewModel.uiState.questionOneValue.not(),
+                        secondButtonIsSelected = viewModel.uiState.questionTwoValue,
                         onFirstButtonOnClick = {
                             viewModel.onUIEvent(
-                                VerifyIdentityViewModel.UIEvent.OnQuestionOneValueChange(
-                                    true
-                                )
+                                VerifyIdentityViewModel.UIEvent.OnQuestionOneSelected(true)
                             )
                         },
                         onSecondButtonOnClick = {
                             viewModel.onUIEvent(
-                                VerifyIdentityViewModel.UIEvent.OnQuestionOneValueChange(
-                                    false
-                                )
+                                VerifyIdentityViewModel.UIEvent.OnQuestionTwoSelected(true)
                             )
                         }
                     )
                 }
             }
-
         }
         CustomButton(
             modifier = Modifier
@@ -151,7 +140,7 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
             text = stringResource(id = R.string.profile_send_code),
-            enable = true,
+            enable = viewModel.uiState.isButtonEnabled,
             onClick = {
                 viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnContinueButtonClicked)
             }

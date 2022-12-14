@@ -40,8 +40,7 @@ class ProfileViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-
-    private fun getProfileInfo()  {
+    private fun getProfileInfo() {
         uiState = uiState.copy(
             userName = savedStateHandle[USER_NAME],
             email = savedStateHandle[EMAIL],
@@ -53,7 +52,6 @@ class ProfileViewModel @Inject constructor(
             idClient = savedStateHandle[ID_CLIENT]
         )
     }
-
 
     private fun navigateToPersonalInfoScreen() {
         navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
@@ -95,12 +93,12 @@ class ProfileViewModel @Inject constructor(
         val userName: String? = null,
         val email: String? = null,
         val phoneNumber: String? = null,
-        val identification : String? = null,
+        val identification: String? = null,
         val idBrand: Int? = null,
         val pkUser: String? = null,
-        val idClient : Int? = null,
-        val firstName : String? = null,
-        val countryCode : String? = null,
+        val idClient: Int? = null,
+        val firstName: String? = null,
+        val countryCode: String? = null,
         val openDialog: DialogParameters = DialogParameters()
     )
 

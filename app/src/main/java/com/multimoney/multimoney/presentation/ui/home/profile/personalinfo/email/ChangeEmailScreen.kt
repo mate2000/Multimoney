@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.modifier.modifierLocalOf
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +40,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 
-
 @Preview
 @Composable
 fun ChangeEmailScreen(
@@ -61,7 +61,6 @@ fun ChangeEmailScreen(
 @Composable
 private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
     val focusManager = LocalFocusManager.current
-
     ConstraintLayout(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)

@@ -5,7 +5,6 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreenViewModel.UIEvent.OnNavigateToNextScreen
-import com.multimoney.multimoney.util.firebase.FireBaseEventHelper
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -39,5 +38,9 @@ class SplashScreenViewModel @Inject constructor(
 
     sealed class UIEvent {
         object OnNavigateToNextScreen : UIEvent()
+    }
+
+    companion object {
+        const val SPLASH_DURATION =  2000L
     }
 }

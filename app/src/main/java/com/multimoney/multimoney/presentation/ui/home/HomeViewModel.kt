@@ -13,12 +13,16 @@ import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsU
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
+import com.multimoney.domain.interaction.credit.QueryGetPromissoryNoteDetail
+import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.credit.CreditMovementsResult
+import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.QuickAction
@@ -45,6 +49,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBo
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetCreditMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
@@ -53,18 +58,21 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSi
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.OPTION_BTN_6
 import com.multimoney.multimoney.presentation.util.boolean
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -73,12 +81,14 @@ class HomeViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
+    private val queryGetHistoricalClientBalanceUseCase: GetHistoricalClientBalanceUseCase,
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase,
     private val queryMiniCardsUseCase: QueryMiniCardsUseCase,
     private val queryGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
     private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase,
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
+    private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
     private val cognitoHelper: CognitoHelper
 ) : BaseViewModel(true) {
 
@@ -126,6 +136,37 @@ class HomeViewModel @Inject constructor(
                         movements.accountToken = tokenNumber
                         uiState = uiState.copy(
                             smartMovementsList = uiState.smartMovementsList + movements,
+                            isLoading = false
+                        )
+                    }
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+                result.onFailure {
+                    onFailure(it)
+                    uiState = uiState.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
+    private fun onGetCreditMovements(
+        idBrand: Int,
+        idLoanClient: Int
+    ) {
+        executeUseCase {
+            queryGetPromissoryNoteDetail.invoke(
+                idBrand = idBrand,
+                idLoanClient = idLoanClient,
+                pageNumber = INDEX_ONE,
+                pageSize = LAST_THREE,
+                option = OPTION_BTN_6
+            ).collectLatest { result ->
+                result.onSuccess {
+                    it?.let { promissoryNote ->
+                        uiState = uiState.copy(
+                            creditMovementsList = promissoryNote.movementsResultList ?: emptyList(),
                             isLoading = false
                         )
                     }
@@ -249,6 +290,39 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun callQueryGetHistoricalBalanceUseCase(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        baseAsset: String
+    ) = executeUseCase {
+        queryGetHistoricalClientBalanceUseCase.invoke(
+            user,
+            idBrand,
+            identification,
+            baseAsset = baseAsset,
+            startDate = getPreviousDate(1),
+            endDate = getCurrentDateYMDPattern()
+        ).collectLatest { result ->
+            result.onSuccess { historicBalance ->
+                historicBalance?.let {
+                    if (uiState.configurationVersion != null && uiState.balance != null) {
+                        uiState = uiState.copy(isLoading = false)
+                    }
+                    uiState = uiState.copy(
+                        cryptoHistoricalBalance = it.historicalBalanceClient
+                    )
+                }
+            }
+            result.onFailure {
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
     private fun setBalance(balance: Balance) {
         val productPageList = mutableListOf<ProductPage>()
 
@@ -293,11 +367,13 @@ class HomeViewModel @Inject constructor(
                         )
                     )
 
-                    onGetSmartMovements(
-                        uiState.userName,
-                        uiState.idBrand.toInt(),
-                        uiState.identification,
-                        account?.tokenNumber?.toLongOrNull() ?: 0
+                    onUIEvent(
+                        OnGetSmartMovements(
+                            uiState.userName,
+                            uiState.idBrand.toInt(),
+                            uiState.identification,
+                            account?.tokenNumber?.toLongOrNull() ?: 0
+                        )
                     )
                 }
                 // If user has smart activated he can enable crypto
@@ -332,6 +408,13 @@ class HomeViewModel @Inject constructor(
                 )
             }
         }
+
+        onUIEvent(
+            OnGetCreditMovements(
+                uiState.idBrand.toInt(),
+                uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+            )
+        )
 
         if (uiState.configurationVersion != null && uiState.quickActions != null) {
             uiState = uiState.copy(isLoading = false)
@@ -412,6 +495,16 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
+                if (uiState.configurationVersion?.configuration?.crypto?.active == true) {
+                    // todo change "BTC" when asset are ready in BE
+                    callQueryGetHistoricalBalanceUseCase(
+                        user = email,
+                        identification = identification,
+                        idBrand = idBrand,
+                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset
+                            ?: "BTC"
+                    )
+                }
             }
             result.onFailure {
                 onFailure(it)
@@ -527,6 +620,7 @@ class HomeViewModel @Inject constructor(
         var configurationVersion: ConfigurationVersion? = null,
         var validateUserStatus: ValidateUserStatus? = null,
         var balance: Balance? = null,
+        var cryptoHistoricalBalance: List<HistoricalBalanceClient> = emptyList(),
         var idBrand: String = "",
         var pkUser: String = "",
         var identification: String = "",
@@ -535,7 +629,8 @@ class HomeViewModel @Inject constructor(
         var forceIsExpanded: Boolean = false,
         var productScreenPagerState: PagerState? = null,
         var productPageList: List<ProductPage> = emptyList(),
-        val smartMovementsList: List<SmartMovementsResult> = emptyList()
+        val smartMovementsList: List<SmartMovementsResult> = emptyList(),
+        val creditMovementsList: List<CreditMovementsResult> = emptyList()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -553,16 +648,22 @@ class HomeViewModel @Inject constructor(
                 uiEvent.identificationNumber,
                 uiEvent.tokenNumber
             )
+            is OnGetCreditMovements -> onGetCreditMovements(
+                uiEvent.idBrand,
+                uiEvent.idLoanClient
+            )
             is OnShowAutomaticPaymentEdit -> emitBaseEvent(OnShowAutomaticPaymentEditBottomSheet)
             is OnHideAutomaticPaymentEdit -> emitBaseEvent(OnHideAutomaticPaymentEditBottomSheet)
             is OnEditAutomaticPayment -> emitBaseEvent(OnEditAutomaticPaymentEvent)
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
-            is UIEvent.OnMyProductPageChange -> uiState =
-                uiState.copy(productScreenPagerState = uiEvent.page)
-            is UIEvent.OnLoadingValueChanged -> uiState =
-                uiState.copy(isLoading = uiEvent.isLoading)
+            is UIEvent.OnMyProductPageChange ->
+                uiState =
+                    uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnLoadingValueChanged ->
+                uiState =
+                    uiState.copy(isLoading = uiEvent.isLoading)
         }
     }
 
@@ -579,6 +680,11 @@ class HomeViewModel @Inject constructor(
             val idBrand: Int,
             val identificationNumber: String,
             val tokenNumber: Long
+        ) : UIEvent()
+
+        data class OnGetCreditMovements(
+            val idBrand: Int,
+            val idLoanClient: Int
         ) : UIEvent()
 
         data class OnMyProductClick(val expand: Boolean) : UIEvent()
@@ -607,6 +713,5 @@ class HomeViewModel @Inject constructor(
         object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
         object OnPhoneNumberChangedToastEvent : BaseEvent()
         object OnEmailChangedToastEvent : BaseEvent()
-
     }
 }

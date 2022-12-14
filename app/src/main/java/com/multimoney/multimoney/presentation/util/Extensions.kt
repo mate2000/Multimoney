@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -20,10 +21,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Duration
 
-fun Context.openWhatsAppDeepLink(link: String) {
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse(link)
-    this.startActivity(intent)
+fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(link)
+        this.startActivity(intent)
+    } catch (nullException: NullPointerException) {
+        onFailure()
+    } catch (security: SecurityException) {
+        onFailure()
+    } catch (noActivity: ActivityNotFoundException) {
+        onFailure()
+    }
 }
 
 fun Context.openMapsLink(latitude: String, longitude: String) {
@@ -38,6 +47,16 @@ fun Context.openMapsLink(latitude: String, longitude: String) {
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
     mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)
+}
+
+fun Context.openIntent(intent: Intent, onFailure: () -> Unit) {
+    try {
+        this.startActivity(intent)
+    } catch (security: SecurityException) {
+        onFailure()
+    } catch (noActivity: ActivityNotFoundException) {
+        onFailure()
+    }
 }
 
 fun tickerFlow(
@@ -147,6 +166,8 @@ fun Color.toHexCode(): String {
 
 val Int.boolean
     get() = this == 1
+
+fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"

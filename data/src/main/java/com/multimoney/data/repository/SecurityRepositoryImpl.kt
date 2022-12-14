@@ -11,7 +11,6 @@ import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.MiniCards
-import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
@@ -175,7 +174,6 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
-
     override suspend fun mutationSendPinProcess(
         identification: String,
         firstName: String,
@@ -313,10 +311,11 @@ class SecurityRepositoryImpl @Inject constructor(
     override suspend fun queryValidateBankAccount(
         account: String,
         identification: String,
+        queryType: String?,
         user: String,
         idBrand: Int
     ) = fetchData(
-        apolloCall = graphqlApi.queryValidateAccount(account, identification, user, idBrand),
+        apolloCall = graphqlApi.queryValidateAccount(account, identification, queryType, user, idBrand),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -357,7 +356,6 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
-
     override suspend fun queryHomeMiniCards(
         infoCreditStatus: Boolean,
         infoVirtualCardStatus: Boolean,
@@ -387,13 +385,14 @@ class SecurityRepositoryImpl @Inject constructor(
         idBrand: Int
     ): Flow<MultimoneyResult<ChangePhone>> =
         fetchData(
-            apolloCall = graphqlApi.mutationChangePhone(identification,phone,pkUser,idBrand),
+            apolloCall = graphqlApi.mutationChangePhone(identification, phone, pkUser, idBrand),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }
         )
 
     override suspend fun mutationChangeEmail(
+        idClient: Int,
         pkUser: Int,
         identification: String,
         email: String,
@@ -401,9 +400,18 @@ class SecurityRepositoryImpl @Inject constructor(
         changeUser: Boolean,
         user: String,
         idBrand: Int
-    ): Flow<MultimoneyResult<ChangeEmail>>  =
+    ): Flow<MultimoneyResult<ChangeEmail>> =
         fetchData(
-            apolloCall = graphqlApi.mutationChangeEmail(pkUser,identification,email,registerId,changeUser,user,idBrand),
+            apolloCall = graphqlApi.mutationChangeEmail(
+                idClient = idClient,
+                pkUser = pkUser,
+                identification = identification,
+                email = email,
+                changeUser = changeUser,
+                idBrand = idBrand,
+                user = user,
+                registerId = registerId
+            ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

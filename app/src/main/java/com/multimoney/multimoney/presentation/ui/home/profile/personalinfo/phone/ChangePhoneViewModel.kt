@@ -1,10 +1,12 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.google.i18n.phonenumbers.PhoneNumberUtil
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FieldToChange
@@ -19,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
+import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -27,6 +30,8 @@ class ChangePhoneViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
+    var phoneNumberTransformation : PhoneNumberTransformation? = null
+
 
     var uiState by mutableStateOf(UIState())
         private set
@@ -42,6 +47,7 @@ class ChangePhoneViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             firstName = savedStateHandle[FIRST_NAME]
         )
+        phoneNumberTransformation = PhoneNumberTransformation(uiState.countryCode?.uppercase().toString())
     }
 
     private fun isFormValid(countryCode: String) = emitBaseEvent(
@@ -89,10 +95,12 @@ class ChangePhoneViewModel @Inject constructor(
             phoneNumberError = Pair(false, R.string.error_empty),
             countryCode = countryCode
         )
+        phoneNumberTransformation = PhoneNumberTransformation(uiState.countryCode?.uppercase().toString())
         isFormValid(countryCode)
     }
 
     private fun isPhoneValid(countryCode: String?) {
+        Log.e("EXAMPLE",phoneNumberTransformation.mobileTextExample.toString())
         if (isPhoneNumberValid(
                 phone = uiState.newPhoneNumber.toString(),
                 fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",

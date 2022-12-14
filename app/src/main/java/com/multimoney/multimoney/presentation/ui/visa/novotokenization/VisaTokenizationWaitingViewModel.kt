@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.visa.novotokenization
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,9 +27,10 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToNextScreen
-import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnPauseCountDownTimer
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.util.NovoHelper
+import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -65,30 +67,47 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     }
 
     private fun startTokenizationProcess() {
-        novoHelper.novoEnrollDevice(
-            pkUser.toInt(),
-            phone,
-            onSuccessEnrollDevice = {
-                novoDeviceId = it.data
-                callNovoEnrollPan()
-            },
-            onErrorEnrollDevice = {
-                // todo handle the error in the sdk
-            }
-        )
+        mmCountDownTimer.stopTimer()
+        if (NovoVTS.isDeviceEnrolled().not()) {
+            novoHelper.novoEnrollDevice(
+                pkUser.toInt(),
+                phone,
+                onSuccessEnrollDevice = {
+                    novoDeviceId = it.data
+                    callNovoEnrollPan()
+                },
+                onErrorEnrollDevice = {
+                    mmCountDownTimer.resumeTimer()
+                    // odo handle novo sdk error
+                    Log.wtf("MM_NOVO_ENROLL_DEVICE_ERROR", it.message)
+                    Log.wtf("MM_NOVO_ENROLL_DEVICE_ERROR", it.code.toString())
+                }
+            )
+        } else {
+            callNovoEnrollPan()
+        }
     }
 
     private fun callNovoEnrollPan() {
+        val expirationDate = balanceCardInformation?.cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
         novoHelper.novoEnrollPan(
             pkUser = pkUser.toInt(),
             email = email,
             accountNumber = balanceCardInformation?.cardInformation?.cardNumber ?: "",
             cardName = balanceCardInformation?.cardInformation?.holderName ?: "",
             cardCvv = balanceCardInformation?.cardInformation?.cValidation ?: "",
-            cardExpirationMonth = balanceCardInformation?.cardInformation?.expDate ?: "",
-            cardExpirationYear = balanceCardInformation?.cardInformation?.expDate ?: "",
-            onSuccessEnrollDevice = {},
-            onErrorEnrollDevice = {}
+            cardExpirationMonth = expirationDate?.first() ?: "",
+            cardExpirationYear = expirationDate?.last() ?: "",
+            onSuccessEnrollDevice = {
+                mmCountDownTimer.resumeTimer()
+                NovoVTS.setFavoriteCard(it.data.vProvisionedToken)
+            },
+            onErrorEnrollDevice = {
+                // todo handle novo sdk error
+                mmCountDownTimer.resumeTimer()
+                Log.wtf("MM_NOVO_ENROLL_PAN_ERROR", it.message)
+                Log.wtf("MM_NOVO_ENROLL_PAN_ERROR", it.code.toString())
+            }
         )
     }
 
@@ -197,14 +216,14 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         when (event) {
             is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
             is OnGoToNextScreen -> goToNextScreen(event.context, event.color)
-            is OnPauseCountDownTimer -> mmCountDownTimer.stopTimer()
+            is OnStartNovoTokenization -> startTokenizationProcess()
         }
     }
 
     sealed class UIEvent {
         data class OnNavigateToNextScreen(val screen: String) : UIEvent()
         data class OnGoToNextScreen(val context: Context, val color: Color) : UIEvent()
-        object OnPauseCountDownTimer : UIEvent()
+        object OnStartNovoTokenization : UIEvent()
     }
 
     companion object {
@@ -212,5 +231,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         const val STEP_ONE = 1
         const val STEP_TWO = 2
         const val TIME_TO_WAITING_NOVO_STEP = 10000L
+        const val EXPIRATION_DATE_CHUCKS_LIMIT = 2
     }
 }

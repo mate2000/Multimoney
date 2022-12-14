@@ -5,6 +5,7 @@ import com.multimoney.data.repository.BalanceRepositoryImpl
 import com.multimoney.data.repository.CreditRepositoryImpl
 import com.multimoney.data.repository.CryptoRepositoryImpl
 import com.multimoney.data.repository.MultimoneyVisaRepositoryImpl
+import com.multimoney.data.repository.ProfileRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
 import com.multimoney.data.repository.SmartAccountRepositoryImpl
 import com.multimoney.data.repository.VirtualCardRepositoryImpl
@@ -51,4 +52,9 @@ class RepositoryModule {
     @Singleton
     fun provideVirtualCardRepository(graphqlApi: GraphqlApi) =
         VirtualCardRepositoryImpl(graphqlApi)
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(graphqlApi: GraphqlApi) =
+        ProfileRepositoryImpl(graphqlApi)
 }

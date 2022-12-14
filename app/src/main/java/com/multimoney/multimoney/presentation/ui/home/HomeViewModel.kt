@@ -68,11 +68,11 @@ import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -495,13 +495,16 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
-                // todo change "BTC" when asset are ready in BE
-                callQueryGetHistoricalBalanceUseCase(
-                    user = email,
-                    identification = identification,
-                    idBrand = idBrand,
-                    baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: "BTC"
-                )
+                if (uiState.configurationVersion?.configuration?.crypto?.active == true) {
+                    // todo change "BTC" when asset are ready in BE
+                    callQueryGetHistoricalBalanceUseCase(
+                        user = email,
+                        identification = identification,
+                        idBrand = idBrand,
+                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset
+                            ?: "BTC"
+                    )
+                }
             }
             result.onFailure {
                 onFailure(it)

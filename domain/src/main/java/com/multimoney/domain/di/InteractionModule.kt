@@ -108,6 +108,8 @@ import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCas
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCaseImpl
+import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
+import com.multimoney.domain.interaction.profile.QueryCountryContactUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
@@ -158,6 +160,7 @@ import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
 import com.multimoney.domain.repository.CryptoRepository
 import com.multimoney.domain.repository.MultimoneyVisaRepository
+import com.multimoney.domain.repository.ProfileRepository
 import com.multimoney.domain.repository.SecurityRepository
 import com.multimoney.domain.repository.SmartAccountRepository
 import com.multimoney.domain.repository.VirtualCardRepository
@@ -552,6 +555,7 @@ class InteractionModule {
         GetHistoricalClientBalanceUseCaseImpl(cryptoRepository)
 
     // Virtual Card
+
     @Provides
     @Singleton
     fun provideQueryListCardVDUseCase(virtualCardRepository: VirtualCardRepository): QueryListCardVDUseCase =
@@ -566,4 +570,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationActivatedCardAutomaticDebitUseCase(virtualCardRepository: VirtualCardRepository): MutationActivatedCardAutomaticDebitUseCase =
         MutationActivatedCardAutomaticDebitUseCaseImpl(virtualCardRepository)
+
+    // Profile
+
+    @Provides
+    @Singleton
+    fun provideQueryCountryContactUseCase(profileRepository: ProfileRepository): QueryCountryContactUseCase =
+        QueryCountryContactUseCaseImpl(profileRepository)
 }

@@ -135,10 +135,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "profile_validate_otp_screen"
     )
 
+    // Profile Sub-Screens
     object ProfileSettingsScreen : Screen(
         "profile_settings_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",
         "profile_settings_screen"
     )
+
+    object HelpScreen : Screen("help_screen/{$ID_BRAND}", "help_screen")
 
     object ProfileChangePasswordScreen : Screen(
         "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",

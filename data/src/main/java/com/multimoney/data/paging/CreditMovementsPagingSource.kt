@@ -2,7 +2,7 @@ package com.multimoney.data.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.multimoney.data.mapper.virtualcard.mapToDomainModel
+import com.multimoney.data.mapper.credit.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.util.fetchData
 import com.multimoney.domain.model.credit.CreditMovement

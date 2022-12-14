@@ -390,7 +390,7 @@ fun ProductContent(
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
                     openCryptoHomeAction = { sharedViewModel.onUIEvent(OnMyProductClick(true)) },
                     openSmartCryptoAction = {
-                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(true))
+                        viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = true))
                     }
                 )
             }

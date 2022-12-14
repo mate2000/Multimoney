@@ -65,8 +65,8 @@ class PaymentCardListViewModel @Inject constructor(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         ),
-                        cardVDList = listOf(CardVisaDirect()),
-                        isCardListEmpty = false
+                        cardVDList = listOf(),
+                        isCardListEmpty = true
                     )
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)

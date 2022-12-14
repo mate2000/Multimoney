@@ -30,6 +30,8 @@ import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
+import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCaseImpl
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCaseImpl
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
@@ -505,6 +507,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryRelationshipUseCaseImpl(smartAccountRepository: SmartAccountRepository): QueryRelationshipUseCase =
         QueryRelationshipUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideSubscriptionAccountSmartContractUseCaseImpl(smartAccountRepository: SmartAccountRepository): SubscriptionAccountSmartContractUseCase =
+        SubscriptionAccountSmartContractUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

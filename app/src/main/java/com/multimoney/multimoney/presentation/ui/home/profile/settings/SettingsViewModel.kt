@@ -11,6 +11,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
@@ -23,17 +25,17 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle,
-    private val cognitoHelper: CognitoHelper,
-    private val countDownTimer: MMCountDownTimer
 ) : BaseViewModel(true) {
 
     // UIState
-    var uiState by mutableStateOf(SettingsViewModel.UIState())
+    var uiState by mutableStateOf(UIState())
         private set
 
     init {
         uiState = uiState.copy(
             idBrand = savedStateHandle[ID_BRAND],
+            pkUser = savedStateHandle[PK_USER],
+            userName = savedStateHandle[USER_NAME]
         )
         viewModelScope.launch {
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
@@ -62,10 +64,16 @@ class SettingsViewModel @Inject constructor(
         uiState = uiState.copy(areBiometricsEnabled = false)
     }
 
+    private fun onNavigateToChangePassword() {
+        navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
+    }
+
     data class UIState(
         // Fields
         val openDialog: DialogParameters = DialogParameters(),
         val idBrand: Int? = null,
+        val pkUser: String? = null,
+        val userName : String? = null,
         val areBiometricsEnabled: Boolean? = null
     )
 
@@ -73,11 +81,13 @@ class SettingsViewModel @Inject constructor(
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is UIEvent.OnShowConfirmationDialog -> onShowConfirmationDialog()
+            is UIEvent.OnNavigateToChangePassword -> onNavigateToChangePassword()
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnShowConfirmationDialog : UIEvent()
+        object OnNavigateToChangePassword : UIEvent()
     }
 }

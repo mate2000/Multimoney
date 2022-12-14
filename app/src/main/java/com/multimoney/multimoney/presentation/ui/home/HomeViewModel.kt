@@ -376,12 +376,6 @@ class HomeViewModel @Inject constructor(
                             account?.tokenNumber?.toLongOrNull() ?: 0
                         )
                     )
-                    onUIEvent(
-                        OnGetCreditMovements(
-                            uiState.idBrand.toInt(),
-                            uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
-                        )
-                    )
                 }
                 // If user has smart activated he can enable crypto
                 productPageList.add(
@@ -415,6 +409,13 @@ class HomeViewModel @Inject constructor(
                 )
             }
         }
+
+        onUIEvent(
+            OnGetCreditMovements(
+                uiState.idBrand.toInt(),
+                uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+            )
+        )
 
         if (uiState.configurationVersion != null && uiState.quickActions != null) {
             uiState = uiState.copy(isLoading = false)

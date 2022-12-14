@@ -31,7 +31,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.Companion.PACKAGE_NAME
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCallInFidoToken
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoViewModel.UIEvent.OnConfigureOnFidoSdk
@@ -71,6 +70,7 @@ fun SmartOnfidoScreen(
     LaunchedEffect(context) {
         viewModel.onFidoTokenEvent.collect { event ->
             event.onSuccess {
+                viewModel.applicantId = it?.applicantId
                 viewModel.apply {
                     onUIEvent(
                         OnOpenOnfidoSdk(onOpenOnfidoSdk = {
@@ -86,7 +86,6 @@ fun SmartOnfidoScreen(
                                                 firstName = viewModel.firstName,
                                                 lastName = viewModel.lastName,
                                                 identification = viewModel.identification,
-                                                applicationId = PACKAGE_NAME,
                                                 user = viewModel.email,
                                                 injectNewToken = refreshToken
                                             )
@@ -121,7 +120,6 @@ fun SmartOnfidoScreen(
                 firstName = viewModel.firstName,
                 lastName = viewModel.lastName,
                 identification = viewModel.identification,
-                PACKAGE_NAME,
                 user = viewModel.email
             )
         )

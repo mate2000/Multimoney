@@ -21,8 +21,6 @@ import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency16
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.Secondary300
-import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.HomeCryptoGraphic
 import com.multimoney.multimoney.presentation.uielement.CustomImage

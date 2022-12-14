@@ -96,6 +96,19 @@ query Balance(
         }
     ) {
         globalBalance
+        investedBalance
+        percentageInvested
+        items {
+            asset
+            available
+            trading
+            descriptionCurrency
+            balanceDollars
+            investedBalanceCurrency
+            percentageInvestedCurrency
+            priceOfTheDay
+            url_image
+        }
     }
     balanceCardInformation(
         balanceCardInformationInput: {

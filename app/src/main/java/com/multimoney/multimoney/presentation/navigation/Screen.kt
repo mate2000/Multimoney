@@ -5,6 +5,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINA
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
@@ -100,29 +101,38 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // HomeNavGraph Screens
     object HomeScreen : Screen("home_screen")
 
-    object ProfileScreen : Screen("profile_screen/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
+    object ProfileScreen : Screen("profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen")
 
-    object ProfilePersonalInfoScreen : Screen("profile_personal_info_screen/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
-        "profile_personal_info_screen")
+    object ProfilePersonalInfoScreen : Screen(
+        "profile_personal_info_screen/{$ID_CLIENT}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_personal_info_screen"
+    )
 
-    object ProfileVerifyIdentityPhoneScreen : Screen("profile_verify_identity_phone_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$NEW_PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
-        "profile_verify_identity_phone_screen")
+    object ProfileVerifyIdentityPhoneScreen : Screen(
+        "profile_verify_identity_phone_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$NEW_PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_verify_identity_phone_screen"
+    )
 
-    object ProfileVerifyIdentityEmailScreen : Screen("profile_verify_identity_email_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$NEW_EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+    object ProfileVerifyIdentityEmailScreen : Screen("profile_verify_identity_email_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$NEW_EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
         "profile_verify_identity_email_screen")
 
-    object ProfileChangePhoneScreen : Screen("profile_change_phone_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
-        "profile_change_phone_screen")
+    object ProfileChangePhoneScreen : Screen(
+        "profile_change_phone_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_change_phone_screen"
+    )
 
-    object ProfileChangeEmailScreen : Screen("profile_change_email_screen/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+    object ProfileChangeEmailScreen : Screen(
+        "profile_change_email_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
         "profile_change_email_screen")
 
-    object ProfileValidateOTPScreen : Screen("profile_validate_otp_screen/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}",
+    object ProfileValidateOTPScreen : Screen("profile_validate_otp_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}",
         "profile_validate_otp_screen")
 
-    object ProfileSettingsScreen : Screen("profile_settings_screen/{$ID_BRAND}",
-        "profile_settings_screen")
+    object ProfileSettingsScreen : Screen(
+        "profile_settings_screen/{$ID_BRAND}",
+        "profile_settings_screen"
+    )
 
     // DisbursementNavGraph Screens
     object DisbursementAmountScreen : Screen(
@@ -256,18 +266,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentLocationDetailsScreen : Screen(
-        "payment_location_details_screen/{$POINT_NAME}/{$POINT_ADDRESS}/{$POINT_ADDRESS_DESCRIPTION}/{$POINT_SCHEDULE}/{$POINT_LATITUDE}/{$POINT_LONGITUDE}/{$PAYMENT_AMOUNT}/{$CREDIT_NUMBER}/{$ID_BRAND}",
+        "payment_location_details_screen?$POINT_NAME={$POINT_NAME}?$POINT_ADDRESS={$POINT_ADDRESS}?$POINT_ADDRESS_DESCRIPTION={$POINT_ADDRESS_DESCRIPTION}?$POINT_SCHEDULE={$POINT_SCHEDULE}?$POINT_LATITUDE={$POINT_LATITUDE}?$POINT_LONGITUDE={$POINT_LONGITUDE}?$PAYMENT_AMOUNT={$PAYMENT_AMOUNT}?$CREDIT_NUMBER={$CREDIT_NUMBER}?$ID_BRAND={$ID_BRAND}",
         "payment_location_details_screen"
     )
 
     // Smart
     object SmartScreen : Screen(
-        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}",
+        "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$COMING_FROM_CRYPTO}",
         "smart_screen"
     )
 
     object SmartOnfidoScreen : Screen(
-        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}",
+        "smart_onfido_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$FIRST_NAME}/{$LAST_NAME}/{$SIGN_DOCUMENT_ID_PRINT}/{$SIGN_DOCUMENT_URL}/{$COMING_FROM_CRYPTO}",
         "smart_onfido_screen"
     )
 

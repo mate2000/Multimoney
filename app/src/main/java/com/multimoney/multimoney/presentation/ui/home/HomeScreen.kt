@@ -14,7 +14,6 @@ import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,11 +54,9 @@ fun HomeScreen(
 ) {
     viewModel.apply {
         isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
+        LaunchedEffect(isOnRestart) {
             if (isOnRestart) {
                 onUIEvent(OnSetUserData)
-            }
-            onDispose {
                 isOnRestart = false
             }
         }
@@ -70,8 +67,8 @@ fun HomeScreen(
     val automaticPaymentEditBottomSheetState = rememberModalBottomSheetState(Hidden)
     val quickActionsModalBottomSheetState =
         rememberModalBottomSheetState(initialValue = Hidden, skipHalfExpanded = true)
-    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden)
-    val context = LocalContext.current
+    val myProductsModalBottomSheetState = rememberModalBottomSheetState(Hidden, skipHalfExpanded = true)
+    val activity = LocalContext.current.findActivity()
 
     LaunchedEffect(true) {
         viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
@@ -141,7 +138,7 @@ fun HomeScreen(
                 }
             }
             else -> {
-                context.findActivity()?.finish()
+                activity?.finish()
             }
         }
     }

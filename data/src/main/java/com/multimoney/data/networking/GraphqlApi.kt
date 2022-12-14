@@ -1148,6 +1148,7 @@ class GraphqlApi @Inject constructor(
             .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationChangeEmail(
+        idClient: Int,
         pkUser: Int,
         identification: String,
         email: String,
@@ -1158,16 +1159,17 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<ChangeEmailMutation.Data> =
         apolloAuthorizedClient.mutation(
             ChangeEmailMutation(
-                pkUser,
-                identification,
-                email,
-                registerId,
-                changeUser,
-                idBrand,
-                user
+                idClient = idClient,
+                pkUser = pkUser,
+                identification = identification,
+                email = email,
+                changeUser = changeUser,
+                idBrand = idBrand,
+                user = user,
+                registerId = registerId
             )
-        )
-            .fetchPolicy(FetchPolicy.NetworkOnly)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
 
     fun queryMiniCards(
         infoCreditStatus: Boolean,

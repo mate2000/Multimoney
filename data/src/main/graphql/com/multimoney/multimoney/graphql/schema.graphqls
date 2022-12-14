@@ -2996,7 +2996,7 @@ input UserPhoneMobileGetDtoInput {
   manufacture: String!
 
   serialNumber: String!
-
+  
   pkUser: Long!
 
   idBrand: Int
@@ -6256,8 +6256,6 @@ type LocalTransferFavoriteResult {
   idCurrencyAccount: Int
 
   currencyAccount: String!
-
-  ibanNumber: String!
 }
 
 type TypeAccountListResponse {
@@ -6467,8 +6465,6 @@ type ObjPhone {
   id_Currency: String!
 
   currency: String!
-
-  ibanNumber: String
 }
 
 type PromissoryNoteTransactionMobile {

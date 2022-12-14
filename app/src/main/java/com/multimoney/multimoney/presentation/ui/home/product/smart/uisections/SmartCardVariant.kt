@@ -2,12 +2,13 @@ package com.multimoney.multimoney.presentation.ui.home.product.smart.uisections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -18,15 +19,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency16
+import com.multimoney.multimoney.presentation.theme.BlackTransparency20
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 
@@ -180,4 +188,149 @@ fun CardSmartProduct(
             )
         }
     }
+}
+
+@Composable
+@Preview
+fun CardSmartFirmedAndOnfidoPending() {
+    val backgroundShip: Color = if (isSystemInDarkTheme()) {
+        BlackTransparency20
+    } else {
+        WhiteTransparency10
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+    ) {
+        CustomInformativeChip(
+            text = stringResource(id = R.string.home_my_products_title_smart),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = backgroundShip,
+            startIcon = R.drawable.ic_warning
+        )
+        Text(
+            text = stringResource(id = R.string.smart_continue_validating_identity_title),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = stringResource(id = R.string.home_smart_product_process_accept_contract_description),
+            modifier = Modifier.padding(top = 8.dp, bottom = 73.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+    }
+}
+
+@Composable
+@Preview
+fun CardWithSmartInProcess(
+    type: SmartProcessStarted = SmartProcessStarted.SmartProcessOnfidoReject,
+    idBrand: Int = Brand.ElSalvador.id,
+    action: () -> Unit = {},
+    wording: Wording? = Wording("", "", "")
+) {
+    val notDefinedValue = stringResource(id = R.string.not_defined)
+    var chipText = R.string.home_product_process_smart_label
+    val title: String = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: ""
+    val description: String = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: ""
+    val actionText: String? = wording?.cTA?.filter { wording.textTwo != notDefinedValue }
+    var startIcon = R.drawable.ic_time
+
+    val backgroundShip: Color = if (isSystemInDarkTheme()) {
+        BlackTransparency20
+    } else {
+        WhiteTransparency10
+    }
+    when (type) {
+        SmartProcessStarted.SmartStartProcessIncomplete -> {
+            chipText = R.string.smart_card_smart_title
+            startIcon = R.drawable.ic_warning
+        }
+        SmartProcessStarted.SmartProcessOnFidoIncomplete -> {
+            startIcon = R.drawable.ic_warning
+        }
+        SmartProcessStarted.SmartProcessOnfidoReject -> {
+            startIcon = R.drawable.ic_warning
+        }
+        SmartProcessStarted.CreditProcessCreateAccountFailure -> {
+            startIcon = R.drawable.ic_warning
+        }
+        else -> Unit
+    }
+
+    Column(
+        modifier = Modifier
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable {
+                action.invoke()
+            }
+    ) {
+        CustomInformativeChip(
+            text = stringResource(id = chipText),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = backgroundShip,
+            startIcon = startIcon,
+            startIconTint = MultimoneyTheme.colors.iconColor
+        )
+        Text(
+            text = title,
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = description,
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+        actionText?.let {
+            if (it.isNotBlank()) {
+                CustomImage(
+                    modifier = Modifier
+                        .padding(top = 21.dp)
+                        .align(Alignment.CenterHorizontally),
+                    drawableResource = R.drawable.ic_chevron_up
+                )
+
+                Text(
+                    text = actionText,
+                    modifier = Modifier
+                        .padding(bottom = 12.dp)
+                        .align(Alignment.CenterHorizontally),
+                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.text,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+sealed class SmartProcessStarted {
+    object SmartStartProcessIncomplete : SmartProcessStarted()
+    object SmartProcessOnFidoIncomplete : SmartProcessStarted()
+    object CreditProcessFirmIncomplete : SmartProcessStarted()
+    object CreditProcessFirmReject : SmartProcessStarted()
+    object CreditProcessFirmMaxAttempts : SmartProcessStarted()
+    object SmartProcessOnfidoReject : SmartProcessStarted()
+    object SmartProcessOnfidoMaxAttempts : SmartProcessStarted()
+    object CreditProcessCreateAccountFailure : SmartProcessStarted()
 }

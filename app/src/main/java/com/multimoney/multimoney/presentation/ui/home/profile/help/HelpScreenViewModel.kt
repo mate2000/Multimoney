@@ -184,8 +184,8 @@ class HelpScreenViewModel @Inject constructor(
 
     companion object {
         const val TEL_PREFIX = "tel:"
-        const val FAQ_LINK_GT = "https://www.multimoney.com/gt/preguntas-frecuentes"
-        const val FAQ_LINK_SV = "https://www.multimoney.com/sv/preguntas-frecuentes"
-        const val FAQ_LINK_CR = "https://www.multimoney.com/cr/preguntas-frecuentes"
+        const val FAQ_LINK_GT = "https://www.multimoney.com/gt/ayuda"
+        const val FAQ_LINK_SV = "https://www.multimoney.com/sv/ayuda"
+        const val FAQ_LINK_CR = "https://www.multimoney.com/cr/ayuda"
     }
 }

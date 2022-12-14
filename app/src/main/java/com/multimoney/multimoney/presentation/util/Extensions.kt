@@ -71,11 +71,20 @@ fun Int.getSourceIncomeIconDrawable() = when (this) {
 }
 
 // Currency
-fun Int.getCurrency(): CurrencyType {
+fun Int.getCurrencyFromId(): CurrencyType {
     return when (this) {
         Colon.id -> Colon
         Dollar.id -> Dollar
         Quetzal.id -> Quetzal
+        else -> All
+    }
+}
+
+fun String.getCurrencyFromValue(): CurrencyType {
+    return when (this.lowercase()) {
+        Colon.value.lowercase() -> Colon
+        Dollar.value.lowercase() -> Dollar
+        Quetzal.value.lowercase() -> Quetzal
         else -> All
     }
 }
@@ -110,7 +119,7 @@ fun String.getCurrencySymbol(): Int {
     }
 }
 
-fun String.getCurrency(): CurrencyType {
+fun String.getCurrencyFromId(): CurrencyType {
     return when (this) {
         Colon.currency -> Colon
         Dollar.currency -> Dollar

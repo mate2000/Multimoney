@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAc
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -154,7 +154,7 @@ class AddIbanAccountViewModel @Inject constructor(
             idClient = idClient?.toLong() ?: 0,
             idBank = validateAccount?.bankId ?: 0,
             accountNumber = "${Brand.CostaRica.iban}${uiState.accountNumber}",
-            idCurrency = validateAccount?.currency?.getCurrency()?.id ?: 0,
+            idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id ?: 0,
             idAccountType = null,
             idLoanClient = idLoanClient?.toLong() ?: 0,
             user = user.orEmpty(),

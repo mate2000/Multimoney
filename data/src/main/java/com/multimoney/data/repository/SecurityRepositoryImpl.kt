@@ -16,6 +16,7 @@ import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.security.UserPhoneMobileSave
 import com.multimoney.domain.model.security.ValidateOTP
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
@@ -24,9 +25,9 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SecurityRepository
-import kotlinx.coroutines.flow.Flow
 import java.io.Serializable
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -377,6 +378,31 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+
+    override suspend fun mutationUserPhoneMobileSave(
+        idBrand: Int,
+        idWalletCard: String,
+        manufacture: String,
+        pkUser: Long,
+        serialNumber: String,
+        user: String
+    ): Flow<MultimoneyResult<UserPhoneMobileSave>> = fetchData(
+        apolloCall = graphqlApi.mutationUserPhoneMobileSave(
+            idBrand,
+            idWalletCard,
+            manufacture,
+            pkUser,
+            serialNumber,
+            user
+        ),
+        apolloCallMapper = { data ->
+            if (data.userPhoneMobileSave.status == null || data.userPhoneMobileSave.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
 
     override suspend fun mutationChangePhone(
         identification: String,

@@ -71,6 +71,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
+import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateOTPMutation
@@ -887,6 +888,25 @@ class GraphqlApi @Inject constructor(
             idBrand = idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationUserPhoneMobileSave(
+        idBrand: Int,
+        idWalletCard: String,
+        manufacture: String,
+        pkUser: Long,
+        serialNumber: String,
+        user: String
+    ): ApolloCall<UserPhoneMobileSaveMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            UserPhoneMobileSaveMutation(
+                idBrand,
+                idWalletCard,
+                manufacture,
+                pkUser,
+                serialNumber,
+                user
+            )
+        )
 
     // SmartAccount
     fun queryGetCoreBankMovements(

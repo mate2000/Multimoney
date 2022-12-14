@@ -17,7 +17,6 @@ import com.multimoney.domain.model.accountsmart.Nationalities
 import com.multimoney.domain.model.accountsmart.Professions
 import com.multimoney.domain.model.accountsmart.RelationshipData
 import com.multimoney.domain.model.accountsmart.SaveSmartAccount
-import com.multimoney.domain.model.accountsmart.SaveSmartAccount
 import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
@@ -336,8 +335,10 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 country,
                 idAccount,
                 accountNumber
-            ), apolloCallMapper = { data ->
+            ),
+            apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
-            })
+            }
+        )
     }
 }

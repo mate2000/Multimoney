@@ -17,7 +17,6 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPayme
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
 import javax.inject.Inject
-import okhttp3.internal.toLongOrDefault
 
 class SmartPaymentMethodViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
@@ -52,7 +51,7 @@ class SmartPaymentMethodViewModel @Inject constructor(
 
     private fun navigateToVisaScreen() {
         navigateTo(
-            "${Screen.PaymentSmartCardsScreen.baseRoute}/$username/$idBrand/$identification/${accountToken.toLongOrNull()}/$currencyId"
+            "${Screen.SmartPaymentCardsScreen.baseRoute}/$username/$idBrand/$identification/${accountToken.toLongOrNull()}/$currencyId"
         )
     }
 

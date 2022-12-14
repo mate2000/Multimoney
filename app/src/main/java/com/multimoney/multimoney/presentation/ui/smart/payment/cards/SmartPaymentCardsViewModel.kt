@@ -1,6 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.cards
 
-import android.util.Log
+import android.content.Context
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue.Expanded
@@ -27,10 +27,14 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnRetryTransfer
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnTryLater
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -49,6 +53,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
     private var identification: String = savedStateHandle[IDENTIFICATION] ?: ""
     private var idCurrency: Int = savedStateHandle[ID_CURRENCY] ?: 0
     private var tokenNumber: Long = savedStateHandle[ACCOUNT_TOKEN] ?: 0
+    val currency: String = if (idCurrency == 2) Dollar.symbol else "C"
 
     private fun onCallQueryGetClientCardsUseCase() {
         executeUseCase {
@@ -80,27 +85,57 @@ class SmartPaymentCardsViewModel @Inject constructor(
     private fun onCallProcessTransferVisaToSmart() {
         executeUseCase {
             processTransferVisaToSmart.invoke(
-                uiState.idCard,
-                tokenNumber,
-                identification,
+                1,
+                1,
+                "identification",
                 uiState.amount,
                 idCurrency,
                 DEFAULT_DESCRIPTION,
                 uiState.cardMasked,
                 user,
-                idBrand
+                1
             ).collectLatest { result ->
                 result.onSuccess {
-                    Log.d("SmartPayment", "Success: ${it?.referenceNumberVisa}")
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        showErrorScreen = false
+                    )
+                    navigateTo(
+                        "${Screen.SmartPaymentSuccessScreen.baseRoute}/$currency/${uiState.amount}/${false}/${"0"}/${"0 "}/${uiState.cardMasked}/$tokenNumber"
+                    )
                 }
                 result.onFailure {
-                    Log.d("SmartPayment", "Failure: ${it?.getError()}")
+                    uiState = uiState.copy(
+                        showLoadingScreen = false,
+                        showErrorScreen = true
+                    )
                 }
                 result.onLoading {
-                    Log.d("SmartPayment", "Loading Payment")
+                    uiState = uiState.copy(
+                        showLoadingScreen = true,
+                        showErrorScreen = false
+                    )
                 }
             }
         }
+    }
+
+    private fun onRetryTransfer() {
+        uiState = uiState.copy(
+            showErrorScreen = false
+        )
+        onCallProcessTransferVisaToSmart()
+    }
+
+    private fun onTryLater(smallIcon: Int, largeIcon: Int, context: Context) {
+        // todo set up notification
+        startTimedNotification(
+            context,
+            "title",
+            "body",
+            largeIcon,
+            smallIcon
+        )
     }
 
     private fun onCardSelected(cardSelected: CardVisaDirect) {
@@ -109,9 +144,6 @@ class SmartPaymentCardsViewModel @Inject constructor(
             cardMasked = (cardSelected.cardMaskedNumber ?: ""),
             cardBankName = cardSelected.detail ?: "",
             bottomSheetState = ModalBottomSheetState(Expanded)
-        )
-        navigateTo(
-            "${Screen.SmartPaymentSuccessScreen.baseRoute}/${"$"}/${"500"}/${"true"}/${"300694.10"}/${"601.95 "}/${"12345****0980"}/${"74598621"}"
         )
         // fixme navigate to amount screen
         // navigateTo("${Screen. ROUTE }/${idBrand} +
@@ -137,14 +169,15 @@ class SmartPaymentCardsViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isVisaAnimationVisible: Boolean = false,
-        val currency: String = "$",
         val amount: String = "500",
         val cardBankName: String = "",
         val exchangeRate: String = "",
         val exchangeAmount: String = "",
         val idCard: Long = 0,
         val cardMasked: String = "",
-        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden)
+        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
+        var showErrorScreen: Boolean = false,
+        val showLoadingScreen: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -154,16 +187,20 @@ class SmartPaymentCardsViewModel @Inject constructor(
             is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
             is OnAddCard -> onAddCard()
             is OnCallProcessTransferVisaToSmart -> onCallProcessTransferVisaToSmart()
+            is OnRetryTransfer -> onRetryTransfer()
+            is OnTryLater -> onTryLater(uiEvent.smallIcon, uiEvent.largeIcon, uiEvent.context)
         }
     }
 
     sealed class UIEvent {
-        class OnCardSelected(val cardSelected: CardVisaDirect) : UIEvent()
+        data class OnCardSelected(val cardSelected: CardVisaDirect) : UIEvent()
         object OnCallQueryGetClientCards : UIEvent()
         object OnAddCard : UIEvent()
         object OnNavigateBack : UIEvent()
 
         object OnCallProcessTransferVisaToSmart : UIEvent()
+        object OnRetryTransfer : UIEvent()
+        data class OnTryLater(val smallIcon: Int, val largeIcon: Int, val context: Context) : UIEvent()
     }
 
     companion object {

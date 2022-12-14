@@ -11,10 +11,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,13 +27,17 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnRetryTransfer
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnTryLater
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -43,6 +47,8 @@ fun SmartPaymentCardsScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartPaymentCardsViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     // Navigation
     viewModel.apply {
         isOnRestart = isRestart
@@ -54,22 +60,43 @@ fun SmartPaymentCardsScreen(
             }
         }
     }
-    Column(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize()
-    ) {
-        TopNavBar(
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            isRightButtonVisible = false
+    if (viewModel.uiState.showLoadingScreen) {
+        LoadingMultiMoney(R.string.button_continue)
+    } else if (viewModel.uiState.showErrorScreen) {
+
+        AlertResult(
+            buttonTextResource = R.string.error_button_retry,
+            onButtonClick = { viewModel.onUIEvent(OnRetryTransfer) },
+            isSecondaryButtonVisible = true,
+            secondaryButtonTextResource = R.string.error_button_try_later,
+            onSecondaryButtonClick = {
+                viewModel.onUIEvent(
+                    OnTryLater(
+                        R.drawable.ic_logo_multimoney,
+                        R.drawable.ic_plus,
+                        context
+                    )
+                )
+            }
         )
-        PaymentCardsListContent(viewModel)
+    } else {
+        Column(
+            modifier = Modifier
+                .background(MultimoneyTheme.colors.background)
+                .fillMaxSize()
+        ) {
+            TopNavBar(
+                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+                isRightButtonVisible = false
+            )
+            PaymentCardsListContent(viewModel)
+        }
+        SmartPaymentConfirmBottomSheet(
+            rememberCoroutineScope(),
+            viewModel.uiState.bottomSheetState,
+            viewModel
+        )
     }
-    SmartPaymentConfirmBottomSheet(
-        rememberCoroutineScope(),
-        viewModel.uiState.bottomSheetState,
-        viewModel
-    )
 }
 
 @Composable
@@ -99,16 +126,6 @@ fun PaymentCardsListContent(
             onClick = { viewModel.onUIEvent(OnAddCard) },
             buttonType = PrimaryTertiary,
             trailingIcon = R.drawable.ic_plus
-        )
-    }
-
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
     LoadingIndicator(viewModel.uiState.isLoading)

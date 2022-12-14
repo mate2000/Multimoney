@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -47,6 +48,7 @@ class DownloadCreditMovementsWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
+        Log.d("TestLog", "DownloadCreditMovementsWorker")
         val creditNumber = inputData.getString(CREDIT_NUMBER).orEmpty()
         val user = inputData.getString(USER).orEmpty()
         val idBrand = inputData.getInt(ID_BRAND, 0)

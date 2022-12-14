@@ -4,14 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ValidateUserStatus
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardDiscoverCrypto
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardSmartInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardWithBalance
@@ -41,7 +39,7 @@ fun CryptoContent(
                             type = ProductBackGroundType.ComplementaryTwo
                         ) {
                             CryptoCardWithBalance(
-                                cryptoBalance = stringResource(id = R.string.home_crypto_card_with_balance_zero_text),
+                                cryptoBalance = 0.0,
                             )
                         }
                         return
@@ -54,7 +52,7 @@ fun CryptoContent(
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
                         CryptoCardWithBalance(
-                            cryptoBalance = cryptoBalance.globalBalance.toString(),
+                            cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
                             clientCryptoBalanceHistory = clientBalanceHistory
                         )
                     }

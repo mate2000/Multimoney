@@ -55,6 +55,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHi
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
+import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
@@ -301,7 +302,7 @@ class HomeViewModel @Inject constructor(
             idBrand,
             identification,
             baseAsset = baseAsset,
-            startDate = getPreviousDate(1),
+            startDate = getPreviousDate(FilterDateByDays.YESTERDAY.days),
             endDate = getCurrentDateYMDPattern()
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
@@ -494,13 +495,14 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
-                // todo change "BTC" when asset are ready in BE
-                callQueryGetHistoricalBalanceUseCase(
-                    user = email,
-                    identification = identification,
-                    idBrand = idBrand,
-                    baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: "BTC"
-                )
+                if (uiState.idBrand != Brand.Guatemala.id.toString()) {
+                    callQueryGetHistoricalBalanceUseCase(
+                        user = email,
+                        identification = identification,
+                        idBrand = idBrand,
+                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
+                    )
+                }
             }
             result.onFailure {
                 onFailure(it)

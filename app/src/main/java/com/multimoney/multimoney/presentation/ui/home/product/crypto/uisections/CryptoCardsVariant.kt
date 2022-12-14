@@ -19,7 +19,10 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.BlackTransparency16
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Secondary300
+import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.HomeCryptoGraphic
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -87,8 +90,7 @@ fun CryptoCardSmartInProcess(
         CustomInformativeChip(
             text = stringResource(id = R.string.home_smart_in_process_crypto_card),
             textStyle = Typography.body2.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
+                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             ),
             modifier = Modifier.padding(top = 24.dp),
             shape = RoundedCornerShape(12.dp),
@@ -112,8 +114,7 @@ fun CryptoCardSmartInProcess(
 
 @Composable
 fun CryptoCardWithBalance(
-    cryptoBalance: String,
-    clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList()
+    cryptoBalance: Double, clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList()
 ) {
     Column(
         modifier = Modifier
@@ -129,47 +130,83 @@ fun CryptoCardWithBalance(
         Text(
             text = stringResource(id = R.string.home_crypto_card_with_balance_title),
             style = Typography.body1.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
+                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             )
         )
         Text(
             modifier = Modifier.height(40.dp),
             text = "\$${cryptoBalance}",
             style = Typography.h4.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
+                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             )
         )
-        // TODO box for now, show graphics gains/loses (In Process...), show chip gains/losses
-        /*if (clientCryptoBalanceHistory.isNotEmpty()) {
 
-            HomeCryptoGraphic(clientCryptoBalanceHistory = clientCryptoBalanceHistory)
-            /* chip gains/losses
+        if (clientCryptoBalanceHistory.isNotEmpty()) {
+
+            val isInGainOrLoss =
+                cryptoBalance > calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory)
+            HomeCryptoGraphic(
+                clientCryptoBalanceHistory = clientCryptoBalanceHistory,
+                graphicColor = if (isInGainOrLoss)
+                    MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor
+            )
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 CustomInformativeChip(
-                    text = "\$${cryptoBalance}",
+                    text = "\$${
+                        String.format(
+                            "%.2f", calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory)
+                        )
+                    }",
                     textStyle = Typography.body2.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MultimoneyTheme.colors.text
+                        fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
                     ),
-                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+                    startIconTint = if (isInGainOrLoss)
+                        MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor,
                     shape = RoundedCornerShape(12.dp),
                     background = BlackTransparency16,
-                    startIcon = R.drawable.ic_gains_crypto
+                    startIcon = if (isInGainOrLoss) R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract
                 )
-            }*/
-        }*/
+            }
+        }
     }
+}
+
+// fun to calculate gain loses based on the list of historical balance
+fun calculateGainLoses(
+    cryptoBalance: Double, clientCryptoBalanceHistory: List<HistoricalBalanceClient>
+): Double {
+
+    if (clientCryptoBalanceHistory.isEmpty()) {
+        return cryptoBalance
+    }
+    val lastBalance = clientCryptoBalanceHistory.last().convertedBalance
+    return cryptoBalance - lastBalance
 }
 
 @Preview
 @Composable
 fun CryptoCardWithBalancePreview() {
-    CryptoCardWithBalance("5252.04")
+    CryptoCardWithBalance(
+        cryptoBalance = 5252.04, clientCryptoBalanceHistory = listOf(
+            HistoricalBalanceClient(
+                convertedBalance = 5000.0, date = "2021-01-01"
+            ),
+            HistoricalBalanceClient(
+                convertedBalance = 5500.0, date = "2021-01-02"
+            ),
+            HistoricalBalanceClient(
+                convertedBalance = 3000.0, date = "2021-01-03"
+            ),
+            HistoricalBalanceClient(
+                convertedBalance = 4000.0, date = "2021-01-04"
+            ),
+        )
+    )
 }
 
 @Preview
@@ -177,9 +214,7 @@ fun CryptoCardWithBalancePreview() {
 fun CryptoCardsPreview() {
     CryptoCardDiscoverCrypto(
         wording = Wording(
-            textOne = "Hola como estas",
-            textTwo = "aprovecha la oferta",
-            cTA = "Ir a Oferta"
+            textOne = "Hola como estas", textTwo = "aprovecha la oferta", cTA = "Ir a Oferta"
         )
     )
 }
@@ -189,9 +224,7 @@ fun CryptoCardsPreview() {
 fun CryptoCardSmartInProcessPreview() {
     CryptoCardSmartInProcess(
         wording = Wording(
-            textOne = "Hola como estas",
-            textTwo = "aprovecha la oferta",
-            cTA = ""
+            textOne = "Hola como estas", textTwo = "aprovecha la oferta", cTA = ""
         )
     )
 }

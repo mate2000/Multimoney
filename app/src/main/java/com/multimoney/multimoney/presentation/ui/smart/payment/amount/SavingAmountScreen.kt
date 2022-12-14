@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmou
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSuggestedAmountClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -53,6 +54,7 @@ fun SavingAmountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack)
+            onUIEvent(OnStart)
         }
     }
 
@@ -124,7 +126,7 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
-                        mainText = TWO_HUNDRED.display,
+                        mainText = viewModel.,
                         secondaryText = String(),
                         isSelected = viewModel.uiState.suggestedAmountSelected == TWO_HUNDRED
                     )

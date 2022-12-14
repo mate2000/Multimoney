@@ -1,27 +1,37 @@
 package com.multimoney.multimoney.presentation.util.catalog
 
-interface SuggestedAmount {
-    val display: String
-    val value: String
+abstract class SuggestedAmount(val isDollarAccount: Boolean) {
+    open val display: String = ""
+    open val value: String = ""
 }
 
-enum class SuggestedAmountSV : SuggestedAmount {
-    TWO_HUNDRED {
-        override val display: String
-            get() = "$200"
-        override val value: String
-            get() = "200"
-    },
-    FIVE_HUNDRED {
-        override val display: String
-            get() = "$500"
-        override val value: String
-            get() = "500"
-    },
-    ONE_THOUSAND {
-        override val display: String
-            get() = "$1,000"
-        override val value: String
-            get() = "1000"
-    }
+class FirstSuggestion : SuggestedAmount() {
+    override val display: String
+        get() = setDisplay()
+    override val value: String
+        get() = setValue()
+
+    private fun setDisplay() = if (isDollarAccount) "$250" else ""
+    private fun setValue() = if (isDollarAccount) "250" else ""
 }
+
+class SecondSuggestion(private val isDollarAccount: Boolean) : SuggestedAmount {
+    override val display: String
+        get() = setDisplay()
+    override val value: String
+        get() = setValue()
+
+    private fun setDisplay() = if (isDollarAccount) "$500" else ""
+    private fun setValue() = if (isDollarAccount) "500" else ""
+}
+
+class ThirdSuggestion(private val isDollarAccount: Boolean) : SuggestedAmount {
+    override val display: String
+        get() = setDisplay()
+    override val value: String
+        get() = setValue()
+
+    private fun setDisplay() = if (isDollarAccount) "$1,000" else ""
+    private fun setValue() = if (isDollarAccount) "1000" else ""
+}
+

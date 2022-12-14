@@ -7,33 +7,63 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount
+import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmountSV
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
-class SavingAmountViewModel @Inject constructor(savedStateHandle: SavedStateHandle) : BaseViewModel(true) {
+class SavingAmountViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle
+) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
         private set
 
     // stateless
-    val idBrand = savedStateHandle
+    var idBrand: Int = 0
+    var idCard: Int = 0
+    var identification: String = ""
+    var user: String = ""
+
+    private fun onStart() {
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        idCard = savedStateHandle[ID_VISA_CARD] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        user = savedStateHandle[USER] ?: ""
+        when (idBrand) {
+            Brand.CostaRica.id -> TODO()
+            else -> uiState = uiState.copy(suggestedDisplay = SuggestedAmountSV.values().toList())
+        }
+    }
 
     private fun onAmountChanged(newAmount: String) {
-        val possibleSuggestion =
-            SuggestedAmount.values().find { suggestion -> suggestion.display == newAmount }
-        if (possibleSuggestion != null) {
-            uiState = uiState.copy(
-                currentAmountValueString = newAmount,
-                suggestedAmountSelected = possibleSuggestion
-            )
-        } else {
-            uiState = uiState.copy(currentAmountValueString = newAmount)
+        uiState = when (idBrand) {
+            Brand.CostaRica.id -> {
+                TODO()
+            }
+            else -> {
+                val possibleSuggestion =
+                    SuggestedAmountSV.values()
+                        .find { suggestion -> suggestion.display == newAmount }
+                if (possibleSuggestion != null) {
+                    uiState.copy(
+                        currentAmountValueString = newAmount,
+                        suggestedAmountSelected = possibleSuggestion
+                    )
+                } else {
+                    uiState.copy(currentAmountValueString = newAmount)
+                }
+            }
         }
     }
 
@@ -50,6 +80,7 @@ class SavingAmountViewModel @Inject constructor(savedStateHandle: SavedStateHand
     data class UIState(
         // Interactions
         val suggestedAmountSelected: SuggestedAmount? = null,
+        val suggestedDisplay: List<SuggestedAmount> = listOf(),
         val currency: String = "$",
         val accountCurrency: String = "$",
         val currentAmountValueString: String = "0",
@@ -65,6 +96,7 @@ class SavingAmountViewModel @Inject constructor(savedStateHandle: SavedStateHand
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is UIEvent.OnNavigateBack -> onNavigateBack()
+            is UIEvent.OnStart -> onStart()
             is UIEvent.OnAmountValueChange -> onAmountChanged(uiEvent.value)
             is UIEvent.OnContinueClick -> TODO()
             is UIEvent.OnHidePaymentBottomSheet -> TODO()
@@ -75,6 +107,7 @@ class SavingAmountViewModel @Inject constructor(savedStateHandle: SavedStateHand
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
+        object OnStart : UIEvent()
         data class OnAmountValueChange(val value: String) : UIEvent()
         data class OnSuggestedAmountClick(val suggestion: SuggestedAmount) : UIEvent()
         object OnContinueClick : UIEvent()

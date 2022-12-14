@@ -12,13 +12,11 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardInactiveSmartProduct
-import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartFirmedAndOnfidoPending
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartProduct
-import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardWithSmartInProcess
-import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartProcessStarted
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
 fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
@@ -37,7 +35,7 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
         type = ProductBackGroundType.Secondary
     ) {
         viewModel.uiState.userStatus?.apply {
-            when (viewModel.uiState.smartContent) {
+            when (viewModel.uiState.smartContent.first) {
                 true -> {
                     viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
                         CardInactiveSmartProduct(
@@ -45,7 +43,12 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                             it?.textTwo.toString(),
                             it?.cTA.toString()
                         ) {
-                            viewModel.onUIEvent(OnNavigateToSmartOriginationFlow(comingFromCrypto = false))
+                            viewModel.onUIEvent(
+                                OnNavigateToSmartOriginationFlow(
+                                    smartStep = viewModel.uiState.smartContent.second,
+                                    onIntent = { context.openWhatsAppDeepLink(whatsAppLink) }
+                                )
+                            )
                         }
                     }
                 }
@@ -61,75 +64,7 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                     }
                 }
                 else -> {
-                    when {
-                        viewModel.evaluateCardCondition(
-                            ProductViewModel.SMART_INITIAL_CARD, this
-                        ) -> {
-                            viewModel.uiState.userStatus?.infoBankAccount?.wording?.let {
-                                CardInactiveSmartProduct(
-                                    it.textOne, it.textTwo, it.cTA
-                                ) {
-                                    viewModel.onUIEvent(
-                                        ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(
-                                            ProductViewModel.SMART_INITIAL_CARD
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                        viewModel.evaluateCardCondition(
-                            ProductViewModel.SMART_IDENTITY_INCOMPLETE, this
-                        ) -> {
-                            CardWithSmartInProcess(
-                                type = SmartProcessStarted.SmartProcessOnFidoIncomplete,
-                                action = {
-                                    viewModel.onUIEvent(
-                                        ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(
-                                            ProductViewModel.SMART_IDENTITY_INCOMPLETE
-                                        )
-                                    )
-                                },
-                                wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
-                            )
-                        }
-                        viewModel.evaluateCardCondition(
-                            ProductViewModel.SMART_FIRMED_ONFIDO_PENDING, this
-                        ) -> {
-                            CardSmartFirmedAndOnfidoPending()
-                        }
-                        viewModel.evaluateCardCondition(
-                            ProductViewModel.SMART_ONFIDO_REJECTED, this
-                        ) -> {
-                            CardWithSmartInProcess(
-                                type = SmartProcessStarted.SmartProcessOnfidoReject,
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(
-                                        ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow(
-                                            ProductViewModel.SMART_ONFIDO_REJECTED
-                                        )
-                                    )
-                                },
-                                wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
-                            )
-                        }
-                        viewModel.evaluateCardCondition(
-                            ProductViewModel.SMART_ONFIDO_MAX_ATTEMPTS, this
-                        ) -> {
-                            CardWithSmartInProcess(
-                                type = SmartProcessStarted.SmartProcessOnfidoMaxAttempts,
-                                idBrand = viewModel.uiState.idBrand.toInt(),
-                                action = {
-                                    viewModel.onUIEvent(
-                                        ProductViewModel.UIEvent.OnMaxAttemptsCardClick(
-                                            whatsAppLink = whatsAppLink, context = context
-                                        )
-                                    )
-                                },
-                                wording = viewModel.uiState.userStatus?.infoBankAccount?.wording
-                            )
-                        }
-                    }
+                    // Empty on purpose
                 }
             }
         }

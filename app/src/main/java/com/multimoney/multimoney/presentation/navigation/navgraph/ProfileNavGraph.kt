@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.SettingsScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -234,6 +235,33 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 },
             )
         }
+
+        composable(
+            Screen.ProfileChangePasswordScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            ChangePasswordScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+            )
+        }
+
         composable(
             Screen.HelpScreen.route,
             arguments = listOf(
@@ -244,7 +272,10 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         ) {
             HelpScreen(
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_P
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
@@ -65,7 +66,6 @@ const val SMART_ROUTE = "smart_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
 const val PAYMENT_SMART_ROUTE = "payment_smart_route"
-
 const val ID_BRAND = "id_brand"
 const val PHONE_NUMBER = "phone_number"
 const val NEW_PHONE_NUMBER = "new_phone_number"
@@ -130,11 +130,16 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Profile Sub-Screens
     object ProfileSettingsScreen : Screen(
-        "profile_settings_screen/{$ID_BRAND}",
+        "profile_settings_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",
         "profile_settings_screen"
     )
 
     object HelpScreen : Screen("help_screen/{$ID_BRAND}", "help_screen")
+
+    object ProfileChangePasswordScreen : Screen(
+        "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",
+        "profile_change_password_screen"
+    )
 
     // DisbursementNavGraph Screens
     object DisbursementAmountScreen : Screen(
@@ -175,7 +180,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignDocumentProcessScreen : Screen(
-        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}",
+        "sign_document_process_screen"
+    )
+
+    object SmartSignScreen : Screen(
+        "sign_document_process_screen/{$SIGN_DOCUMENT_STEP_ARG}/{$SIGN_DOCUMENT_URL}/{$SIGN_DOCUMENT_ID_PRINT}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$IS_SMART_EVICERTIA}",
         "sign_document_process_screen"
     )
 

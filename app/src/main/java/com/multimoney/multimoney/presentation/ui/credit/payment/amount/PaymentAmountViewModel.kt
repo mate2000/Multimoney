@@ -45,7 +45,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnProcessPayment
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -121,7 +121,7 @@ class PaymentAmountViewModel @Inject constructor(
         )
         uiState = uiState.copy(
             accountCurrency = if (isMultiCurrency() || shouldDisplayExchangeRate()) {
-                uiState.clientBankAccount?.idCurrency?.getCurrency()?.symbol ?: ""
+                uiState.clientBankAccount?.idCurrency?.getCurrencyFromId()?.symbol ?: ""
             } else {
                 minimumPaymentLabel.first().toString()
             }

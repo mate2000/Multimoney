@@ -27,7 +27,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 
 @Composable
 fun PaymentFeeSelectionScreen(
@@ -75,14 +75,14 @@ fun PaymentFeeSelectionContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
-                        startIcon = summary?.idCurrency?.getCurrency()?.feeIcon ?: 0,
-                        title = "${stringResource(id = summary?.idCurrency?.getCurrency()?.feeInfoButtonTitle ?: 0)} ${
+                        startIcon = summary?.idCurrency?.getCurrencyFromId()?.feeIcon ?: 0,
+                        title = "${stringResource(id = summary?.idCurrency?.getCurrencyFromId()?.feeInfoButtonTitle ?: 0)} ${
                         stringResource(
-                            id = summary?.idCurrency?.getCurrency()?.currencyName ?: string.empty
+                            id = summary?.idCurrency?.getCurrencyFromId()?.currencyName ?: string.empty
                         ).lowercase()
                         }",
                         subtitle = summary?.monthlyQuotaLabel ?: "",
-                        onClick = { viewModel.onUIEvent(OnNavigateToPaymentAccount(summary?.idCurrency?.getCurrency())) }
+                        onClick = { viewModel.onUIEvent(OnNavigateToPaymentAccount(summary?.idCurrency?.getCurrencyFromId())) }
                     )
                 }
                 if ((viewModel.uiState.summaryList?.count() ?: 0) > 1) {

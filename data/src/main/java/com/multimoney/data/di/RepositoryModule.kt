@@ -8,6 +8,7 @@ import com.multimoney.data.repository.MultimoneyVisaRepositoryImpl
 import com.multimoney.data.repository.ProfileRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
 import com.multimoney.data.repository.SmartAccountRepositoryImpl
+import com.multimoney.data.repository.VirtualCardRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,6 +47,11 @@ class RepositoryModule {
     @Singleton
     fun provideCryptoRepository(graphqlApi: GraphqlApi) =
         CryptoRepositoryImpl(graphqlApi)
+
+    @Provides
+    @Singleton
+    fun provideVirtualCardRepository(graphqlApi: GraphqlApi) =
+        VirtualCardRepositoryImpl(graphqlApi)
 
     @Provides
     @Singleton

@@ -1,7 +1,27 @@
 package com.multimoney.multimoney.presentation.util.catalog
 
-enum class SuggestedAmount(val display: String, val value: String) {
-    TWO_HUNDRED("$200", "200"),
-    FIVE_HUNDRED("$500", "500"),
-    ONE_THOUSAND("$1,000", "1000")
+interface SuggestedAmount {
+    val display: String
+    val value: String
+}
+
+enum class SuggestedAmountSV : SuggestedAmount {
+    TWO_HUNDRED {
+        override val display: String
+            get() = "$200"
+        override val value: String
+            get() = "200"
+    },
+    FIVE_HUNDRED {
+        override val display: String
+            get() = "$500"
+        override val value: String
+            get() = "500"
+    },
+    ONE_THOUSAND {
+        override val display: String
+            get() = "$1,000"
+        override val value: String
+            get() = "1000"
+    }
 }

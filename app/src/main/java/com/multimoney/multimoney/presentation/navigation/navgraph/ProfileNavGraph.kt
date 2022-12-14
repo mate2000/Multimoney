@@ -242,14 +242,17 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         composable(
             Screen.ProfileChangePasswordScreen.route,
             arguments = listOf(
-                navArgument(ID_BRAND){
+                navArgument(ID_BRAND) {
                     type = NavType.IntType
                 }
             )
         ) {
             ChangePasswordScreen(
                 onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

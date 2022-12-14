@@ -1,8 +1,9 @@
-query ValidateBankAccount($account:String!, $identification:String!, $user: String!, $idBrand: Int!){
+query ValidateBankAccount($account:String!, $identification:String!, $queryType:String, $user: String!, $idBrand: Int!){
     validateBankAccount(
         validateBankAccountInput: {
             account: $account,
             identification: $identification,
+            queryType: $queryType,
             user: $user,
             idBrand: $idBrand
         }

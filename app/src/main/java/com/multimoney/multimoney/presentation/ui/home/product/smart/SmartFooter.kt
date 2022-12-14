@@ -8,8 +8,10 @@ import com.multimoney.multimoney.presentation.theme.Typography
 
 @Composable
 fun SmartFooter() {
+    // TODO, add smart footer when available, passing an empty text for now
+    //  due to this ticket: https://akros.atlassian.net/browse/REV-2804
     Text(
-        text = "Smart Footer",
+        text = "",
         style = Typography.h6.copy(letterSpacing = 0.38.sp),
         color = MultimoneyTheme.colors.labelText
     )

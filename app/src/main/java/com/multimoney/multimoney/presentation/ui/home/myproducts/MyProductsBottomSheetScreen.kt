@@ -31,6 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
+import com.multimoney.data.util.catalog.CryptoAccountStatus
+import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.ComplementaryTwo500
@@ -82,6 +84,7 @@ fun MyProductsContent(
     val productPageList = shareViewModel.uiState.productPageList
 
     // credit section
+    val userStatus = shareViewModel.uiState.validateUserStatus
     val creditProducts = productPageList.filter { it.product == ProductType.Credit.value }
 
     MyProductSection(
@@ -97,30 +100,38 @@ fun MyProductsContent(
     // smart section
     val smartProducts = productPageList.filter { it.product == ProductType.Smart.value }
 
-    MyProductSection(
-        products = smartProducts,
-        shareViewModel = shareViewModel,
-        coroutineScope = coroutineScope,
-        modalBottomSheetState = modalBottomSheetState,
-        productScreenPagerState = productScreenPagerState,
-        backGroundColor = Secondary500,
-        labelText = stringResource(id = string.home_my_products_title_smart),
-        true
-    )
+    userStatus?.infoBankAccount?.let {
+        if (it.status == SmartAccountStatus.EXIST_IN_CORE.status) {
+            MyProductSection(
+                products = smartProducts,
+                shareViewModel = shareViewModel,
+                coroutineScope = coroutineScope,
+                modalBottomSheetState = modalBottomSheetState,
+                productScreenPagerState = productScreenPagerState,
+                backGroundColor = Secondary500,
+                labelText = stringResource(id = string.home_my_products_title_smart),
+                true
+            )
+        }
+    }
 
     //crypto section
     val cryptoProducts = productPageList.filter { it.product == ProductType.Crypto.value }
 
-    MyProductSection(
-        products = cryptoProducts,
-        shareViewModel = shareViewModel,
-        coroutineScope = coroutineScope,
-        modalBottomSheetState = modalBottomSheetState,
-        productScreenPagerState = productScreenPagerState,
-        backGroundColor = ComplementaryTwo500,
-        labelText = stringResource(id = string.home_my_products_title_crypto),
-        true
-    )
+    userStatus?.infoCrypto?.let {
+        if (it.status == CryptoAccountStatus.ACTIVE.status) {
+            MyProductSection(
+                products = cryptoProducts,
+                shareViewModel = shareViewModel,
+                coroutineScope = coroutineScope,
+                modalBottomSheetState = modalBottomSheetState,
+                productScreenPagerState = productScreenPagerState,
+                backGroundColor = ComplementaryTwo500,
+                labelText = stringResource(id = string.home_my_products_title_crypto),
+                true
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPagerApi::class)

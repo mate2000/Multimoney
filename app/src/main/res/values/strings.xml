@@ -1045,4 +1045,14 @@
     <string name="download_credit_movements_worker_push_description_success" translatable="false">Abrir estado de cuenta</string>
     <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
+    <!-- Profile Help And Information Section -->
+    <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>
+    <string name="profile_help_chat_with_us_label" translatable="false">Chatear con nosotros</string>
+    <string name="profile_help_call_attention_center_label" translatable="false">Llamar a centro de atención</string>
+    <string name="profile_help_faq_label" translatable="false">Preguntas frecuentes</string>
+    <string name="profile_help_terms_and_conditions_label" translatable="false">Términos y condiciones</string>
+    <string name="profile_help_error_title" translatable="false">¡Oh no! hubo un error</string>
+    <string name="profile_help_error_subtitle" translatable="false">Por favor intentá de nuevo</string>
+    <string name="profile_help_error_button_label" translatable="false">Regresar</string>
+
 </resources>

@@ -4,12 +4,14 @@ import com.multimoney.data.repository.BalanceRepositoryImpl
 import com.multimoney.data.repository.CreditRepositoryImpl
 import com.multimoney.data.repository.CryptoRepositoryImpl
 import com.multimoney.data.repository.MultimoneyVisaRepositoryImpl
+import com.multimoney.data.repository.ProfileRepositoryImpl
 import com.multimoney.data.repository.SecurityRepositoryImpl
 import com.multimoney.data.repository.SmartAccountRepositoryImpl
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
 import com.multimoney.domain.repository.CryptoRepository
 import com.multimoney.domain.repository.MultimoneyVisaRepository
+import com.multimoney.domain.repository.ProfileRepository
 import com.multimoney.domain.repository.SecurityRepository
 import com.multimoney.domain.repository.SmartAccountRepository
 import dagger.Binds
@@ -37,4 +39,7 @@ abstract class InteractionRepositoryModule {
 
     @Binds
     abstract fun bindCryptoRepository(cryptoRepositoryImpl: CryptoRepositoryImpl): CryptoRepository
+
+    @Binds
+    abstract fun bindProfileRepository(profileRepositoryImpl: ProfileRepositoryImpl): ProfileRepository
 }

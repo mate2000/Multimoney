@@ -75,8 +75,8 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -104,7 +104,6 @@ class ProductViewModel @Inject constructor(
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
     var creditMovements: List<CreditMovementsResult> = emptyList()
-    var idRequestSys: Int? = 0
 
     private fun onSetUserData(
         idBrand: String,
@@ -117,8 +116,7 @@ class ProductViewModel @Inject constructor(
         configurationVersion: ConfigurationVersion?,
         productPageList: List<ProductPage>,
         smartMovements: List<SmartMovementsResult>,
-        creditMovements: List<CreditMovementsResult>,
-        idRequestSys: Int?
+        creditMovements: List<CreditMovementsResult>
     ) {
         this.pkUser = pkUser
         this.identification = identification
@@ -132,7 +130,6 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(idBrand = idBrand)
         this.smartMovementsList = smartMovements
         this.creditMovements = creditMovements
-        this.idRequestSys = idRequestSys
     }
 
     private fun setBalance(balance: Balance?) {
@@ -184,7 +181,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToSmartFlow(
         smartStep: String,
         comingFromCrypto: Boolean = false,
-        onIntent: () -> Unit
+        onIntent: () -> Unit? = { }
     ) {
         // TODO Implement navigation on smart cards
         when (smartStep) {
@@ -686,8 +683,7 @@ class ProductViewModel @Inject constructor(
                 configurationVersion = uiEvent.configurationVersion,
                 productPageList = uiEvent.productPageList,
                 smartMovements = uiEvent.smartMovements,
-                creditMovements = uiEvent.creditMovements,
-                idRequestSys = uiEvent.idRequestSys
+                creditMovements = uiEvent.creditMovements
             )
             is OnMaxAttemptsCardClick -> openWhatsAppLink(
                 uiEvent.context,
@@ -739,7 +735,7 @@ class ProductViewModel @Inject constructor(
         data class OnNavigateToSmartOriginationFlow(
             val smartStep: String = "",
             val comingFromCrypto: Boolean = false,
-            val onIntent: () -> Unit
+            val onIntent: () -> Unit? = { }
         ) : UIEvent()
 
         object OnNavigateToPaymentProcess : UIEvent()
@@ -771,8 +767,7 @@ class ProductViewModel @Inject constructor(
             val configurationVersion: ConfigurationVersion?,
             val productPageList: List<ProductPage>,
             val smartMovements: List<SmartMovementsResult>,
-            val creditMovements: List<CreditMovementsResult>,
-            val idRequestSys: Int?
+            val creditMovements: List<CreditMovementsResult>
         ) : UIEvent()
 
         data class OnShareIbanAccount(

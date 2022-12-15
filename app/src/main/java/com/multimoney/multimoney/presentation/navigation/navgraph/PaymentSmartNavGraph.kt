@@ -7,10 +7,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
 import com.multimoney.multimoney.presentation.navigation.PAYMENT_SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
@@ -79,6 +81,41 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 onNavigate = {
                     navController.navigate(it.route)
                 },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            Screen.SmartSavingAmount.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_VISA_CARD) {
+                    type = NavType.IntType
+                },
+                navArgument(USER) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument(IDENTIFICATION) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {
+            SavingAmountScreen(
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         PREVIOUS_IS_RESTART,

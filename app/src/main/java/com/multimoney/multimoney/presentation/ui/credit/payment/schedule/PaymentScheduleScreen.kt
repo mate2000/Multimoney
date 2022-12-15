@@ -37,7 +37,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
@@ -118,7 +118,7 @@ fun PaymentScheduleContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp, start = 16.dp, end = 16.dp),
-                        startIcon = idCurrency?.getCurrency()?.accountIcon
+                        startIcon = idCurrency?.getCurrencyFromId()?.accountIcon
                             ?: R.drawable.ic_account_dollar,
                         title = bankDescription ?: "",
                         subtitle = getMaskedAccount(

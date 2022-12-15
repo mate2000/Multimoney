@@ -71,7 +71,10 @@ fun HomeScreen(
     val activity = LocalContext.current.findActivity()
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onInnerNavigate = onInnerNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(
+            onInnerNavigate = onInnerNavigate,
+            onPopAndNavigate = onPopAndNavigate
+        )
         viewModel.countDownTimer.subscribe(object : OnCountDownTimerFinish {
             override fun onFinished() {
                 viewModel.onUIEvent(HomeViewModel.UIEvent.OnSignOut)
@@ -106,7 +109,12 @@ fun HomeScreen(
         }
     }
 
-    Scaffold(bottomBar = { MMBottomNavigation(navController = innerNavController, viewModel) }) { paddingValues ->
+    Scaffold(bottomBar = {
+        MMBottomNavigation(
+            navController = innerNavController,
+            viewModel
+        )
+    }) { paddingValues ->
         Column(Modifier.padding(paddingValues)) {
             HomeInsideNavGraph(
                 sharedViewModel = viewModel,

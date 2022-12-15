@@ -11,12 +11,14 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.PROFILE_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.PersonalInfoScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.email.ChangeEmailScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.SettingsScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordScreen
 
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
     navigation(
@@ -78,7 +80,6 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 }
             )
         }
-
         composable(
             Screen.ProfileChangeEmailScreen.route,
             arguments = listOf(navArgument(ID_BRAND) {
@@ -104,7 +105,6 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 }
             )
         }
-
         composable(
             Screen.ProfileChangePhoneScreen.route,
             arguments = listOf(navArgument(ID_BRAND) {
@@ -130,7 +130,6 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 }
             )
         }
-
         composable(
             Screen.ProfileVerifyIdentityPhoneScreen.route,
             arguments = listOf(navArgument(ID_BRAND) {
@@ -211,7 +210,6 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 }
             )
         }
-
         composable(
             Screen.ProfileSettingsScreen.route,
             arguments = listOf(
@@ -235,6 +233,55 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 onNavigate = {
                     navController.navigate(it.route)
                 },
+            )
+        }
+
+        composable(
+            Screen.ProfileChangePasswordScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            ChangePasswordScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+            )
+        }
+
+        composable(
+            Screen.HelpScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            HelpScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
             )
         }
     }

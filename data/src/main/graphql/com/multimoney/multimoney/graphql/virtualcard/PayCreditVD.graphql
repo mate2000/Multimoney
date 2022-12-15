@@ -1,0 +1,28 @@
+mutation PayCreditVD($identification: String!, $currency: String!, $paymentAmount: Decimal!, $operationNumber: String!,$reference: String!,$comment: String!,$cardMasked: String!,$idCard: Long!,$idBrand: Int!,){
+    payCreditVD(
+        payCreditVDInput: {
+            identification: $identification
+            currency: $currency
+            paymentAmount: $paymentAmount
+            operationNumber: $operationNumber
+            reference: $reference
+            comment: $comment
+            cardMasked: $cardMasked
+            idCard:$idCard
+            idBrand:$idBrand
+        }
+    ) {
+        documentoPay
+        statusPay
+        amountPay
+        ticket
+        referenceAuthotization
+        nextPayDate
+        quota_Number
+        observations
+        referenceAuthotizationVisa
+        status
+        message
+        detail
+    }
+}

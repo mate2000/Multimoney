@@ -4,15 +4,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.domain.interaction.credit.QueryListCardVDUseCase
-import com.multimoney.domain.model.credit.CardVisaDirect
+import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnCallQueryGetClientCards
@@ -38,11 +41,17 @@ class PaymentCardListViewModel @Inject constructor(
     private var user: String = ""
     private var idBrand: Int = 0
     private var identification: String? = null
+    private var creditNumber: String? = null
+    private var idClient: Int? = null
+    private var idLoanClient: Int? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
+        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
+        idClient = savedStateHandle[ID_CLIENT]
+        idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
     }
 
     private fun onCallQueryGetClientCardsUseCase() {
@@ -65,8 +74,8 @@ class PaymentCardListViewModel @Inject constructor(
                             description = it.getError() ?: "",
                             isActive = mutableStateOf(true)
                         ),
-                        cardVDList = listOf(CardVisaDirect()),
-                        isCardListEmpty = false
+                        cardVDList = listOf(),
+                        isCardListEmpty = true
                     )
                 }.onLoading {
                     uiState = uiState.copy(isLoading = true)
@@ -79,7 +88,7 @@ class PaymentCardListViewModel @Inject constructor(
         navigateTo(
             route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$idBrand/$identification/$user/${
             encodeData(cardSelected)
-            }"
+            }/$creditNumber/$idClient/$idLoanClient"
         )
 
     private fun onNavigateBack() =

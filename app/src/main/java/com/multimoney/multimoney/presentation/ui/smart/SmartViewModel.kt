@@ -9,14 +9,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SmartStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.accountsmart.MutationGlobalRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryStepByStepUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartData
+import com.multimoney.domain.model.accountsmart.StepByStep
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -30,7 +31,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
@@ -58,9 +58,9 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateString
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -68,7 +68,6 @@ class SmartViewModel @Inject constructor(
     private val queryStepByStepUseCase: QueryStepByStepUseCase,
     private val mutationGlobalRequestUseCase: MutationGlobalRequestUseCase,
     private val mutationInitialRequestUseCase: MutationInitialRequestUseCase,
-    private val dataStorePreferences: DataStorePreferences,
     private val mutationSaveSmartAccount: MutationSaveAutomatedSmartAccountUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
@@ -106,15 +105,17 @@ class SmartViewModel @Inject constructor(
         )
     }
 
-    // FIXME, this is the logic to list the data, it should be handled in another ticket
     private fun callQueryStepByStepUseCase() = executeUseCase {
         queryStepByStepUseCase.invoke(
             user = accountSmartData?.user ?: "",
             idBrand = accountSmartData?.idBrand ?: 0,
-            idRequest = 264
+            idRequest = globalRequestId
         ).collectLatest { result ->
-            dataStorePreferences.getIdBrand().first()
-            result.onSuccess {
+            result.onSuccess { stepByStep ->
+                stepByStep?.let {
+                    Timber.d( "callQueryStepByStepUseCase(): $it")
+                    navigateToScreenOnStepFetched(it)
+                }
                 onUIEvent(OnLoadingValueChange(false))
             }
             result.onFailure {
@@ -134,6 +135,60 @@ class SmartViewModel @Inject constructor(
         }
     }
 
+    /**
+     * this function will collect the data coming from the backend and will be set on the
+     * AccountSmartData object, then an event will be sent to the smart origination step
+     * by step screens in order to preload the data on the current UI and also to navigate
+     * to the right step.
+     */
+    private fun navigateToScreenOnStepFetched(stepByStep: StepByStep) {
+        // setting up the data coming from the backend
+        accountSmartData = AccountSmartData(
+            pkUser = pkUser,
+            status = SmartStatus.Search.getIdByName(stepByStep.statusRequest),
+            idProfessionType = stepByStep.idProfessionType,
+            idCivilStatusType = stepByStep.idMaritalStatus?.toLong(),
+            birthday = stepByStep.birthdate.orEmpty(),
+            expirationDate = stepByStep.expirationDate,
+            idGender = stepByStep.idGenre?.toLong(),
+            strGenre = stepByStep.strGenre,
+            stringProfessionType = stepByStep.stringProfessionType,
+            strMaritalStatus = stepByStep.strMaritalStatus,
+            idAddressLevel1 = stepByStep.idAddressLevel1?.toLong(),
+            idAddressLevel2 = stepByStep.idAddressLevel2?.toLong(),
+            idAddressLevel3 = stepByStep.idAddressLevel3?.toLong(),
+            strAddressLevel1 = stepByStep.strAddressLevel1,
+            strAddressLevel2 = stepByStep.strAddressLevel2,
+            strAddressLevel3 = stepByStep.strAddressLevel3,
+            positionJob = stepByStep.positionJob,
+            idEconomicActivity = stepByStep.idEconomicActivity?.toLong(),
+            institutionPension = stepByStep.institutionalPesion.orEmpty(),
+            income = stepByStep.income,
+            addressDetail = stepByStep.addressDetail,
+            user = user,
+            idBrand = idBrandAsInt,
+            currentStep = stepByStep.currentStep,
+            aboutCompany = stepByStep.aboutCompany,
+            companyName = stepByStep.nameCompany,
+            specifiesIncomeSource = stepByStep.specifiesIncomeSource,
+            listBeneficiaries = stepByStep.beneficiary.orEmpty(),
+            entrepreneurship = stepByStep.entrepreneurship.orEmpty(),
+            legalID = stepByStep.legalID,
+            isPEP = stepByStep.isPEP,
+            isUSCitizen = stepByStep.isUSCitizen,
+            isActivityOfArt15 = stepByStep.isActivityOfArt15,
+            isUSTaxPayer = stepByStep.isUSTaxPayer,
+            isTaxPayer = stepByStep.isTaxPayer,
+            idJobLevel1 = stepByStep.idJobLevel1,
+            idJobLevel2 = stepByStep.idJobLevel2,
+            idJobLevel3 = stepByStep.idJobLevel3,
+            fullJobAddress = stepByStep.fullJobAddress
+        )
+
+        // update the current step coming from the backend in order to navigate to the proper screen
+        uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+    }
+
     private fun callMutationInitialRequestUseCase() = executeUseCase(
         action = {
             mutationInitialRequestUseCase.invoke(
@@ -144,6 +199,7 @@ class SmartViewModel @Inject constructor(
                 result.onSuccess {
                     globalRequestId = it?.idGlobalRequest ?: 0
                     onUIEvent(OnLoadingValueChange(false))
+                    callQueryStepByStepUseCase()
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -192,6 +248,7 @@ class SmartViewModel @Inject constructor(
                 }.orEmpty(),
                 idGender = accountSmartData?.idGender ?: 0,
                 companyName = accountSmartData?.companyName.orEmpty(),
+                fullJobAddress = accountSmartData?.fullJobAddress.orEmpty(),
                 aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
                 institutionPension = accountSmartData?.institutionPension.orEmpty(),
                 specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
@@ -202,7 +259,7 @@ class SmartViewModel @Inject constructor(
                 isPEP = accountSmartData?.isPEP ?: false,
                 isUSTaxPayer = accountSmartData?.isUSTaxPayer ?: false,
                 isTaxPayer = accountSmartData?.isTaxPayer ?: false,
-                beneficiaries = accountSmartData?.listBeneficiaries ?: listOf(),
+                beneficiaries = accountSmartData?.listBeneficiaries.orEmpty(),
                 idJobLevel2 = accountSmartData?.idJobLevel2 ?: 0,
                 idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
             ).collectLatest { result ->
@@ -355,7 +412,10 @@ class SmartViewModel @Inject constructor(
 
     private fun nextStep() {
         if (nextStep <= getTotalStepperCounter()) {
-            navigateToOnfido()
+            uiState = uiState.copy(
+                currentStep = nextStep,
+                isCloseVisible = nextStep >= SmartSteps.One.id
+            )
         } else {
             navigateToOnfido()
         }
@@ -485,8 +545,6 @@ class SmartViewModel @Inject constructor(
             val previousStep: Int
         ) : UIEvent()
 
-        object OnNavigateToContinueValidatingIdentity : UIEvent()
-
         object OnNextStep : UIEvent()
         object OnPreviousStep : UIEvent()
         data class OnContinueVisible(
@@ -496,11 +554,6 @@ class SmartViewModel @Inject constructor(
 
         data class OnCallMutationUpdateGlobalRequestUseCase(val accountSmartData: AccountSmartData?) :
             UIEvent()
-
-        data class OnUseDataValueChange(
-            val accountSmartData: AccountSmartData?,
-            val idBrand: Int? = null
-        ) : UIEvent()
 
         data class OnOnFidoVerifiedChanged(val isOnFidoVerified: Boolean) : UIEvent()
 
@@ -517,5 +570,7 @@ class SmartViewModel @Inject constructor(
         const val SMART_INDICATOR_CR_TOTAL_STEPS = 3
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
+        const val STEP_BY_STEP_EVENT_DELAY = 1500L
+        const val ONE_SEC_DELAY = 1000L
     }
 }

@@ -53,9 +53,6 @@ fun SmartScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-    }
-
-    LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallMutationInitialRequest)
     }
 

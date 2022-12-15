@@ -23,7 +23,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangeEmailViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 

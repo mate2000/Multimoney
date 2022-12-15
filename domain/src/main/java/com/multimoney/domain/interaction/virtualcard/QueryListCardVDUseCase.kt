@@ -1,7 +1,7 @@
-package com.multimoney.domain.interaction.credit
+package com.multimoney.domain.interaction.virtualcard
 
-import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import kotlinx.coroutines.flow.Flow
 
 interface QueryListCardVDUseCase {

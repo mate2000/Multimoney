@@ -1,7 +1,7 @@
-package com.multimoney.data.mapper.credit
+package com.multimoney.data.mapper.virtualcard
 
 import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
-import com.multimoney.domain.model.credit.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 
 private fun ListCardVDQuery.ListCardVD.mapToDomainModel() = CardVisaDirect(
     idCard = idCard.toString().toInt(),

@@ -1,0 +1,8 @@
+query GetCountryContact($user: String!, $idBrand: Int!) {
+    getCountryContact(
+        getCountryContactInput: { user: $user, idBrand: $idBrand }
+    ) {
+        whatsappLink
+        customerServicesPhone
+    }
+}

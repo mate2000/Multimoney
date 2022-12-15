@@ -1,4 +1,4 @@
-package com.multimoney.domain.model.credit
+package com.multimoney.domain.model.virtualcard
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

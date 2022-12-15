@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnHideDisbursementBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnMessageProcessCreditExtension
@@ -48,14 +49,13 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.Dis
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnProcessCreditExtension
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnShowDisbursementBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnSuccessProcessCreditExtension
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -118,6 +118,7 @@ class DisbursementAccountViewModel @Inject constructor(
             }
         )
     }
+
     private fun onCallQueryGetClientBankAccountUseCase() {
         executeUseCase {
             queryGetClientBankAccountUseCase.invoke(
@@ -197,7 +198,7 @@ class DisbursementAccountViewModel @Inject constructor(
             pkUser = pkUser ?: 0,
             idBrand = idBrand,
             idFlowControl = fkFlowControl ?: 0,
-            currency = idCurrency?.getCurrency()?.disbursementValue ?: "",
+            currency = idCurrency?.getCurrencyFromId()?.disbursementValue ?: "",
             accountNumber = creditNumber ?: "",
             bankAccount = uiState.clientBankAccountSelected?.accountNumber ?: "",
             idBankAccount = uiState.clientBankAccountSelected?.id ?: "",
@@ -268,11 +269,13 @@ class DisbursementAccountViewModel @Inject constructor(
     }
 
     private fun onNavigateToVoucher(referenceNumber: String?) = navigateTo(
-        route = "${Screen.DisbursementVoucherScreen.baseRoute}/${encodeData(uiState.clientBankAccountSelected)}/${if (shouldDisplayExchangeRate()) {
+        route = "${Screen.DisbursementVoucherScreen.baseRoute}/${encodeData(uiState.clientBankAccountSelected)}/${
+        if (shouldDisplayExchangeRate()) {
             getCurrentAmountExchangedFormatted()
         } else {
             getCurrentAmountFormatted()
-        }}/${getExchangeRateFormatted()}/${shouldDisplayExchangeRate()}/${referenceNumber ?: ""}/${getCurrentAmountFormatted()}"
+        }
+        }/${getExchangeRateFormatted()}/${shouldDisplayExchangeRate()}/${referenceNumber ?: ""}/${getCurrentAmountFormatted()}"
     )
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.DisbursementAmountScreen.route, isRestart = false)
@@ -301,26 +304,29 @@ class DisbursementAccountViewModel @Inject constructor(
     }
 
     fun getCurrentAmountFormatted() =
-        "${idCurrency?.getCurrency()?.symbol ?: ""}${
+        "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
         selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getCurrentAmountExchangedFormatted() =
-        "${uiState.clientBankAccountSelected?.idCurrency?.getCurrency()?.symbol ?: ""}${
-        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString().stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        "${uiState.clientBankAccountSelected?.idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
+        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
+            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getExchangeRateFormatted() =
-        "${idCurrency?.getCurrency()?.symbol ?: ""}${
-        uiState.exchangeRateLabel.toString().stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
+        uiState.exchangeRateLabel.toString()
+            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getQuotaTotalFormatted() =
-        "${idCurrency?.getCurrency()?.symbol ?: ""}${
+        "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
         quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
         }"
 
-    fun getQuotaNextDateFormatted() = getCardDateFormat(nextPaymentDate, BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS, API_DATE_FORMAT)
+    fun getQuotaNextDateFormatted() =
+        getCardDateFormat(nextPaymentDate, BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS, API_DATE_FORMAT)
 
     data class UIState(
         // Interactions
@@ -378,8 +384,10 @@ class DisbursementAccountViewModel @Inject constructor(
     }
 
     companion object {
-        private const val ID_LOAN_FORM_HARDCODED = 4 // TODO Change to 1-4 depending on preferences user previously selected (new HU)
-        private const val LOAN_FORM_HARDCODED = "Transferencia" // TODO Change to Transferencia-PEX depending on preferences user previously selected (new HU)
+        private const val ID_LOAN_FORM_HARDCODED =
+            4 // TODO Change to 1-4 depending on preferences user previously selected (new HU)
+        private const val LOAN_FORM_HARDCODED =
+            "Transferencia" // TODO Change to Transferencia-PEX depending on preferences user previously selected (new HU)
         const val MAX_ACCOUNT_NUMBER = 3
     }
 }

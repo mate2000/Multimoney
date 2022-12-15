@@ -40,8 +40,7 @@ class ProfileViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-
-    private fun getProfileInfo()  {
+    private fun getProfileInfo() {
         uiState = uiState.copy(
             userName = savedStateHandle[USER_NAME],
             email = savedStateHandle[EMAIL],
@@ -54,13 +53,16 @@ class ProfileViewModel @Inject constructor(
         )
     }
 
-
     private fun navigateToPersonalInfoScreen() {
         navigateTo("${Screen.ProfilePersonalInfoScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun navigateToSettingsScreen() {
-        navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
+    }
+
+    private fun navigateToHelpAndInformation () {
+        navigateTo("${Screen.HelpScreen.baseRoute}/${uiState.idBrand}")
     }
 
     private fun signOutDialogConfirmation() {
@@ -95,12 +97,12 @@ class ProfileViewModel @Inject constructor(
         val userName: String? = null,
         val email: String? = null,
         val phoneNumber: String? = null,
-        val identification : String? = null,
+        val identification: String? = null,
         val idBrand: Int? = null,
         val pkUser: String? = null,
-        val idClient : Int? = null,
-        val firstName : String? = null,
-        val countryCode : String? = null,
+        val idClient: Int? = null,
+        val firstName: String? = null,
+        val countryCode: String? = null,
         val openDialog: DialogParameters = DialogParameters()
     )
 
@@ -112,7 +114,7 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
             is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
             is UIEvent.OnSettingsClick -> navigateToSettingsScreen()
-            is UIEvent.OnHelpClick -> Timber.d("navigate to help screen")
+            is UIEvent.OnHelpClick -> navigateToHelpAndInformation()
             is UIEvent.OnInviteFriendsClick -> Timber.d("navigate to invite friends screen")
             is UIEvent.OnLogoutClick -> signOutDialogConfirmation()
 

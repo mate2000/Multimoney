@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
  * @param mainText: Is the main text that will display the amount.
  * @param secondaryText: Is the secondary text that will display the description.
  * @param isSelected: This variable will decide what color should be displayed in the stroke.
+ * @param textAlign: The alignment for main a secondary text.
  * **/
 
 @Composable
@@ -46,8 +47,9 @@ fun RoundedPaymentButton(
     strokeWidth: Dp,
     roundedShapeDp: Dp,
     mainText: String,
-    secondaryText: String,
-    isSelected: Boolean
+    secondaryText: String? = null,
+    isSelected: Boolean,
+    textAlign: Alignment.Horizontal = Alignment.Start
 ) {
     // Set colors depending on system theme
     val selectedColors: List<Color>
@@ -105,7 +107,7 @@ fun RoundedPaymentButton(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = textAlign
         ) {
             Text(
                 text = mainText,
@@ -113,12 +115,14 @@ fun RoundedPaymentButton(
                 color = mainTextColor,
                 textAlign = TextAlign.Left
             )
-            Text(
-                text = secondaryText,
-                style = Typography.caption,
-                color = secondaryTextColor,
-                textAlign = TextAlign.Left
-            )
+            secondaryText?.let {
+                Text(
+                    text = secondaryText,
+                    style = Typography.caption,
+                    color = secondaryTextColor,
+                    textAlign = TextAlign.Left
+                )
+            }
         }
     }
 }

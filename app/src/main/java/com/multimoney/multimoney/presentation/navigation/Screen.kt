@@ -76,6 +76,7 @@ const val SEND_METHOD = "send_method"
 const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE = "new_value"
+const val ID_VISA_CARD = "id_visa_card"
 const val BASE_ASSET = "base_asset"
 const val START_DATE = "start_date"
 const val END_DATE = "end_date"
@@ -224,7 +225,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "visa_issuance_screen"
     )
 
-    object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
+    object VisaCardScreen :
+        Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")
@@ -334,6 +336,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object PaymentSmartCardsScreen : Screen(
         "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
         "payment_smart_cards_screen"
+    )
+
+    object SmartSavingAmount : Screen(
+        "payment_smart_saving_amount_screen/{$ID_BRAND}/{$ID_VISA_CARD}?$USER={$USER}?$IDENTIFICATION={$IDENTIFICATION}",
+        "payment_smart_saving_amount_screen"
     )
 
     // TestNavGraph Screens

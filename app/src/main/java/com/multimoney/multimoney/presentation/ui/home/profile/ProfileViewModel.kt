@@ -61,6 +61,10 @@ class ProfileViewModel @Inject constructor(
         navigateTo("${Screen.ProfileSettingsScreen.baseRoute}/${uiState.idBrand}/${uiState.pkUser}/${uiState.userName}")
     }
 
+    private fun navigateToHelpAndInformation () {
+        navigateTo("${Screen.HelpScreen.baseRoute}/${uiState.idBrand}")
+    }
+
     private fun signOutDialogConfirmation() {
         uiState = uiState.copy(
             openDialog = DialogParameters(
@@ -110,7 +114,7 @@ class ProfileViewModel @Inject constructor(
             is UIEvent.OnMyAccountsClick -> Timber.d("navigate to my account screen")
             is UIEvent.OnMyCardsClick -> Timber.d("navigate to my cards screen")
             is UIEvent.OnSettingsClick -> navigateToSettingsScreen()
-            is UIEvent.OnHelpClick -> Timber.d("navigate to help screen")
+            is UIEvent.OnHelpClick -> navigateToHelpAndInformation()
             is UIEvent.OnInviteFriendsClick -> Timber.d("navigate to invite friends screen")
             is UIEvent.OnLogoutClick -> signOutDialogConfirmation()
 

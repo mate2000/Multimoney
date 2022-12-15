@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -20,10 +21,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Duration
 
-fun Context.openWhatsAppDeepLink(link: String) {
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse(link)
-    this.startActivity(intent)
+fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(link)
+        this.startActivity(intent)
+    } catch (nullException: NullPointerException) {
+        onFailure()
+    } catch (security: SecurityException) {
+        onFailure()
+    } catch (noActivity: ActivityNotFoundException) {
+        onFailure()
+    }
 }
 
 fun Context.openMapsLink(latitude: String, longitude: String) {
@@ -38,6 +47,16 @@ fun Context.openMapsLink(latitude: String, longitude: String) {
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)
     mapIntent.setPackage(resources.getString(R.string.payment_location_intent_package))
     this.startActivity(mapIntent)
+}
+
+fun Context.openIntent(intent: Intent, onFailure: () -> Unit) {
+    try {
+        this.startActivity(intent)
+    } catch (security: SecurityException) {
+        onFailure()
+    } catch (noActivity: ActivityNotFoundException) {
+        onFailure()
+    }
 }
 
 fun tickerFlow(
@@ -71,11 +90,20 @@ fun Int.getSourceIncomeIconDrawable() = when (this) {
 }
 
 // Currency
-fun Int.getCurrency(): CurrencyType {
+fun Int.getCurrencyFromId(): CurrencyType {
     return when (this) {
         Colon.id -> Colon
         Dollar.id -> Dollar
         Quetzal.id -> Quetzal
+        else -> All
+    }
+}
+
+fun String.getCurrencyFromValue(): CurrencyType {
+    return when (this.lowercase()) {
+        Colon.value.lowercase() -> Colon
+        Dollar.value.lowercase() -> Dollar
+        Quetzal.value.lowercase() -> Quetzal
         else -> All
     }
 }
@@ -110,7 +138,7 @@ fun String.getCurrencySymbol(): Int {
     }
 }
 
-fun String.getCurrency(): CurrencyType {
+fun String.getCurrencyFromId(): CurrencyType {
     return when (this) {
         Colon.currency -> Colon
         Dollar.currency -> Dollar

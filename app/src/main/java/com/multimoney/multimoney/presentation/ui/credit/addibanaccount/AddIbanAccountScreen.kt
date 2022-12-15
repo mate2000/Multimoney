@@ -41,7 +41,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks
@@ -87,7 +87,7 @@ fun AddIbanAccountScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp, start = 16.dp, end = 16.dp),
-                    startIcon = viewModel.validateAccount?.currency?.getCurrency()?.accountIcon,
+                    startIcon = viewModel.validateAccount?.currency?.getCurrencyFromId()?.accountIcon,
                     title = viewModel.validateAccount?.bankName ?: "",
                     subtitle = getMaskedAccountIban(
                         viewModel.uiState.accountNumber,

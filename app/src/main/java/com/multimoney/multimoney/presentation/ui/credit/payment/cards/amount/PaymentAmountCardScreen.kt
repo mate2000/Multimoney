@@ -24,12 +24,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnHidePaymentBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
@@ -65,44 +68,55 @@ fun PaymentAmountCardContent(
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     val focusManager = LocalFocusManager.current
-    Column(
-        modifier = Modifier.background(MultimoneyTheme.colors.background)
-    ) {
-        TopNavBar(
-            onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
-            onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBackHome) }
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = viewModel.uiState.alertResultTitle,
+            descriptionString = viewModel.uiState.alertResultDescription,
+            buttonTextResource = string.payment_amount_error_button,
+            isLeftButtonVisible = false,
+            isRightButtonVisible = false,
+            onButtonClick = { viewModel.onUIEvent(OnAlertResultButtonClick) }
         )
+    } else {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .background(MultimoneyTheme.colors.background)
-                .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.background(MultimoneyTheme.colors.background)
         ) {
-            Column {
-                Text(
-                    modifier = Modifier.padding(top = 42.dp),
-                    text = stringResource(id = R.string.payment_amount_card_title),
-                    style = Typography.h5.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MultimoneyTheme.colors.labelText
-                    ),
-                    textAlign = TextAlign.Left
+            TopNavBar(
+                onLeftButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBack) },
+                onRightButtonClick = { viewModel.onUIEvent(UIEvent.OnNavigateBackHome) }
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .background(MultimoneyTheme.colors.background)
+                    .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        modifier = Modifier.padding(top = 42.dp),
+                        text = stringResource(id = R.string.payment_amount_card_title),
+                        style = Typography.h5.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MultimoneyTheme.colors.labelText
+                        ),
+                        textAlign = TextAlign.Left
+                    )
+                }
+                CustomButton(
+                    modifier = Modifier
+                        .height(48.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        focusManager.clearFocus()
+                        viewModel.onUIEvent(UIEvent.OnContinueClick)
+                    },
+                    text = stringResource(id = R.string.button_continue),
+                    buttonType = CustomButtonType.PrimaryPrimary,
+                    enable = viewModel.uiState.enableButton
                 )
             }
-            CustomButton(
-                modifier = Modifier
-                    .height(48.dp)
-                    .fillMaxWidth(),
-                onClick = {
-                    focusManager.clearFocus()
-                    viewModel.onUIEvent(UIEvent.OnContinueClick)
-                },
-                text = stringResource(id = R.string.button_continue),
-                buttonType = CustomButtonType.PrimaryPrimary,
-                enable = viewModel.uiState.enableButton
-            )
         }
     }
 

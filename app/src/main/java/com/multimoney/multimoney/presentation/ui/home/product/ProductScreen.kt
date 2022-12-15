@@ -396,7 +396,9 @@ fun ProductFooter(
                     }
                 )
                 ProductType.Smart.value -> SmartFooter()
-                ProductType.Crypto.value -> CryptoFooter()
+                ProductType.Crypto.value -> CryptoFooter(
+
+                )
             }
         }
     }
@@ -425,7 +427,9 @@ fun ProductFooterExpanded(
                     viewModel = viewModel,
                     currentPage
                 )
-                ProductType.Crypto.value -> CryptoFooterExpanded()
+                ProductType.Crypto.value -> CryptoFooterExpanded(
+                    viewModel.balanceCredit?.balanceCryptoAccount?.items
+                )
             }
         }
     }

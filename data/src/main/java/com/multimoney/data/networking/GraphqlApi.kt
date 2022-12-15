@@ -92,7 +92,15 @@ class GraphqlApi @Inject constructor(
         cardStatus: Int
     ): ApolloCall<BalanceQuery.Data> = apolloAuthorizedClient.query(
         BalanceQuery(
-            user, identification, idBrand, idClient, idLoanClient, creditStatus, accountStatus, cryptoStatus, cardStatus
+            user,
+            identification,
+            idBrand,
+            idClient,
+            idLoanClient,
+            creditStatus,
+            accountStatus,
+            cryptoStatus,
+            cardStatus
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -101,7 +109,8 @@ class GraphqlApi @Inject constructor(
         pkUser: Int,
         idBrand: Int
     ): ApolloCall<CreditOfferQuery.Data> =
-        apolloAuthorizedClient.query(CreditOfferQuery(pkUser, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(CreditOfferQuery(pkUser, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryPaymentAmount(
         amount: Int,
@@ -472,7 +481,15 @@ class GraphqlApi @Inject constructor(
         cicle: Int
     ): ApolloCall<CreditExtensionMessageQuery.Data> = apolloAuthorizedClient.query(
         CreditExtensionMessageQuery(
-            idClient, currency, user, idBrand, amountRequest, idLoanClient, quotaMax, idProductBase, cicle
+            idClient,
+            currency,
+            user,
+            idBrand,
+            amountRequest,
+            idLoanClient,
+            quotaMax,
+            idProductBase,
+            cicle
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -655,9 +672,10 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int
     ): ApolloCall<ValidationSecurityQuery.Data> =
-        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand)).fetchPolicy(
-            FetchPolicy.NetworkOnly
-        )
+        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand))
+            .fetchPolicy(
+                FetchPolicy.NetworkOnly
+            )
 
     fun queryValidateUserStatus(
         pkUser: Int,
@@ -837,19 +855,22 @@ class GraphqlApi @Inject constructor(
         pkUser: String,
         idBrand: Int
     ): ApolloCall<CivilStatusQuery.Data> =
-        apolloAuthorizedClient.query(CivilStatusQuery(pkUser, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(CivilStatusQuery(pkUser, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryProfessionSmart(
         pkUser: String,
         idBrand: Int
     ): ApolloCall<ProfessionSmartQuery.Data> =
-        apolloAuthorizedClient.query(ProfessionSmartQuery(pkUser, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(ProfessionSmartQuery(pkUser, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryAddressLevelOne(
         user: String,
         idBrand: Int
     ): ApolloCall<AddressLevel1Query.Data> =
-        apolloAuthorizedClient.query(AddressLevel1Query(user, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(AddressLevel1Query(user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryAddressLevelTwo(
         user: String,
@@ -877,14 +898,16 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int
     ): ApolloCall<NationalityQuery.Data> =
-        apolloAuthorizedClient.query(NationalityQuery(user, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(NationalityQuery(user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryStepByStep(
         user: String,
         idBrand: Int,
         idRequest: Int
     ): ApolloCall<StepByStepQuery.Data> =
-        apolloAuthorizedClient.query(StepByStepQuery(user, idBrand, idRequest)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(StepByStepQuery(user, idBrand, idRequest))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationGlobalRequest(
         pkUser: Int,
@@ -982,14 +1005,16 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int
     ): ApolloCall<GeneralEconomicActivityQuery.Data> =
-        apolloAuthorizedClient.query(GeneralEconomicActivityQuery(user, idBrand)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(GeneralEconomicActivityQuery(user, idBrand))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryRelationship(
         user: String,
         idBrand: Int,
         option: Int
     ): ApolloCall<RelationshipQuery.Data> =
-        apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option)).fetchPolicy(FetchPolicy.NetworkOnly)
+        apolloAuthorizedClient.query(RelationshipQuery(user, idBrand, option))
+            .fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationInitialRequestSmartAccount(
         pkUser: Long,
@@ -1021,12 +1046,12 @@ class GraphqlApi @Inject constructor(
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun queryMiniCards(
-        infoCreditStatus:Boolean,
-        infoVirtualCardStatus:Boolean,
-        infoBankAccountStatus:Boolean,
-        infoCrypto:Boolean,
-        userEmail:String,
-        idBrand:Int
+        infoCreditStatus: Boolean,
+        infoVirtualCardStatus: Boolean,
+        infoBankAccountStatus: Boolean,
+        infoCrypto: Boolean,
+        userEmail: String,
+        idBrand: Int
     ): ApolloCall<ListMiniCardsQuery.Data> =
         apolloAuthorizedClient.query(
             ListMiniCardsQuery(
@@ -1055,7 +1080,8 @@ class GraphqlApi @Inject constructor(
                 id_Banco = idBank,
                 numeroCuenta = accountNumber,
                 id_Moneda = idCurrency,
-                id_Tipo_Cuenta = idAccountType?.let { Optional.Present(it) } ?: run { Optional.Absent },
+                id_Tipo_Cuenta = idAccountType?.let { Optional.Present(it) }
+                    ?: run { Optional.Absent },
                 idLoanClient = idLoanClient,
                 user = user,
                 idBrand = idBrand

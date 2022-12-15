@@ -6,6 +6,7 @@ import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.domain.model.balance.Summary
 
@@ -54,7 +55,27 @@ private fun BalanceQuery.Account.mapToDomainModel() =
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
-    BalanceCryptoAccount(globalBalance = globalBalance.toString().toDouble())
+    BalanceCryptoAccount(
+        globalBalance = globalBalance.toString().toDouble(),
+        investedBalance = investedBalance,
+        percentageInvested = percentageInvested,
+        items = items?.map {
+            it.mapToDomainModel()
+        }
+    )
+
+private fun BalanceQuery.Item.mapToDomainModel() =
+    BalanceCryptoAccountItems(
+        asset = asset ?: "",
+        available = (available ?: 0.0) as Double,
+        trading = trading ?: "",
+        descriptionCurrency = descriptionCurrency ?: "",
+        balanceDollars = (balanceDollars ?: 0.0) as Double,
+        investedBalanceCurrency = investedBalanceCurrency ?: "",
+        percentageInvestedCurrency = percentageInvestedCurrency ?: "",
+        priceOfTheDay = (priceOfTheDay ?: 0.0) as Double,
+        url_image = url_image ?: ""
+    )
 
 private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
     BalanceCardInformation(cardInformation = CardInformation(cardInfo.cardNumber))

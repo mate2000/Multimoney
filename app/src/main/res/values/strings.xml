@@ -874,4 +874,7 @@
     <string name="disbursement_bottom_sheet_quota_to_pay"  translatable="false">Cuota mensual consolidada</string>
     <string name="disbursement_bottom_sheet_next_payment_date"  translatable="false">Fecha del siguiente pago</string>
 
+    <!-- My crypto currencies -->
+    <string name="crypto_currencies" translatable="false">Mis monedas</string>
+    <string name="crypto_currencies_see_all" translatable="false">Mis monedas</string>
 </resources>

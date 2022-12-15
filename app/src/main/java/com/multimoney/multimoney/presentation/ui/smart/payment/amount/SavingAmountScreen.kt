@@ -111,10 +111,6 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         focusManager.clearFocus()
                     }),
                     isRequired = true,
-                    isError = viewModel.uiState.currentAmountError.first,
-                    errorMessage = stringResource(
-                        id = viewModel.uiState.currentAmountError.second
-                    ),
                     customTransformation = CurrencyDoubleTransformation(
                         viewModel.uiState.currency,
                         CreditAmountViewModel.CURRENCY_SEPARATOR

@@ -74,7 +74,7 @@ const val USER_NAME = "user_name"
 const val SEND_METHOD = "send_method"
 const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
-const val NEW_VALUE= "new_value"
+const val NEW_VALUE = "new_value"
 const val ID_VISA_CARD = "id_visa_card"
 
 // Previous
@@ -215,7 +215,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "visa_issuance_screen"
     )
 
-    object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
+    object VisaCardScreen :
+        Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")

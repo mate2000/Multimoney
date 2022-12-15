@@ -22,7 +22,10 @@ query BalanceCardInformation(
                 expDate
                 holderName
                 status
-                blockType
+                blockType{
+                    code
+                    msg
+                }
                 cvalidation
                 type
             }

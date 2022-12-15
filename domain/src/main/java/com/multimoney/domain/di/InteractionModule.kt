@@ -106,8 +106,6 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
-import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
-import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOfferUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
@@ -158,8 +156,6 @@ import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCaseImpl
-import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
-import com.multimoney.domain.interaction.security.MutationChangePhoneUseCaseImpl
 import com.multimoney.domain.repository.BalanceRepository
 import com.multimoney.domain.repository.CreditRepository
 import com.multimoney.domain.repository.CryptoRepository

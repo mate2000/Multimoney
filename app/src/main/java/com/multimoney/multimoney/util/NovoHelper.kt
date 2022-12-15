@@ -16,7 +16,7 @@ import javax.inject.Inject
 class NovoHelper @Inject constructor() {
 
     fun configureNovoSdk() {
-        if (NovoVTS.isConfigured().not()) {
+        if (NovoVTS.isConfiguredForVts().not()) {
             NovoVTS.setConfigurations(
                 BuildConfig.NOVO_CLIENT_ID,
                 BuildConfig.NOVO_API_KEY,

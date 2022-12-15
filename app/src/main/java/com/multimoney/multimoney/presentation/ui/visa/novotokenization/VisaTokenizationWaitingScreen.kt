@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.Companion.TIME_TO_WAITING_NOVO_STEP
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -109,6 +110,17 @@ fun VisaTokenizationWaitingScreen(
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold)
             )
         }
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 
     // this is necessary to block the systems back button

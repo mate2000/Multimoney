@@ -54,6 +54,7 @@
     <string name="dollars" translatable="false">Doláres</string>
     <string name="quetzales" translatable="false">Quetzales</string>
     <string name="detail" translatable="false">Detalle</string>
+    <string name="success" translatable="false">Exito</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 

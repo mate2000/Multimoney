@@ -1,9 +1,9 @@
 package com.multimoney.multimoney
 
 import android.app.Application
-import com.multimoney.multimoney.presentation.util.NfcHelper
 import androidx.work.Configuration
 import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.DownloadCreditMovementsWorkerProvider
+import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.util.AdjustHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import com.multimoney.multimoney.util.SentryHelper
@@ -48,7 +48,7 @@ open class MultimoneyApplication : Application(), Configuration.Provider {
         adjustHelper.initAdjust()
         cognitoHelper.initCognito()
         if (nfcHelper.isNfcSupported()) {
-            NovoVTS.isInitialized()
+            NovoVTS.initialize(applicationContext = applicationContext)
         }
     }
 }

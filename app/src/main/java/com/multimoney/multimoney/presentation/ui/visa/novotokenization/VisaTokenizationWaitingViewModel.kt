@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.visa.novotokenization
 
 import android.content.Context
+import android.provider.Settings
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +17,10 @@ import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCase
-import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.balance.CardInformation
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.EMAIL
@@ -30,11 +34,14 @@ import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaToken
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getDeviceManufacture
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
@@ -58,14 +65,14 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     var phone = ""
     var novoDeviceId: String = ""
     var email: String = ""
-    var balanceCardInformation: BalanceCardInformation? = null
+    var cardInformation: CardInformation? = null
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
-        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(CARD_INFORMATION)
+        cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
     }
 
     private fun startTokenizationProcess() {
@@ -75,42 +82,116 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 pkUser.toInt(),
                 phone,
                 onSuccessEnrollDevice = {
+                    mmCountDownTimer.resumeTimer()
                     novoDeviceId = it.data
-                    callNovoEnrollPan()
+                    callNovoEnrollPan(novoDeviceId)
                 },
                 onErrorEnrollDevice = {
                     mmCountDownTimer.resumeTimer()
-                    // odo handle novo sdk error
-                    Log.wtf("MM_NOVO_ENROLL_DEVICE_ERROR", it.message)
-                    Log.wtf("MM_NOVO_ENROLL_DEVICE_ERROR", it.code.toString())
+                    // todo handle novo sdk error
+                    Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.message?:"")
+                    Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.code.toString())
                 }
             )
         } else {
-            callNovoEnrollPan()
+            callNovoEnrollPan(novoDeviceId)
         }
     }
 
-    private fun callNovoEnrollPan() {
-        val expirationDate = balanceCardInformation?.cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
+    private fun callNovoEnrollPan(walletId: String) {
+        val expirationDate = cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
         novoHelper.novoEnrollPan(
             pkUser = pkUser.toInt(),
             email = email,
-            accountNumber = balanceCardInformation?.cardInformation?.cardNumber ?: "",
-            cardName = balanceCardInformation?.cardInformation?.holderName ?: "",
-            cardCvv = balanceCardInformation?.cardInformation?.cValidation ?: "",
+            accountNumber = cardInformation?.cardNumber ?: "",
+            cardName = cardInformation?.holderName ?: "",
+            cardCvv = cardInformation?.cValidation ?: "",
             cardExpirationMonth = expirationDate?.first() ?: "",
             cardExpirationYear = expirationDate?.last() ?: "",
             onSuccessEnrollDevice = {
                 mmCountDownTimer.resumeTimer()
                 NovoVTS.setFavoriteCard(it.data.vProvisionedToken)
+                createWallet(walletId = walletId)
             },
             onErrorEnrollDevice = {
                 // todo handle novo sdk error
                 mmCountDownTimer.resumeTimer()
-                Log.wtf("MM_NOVO_ENROLL_PAN_ERROR", it.message)
-                Log.wtf("MM_NOVO_ENROLL_PAN_ERROR", it.code.toString())
+                Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.message?:"")
+                Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.code.toString())
             }
         )
+    }
+
+    /**
+     * This function execute the mutation userPhoneMobileSave without walletID
+     * in order to create the wallet
+     */
+    private fun createWallet(walletId: String) {
+        executeUseCase {
+            mutationUserPhoneMobileSaveUseCase.invoke(
+                idBrand,
+                "",
+                getDeviceManufacture(),
+                pkUser,
+                Settings.Secure.ANDROID_ID,
+                email
+            ).collectLatest { result ->
+                result.onSuccess {
+                    linkWalletWithThisDevice(walletId = walletId)
+                }.onFailure {
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onMessage {
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it?.message ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun linkWalletWithThisDevice(walletId: String) {
+        executeUseCase {
+            mutationUserPhoneMobileSaveUseCase.invoke(
+                idBrand,
+                walletId,
+                getDeviceManufacture(),
+                pkUser,
+                Settings.Secure.ANDROID_ID,
+                email
+            ).collectLatest { result ->
+                result.onSuccess {
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            titleResource = R.string.success,
+                            description = "La tarjeta fue tokenizada exitosamente",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onFailure {
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onMessage {
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it?.message ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+            }
+        }
     }
 
     private fun goToNextScreen(context: Context, color: Color) {
@@ -211,7 +292,8 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     data class UIState(
         // Fields
         val icon: Int = R.drawable.ic_novo_waiting_smartphone,
-        val description: AnnotatedString = buildAnnotatedString {}
+        val description: AnnotatedString = buildAnnotatedString {},
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(event: UIEvent) {

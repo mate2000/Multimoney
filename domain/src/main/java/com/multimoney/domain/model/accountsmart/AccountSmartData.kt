@@ -12,6 +12,12 @@ data class AccountSmartData(
     var birthday: String = "",
     var expirationDate: String? = "",
     var idGender: Long? = 0,
+    val strGenre: String? = "",
+    val strMaritalStatus: String? = "",
+    val stringProfessionType: String? = "",
+    val strAddressLevel1: String? = "",
+    val strAddressLevel2: String? = "",
+    val strAddressLevel3: String? = "",
     var idAddressLevel1: Long? = 0,
     var idAddressLevel2: Long? = 0,
     var idAddressLevel3: Long? = 0,
@@ -19,6 +25,7 @@ data class AccountSmartData(
     var idEconomicActivity: Long? = 0,
     var institutionPension: String = "",
     var income: Float? = 0.0f,
+    var fullJobAddress: String? = "",
     var addressDetail: String? = "",
     var user: String? = "",
     var idBrand: Int? = 0,
@@ -34,6 +41,7 @@ data class AccountSmartData(
     var isActivityOfArt15: Boolean? = null,
     var isUSTaxPayer: Boolean? = null,
     var isTaxPayer: Boolean? = null,
+    var idJobLevel1: Long? = 0,
     var idJobLevel2: Long? = 0,
     var idJobLevel3: Long? = 0
 )

@@ -8,6 +8,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCas
 import com.multimoney.domain.interaction.accountsmart.QueryCivilStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryNationalitiesUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryProfessionUseCase
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.accountsmart.Address
 import com.multimoney.domain.model.accountsmart.CivilStatus
 import com.multimoney.domain.model.accountsmart.Nationality
@@ -30,12 +31,14 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getDayFromString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
@@ -216,6 +219,20 @@ class SmartDocumentViewModel @Inject constructor(
         nextStepAction()
     }
 
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        uiState = uiState.copy(
+            birthdate = getDayFromString(accountSmartData?.birthday, API_DATE_FORMAT),
+            expirationDate = getDayFromString(accountSmartData?.expirationDate, API_DATE_FORMAT)
+        )
+        onGenderChange(accountSmartData?.strGenre.orEmpty())
+        onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
+        onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
+    }
+
     data class UIState(
         // Fields
         val expirationDate: String = "",
@@ -258,6 +275,7 @@ class SmartDocumentViewModel @Inject constructor(
             is OnCallQueryProfessionUseCase -> callQueryProfessionUseCase(event.user, event.idBrand)
             is OnValidateForm -> validateForm()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction)
+            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
         }
     }
 
@@ -287,6 +305,7 @@ class SmartDocumentViewModel @Inject constructor(
 
         data class OnCallQueryCivilStatusUseCase(val user: String, val idBrand: Int) : UIEvent()
         data class OnCallQueryProfessionUseCase(val user: String, val idBrand: Int) : UIEvent()
+        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 

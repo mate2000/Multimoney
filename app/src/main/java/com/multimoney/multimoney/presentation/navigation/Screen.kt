@@ -176,6 +176,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "credit_screen"
     )
 
+    // Non Pre-Approved Screen
+    object NonPreApprovedScreen : Screen(
+        "non_pre_approved_screen/{$PK_USER}/{$EMAIL}/{$ID_BRAND}/{$ID_USER_REQUEST}",
+        "non_pre_approved_screen"
+    )
+
     object CreditMovementsScreen : Screen(
         "credit_movements_screen/{$ID_BRAND}/{$ID_LOAN_CLIENT}/{$USER}/{$CREDIT_NUMBER}",
         "credit_movements_screen"

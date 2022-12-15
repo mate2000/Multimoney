@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -129,7 +130,7 @@ fun CurrencyAmountInput(
 
     if (isSystemInDarkTheme()) {
         backgroundColor = WhiteTransparency10
-        placeholderColor = WhiteTransparency30
+        placeholderColor = WhiteTransparency60
         unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = SemanticNegative400
         when {
@@ -202,7 +203,7 @@ fun CurrencyAmountInput(
                     modifier = Modifier.fillMaxWidth(),
                     text = placeHolder,
                     color = placeholderColor,
-                    style = Typography.h4.copy(textAlign = TextAlign.Center)
+                    style = Typography.h4.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W600)
                 )
             },
             isError = isError || emptyError,

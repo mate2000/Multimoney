@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -11,15 +13,21 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class SmartPaymentMethodViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
 
     // uiState
@@ -34,8 +42,13 @@ class SmartPaymentMethodViewModel @Inject constructor(
     var accountToken: String = savedStateHandle[ACCOUNT_TOKEN] ?: ""
     var currencyId: Int = savedStateHandle[ID_CURRENCY] ?: 0
 
-    init {
-        userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""
+
+    private fun onStart() {
+        viewModelScope.launch {
+            userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""
+            idBrand = dataStorePreferences.getIdBrand().first()
+            identification = dataStorePreferences.getIdentification().first()
+        }
     }
 
     private fun onNavigateBack() {
@@ -53,10 +66,13 @@ class SmartPaymentMethodViewModel @Inject constructor(
         navigateTo(
             "${Screen.SmartPaymentCardsScreen.baseRoute}/$username/$idBrand/$identification/${accountToken.toLongOrNull()}/$currencyId"
         )
+        //TODO verify if there are added cards
+        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userSmartAccount/$idBrand/$identification")
     }
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is UIEvent.OnStart -> onStart()
             is OnNavigateBack -> onNavigateBack()
             is OnTransferSelected -> navigateToTransferScreen()
             is OnVisaSelected -> navigateToVisaScreen()
@@ -64,6 +80,7 @@ class SmartPaymentMethodViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
+        object OnStart : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnTransferSelected : UIEvent()
         object OnVisaSelected : UIEvent()

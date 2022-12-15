@@ -139,6 +139,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
     }
 
     private fun onCardSelected(cardSelected: CardVisaDirect) {
+        navigateTo("${Screen.SmartSavingAmount.baseRoute}/$idBrand/${cardSelected.idCard}?$USER=$user?$IDENTIFICATION=$identification")
         uiState = uiState.copy(
             idCard = cardSelected.idCard?.toLong() ?: 0,
             cardMasked = (cardSelected.cardMaskedNumber ?: ""),
@@ -156,7 +157,8 @@ class SmartPaymentCardsViewModel @Inject constructor(
     }
 
     private fun onAddCard() {
-        // todo navigate
+        // For testing, using this to open the add saving amount TODO change to add card navigation
+        navigateTo("${Screen.SmartSavingAmount.baseRoute}/$idBrand/1?$USER=$user?$IDENTIFICATION=$identification")
     }
 
     // todo navigate back to previous payment flow screen

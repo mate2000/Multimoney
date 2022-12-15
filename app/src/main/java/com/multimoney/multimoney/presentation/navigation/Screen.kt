@@ -76,7 +76,8 @@ const val USER_NAME = "user_name"
 const val SEND_METHOD = "send_method"
 const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
-const val NEW_VALUE = "new_value"
+const val NEW_VALUE= "new_value"
+const val ID_VISA_CARD = "id_visa_card"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -330,6 +331,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SmartPaymentSuccessScreen : Screen(
         "smart_payment_success_screen/{$CURRENCY_SYMBOL}/{$PAYMENT_AMOUNT}/{$IS_MULTI_CURRENCY}/{$EXCHANGE_AMOUNT}/{$EXCHANGE_RATE_LABEL}/{$CARD_SELECTED}/{$REFERENCE_NUMBER}",
         "smart_payment_success_screen"
+    )
+
+    object SmartSavingAmount : Screen(
+        "payment_smart_saving_amount_screen/{$ID_BRAND}/{$ID_VISA_CARD}?$USER={$USER}?$IDENTIFICATION={$IDENTIFICATION}",
+        "payment_smart_saving_amount_screen"
     )
 
     // TestNavGraph Screens

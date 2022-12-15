@@ -178,6 +178,12 @@ val Int.boolean
 
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
+fun Char.isValidAmountCharacter() =
+    this.isDigit() || this == DECIMAL_SEPARATOR
+
+fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val NUMBER_REGEX = "[0-9]"
+private const val DECIMAL_SEPARATOR = '.'

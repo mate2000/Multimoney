@@ -142,7 +142,7 @@ class ChangePhoneViewModel @Inject constructor(
                 event.countryCode
             )
             is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfilePersonalInfoScreen.route, false)
         }
     }
 

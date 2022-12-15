@@ -12,6 +12,8 @@ import com.multimoney.multimoney.presentation.navigation.PROFILE_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.profile.ProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.help.HelpScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions.TermsAndConditionsScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions.detail.TermsAndConditionsDetailsScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.PersonalInfoScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.email.ChangeEmailScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
@@ -210,6 +212,52 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                 }
             )
         }
+
+        composable(
+            Screen.ProfileTermsAndConditionsScreen.route,
+            arguments = listOf(navArgument(ID_BRAND) {
+                type = NavType.IntType
+            })
+        ) {
+            TermsAndConditionsScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
+        composable(
+            Screen.ProfileTermsAndConditionsDetailScreen.route,
+        ) {
+            TermsAndConditionsDetailsScreen(
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                }
+            )
+        }
+
         composable(
             Screen.ProfileSettingsScreen.route,
             arguments = listOf(
@@ -263,7 +311,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         }
 
         composable(
-            Screen.HelpScreen.route,
+            Screen.ProfileHelpScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
@@ -281,7 +329,10 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
             )
         }
     }

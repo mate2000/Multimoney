@@ -66,7 +66,7 @@ class PersonalInfoViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileScreen.route, false)
             is UIEvent.OnNavigateToEditPhone -> navigateToEditPhone()
             is UIEvent.OnNavigateToEditEmail -> navigateToEditEmail()
         }

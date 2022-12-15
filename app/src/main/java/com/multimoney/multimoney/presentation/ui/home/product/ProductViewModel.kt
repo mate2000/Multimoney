@@ -291,7 +291,7 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}")
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${pkUser}/${uiState.userStatus?.infoUser?.userName}")
     }
 
     private fun onNavigateToSmartPaymentAccountScreen() =

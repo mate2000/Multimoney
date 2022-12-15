@@ -141,7 +141,7 @@ class ChangeEmailViewModel @Inject constructor(
             is ChangeEmailViewModel.UIEvent.OnValidateUserEmailConfirmation -> isUserEmailConfirmationValid()
             is ChangeEmailViewModel.UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
             is ChangeEmailViewModel.UIEvent.OnNavigateBack -> navigateBack(
-                Screen.HomeScreen.route,
+                Screen.ProfilePersonalInfoScreen.route,
                 false
             )
         }

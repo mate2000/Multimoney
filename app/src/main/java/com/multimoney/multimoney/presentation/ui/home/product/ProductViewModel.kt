@@ -75,8 +75,8 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -288,7 +288,7 @@ class ProductViewModel @Inject constructor(
         )
 
     private fun onNavigateToHomeMultimoneyVisa() =
-        navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}")
+        navigateTo("${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/${encodeData(balanceCredit?.balanceCardInformation)}/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}")
 
     private fun onNavigateToProfileScreen() {
         navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
@@ -313,13 +313,14 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getProgress() {
-        productProgress = (
-            balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
-                ?: DEFAULT_PROGRESS
-            ) / (
-            balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
-                ?: DEFAULT_PROGRESS
-            )
+        productProgress = if (uiState.isCreditAvailable.not()) {
+            DEFAULT_PROGRESS
+        } else {
+            (
+                balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
+                    ?: DEFAULT_PROGRESS
+                ) / (balanceCredit?.getFirstCredit()?.creditLimit?.toFloat() ?: DEFAULT_PROGRESS)
+        }
     }
 
     private fun isExpired() {

@@ -53,6 +53,58 @@ import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgr
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
 
 /**
+ * Composable to handle the status non-preapproved for GT and SV
+ */
+@Composable
+fun CardNonPreApprovedCredit(
+    idBrand: Int = Brand.ElSalvador.id,
+    action: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable {
+                action()
+            }
+    ) {
+        Text(
+            text = stringResource(id = string.home_product_gt_sv_non_pre_approved_credit_title),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = stringResource(
+                id = when (idBrand) {
+                    Brand.ElSalvador.id -> string.home_product_sv_non_pre_approved_credit_description
+                    else -> string.home_product_gt_non_pre_approved_credit_description
+                }
+            ),
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+        CustomImage(
+            modifier = Modifier
+                .padding(top = 40.dp)
+                .align(Alignment.CenterHorizontally),
+            drawableResource = drawable.ic_chevron_up
+        )
+        Text(
+            text = stringResource(id = string.home_product_gt_sv_non_pre_approved_credit_action),
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .align(Alignment.CenterHorizontally),
+            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+/**
  * Composable to handle the status without credit GT
  */
 @Composable
@@ -389,9 +441,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                            ?: 0
-                                        ) > 0
+                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                    ?: 0
+                                                ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

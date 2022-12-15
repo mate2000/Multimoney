@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
@@ -114,7 +113,6 @@ class SavingAmountViewModel @Inject constructor(
         val maxSuggestion: SuggestedAmount = SuggestedAmount(),
         val currency: String = "$",
         val currentAmountValueString: String? = null,
-        val currentAmountError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
         val enableButton: Boolean = false,
         val isLoading: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(

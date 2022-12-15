@@ -106,6 +106,10 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSaveCreditOfferUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveCreditOfferUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
+import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
@@ -313,6 +317,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationSaveCreditOfferUseCase(creditRepository: CreditRepository): MutationSaveCreditOfferUseCase =
+        MutationSaveCreditOfferUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryHomeCantonUseCase(creditRepository: CreditRepository): QueryHomeCantonUseCase =
         QueryHomeCantonUseCaseImpl(creditRepository)
 
@@ -335,6 +344,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryOccupationUseCase(creditRepository: CreditRepository): QueryOccupationUseCase =
         QueryOccupationUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryEmploymentSituationUseCase(creditRepository: CreditRepository): QueryEmploymentSituationUseCase =
+        QueryEmploymentSituationUseCaseImpl(creditRepository)
 
     @Provides
     @Singleton

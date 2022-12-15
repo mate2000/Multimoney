@@ -96,6 +96,7 @@ interface SmartAccountRepository {
         idEconomicActivity: Long,
         income: Double,
         addressDetail: String,
+        fullJobAddress: String,
         user: String,
         idBrand: Int,
         currentStep: String,

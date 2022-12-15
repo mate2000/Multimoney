@@ -11,7 +11,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.multimoney.multimoney.util.firebase.displayLocalNotification
+import com.multimoney.multimoney.presentation.util.displayLocalNotification
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit.SECONDS
@@ -66,4 +66,4 @@ fun startTimedNotification(
         )
 }
 
-const val TIMED_NOTIFICATION_WORKER = "timed_notification"
+const val TIMED_NOTIFICATION_WORKER = "timed_notification_worker"

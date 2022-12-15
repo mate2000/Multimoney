@@ -74,8 +74,4 @@ class FirebaseHelper @Inject constructor(
     private fun disableFCM() {
         FirebaseMessaging.getInstance().isAutoInitEnabled = false
     }
-
-    companion object {
-
-    }
 }

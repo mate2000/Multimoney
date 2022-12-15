@@ -121,8 +121,7 @@ fun CryptoCardWithBalance(
             .padding(
                 top = 24.dp,
                 start = 16.dp,
-                end = 16.dp,
-                bottom = if (clientCryptoBalanceHistory.isEmpty()) 136.dp else 0.dp
+                end = 16.dp
             )
     ) {
         Text(
@@ -139,37 +138,35 @@ fun CryptoCardWithBalance(
             )
         )
 
-        if (clientCryptoBalanceHistory.isNotEmpty()) {
+        val isInGainOrLoss = calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory) >= 0
+        val graphicColor = if (isInGainOrLoss)
+            MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor
 
-            val isInGainOrLoss =
-                cryptoBalance > calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory)
-            HomeCryptoGraphic(
-                clientCryptoBalanceHistory = clientCryptoBalanceHistory,
-                graphicColor = if (isInGainOrLoss)
-                    MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor
+        HomeCryptoGraphic(
+            clientCryptoBalanceHistory = clientCryptoBalanceHistory,
+            graphicColor = graphicColor
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            CustomInformativeChip(
+                text = "\$${
+                    String.format(
+                        "%.2f", calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory)
+                    ).replace("-", "")
+                }",
+                textStyle = Typography.body2.copy(
+                    fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
+                ),
+                startIconTint = graphicColor,
+                shape = RoundedCornerShape(12.dp),
+                background = BlackTransparency16,
+                startIcon = if (isInGainOrLoss) R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract
             )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                CustomInformativeChip(
-                    text = "\$${
-                        String.format(
-                            "%.2f", calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory)
-                        )
-                    }",
-                    textStyle = Typography.body2.copy(
-                        fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
-                    ),
-                    startIconTint = if (isInGainOrLoss)
-                        MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor,
-                    shape = RoundedCornerShape(12.dp),
-                    background = BlackTransparency16,
-                    startIcon = if (isInGainOrLoss) R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract
-                )
-            }
         }
     }
 }
@@ -180,10 +177,10 @@ fun calculateGainLoses(
 ): Double {
 
     if (clientCryptoBalanceHistory.isEmpty()) {
-        return cryptoBalance
+        return 0.0
     }
     val lastBalance = clientCryptoBalanceHistory.last().convertedBalance
-    return cryptoBalance - lastBalance
+    return lastBalance - cryptoBalance
 }
 
 @Preview
@@ -192,16 +189,28 @@ fun CryptoCardWithBalancePreview() {
     CryptoCardWithBalance(
         cryptoBalance = 5252.04, clientCryptoBalanceHistory = listOf(
             HistoricalBalanceClient(
-                convertedBalance = 5000.0, date = "2021-01-01"
+                convertedBalance = 5000.0,
+                date = "2021-01-01"
             ),
             HistoricalBalanceClient(
-                convertedBalance = 5500.0, date = "2021-01-02"
+                convertedBalance = 5000.0,
+                date = "2021-01-01"
             ),
             HistoricalBalanceClient(
-                convertedBalance = 3000.0, date = "2021-01-03"
+                convertedBalance = 5000.0,
+                date = "2021-01-01"
             ),
             HistoricalBalanceClient(
-                convertedBalance = 4000.0, date = "2021-01-04"
+                convertedBalance = 5000.0,
+                date = "2021-01-01"
+            ),
+            HistoricalBalanceClient(
+                convertedBalance = 5000.0,
+                date = "2021-01-01"
+            ),
+            HistoricalBalanceClient(
+                convertedBalance = 5000.0,
+                date = "2021-01-01"
             ),
         )
     )

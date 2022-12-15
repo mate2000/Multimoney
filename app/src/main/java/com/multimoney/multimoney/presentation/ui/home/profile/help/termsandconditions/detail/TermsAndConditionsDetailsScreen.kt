@@ -1,9 +1,13 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions.detail
 
+import android.util.Base64
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,6 +27,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.parseApiDateToTermsAndConditionsDateTime
 
 @Composable
 fun TermsAndConditionsDetailsScreen(
@@ -36,11 +41,11 @@ fun TermsAndConditionsDetailsScreen(
     BackHandler {
         viewModel.onUIEvent(TermsAndConditionsDetailsViewModel.UIEvent.OnNavigateBack)
     }
-    DetailContent(viewModel)
+    TermsAndConditionsDetailsContent(viewModel)
 }
 
 @Composable
-fun DetailContent(viewModel: TermsAndConditionsDetailsViewModel) {
+fun TermsAndConditionsDetailsContent(viewModel: TermsAndConditionsDetailsViewModel) {
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -59,12 +64,39 @@ fun DetailContent(viewModel: TermsAndConditionsDetailsViewModel) {
         ) {
             Text(
                 modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
-                text = stringResource(id = R.string.profile_terms_and_conditions_title_template,viewModel.uiState.title ?: ""),
+                text = stringResource(
+                    id = R.string.profile_terms_and_conditions_title_template,
+                    viewModel.uiState.title ?: ""
+                ),
                 style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
             )
-            HtmlText(text = viewModel.uiState.html ?: "", style = TextStyle(color = MultimoneyTheme.colors.text))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(
+                        id = R.string.profile_terms_and_conditions_version_template,
+                        viewModel.uiState.version.orEmpty()
+                    ),
+                    style = Typography.body2.copy(fontWeight = FontWeight.ExtraLight),
+                    color = MultimoneyTheme.colors.labelText
+                )
+                Text(
+                    parseApiDateToTermsAndConditionsDateTime(viewModel.uiState.dateSigned.orEmpty()),
+                    style = Typography.body2.copy(fontWeight = FontWeight.ExtraLight),
+                    color = MultimoneyTheme.colors.labelText
+                )
+            }
+
+            HtmlText(
+                modifier = Modifier.padding(top = 16.dp),
+                text = viewModel.uiState.html ?: "",
+                style = TextStyle(color = MultimoneyTheme.colors.text)
+            )
         }
     }
 }

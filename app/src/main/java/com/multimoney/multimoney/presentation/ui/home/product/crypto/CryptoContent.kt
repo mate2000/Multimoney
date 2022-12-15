@@ -76,30 +76,28 @@ fun CryptoContent(
         }
         SmartAccountStatus.NO_EXIST.status -> {
             //show offer card with no action when smart is in process
-            val infoRequest = userStatus.infoBankAccount?.infoRequest
-            if (infoRequest?.statusRequest != ""
-                || infoRequest.idRequestGlobal != 0L
-                || infoRequest.currentStep != ""
-            ) {
+            userStatus.infoBankAccount?.infoRequest?.let {
+                if (it.idRequestSysde != 0L && it.statusRequest != "" && it.idRequestGlobal != 0L && it.currentStep != "") {
 
-                CustomProductBackground(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    type = ProductBackGroundType.ComplementaryTwo
-                ) {
-                    CryptoCardSmartInProcess(wording = userStatus.infoCrypto?.wording)
+                    CustomProductBackground(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        type = ProductBackGroundType.ComplementaryTwo
+                    ) {
+                        CryptoCardSmartInProcess(wording = userStatus.infoCrypto?.wording)
+                    }
+                } else {
+                    //show offer card with action
+                    CustomProductBackground(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable { openSmartCryptoAction.invoke() },
+                        type = ProductBackGroundType.ComplementaryTwo
+                    ) {
+                        CryptoCardDiscoverCrypto(
+                            wording = userStatus.infoCrypto?.wording
+                        )
+                    }
                 }
-                return
-            }
-            //show offer card without action
-            CustomProductBackground(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .clickable { openSmartCryptoAction.invoke() },
-                type = ProductBackGroundType.ComplementaryTwo
-            ) {
-                CryptoCardDiscoverCrypto(
-                    wording = userStatus.infoCrypto?.wording
-                )
             }
         }
     }

@@ -99,6 +99,11 @@ fun getCurrentTime(time: Date): String {
     return SHORT_TIME_FORMAT.format(time)
 }
 
+fun getCurrentDateMinusYears(years: Long): LocalDate{
+    val today = LocalDate.now()
+    return today.minusYears(years)
+}
+
 fun parseApiDateToCardDate(date: String?): String {
     return if (date.isNullOrEmpty().not()) {
         val dateFormatted = date?.let { API_DATE_FORMAT.parse(it) }

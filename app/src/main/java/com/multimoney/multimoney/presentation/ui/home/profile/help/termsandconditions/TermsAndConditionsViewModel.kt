@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions
 
+import android.util.Base64
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,7 +8,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.TermsAndConditionsType
 import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCase
 import com.multimoney.domain.model.profile.TermsAndConditionsSigned
-import com.multimoney.domain.model.profile.TermsAndConditionsSignedItem
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -76,8 +76,9 @@ class TermsAndConditionsViewModel @Inject constructor(
         }
     }
 
-    private fun onTermsAndConditionsClicked(title: String, html: String) {
-        navigateTo("${Screen.ProfileTermsAndConditionsDetailScreen.baseRoute}/$title/$html")
+    private fun onTermsAndConditionsClicked(title: String, html: String,version : String, dateSigned : String) {
+        //String with the HTML is too large, so here we encoded it as base64 to reduce the length and pass it as parameter
+        navigateTo("${Screen.ProfileTermsAndConditionsDetailScreen.baseRoute}/$title/${Base64.encodeToString(html.toByteArray(charset("UTF-8")),Base64.DEFAULT)}/$version/$dateSigned")
     }
 
     private fun onQuerySuccess(items: TermsAndConditionsSigned) {
@@ -112,7 +113,9 @@ class TermsAndConditionsViewModel @Inject constructor(
             is UIEvent.OnStart -> onStart(event.isSystemInDarkTheme)
             is UIEvent.OnTermsAndConditionsClicked -> onTermsAndConditionsClicked(
                 event.title,
-                event.html
+                event.html,
+                event.version,
+                event.dateSigned
             )
             is UIEvent.OnQuerySuccess -> onQuerySuccess(event.items)
             is UIEvent.OnUpdateLoadingState -> onUpdateLoadingState(event.isLoading)
@@ -124,7 +127,7 @@ class TermsAndConditionsViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         data class OnStart(val isSystemInDarkTheme: Boolean) : UIEvent()
         data class OnShowCustomDialog(val description: String) : UIEvent()
-        data class OnTermsAndConditionsClicked(val title: String, val html: String) : UIEvent()
+        data class OnTermsAndConditionsClicked(val title: String, val html: String, val version : String, val dateSigned : String) : UIEvent()
         data class OnUpdateLoadingState(val isLoading: Boolean) : UIEvent()
         data class OnQuerySuccess(val items: TermsAndConditionsSigned) : UIEvent()
     }

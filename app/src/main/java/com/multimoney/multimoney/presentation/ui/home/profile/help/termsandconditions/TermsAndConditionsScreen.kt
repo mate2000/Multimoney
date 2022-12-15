@@ -118,7 +118,9 @@ fun TermsAndConditionsContent(viewModel: TermsAndConditionsViewModel) {
                                     viewModel.onUIEvent(
                                         TermsAndConditionsViewModel.UIEvent.OnTermsAndConditionsClicked(
                                             title,
-                                            item.html
+                                            item.html,
+                                            item.version,
+                                            item.dateSigned
                                         )
                                     )
                                 }

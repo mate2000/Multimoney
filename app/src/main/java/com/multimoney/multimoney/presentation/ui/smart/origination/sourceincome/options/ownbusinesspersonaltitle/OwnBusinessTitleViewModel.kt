@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
@@ -22,6 +23,7 @@ class OwnBusinessTitleViewModel @Inject constructor() : BaseViewModel(true) {
     sealed class UIEvent {
         data class OnIncomeAmountChange(val income: String) : UIEvent()
         data class OnBusinessNameValueChange(val businessName: String) : UIEvent()
+        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 
@@ -34,6 +36,7 @@ class OwnBusinessTitleViewModel @Inject constructor() : BaseViewModel(true) {
             is UIEvent.OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
             is UIEvent.OnBusinessNameValueChange -> addressValueChanged(uiEvent.businessName)
             is UIEvent.OnValidateForm -> onValidateForm()
+            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(uiEvent.accountSmartData)
         }
     }
 
@@ -47,6 +50,17 @@ class OwnBusinessTitleViewModel @Inject constructor() : BaseViewModel(true) {
     private fun addressValueChanged(businessName: String) {
         uiState = uiState.copy(businessName = businessName)
         onValidateForm()
+    }
+
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        accountSmartData?.let {
+            incomeAmountChange(it.income.toString())
+            addressValueChanged(it.entrepreneurship)
+        }
     }
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))

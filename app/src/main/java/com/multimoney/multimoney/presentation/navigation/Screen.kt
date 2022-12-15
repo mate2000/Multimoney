@@ -77,6 +77,8 @@ const val SEND_METHOD = "send_method"
 const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE = "new_value"
+const val DATE_SIGNED = "date_signed"
+const val VERSION = "version"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -113,7 +115,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileTermsAndConditionsDetailScreen : Screen(
-    "profile_terms_and_conditions_detail_screen/{$TITLE}/{$HTML}",
+    "profile_terms_and_conditions_detail_screen/{$TITLE}/{$HTML}/{$VERSION}/{$DATE_SIGNED}",
         "profile_terms_and_conditions_detail_screen"
     )
 
@@ -186,6 +188,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object CreditScreen : Screen(
         "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}",
         "credit_screen"
+    )
+
+    // Non Pre-Approved Screen
+    object NonPreApprovedScreen : Screen(
+        "non_pre_approved_screen/{$PK_USER}/{$EMAIL}/{$ID_BRAND}/{$ID_USER_REQUEST}",
+        "non_pre_approved_screen"
     )
 
     object CreditMovementsScreen : Screen(

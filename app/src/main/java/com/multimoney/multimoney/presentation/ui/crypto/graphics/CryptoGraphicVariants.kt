@@ -27,6 +27,28 @@ fun HomeCryptoGraphic(
     val convertedBalances = clientCryptoBalanceHistory.map { it.convertedBalance }
 
     CryptoGraphic(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
+        convertedBalances = convertedBalances,
+        graphicColor = graphicColor
+    )
+}
+
+@Composable
+fun WalletCryptoGraphic(
+    clientCryptoBalanceHistory: List<HistoricalBalanceClient>,
+    graphicColor: Color,
+) {
+
+    val convertedBalances = clientCryptoBalanceHistory.map { it.convertedBalance }
+
+    CryptoGraphic(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+            .padding(top = 24.dp, bottom = 32.dp, start = 16.dp),
         convertedBalances = convertedBalances,
         graphicColor = graphicColor
     )
@@ -34,6 +56,7 @@ fun HomeCryptoGraphic(
 
 @Composable
 fun CryptoGraphic(
+    modifier: Modifier = Modifier,
     convertedBalances: List<Double>,
     graphicColor: Color
 ) {
@@ -47,10 +70,7 @@ fun CryptoGraphic(
     } else {
 
         LineGraphic(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp)
-                .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
+            modifier = modifier,
             lineGraphicEntries = convertedBalances,
             graphicColor = graphicColor
         )

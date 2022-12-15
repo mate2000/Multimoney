@@ -9,6 +9,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CryptoAccountStatus
+import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
@@ -497,12 +499,16 @@ class HomeViewModel @Inject constructor(
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
                 if (uiState.idBrand != Brand.Guatemala.id.toString()) {
-                    callQueryGetHistoricalBalanceUseCase(
-                        user = email,
-                        identification = identification,
-                        idBrand = idBrand,
-                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
-                    )
+                    if (validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status
+                        && validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
+                    ) {
+                        callQueryGetHistoricalBalanceUseCase(
+                            user = email,
+                            identification = identification,
+                            idBrand = idBrand,
+                            baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
+                        )
+                    }
                 }
             }
             result.onFailure {

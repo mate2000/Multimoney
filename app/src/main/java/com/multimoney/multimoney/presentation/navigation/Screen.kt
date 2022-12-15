@@ -63,6 +63,7 @@ const val DISBURSEMENT_ROUTE = "disbursement_route"
 const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
+const val CRYPTO_ROUTE = "crypto_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
 const val PAYMENT_SMART_ROUTE = "payment_smart_route"
@@ -75,6 +76,9 @@ const val SEND_METHOD = "send_method"
 const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE = "new_value"
+const val BASE_ASSET = "base_asset"
+const val START_DATE = "start_date"
+const val END_DATE = "end_date"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -336,4 +340,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")
     object SubscriptionScreen : Screen("subscription_screen")
+
+    // Crypto
+    object CryptoWalletScreen : Screen(
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "crypto_wallet_screen"
+    )
 }

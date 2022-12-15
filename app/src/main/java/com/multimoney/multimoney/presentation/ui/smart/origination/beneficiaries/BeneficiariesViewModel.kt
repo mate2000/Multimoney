@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -185,7 +184,6 @@ class BeneficiariesViewModel @Inject constructor(
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        Log.d("tellCollected", "collected in beneficiary screen: $accountSmartData")
         accountSmartData?.let {
             uiState = uiState.copy(
                 addBeneficiaryState = false,

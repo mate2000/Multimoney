@@ -31,7 +31,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
-import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnBackClick
@@ -59,10 +58,9 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateString
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
-import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -115,7 +113,7 @@ class SmartViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { stepByStep ->
                 stepByStep?.let {
-                    Timber.d("callQueryStepByStepUseCase(): $it")
+                    Timber.d( "callQueryStepByStepUseCase(): $it")
                     navigateToScreenOnStepFetched(it)
                 }
                 onUIEvent(OnLoadingValueChange(false))
@@ -184,6 +182,7 @@ class SmartViewModel @Inject constructor(
             idJobLevel1 = stepByStep.idJobLevel1,
             idJobLevel2 = stepByStep.idJobLevel2,
             idJobLevel3 = stepByStep.idJobLevel3,
+            fullJobAddress = stepByStep.fullJobAddress
         )
 
         // update the current step coming from the backend in order to navigate to the proper screen
@@ -413,7 +412,10 @@ class SmartViewModel @Inject constructor(
 
     private fun nextStep() {
         if (nextStep <= getTotalStepperCounter()) {
-            navigateToOnfido()
+            uiState = uiState.copy(
+                currentStep = nextStep,
+                isCloseVisible = nextStep >= SmartSteps.One.id
+            )
         } else {
             navigateToOnfido()
         }

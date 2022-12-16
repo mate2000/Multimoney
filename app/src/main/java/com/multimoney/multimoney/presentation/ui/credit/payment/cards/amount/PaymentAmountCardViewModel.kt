@@ -181,8 +181,9 @@ class PaymentAmountCardViewModel @Inject constructor(
     private fun onAlertResultButtonClick() = onNavigateBackHome()
 
     // TODO: Value hardcoded. Must be replaced when user selects the value
-    fun getCurrentAmountFormatted() = "$100"
+    fun getCurrentAmountFormatted() = "$10"
 
+    // TODO: PaymentAmount must be 0 now is 10 for testing
     data class UIState(
         // Interactions
         val paymentAmount: Double = 10.0,

@@ -12,6 +12,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
@@ -31,10 +32,12 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     // Stateless
     private var idBrand: Int = 0
     private var balanceCardInformation: BalanceCardInformation? = null
+    var availableBalanceLabel: String? = null
 
     init {
-        idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
-        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        balanceCardInformation = savedStateHandle[BALANCE_CARD_INFORMATION]
+        availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
     }
 
     private fun onAvailableAmountClick() {
@@ -55,7 +58,6 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     data class UIState(
         // Interactions
         val isTextVisible: Boolean = false,
-        val availableAmount: String = "$900",
         val isNfcAvailable: Boolean = false,
         val dialogParameters: DialogParameters = DialogParameters()
     )

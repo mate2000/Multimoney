@@ -625,8 +625,8 @@
     <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
 
     <!-- Visa -->
-    <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>
-    <string name="visa_cvv_label" translatable="false">CVV</string>
+    <string name="visa_date_label" translatable="false">EXP. \nDATE</string>
+    <string name="visa_cvv_label" translatable="false">SECURITY \nCODE</string>
 
     <!-- Visa Issuance-->
     <string name="visa_issuance_sv_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>
@@ -1046,6 +1046,9 @@
     <string name="download_credit_movements_worker_push_description_success" translatable="false">Abrir estado de cuenta</string>
     <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
+    <!-- Smart Saving Amount -->
+    <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
+
     <!-- Profile Help And Information Section -->
     <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>
     <string name="profile_help_chat_with_us_label" translatable="false">Chatear con nosotros</string>
@@ -1055,5 +1058,5 @@
     <string name="profile_help_error_title" translatable="false">¡Oh no! hubo un error</string>
     <string name="profile_help_error_subtitle" translatable="false">Por favor intentá de nuevo</string>
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
-
+    
 </resources>

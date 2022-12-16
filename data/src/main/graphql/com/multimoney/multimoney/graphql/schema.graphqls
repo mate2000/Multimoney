@@ -419,6 +419,11 @@ type Query {
   """
   Security
   """
+  saveRegisterCoreLog(saveRegisterCoreLogDto: SaveRegisterCoreLogDtoInput!): SaveRegisterCoreLog!
+
+  """
+  Security
+  """
   quickActions(quickActionsInput: QuickActionsDtoInput!): [QuickActions!]!
 
   """
@@ -1264,6 +1269,12 @@ input GetExchangeRateDtoInput {
   idOriginCurrency: String!
 
   idDestinationCurrency: String!
+
+  amount: Decimal
+
+  identificacionNumber: String
+
+  abreviatura_Moneda: String
 
   idBrand: Int
 
@@ -2922,6 +2933,26 @@ type DataCompanyInformation {
 
 input GetCompanyNameByIdentificationDtoInput {
   identification: String!
+
+  idBrand: Int
+
+  user: String
+}
+
+type SaveRegisterCoreLog {
+  status: Int
+
+  message: String
+
+  detail: String
+}
+
+input SaveRegisterCoreLogDtoInput {
+  process: String!
+
+  parameters: String!
+
+  result: String!
 
   idBrand: Int
 
@@ -5601,7 +5632,7 @@ type GlobalRequest_Response_Result {
 
   idSysdeRequest: Long!
 
-  isCrosseling: Short!
+  isCrosseling: Short
 }
 
 type CardIssuanceUserResponse {
@@ -5930,11 +5961,6 @@ type SubOpciones {
   valor: String
 }
 
-"""
-The built-in `Decimal` scalar type.
-"""
-scalar Decimal
-
 type PRODUCTO {
   iD_PRODUCTO: String
 
@@ -6004,7 +6030,7 @@ type CardInfo {
 
   status: String
 
-  blockType: String
+  blockType: BlockType
 
   cvalidation: String
 
@@ -6190,6 +6216,11 @@ type beneficiarieResult {
 }
 
 """
+The built-in `Decimal` scalar type.
+"""
+scalar Decimal
+
+"""
 The `DateTime` scalar represents an ISO-8601 compliant date time type.
 """
 scalar DateTime
@@ -6223,7 +6254,17 @@ type GetCoreBankMovementsResult {
 }
 
 type ExchangeRateObjet {
+  amount: Decimal!
+
   exchangeRate: Float!
+
+  convertedAmount: Decimal!
+
+  amount_label: String!
+
+  exchangeRate_label: String!
+
+  convertedAmount_label: String!
 }
 
 type ListSinpeAccountResult {
@@ -6479,6 +6520,12 @@ type ObjPhone {
   currency: String!
 
   ibanNumber: String
+}
+
+type BlockType {
+  code: String
+
+  msg: String
 }
 
 type PromissoryNoteTransactionMobile {

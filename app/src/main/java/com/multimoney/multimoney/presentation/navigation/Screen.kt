@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
@@ -75,6 +76,7 @@ const val SEND_METHOD = "send_method"
 const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE = "new_value"
+const val ID_VISA_CARD = "id_visa_card"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -220,7 +222,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "visa_issuance_screen"
     )
 
-    object VisaCardScreen : Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
+    object VisaCardScreen : Screen(
+        "visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_card_screen"
+    )
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")
@@ -330,6 +335,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object PaymentSmartCardsScreen : Screen(
         "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
         "payment_smart_cards_screen"
+    )
+
+    object SmartSavingAmount : Screen(
+        "payment_smart_saving_amount_screen/{$ID_BRAND}/{$ID_VISA_CARD}?$USER={$USER}?$IDENTIFICATION={$IDENTIFICATION}",
+        "payment_smart_saving_amount_screen"
     )
 
     // TestNavGraph Screens

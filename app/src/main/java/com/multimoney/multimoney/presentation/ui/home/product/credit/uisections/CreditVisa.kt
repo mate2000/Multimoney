@@ -35,13 +35,15 @@ fun CreditVisa(
                 onClick = {
                     onNavigateToVisaActivateScreen()
                 },
-                type = CreditCard(cardInformation.cardNumber ?: "")
+                type = CreditCard(cardInformation.cardNumber ?: ""),
+                idBrand = uiState.idBrand.toInt()
             )
         } ?: run {
             CustomBoxVisaBackground(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = { onCreateMultimoneyVisa() },
-                type = RequestCreditCard
+                type = RequestCreditCard,
+                idBrand = uiState.idBrand.toInt()
             )
         }
     }

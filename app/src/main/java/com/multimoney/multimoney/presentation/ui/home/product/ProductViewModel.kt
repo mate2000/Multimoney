@@ -297,7 +297,7 @@ class ProductViewModel @Inject constructor(
             encodeData(
                 balanceCredit?.balanceCardInformation?.cardInformation
             )
-            }"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
         )
 
     private fun onNavigateToProfileScreen() {
@@ -323,13 +323,14 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getProgress() {
-        productProgress = (
-            balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
-                ?: DEFAULT_PROGRESS
-            ) / (
-            balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
-                ?: DEFAULT_PROGRESS
-            )
+        productProgress = if (uiState.isCreditAvailable.not()) {
+            DEFAULT_PROGRESS
+        } else {
+            (
+                balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
+                    ?: DEFAULT_PROGRESS
+                ) / (balanceCredit?.getFirstCredit()?.creditLimit?.toFloat() ?: DEFAULT_PROGRESS)
+        }
     }
 
     private fun isExpired() {

@@ -16,6 +16,8 @@ import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceScree
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingScreen
 
 const val CARD_INFORMATION = "card_information"
+const val BALANCE_CARD_INFORMATION = "balance_card_information"
+const val AVAILABLE_BALANCE_LABEL = "available_balance_label"
 
 fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     navigation(

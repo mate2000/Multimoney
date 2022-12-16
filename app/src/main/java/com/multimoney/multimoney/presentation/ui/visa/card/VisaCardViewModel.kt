@@ -17,6 +17,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
@@ -39,6 +40,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     private var email: String = ""
     private var phone: String = ""
     private var cardInformation: CardInformation? = null
+    var availableBalanceLabel: String? = null
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
@@ -46,6 +48,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
+        availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
         callNovoGetFavoriteCard()
     }
 
@@ -74,7 +77,6 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     data class UIState(
         // Interactions
         val isTextVisible: Boolean = false,
-        val availableAmount: String = "$900",
         val isNfcAvailable: Boolean = false,
         val isCardTokenize: Boolean = false,
         val dialogParameters: DialogParameters = DialogParameters()

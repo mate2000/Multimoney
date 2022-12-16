@@ -626,8 +626,8 @@
     <string name="origination_voucher_destiny_account" translatable="false">Cuenta de destino</string>
 
     <!-- Visa -->
-    <string name="visa_date_label" translatable="false">VÁLIDA \nHASTA</string>
-    <string name="visa_cvv_label" translatable="false">CVV</string>
+    <string name="visa_date_label" translatable="false">EXP. \nDATE</string>
+    <string name="visa_cvv_label" translatable="false">SECURITY \nCODE</string>
 
     <!-- Visa Issuance-->
     <string name="visa_issuance_sv_nfc_title" translatable="false">¡Comprá en línea y en comercios!</string>

@@ -16,7 +16,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,18 +46,12 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
 fun SmartPaymentSuccessScreen(
-    onPopBackStack: (NavEvent.PopBackStack) -> Unit,
     viewModel: SavingAmountViewModel
 ) {
-    LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

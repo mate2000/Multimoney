@@ -71,6 +71,9 @@ class SmartPaymentCardsViewModel @Inject constructor(
                         isLoading = false,
                         cardVDList = cardsList ?: emptyList()
                     )
+                    if (cardsList.isNullOrEmpty()) {
+                        // todo redirect to add card
+                    }
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,

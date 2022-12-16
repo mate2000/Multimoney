@@ -61,19 +61,18 @@ import com.multimoney.multimoney.presentation.util.transformation.CurrencyDouble
 @Composable
 fun SavingAmountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SavingAmountViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
+            executeNavigation(onPopBackStack = onPopBackStack)
             onUIEvent(OnStart)
         }
     }
 
     if (viewModel.uiState.showLoadingScreen) {
-        LoadingMultiMoney(string.button_continue)
+        LoadingMultiMoney(string.smart_processing_transaction)
     } else if (viewModel.uiState.showErrorScreen) {
         val notificationTitle = stringResource(string.smart_saving_try_later_notification_title)
         val notificationBody = stringResource(string.smart_saving_try_later_notification_body)
@@ -102,8 +101,7 @@ fun SavingAmountScreen(
         }
     } else if (viewModel.uiState.paymentSuccess) {
         SmartPaymentSuccessScreen(
-            viewModel = viewModel,
-            onPopBackStack = onPopBackStack
+            viewModel = viewModel
         )
         BackHandler {
             viewModel.onUIEvent(OnNavigateHome)
@@ -165,7 +163,6 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         focusManager.clearFocus()
                     }),
                     isRequired = true,
-                    isRequiredMessage = stringResource(string.error_empty),
                     customTransformation = CurrencyDoubleTransformation(
                         viewModel.uiState.currency,
                         CreditAmountViewModel.CURRENCY_SEPARATOR

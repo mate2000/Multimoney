@@ -1,6 +1,7 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.cards
+package com.multimoney.multimoney.presentation.ui.smart.payment.amount
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallProcessTransferVisaToSmart
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransferVisaToSmart
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
@@ -34,7 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 fun SmartPaymentConfirmBottomSheet(
     coroutineScope: CoroutineScope,
     modalBottomSheetState: ModalBottomSheetState,
-    viewModel: SmartPaymentCardsViewModel
+    viewModel: SavingAmountViewModel
 ) {
     CustomModalBottomSheet(
         title = R.string.smart_payment_amount_bottom_sheet_title,
@@ -50,7 +51,7 @@ fun SmartPaymentConfirmBottomSheet(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                text = "$500", // viewModel.Currency + viewModel.amount,
+                text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString,
                 style = Typography.h4.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center
@@ -68,17 +69,19 @@ fun SmartPaymentConfirmBottomSheet(
                     .height(90.dp)
                     .padding(top = 4.dp),
                 startIcon = R.drawable.ic_visa_card_item,
-                title = "Banco example", // viewModel.cardBankName,
-                subtitle = stringResource(R.string.visa_card_masked_number, "1234"),
+                title = viewModel.bankDetail,
+                subtitle = stringResource(R.string.visa_card_masked_number, viewModel.maskedCardNumber.takeLast(4)),
                 endIcon = null,
                 enable = false
             )
+
             Icon(
                 painter = painterResource(R.drawable.ic_down_arrow_from_to),
                 tint = Color.Unspecified,
                 contentDescription = "",
                 modifier = Modifier.padding(top = 16.dp)
             )
+
             Text(
                 text = stringResource(R.string.smart_payment_amount_bottom_sheet_to),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
@@ -90,11 +93,18 @@ fun SmartPaymentConfirmBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(90.dp)
-                    .padding(top = 4.dp, bottom = 24.dp),
+                    .padding(top = 4.dp),
                 startIcon = R.drawable.ic_bank_account_dollar,
-                title = stringResource(R.string.smart_payment_amount_bottom_sheet_my_smart_account, "$"),
+                title = stringResource(
+                    R.string.smart_payment_amount_bottom_sheet_my_smart_account,
+                    viewModel.uiState.currency
+                ),
                 endIcon = null,
                 enable = false
+            )
+
+            Spacer(
+                Modifier.fillMaxWidth().height(24.dp)
             )
 
             CustomButton(

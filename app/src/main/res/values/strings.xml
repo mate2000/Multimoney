@@ -60,6 +60,8 @@
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
     <string name="error_no_internet_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="error_occurred_title" translatable="false">"¡Oh no! hubo un error"</string>
+    <string name="error_please_try_again" translatable="false">"Por favor intentá de nuevo"</string>
     <string name="you_have_exceeded_the_max_characters_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
     <string name="error_button_retry" translatable="false">Reintentar</string>
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
@@ -1064,6 +1066,8 @@
 
     <!-- Smart Saving Amount -->
     <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
+    <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>
+    <string name="smart_saving_try_later_notification_body" translatable="false">Abrí la app y hacé tu primer ahorro para ganar más</string>
 
     <!-- Profile Help And Information Section -->
     <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>

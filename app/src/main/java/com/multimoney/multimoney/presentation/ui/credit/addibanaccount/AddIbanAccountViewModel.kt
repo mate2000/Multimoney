@@ -66,7 +66,7 @@ class AddIbanAccountViewModel @Inject constructor(
         uiState = uiState.copy(
             title = when (previousScreen) {
                 Screen.DisbursementAccountScreen.baseRoute -> R.string.add_iban_account_disbursement_tile
-                Screen.SmartPaymentAccountScreen.baseRoute -> R.string.payment_account_iban_title
+                Screen.SmartPaymentAccountScreenCR.baseRoute -> R.string.payment_account_iban_title
                 else -> R.string.add_iban_account_payment_tile
             }
         )
@@ -93,7 +93,7 @@ class AddIbanAccountViewModel @Inject constructor(
     }
 
     private fun getQueryType() = when (previousScreen) {
-        Screen.SmartPaymentAccountScreen.baseRoute -> null
+        Screen.SmartPaymentAccountScreenCR.baseRoute -> null
         else -> BankAccountType.Credit.value
     }
 

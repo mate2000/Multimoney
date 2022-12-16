@@ -35,11 +35,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
@@ -80,8 +76,9 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import okhttp3.internal.toLongOrDefault
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -206,7 +203,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSmartSave() {
         val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo("${Screen.SmartPaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentAccountScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        navigateTo("${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentAccountScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -300,10 +297,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartPaymentAccountScreen() =
-        navigateTo(Screen.SmartPaymentAccountScreen.route)
+        navigateTo(Screen.SmartPaymentAccountScreenCR.route)
 
     private fun onNavigateToSmartPaymentMethodScreen() =
-        navigateTo(Screen.SmartPaymentScreen.route)
+        navigateTo(Screen.SmartPaymentMethodScreenSV.route)
 
     private fun onNavigateToSmartMovements(accountToken: String) =
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
@@ -447,7 +444,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
-            route = "${Screen.NonPreApprovedScreen.baseRoute}/${pkUser}/${email}/${uiState.idBrand}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
+            route = "${Screen.NonPreApprovedScreen.baseRoute}/$pkUser/$email/${uiState.idBrand}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}"
         )
 
     fun getCreditBalanceLabel(balanceCredit: List<BalanceCredit?>?): String {
@@ -539,7 +536,13 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPaymentSmartScreen(account: Account?) {
-        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}/$userName/${uiState.idBrand}/$identification/${account?.tokenNumber}/${account?.idCurrencyAccount}")
+        navigateTo(
+            "${Screen.SmartPaymentMethodScreenSV.baseRoute}/${account?.accountNumber}/${
+            account?.tokenNumber?.toLongOrDefault(
+                0
+            )
+            }/${account?.idCurrencyAccount}"
+        )
     }
 
     private fun onNavigateToSendMoneyScreen() {

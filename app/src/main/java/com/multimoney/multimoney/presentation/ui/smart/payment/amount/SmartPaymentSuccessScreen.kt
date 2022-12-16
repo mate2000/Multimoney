@@ -1,11 +1,10 @@
-package com.multimoney.multimoney.presentation.ui.smart.payment.paymentdetails
+package com.multimoney.multimoney.presentation.ui.smart.payment.amount
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -37,12 +35,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.payment.paymentdetails.PaymentSuccessViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.smart.payment.paymentdetails.PaymentSuccessViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
@@ -52,13 +51,12 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
 @Composable
-fun PaymentSuccessScreen(
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: PaymentSuccessViewModel = hiltViewModel()
+fun SmartPaymentSuccessScreen(
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit,
+    viewModel: SavingAmountViewModel
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.executeNavigation(onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -70,7 +68,7 @@ fun PaymentSuccessScreen(
             isLeftButtonVisible = false,
             isCenterContentVisible = true,
             onRightButtonClick = {
-                viewModel.onUIEvent(OnCloseClick)
+                viewModel.onUIEvent(OnNavigateHome)
             }
         )
         PaymentSuccessContent(viewModel)
@@ -78,13 +76,13 @@ fun PaymentSuccessScreen(
 }
 
 @Composable
-fun PaymentSuccessContent(viewModel: PaymentSuccessViewModel) {
+fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -98,7 +96,7 @@ fun PaymentSuccessContent(viewModel: PaymentSuccessViewModel) {
         ) {
             CustomImage(
                 modifier = Modifier.fillMaxSize(),
-                drawableResource = R.drawable.bg_confirmation_card,
+                drawableResource = drawable.bg_confirmation_card,
                 contentScale = ContentScale.FillBounds
             )
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -109,7 +107,7 @@ fun PaymentSuccessContent(viewModel: PaymentSuccessViewModel) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = stringResource(R.string.smart_payment_success),
+                        text = stringResource(string.smart_payment_success),
                         modifier = Modifier.padding(top = 16.dp),
                         style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.text
@@ -125,7 +123,7 @@ fun PaymentSuccessContent(viewModel: PaymentSuccessViewModel) {
                                 )
                             }
                         },
-                        text = stringResource(R.string.smart_payment_shared_button),
+                        text = stringResource(string.smart_payment_shared_button),
                         modifier = Modifier
                             .padding(
                                 start = 24.dp,
@@ -138,18 +136,21 @@ fun PaymentSuccessContent(viewModel: PaymentSuccessViewModel) {
                             pressedElevation = 0.dp,
                             disabledElevation = 0.dp
                         ),
-                        trailingIcon = R.drawable.ic_icon_share,
+                        trailingIcon = drawable.ic_icon_share,
                         buttonType = PrimaryTertiary
                     )
                     Text(
-                        text = stringResource(R.string.smart_payment_you_saved_on_you_smart_account, viewModel.smartAccountCurrency),
+                        text = stringResource(
+                            string.smart_payment_you_saved_on_you_smart_account,
+                            viewModel.uiState.currency
+                        ),
                         modifier = Modifier.padding(top = 12.dp),
                         style = Typography.body1,
                         color = MultimoneyTheme.colors.text
                     )
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = viewModel.smartAccountCurrency + viewModel.amountSaved,
+                        text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString,
                         style = Typography.h4.copy(fontWeight = FontWeight.W600),
                         color = MultimoneyTheme.colors.text,
                         textAlign = TextAlign.Center
@@ -160,10 +161,13 @@ fun PaymentSuccessContent(viewModel: PaymentSuccessViewModel) {
                         .height(1.dp)
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 12.dp))
+                        .background(
+                            MultimoneyTheme.colors.dividerWhite16,
+                            shape = DottedShape(step = 12.dp)
+                        )
                 )
                 Text(
-                    text = stringResource(R.string.smart_payment_from_label),
+                    text = stringResource(string.smart_payment_from_label),
                     modifier = Modifier.padding(start = 21.dp, top = 16.dp),
                     style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
                     color = MultimoneyTheme.colors.labelText
@@ -171,36 +175,26 @@ fun PaymentSuccessContent(viewModel: PaymentSuccessViewModel) {
 
                 InfoItemAccount(
                     modifier = Modifier.padding(start = 21.dp, top = 16.dp),
-                    icon = R.drawable.ic_bank,
+                    icon = drawable.ic_bank,
                     tintIcon = MultimoneyTheme.colors.iconTintVoucher,
-                    title = stringResource(R.string.smart_payment_origin_account_label),
+                    title = stringResource(string.smart_payment_origin_account_label),
                     subTitle = stringResource(
-                        R.string.visa_card_masked_number,
-                        viewModel.cardNumberMasked.takeLast(4)
+                        string.visa_card_masked_number,
+                        viewModel.maskedCardNumber.takeLast(4)
                     )
                 )
 
                 InfoItem(
                     modifier = Modifier.padding(start = 21.dp, top = 32.dp),
-                    icon = R.drawable.ic_receipt,
+                    icon = drawable.ic_receipt,
                     tintIcon = MultimoneyTheme.colors.iconTintVoucher,
-                    title = stringResource(R.string.smart_payment_reference_number_label),
-                    subTitle = viewModel.referenceNumber
+                    title = stringResource(string.smart_payment_reference_number_label),
+                    subTitle = viewModel.uiState.referenceNumber
                 )
 
-                if (viewModel.isMultiCurrency) {
-                    CurrencyExchangeRow(
-                        exchangeCurrency = viewModel.exchangeCurrency,
-                        exchangeRate = viewModel.exchangeRate,
-                        exchangeAmount = viewModel.exchangeAmount,
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(start = 27.dp, top = 32.dp)
-                    )
-                }
-
                 InfoDate(
-                    currentDate = viewModel.currentDate,
-                    currentTime = viewModel.currentTime,
+                    currentDate = viewModel.uiState.currentDate,
+                    currentTime = viewModel.uiState.currentTime,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 21.dp, top = 32.dp, end = 32.dp)
@@ -209,8 +203,8 @@ fun PaymentSuccessContent(viewModel: PaymentSuccessViewModel) {
         }
 
         CustomButton(
-            onClick = { },
-            text = stringResource(R.string.smart_payment_make_another_payment),
+            onClick = { viewModel.onUIEvent(OnNavigateBack) },
+            text = stringResource(string.smart_payment_make_another_payment),
             modifier = Modifier
                 .padding(
                     start = 16.dp,
@@ -237,7 +231,7 @@ fun InfoDate(
     ) {
         Row {
             Icon(
-                painter = painterResource(R.drawable.ic_calendar_voucher),
+                painter = painterResource(drawable.ic_calendar_voucher),
                 tint = MultimoneyTheme.colors.iconTintVoucher,
                 contentDescription = ""
             )
@@ -254,59 +248,6 @@ fun InfoDate(
             style = Typography.body2,
             color = MultimoneyTheme.colors.labelText
         )
-    }
-}
-
-@Composable
-fun CurrencyExchangeRow(
-    exchangeCurrency: String,
-    exchangeRate: String,
-    exchangeAmount: String,
-    modifier: Modifier = Modifier
-) {
-    Row(modifier = modifier) {
-        Icon(
-            painter = painterResource(R.drawable.ic_money_gray),
-            tint = MultimoneyTheme.colors.iconTintVoucher,
-            contentDescription = "",
-            modifier = Modifier.height(24.dp).width(24.dp)
-        )
-        Column(modifier = Modifier.padding(start = 14.dp)) {
-            Text(
-                text = stringResource(id = R.string.payment_amount_bottom_sheet_exchange_type),
-                style = Typography.body2.copy(fontWeight = FontWeight.W600),
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-            Text(
-                text = exchangeCurrency + exchangeRate,
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-        }
-        Spacer(modifier = Modifier.width(20.dp))
-        Divider(
-            modifier = Modifier
-                .height(44.dp)
-                .width(1.dp),
-            color = MultimoneyTheme.colors.bottomNavigationDividerColor
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.padding(start = 14.dp)) {
-            Text(
-                text = stringResource(id = R.string.payment_amount_bottom_sheet_amount_to_debit),
-                style = Typography.body2.copy(fontWeight = FontWeight.W600),
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-            Text(
-                text = exchangeCurrency + exchangeAmount,
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Start
-            )
-        }
     }
 }
 

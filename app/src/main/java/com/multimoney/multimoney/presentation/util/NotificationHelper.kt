@@ -16,8 +16,8 @@ fun displayLocalNotification(
     body: String,
     intent: Intent,
     context: Context,
-    largeIcon: Bitmap?,
-    smallIconResource: Int
+    smallIconResource: Int,
+    largeIcon: Bitmap? = null
 ) {
     val notificationManager = NotificationManagerCompat.from(context)
     createNotificationChannel(context)

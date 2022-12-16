@@ -24,8 +24,8 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
                 body,
                 intent,
                 this,
-                ResourcesCompat.getDrawable(resources, R.mipmap.ic_launcher, null)?.toBitmap(),
-                R.mipmap.ic_launcher
+                R.mipmap.ic_launcher,
+                ResourcesCompat.getDrawable(resources, R.mipmap.ic_launcher, null)?.toBitmap()
             )
         }
 

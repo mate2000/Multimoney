@@ -85,11 +85,11 @@ class SmartPaymentAccountViewModel @Inject constructor(
     private fun onNavigateBack() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
-            popTo = Screen.SmartPaymentAccountScreen.route
+            popTo = Screen.SmartPaymentAccountScreenCR.route
         )
     }
 
-    //TODO Implement Colon navigation
+    // TODO Implement Colon navigation
     private fun navigateToColonPaymentScreen() {
         callQueryBalanceUseCase()
     }

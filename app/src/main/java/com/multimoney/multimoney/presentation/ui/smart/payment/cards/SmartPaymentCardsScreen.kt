@@ -12,34 +12,25 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnRetryTransfer
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnTryLater
-import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getMaskedVisa
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -49,55 +40,28 @@ fun SmartPaymentCardsScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartPaymentCardsViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-
     // Navigation
     viewModel.apply {
         isOnRestart = isRestart
         LaunchedEffect(isOnRestart) {
             if (isOnRestart) {
                 executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-                onUIEvent(OnCallQueryGetClientCards)
+                viewModel.onUIEvent(OnStart)
                 isOnRestart = false
             }
         }
     }
-    if (viewModel.uiState.showLoadingScreen) {
-        LoadingMultiMoney(R.string.button_continue)
-    } else if (viewModel.uiState.showErrorScreen) {
 
-        AlertResult(
-            buttonTextResource = R.string.error_button_retry,
-            onButtonClick = { viewModel.onUIEvent(OnRetryTransfer) },
-            isSecondaryButtonVisible = true,
-            secondaryButtonTextResource = R.string.error_button_try_later,
-            onSecondaryButtonClick = {
-                viewModel.onUIEvent(
-                    OnTryLater(
-                        R.drawable.ic_logo_multimoney,
-                        R.drawable.ic_plus,
-                        context
-                    )
-                )
-            }
+    Column(
+        modifier = Modifier
+            .background(MultimoneyTheme.colors.background)
+            .fillMaxSize()
+    ) {
+        TopNavBar(
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            isRightButtonVisible = false
         )
-    } else {
-        Column(
-            modifier = Modifier
-                .background(MultimoneyTheme.colors.background)
-                .fillMaxSize()
-        ) {
-            TopNavBar(
-                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-                isRightButtonVisible = false
-            )
-            PaymentCardsListContent(viewModel)
-        }
-        SmartPaymentConfirmBottomSheet(
-            rememberCoroutineScope(),
-            viewModel.uiState.bottomSheetState,
-            viewModel
-        )
+        PaymentCardsListContent(viewModel)
     }
 }
 
@@ -147,9 +111,9 @@ fun PaymentCardList(
                     imageModifier = Modifier.size(48.dp),
                     startIcon = R.drawable.ic_visa_card_item,
                     title = card.detail ?: "",
-                    subtitle = getMaskedVisa(
-                        card.cardMaskedNumber.orEmpty(),
-                        stringResource(id = string.visa_card_masked_number)
+                    subtitle = stringResource(
+                        R.string.visa_card_masked_number,
+                        card.cardMaskedNumber.orEmpty().takeLast(4)
                     ),
                     onClick = { onCardSelected(card) }
                 )

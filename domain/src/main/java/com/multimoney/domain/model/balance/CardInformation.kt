@@ -10,7 +10,7 @@ data class CardInformation(
     val expDate: String?,
     val holderName: String?,
     val status: String?,
-    val blockType: String?,
+    val blockType: BlockType?,
     val cValidation: String?,
     val type: String?
 ) : Parcelable

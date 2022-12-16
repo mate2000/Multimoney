@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnCrGoPageOne
@@ -13,6 +14,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFa
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSCitizenChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSTaxPayerChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnValidateForm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,27 +25,27 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onIsPEPChange(condition: Boolean, idBrand: Int) {
+    private fun onIsPEPChange(condition: Boolean, idBrand: Int?) {
         uiState = uiState.copy(isPEP = condition)
         onValidateForm(idBrand)
     }
 
-    private fun onIsUSCitizenChange(condition: Boolean, idBrand: Int) {
+    private fun onIsUSCitizenChange(condition: Boolean, idBrand: Int?) {
         uiState = uiState.copy(isUSCitizen = condition)
         onValidateForm(idBrand)
     }
 
-    private fun onIsActivityOfArt15Change(condition: Boolean, idBrand: Int) {
+    private fun onIsActivityOfArt15Change(condition: Boolean, idBrand: Int?) {
         uiState = uiState.copy(isActivityOfArt15 = condition)
         onValidateForm(idBrand)
     }
 
-    private fun onIsUSTaxPayerChange(condition: Boolean, idBrand: Int) {
+    private fun onIsUSTaxPayerChange(condition: Boolean, idBrand: Int?) {
         uiState = uiState.copy(isUSTaxPayer = condition)
         onValidateForm(idBrand)
     }
 
-    private fun onIsTaxPayerChange(condition: Boolean, idBrand: Int) {
+    private fun onIsTaxPayerChange(condition: Boolean, idBrand: Int?) {
         uiState = uiState.copy(isTaxPayer = condition)
         onValidateForm(idBrand)
     }
@@ -82,7 +84,23 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
         }
     }
 
-    private fun onValidateForm(idBrand: Int) = emitBaseEvent(OnFormValidateCompleted(isFormValid(idBrand)))
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        accountSmartData?.let {
+            onIsPEPChange(it.isPEP ?: false, it.idBrand)
+            onIsUSCitizenChange(it.isUSCitizen?: false, it.idBrand)
+            onIsActivityOfArt15Change(it.isActivityOfArt15 ?: false, it.idBrand)
+            onIsUSTaxPayerChange(it.isUSTaxPayer ?: false, it.idBrand)
+            onIsTaxPayerChange(it.isTaxPayer ?: false, it.idBrand)
+        }
+    }
+
+    private fun onValidateForm(idBrand: Int?) = idBrand?.let {
+        emitBaseEvent(OnFormValidateCompleted(isFormValid(idBrand)))
+    }
 
     data class UIState(
         var isPEP: Boolean? = null,
@@ -102,6 +120,7 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
         object OnCrGoPageOne : UIEvent()
         object OnCrGoPageTwo : UIEvent()
         data class OnValidateForm(val idBrand: Int) : UIEvent()
+        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
     }
 
     fun onUiEvent(event: UIEvent) {
@@ -114,6 +133,7 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
             is OnCrGoPageOne -> onCrGoPageOne()
             is OnCrGoPageTwo -> onCrGoPageTwo()
             is OnValidateForm -> onValidateForm(event.idBrand)
+            is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
         }
     }
 

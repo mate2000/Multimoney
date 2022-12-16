@@ -76,6 +76,7 @@ const val SEND_METHOD = "send_method"
 const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE = "new_value"
+const val ID_VISA_CARD = "id_visa_card"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -175,6 +176,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object CreditScreen : Screen(
         "credit_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$EVICERTIA_STATUS}/{$SIGN_DOCUMENT_ID_PRINT}",
         "credit_screen"
+    )
+
+    // Non Pre-Approved Screen
+    object NonPreApprovedScreen : Screen(
+        "non_pre_approved_screen/{$PK_USER}/{$EMAIL}/{$ID_BRAND}/{$ID_USER_REQUEST}",
+        "non_pre_approved_screen"
     )
 
     object CreditMovementsScreen : Screen(
@@ -328,6 +335,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object PaymentSmartCardsScreen : Screen(
         "payment_smart_cards_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
         "payment_smart_cards_screen"
+    )
+
+    object SmartSavingAmount : Screen(
+        "payment_smart_saving_amount_screen/{$ID_BRAND}/{$ID_VISA_CARD}?$USER={$USER}?$IDENTIFICATION={$IDENTIFICATION}",
+        "payment_smart_saving_amount_screen"
     )
 
     // TestNavGraph Screens

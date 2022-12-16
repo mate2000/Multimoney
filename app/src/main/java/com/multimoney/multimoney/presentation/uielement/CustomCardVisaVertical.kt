@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.font
 import com.multimoney.multimoney.presentation.theme.GrayScale600
@@ -39,23 +40,23 @@ fun CustomCardVisaVertical(
 
     val textStyleLabel = TextStyle(
         fontFamily = forzaFontFamily,
-        fontWeight = FontWeight.W400,
-        fontSize = 6.sp,
-        letterSpacing = (0.08).sp
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 8.sp,
+        letterSpacing = (1).sp
     )
 
     val textStyleSubtitle = TextStyle(
         fontFamily = forzaFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 10.sp,
-        letterSpacing = (0.08).sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp,
+        letterSpacing = (4).sp
     )
 
     val textStyleBody = TextStyle(
         fontFamily = forzaFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 8.sp,
-        letterSpacing = (0.08).sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 10.sp,
+        letterSpacing = (1.5).sp
     )
 
     val textColor = if (isSystemInDarkTheme()) {
@@ -79,12 +80,13 @@ fun CustomCardVisaVertical(
         Image(
             painter = painterResource(R.drawable.ic_mm_visa),
             contentDescription = "",
-            contentScale = ContentScale.Inside,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier.constrainAs(backgroundRef) {
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
             }
         )
         if (isTextVisible) {
@@ -95,7 +97,7 @@ fun CustomCardVisaVertical(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .constrainAs(cardNumberOneRef) {
-                        start.linkTo(backgroundRef.start, margin = 16.dp)
+                        start.linkTo(backgroundRef.start, margin = 12.dp)
                         bottom.linkTo(dateLabelRef.top, margin = 7.dp)
                     }
             )
@@ -106,7 +108,7 @@ fun CustomCardVisaVertical(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .constrainAs(cardNumberTwoRef) {
-                        start.linkTo(cardNumberOneRef.end, margin = 6.dp)
+                        start.linkTo(cardNumberOneRef.end, margin = 8.dp)
                         top.linkTo(cardNumberOneRef.top)
                         bottom.linkTo(cardNumberOneRef.bottom)
                     }
@@ -118,7 +120,7 @@ fun CustomCardVisaVertical(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .constrainAs(cardNumberThreeRef) {
-                        start.linkTo(cardNumberTwoRef.end, margin = 6.dp)
+                        start.linkTo(cardNumberTwoRef.end, margin = 8.dp)
                         top.linkTo(cardNumberOneRef.top)
                         bottom.linkTo(cardNumberOneRef.bottom)
                     }
@@ -130,7 +132,7 @@ fun CustomCardVisaVertical(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .constrainAs(cardNumberFourRef) {
-                        start.linkTo(cardNumberThreeRef.end, margin = 6.dp)
+                        start.linkTo(cardNumberThreeRef.end, margin = 8.dp)
                         top.linkTo(cardNumberOneRef.top)
                         bottom.linkTo(cardNumberOneRef.bottom)
                     }
@@ -143,7 +145,7 @@ fun CustomCardVisaVertical(
                 modifier = Modifier
                     .constrainAs(dateLabelRef) {
                         bottom.linkTo(backgroundRef.bottom, margin = 16.dp)
-                        start.linkTo(cardNumberOneRef.start)
+                        start.linkTo(parent.start, margin = 15.dp)
                     }
             )
             Text(

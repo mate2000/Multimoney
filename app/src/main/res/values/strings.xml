@@ -54,6 +54,7 @@
     <string name="dollars" translatable="false">Doláres</string>
     <string name="quetzales" translatable="false">Quetzales</string>
     <string name="detail" translatable="false">Detalle</string>
+    <string name="success" translatable="false">Exito</string>
 
     <string name="content_description_more_info" translatable="false">Más información</string>
 
@@ -649,6 +650,20 @@
     <string name="visa_card_gt_dialog_description_available" translatable="false">Recuerda que puedes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_available_amount" translatable="false">Disponible %s</string>
     <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
+    <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
+    <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
+
+    <!-- visa tokenization waiting -->
+    <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
+    <string name="visa_tokenization_waiting_description_one" translatable="false">Tu tarjeta\nestá segura en tu teléfono</string>
+    <string name="visa_tokenization_waiting_description_two_first" translatable="false">Podrás</string>
+    <string name="visa_tokenization_waiting_description_two_bold" translatable="false">utilizar tu línea de crédito</string>
+    <string name="visa_tokenization_waiting_description_two_second" translatable="false">\npara hacer compras físicas y en línea</string>
+    <string name="visa_tokenization_waiting_description_three_bold" translatable="false">Podés pagar con tu teléfono</string>
+    <string name="visa_tokenization_waiting_description_three" translatable="false">\no con los datos de tu tarjeta</string>
+    <string name="visa_tokenization_waiting_description_three_bold_gt" translatable="false">Puedes pagar con tu teléfono</string>
+    <string name="visa_tokenization_waiting_description_three_gt" translatable="false">\no con los datos de tu tarjeta</string>
+    <string name="visa_tokenization_waiting_loading_label" translatable="false">Activando tu tarjeta…</string>
 
     <!-- Credit Loading -->
     <string name="credit_glad_to_see_you" translatable="false">¡Nos alegra que regresés!</string>

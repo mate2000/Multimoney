@@ -47,9 +47,9 @@ class ProfileViewModel @Inject constructor(
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             identification = savedStateHandle[IDENTIFICATION],
             pkUser = savedStateHandle[PK_USER],
+            idClient = savedStateHandle[ID_CLIENT],
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
             firstName = savedStateHandle[FIRST_NAME],
-            idClient = savedStateHandle[ID_CLIENT]
         )
     }
 

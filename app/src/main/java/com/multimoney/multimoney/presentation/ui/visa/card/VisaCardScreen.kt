@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.uielement.CustomButtonBig
 import com.multimoney.multimoney.presentation.uielement.CustomCardVisaVertical
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -33,6 +34,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Composable
 @Preview
 fun VisaCardScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: VisaCardViewModel = hiltViewModel()
@@ -40,11 +42,17 @@ fun VisaCardScreen(
     val context = LocalContext.current
     // Navigation
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(
+            onNavigate = onNavigate,
+            onPopBackStack = onPopBackStack,
+            onPopAndNavigate = onPopAndNavigate
+        )
     }
 
     Column(
-        modifier = Modifier.background(MultimoneyTheme.colors.background).fillMaxSize()
+        modifier = Modifier
+            .background(MultimoneyTheme.colors.background)
+            .fillMaxSize()
     ) {
         TopNavBar(
             rightButtonIcon = R.drawable.ic_gear,
@@ -59,11 +67,15 @@ fun VisaCardScreen(
             }
         )
         CustomCardVisaVertical(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 16.dp)
+                .fillMaxWidth(),
             isTextVisible = viewModel.uiState.isTextVisible
         )
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
             CustomInformativeChip(
@@ -83,26 +95,29 @@ fun VisaCardScreen(
             )
         }
         Row(
-            modifier = Modifier.padding(start = 16.dp, end = 8.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 8.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            if (viewModel.uiState.isNfcAvailable) {
+            if (viewModel.uiState.isNfcAvailable && viewModel.uiState.isCardTokenize.not()) {
                 CustomButtonBig(
-                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
                     icon = R.drawable.ic_link,
                     text = stringResource(id = R.string.link),
                     onClick = {
-                        // TODO: Execute action when implemented
-                        Toast.makeText(
-                            context,
-                            "TBD1",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
                     }
                 )
             }
             CustomButtonBig(
-                modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
                 icon = R.drawable.ic_eye,
                 text = stringResource(id = R.string.see_data),
                 onClick = {
@@ -115,7 +130,10 @@ fun VisaCardScreen(
                 }
             )
             CustomButtonBig(
-                modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(end = 8.dp),
                 icon = R.drawable.ic_locked,
                 text = stringResource(id = R.string.locked),
                 onClick = {
@@ -132,8 +150,10 @@ fun VisaCardScreen(
 
     if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(
+            title = stringResource(id = viewModel.uiState.dialogParameters.titleResource),
             message = stringResource(id = viewModel.uiState.dialogParameters.descriptionResource).ifEmpty { viewModel.uiState.dialogParameters.description },
             positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,
             onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
         )

@@ -66,8 +66,7 @@ fun SmartPaymentConfirmBottomSheet(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(90.dp)
-                    .padding(top = 4.dp),
+                    .height(80.dp),
                 startIcon = R.drawable.ic_visa_card_item,
                 title = viewModel.bankDetail,
                 subtitle = stringResource(R.string.visa_card_masked_number, viewModel.maskedCardNumber.takeLast(4)),
@@ -79,7 +78,7 @@ fun SmartPaymentConfirmBottomSheet(
                 painter = painterResource(R.drawable.ic_down_arrow_from_to),
                 tint = Color.Unspecified,
                 contentDescription = "",
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 24.dp)
             )
 
             Text(
@@ -92,8 +91,7 @@ fun SmartPaymentConfirmBottomSheet(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(90.dp)
-                    .padding(top = 4.dp),
+                    .height(80.dp),
                 startIcon = R.drawable.ic_bank_account_dollar,
                 title = stringResource(
                     R.string.smart_payment_amount_bottom_sheet_my_smart_account,
@@ -104,7 +102,7 @@ fun SmartPaymentConfirmBottomSheet(
             )
 
             Spacer(
-                Modifier.fillMaxWidth().height(24.dp)
+                Modifier.fillMaxWidth().height(32.dp)
             )
 
             CustomButton(

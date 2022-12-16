@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,7 +31,6 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SmartPaymentCardsScreen(
     isRestart: Boolean = true,
@@ -44,8 +42,8 @@ fun SmartPaymentCardsScreen(
     viewModel.apply {
         isOnRestart = isRestart
         LaunchedEffect(isOnRestart) {
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
             if (isOnRestart) {
-                executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
                 viewModel.onUIEvent(OnStart)
                 isOnRestart = false
             }

@@ -538,9 +538,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToPaymentSmartScreen(account: Account?) {
         navigateTo(
             "${Screen.SmartPaymentMethodScreenSV.baseRoute}/${account?.accountNumber}/${
-            account?.tokenNumber?.toLongOrDefault(
-                0
-            )
+            account?.tokenNumber?.toLongOrNull() ?: 0
             }/${account?.idCurrencyAccount}"
         )
     }

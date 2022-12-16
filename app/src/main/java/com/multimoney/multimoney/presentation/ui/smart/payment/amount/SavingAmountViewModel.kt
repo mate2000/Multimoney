@@ -100,15 +100,15 @@ class SavingAmountViewModel @Inject constructor(
     private fun onCallProcessTransferVisaToSmart() {
         executeUseCase {
             processTransferVisaToSmart.invoke(
-                1,
-                1,
+                idCard,
+                tokenNumber,
                 identification,
                 uiState.currentAmountValueString ?: "",
                 idCurrency,
                 DEFAULT_DESCRIPTION,
                 maskedCardNumber,
                 user,
-                1
+                idBrand
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(

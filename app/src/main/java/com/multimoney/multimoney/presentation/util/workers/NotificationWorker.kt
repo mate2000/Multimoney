@@ -58,5 +58,5 @@ fun startTimedNotification(
 
 const val TITLE_PARAM = "title"
 const val BODY_PARAM = "body"
-const val SMALL_ICON_PARAM = "title"
+const val SMALL_ICON_PARAM = "small_icon"
 const val TIMED_NOTIFICATION_WORKER = "timed_notification_worker"

@@ -100,15 +100,15 @@ class SavingAmountViewModel @Inject constructor(
     private fun onCallProcessTransferVisaToSmart() {
         executeUseCase {
             processTransferVisaToSmart.invoke(
-                idCard,
-                tokenNumber,
+                1,
+                1,
                 identification,
                 uiState.currentAmountValueString ?: "",
                 idCurrency,
                 DEFAULT_DESCRIPTION,
                 maskedCardNumber,
                 user,
-                idBrand
+                1
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(
@@ -192,6 +192,10 @@ class SavingAmountViewModel @Inject constructor(
             notificationTitle,
             notificationBody,
             notificationSmallIcon
+        )
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = true
         )
     }
 

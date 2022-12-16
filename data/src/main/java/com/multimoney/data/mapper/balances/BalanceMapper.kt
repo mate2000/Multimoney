@@ -7,6 +7,7 @@ import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
+import com.multimoney.domain.model.balance.BlockType
 import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.domain.model.balance.Summary
 
@@ -78,14 +79,17 @@ private fun BalanceQuery.Item.mapToDomainModel() = BalanceCryptoAccountItems(
 
 private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCardInformation(
     cardInformation = CardInformation(
-        cardToken = cardInfo.cardToken,
-        cardNumber = cardInfo.cardNumber,
-        expDate = cardInfo.expDate,
-        holderName = cardInfo.holderName,
-        status = cardInfo.status,
-        blockType = cardInfo.blockType,
-        cValidation = cardInfo.cvalidation,
-        type = cardInfo.type
+        cardToken = cardInfo?.cardToken,
+        cardNumber = cardInfo?.cardNumber,
+        expDate = cardInfo?.expDate,
+        holderName = cardInfo?.holderName,
+        status = cardInfo?.status,
+        blockType = BlockType(
+            cardInfo?.blockType?.code,
+            cardInfo?.blockType?.msg
+        ),
+        cValidation = cardInfo?.cvalidation,
+        type = cardInfo?.type
     ),
     floatingBalance = sALDO_FLOTANTE,
     allowUnLock = pERMITE_DESBLOQUEO,

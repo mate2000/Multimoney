@@ -2,19 +2,23 @@ package com.multimoney.data.mapper.balances
 
 import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
 import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.balance.BlockType
 import com.multimoney.domain.model.balance.CardInformation
 
 private fun BalanceCardInformationQuery.BalanceCardInformation.mapToDomainModel() =
     BalanceCardInformation(
         cardInformation = CardInformation(
-            cardToken = cardInfo.cardToken,
-            cardNumber = cardInfo.cardNumber,
-            expDate = cardInfo.expDate,
-            holderName = cardInfo.holderName,
-            status = cardInfo.status,
-            blockType = cardInfo.blockType,
-            cValidation = cardInfo.cvalidation,
-            type = cardInfo.type
+            cardToken = cardInfo?.cardToken,
+            cardNumber = cardInfo?.cardNumber,
+            expDate = cardInfo?.expDate,
+            holderName = cardInfo?.holderName,
+            status = cardInfo?.status,
+            blockType = BlockType(
+                cardInfo?.blockType?.code,
+                cardInfo?.blockType?.msg
+            ),
+            cValidation = cardInfo?.cvalidation,
+            type = cardInfo?.type
         ),
         floatingBalance = sALDO_FLOTANTE,
         allowUnLock = pERMITE_DESBLOQUEO,

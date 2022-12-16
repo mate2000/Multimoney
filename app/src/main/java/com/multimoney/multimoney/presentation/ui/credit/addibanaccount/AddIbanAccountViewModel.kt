@@ -27,8 +27,9 @@ import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAc
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnEditAccount
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.capitalized
+import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -91,13 +92,19 @@ class AddIbanAccountViewModel @Inject constructor(
         }
     }
 
+    private fun getQueryType() = when (previousScreen) {
+        Screen.SmartPaymentAccountScreen.baseRoute -> null
+        else -> BankAccountType.Credit.value
+    }
+
     private fun validateIbanAccount() = executeUseCase {
         uiState = uiState.copy(accountInformation = Pair(true, R.string.iban_account_loading))
         queryValidateBankAccountUseCase(
             account = "${Brand.CostaRica.iban}${uiState.accountNumber}",
             identification = identification.orEmpty(),
+            queryType = getQueryType(),
             user = user.orEmpty(),
-            idBrand = idBrand?.toInt() ?: 0
+            idBrand = idBrand ?: 0
         ).collectLatest {
             it.onSuccess { account ->
                 account?.let { response ->
@@ -147,11 +154,11 @@ class AddIbanAccountViewModel @Inject constructor(
             idClient = idClient?.toLong() ?: 0,
             idBank = validateAccount?.bankId ?: 0,
             accountNumber = "${Brand.CostaRica.iban}${uiState.accountNumber}",
-            idCurrency = validateAccount?.currency?.getCurrency()?.id ?: 0,
+            idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id ?: 0,
             idAccountType = null,
             idLoanClient = idLoanClient?.toLong() ?: 0,
             user = user.orEmpty(),
-            idBrand = idBrand?.toInt() ?: 0
+            idBrand = idBrand ?: 0
         ).collectLatest { result ->
             result.onSuccess {
                 if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {

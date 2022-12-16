@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseCase
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -17,8 +18,8 @@ import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class OwnBusinessInPartnershipViewModel @Inject constructor(
@@ -133,6 +134,18 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
         uiState.businessIncome.toFloat() > MIN_INCOME &&
         uiState.businessActivityError.first.not()
 
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        accountSmartData?.let {
+            incomeAmountChange(it.income.toString())
+            businessActivityChange(it.entrepreneurship)
+            identificationChange(it.legalID.orEmpty(), it.idBrand ?: 0, it.user.orEmpty())
+        }
+    }
+
     data class UIState(
         var businessIncome: String = "",
         var businessActivity: String = "",
@@ -154,6 +167,7 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
             val user: String
         ) : UIEvent()
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
+        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
     }
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -167,6 +181,7 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
                     uiEvent.user
                 )
             is OnNextActionClick -> OnNextActionClick(uiEvent.nextStepAction)
+            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(uiEvent.accountSmartData)
         }
     }
 

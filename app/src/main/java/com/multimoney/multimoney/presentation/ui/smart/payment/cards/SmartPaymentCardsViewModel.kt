@@ -4,11 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.domain.interaction.credit.QueryListCardVDUseCase
-import com.multimoney.domain.model.credit.CardVisaDirect
+import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -65,11 +65,12 @@ class SmartPaymentCardsViewModel @Inject constructor(
     }
 
     private fun onCardSelected(cardSelected: CardVisaDirect) {
-        // todo navigate
+        navigateTo("${Screen.SmartSavingAmount.baseRoute}/$idBrand/${cardSelected.idCard}?$USER=$user?$IDENTIFICATION=$identification")
     }
 
     private fun onAddCard() {
-        // todo navigate
+        // For testing, using this to open the add saving amount TODO change to add card navigation
+        navigateTo("${Screen.SmartSavingAmount.baseRoute}/$idBrand/1?$USER=$user?$IDENTIFICATION=$identification")
     }
 
     // todo navigate back to previous payment flow screen

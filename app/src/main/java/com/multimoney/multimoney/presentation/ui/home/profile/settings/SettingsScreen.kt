@@ -97,6 +97,8 @@ fun SettingsContent(viewModel: SettingsViewModel) {
                 startIcon = R.drawable.ic_locked_gray,
                 endIcon = R.drawable.ic_right_chevron,
                 onClick = {
+                    viewModel.onUIEvent(SettingsViewModel.UIEvent.OnNavigateToChangePassword)
+
                 }
             )
         }

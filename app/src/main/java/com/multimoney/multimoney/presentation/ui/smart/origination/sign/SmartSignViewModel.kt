@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
@@ -42,8 +42,8 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -139,14 +139,14 @@ class SmartSignViewModel @Inject constructor(
             }
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
-                    CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
+                    SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
                         handleOnfidoStatus(creditContractEvent)
                     }
-                    CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+                    SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
                         emitBaseEvent(SimulateUserInteraction)
                         onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                     }
-                    CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+                    SmartOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
                         emitBaseEvent(SimulateUserInteraction)
                         onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                     }
@@ -164,21 +164,21 @@ class SmartSignViewModel @Inject constructor(
     ) {
         emitBaseEvent(SimulateUserInteraction)
         when (creditContractEvent?.statusOnfido?.lowercase()) {
-            CreditOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
+            SmartOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
                 uiState = uiState.copy(
                     signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
-            CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+            SmartOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
                 popAndNavigateTo(
                     route = Screen.ProcessingTransactionScreen.route,
                     popTo = Screen.SmartSignScreen.route
                 )
             }
-            CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+            SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
                 onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value)
             }
-            CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+            SmartOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
                 onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value)
             }
         }

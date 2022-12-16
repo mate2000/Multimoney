@@ -41,7 +41,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 import com.multimoney.multimoney.presentation.util.transformation.VisualTransformationMasks
@@ -87,7 +87,7 @@ fun AddIbanAccountScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp, start = 16.dp, end = 16.dp),
-                    startIcon = viewModel.validateAccount?.currency?.getCurrency()?.accountIcon,
+                    startIcon = viewModel.validateAccount?.currency?.getCurrencyFromId()?.accountIcon,
                     title = viewModel.validateAccount?.bankName ?: "",
                     subtitle = getMaskedAccountIban(
                         viewModel.uiState.accountNumber,
@@ -135,8 +135,8 @@ fun AddIbanAccountScreen(
                     canShowNonErrorMessage = true,
                     showInfo = viewModel.uiState.accountInformation.first,
                     infoMessage = stringResource(id = viewModel.uiState.accountInformation.second),
-                    isError = viewModel.uiState.accountError.first,
-                    errorMessage = viewModel.uiState.validationError
+                    isError = viewModel.uiState.accountError.first || viewModel.uiState.validationError?.first == true,
+                    errorMessage = viewModel.uiState.validationError?.second
                         ?: stringResource(id = viewModel.uiState.accountError.second),
                     customTransformation = MaskVisualTransformation(
                         VisualTransformationMasks.IBAN_TRANSFORMATION_MASK.mask,

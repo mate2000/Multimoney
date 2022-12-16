@@ -20,7 +20,6 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
@@ -30,7 +29,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnCurrencyIndexChanged
@@ -42,7 +40,7 @@ import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.Disb
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.amount.DisbursementAmountViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -113,13 +111,26 @@ class DisbursementAmountViewModel @Inject constructor(
                 else -> R.string.disbursement_amount_title
             },
             isMultipleCurrency = (currencyItems?.lastIndex ?: INITIAL_CURRENCY_INDEX) > INITIAL_CURRENCY_INDEX,
-            currencyItems = currencyItems?.map { it.getCurrency().symbol } ?: listOf(),
+            currencyItems = currencyItems?.map { it.getCurrencyFromId().symbol } ?: listOf(),
             currencyIndex = INITIAL_CURRENCY_INDEX
         )
         callCreditExtensionAmount()
     }
 
     private fun onCloseClick() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+
+    private fun onExitConfirmDialog() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = string.credit_amount_disbursement_exit_confirm_title,
+                descriptionResource = string.credit_amount_disbursement_exit_confirm_description,
+                negativeResource = string.common_leave,
+                positiveResource = string.button_continue,
+                negativeAction = { onCloseClick() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
 
     private fun isFormValid() {
         uiState = uiState.copy(
@@ -179,7 +190,7 @@ class DisbursementAmountViewModel @Inject constructor(
     private fun callCreditExtensionAmount() = executeUseCase {
         queryCreditExtensionAmountUseCase.invoke(
             idClient = idClient?.toLong() ?: 0,
-            currency = currencyItems?.get(uiState.currencyIndex)?.getCurrency()?.disbursementValue.orEmpty(),
+            currency = currencyItems?.get(uiState.currencyIndex)?.getCurrencyFromId()?.disbursementValue.orEmpty(),
             user = user ?: "",
             idBrand = idBrand ?: 0
         ).collectLatest { result ->
@@ -213,7 +224,7 @@ class DisbursementAmountViewModel @Inject constructor(
     private fun callCreditExtensionMessage() = executeUseCase {
         queryCreditExtensionMessageUseCase.invoke(
             idClient = idClient?.toLong() ?: 0,
-            currency = currencyItems?.get(uiState.currencyIndex)?.getCurrency()?.disbursementValue.orEmpty(),
+            currency = currencyItems?.get(uiState.currencyIndex)?.getCurrencyFromId()?.disbursementValue.orEmpty(),
             user = user ?: "",
             idBrand = idBrand ?: 0,
             amountRequest = uiState.disbursement.toDouble(),
@@ -280,7 +291,11 @@ class DisbursementAmountViewModel @Inject constructor(
                 )
                 creditExtensionDetail = it
                 navigateTo(
-                    route = "${Screen.DisbursementAccountScreen.baseRoute}/$idBrand/$user/$idClient/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/${pkUser?.toString() ?: ""}/${idUserRequest ?: 0}/$identification/$creditNumber/${it?.fkFlowControl ?: 0}/${currencyItems?.get(uiState.currencyIndex)}/${creditExtensionAmount?.idLoanClient ?: 0}"
+                    route = "${Screen.DisbursementAccountScreen.baseRoute}/$idBrand/$user/$idClient/${it?.nextPayment}/${it?.quotaTotal}/${it?.selectedAmount}/${pkUser?.toString() ?: ""}/${idUserRequest ?: 0}/$identification/$creditNumber/${it?.fkFlowControl ?: 0}/${
+                    currencyItems?.get(
+                        uiState.currencyIndex
+                    )
+                    }/${creditExtensionAmount?.idLoanClient ?: 0}"
                 )
             }.onFailure {
                 uiState = uiState.copy(
@@ -411,7 +426,7 @@ class DisbursementAmountViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnStart -> onStart()
-            is OnCloseClick -> onCloseClick()
+            is OnCloseClick -> onExitConfirmDialog()
             is OnValidateForm -> isFormValid()
             is OnDisbursementValueChange -> uiState = uiState.copy(disbursement = uiEvent.value)
             is OnDisbursementValueChangeFinished -> onDisbursementValueChangeFinished(uiEvent.value)

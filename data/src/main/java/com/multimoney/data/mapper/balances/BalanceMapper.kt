@@ -34,7 +34,9 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
             isProductActive = it.producto_Activo,
             applyAutomaticDebit = it.aplica_Debito_Aut,
             automaticDebitEnabled = it.debito_Aut_Activo,
-            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo
+            visaAutomaticDebitEnabled = it.vDDebito_Aut_Activo,
+            applyCommerce = it.aplica_Ampli_Comercio,
+            applyCreateCard = it.aplica_Crear_Tarjeta
         )
     },
     creditLimit = limite_credito,
@@ -57,28 +59,42 @@ private fun BalanceQuery.Account.mapToDomainModel() =
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
     BalanceCryptoAccount(
         globalBalance = globalBalance.toString().toDouble(),
-        investedBalance = investedBalance,
-        percentageInvested = percentageInvested,
-        items = items?.map {
-            it.mapToDomainModel()
-        }
+        investedBalance = investedBalance.toString(),
+        percentageInvested = percentageInvested.toString(),
+        items = items?.map { it.mapToDomainModel() } ?: emptyList()
     )
 
-private fun BalanceQuery.Item.mapToDomainModel() =
-    BalanceCryptoAccountItems(
-        asset = asset ?: "",
-        available = (available ?: 0.0) as Double,
-        trading = trading ?: "",
-        descriptionCurrency = descriptionCurrency ?: "",
-        balanceDollars = (balanceDollars ?: 0.0) as Double,
-        investedBalanceCurrency = investedBalanceCurrency ?: "",
-        percentageInvestedCurrency = percentageInvestedCurrency ?: "",
-        priceOfTheDay = (priceOfTheDay ?: 0.0) as Double,
-        url_image = url_image ?: ""
-    )
+private fun BalanceQuery.Item.mapToDomainModel() = BalanceCryptoAccountItems(
+    asset = asset.toString(),
+    available = available.toString().toDouble(),
+    trading = trading.toString(),
+    descriptionCurrency = descriptionCurrency.toString(),
+    balanceDollars = balanceDollars.toString().toDouble(),
+    investedBalanceCurrency = investedBalanceCurrency.toString(),
+    percentageInvestedCurrency = percentageInvestedCurrency.toString(),
+    priceOfTheDay = priceOfTheDay.toString().toDouble(),
+    url_image = url_image.toString()
+)
 
-private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() =
-    BalanceCardInformation(cardInformation = CardInformation(cardInfo.cardNumber))
+private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCardInformation(
+    cardInformation = CardInformation(
+        cardToken = cardInfo?.cardToken,
+        cardNumber = cardInfo?.cardNumber,
+        expDate = cardInfo?.expDate,
+        holderName = cardInfo?.holderName,
+        status = cardInfo?.status,
+        blockType = cardInfo?.blockType,
+        cValidation = cardInfo?.cvalidation,
+        type = cardInfo?.type
+    ),
+    floatingBalance = sALDO_FLOTANTE,
+    allowUnLock = pERMITE_DESBLOQUEO,
+    disbursementCommission = cOMISION_DESEMBOLSO,
+    interestRate = tASA_INTERES,
+    term = pLAZO,
+    fullName = nOMBRE_COMPLETO,
+    remission = rEMISION
+)
 
 fun BalanceQuery.Data.mapToDomainModel() =
     Balance(

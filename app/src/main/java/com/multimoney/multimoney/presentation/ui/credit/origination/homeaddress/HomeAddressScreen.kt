@@ -89,14 +89,26 @@ fun HomeAddressScreen(
                         OnNextActionClick(
                             user = sharedViewModel.email,
                             nextStepAction = {
-                                sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep())
+                                if (sharedViewModel.idBrand.toInt() == Brand.Guatemala.id) {
+                                    sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep(true))
+                                } else {
+                                    sharedViewModel.onUIEvent(OnCallMutationSaveCreditFlowStep())
+                                }
                             },
                             saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
                     )
                 },
-                nextStep = CreditStep.Seven.id,
-                previousStep = CreditStep.Five.id
+                nextStep = if (sharedViewModel.idBrand.toInt() == Brand.Guatemala.id) {
+                    CreditStep.Eight.id
+                } else {
+                    CreditStep.Seven.id
+                },
+                previousStep = if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {
+                    CreditStep.Four.id
+                } else {
+                    CreditStep.Five.id
+                }
             )
         )
         viewModel.onUIEvent(OnFormValid)

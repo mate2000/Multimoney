@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.solver.widgets.Optimizer
 import com.multimoney.multimoney.presentation.uielement.ShimmerBoxView
 import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 
@@ -21,8 +20,7 @@ fun DisbursementAmountScreenSkeleton() {
     ShimmerBoxView {
         Column(Modifier.fillMaxSize()) {
             ConstraintLayout(
-                modifier = Modifier.padding(top = 30.dp, start = 16.dp, end = 16.dp),
-                optimizationLevel = Optimizer.OPTIMIZATION_DIRECT
+                modifier = Modifier.padding(top = 30.dp, start = 16.dp, end = 16.dp)
             ) {
                 val (
                     titleOne, titleTwo, input, sliderLine, sliderSelectionCircle, sliderMinAmount, sliderMaxAmount,

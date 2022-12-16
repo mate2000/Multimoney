@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.method
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
@@ -26,11 +28,14 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 @Composable
 fun SmartPaymentMethodScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartPaymentMethodViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnStart)
+        }
     }
 
     Column(
@@ -47,6 +52,7 @@ fun SmartPaymentMethodScreen(
             onVisaClick = { viewModel.onUIEvent(OnVisaSelected) }
         )
     }
+    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
 }
 
 @Composable
@@ -70,7 +76,8 @@ fun PaymentOptions(
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_transfer,
-            onEndIconClick = onTransferClick
+            onEndIconClick = onTransferClick,
+            onClick = onTransferClick
         )
 
         CustomInfoButton(
@@ -80,7 +87,8 @@ fun PaymentOptions(
                 .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_payment_visa,
-            onEndIconClick = onVisaClick
+            onEndIconClick = onVisaClick,
+            onClick = onVisaClick
         )
     }
 }

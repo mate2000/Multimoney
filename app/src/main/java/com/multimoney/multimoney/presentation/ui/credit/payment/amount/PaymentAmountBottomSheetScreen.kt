@@ -26,7 +26,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import kotlinx.coroutines.CoroutineScope
 
@@ -89,7 +89,7 @@ fun PaymentAmountBottomSheetScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(72.dp),
-                startIcon = viewModel.uiState.clientBankAccount?.idCurrency?.getCurrency()?.accountIcon ?: 0,
+                startIcon = viewModel.uiState.clientBankAccount?.idCurrency?.getCurrencyFromId()?.accountIcon ?: 0,
                 title = viewModel.uiState.clientBankAccount?.bankDescription ?: "",
                 subtitle = getMaskedAccount(
                     viewModel.uiState.clientBankAccount?.accountNumber ?: "",

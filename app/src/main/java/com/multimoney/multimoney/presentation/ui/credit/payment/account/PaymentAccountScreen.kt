@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -38,7 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
@@ -51,12 +51,10 @@ fun PaymentAccountScreen(
     // Navigation
     viewModel.apply {
         isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
+        LaunchedEffect(isOnRestart) {
             if (isOnRestart) {
                 executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
                 onUIEvent(OnCallQueryGetClientBankAccount)
-            }
-            onDispose {
                 isOnRestart = false
             }
         }
@@ -156,7 +154,7 @@ fun PaymentAccountList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    startIcon = clientBankAccount?.idCurrency?.getCurrency()?.accountIcon ?: 0,
+                    startIcon = clientBankAccount?.idCurrency?.getCurrencyFromId()?.accountIcon ?: 0,
                     title = clientBankAccount?.bankDescription ?: "",
                     subtitle = getMaskedAccount(
                         clientBankAccount?.accountNumber ?: "",

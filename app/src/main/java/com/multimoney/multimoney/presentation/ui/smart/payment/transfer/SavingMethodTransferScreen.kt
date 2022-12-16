@@ -49,7 +49,7 @@ fun SavingMethodTransferScreen(
 ) {
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
-    val sacAccountNumber = stringResource(R.string.saving_method_transfer_account_number)
+    val userAccountNumber = viewModel.uiState.accountNumber
     val copiedMessage = stringResource(R.string.saving_method_transfer_account_number_copied)
 
     // Navigation
@@ -76,9 +76,10 @@ fun SavingMethodTransferScreen(
 
     viewModel.apply {
         SavingMethodTransferContent(
+            userAccountNumber,
             onBackClick = { onUIEvent(OnNavigateBack) },
             onGoToHomeClick = { onUIEvent(OnNavigateBackHome) },
-            onCopyToClipboard = { onUIEvent(OnCopyTextToClipboard(sacAccountNumber)) },
+            onCopyToClipboard = { onUIEvent(OnCopyTextToClipboard(userAccountNumber)) },
         )
 
         BackHandler { onUIEvent(OnNavigateBack) }
@@ -88,6 +89,7 @@ fun SavingMethodTransferScreen(
 @Composable
 @Preview
 fun SavingMethodTransferContent(
+    accountNumber: String = "",
     onBackClick: () -> Unit = { },
     onGoToHomeClick: () -> Unit = { },
     onCopyToClipboard: () -> Unit = { },
@@ -141,7 +143,7 @@ fun SavingMethodTransferContent(
                         .padding(top = 22.dp)
                         .fillMaxWidth(),
                     labelText = stringResource(id = R.string.saving_method_transfer_account),
-                    descriptionText = stringResource(R.string.saving_method_transfer_account_number),
+                    descriptionText = accountNumber,
                     endIcon = R.drawable.ic_copy,
                     endIconClick = onCopyToClipboard
                 )

@@ -27,8 +27,9 @@ import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAc
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnEditAccount
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.capitalized
+import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -63,10 +64,10 @@ class AddIbanAccountViewModel @Inject constructor(
 
     private fun onStart() {
         uiState = uiState.copy(
-            title = if (previousScreen == Screen.DisbursementAccountScreen.baseRoute) {
-                R.string.add_iban_account_disbursement_tile
-            } else {
-                R.string.add_iban_account_payment_tile
+            title = when (previousScreen) {
+                Screen.DisbursementAccountScreen.baseRoute -> R.string.add_iban_account_disbursement_tile
+                Screen.SmartPaymentAccountScreen.baseRoute -> R.string.payment_account_iban_title
+                else -> R.string.add_iban_account_payment_tile
             }
         )
     }
@@ -91,11 +92,17 @@ class AddIbanAccountViewModel @Inject constructor(
         }
     }
 
+    private fun getQueryType() = when (previousScreen) {
+        Screen.SmartPaymentAccountScreen.baseRoute -> null
+        else -> BankAccountType.Credit.value
+    }
+
     private fun validateIbanAccount() = executeUseCase {
         uiState = uiState.copy(accountInformation = Pair(true, R.string.iban_account_loading))
         queryValidateBankAccountUseCase(
             account = "${Brand.CostaRica.iban}${uiState.accountNumber}",
             identification = identification.orEmpty(),
+            queryType = getQueryType(),
             user = user.orEmpty(),
             idBrand = idBrand ?: 0
         ).collectLatest {
@@ -115,7 +122,7 @@ class AddIbanAccountViewModel @Inject constructor(
                                 uiState.copy(
                                     accountError = Pair(false, R.string.empty),
                                     accountInformation = Pair(false, R.string.empty),
-                                    validationError = response.responseMessage.capitalized()
+                                    validationError = Pair(true, response.responseMessage.capitalized())
                                 )
                         }
                     }
@@ -147,7 +154,7 @@ class AddIbanAccountViewModel @Inject constructor(
             idClient = idClient?.toLong() ?: 0,
             idBank = validateAccount?.bankId ?: 0,
             accountNumber = "${Brand.CostaRica.iban}${uiState.accountNumber}",
-            idCurrency = validateAccount?.currency?.getCurrency()?.id ?: 0,
+            idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id ?: 0,
             idAccountType = null,
             idLoanClient = idLoanClient?.toLong() ?: 0,
             user = user.orEmpty(),
@@ -199,7 +206,7 @@ class AddIbanAccountViewModel @Inject constructor(
         val accountError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val accountInformation: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val isFormValid: Boolean = false,
-        val validationError: String? = null,
+        val validationError: Pair<Boolean, String>? = Pair(false, ""),
         val ibanSuccess: Boolean = false,
         val isLoading: Boolean = false,
         val dialogParameters: DialogParameters = DialogParameters()

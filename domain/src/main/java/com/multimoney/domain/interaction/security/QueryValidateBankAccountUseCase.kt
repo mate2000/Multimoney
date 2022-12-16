@@ -8,6 +8,7 @@ interface QueryValidateBankAccountUseCase {
     suspend operator fun invoke(
         account: String,
         identification: String,
+        queryType: String?,
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<ValidateAccount?>>

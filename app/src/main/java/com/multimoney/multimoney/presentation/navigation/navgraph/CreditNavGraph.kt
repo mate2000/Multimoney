@@ -10,7 +10,9 @@ import com.multimoney.multimoney.presentation.navigation.CREDIT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.credit.origination.nonpreapproved.NonPreApprovedScreen
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
+import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.continuevalidatingonfido.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.evisertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
@@ -26,11 +28,13 @@ const val ID_USER_REQUEST = "id_user_request"
 const val FIRST_NAME = "name"
 const val LAST_NAME = "last_name"
 const val ONFIDO_STATUS = "onfido_status"
+const val COMING_FROM_CRYPTO = "coming_from_crypto"
 const val EVICERTIA_STATUS = "evicertia_status"
 const val SIGN_DOCUMENT_STEP_ARG = "sign_document_step_arg"
 const val SIGN_DOCUMENT_URL = "sign_document_url"
 const val SIGN_DOCUMENT_ID_PRINT = "sign_document_id_print"
 const val ONFIDO_AND_EVICERTIA_ERROR = "onfifo_and_evicertia_error"
+const val IS_SMART_EVICERTIA = "is_smart_evicertia"
 const val ID_CURRENCY = "currency"
 
 fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
@@ -45,14 +49,14 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(ID_USER_REQUEST) { type = NavType.IntType },
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType }
             )
-        ) { navBackStackEntry ->
+        ) {
             CreditScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                })
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
 
         composable(
@@ -76,7 +80,8 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 navArgument(SIGN_DOCUMENT_ID_PRINT) { type = NavType.LongType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(ID_USER_REQUEST) { type = NavType.LongType },
-                navArgument(PK_USER) { type = NavType.LongType }
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(IS_SMART_EVICERTIA) { type = NavType.BoolType }
             )
         ) {
             SignDocumentProcessScreen(onPopAndNavigate = {
@@ -85,6 +90,7 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 }
             })
         }
+
         composable(
             route = Screen.ContinueValidatingOnfidoScreen.route
         ) {
@@ -138,6 +144,47 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
             )
         ) {
             AddIbanAccountScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.CreditMovementsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            CreditMovementsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(
+            route = Screen.NonPreApprovedScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.IntType },
+                navArgument(ID_USER_REQUEST) { type = NavType.IntType }
+            )
+        ) {
+            NonPreApprovedScreen(
                 onNavigate = {
                     navController.navigate(it.route)
                 },

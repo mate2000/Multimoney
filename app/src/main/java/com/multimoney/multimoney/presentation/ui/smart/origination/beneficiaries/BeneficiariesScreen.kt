@@ -51,6 +51,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRelationshipValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnRemoveBeneficiaryClick
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnValidatePercentage
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.edit.EditBeneficiaryBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -64,6 +65,7 @@ fun BeneficiariesScreen(
     beneficiaryViewModel: BeneficiariesViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
+
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
         beneficiaryViewModel.baseEvent.collect { event ->
@@ -121,7 +123,12 @@ fun BeneficiariesScreen(
                 previousStep = Three.id
             )
         )
-        beneficiaryViewModel.onUIEvent(OnValidateForm)
+        if (beneficiaryViewModel.uiState.beneficiaryList.isNotEmpty()) {
+            beneficiaryViewModel.onUIEvent(OnValidatePercentage)
+        } else {
+            beneficiaryViewModel.onUIEvent(OnValidateForm)
+        }
+
     }
 
     val generalModifier = if (beneficiaryViewModel.uiState.addBeneficiaryState) {

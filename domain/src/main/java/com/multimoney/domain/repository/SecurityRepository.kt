@@ -1,18 +1,20 @@
 package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.security.CatalogType
+import com.multimoney.domain.model.security.ChangeEmail
+import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.ClientInfoCr
 import com.multimoney.domain.model.security.Company
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.CountryList
 import com.multimoney.domain.model.security.MiniCards
-import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.ValidateAccount
+import com.multimoney.domain.model.security.ValidateOTP
 import com.multimoney.domain.model.security.ValidatePin
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.security.ValidateUserStatus
@@ -138,6 +140,7 @@ interface SecurityRepository {
     suspend fun queryValidateBankAccount(
         account: String,
         identification: String,
+        queryType: String?,
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<ValidateAccount?>>
@@ -152,6 +155,29 @@ interface SecurityRepository {
         infoCriptoStatus: Int
     ): Flow<MultimoneyResult<QuickActions?>>
 
+    suspend fun mutationValidateOTP(
+        email: String,
+        otp: String
+    ): Flow<MultimoneyResult<ValidateOTP>>
+
+    suspend fun mutationChangePhone(
+        identification: String,
+        phone: String,
+        pkUser: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ChangePhone>>
+
+    suspend fun mutationChangeEmail(
+        idClient : Int,
+        pkUser: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<ChangeEmail>>
+
     suspend fun queryHomeMiniCards(
         infoCreditStatus: Boolean,
         infoVirtualCardStatus: Boolean,
@@ -159,5 +185,5 @@ interface SecurityRepository {
         infoCripto: Boolean,
         userEmail: String,
         idBrand: Int
-    ) : Flow<MultimoneyResult<MiniCards>>
+    ): Flow<MultimoneyResult<MiniCards>>
 }

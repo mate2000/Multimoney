@@ -53,6 +53,7 @@ const val PAYMENT_DATE = "payment_date"
 const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
 const val IS_EDIT_PAYMENT_SCHEDULE = "is_edit_payment_schedule"
 const val PREVIOUS_SCREEN = "previous_screen"
+const val USER_SMART_ACCOUNT = "user_smart_account"
 
 // Payment maps location parameters
 const val POINT_NAME = "point_name"
@@ -283,8 +284,11 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(TRANSFER_ACCOUNT) {
                     type = TransferAccountNavType()
                 },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -369,6 +373,12 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -395,6 +405,12 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(CARD_SELECTED) {
                     type = CardVDNavType()
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
                 }
             )
         ) {

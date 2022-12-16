@@ -31,6 +31,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.STEP_BY_STEP_EVENT_DELAY
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnBirthDateValueChange
@@ -40,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.document.Smar
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCallQueryProfessionUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnCivilStateChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnGenderChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.document.SmartDocumentViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
@@ -54,6 +56,7 @@ import com.multimoney.multimoney.presentation.util.getPickedDateAsString
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
+import kotlinx.coroutines.delay
 
 @Composable
 fun SmartDocumentScreen(
@@ -62,6 +65,11 @@ fun SmartDocumentScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+
+    LaunchedEffect(true) {
+        delay(STEP_BY_STEP_EVENT_DELAY)
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    }
 
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
@@ -143,7 +151,6 @@ fun SmartDocumentScreen(
                 sharedViewModel.accountSmartData?.idBrand ?: 0
             )
         )
-
         viewModel.onUIEvent(OnValidateForm)
     }
 
@@ -200,7 +207,12 @@ fun SmartDocumentScreen(
 
                         val calendarValidation = Calendar.getInstance()
                         calendarValidation.set(year, month, day)
-                        viewModel.onUIEvent(OnBirthDateValueChange(date, LocalDate.of(year, month, day)))
+                        viewModel.onUIEvent(
+                            OnBirthDateValueChange(
+                                date,
+                                LocalDate.of(year, month, day)
+                            )
+                        )
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),

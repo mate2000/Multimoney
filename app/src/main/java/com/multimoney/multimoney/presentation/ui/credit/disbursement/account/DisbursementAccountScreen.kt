@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnHideDisbursementBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBackHome
@@ -35,10 +36,11 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -55,12 +57,10 @@ fun DisbursementAccountScreen(
     // Navigation
     viewModel.apply {
         isOnRestart = isRestart
-        DisposableEffect(isOnRestart) {
+        LaunchedEffect(isOnRestart) {
             if (isOnRestart) {
                 executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
                 onUIEvent(OnCallQueryGetClientBankAccount)
-            }
-            onDispose {
                 isOnRestart = false
             }
         }
@@ -152,7 +152,7 @@ fun PaymentAccountList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    startIcon = clientBankAccount?.idCurrency?.getCurrency()?.accountIcon ?: 0,
+                    startIcon = clientBankAccount?.idCurrency?.getCurrencyFromId()?.accountIcon ?: 0,
                     title = clientBankAccount?.bankDescription ?: "",
                     subtitle = getMaskedAccount(
                         clientBankAccount?.accountNumber ?: "",
@@ -174,6 +174,17 @@ fun PaymentAccountList(
             viewModel.onUIEvent(OnNavigateToDisbursementAddAccount)
         },
         buttonType = CustomButtonType.PrimaryTertiary,
-        trailingIcon = R.drawable.ic_plus
+        trailingIcon = R.drawable.ic_plus,
+        enable = (viewModel.uiState.clientBankAccountList?.size ?: 0) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
     )
+
+    if ((viewModel.uiState.clientBankAccountList?.size ?: 0) >= DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER) {
+        CustomInformativeText(
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 32.dp),
+            leadingIcon = R.drawable.ic_information,
+            text = stringResource(id = R.string.disbursement_account_max_number_disclaimer),
+            textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
+            leadingIconClick = { viewModel.onUIEvent(OnDisclaimerClick) }
+        )
+    }
 }

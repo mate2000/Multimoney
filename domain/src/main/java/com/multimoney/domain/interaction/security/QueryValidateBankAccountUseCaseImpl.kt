@@ -10,9 +10,14 @@ class QueryValidateBankAccountUseCaseImpl(val repository: SecurityRepository) :
     override suspend fun invoke(
         account: String,
         identification: String,
+        queryType: String?,
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<ValidateAccount?>> = repository.queryValidateBankAccount(
-        account, identification, user, idBrand
+        account,
+        identification,
+        queryType,
+        user,
+        idBrand
     )
 }

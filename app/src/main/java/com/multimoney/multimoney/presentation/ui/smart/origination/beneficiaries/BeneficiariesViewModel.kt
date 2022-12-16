@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.multimoney.domain.interaction.accountsmart.QueryRelationshipUseCase
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.Relationship
 import com.multimoney.domain.model.util.onFailure
@@ -24,8 +25,8 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.hasNumbersAndSpecialCharacters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class BeneficiariesViewModel @Inject constructor(
@@ -73,7 +74,7 @@ class BeneficiariesViewModel @Inject constructor(
         if (percentage.isBlank()) {
             uiState = uiState.copy(percentage = percentage)
         } else {
-            if (percentage.toInt() <= MAX_PERCENTAGE) {
+            if (percentage.toInt() in MIN_PERCENTAGE..MAX_PERCENTAGE) {
                 uiState = uiState.copy(percentage = percentage)
             }
         }
@@ -171,9 +172,27 @@ class BeneficiariesViewModel @Inject constructor(
     private fun validateForm() {
         emitBaseEvent(
             OnFormValidateCompleted(
-                isFormValid = uiState.beneficiaryFullName.isNotBlank() && uiState.percentage.isNotBlank() && uiState.relationship.isNotBlank()
+                isFormValid = uiState.beneficiaryFullName.isNotBlank() &&
+                        uiState.percentage.isNotBlank() &&
+                        uiState.relationship.isNotBlank()
             )
         )
+    }
+
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        accountSmartData?.let {
+            uiState = uiState.copy(
+                addBeneficiaryState = false,
+                addBeneficiaryOption = accountSmartData.listBeneficiaries?.isNotEmpty() == true,
+                beneficiaryList = accountSmartData.listBeneficiaries ?: emptyList(),
+                totalPercentage = MAX_PERCENTAGE,
+            )
+            validatePercentage()
+        }
     }
 
     private fun validatePercentage() {
@@ -192,6 +211,7 @@ class BeneficiariesViewModel @Inject constructor(
             is OnPercentageValueChange -> onPercentageValueChange(event.percentage)
             is OnNextActionClick -> event.nextStepAction()
             is OnValidateForm -> validateForm()
+            is UIEvent.OnValidatePercentage -> validatePercentage()
             is OnAddBeneficiaryStateChange -> onAddBeneficiaryStateChange(
                 event.status,
                 event.beneficiary
@@ -200,6 +220,7 @@ class BeneficiariesViewModel @Inject constructor(
             is OnRemoveBeneficiaryClick -> onShowAlertBeforeRemoveBeneficiary(event.beneficiary)
             is OnAddBeneficiaryOptionChange -> uiState =
                 uiState.copy(addBeneficiaryOption = event.option)
+            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
         }
     }
 
@@ -235,8 +256,9 @@ class BeneficiariesViewModel @Inject constructor(
         ) : UIEvent()
 
         data class OnAddBeneficiaryOptionChange(val option: Boolean) : UIEvent()
-
+        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
         object OnValidateForm : UIEvent()
+        object OnValidatePercentage : UIEvent()
     }
 
     sealed class BaseEvent {
@@ -245,5 +267,6 @@ class BeneficiariesViewModel @Inject constructor(
 
     companion object {
         const val MAX_PERCENTAGE = 100
+        const val MIN_PERCENTAGE = 1
     }
 }

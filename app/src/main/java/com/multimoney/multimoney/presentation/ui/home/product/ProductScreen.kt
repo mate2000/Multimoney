@@ -305,7 +305,7 @@ fun TipsAndOffer(
                         .padding(start = 16.dp, end = 2.dp)
                         .clickable {
                             viewModel.onUIEvent(OnNavigateToProfileScreen)
-                            },
+                        },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )

@@ -47,6 +47,12 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -56,12 +62,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -95,7 +95,7 @@ class ValidateOTPViewModel @Inject constructor(
             userName = savedStateHandle[USER],
             sendMethod = savedStateHandle[SEND_METHOD],
             changingField = savedStateHandle[CHANGING_FIELD],
-            newValue = savedStateHandle[NEW_VALUE],
+            newValue = savedStateHandle[NEW_VALUE]
         )
         getTextResources()
     }
@@ -210,8 +210,9 @@ class ValidateOTPViewModel @Inject constructor(
         when (uiState.phaseCount) {
             PHASE_ONE -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP)
             PHASE_TWO -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP_AGAIN)
-            PHASE_THREE, null -> uiState =
-                uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
+            PHASE_THREE, null ->
+                uiState =
+                    uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
         }
     }
 
@@ -283,14 +284,19 @@ class ValidateOTPViewModel @Inject constructor(
         }
 
     private fun onChangeEmail(
-        idClient : Int,pkUser: Int, identification: String, email: String, registerId: Int,
-        changeUser: Boolean, user: String, idBrand: Int
+        idClient: Int,
+        pkUser: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
     ) =
         executeUseCase {
             mutationChangeEmailUseCase.invoke(
                 idClient,
                 pkUser,
-                idClient,
                 identification,
                 email,
                 registerId,
@@ -344,9 +350,8 @@ class ValidateOTPViewModel @Inject constructor(
                 }
                 else -> {
                     onChangeEmail(
-                        uiState.idClient?.toInt() ?: 0,
-                        uiState.pkUser?.toInt() ?: 0,
                         uiState.idClient ?: 0,
+                        uiState.pkUser?.toInt() ?: 0,
                         uiState.identification.toString(),
                         uiState.newValue.toString(),
                         0,

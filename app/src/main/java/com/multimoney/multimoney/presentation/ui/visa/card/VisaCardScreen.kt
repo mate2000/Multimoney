@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
+@Preview
 fun VisaCardScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -45,37 +46,32 @@ fun VisaCardScreen(
     Column(
         modifier = Modifier.background(MultimoneyTheme.colors.background).fillMaxSize()
     ) {
-        Column(
-            Modifier.weight(0.11f)
-        ) {
-            TopNavBar(
-                rightButtonIcon = R.drawable.ic_gear,
-                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-                onRightButtonClick = {
-                    // TODO: Execute action when implemented
-                    Toast.makeText(
-                        context,
-                        "TBD3",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            )
-        }
+        TopNavBar(
+            rightButtonIcon = R.drawable.ic_gear,
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            onRightButtonClick = {
+                // TODO: Execute action when implemented
+                Toast.makeText(
+                    context,
+                    "TBD3",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        )
         CustomCardVisaVertical(
-            modifier = Modifier.weight(0.45f).padding(start = 68.dp, end = 68.dp).fillMaxSize(),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 16.dp).fillMaxWidth(),
             isTextVisible = viewModel.uiState.isTextVisible
         )
-        Column(
-            Modifier.fillMaxWidth().weight(0.09f),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
             CustomInformativeChip(
                 text = stringResource(
                     id = R.string.visa_card_available_amount,
-                    viewModel.uiState.availableAmount
+                    viewModel.availableBalanceLabel.orEmpty()
                 ),
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
-                modifier = Modifier.padding(top = 16.dp),
                 onClick = {
                     viewModel.onUIEvent(UIEvent.OnAvailableAmountClick)
                 },
@@ -86,55 +82,51 @@ fun VisaCardScreen(
                 size = Large
             )
         }
-        Column(
-            Modifier.background(MultimoneyTheme.colors.backgroundBottomOptions).weight(0.35f)
+        Row(
+            modifier = Modifier.padding(start = 16.dp, end = 8.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(
-                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 8.dp).fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if (viewModel.uiState.isNfcAvailable) {
-                    CustomButtonBig(
-                        modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
-                        icon = R.drawable.ic_link,
-                        text = stringResource(id = R.string.link),
-                        onClick = {
-                            // TODO: Execute action when implemented
-                            Toast.makeText(
-                                context,
-                                "TBD1",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    )
-                }
+            if (viewModel.uiState.isNfcAvailable) {
                 CustomButtonBig(
                     modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
-                    icon = R.drawable.ic_eye,
-                    text = stringResource(id = R.string.see_data),
+                    icon = R.drawable.ic_link,
+                    text = stringResource(id = R.string.link),
                     onClick = {
                         // TODO: Execute action when implemented
                         Toast.makeText(
                             context,
-                            "TBD2",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                )
-                CustomButtonBig(
-                    modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
-                    icon = R.drawable.ic_locked,
-                    text = stringResource(id = R.string.locked),
-                    onClick = {
-                        // TODO: Execute action when implemented
-                        Toast.makeText(
-                            context,
-                            "TBD3",
+                            "TBD1",
                             Toast.LENGTH_LONG
                         ).show()
                     }
                 )
             }
+            CustomButtonBig(
+                modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
+                icon = R.drawable.ic_eye,
+                text = stringResource(id = R.string.see_data),
+                onClick = {
+                    // TODO: Execute action when implemented
+                    Toast.makeText(
+                        context,
+                        "TBD2",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            )
+            CustomButtonBig(
+                modifier = Modifier.weight(1f).fillMaxWidth().padding(end = 8.dp),
+                icon = R.drawable.ic_locked,
+                text = stringResource(id = R.string.locked),
+                onClick = {
+                    // TODO: Execute action when implemented
+                    Toast.makeText(
+                        context,
+                        "TBD3",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            )
         }
     }
 

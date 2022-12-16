@@ -77,8 +77,7 @@ fun SavingAmountScreen(
         val notificationTitle = stringResource(string.smart_saving_try_later_notification_title)
         val notificationBody = stringResource(string.smart_saving_try_later_notification_body)
         AlertResult(
-            isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnNavigateHome) },
+            isTopNavBarVisible = false,
             titleResource = string.error_occurred_title,
             descriptionResource = string.error_please_try_again,
             buttonTextResource = string.error_button_retry,

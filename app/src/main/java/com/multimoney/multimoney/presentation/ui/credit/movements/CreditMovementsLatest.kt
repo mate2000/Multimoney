@@ -36,7 +36,11 @@ fun CreditMovementsLatest(viewModel: ProductViewModel) {
     viewModel.creditMovements.let { movementResultList ->
         movementResultList.forEach { creditMovementsResult ->
             creditMovementsResult.result?.let {
-                movesResult.addAll(it)
+                if (movesResult.size > MAX_HOME_CREDIT_MOVEMENTS_RECORDS) {
+                    return@forEach
+                } else {
+                    movesResult.addAll(it)
+                }
             }
         }
     }
@@ -57,14 +61,16 @@ fun CreditMovementsLatest(viewModel: ProductViewModel) {
                     fontWeight = FontWeight.SemiBold
                 )
             )
-            ClickableText(
-                text = AnnotatedString(stringResource(R.string.home_product_check_all)),
-                style = Typography.button.copy(
-                    color = MultimoneyTheme.colors.textLink,
-                    fontSize = 14.sp
-                ),
-                onClick = { viewModel.onUIEvent(OnNavigateToCreditMovementsScreen) }
-            )
+            if (movesResult.isNotEmpty()) {
+                ClickableText(
+                    text = AnnotatedString(stringResource(R.string.home_product_check_all)),
+                    style = Typography.button.copy(
+                        color = MultimoneyTheme.colors.textLink,
+                        fontSize = 14.sp
+                    ),
+                    onClick = { viewModel.onUIEvent(OnNavigateToCreditMovementsScreen) }
+                )
+            }
         }
         if (movesResult.isEmpty()) {
             CreditMovementsEmptyState()

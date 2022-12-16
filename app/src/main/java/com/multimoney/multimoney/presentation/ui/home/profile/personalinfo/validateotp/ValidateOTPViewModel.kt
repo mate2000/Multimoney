@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -96,7 +95,7 @@ class ValidateOTPViewModel @Inject constructor(
             userName = savedStateHandle[USER],
             sendMethod = savedStateHandle[SEND_METHOD],
             changingField = savedStateHandle[CHANGING_FIELD],
-            newValue = savedStateHandle[NEW_VALUE]
+            newValue = savedStateHandle[NEW_VALUE],
         )
         getTextResources()
     }
@@ -104,8 +103,8 @@ class ValidateOTPViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             dialogTextResource = when (uiState.idBrand) {
-                Brand.Guatemala.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt else R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt
-                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone else R.string.profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email
+                Brand.Guatemala.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone_gt else R.string.profile_otp_user_blocked_max_attempt_email_gt
+                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone else R.string.profile_otp_user_blocked_max_attempt_email
             },
             alertTextResource = when (uiState.idBrand) {
                 Brand.Guatemala.id -> R.string.profile_error_changing_phone_gt
@@ -211,7 +210,8 @@ class ValidateOTPViewModel @Inject constructor(
         when (uiState.phaseCount) {
             PHASE_ONE -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP)
             PHASE_TWO -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP_AGAIN)
-            PHASE_THREE, null -> uiState = uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
+            PHASE_THREE, null -> uiState =
+                uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
         }
     }
 
@@ -250,8 +250,6 @@ class ValidateOTPViewModel @Inject constructor(
     }
 
     private fun onLogout() {
-        Timber.d("Closing session")
-        Log.e("TAG", "closing session")
         cognitoHelper.signOut(signOutError = {
             Timber.d("SignOut Error")
         })
@@ -285,17 +283,12 @@ class ValidateOTPViewModel @Inject constructor(
         }
 
     private fun onChangeEmail(
-        pkUser: Int,
-        idClient: Int,
-        identification: String,
-        email: String,
-        registerId: Int,
-        changeUser: Boolean,
-        user: String,
-        idBrand: Int
+        idClient : Int,pkUser: Int, identification: String, email: String, registerId: Int,
+        changeUser: Boolean, user: String, idBrand: Int
     ) =
         executeUseCase {
             mutationChangeEmailUseCase.invoke(
+                idClient,
                 pkUser,
                 idClient,
                 identification,
@@ -351,6 +344,7 @@ class ValidateOTPViewModel @Inject constructor(
                 }
                 else -> {
                     onChangeEmail(
+                        uiState.idClient?.toInt() ?: 0,
                         uiState.pkUser?.toInt() ?: 0,
                         uiState.idClient ?: 0,
                         uiState.identification.toString(),

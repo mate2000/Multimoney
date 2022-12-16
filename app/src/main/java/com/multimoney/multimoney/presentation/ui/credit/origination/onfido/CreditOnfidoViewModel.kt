@@ -242,7 +242,7 @@ class CreditOnfidoViewModel @Inject constructor(
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${false}",
             Screen.CreditOnfidoScreen.route
         )
     }

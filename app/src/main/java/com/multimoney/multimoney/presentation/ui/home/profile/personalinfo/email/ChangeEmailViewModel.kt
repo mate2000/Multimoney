@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -23,7 +22,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangeEmailViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -38,13 +36,13 @@ class ChangeEmailViewModel @Inject constructor(
             userName = savedStateHandle[USER_NAME],
             identification = savedStateHandle[IDENTIFICATION],
             pkUser = savedStateHandle[PK_USER],
-            idClient = savedStateHandle[ID_CLIENT],
-            firstName = savedStateHandle[FIRST_NAME]
+            firstName = savedStateHandle[FIRST_NAME],
+            idClient = savedStateHandle.get<Int>(ID_CLIENT)?.toInt()
         )
     }
 
     private fun onContinueButtonClicked() {
-        navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.idClient}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun isFormValid() {

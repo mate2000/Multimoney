@@ -32,7 +32,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentA
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -78,7 +78,7 @@ class PaymentAccountViewModel @Inject constructor(
 
     private fun getTextResources() {
         uiState = uiState.copy(
-            titleResource = idCurrency?.getCurrency()?.accountTitle ?: R.string.empty
+            titleResource = idCurrency?.getCurrencyFromId()?.accountTitle ?: R.string.empty
         )
     }
 

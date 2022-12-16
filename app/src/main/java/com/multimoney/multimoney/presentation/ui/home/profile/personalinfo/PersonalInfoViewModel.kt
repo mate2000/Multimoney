@@ -23,7 +23,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PersonalInfoViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -40,16 +39,16 @@ class PersonalInfoViewModel @Inject constructor(
             identification = savedStateHandle[IDENTIFICATION],
             email = savedStateHandle.get<String>(EMAIL)?.trim()?.lowercase(Locale.getDefault()),
             firstName = savedStateHandle[FIRST_NAME],
-            userName = savedStateHandle[USER_NAME]
+            userName = savedStateHandle[USER_NAME],
         )
     }
 
     private fun navigateToEditEmail() {
-        navigateTo("${Screen.ProfileChangeEmailScreen.baseRoute}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.idClient}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileChangeEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     private fun navigateToEditPhone() {
-        navigateTo("${Screen.ProfileChangePhoneScreen.baseRoute}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileChangePhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
     data class UIState(
@@ -59,10 +58,10 @@ class PersonalInfoViewModel @Inject constructor(
         val email: String? = null,
         val identification: String? = null,
         val pkUser: String? = null,
-        val idClient: Int? = null,
         val firstName: String? = null,
         val phoneNumber: String? = null,
         val idBrand: Int? = null,
+        val idClient : Int? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

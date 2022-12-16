@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
@@ -17,6 +18,18 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
+
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        accountSmartData?.let {
+            onCompanyNameValueChange(it.companyName.orEmpty())
+            onCompanyDescriptionValueChange(it.aboutCompany.orEmpty())
+            onMonthlyIncomeValueChange(it.income.toString())
+        }
+    }
 
     private fun onCompanyNameValueChange(companyName: String) {
         uiState = uiState.copy(companyNameValue = companyName)
@@ -51,10 +64,10 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
     fun isFormValid() = uiState.companyNameValue.isNotBlank() &&
-        uiState.companyDescriptionValue.isNotBlank() &&
-        !uiState.companyDescriptionError.first &&
-        uiState.monthlyIncomeValue.isNotBlank() &&
-        uiState.monthlyIncomeValue.toFloat() > MIN_INCOME
+            uiState.companyDescriptionValue.isNotBlank() &&
+            !uiState.companyDescriptionError.first &&
+            uiState.monthlyIncomeValue.isNotBlank() &&
+            uiState.monthlyIncomeValue.toFloat() > MIN_INCOME
 
     data class UIState(
         // Interactions
@@ -73,6 +86,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
             is UIEvent.OnCompanyNameChange -> onCompanyNameValueChange(uiEvent.companyName)
             is UIEvent.OnCompanyDescriptionChange -> onCompanyDescriptionValueChange(uiEvent.description)
             is UIEvent.OnMonthlyIncomeChange -> onMonthlyIncomeValueChange(uiEvent.monthlyIncome)
+            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(uiEvent.accountSmartData)
         }
     }
 
@@ -80,6 +94,7 @@ class OwnBusinessViewModel @Inject constructor() : BaseViewModel(false) {
         data class OnCompanyNameChange(val companyName: String) : UIEvent()
         data class OnCompanyDescriptionChange(val description: String) : UIEvent()
         data class OnMonthlyIncomeChange(val monthlyIncome: String) : UIEvent()
+        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
     }
 
     sealed class BaseEvent {

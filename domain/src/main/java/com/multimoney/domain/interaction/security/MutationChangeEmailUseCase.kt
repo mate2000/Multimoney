@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MutationChangeEmailUseCase {
     suspend operator fun invoke(
+        idClient : Int,
         pkUser: Int,
         idClient: Int,
         identification: String,

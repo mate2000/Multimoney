@@ -169,6 +169,7 @@ interface SecurityRepository {
     ): Flow<MultimoneyResult<ChangePhone>>
 
     suspend fun mutationChangeEmail(
+        idClient : Int,
         pkUser: Int,
         idClient: Int,
         identification: String,

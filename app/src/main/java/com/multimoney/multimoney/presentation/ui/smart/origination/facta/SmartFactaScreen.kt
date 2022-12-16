@@ -43,6 +43,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFa
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsTaxPayerChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSCitizenChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnIsUSTaxPayerChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonsLayout
@@ -52,6 +53,11 @@ fun SmartFactaScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     viewModel: SmartFactaViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(true) {
+        viewModel.onUiEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    }
+
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(sharedViewModel.idBrandAsInt)))
         sharedViewModel.onUIEvent(

@@ -279,6 +279,10 @@
     <string name="home_product_process_action" translatable="false">Validar identificación</string>
     <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
     <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
+    <string name="home_product_gt_sv_non_pre_approved_credit_title" translatable="false">Crédito</string>
+    <string name="home_product_sv_non_pre_approved_credit_description" translatable="false">Contestá estas preguntas para conocer si aplicás para un crédito.</string>
+    <string name="home_product_gt_non_pre_approved_credit_description" translatable="false">Contesta estas preguntas para conocer si aplicas para un crédito.</string>
+    <string name="home_product_gt_sv_non_pre_approved_credit_action" translatable="false">Contestar preguntas</string>
     <string name="home_product_gt_with_out_credit_title" translatable="false">Conoce nuestras opciones\nde crédito</string>
     <string name="home_smart_product_process_accept_contract_description" translatable="false">Estamos terminando de validar tus datos. Pronto te informaremos del proceso.</string>
     <string name="home_product_gt_with_out_credit_description" translatable="false">Comunicate con nosotros para brindarte más información de tu solicitud de crédito.</string>
@@ -300,6 +304,7 @@
     <string name="home_crypto_card_with_balance_label" translatable="false">Balance</string>
     <string name="home_crypto_card_smart_in_process_label" translatable="false">Cripto</string>
     <string name="home_crypto_card_with_balance_zero_label" translatable="false">0.00</string>
+    <string name="home_product_process_smart_label" translatable="false">Smart</string>
 
     <!-- Credit in progress firm incomplete -->
     <string name="home_firm_incomplete_title" translatable="false">¡Sólo falta tu firma!</string>
@@ -329,8 +334,8 @@
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
-    <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde quieres recibir el código?</string>
-    <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde querés recibir el código?</string>
+    <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde quieres recibir el código?</string>
+    <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde querés recibir el código?</string>
     <string name="profile_new_phone_number" translatable="false">Nuevo número de teléfono</string>
     <string name="profile_we_will_send_you_a_code" translatable="false">Te envieramos un código de verificación para confirmar tu nuevo teléfono</string>
     <string name="profile_sms_to_previous_phone" translatable="false">SMS al teléfono anterior</string>
@@ -340,10 +345,10 @@
     <string name="profile_send_code" translatable="false">Enviar código</string>
     <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
     <string name="profile_enter_the_code_sent_to_template_gt" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
-    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
-    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
-    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_phone_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
-    <string name="profile_otp_code_user_blocked_for_exceed_the_max_of_attend_email_gt" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_phone_gt" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_email_gt" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="profile_code_expires_in_template" translatable="false">Código expira en %1$s segundos</string>
     <string name="profile_code_resend_expires_in_template" translatable="false">Código reenviado expira en %1$s segundos</string>
     <string name="profile_error_changing_phone_title" translatable="false">No pudimos cambiar tu teléfono</string>
@@ -365,7 +370,22 @@
     <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
     <string name="profile_you_can_try_later_biometrics_gt" translatable="false">Puedes volver a configurarlo cuando quieras</string>
     <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
-    <string name="home_product_process_smart_label" translatable="false">Smart</string>
+
+    <string name="profile_settings_change_password" translatable="false">Cambiar contraseña</string>
+    <string name="profile_settings_current_password" translatable="false">Contraseña actual</string>
+    <string name="profile_settings_new_password" translatable="false">Nueva contraseña</string>
+    <string name="profile_settings_confirm_new_password" translatable="false">Confirmar nueva contraseña</string>
+    <string name="profile_settings_forget_password" translatable="false">Olvidé mi contraseña</string>
+    <string name="profile_settings_change_password_button" translatable="false">Cambiar contraseña</string>
+    <string name="profile_settings_password_modified" translatable="false">Contraseña modificada</string>
+    <string name="profile_settings_error_wrong_current_password" translatable="false">Contraseña actual es incorrecta</string>
+    <string name="profile_settings_error_new_password_invalid" translatable="false">Contraseña nueva no tiene el formato requerido</string>
+    <string name="profile_settings_error_new_password_something_went_wrong" translatable="false">Ha ocurrido un error</string>
+    <string name="profile_settings_error_try_again_later" translatable="false">Intentar mas tarde</string>
+    <string name="profile_settings_error_password_must_not_be_the_same" translatable="false">Tu contraseña no debe ser igual a las últimas 12 contraseñas anteriores</string>
+    <string name="profile_settings_error_we_could_not_change_your_password" translatable="false">No pudimos cambiar tu contraseña </string>
+    <string name="profile_settings_error_we_are_sorry_try_again_later" translatable="false">Lo sentimos, vuelve a intentarlo mas tarde </string>
+
 
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
@@ -552,6 +572,19 @@
     <string name="save_credit_operation_error_title" translatable="false">¡Oh no! Hubo un error</string>
     <string name="save_credit_operation_error_subtitle" translatable="false">Contactanos para brindarte más información</string>
     <string name="save_credit_operation_error_action" translatable="false">Escríbinos por whatsApp</string>
+
+    <!-- Non-PreApproved Additional Questions -->
+    <string name="non_pre_approved_additional_questions_title_gt" translatable="false">Cuéntanos de ti</string>
+    <string name="non_pre_approved_additional_questions_title_sv" translatable="false">Contános sobre vos</string>
+    <string name="non_pre_approved_additional_questions_birthdate_label" translatable="false">Fecha de nacimiento</string>
+    <string name="non_pre_approved_additional_questions_birthdate_placeholder" translatable="false">00 | 00 | 0000</string>
+    <string name="non_pre_approved_additional_questions_birthdate_minus_120_error" translatable="false">Validá tu fecha de nacimiento</string>
+    <string name="non_pre_approved_additional_questions_birthdate_minus_18_error" translatable="false">Debes ser mayor de 18 años</string>
+    <string name="non_pre_approved_additional_questions_birthdate_required" translatable="false">Fecha de nacimiento requerida</string>
+    <string name="non_pre_approved_additional_questions_income_label" translatable="false">Ingreso mensual</string>
+    <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
+    <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
+
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tu cuenta</string>
@@ -752,6 +785,8 @@
     <string name="smart_other_title" translatable="false">Otro</string>
     <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
+    <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multimoney Smart</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
 
@@ -826,7 +861,6 @@
     <string name="payment_amount_bottom_sheet_account" translatable="false">Desde tu cuenta</string>
     <string name="payment_amount_bottom_sheet_exchange_type" translatable="false">Tipo de cambio</string>
     <string name="payment_amount_bottom_sheet_amount_to_debit" translatable="false">Monto a debitar</string>
-    <string name="payment_amount_bottom_sheet_amount_automatic_checkbox" translatable="false">Programar pago automático</string>
     <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
@@ -917,6 +951,13 @@
         <item>No, no lo soy</item>
     </string-array>
 
+    <!-- Evicertia screen -->
+    <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
+    <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
+    <string name="smart_evicertia_miss_title" translatable="false">¡Te vamos a extrañar!</string>
+    <string name="smart_evicertia_miss_subtitle" translatable="false">Si querés finalizar la solicitud de tu Multimoney Smart debés firmar el contrato.</string>
+    <string name="smart_evicertia_missing_signature_title" translatable="false">Te vamos a extrañar</string>
+
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
     <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
@@ -956,7 +997,14 @@
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
-    <string name="payment_cards_list_amount_title" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title" translatable="false">¿Cuánto querés abonar?</string>
+
+    <!-- Payment Amount Card Bottom Sheet -->
+    <string name="payment_amount_card_bottom_sheet_title" translatable="false">Monto a abonar</string>
+    <string name="payment_amount_card_bottom_sheet_from_card" translatable="false">Desde tu tarjeta</string>
+    <string name="payment_amount_card_bottom_sheet_amount_automatic_checkbox" translatable="false">Programar pago automático</string>
+    <string name="payment_amount_card_bottom_sheet_button" translatable="false">Realizar abono</string>
+    <string name="payment_amount_card_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
 
     <!-- Payment method -->
     <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>
@@ -976,8 +1024,8 @@
     <string name="disbursement_bottom_sheet_account" translatable="false">En tu cuenta</string>
     <string name="disbursement_bottom_sheet_button" translatable="false">Realizar desembolso</string>
     <string name="disbursement_bottom_sheet_exchange_rate" translatable="false">Tipo de cambio</string>
-    <string name="disbursement_bottom_sheet_quota_to_pay"  translatable="false">Cuota mensual consolidada</string>
-    <string name="disbursement_bottom_sheet_next_payment_date"  translatable="false">Fecha del siguiente pago</string>
+    <string name="disbursement_bottom_sheet_quota_to_pay" translatable="false">Cuota mensual consolidada</string>
+    <string name="disbursement_bottom_sheet_next_payment_date" translatable="false">Fecha del siguiente pago</string>
 
     <!-- Disbursement Voucher -->
     <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
@@ -1011,4 +1059,17 @@
     <string name="download_credit_movements_worker_push_description_success" translatable="false">Abrir estado de cuenta</string>
     <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
+    <!-- Smart Saving Amount -->
+    <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
+
+    <!-- Profile Help And Information Section -->
+    <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>
+    <string name="profile_help_chat_with_us_label" translatable="false">Chatear con nosotros</string>
+    <string name="profile_help_call_attention_center_label" translatable="false">Llamar a centro de atención</string>
+    <string name="profile_help_faq_label" translatable="false">Preguntas frecuentes</string>
+    <string name="profile_help_terms_and_conditions_label" translatable="false">Términos y condiciones</string>
+    <string name="profile_help_error_title" translatable="false">¡Oh no! hubo un error</string>
+    <string name="profile_help_error_subtitle" translatable="false">Por favor intentá de nuevo</string>
+    <string name="profile_help_error_button_label" translatable="false">Regresar</string>
+    
 </resources>

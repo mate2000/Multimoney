@@ -18,6 +18,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
@@ -31,7 +32,10 @@ fun SmartPaymentMethodScreen(
     viewModel: SmartPaymentMethodViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnStart)
+        }
     }
 
     Column(

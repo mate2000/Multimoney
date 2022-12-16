@@ -7,6 +7,7 @@ import com.multimoney.data.base.BaseRepository
 import com.multimoney.data.mapper.smartaccount.mapToDomain
 import com.multimoney.data.mapper.smartaccount.mapToDomainModel
 import com.multimoney.data.networking.GraphqlApi
+import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -182,6 +183,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
         idEconomicActivity: Long,
         income: Double,
         addressDetail: String,
+        fullJobAddress: String,
         user: String,
         idBrand: Int,
         currentStep: String,
@@ -215,6 +217,7 @@ class SmartAccountRepositoryImpl @Inject constructor(
             idEconomicActivity = idEconomicActivity,
             income = income,
             addressDetail = addressDetail,
+            fullJobAddress = fullJobAddress,
             user = user,
             idBrand = idBrand,
             currentStep = currentStep,
@@ -273,6 +276,17 @@ class SmartAccountRepositoryImpl @Inject constructor(
             apolloCall = graphqlApi.queryRelationship(user, idBrand, option),
             apolloCallMapper = { data -> Success(data.mapToDomain()) }
         )
+    }
+
+    override suspend fun subscriptionAccountContractEvent(
+        idBrand: Int,
+        idRequestSys: Long
+    ): Flow<MultimoneyResult<AccountSmartContractResult?>> {
+        return fetchSubscription(
+            apolloCall = graphqlApi.subscriptionAccountSmartContractEvent(
+                idBrand,
+                idRequestSys
+            ), apolloCallMapper = { data -> Success(data?.mapToDomain()) })
     }
 
     override suspend fun mutationInitialRequestSmartAccount(

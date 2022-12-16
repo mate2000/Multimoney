@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionThreeValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnGetUserData
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnWorkingAddressChange
@@ -54,6 +55,11 @@ fun FormalSalariedSvScreen(
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
     viewModel: FormalSalariedSvViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(true) {
+        viewModel.onUiEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    }
+
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueVisible(true))
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))

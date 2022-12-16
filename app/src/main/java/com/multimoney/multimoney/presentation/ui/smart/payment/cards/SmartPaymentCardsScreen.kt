@@ -16,8 +16,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.credit.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
@@ -31,6 +32,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getMaskedVisa
 
 @Composable
 fun SmartPaymentCardsScreen(
@@ -119,9 +121,9 @@ fun PaymentCardList(
                     imageModifier = Modifier.size(48.dp),
                     startIcon = R.drawable.ic_visa_card_item,
                     title = card.detail ?: "",
-                    subtitle = stringResource(
-                        R.string.visa_card_masked_number,
-                        card.cardMaskedNumber?.takeLast(4) ?: ""
+                    subtitle = getMaskedVisa(
+                        card.cardMaskedNumber.orEmpty(),
+                        stringResource(id = string.visa_card_masked_number)
                     ),
                     onClick = { onCardSelected(card) }
                 )

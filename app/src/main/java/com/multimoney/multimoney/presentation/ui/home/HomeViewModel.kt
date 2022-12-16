@@ -495,13 +495,16 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
-                // todo change "BTC" when asset are ready in BE
-                callQueryGetHistoricalBalanceUseCase(
-                    user = email,
-                    identification = identification,
-                    idBrand = idBrand,
-                    baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: "BTC"
-                )
+                if (uiState.configurationVersion?.configuration?.crypto?.active == true) {
+                    // todo change "BTC" when asset are ready in BE
+                    callQueryGetHistoricalBalanceUseCase(
+                        user = email,
+                        identification = identification,
+                        idBrand = idBrand,
+                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset
+                            ?: "BTC"
+                    )
+                }
             }
             result.onFailure {
                 onFailure(it)

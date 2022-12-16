@@ -8,6 +8,7 @@ class MutationChangeEmailUseCaseImpl(
     val securityRepository: SecurityRepository
 ) : MutationChangeEmailUseCase {
     override suspend fun invoke(
+        idClient : Int,
         pkUser: Int,
         idClient: Int,
         identification: String,
@@ -17,6 +18,7 @@ class MutationChangeEmailUseCaseImpl(
         user: String,
         idBrand: Int
         ): Flow<MultimoneyResult<ChangeEmail>> = securityRepository.mutationChangeEmail(
+        idClient,
         pkUser,
         idClient,
         identification,

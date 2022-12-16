@@ -16,7 +16,6 @@ import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.Summary
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditMovementsResult
-import com.multimoney.domain.model.credit.CreditOfferAndTip
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
@@ -166,7 +165,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSmartSave() {
         val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo("${Screen.SmartPaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentAccountScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        navigateTo("${Screen.SmartPaymentOptionsScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -254,7 +253,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSmartPaymentAccountScreen() =
-        navigateTo(Screen.SmartPaymentAccountScreen.route)
+        navigateTo(Screen.SmartPaymentOptionsScreen.route)
 
     private fun onNavigateToSmartPaymentMethodScreen() =
         navigateTo(Screen.SmartPaymentScreen.route)

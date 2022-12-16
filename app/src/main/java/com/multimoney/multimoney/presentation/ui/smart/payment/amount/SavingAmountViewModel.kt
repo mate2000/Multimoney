@@ -81,17 +81,17 @@ class SavingAmountViewModel @Inject constructor(
 
         // Todo get if the account is using dollars
         uiState = uiState.copy(
-            currency = if (idCurrency == 2) Dollar.symbol else Colon.symbol,
+            currency = if (idCurrency == Dollar.id) Dollar.symbol else Colon.symbol,
             minSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == 2,
+                idCurrency == Dollar.id,
                 SuggestionOrder.MIN
             ),
             mediumSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == 2,
+                idCurrency == Dollar.id,
                 SuggestionOrder.MEDIUM
             ),
             maxSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == 2,
+                idCurrency == Dollar.id,
                 SuggestionOrder.MAX
             )
         )
@@ -277,6 +277,6 @@ class SavingAmountViewModel @Inject constructor(
 
     companion object {
         const val SAVING_PLACEHOLDER = "$0"
-        const val DEFAULT_DESCRIPTION = "Smart aacount deposit"
+        const val DEFAULT_DESCRIPTION = "Smart account deposit"
     }
 }

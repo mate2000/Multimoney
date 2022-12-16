@@ -176,7 +176,9 @@ class SavingAmountViewModel @Inject constructor(
 
     private fun onRetryTransfer() {
         uiState = uiState.copy(
-            showErrorScreen = false
+            showErrorScreen = false,
+            showLoadingScreen = true,
+            paymentSuccess = false
         )
         onCallProcessTransferVisaToSmart()
     }

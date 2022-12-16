@@ -13,7 +13,7 @@ import com.multimoney.multimoney.presentation.ui.MainActivity
 import com.multimoney.multimoney.presentation.util.displayLocalNotification
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.util.concurrent.TimeUnit.SECONDS
+import java.util.concurrent.TimeUnit.HOURS
 
 @HiltWorker
 class NotificationWorker @AssistedInject constructor(
@@ -40,7 +40,7 @@ fun startTimedNotification(
     body: String,
     smallIcon: Int
 ) {
-    val worker = OneTimeWorkRequestBuilder<NotificationWorker>().setInitialDelay(10, SECONDS)
+    val worker = OneTimeWorkRequestBuilder<NotificationWorker>().setInitialDelay(3, HOURS)
     val workData = Data.Builder()
         .putString(TITLE_PARAM, title)
         .putString(BODY_PARAM, body)

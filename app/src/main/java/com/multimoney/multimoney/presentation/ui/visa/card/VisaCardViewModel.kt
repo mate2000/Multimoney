@@ -14,13 +14,14 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.novopayment.sdk.vts.NovoVTS
@@ -93,6 +94,18 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
                 )
                 }"
             )
+            is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
+                dialogParameters = DialogParameters(
+                    titleResource = string.visa_card_dialog_title,
+                    descriptionResource = string.visa_card_dialog_description,
+                    positiveResource = string.link,
+                    negativeResource = string.cancel,
+                    positiveAction = {
+                        onUIEvent(OnNavigateToVisaTokenizationScreen)
+                    },
+                    isActive = mutableStateOf(true)
+                )
+            )
         }
     }
 
@@ -100,6 +113,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
         object OnNavigateBack : UIEvent()
         object OnAvailableAmountClick : UIEvent()
         object OnNavigateToVisaTokenizationScreen : UIEvent()
+        object OnOpenDialogConfirmToStartTokenizationProcess : UIEvent()
     }
 
     companion object {

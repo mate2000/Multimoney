@@ -649,6 +649,8 @@
     <string name="visa_card_gt_dialog_description_available" translatable="false">Recuerda que puedes utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
     <string name="visa_card_available_amount" translatable="false">Disponible %s</string>
     <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
+    <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
+    <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
 
     <!-- visa tokenization waiting -->
     <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>

@@ -37,11 +37,11 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCloseCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetSmartContent
@@ -567,18 +567,12 @@ class ProductViewModel @Inject constructor(
                     onCallQueryBalanceCardInformation(onLoadingValueChange)
                 }.onFailure {
                     onLoadingValueChange(false)
-                    uiState = uiState.copy(showCardIssuanceError = true)
+                    emitBaseEvent(OnShowCardIssuanceError)
                 }.onLoading {
                     onLoadingValueChange(true)
                 }
             }
         }
-    }
-
-    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.Guatemala.id) {
-        R.string.card_issuance_error_description_gt
-    } else {
-        R.string.card_issuance_error_description
     }
 
     private fun onCallQueryBalanceCardInformation(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -675,7 +669,6 @@ class ProductViewModel @Inject constructor(
         val canExpandCredit: Boolean = false,
         val scheduleChipIconResource: Int? = null,
         val phoneNumber: String? = null,
-        val showCardIssuanceError: Boolean = false,
         val smartContent: Pair<Boolean?, String> = Pair(null, "")
     )
 
@@ -742,7 +735,6 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToSmartPaymentMethodScreen -> onNavigateToSmartPaymentMethodScreen()
             is OnNavigateToCreditMovementsScreen -> onNavigateToCreditMovements()
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
-            is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
             OnNavigateToVisaActivateScreen -> TODO()
@@ -815,9 +807,12 @@ class ProductViewModel @Inject constructor(
         data class OnCreateMultimoneyVisa(val onLoadingValueChange: (isLoading: Boolean) -> Unit) :
             UIEvent()
 
-        object OnCloseCardIssuanceError : UIEvent()
         object OnNoVoConfig : UIEvent()
         data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object OnShowCardIssuanceError : BaseEvent()
     }
 
     companion object {

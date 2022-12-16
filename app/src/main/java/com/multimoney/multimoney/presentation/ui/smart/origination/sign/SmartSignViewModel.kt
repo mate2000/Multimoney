@@ -15,7 +15,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.Screen.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -201,7 +200,7 @@ class SmartSignViewModel @Inject constructor(
 
     private fun onNavigateToContinueValidatingIdentity() {
         popAndNavigateTo(
-            route = ContinueValidatingOnfidoScreen.route,
+            route = Screen.SmartContinueValidatingOnfidoScreen.route,
             popTo = Screen.SmartSignScreen.route
         )
     }

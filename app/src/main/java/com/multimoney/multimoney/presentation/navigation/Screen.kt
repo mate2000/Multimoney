@@ -211,6 +211,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
 
+    object SmartContinueValidatingOnfidoScreen : Screen("smart_continue_validating_onfido_screen")
+
     object ProcessingTransactionScreen : Screen(
         "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
         "processing_transaction_screen"

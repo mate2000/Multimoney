@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.evicertiaando
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
+import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.onfidoapproved.ApprovedByOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
 
 const val ACCOUNT_TOKEN = "account_token"
@@ -92,6 +93,21 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
             )
         ) {
             OnfidoAndEvicertiaErrorsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = Screen.ApprovedByOnfidoScreen.route,
+            arguments = listOf(
+                navArgument(PK_USER) { type = NavType.LongType },
+            )
+        ) {
+            ApprovedByOnfidoScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

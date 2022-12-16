@@ -170,7 +170,7 @@ class SmartSignViewModel @Inject constructor(
             }
             SmartOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
                 popAndNavigateTo(
-                    route = Screen.ProcessingTransactionScreen.route,
+                    route = "${Screen.ApprovedByOnfidoScreen.baseRoute}/$pkUser",
                     popTo = Screen.SmartSignScreen.route
                 )
             }

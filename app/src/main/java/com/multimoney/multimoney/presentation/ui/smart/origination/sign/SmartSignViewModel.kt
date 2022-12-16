@@ -194,7 +194,7 @@ class SmartSignViewModel @Inject constructor(
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
         popAndNavigateTo(
-            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             popTo = Screen.SmartSignScreen.route
         )
     }

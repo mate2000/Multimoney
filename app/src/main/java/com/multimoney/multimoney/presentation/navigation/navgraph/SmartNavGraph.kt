@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.smart.origination.evicertiaandonfidoerrors.OnfidoAndEvicertiaErrorsScreen
 import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementsScreen
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
@@ -79,6 +80,23 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                     popUpTo(it.popTo) { inclusive = true }
                 }
             })
+        }
+
+        composable(
+            route = Screen.SmartOnfidoAndEvicertiaErrorsScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(PK_USER) { type = NavType.LongType },
+                navArgument(ID_USER_REQUEST) { type = NavType.LongType }
+            )
+        ) {
+            OnfidoAndEvicertiaErrorsScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

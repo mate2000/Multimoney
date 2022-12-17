@@ -117,13 +117,13 @@ fun parseApiDateToCardDate(date: String?): String {
     }
 }
 
-enum class FilterDateByDays(val days: Long) {
-    YESTERDAY(1),
-    LAST_7_DAYS(7),
-    LAST_30_DAYS(30),
-    LAST_90_DAYS(90),
-    LAST_180_DAYS(180),
-    LAST_365_DAYS(365)
+enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: String) {
+    YESTERDAY(1, "Dia", "D"),
+    LAST_7_DAYS(7, "Semana", "S"),
+    LAST_30_DAYS(30, "Mes", "M"),
+    LAST_90_DAYS(90, "3 Meses", "3M"),
+    LAST_180_DAYS(180, "6 Meses", "6M"),
+    LAST_365_DAYS(365, "Año", "A"),
 }
 
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"

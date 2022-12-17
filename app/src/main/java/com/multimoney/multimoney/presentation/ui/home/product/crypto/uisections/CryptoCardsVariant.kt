@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.Wording
@@ -25,6 +24,8 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.HomeCryptoGraphic
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
+import com.multimoney.multimoney.presentation.util.calculateGainLoses
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 
 @Composable
 fun CryptoCardDiscoverCrypto(wording: Wording?) {
@@ -112,7 +113,8 @@ fun CryptoCardSmartInProcess(
 
 @Composable
 fun CryptoCardWithBalance(
-    cryptoBalance: Double, clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList()
+    cryptoBalance: Double, clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),
+    isEmptyStateEnable: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -121,7 +123,8 @@ fun CryptoCardWithBalance(
             .padding(
                 top = 24.dp,
                 start = 16.dp,
-                end = 16.dp
+                end = 16.dp,
+                bottom = if (isEmptyStateEnable.not()) 136.dp else 0.dp
             )
     ) {
         Text(
@@ -138,100 +141,34 @@ fun CryptoCardWithBalance(
             )
         )
 
-        val isInGainOrLoss = calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory) >= 0
-        val graphicColor = if (isInGainOrLoss)
-            MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor
+        if (isEmptyStateEnable) {
+            val isInGainOrLoss = calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory) >= 0
+            val graphicColor = if (isInGainOrLoss)
+                MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor
 
-        HomeCryptoGraphic(
-            clientCryptoBalanceHistory = clientCryptoBalanceHistory,
-            graphicColor = graphicColor
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            CustomInformativeChip(
-                text = "\$${
-                    String.format(
-                        "%.2f", calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory)
-                    ).replace("-", "")
-                }",
-                textStyle = Typography.body2.copy(
-                    fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
-                ),
-                startIconTint = graphicColor,
-                shape = RoundedCornerShape(12.dp),
-                background = BlackTransparency16,
-                startIcon = if (isInGainOrLoss) R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract
+            HomeCryptoGraphic(
+                clientCryptoBalanceHistory = clientCryptoBalanceHistory,
+                graphicColor = graphicColor
             )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                CustomInformativeChip(
+                    text = "\$${calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory).roundToTwoDecimalPlacesWithoutNegatives()}",
+                    textStyle = Typography.body2.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = MultimoneyTheme.colors.text
+                    ),
+                    startIconTint = graphicColor,
+                    shape = RoundedCornerShape(12.dp),
+                    background = BlackTransparency16,
+                    startIcon = if (isInGainOrLoss) R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract
+                )
+            }
         }
     }
-}
-
-// fun to calculate gain loses based on the list of historical balance
-fun calculateGainLoses(
-    cryptoBalance: Double, clientCryptoBalanceHistory: List<HistoricalBalanceClient>
-): Double {
-
-    if (clientCryptoBalanceHistory.isEmpty()) {
-        return 0.0
-    }
-    val lastBalance = clientCryptoBalanceHistory.last().convertedBalance
-    return lastBalance - cryptoBalance
-}
-
-@Preview
-@Composable
-fun CryptoCardWithBalancePreview() {
-    CryptoCardWithBalance(
-        cryptoBalance = 5252.04, clientCryptoBalanceHistory = listOf(
-            HistoricalBalanceClient(
-                convertedBalance = 5000.0,
-                date = "2021-01-01"
-            ),
-            HistoricalBalanceClient(
-                convertedBalance = 5000.0,
-                date = "2021-01-01"
-            ),
-            HistoricalBalanceClient(
-                convertedBalance = 5000.0,
-                date = "2021-01-01"
-            ),
-            HistoricalBalanceClient(
-                convertedBalance = 5000.0,
-                date = "2021-01-01"
-            ),
-            HistoricalBalanceClient(
-                convertedBalance = 5000.0,
-                date = "2021-01-01"
-            ),
-            HistoricalBalanceClient(
-                convertedBalance = 5000.0,
-                date = "2021-01-01"
-            ),
-        )
-    )
-}
-
-@Preview
-@Composable
-fun CryptoCardsPreview() {
-    CryptoCardDiscoverCrypto(
-        wording = Wording(
-            textOne = "Hola como estas", textTwo = "aprovecha la oferta", cTA = "Ir a Oferta"
-        )
-    )
-}
-
-@Preview
-@Composable
-fun CryptoCardSmartInProcessPreview() {
-    CryptoCardSmartInProcess(
-        wording = Wording(
-            textOne = "Hola como estas", textTwo = "aprovecha la oferta", cTA = ""
-        )
-    )
 }

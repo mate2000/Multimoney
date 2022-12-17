@@ -21,6 +21,7 @@ fun CryptoContent(
     userStatus: ValidateUserStatus?,
     cryptoBalance: BalanceCryptoAccount?,
     clientBalanceHistory: List<HistoricalBalanceClient>,
+    cryptoEmptyState: Boolean,
     openActionEnable: Boolean = false,
     openCryptoHomeAction: () -> Unit = {},
     openSmartCryptoAction: () -> Unit = {}
@@ -40,6 +41,7 @@ fun CryptoContent(
                         ) {
                             CryptoCardWithBalance(
                                 cryptoBalance = 0.0,
+                                isEmptyStateEnable = cryptoEmptyState
                             )
                         }
                         return
@@ -53,7 +55,8 @@ fun CryptoContent(
                     ) {
                         CryptoCardWithBalance(
                             cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
-                            clientCryptoBalanceHistory = clientBalanceHistory
+                            clientCryptoBalanceHistory = clientBalanceHistory,
+                            isEmptyStateEnable = cryptoEmptyState
                         )
                     }
                 }

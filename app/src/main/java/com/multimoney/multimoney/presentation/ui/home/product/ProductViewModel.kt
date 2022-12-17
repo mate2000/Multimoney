@@ -304,6 +304,12 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToSmartMovements(accountToken: String) =
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
 
+    private fun onNavigateToCryptoWallet() {
+        navigateTo(
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${balanceCredit?.balanceCryptoAccount?.globalBalance ?: 0.0}"
+        )
+    }
+
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
     }
@@ -680,6 +686,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
+            is UIEvent.OnNavigateToCryptoWallet -> onNavigateToCryptoWallet()
             is OnNavigateToGtSvNonPreApproved -> onNavigateToGtSvNonPreApproved()
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
@@ -765,6 +772,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
         object OnNavigateToSmartPaymentAccountScreen : UIEvent()
         object OnNavigateToSmartPaymentMethodScreen : UIEvent()
+        object OnNavigateToCryptoWallet : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(

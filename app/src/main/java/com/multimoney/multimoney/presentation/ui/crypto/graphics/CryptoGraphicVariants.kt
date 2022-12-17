@@ -39,16 +39,17 @@ fun HomeCryptoGraphic(
 @Composable
 fun WalletCryptoGraphic(
     clientCryptoBalanceHistory: List<HistoricalBalanceClient>,
-    graphicColor: Color,
+    graphicColor: Color
 ) {
 
-    val convertedBalances = clientCryptoBalanceHistory.map { it.convertedBalance }
+    val convertedBalances = clientCryptoBalanceHistory.map { it.convertedBalance }.takeLast(120)
 
     CryptoGraphic(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .padding(top = 24.dp, bottom = 32.dp, start = 16.dp),
+            .padding(top = 24.dp, bottom = 32.dp, start = 16.dp, end = 16.dp),
+        fromHome = false,
         convertedBalances = convertedBalances,
         graphicColor = graphicColor
     )
@@ -58,6 +59,7 @@ fun WalletCryptoGraphic(
 fun CryptoGraphic(
     modifier: Modifier = Modifier,
     convertedBalances: List<Double>,
+    fromHome: Boolean = true,
     graphicColor: Color
 ) {
 
@@ -66,7 +68,11 @@ fun CryptoGraphic(
         || convertedBalances.all { convertedBalances[0] == it }
     ) {
 
-        EmptyCryptoGraphic(graphicColor = graphicColor)
+        if (fromHome) {
+            EmptyCryptoGraphic(graphicColor = graphicColor)
+        } else {
+            LargeEmptyCryptoGraphic(graphicColor = graphicColor)
+        }
     } else {
 
         LineGraphic(
@@ -97,7 +103,28 @@ fun EmptyCryptoGraphic(
             color = graphicColor
         )
     }
+}
 
+@Composable
+fun LargeEmptyCryptoGraphic(
+    graphicColor: Color
+) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(horizontal = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 48.dp)
+                .height(4.dp),
+            color = graphicColor
+        )
+    }
 }
 
 @Composable

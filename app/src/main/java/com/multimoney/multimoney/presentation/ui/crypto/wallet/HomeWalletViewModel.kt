@@ -4,22 +4,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
-import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
-import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
@@ -30,22 +26,18 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeWalletViewModel @Inject constructor(
     private val queryGetHistoricalClientBalanceUseCase: GetHistoricalClientBalanceUseCase,
-    savedStateHandle: SavedStateHandle
-): BaseViewModel(shouldObserveToken = true) {
-
-    // bundle parameters
-    val user = savedStateHandle[USER] ?: ""
-    val idBrand = savedStateHandle[ID_BRAND] ?: ""
-    val idBrandAsInt = idBrand.toIntOrNull() ?: SmartViewModel.DEFAULT_ID_BRAND_ERROR
-    val identification: String = savedStateHandle[IDENTIFICATION] ?: ""
+    private val savedStateHandle: SavedStateHandle
+): BaseViewModel(true) {
 
     var uiState by mutableStateOf(UiState())
+        private set
 
-    init {
-        callQueryGetHistoricalBalanceUseCase(
-            user = user,
-            idBrand = idBrandAsInt,
-            identification = identification
+    private fun onGetUserInfo() {
+        uiState = uiState.copy(
+            user = savedStateHandle[USER] ?: "",
+            idBrand = savedStateHandle[ID_BRAND] ?: 0,
+            identification = savedStateHandle[IDENTIFICATION] ?: "",
+            globalCryptoBalance = savedStateHandle[GLOBAL_CRYPTO_BALANCE] ?: 0.0f
         )
     }
 
@@ -60,7 +52,7 @@ class HomeWalletViewModel @Inject constructor(
             idBrand,
             identification,
             baseAsset = baseAsset,
-            startDate = getPreviousDate(uiState.startDate),
+            startDate = getPreviousDate(uiState.startDate ?: 1),
             endDate = getCurrentDateYMDPattern()
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
@@ -80,8 +72,14 @@ class HomeWalletViewModel @Inject constructor(
         }
     }
 
-    // todo function to navigate to coins details
-    private fun onNavigateToCoinsDetails() {}
+    private fun onSetDateRange(startDate: Long) {
+        uiState = uiState.copy(startDate = startDate)
+        callQueryGetHistoricalBalanceUseCase(
+            uiState.user ?: "",
+            uiState.idBrand ?: 0,
+            uiState.identification ?: ""
+        )
+    }
 
     private fun onFailure(error: HttpError) {
         uiState = uiState.copy(
@@ -94,20 +92,28 @@ class HomeWalletViewModel @Inject constructor(
     }
 
     data class UiState(
+        val user: String? = null,
+        val idBrand: Int? = null,
+        val identification: String? = null,
+        val globalCryptoBalance: Float? = null,
         val isLoading: Boolean = false,
         val error: String? = null,
         val clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),
         val openDialog: DialogParameters = DialogParameters(),
-        val startDate: Long = FilterDateByDays.YESTERDAY.days,
+        val startDate: Long? = null,
     )
 
-    fun onUiEvent(event: UiEvent) {
+    fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UiEvent.OnSetDateRange -> uiState.copy(startDate = event.startDate)
+            is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnGetUserInfo -> onGetUserInfo()
         }
     }
 
-    sealed interface UiEvent {
-        data class OnSetDateRange(val startDate: Long): UiEvent
+    sealed interface UIEvent {
+        object OnGetUserInfo : UIEvent
+        object OnNavigateBack : UIEvent
+        data class OnSetDateRange(val startDate: Long): UIEvent
     }
 }

@@ -77,9 +77,7 @@ const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE = "new_value"
 const val ID_VISA_CARD = "id_visa_card"
-const val BASE_ASSET = "base_asset"
-const val START_DATE = "start_date"
-const val END_DATE = "end_date"
+const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -350,7 +348,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Crypto
     object CryptoWalletScreen : Screen(
-        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}",
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}",
         "crypto_wallet_screen"
     )
 }

@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -44,27 +43,6 @@ fun TermsAndConditionsScreen(
         viewModel.onUIEvent(TermsAndConditionsViewModel.UIEvent.OnNavigateBack)
     }
 
-    LaunchedEffect(key1 = true) {
-        viewModel.apply {
-            onGetTermsAndConditionsSigned.collect { event ->
-                event.onSuccess { result ->
-                    result?.let { items ->
-                        this.onUIEvent(TermsAndConditionsViewModel.UIEvent.OnQuerySuccess(items))
-                    }
-                }.onFailure {
-                    this.onUIEvent(
-                        TermsAndConditionsViewModel.UIEvent.OnShowCustomDialog(
-                            it.getError() ?: ""
-                        )
-                    )
-                    this.onUIEvent(TermsAndConditionsViewModel.UIEvent.OnUpdateLoadingState(false))
-                }.onLoading {
-                    this.onUIEvent(TermsAndConditionsViewModel.UIEvent.OnUpdateLoadingState(true))
-                }
-            }
-        }
-    }
-
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
@@ -105,28 +83,24 @@ fun TermsAndConditionsContent(viewModel: TermsAndConditionsViewModel) {
             )
 
             if (viewModel.uiState.termsAndConditionsSigned?.items != null && viewModel.uiState.termsAndConditionsSigned?.items?.isNotEmpty() == true) {
-                viewModel.uiState.termsAndConditionsSigned?.items?.apply {
-                    if (this.isNotEmpty()) {
-                        this.forEach { item ->
-                            val title = stringResource(id = viewModel.getStringResource(item.type))
-                            CustomInfoButton(
-                                startIcon = null,
-                                title = title,
-                                subtitle = parseApiDateToTermsAndConditionsDateTime(item.dateSigned),
-                                subtitle2 = item.version,
-                                onClick = {
-                                    viewModel.onUIEvent(
-                                        TermsAndConditionsViewModel.UIEvent.OnTermsAndConditionsClicked(
-                                            title,
-                                            item.html,
-                                            item.version,
-                                            item.dateSigned
-                                        )
-                                    )
-                                }
+                viewModel.uiState.termsAndConditionsSigned?.items?.onEach { item ->
+                    val title = stringResource(id = viewModel.getStringResource(item.type))
+                    CustomInfoButton(
+                        startIcon = null,
+                        title = title,
+                        subtitle = parseApiDateToTermsAndConditionsDateTime(item.dateSigned),
+                        subtitle2 = item.version,
+                        onClick = {
+                            viewModel.onUIEvent(
+                                TermsAndConditionsViewModel.UIEvent.OnTermsAndConditionsClicked(
+                                    title,
+                                    item.html,
+                                    item.version,
+                                    item.dateSigned
+                                )
                             )
                         }
-                    }
+                    )
                 }
             }
         }

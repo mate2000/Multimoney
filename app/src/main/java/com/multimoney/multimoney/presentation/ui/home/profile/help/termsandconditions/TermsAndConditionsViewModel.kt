@@ -9,11 +9,15 @@ import com.multimoney.data.util.catalog.TermsAndConditionsType
 import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCase
 import com.multimoney.domain.model.profile.TermsAndConditionsSigned
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.UTF8
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -63,7 +67,16 @@ class TermsAndConditionsViewModel @Inject constructor(
             pkUser = pkUser,
             styleDark = styleDark
         ).collectLatest { result ->
-            onGetTermsAndConditionsSigned.emit(result)
+            result.onSuccess {
+                it?.let { items ->
+                    onQuerySuccess(items)
+                }
+            }.onFailure {
+                onShowCustomDialog(it.getError() ?: "")
+                onUpdateLoadingState(false)
+            }.onLoading {
+                onUpdateLoadingState(true)
+            }
         }
     }
 
@@ -76,9 +89,21 @@ class TermsAndConditionsViewModel @Inject constructor(
         }
     }
 
-    private fun onTermsAndConditionsClicked(title: String, html: String,version : String, dateSigned : String) {
+    private fun onTermsAndConditionsClicked(
+        title: String,
+        html: String,
+        version: String,
+        dateSigned: String
+    ) {
         //String with the HTML is too large, so here we encoded it as base64 to reduce the length and pass it as parameter
-        navigateTo("${Screen.ProfileTermsAndConditionsDetailScreen.baseRoute}/$title/${Base64.encodeToString(html.toByteArray(charset("UTF-8")),Base64.DEFAULT)}/$version/$dateSigned")
+        navigateTo(
+            "${Screen.ProfileTermsAndConditionsDetailScreen.baseRoute}/$title/${
+                Base64.encodeToString(
+                    html.toByteArray(charset(UTF8)),
+                    Base64.DEFAULT
+                )
+            }/$version/$dateSigned"
+        )
     }
 
     private fun onQuerySuccess(items: TermsAndConditionsSigned) {
@@ -117,18 +142,17 @@ class TermsAndConditionsViewModel @Inject constructor(
                 event.version,
                 event.dateSigned
             )
-            is UIEvent.OnQuerySuccess -> onQuerySuccess(event.items)
-            is UIEvent.OnUpdateLoadingState -> onUpdateLoadingState(event.isLoading)
-            is UIEvent.OnShowCustomDialog -> onShowCustomDialog(event.description)
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         data class OnStart(val isSystemInDarkTheme: Boolean) : UIEvent()
-        data class OnShowCustomDialog(val description: String) : UIEvent()
-        data class OnTermsAndConditionsClicked(val title: String, val html: String, val version : String, val dateSigned : String) : UIEvent()
-        data class OnUpdateLoadingState(val isLoading: Boolean) : UIEvent()
-        data class OnQuerySuccess(val items: TermsAndConditionsSigned) : UIEvent()
+        data class OnTermsAndConditionsClicked(
+            val title: String,
+            val html: String,
+            val version: String,
+            val dateSigned: String
+        ) : UIEvent()
     }
 }

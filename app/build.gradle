@@ -254,9 +254,7 @@ dependencies {
     debugImplementation(novo.novo_dev) {
         exclude group: "com.novopayment.sdk.android", module: "visa-sensory-branding"
     }
-
     productionImplementation novo.novo_prod
-
 }
 
 dexguard {

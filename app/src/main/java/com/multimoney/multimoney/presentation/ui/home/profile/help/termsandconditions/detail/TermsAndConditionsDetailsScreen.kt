@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions.detail
 
-import android.util.Base64
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

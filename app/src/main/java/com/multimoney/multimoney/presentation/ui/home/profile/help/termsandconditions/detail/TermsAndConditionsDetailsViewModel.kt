@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TermsAndConditionsDetailsViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())

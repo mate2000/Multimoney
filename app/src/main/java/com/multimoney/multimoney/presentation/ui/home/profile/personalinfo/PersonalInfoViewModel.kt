@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -18,7 +17,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Locale
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,7 +60,7 @@ class PersonalInfoViewModel @Inject constructor(
         val firstName: String? = null,
         val phoneNumber: String? = null,
         val idBrand: Int? = null,
-        val idClient : Int? = null
+        val idClient: Int? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

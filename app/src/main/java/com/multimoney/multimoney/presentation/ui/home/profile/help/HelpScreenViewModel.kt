@@ -24,7 +24,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -128,7 +127,7 @@ class HelpScreenViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToTermsAndConditions(){
+    private fun onNavigateToTermsAndConditions() {
         navigateTo("${Screen.ProfileTermsAndConditionsScreen.baseRoute}/$idBrand/$identification/$pkUser/$userName")
     }
 

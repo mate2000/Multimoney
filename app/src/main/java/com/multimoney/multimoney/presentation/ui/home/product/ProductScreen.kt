@@ -39,19 +39,18 @@ import com.google.accompanist.pager.rememberPagerState
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.GrayScale200
 import com.multimoney.multimoney.presentation.theme.GrayScale600
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCloseCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
@@ -61,6 +60,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
@@ -75,7 +75,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartHeaderExpanded
-import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -114,8 +113,19 @@ fun ProductScreen(
     )
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
+        viewModel.onUIEvent(OnNoVoConfig)
     }
 
+    // BaseEvent from ProductViewModel
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnShowCardIssuanceError -> sharedViewModel.onUIEvent(UIEvent.OnShowCardIssuanceError)
+            }
+        }
+    }
+
+    // BaseEvent from HomeViewModel
     LaunchedEffect(key1 = true) {
         sharedViewModel.baseEvent.collect { event ->
             when (event) {
@@ -234,18 +244,6 @@ fun ProductScreen(
         }
     }
 
-    if (viewModel.uiState.showCardIssuanceError) {
-        AlertResult(
-            iconResource = drawable.ic_error_symbol,
-            titleResource = string.card_issuance_error_title,
-            descriptionResource = viewModel.getCardIssuanceDescriptionError(),
-            buttonTextResource = string.understood,
-            isLeftButtonVisible = false,
-            onRightButtonClick = { viewModel.onUIEvent(OnCloseCardIssuanceError) },
-            onButtonClick = { viewModel.onUIEvent(OnCloseCardIssuanceError) }
-        )
-    }
-
     LoadingIndicator(sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded)
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -303,7 +301,7 @@ fun TipsAndOffer(
                         .padding(start = 16.dp, end = 2.dp)
                         .clickable {
                             viewModel.onUIEvent(OnNavigateToProfileScreen)
-                            },
+                        },
                     contentDescription = "",
                     tint = MultimoneyTheme.colors.iconColor
                 )
@@ -474,7 +472,7 @@ fun ProductFooterExpanded(
                     actionMarket = { /* todo send to all coins screen*/ },
                     actionWallet = { /*todo send to "my wallet"*/ },
                     noBalanceAction = {
-                        when(viewModel.uiState.idBrand) {
+                        when (viewModel.uiState.idBrand) {
                             Brand.CostaRica.id.toString() -> {
                                 viewModel.onUIEvent(
                                     ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance {

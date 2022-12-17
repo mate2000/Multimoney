@@ -41,9 +41,9 @@ class VerifyIdentityViewModel @Inject constructor(
             firstName = savedStateHandle[FIRST_NAME],
             email = savedStateHandle[EMAIL],
             pkUser = savedStateHandle[PK_USER],
+            idClient = savedStateHandle[ID_CLIENT],
             changingField = savedStateHandle[CHANGING_FIELD],
             newEmail = savedStateHandle[NEW_EMAIL],
-            idClient = savedStateHandle[ID_CLIENT]
         )
         getTextResources()
     }

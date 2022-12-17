@@ -3,9 +3,11 @@ package com.multimoney.multimoney
 import android.app.Application
 import androidx.work.Configuration
 import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.WorkerProvider
+import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.util.AdjustHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import com.multimoney.multimoney.util.SentryHelper
+import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -20,6 +22,9 @@ open class MultimoneyApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var cognitoHelper: CognitoHelper
+
+    @Inject
+    lateinit var nfcHelper: NfcHelper
 
     @Inject
     lateinit var workerProvider: WorkerProvider
@@ -42,5 +47,8 @@ open class MultimoneyApplication : Application(), Configuration.Provider {
         sentryHelper.initSentry()
         adjustHelper.initAdjust()
         cognitoHelper.initCognito()
+        if (nfcHelper.isNfcSupported()) {
+            NovoVTS.initialize(applicationContext = applicationContext)
+        }
     }
 }

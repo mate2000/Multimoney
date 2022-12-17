@@ -128,6 +128,8 @@ import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCase
+import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCase
 import com.multimoney.domain.interaction.security.MutationUserValidationUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationValidateOTPUseCase
@@ -260,6 +262,11 @@ class InteractionModule {
     @Singleton
     fun provideMutableOnfidoCheckProcess(securityRepository: SecurityRepository): MutationOnfidoCheckProcessUseCase =
         MutationOnfidoCheckProcessUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUserPhoneMobileUseCase(securityRepository: SecurityRepository): MutationUserPhoneMobileSaveUseCase =
+        MutationUserPhoneMobileSaveUseCaseImpl(securityRepository)
 
     // Balance
 

@@ -35,11 +35,11 @@ class PersonalInfoViewModel @Inject constructor(
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             idBrand = savedStateHandle[ID_BRAND],
             pkUser = savedStateHandle[PK_USER],
+            idClient = savedStateHandle[ID_CLIENT],
             identification = savedStateHandle[IDENTIFICATION],
             email = savedStateHandle.get<String>(EMAIL)?.trim()?.lowercase(Locale.getDefault()),
             firstName = savedStateHandle[FIRST_NAME],
             userName = savedStateHandle[USER_NAME],
-            idClient = savedStateHandle[ID_CLIENT]
         )
     }
 
@@ -58,7 +58,7 @@ class PersonalInfoViewModel @Inject constructor(
         val email: String? = null,
         val identification: String? = null,
         val pkUser: String? = null,
-        val firstName : String? = null,
+        val firstName: String? = null,
         val phoneNumber: String? = null,
         val idBrand: Int? = null,
         val idClient : Int? = null
@@ -71,7 +71,7 @@ class PersonalInfoViewModel @Inject constructor(
             is UIEvent.OnNavigateToEditEmail -> navigateToEditEmail()
         }
     }
-    
+
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnNavigateToEditPhone : UIEvent()

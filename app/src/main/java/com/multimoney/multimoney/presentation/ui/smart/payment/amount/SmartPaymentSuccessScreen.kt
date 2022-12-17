@@ -4,16 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,14 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +39,9 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.InfoPaymentDateItem
+import com.multimoney.multimoney.presentation.uielement.InfoPaymentSourceItem
+import com.multimoney.multimoney.presentation.uielement.InfoReferenceNumberItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
@@ -166,18 +163,18 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     color = MultimoneyTheme.colors.labelText
                 )
 
-                InfoItemAccount(
+                InfoPaymentSourceItem(
                     modifier = Modifier.padding(start = 21.dp, top = 16.dp),
-                    icon = drawable.ic_bank,
+                    icon = drawable.ic_visa_card_item,
                     tintIcon = MultimoneyTheme.colors.iconTintVoucher,
-                    title = stringResource(string.smart_payment_origin_account_label),
+                    title = stringResource(string.smart_payment_card_bank_label),
                     subTitle = stringResource(
                         string.visa_card_masked_number,
                         viewModel.maskedCardNumber.takeLast(4)
                     )
                 )
 
-                InfoItem(
+                InfoReferenceNumberItem(
                     modifier = Modifier.padding(start = 21.dp, top = 32.dp),
                     icon = drawable.ic_receipt,
                     tintIcon = MultimoneyTheme.colors.iconTintVoucher,
@@ -185,7 +182,7 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     subTitle = viewModel.uiState.referenceNumber
                 )
 
-                InfoDate(
+                InfoPaymentDateItem(
                     currentDate = viewModel.uiState.currentDate,
                     currentTime = viewModel.uiState.currentTime,
                     modifier = Modifier
@@ -209,99 +206,5 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                 .height(48.dp),
             buttonType = PrimaryPrimary
         )
-    }
-}
-
-@Composable
-fun InfoDate(
-    currentDate: String,
-    currentTime: String,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row {
-            Icon(
-                painter = painterResource(drawable.ic_calendar_voucher),
-                tint = MultimoneyTheme.colors.iconTintVoucher,
-                contentDescription = ""
-            )
-            Text(
-                text = currentDate,
-                modifier = Modifier.padding(start = 14.dp),
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-        }
-        Text(
-            text = currentTime,
-            modifier = Modifier.padding(bottom = 16.dp),
-            style = Typography.body2,
-            color = MultimoneyTheme.colors.labelText
-        )
-    }
-}
-
-@Composable
-fun InfoItem(
-    modifier: Modifier = Modifier,
-    icon: Int? = null,
-    tintIcon: Color = Color.Transparent,
-    title: String,
-    subTitle: String
-) {
-    Row(modifier = modifier) {
-        icon?.let {
-            Icon(painter = painterResource(id = it), contentDescription = "", tint = tintIcon)
-        }
-        Column(modifier = Modifier.padding(start = 14.dp)) {
-            Text(
-                text = title,
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            Text(
-                text = subTitle,
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.labelText
-            )
-        }
-    }
-}
-
-@Composable
-fun InfoItemAccount(
-    modifier: Modifier = Modifier,
-    icon: Int? = null,
-    tintIcon: Color = Color.Transparent,
-    title: String,
-    subTitle: String
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        icon?.let {
-            Icon(
-                painter = painterResource(id = it),
-                contentDescription = "",
-                tint = tintIcon,
-                modifier = Modifier.height(24.dp).width(24.dp).alpha(0.4f)
-            )
-        }
-        Column(modifier = Modifier.padding(start = 14.dp)) {
-            Text(
-                text = title,
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.labelText
-            )
-            Text(
-                text = subTitle,
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.labelText
-            )
-        }
     }
 }

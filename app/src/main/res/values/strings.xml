@@ -721,6 +721,7 @@
     <string name="smart_payment_reference_number_label" translatable="false">N° de referencia</string>
     <string name="smart_payment_shared_button" translatable="false">Compartir</string>
     <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
+    <string name="smart_payment_card_bank_label" translatable="false">Tarjeta Banco</string>
 
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>

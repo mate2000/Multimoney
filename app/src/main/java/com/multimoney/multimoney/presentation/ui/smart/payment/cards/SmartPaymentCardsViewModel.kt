@@ -54,7 +54,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
             user = dataStorePreferences.getUserName().first()
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             identification = dataStorePreferences.getIdentification().first()
-            currency = if (idCurrency == 2) Dollar.symbol else Colon.symbol
+            currency = if (idCurrency == Dollar.id) Dollar.symbol else Colon.symbol
             onCallQueryGetClientCardsUseCase()
         }
     }

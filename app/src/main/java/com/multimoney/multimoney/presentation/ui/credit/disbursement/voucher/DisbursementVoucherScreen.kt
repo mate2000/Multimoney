@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.credit.disbursement.voucher
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -235,6 +236,9 @@ fun DisbursementVoucherScreen(
                     }
                 }
             }
+        }
+        BackHandler {
+            viewModel.onUIEvent(OnCloseClick)
         }
     }
 }

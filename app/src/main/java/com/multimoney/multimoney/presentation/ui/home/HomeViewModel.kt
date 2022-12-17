@@ -47,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.On
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnStartCountDownTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnBottomNavigationItemClick
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCloseCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnDeleteAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnEditAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGetCreditMovements
@@ -54,6 +55,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnGe
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnHideAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
@@ -611,6 +613,12 @@ class HomeViewModel @Inject constructor(
         )
     }
 
+    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.Guatemala.id) {
+        R.string.card_issuance_error_description_gt
+    } else {
+        R.string.card_issuance_error_description
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
@@ -630,7 +638,8 @@ class HomeViewModel @Inject constructor(
         var productScreenPagerState: PagerState? = null,
         var productPageList: List<ProductPage> = emptyList(),
         val smartMovementsList: List<SmartMovementsResult> = emptyList(),
-        val creditMovementsList: List<CreditMovementsResult> = emptyList()
+        val creditMovementsList: List<CreditMovementsResult> = emptyList(),
+        val showCardIssuanceError: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -658,12 +667,10 @@ class HomeViewModel @Inject constructor(
             is OnDeleteAutomaticPayment -> emitBaseEvent(OnDeleteAutomaticPaymentEvent)
             is OnCallMutationDeactivateClientAutomaticDebit -> onCallGetClientAutomaticDebitUseCase()
             is UIEvent.OnMyProductClick -> uiState = uiState.copy(forceIsExpanded = uiEvent.expand)
-            is UIEvent.OnMyProductPageChange ->
-                uiState =
-                    uiState.copy(productScreenPagerState = uiEvent.page)
-            is UIEvent.OnLoadingValueChanged ->
-                uiState =
-                    uiState.copy(isLoading = uiEvent.isLoading)
+            is UIEvent.OnMyProductPageChange -> uiState = uiState.copy(productScreenPagerState = uiEvent.page)
+            is UIEvent.OnLoadingValueChanged -> uiState = uiState.copy(isLoading = uiEvent.isLoading)
+            is OnShowCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = true)
+            is OnCloseCardIssuanceError -> uiState = uiState.copy(showCardIssuanceError = false)
         }
     }
 
@@ -691,13 +698,14 @@ class HomeViewModel @Inject constructor(
         data class OnMyProductPageChange(val page: PagerState) : UIEvent()
         object OnSetUserData : UIEvent()
         object OnSignOut : UIEvent()
-
         object OnShowAutomaticPaymentEdit : UIEvent()
         object OnHideAutomaticPaymentEdit : UIEvent()
         object OnEditAutomaticPayment : UIEvent()
         object OnDeleteAutomaticPayment : UIEvent()
         object OnCallMutationDeactivateClientAutomaticDebit : UIEvent()
         data class OnLoadingValueChanged(val isLoading: Boolean) : UIEvent()
+        object OnShowCardIssuanceError : UIEvent()
+        object OnCloseCardIssuanceError : UIEvent()
     }
 
     sealed class BaseEvent {

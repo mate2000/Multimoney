@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.compose.ui.graphics.Color
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
@@ -17,9 +18,10 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Cas
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.TransferBank
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
+import java.util.Locale
+import kotlin.time.Duration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import kotlin.time.Duration
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     try {
@@ -177,6 +179,14 @@ val Int.boolean
     get() = this == 1
 
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
+
+fun getDeviceManufacture(): String = (
+    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+        Build.MODEL
+    } else {
+        "${Build.MANUFACTURER} ${Build.MODEL}"
+    }
+    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Char.isValidAmountCharacter() =
     this.isDigit() || this == DECIMAL_SEPARATOR

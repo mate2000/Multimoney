@@ -30,6 +30,7 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
@@ -48,7 +49,8 @@ fun CustomBoxVisaBackground(
     onClick: (type: BoxVisaType) -> Unit = {},
     shape: Shape = RoundedCornerShape(20.dp),
     isEnable: Boolean = true,
-    type: BoxVisaType = RequestCreditCard
+    type: BoxVisaType = RequestCreditCard,
+    idBrand: Int = Brand.ElSalvador.id
 ) {
     val textColor: Color
     val startIconColor: Color
@@ -88,7 +90,13 @@ fun CustomBoxVisaBackground(
                     endIconColor = WhiteTransparency40
                 }
             }
-            contentButton = { RequestCreditCardContent(textColor, endIconColor) }
+            contentButton = {
+                RequestCreditCardContent(
+                    textColor,
+                    endIconColor,
+                    idBrand
+                )
+            }
         }
         is CreditCard -> {
             if (isSystemInDarkTheme()) {
@@ -193,7 +201,11 @@ fun CreditCardContent(
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-fun RequestCreditCardContent(textColor: Color, endIconColor: Color) {
+fun RequestCreditCardContent(
+    textColor: Color,
+    endIconColor: Color,
+    idBrand: Int = Brand.ElSalvador.id
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -201,7 +213,12 @@ fun RequestCreditCardContent(textColor: Color, endIconColor: Color) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = stringResource(id = R.string.home_active_credit_card_label),
+            text = stringResource(
+                id = when (idBrand) {
+                    Brand.Guatemala.id -> R.string.home_active_credit_card_gt_label
+                    else -> R.string.home_active_credit_card_sv_cr_label
+                }
+            ),
             modifier = Modifier.padding(vertical = 18.dp),
             style = Typography.body2.copy(
                 fontWeight = FontWeight.SemiBold,

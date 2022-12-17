@@ -2,7 +2,61 @@ package com.multimoney.multimoney.presentation.navigation
 
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.AMOUNT_ORIGINAL_LABEL
-import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
+import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
+import com.multimoney.multimoney.presentation.navigation.navgraph.DISBURSEMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
+import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_AND_EVICERTIA_ERROR
+import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LATITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_LONGITUDE
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
+import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_DISPLAY_EXCHANGE_RATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
+import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
+import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
@@ -231,12 +285,19 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen(
-        "visa_issuance_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}",
+        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
         "visa_issuance_screen"
     )
 
-    object VisaCardScreen :
-        Screen("visa_card_screen/{$ID_BRAND}/{$BALANCE_CARD_INFORMATION}", "visa_card_screen")
+    object VisaCardScreen : Screen(
+        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_card_screen"
+    )
+
+    object VisaTokenizationWaitingScreen : Screen(
+        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
+        "visa_tokenization_screen"
+    )
 
     // Bottom Navigation
     object HomeBNScreen : Screen("home_bn_screen")

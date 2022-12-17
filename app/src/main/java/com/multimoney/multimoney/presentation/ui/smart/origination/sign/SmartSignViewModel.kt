@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
@@ -89,7 +88,7 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idRequestSys: Long, idBrand: Int) {
-        if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
+        if ( uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
             uiState = uiState.copy(
                 loadingIcon = drawable.ic_multimoney_white_logo,
                 loadingTitle = string.smart_other_generating_document_title,

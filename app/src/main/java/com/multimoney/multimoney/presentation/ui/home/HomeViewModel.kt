@@ -413,7 +413,7 @@ class HomeViewModel @Inject constructor(
 
         onUIEvent(
             OnGetCreditMovements(
-                uiState.idBrand.toInt(),
+                uiState.idBrand.toIntOrNull() ?: 0,
                 uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
             )
         )

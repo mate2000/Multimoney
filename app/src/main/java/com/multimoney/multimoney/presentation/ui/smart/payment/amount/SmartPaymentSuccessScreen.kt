@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
@@ -39,9 +40,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
-import com.multimoney.multimoney.presentation.uielement.InfoPaymentDateItem
-import com.multimoney.multimoney.presentation.uielement.InfoPaymentSourceItem
-import com.multimoney.multimoney.presentation.uielement.InfoReferenceNumberItem
+import com.multimoney.multimoney.presentation.uielement.SmartPaymentInfoItem
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.shape.DottedShape
 
@@ -163,31 +162,36 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     color = MultimoneyTheme.colors.labelText
                 )
 
-                InfoPaymentSourceItem(
+                SmartPaymentInfoItem(
                     modifier = Modifier.padding(start = 21.dp, top = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                     icon = drawable.ic_visa_card_item,
-                    tintIcon = MultimoneyTheme.colors.iconTintVoucher,
+                    iconModifier = Modifier.height(24.dp).width(24.dp),
                     title = stringResource(string.smart_payment_card_bank_label),
-                    subTitle = stringResource(
+                    subtitle = stringResource(
                         string.visa_card_masked_number,
                         viewModel.maskedCardNumber.takeLast(4)
                     )
                 )
 
-                InfoReferenceNumberItem(
+                SmartPaymentInfoItem(
                     modifier = Modifier.padding(start = 21.dp, top = 32.dp),
+                    verticalAlignment = Alignment.Top,
                     icon = drawable.ic_receipt,
-                    tintIcon = MultimoneyTheme.colors.iconTintVoucher,
+                    iconModifier = Modifier.height(24.dp).width(24.dp),
                     title = stringResource(string.smart_payment_reference_number_label),
-                    subTitle = viewModel.uiState.referenceNumber
+                    subtitle = viewModel.uiState.referenceNumber
                 )
 
-                InfoPaymentDateItem(
-                    currentDate = viewModel.uiState.currentDate,
-                    currentTime = viewModel.uiState.currentTime,
+                SmartPaymentInfoItem(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 21.dp, top = 32.dp, end = 32.dp)
+                        .padding(start = 21.dp, top = 32.dp, end = 32.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    icon = drawable.ic_calendar,
+                    iconModifier = Modifier.height(24.dp).width(24.dp),
+                    title = viewModel.uiState.currentDate,
+                    rightTitle = viewModel.uiState.currentTime
                 )
             }
         }

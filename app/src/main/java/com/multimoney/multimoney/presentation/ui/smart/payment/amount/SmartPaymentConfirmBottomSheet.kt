@@ -50,7 +50,7 @@ fun SmartPaymentConfirmBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                 text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString,
                 style = Typography.h4.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
@@ -66,10 +66,13 @@ fun SmartPaymentConfirmBottomSheet(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp),
+                    .height(78.dp),
                 startIcon = R.drawable.ic_visa_card_item,
                 title = viewModel.bankDetail,
-                subtitle = stringResource(R.string.visa_card_masked_number, viewModel.maskedCardNumber.takeLast(4)),
+                subtitle = stringResource(
+                    R.string.visa_card_masked_number,
+                    viewModel.maskedCardNumber.takeLast(4)
+                ),
                 endIcon = null,
                 enable = false
             )
@@ -91,7 +94,7 @@ fun SmartPaymentConfirmBottomSheet(
             CustomInfoButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp),
+                    .height(78.dp),
                 startIcon = R.drawable.ic_bank_account_dollar,
                 title = stringResource(
                     R.string.smart_payment_amount_bottom_sheet_my_smart_account,
@@ -102,7 +105,7 @@ fun SmartPaymentConfirmBottomSheet(
             )
 
             Spacer(
-                Modifier.fillMaxWidth().height(32.dp)
+                Modifier.fillMaxWidth().height(40.dp)
             )
 
             CustomButton(

@@ -336,6 +336,7 @@
     <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>
     <string name="profile_change_phone" translatable="false">Cambio de teléfono</string>
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
+    <string name="profile_change_phone_check_format_template" translatable="false">Revisar formato. Debe tener %1$s digitos </string>
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
     <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde quieres recibir el código?</string>

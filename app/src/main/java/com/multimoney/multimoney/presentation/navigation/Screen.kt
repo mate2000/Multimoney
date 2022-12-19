@@ -125,10 +125,15 @@ const val PHONE_NUMBER = "phone_number"
 const val NEW_PHONE_NUMBER = "new_phone_number"
 const val EMAIL = "email"
 const val USER_NAME = "user_name"
+const val HTML = "html"
+const val UTF8 = "UTF-8"
+const val TITLE = "title"
 const val SEND_METHOD = "send_method"
 const val NEW_EMAIL = "new_email"
 const val CHANGING_FIELD = "changing_field"
 const val NEW_VALUE = "new_value"
+const val DATE_SIGNED = "date_signed"
+const val VERSION = "version"
 const val ID_VISA_CARD = "id_visa_card"
 
 // Previous
@@ -158,6 +163,16 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ProfileScreen : Screen(
         "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen"
+    )
+
+    object ProfileTermsAndConditionsScreen : Screen(
+        "profile_terms_and_conditions_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
+        "profile_terms_and_conditions_screen"
+    )
+
+    object ProfileTermsAndConditionsDetailScreen : Screen(
+    "profile_terms_and_conditions_detail_screen/{$TITLE}/{$HTML}/{$VERSION}/{$DATE_SIGNED}",
+        "profile_terms_and_conditions_detail_screen"
     )
 
     object ProfilePersonalInfoScreen : Screen(
@@ -196,7 +211,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "profile_settings_screen"
     )
 
-    object HelpScreen : Screen("help_screen/{$ID_BRAND}", "help_screen")
+    object ProfileHelpScreen : Screen("profile_help_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}", "profile_help_screen")
 
     object ProfileChangePasswordScreen : Screen(
         "profile_change_password_screen/{$ID_BRAND}/{$PK_USER}/{$USER_NAME}",

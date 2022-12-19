@@ -79,7 +79,7 @@ class SettingsViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfileScreen.route, false)
             is UIEvent.OnShowConfirmationDialog -> onShowConfirmationDialog()
             is UIEvent.OnNavigateToChangePassword -> onNavigateToChangePassword()
         }

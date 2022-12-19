@@ -36,8 +36,16 @@ import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaToken
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDeviceManufacture
-import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
+import com.novopayment.sdk.vts.NovoVTS.ResponseListener
+import com.novopayment.sdk.vts.model.DataEnrollDevice
+import com.novopayment.sdk.vts.model.EnrollFlow.GREEN
+import com.novopayment.sdk.vts.model.ExpirationDate
+import com.novopayment.sdk.vts.model.NovoError
+import com.novopayment.sdk.vts.model.NovoResponse
+import com.novopayment.sdk.vts.model.VtsCard
+import com.novopayment.sdk.vts.network.request.EnrollPanData
+import com.novopayment.sdk.vts.network.request.EnrollPanUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -48,7 +56,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dataStorePreferences: DataStorePreferences,
     private val mmCountDownTimer: MMCountDownTimer,
-    private val novoHelper: NovoHelper,
     private val mutationUserPhoneMobileSaveUseCase: MutationUserPhoneMobileSaveUseCase
 ) : BaseViewModel(false) {
 
@@ -78,20 +85,22 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     private fun startTokenizationProcess() {
         mmCountDownTimer.stopTimer()
         if (NovoVTS.isDeviceEnrolled().not()) {
-            novoHelper.novoEnrollDevice(
-                pkUser.toInt(),
-                phone,
-                onSuccessEnrollDevice = {
-                    mmCountDownTimer.resumeTimer()
-                    novoDeviceId = it.data
-                    callNovoEnrollPan(novoDeviceId)
+            NovoVTS.enrollDevice(
+                object : ResponseListener<String> {
+                    override fun onError(error: NovoError) {
+                        mmCountDownTimer.resumeTimer()
+                        // todo handle novo sdk error
+                        Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", error.message ?: "")
+                        Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", error.code.toString())
+                    }
+
+                    override fun onFinish(response: NovoResponse<String>) {
+                        mmCountDownTimer.resumeTimer()
+                        novoDeviceId = response.data
+                        callNovoEnrollPan(novoDeviceId)
+                    }
                 },
-                onErrorEnrollDevice = {
-                    mmCountDownTimer.resumeTimer()
-                    // todo handle novo sdk error
-                    Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.message?:"")
-                    Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.code.toString())
-                }
+                DataEnrollDevice(pkUser.toString(), phone)
             )
         } else {
             callNovoEnrollPan(novoDeviceId)
@@ -100,25 +109,30 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
 
     private fun callNovoEnrollPan(walletId: String) {
         val expirationDate = cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
-        novoHelper.novoEnrollPan(
-            pkUser = pkUser.toInt(),
-            email = email,
-            accountNumber = cardInformation?.cardNumber ?: "",
-            cardName = cardInformation?.holderName ?: "",
-            cardCvv = cardInformation?.cValidation ?: "",
-            cardExpirationMonth = expirationDate?.first() ?: "",
-            cardExpirationYear = expirationDate?.last() ?: "",
-            onSuccessEnrollDevice = {
-                mmCountDownTimer.resumeTimer()
-                NovoVTS.setFavoriteCard(it.data.vProvisionedToken)
-                createWallet(walletId = walletId)
+        NovoVTS.enrollPan(
+            object : ResponseListener<VtsCard> {
+                override fun onError(error: NovoError) {
+                    // todo handle novo sdk error
+                    mmCountDownTimer.resumeTimer()
+                    Log.d("MM_NOVO_ENROLL_PAN_ERROR", error.message ?: "")
+                    Log.d("MM_NOVO_ENROLL_PAN_ERROR", error.code.toString())
+                }
+
+                override fun onFinish(response: NovoResponse<VtsCard>) {
+                    mmCountDownTimer.resumeTimer()
+                    NovoVTS.setFavoriteCard(response.data.vProvisionedToken)
+                    createWallet(walletId = walletId)
+                }
             },
-            onErrorEnrollDevice = {
-                // todo handle novo sdk error
-                mmCountDownTimer.resumeTimer()
-                Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.message?:"")
-                Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.code.toString())
-            }
+            enrollPanUserInfo = EnrollPanUserInfo(pkUser.toString(), email),
+            enrollPanData = EnrollPanData(
+                cardInformation?.cardNumber ?: "",
+                cardInformation?.holderName ?: "",
+                cardInformation?.cValidation ?: "",
+                ExpirationDate(expirationDate?.first() ?: "", expirationDate?.last() ?: "")
+            ),
+            enrollFlow = GREEN,
+            withTermsAndConditions = false
         )
     }
 
@@ -233,7 +247,9 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     withStyle(style = Typography.body1.toSpanStyle().copy(color = color)) {
                         append("${context.getString(R.string.visa_tokenization_waiting_description_two_first)} ")
                     }
-                    withStyle(style = Typography.body1.toSpanStyle().copy(fontWeight = FontWeight.SemiBold, color = color)) {
+                    withStyle(
+                        style = Typography.body1.toSpanStyle().copy(fontWeight = FontWeight.SemiBold, color = color)
+                    ) {
                         append(context.getString(R.string.visa_tokenization_waiting_description_two_bold))
                     }
                     withStyle(style = Typography.body1.toSpanStyle().copy(color = color)) {

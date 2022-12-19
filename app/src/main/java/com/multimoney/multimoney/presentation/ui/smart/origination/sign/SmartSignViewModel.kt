@@ -22,7 +22,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
@@ -115,7 +114,7 @@ class SmartSignViewModel @Inject constructor(
                             )
                         )
                     }.onFailure {
-                        while (numAttemptsToStartSubscription < SignDocumentProcessViewModel.MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
+                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             onListenSmartContractEventSubscription(idBrand, idRequestSys)
                             numAttemptsToStartSubscription++
                         }
@@ -225,5 +224,10 @@ class SmartSignViewModel @Inject constructor(
             is OnNavigateToHome -> onNavigateToHome()
             is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
         }
+    }
+
+    companion object {
+        const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
+
     }
 }

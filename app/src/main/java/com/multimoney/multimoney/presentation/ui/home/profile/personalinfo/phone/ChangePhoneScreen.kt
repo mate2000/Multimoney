@@ -115,7 +115,12 @@ private fun ChangePhoneScreenContent(
                 isRequired = true,
                 isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
                 isError = viewModel.uiState.phoneNumberError.first,
-                errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
+                errorMessage = if (viewModel.uiState.phoneNumberError.second == R.string.profile_change_phone_check_format_template)
+                    stringResource(
+                        id = R.string.profile_change_phone_check_format_template,
+                        viewModel.uiState.phoneNumberTemplateMinimalLength ?: 0
+                    ) else
+                    stringResource(id = viewModel.uiState.phoneNumberError.second),
                 defaultCountry = selectedCountry,
                 pickedCountry = {
                     viewModel.onUIEvent(

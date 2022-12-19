@@ -39,11 +39,12 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 @Composable
 fun HelpScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: HelpScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.apply {
-            executeNavigation(onPopBackStack = onPopBackStack)
+            executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
             onUIEvent(OnGetContactInfo)
         }
     }
@@ -161,7 +162,7 @@ fun HelpScreenContent(viewModel: HelpScreenViewModel = hiltViewModel()) {
                     }
                 ))
             },
-            onTermsAndConditions = { viewModel.onUIEvent(OnTermsAndConditionsClick) }
+            onTermsAndConditionsClick = { viewModel.onUIEvent(OnTermsAndConditionsClick) }
         )
     }
 }
@@ -171,7 +172,7 @@ fun HelpOptions(
     onChatWithUsClick: () -> Unit,
     onCallAttentionCenterClick: () -> Unit,
     onFAQClick: () -> Unit,
-    onTermsAndConditions: () -> Unit,
+    onTermsAndConditionsClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -209,7 +210,7 @@ fun HelpOptions(
         CustomItemRow(
             title = stringResource(R.string.profile_help_terms_and_conditions_label),
             startIcon = R.drawable.ic_document,
-            onClick = onTermsAndConditions,
+            onClick = onTermsAndConditionsClick,
             endIcon = R.drawable.ic_right_chevron,
             startIconColor = MultimoneyTheme.colors.text
         )

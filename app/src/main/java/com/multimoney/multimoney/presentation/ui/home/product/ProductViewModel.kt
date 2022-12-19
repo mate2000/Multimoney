@@ -205,7 +205,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSmartSave() {
         val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo("${Screen.SmartPaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentAccountScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        navigateTo("${Screen.SmartPaymentOptionsScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -301,11 +301,11 @@ class ProductViewModel @Inject constructor(
         )
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${pkUser}/${uiState.userStatus?.infoUser?.userName}")
     }
 
     private fun onNavigateToSmartPaymentAccountScreen() =
-        navigateTo(Screen.SmartPaymentAccountScreen.route)
+        navigateTo(Screen.SmartPaymentOptionsScreen.route)
 
     private fun onNavigateToSmartPaymentMethodScreen() =
         navigateTo(Screen.SmartPaymentScreen.route)

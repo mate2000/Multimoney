@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartO
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
 
 const val ACCOUNT_TOKEN = "account_token"
+const val SMART_PAYMENT_ACCOUNTS = "smart_payment_accounts"
 
 fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
     navigation(

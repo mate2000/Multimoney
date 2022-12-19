@@ -1,5 +1,9 @@
 package com.multimoney.domain.model.accountsmart
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class SinpeAccount(
     val accountId: Int,
     val country: String,
@@ -10,4 +14,4 @@ data class SinpeAccount(
     val currencyId: Int,
     val currency: String,
     val nameAccount: String,
-)
+) : Parcelable

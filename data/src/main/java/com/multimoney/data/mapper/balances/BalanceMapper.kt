@@ -54,7 +54,8 @@ private fun BalanceQuery.Account.mapToDomainModel() =
         accountNumber = accountNumber,
         ibanAccountNumber = ibanAccountNumber,
         totalInterest = totalInterest.toString(),
-        tokenNumber = tokenNumber
+        tokenNumber = tokenNumber,
+        month = month
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =

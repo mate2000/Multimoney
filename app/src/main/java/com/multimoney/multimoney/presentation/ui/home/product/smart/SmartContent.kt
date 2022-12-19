@@ -58,7 +58,8 @@ fun SmartContent(viewModel: ProductViewModel, currentPage: Int) {
                             CardSmartProduct(
                                 currency = it[index]?.currencyCode ?: "",
                                 profitMonthly = it[index]?.gainedInterest.toString(),
-                                profitTotal = it[index]?.totalBalance.toString()
+                                profitTotal = it[index]?.totalBalance.toString(),
+                                currentMonth = it[index]?.month ?: ""
                             )
                         }
                     }

@@ -78,7 +78,8 @@ query Balance(
             visaDirectId
             visaDirectUser
             totalInterest
-            tokenNumber
+            tokenNumber,
+            month
         }
         request {
             statusFirm

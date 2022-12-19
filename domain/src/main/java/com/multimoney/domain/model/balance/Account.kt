@@ -10,5 +10,6 @@ data class Account(
     val ibanAccountNumber: String?,
     val totalInterest: String?,
     val tokenNumber: String?,
-    val movements: List<SmartMovement> = emptyList()
+    val movements: List<SmartMovement> = emptyList(),
+    val month : String?
 )

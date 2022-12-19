@@ -1,13 +1,11 @@
 package com.multimoney.multimoney.presentation.ui.crypto
 
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
@@ -69,7 +66,7 @@ fun CurrencyItem(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "${item.descriptionCurrency} (${item.asset})",
+                            text = stringResource(id = R.string.currency_item_description,item.descriptionCurrency, item.asset),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
@@ -92,7 +89,7 @@ fun CurrencyItem(
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
-                                text = "${item.percentageInvestedCurrency}%",
+                                text = stringResource(id = R.string.currency_item_percent_invested, item.percentageInvestedCurrency),
                                 style = Typography.caption,
                                 color = SemanticPositive400
                             )

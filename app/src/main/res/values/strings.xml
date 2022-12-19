@@ -1078,5 +1078,8 @@
     <string name="profile_help_error_title" translatable="false">¡Oh no! hubo un error</string>
     <string name="profile_help_error_subtitle" translatable="false">Por favor intentá de nuevo</string>
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
-    
+
+    <!-- Currency Item -->
+    <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
+    <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 </resources>

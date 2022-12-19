@@ -1,13 +1,10 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.google.i18n.phonenumbers.PhoneNumberUtil
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.multimoney.R
@@ -112,33 +109,29 @@ class ChangePhoneViewModel @Inject constructor(
     }
 
     private fun isPhoneValid(countryCode: String?) {
-        if (uiState.phoneNumberTemplateMinimalLength != null) {
+        uiState.phoneNumberTemplateMinimalLength?.let { templateLength ->
             uiState.newPhoneNumber?.let { newPhoneNumber ->
-                uiState.phoneNumberTemplateMinimalLength?.let { templateLength ->
-                    if (newPhoneNumber.length < templateLength) {
-                        uiState =
-                            uiState.copy(
-                                phoneNumberError = Pair(
-                                    true,
-                                    R.string.profile_change_phone_check_format_template
-                                )
-                            )
-                    } else {
-                        if (isPhoneNumberValid(
-                                phone = uiState.newPhoneNumber.toString(),
-                                fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",
-                                countryCode = countryCode ?: "",
-                                phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
-                            ).not()
-                        ) uiState =
-                            uiState.copy(
-                                phoneNumberError = Pair(
-                                    true,
-                                    R.string.sign_up_phone_not_valid
-                                )
-                            )
-                        else clearPhoneError()
-                    }
+                if (newPhoneNumber.length < templateLength) {
+                    uiState = uiState.copy(
+                        phoneNumberError = Pair(
+                            true,
+                            R.string.profile_change_phone_check_format_template
+                        )
+                    )
+                } else {
+                    if (isPhoneNumberValid(
+                            phone = uiState.newPhoneNumber.toString(),
+                            fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",
+                            countryCode = countryCode ?: "",
+                            phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
+                        ).not()
+                    ) uiState = uiState.copy(
+                        phoneNumberError = Pair(
+                            true,
+                            R.string.sign_up_phone_not_valid
+                        )
+                    )
+                    else clearPhoneError()
                 }
             }
         }

@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewModelScope
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartData
@@ -13,7 +12,6 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.Companion.ONE_SEC_DELAY
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnCompanyNameChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionThreeValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionTwoValueChange
@@ -27,10 +25,8 @@ import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class FormalSalariedSvViewModel @Inject constructor(
@@ -42,25 +38,35 @@ class FormalSalariedSvViewModel @Inject constructor(
         private set
 
     // Stateless
-    var user = ""
-    var idBrand = DEFAULT_ID_BRAND
-    var divisionTwoId : Long? = null
-    var divisionThreeId : Long? = null
+    private var user = ""
+    private var idBrand = DEFAULT_ID_BRAND
+    // var divisionTwoId: Long? = null
+    // var divisionThreeId: Long? = null
 
-    private fun getDivisionTwo() {
+    private fun getDivisionTwo(getId: Long? = null) {
         executeUseCase {
             addressLevelTwoUseCase(
                 user,
                 idBrand,
                 NOT_APPLICABLE
-            ).collectLatest {
-                it.onSuccess { addressList ->
-                    uiState = uiState.copy(divisionTwoList = addressList?.addresses)
+            ).collectLatest { result ->
+                result.onSuccess { addressList ->
+                    uiState = uiState.copy(
+                        divisionTwoList = addressList?.addresses,
+                        isLoading = false
+                    )
+                    if (getId != null) {
+                        uiState = uiState.copy(
+                            divisionTwoSelected = addressList?.addresses?.find {
+                                (it?.id?.toLongOrNull() ?: 0) == getId
+                            }
+                        )
+                    }
                 }
-                it.onLoading {
+                result.onLoading {
                     uiState = uiState.copy(isLoading = true)
                 }
-                it.onFailure { error ->
+                result.onFailure { error ->
                     uiState = uiState.copy(
                         dialogParameters = DialogParameters(
                             description = error.getError() ?: "",
@@ -74,7 +80,7 @@ class FormalSalariedSvViewModel @Inject constructor(
         }
     }
 
-    private fun getDivisionThree() {
+    private fun getDivisionThree(getId: Long? = null) {
         executeUseCase {
             uiState.divisionTwoSelected?.code?.let { divTwo ->
                 addressLevelThreeUseCase(
@@ -82,22 +88,25 @@ class FormalSalariedSvViewModel @Inject constructor(
                     idBrand = idBrand,
                     idAddressLevelOne = NOT_APPLICABLE,
                     idAddressLevelTwo = divTwo
-                ).collectLatest {
-                    it.onSuccess { addressList ->
+                ).collectLatest { result ->
+                    result.onSuccess { addressList ->
                         // update the second address field after getting the first address list
                         uiState = uiState.copy(
                             divisionThreeList = addressList?.addresses,
                             isLoading = false
                         )
-
-                        if (divisionThreeId != null) {
-                            onDivisionThreeValueChange(null, divisionThreeId.toString())
+                        if (getId != null) {
+                            uiState = uiState.copy(
+                                divisionThreeSelected = addressList?.addresses?.find {
+                                    (it?.id?.toLongOrNull() ?: 0) == getId
+                                }
+                            )
                         }
                     }
-                    it.onLoading {
+                    result.onLoading {
                         uiState = uiState.copy(isLoading = true)
                     }
-                    it.onFailure { error ->
+                    result.onFailure { error ->
                         uiState = uiState.copy(
                             dialogParameters = DialogParameters(
                                 description = error.getError() ?: "",
@@ -113,32 +122,19 @@ class FormalSalariedSvViewModel @Inject constructor(
     }
 
     private fun onDivisionTwoValueChange(divisionTwo: String?) {
-        divisionTwoId?.let {
-            uiState = uiState.copy(
-                divisionTwoSelected = uiState.divisionTwoList?.find { it?.id == divisionTwoId.toString() },
-                divisionThreeSelected = null,
-                divisionThreeList = listOf()
-            )
-        } ?: run {
-            uiState = uiState.copy(
-                divisionTwoSelected = uiState.divisionTwoList?.find { it?.name == divisionTwo },
-                divisionThreeSelected = null,
-                divisionThreeList = listOf()
-            )
-        }
+        uiState = uiState.copy(
+            divisionTwoSelected = uiState.divisionTwoList?.find { it?.name == divisionTwo },
+            divisionThreeSelected = null,
+            divisionThreeList = listOf()
+        )
+
         getDivisionThree()
     }
 
-    private fun onDivisionThreeValueChange(divisionThree: String?, divisionThreeId: String? = null) {
-        uiState = if (divisionThreeId != null) {
-            uiState.copy(
-                divisionThreeSelected = uiState.divisionThreeList?.find { it?.id == divisionThreeId }
-            )
-        } else {
-            uiState.copy(
-                divisionThreeSelected = uiState.divisionThreeList?.find { it?.name == divisionThree }
-            )
-        }
+    private fun onDivisionThreeValueChange(divisionThree: String?) {
+        uiState = uiState.copy(
+            divisionThreeSelected = uiState.divisionThreeList?.find { it?.name == divisionThree }
+        )
         onValidateForm()
     }
 
@@ -182,16 +178,19 @@ class FormalSalariedSvViewModel @Inject constructor(
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        divisionTwoId = accountSmartData?.idJobLevel2
-        divisionThreeId = accountSmartData?.idJobLevel3
+        val divisionTwoId = accountSmartData?.idJobLevel2
+        val divisionThreeId = accountSmartData?.idJobLevel3
+
+        if (divisionTwoId != null) {
+            getDivisionTwo(divisionTwoId)
+            getDivisionThree(divisionThreeId)
+        } else {
+            getDivisionTwo()
+        }
         accountSmartData?.let {
             onCompanyNameChange(it.companyName.orEmpty())
             onProfessionChange(it.positionJob.orEmpty())
             onSalaryChange(it.income.toString())
-            viewModelScope.launch {
-                delay(ONE_SEC_DELAY)
-                onDivisionTwoValueChange(null)
-            }
             onWorkingAddressChange(it.fullJobAddress.orEmpty())
         }
     }
@@ -201,13 +200,13 @@ class FormalSalariedSvViewModel @Inject constructor(
 
     fun isFormValid(): Boolean =
         uiState.profession.isNotBlank() &&
-                uiState.companyName.isNotBlank() &&
-                uiState.salary.isNotBlank() &&
-                uiState.salary.toFloat() > MIN_INCOME &&
-                uiState.workingAddress.isNotBlank() &&
-                uiState.divisionTwoSelected != null &&
-                uiState.divisionThreeSelected != null &&
-                uiState.workingAddressError.first.not()
+            uiState.companyName.isNotBlank() &&
+            uiState.salary.isNotBlank() &&
+            uiState.salary.toFloat() > MIN_INCOME &&
+            uiState.workingAddress.isNotBlank() &&
+            uiState.divisionTwoSelected != null &&
+            uiState.divisionThreeSelected != null &&
+            uiState.workingAddressError.first.not()
 
     data class UIState(
         var companyName: String = "",
@@ -230,7 +229,12 @@ class FormalSalariedSvViewModel @Inject constructor(
         data class OnWorkingAddressChange(val address: String) : UIEvent()
         data class OnDivisionTwoValueChange(val divisionTwo: String?) : UIEvent()
         data class OnDivisionThreeValueChange(val divisionThree: String?) : UIEvent()
-        data class OnGetUserData(val user: String, val idBrand: Int) : UIEvent()
+        data class OnGetUserData(
+            val user: String,
+            val idBrand: Int,
+            val accountSmartData: AccountSmartData?
+        ) : UIEvent()
+
         data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
         object OnValidateForm : UIEvent()
     }
@@ -240,7 +244,7 @@ class FormalSalariedSvViewModel @Inject constructor(
             is OnGetUserData -> {
                 user = event.user
                 idBrand = event.idBrand
-                getDivisionTwo()
+                onLoadCurrentStepData(event.accountSmartData)
             }
             is OnCompanyNameChange -> onCompanyNameChange(event.companyName)
             is OnProfessionChange -> onProfessionChange(event.profession)

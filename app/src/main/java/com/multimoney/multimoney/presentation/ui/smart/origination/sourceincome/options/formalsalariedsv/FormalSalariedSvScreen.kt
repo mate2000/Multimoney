@@ -38,7 +38,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionThreeValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnGetUserData
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnWorkingAddressChange
@@ -55,15 +54,16 @@ fun FormalSalariedSvScreen(
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
     viewModel: FormalSalariedSvViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(true) {
-        viewModel.onUiEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
-    }
-
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueVisible(true))
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
-        viewModel.onUiEvent(OnGetUserData(sharedViewModel.user, sharedViewModel.idBrandAsInt))
+        viewModel.onUiEvent(
+            OnGetUserData(
+                sharedViewModel.user,
+                sharedViewModel.idBrandAsInt,
+                sharedViewModel.accountSmartData
+            )
+        )
 
         sharedViewModel.onUIEvent(
             OnSetNavigation(
@@ -75,8 +75,11 @@ fun FormalSalariedSvScreen(
                                 income = viewModel.uiState.salary.toFloat(),
                                 companyName = viewModel.uiState.companyName,
                                 positionJob = viewModel.uiState.profession,
-                                idJobLevel2 = viewModel.uiState.divisionTwoSelected?.id?.toLong() ?: 0,
-                                idJobLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong() ?: 0,
+                                idJobLevel2 = viewModel.uiState.divisionTwoSelected?.id?.toLong()
+                                    ?: 0,
+                                idJobLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong()
+                                    ?: 0,
+                                fullJobAddress = viewModel.uiState.workingAddress,
                                 currentStep = Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
@@ -178,7 +181,10 @@ fun FormalSalariedSvContent(
                 focusManager.moveFocus(FocusDirection.Down)
             }),
             leadingIcon = R.drawable.ic_money_gray,
-            placeHolder = stringResource(R.string.smart_salaried_salary_placeholder, currencySymbol),
+            placeHolder = stringResource(
+                R.string.smart_salaried_salary_placeholder,
+                currencySymbol
+            ),
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_salaried_average_salary_required),
             modifier = Modifier.padding(top = 16.dp)

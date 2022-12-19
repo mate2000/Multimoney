@@ -31,7 +31,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmou
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnRetryTransfer
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSuggestedAmountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnTryLater
@@ -224,7 +224,7 @@ class SavingAmountViewModel @Inject constructor(
         val minSuggestion: SuggestedAmount = SuggestedAmount(),
         val mediumSuggestion: SuggestedAmount = SuggestedAmount(),
         val maxSuggestion: SuggestedAmount = SuggestedAmount(),
-        val currency: String = "$",
+        val currency: String = "",
         val currentAmountValueString: String? = null,
         val enableButton: Boolean = false,
         val isLoading: Boolean = false,
@@ -255,7 +255,7 @@ class SavingAmountViewModel @Inject constructor(
                 uiEvent.context
             )
             is OnNavigateHome -> onNavigateToHome()
-            is OnSharedVoucherImage -> onShareVoucherImage(uiEvent.view, uiEvent.capturingBounds)
+            is OnShareVoucherImage -> onShareVoucherImage(uiEvent.view, uiEvent.capturingBounds)
         }
     }
 
@@ -275,7 +275,7 @@ class SavingAmountViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnNavigateHome : UIEvent()
-        data class OnSharedVoucherImage(
+        data class OnShareVoucherImage(
             val view: View,
             val capturingBounds: Rect
         ) : UIEvent()

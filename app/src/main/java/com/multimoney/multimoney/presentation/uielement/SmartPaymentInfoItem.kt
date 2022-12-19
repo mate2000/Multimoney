@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
  * @param title: Left side title string value
  * @param subtitle: Left side subtitle string value
  * @param rightTitle: Right side title string value
+ * @param rightSubtitle: Right side subtitle string value
  */
 
 @Composable
@@ -39,7 +40,8 @@ fun SmartPaymentInfoItem(
     iconModifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
-    rightTitle: String? = null
+    rightTitle: String? = null,
+    rightSubtitle: String? = null
 ) {
     Row(
         modifier = modifier,
@@ -71,13 +73,21 @@ fun SmartPaymentInfoItem(
                 }
             }
         }
-        if (rightTitle.isNullOrBlank().not()) {
-            Text(
-                text = rightTitle ?: "",
-                modifier = Modifier.padding(bottom = 16.dp),
-                style = Typography.body2,
-                color = MultimoneyTheme.colors.labelText
-            )
+        Column(modifier = Modifier.padding(end = 14.dp)) {
+            if (rightTitle.isNullOrBlank().not()) {
+                Text(
+                    text = rightTitle ?: "",
+                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.labelText
+                )
+            }
+            if (rightSubtitle.isNullOrBlank().not()) {
+                Text(
+                    text = rightSubtitle ?: "",
+                    style = Typography.body2,
+                    color = MultimoneyTheme.colors.labelText
+                )
+            }
         }
     }
 }

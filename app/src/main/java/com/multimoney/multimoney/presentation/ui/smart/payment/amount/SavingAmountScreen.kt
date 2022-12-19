@@ -31,8 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R.drawable
-import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
@@ -72,24 +71,24 @@ fun SavingAmountScreen(
     }
 
     if (viewModel.uiState.showLoadingScreen) {
-        LoadingMultiMoney(string.smart_processing_transaction)
+        LoadingMultiMoney(R.string.smart_processing_transaction)
     } else if (viewModel.uiState.showErrorScreen) {
-        val notificationTitle = stringResource(string.smart_saving_try_later_notification_title)
-        val notificationBody = stringResource(string.smart_saving_try_later_notification_body)
+        val notificationTitle = stringResource(R.string.smart_saving_try_later_notification_title)
+        val notificationBody = stringResource(R.string.smart_saving_try_later_notification_body)
         AlertResult(
             isTopNavBarVisible = false,
-            titleResource = string.error_occurred_title,
-            descriptionResource = string.error_please_try_again,
-            buttonTextResource = string.error_button_retry,
+            titleResource = R.string.error_occurred_title,
+            descriptionResource = R.string.error_please_try_again,
+            buttonTextResource = R.string.error_button_retry,
             onButtonClick = { viewModel.onUIEvent(OnRetryTransfer) },
             isSecondaryButtonVisible = true,
-            secondaryButtonTextResource = string.error_button_try_later,
+            secondaryButtonTextResource = R.string.error_button_try_later,
             onSecondaryButtonClick = {
                 viewModel.onUIEvent(
                     OnTryLater(
                         notificationTitle,
                         notificationBody,
-                        drawable.ic_logo_multimoney,
+                        R.drawable.ic_logo_multimoney,
                         context
                     )
                 )
@@ -140,7 +139,7 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
             Column {
                 Text(
                     modifier = Modifier.padding(top = 30.dp),
-                    text = stringResource(id = string.smart_saving_amount_title),
+                    text = stringResource(id = R.string.smart_saving_amount_title),
                     style = Typography.h6.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = MultimoneyTheme.colors.labelText
@@ -214,7 +213,7 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                     focusManager.clearFocus()
                     viewModel.onUIEvent(OnContinueClick)
                 },
-                text = stringResource(id = string.button_continue),
+                text = stringResource(id = R.string.button_continue),
                 buttonType = CustomButtonType.PrimaryPrimary,
                 enable = viewModel.uiState.enableButton
             )

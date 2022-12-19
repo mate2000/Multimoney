@@ -732,11 +732,11 @@
 
     <!-- Smart payment success -->
     <string name="smart_payment_success" translatable="false">¡Transacción exitosa!</string>
-    <string name="smart_payment_you_saved_on_you_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
+    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
     <string name="smart_payment_from_label" translatable="false">Desde</string>
     <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
     <string name="smart_payment_reference_number_label" translatable="false">N° de referencia</string>
-    <string name="smart_payment_shared_button" translatable="false">Compartir</string>
+    <string name="smart_payment_share_button" translatable="false">Compartir</string>
     <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
     <string name="smart_payment_card_bank_label" translatable="false">Tarjeta Banco</string>
 

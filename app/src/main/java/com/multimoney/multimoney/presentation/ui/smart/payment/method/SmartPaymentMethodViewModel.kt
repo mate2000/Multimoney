@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
@@ -15,12 +14,11 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPayme
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartPaymentMethodViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     // uiState
@@ -28,14 +26,14 @@ class SmartPaymentMethodViewModel @Inject constructor(
         private set
 
     // stateLess
-    var userSmartAccount: String = ""
-    var accountToken: Long = savedStateHandle[ACCOUNT_TOKEN] ?: 0
-    var currencyId: Int = savedStateHandle[ID_CURRENCY] ?: 0
+    private var userSmartAccount: String = ""
+    private var accountToken: Long = 0
+    private var currencyId: Int = 0
 
-    private fun onStart() {
-        viewModelScope.launch {
-            userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""
-        }
+    init {
+        userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""
+        accountToken = savedStateHandle[ACCOUNT_TOKEN] ?: 0
+        currencyId = savedStateHandle[ID_CURRENCY] ?: 0
     }
 
     private fun onNavigateBack() {
@@ -57,7 +55,6 @@ class SmartPaymentMethodViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnStart -> onStart()
             is OnNavigateBack -> onNavigateBack()
             is OnTransferSelected -> navigateToTransferScreen()
             is OnVisaSelected -> navigateToVisaScreen()
@@ -65,7 +62,6 @@ class SmartPaymentMethodViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        object OnStart : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnTransferSelected : UIEvent()
         object OnVisaSelected : UIEvent()

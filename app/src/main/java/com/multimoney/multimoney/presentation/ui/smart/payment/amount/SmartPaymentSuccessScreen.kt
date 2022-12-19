@@ -35,7 +35,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnShareVoucherImage
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
@@ -105,14 +105,14 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                         onClick = {
                             capturingViewBounds?.let { bounds ->
                                 viewModel.onUIEvent(
-                                    OnSharedVoucherImage(
+                                    OnShareVoucherImage(
                                         view,
                                         bounds
                                     )
                                 )
                             }
                         },
-                        text = stringResource(string.smart_payment_shared_button),
+                        text = stringResource(string.smart_payment_share_button),
                         modifier = Modifier
                             .padding(
                                 start = 24.dp,
@@ -130,7 +130,7 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     )
                     Text(
                         text = stringResource(
-                            string.smart_payment_you_saved_on_you_smart_account,
+                            string.smart_payment_you_saved_on_your_smart_account,
                             viewModel.uiState.currency
                         ),
                         modifier = Modifier.padding(top = 12.dp),
@@ -191,7 +191,7 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     icon = drawable.ic_calendar,
                     iconModifier = Modifier.height(24.dp).width(24.dp),
                     title = viewModel.uiState.currentDate,
-                    rightTitle = viewModel.uiState.currentTime
+                    rightSubtitle = viewModel.uiState.currentTime
                 )
             }
         }

@@ -16,7 +16,6 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
@@ -72,7 +71,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
                         cardVDList = cardsList ?: emptyList()
                     )
                     if (cardsList.isNullOrEmpty()) {
-                        // todo redirect to add card
+                        onAddCard()
                     }
                 }.onFailure {
                     uiState = uiState.copy(
@@ -113,7 +112,6 @@ class SmartPaymentCardsViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
-            is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase()
             is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
             is OnAddCard -> onAddCard()
             is OnStart -> onStart()
@@ -122,7 +120,6 @@ class SmartPaymentCardsViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnCardSelected(val cardSelected: CardVisaDirect) : UIEvent()
-        object OnCallQueryGetClientCards : UIEvent()
         object OnAddCard : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnStart : UIEvent()

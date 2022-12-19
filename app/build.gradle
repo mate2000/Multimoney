@@ -44,12 +44,12 @@ android {
     }
 
     signingConfigs {
-        production {
+        /*production {
             keyAlias System.env.KEYSTORE_ALIAS ? System.env.KEYSTORE_ALIAS : keystoreAliasMM
             keyPassword System.env.KEY_PASSWORD ? System.env.KEY_PASSWORD : keyPasswordMM
             storeFile rootProject.file(System.env.ANDROID_KEYSTORE_PATH ? System.env.ANDROID_KEYSTORE_PATH : keystorePathMM)
             storePassword System.env.KEYSTORE_PASSWORD ? System.env.KEYSTORE_PASSWORD : keystorePasswordMM
-        }
+        }*/
     }
 
     buildTypes {
@@ -66,7 +66,7 @@ android {
             buildConfigField "String", "NOVO_SOCKET_URL", System.env.PRODUCTION_NOVO_SOCKET_URL ? "\"${System.env.PRODUCTION_NOVO_SOCKET_URL}\"" : novoSocketUrl
             buildConfigField "String", "NOVO_API_KEY", System.env.PRODUCTION_NOVO_API_KEY ? "\"${System.env.PRODUCTION_NOVO_API_KEY}\"" : novoApiKey
             buildConfigField "String", "NOVO_VCEH_URL", System.env.PRODUCTION_NOVO_VCEH_URL ? "\"${System.env.PRODUCTION_NOVO_VCEH_URL}\"" : novoVcehUrl
-            signingConfig signingConfigs.production
+            //signingConfig signingConfigs.production
         }
         staging {
             applicationIdSuffix ".dev"
@@ -80,7 +80,7 @@ android {
             buildConfigField "String", "NOVO_SOCKET_URL", System.env.STAGING_NOVO_SOCKET_URL ? "\"${System.env.STAGING_NOVO_SOCKET_URL}\"" : novoSocketUrl
             buildConfigField "String", "NOVO_API_KEY", System.env.STAGING_NOVO_API_KEY ? "\"${System.env.STAGING_NOVO_API_KEY}\"" : novoApiKey
             buildConfigField "String", "NOVO_VCEH_URL", System.env.STAGING_NOVO_VCEH_URL ? "\"${System.env.STAGING_NOVO_VCEH_URL}\"" : novoVcehUrl
-            signingConfig signingConfigs.production
+            //signingConfig signingConfigs.production
         }
         debug {
             applicationIdSuffix ".dev"
@@ -94,7 +94,7 @@ android {
             buildConfigField "String", "NOVO_SOCKET_URL", System.env.DEVELOPMENT_NOVO_SOCKET_URL ? "\"${System.env.DEVELOPMENT_NOVO_SOCKET_URL}\"" : novoSocketUrl
             buildConfigField "String", "NOVO_API_KEY", System.env.DEVELOPMENT_NOVO_API_KEY ? "\"${System.env.DEVELOPMENT_NOVO_API_KEY}\"" : novoApiKey
             buildConfigField "String", "NOVO_VCEH_URL", System.env.DEVELOPMENT_NOVO_VCEH_URL ? "\"${System.env.DEVELOPMENT_NOVO_VCEH_URL}\"" : novoVcehUrl
-            signingConfig signingConfigs.production
+            //signingConfig signingConfigs.production
         }
     }
     compileOptions {

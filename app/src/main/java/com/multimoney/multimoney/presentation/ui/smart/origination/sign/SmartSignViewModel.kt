@@ -22,14 +22,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
@@ -215,15 +207,25 @@ class SmartSignViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnCallSubscriptionCreditContractEvent -> onShouldCallSubscription(idPrint, idBrand)
-            is OnChangeScreen -> uiState =
+            is UIEvent.OnCallSubscriptionSmartContractEvent -> onShouldCallSubscription(idPrint, idBrand)
+            is UIEvent.OnChangeScreen -> uiState =
                 uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
-            is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
-            is OnCloseClick -> onNavigateToHome()
-            is OnShowDialogInformation -> createDialog()
-            is OnNavigateToHome -> onNavigateToHome()
-            is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
+            is UIEvent.OnInitializeText -> dialogDescription = uiEvent.dialogDescription
+            is UIEvent.OnCloseClick -> onNavigateToHome()
+            is UIEvent.OnShowDialogInformation -> createDialog()
+            is UIEvent.OnNavigateToHome -> onNavigateToHome()
+            is UIEvent.OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
         }
+    }
+
+    sealed class UIEvent {
+        object OnCallSubscriptionSmartContractEvent : UIEvent()
+        data class OnInitializeText(val dialogDescription: String) : UIEvent()
+        object OnCloseClick : UIEvent()
+        object OnShowDialogInformation : UIEvent()
+        data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
+        object OnNavigateToHome : UIEvent()
+        object OnNavigateToContinueValidatingIdentity : UIEvent()
     }
 
     sealed class BaseEvent {

@@ -33,6 +33,7 @@ import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -76,7 +77,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
-import com.multimoney.multimoney.util.NovoHelper
+import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -86,8 +87,7 @@ class ProductViewModel @Inject constructor(
     private val helper: ShareHelper,
     private val nfcHelper: NfcHelper,
     private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
-    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
-    private val novoHelper: NovoHelper
+    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -616,7 +616,15 @@ class ProductViewModel @Inject constructor(
 
     private fun onConfigNovoSdk() {
         if (nfcHelper.isNfcSupported()) {
-            novoHelper.configureNovoSdk()
+            if (NovoVTS.isConfiguredForVts().not()) {
+                NovoVTS.setConfigurations(
+                    BuildConfig.NOVO_CLIENT_ID,
+                    BuildConfig.NOVO_API_KEY,
+                    BuildConfig.NOVO_API_URL,
+                    BuildConfig.NOVO_VCEH_URL,
+                    BuildConfig.NOVO_SOCKET_URL
+                )
+            }
         }
     }
 

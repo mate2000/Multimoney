@@ -1,0 +1,19 @@
+query ExchangeRate(
+    $user: String!
+    $identification: String!
+    $idOriginCurrency: String!
+    $idDestinationCurrency: String!
+) {
+    getExchangeRate(
+        getExchangeRateInput: {
+            user: $user
+            identification: $identification
+            idOriginCurrency: $idOriginCurrency
+            idDestinationCurrency: $idDestinationCurrency
+        }
+    ) {
+        result {
+            exchangeRate
+        }
+    }
+}

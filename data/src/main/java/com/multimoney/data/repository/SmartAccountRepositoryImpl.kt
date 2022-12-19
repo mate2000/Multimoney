@@ -324,4 +324,23 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             })
     }
+
+    override suspend fun querySmartExchangeRate(
+        user: String,
+        identification: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String
+    ): Flow<MultimoneyResult<Double?>> {
+        return fetchData(
+            apolloCall = graphqlApi.querySmartExchangeRate(
+                user = user,
+                identification = identification,
+                idOriginCurrency = idOriginCurrency,
+                idDestinationCurrency = idDestinationCurrency
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
 }

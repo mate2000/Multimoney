@@ -150,4 +150,11 @@ interface SmartAccountRepository {
         idAccount: Long,
         accountNumber: String
     ): Flow<MultimoneyResult<SinpeAccountResult?>>
+
+    suspend fun querySmartExchangeRate(
+        user: String,
+        identification: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String
+    ): Flow<MultimoneyResult<Double?>>
 }

@@ -114,7 +114,7 @@ fun CryptoCardSmartInProcess(
 @Composable
 fun CryptoCardWithBalance(
     cryptoBalance: Double, clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),
-    isEmptyStateEnable: Boolean
+    isEmptyStateDisable: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -124,7 +124,7 @@ fun CryptoCardWithBalance(
                 top = 24.dp,
                 start = 16.dp,
                 end = 16.dp,
-                bottom = if (isEmptyStateEnable.not()) 136.dp else 0.dp
+                bottom = if (isEmptyStateDisable.not()) 136.dp else 0.dp
             )
     ) {
         Text(
@@ -141,7 +141,7 @@ fun CryptoCardWithBalance(
             )
         )
 
-        if (isEmptyStateEnable) {
+        if (isEmptyStateDisable) {
             val isInGainOrLoss = calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory) >= 0
             val graphicColor = if (isInGainOrLoss)
                 MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor

@@ -47,6 +47,12 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -56,12 +62,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -90,12 +90,12 @@ class ValidateOTPViewModel @Inject constructor(
             email = savedStateHandle[EMAIL],
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             pkUser = savedStateHandle[PK_USER],
+            idClient = savedStateHandle[ID_CLIENT],
             firstName = savedStateHandle[FIRST_NAME],
             userName = savedStateHandle[USER],
             sendMethod = savedStateHandle[SEND_METHOD],
             changingField = savedStateHandle[CHANGING_FIELD],
-            newValue = savedStateHandle[NEW_VALUE],
-            idClient = savedStateHandle[ID_CLIENT]
+            newValue = savedStateHandle[NEW_VALUE]
         )
         getTextResources()
     }
@@ -126,7 +126,7 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun initializeTimer(
         phaseCount: Int?,
-        totalTime: Long = TIMER_DURATION,
+        totalTime: Long = TIMER_DURATION
     ) {
         val newRemainingTime = totalTime.seconds
         uiState = uiState.copy(
@@ -144,7 +144,9 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun onOtpValueChange(value: String) {
         uiState = uiState.copy(
-            otp = value, isOtpFromSms = false, otpError = Pair(false, R.string.error_empty)
+            otp = value,
+            isOtpFromSms = false,
+            otpError = Pair(false, R.string.error_empty)
         )
         isFormValid()
     }
@@ -157,11 +159,18 @@ class ValidateOTPViewModel @Inject constructor(
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String,
+        user: String
     ) = executeUseCase {
         uiState = uiState.copy(isTimerRunning = false)
         mutationSendPinProcessUseCase.invoke(
-            identification, firstName, email, cellphone, sendMethod, pkUser, idBrand, user
+            identification,
+            firstName,
+            email,
+            cellphone,
+            sendMethod,
+            pkUser,
+            idBrand,
+            user
         ).collectLatest { result ->
             onCallMutationSendPinProcessEvent.emit(result)
         }
@@ -182,7 +191,8 @@ class ValidateOTPViewModel @Inject constructor(
     private fun onTimerTick() {
         val newRemainingTime = uiState.remainingTime.minus(TIMER_DELAY.seconds)
         uiState = uiState.copy(
-            remainingTime = newRemainingTime, remainingTimeText = newRemainingTime.format()
+            remainingTime = newRemainingTime,
+            remainingTimeText = newRemainingTime.format()
         )
     }
 
@@ -191,7 +201,7 @@ class ValidateOTPViewModel @Inject constructor(
         uiState = uiState.copy(
             isTimerRunning = false,
             remainingTime = newRemainingTime,
-            remainingTimeText = newRemainingTime.format(),
+            remainingTimeText = newRemainingTime.format()
         )
         updateMessageStatus()
     }
@@ -200,8 +210,9 @@ class ValidateOTPViewModel @Inject constructor(
         when (uiState.phaseCount) {
             PHASE_ONE -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP)
             PHASE_TWO -> uiState = uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP_AGAIN)
-            PHASE_THREE, null -> uiState =
-                uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
+            PHASE_THREE, null ->
+                uiState =
+                    uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
         }
     }
 
@@ -273,8 +284,14 @@ class ValidateOTPViewModel @Inject constructor(
         }
 
     private fun onChangeEmail(
-        idClient : Int,pkUser: Int, identification: String, email: String, registerId: Int,
-        changeUser: Boolean, user: String, idBrand: Int
+        idClient: Int,
+        pkUser: Int,
+        identification: String,
+        email: String,
+        registerId: Int,
+        changeUser: Boolean,
+        user: String,
+        idBrand: Int
     ) =
         executeUseCase {
             mutationChangeEmailUseCase.invoke(
@@ -333,7 +350,7 @@ class ValidateOTPViewModel @Inject constructor(
                 }
                 else -> {
                     onChangeEmail(
-                        uiState.idClient?.toInt() ?: 0,
+                        uiState.idClient ?: 0,
                         uiState.pkUser?.toInt() ?: 0,
                         uiState.identification.toString(),
                         uiState.newValue.toString(),
@@ -344,7 +361,6 @@ class ValidateOTPViewModel @Inject constructor(
                     )
                 }
             }
-
         }.onMessage {
             uiState = uiState.copy(
                 isLoading = false,
@@ -360,9 +376,9 @@ class ValidateOTPViewModel @Inject constructor(
     data class UIState(
         val idBrand: Int? = null,
         val identification: String? = null,
-        val idClient : Int? = null,
         val email: String? = null,
         val pkUser: String? = null,
+        val idClient: Int? = null,
         val userName: String? = null,
         val phoneNumber: String? = null,
         val firstName: String? = null,
@@ -418,21 +434,21 @@ class ValidateOTPViewModel @Inject constructor(
             )
             is UIEvent.OnOtpValueChange -> onOtpValueChange(event.value)
             is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
-            is UIEvent.OnFailureWithDialog -> uiState =
-                uiState.copy(
-                    isLoading = event.isLoading,
-                    openDialog = event.openDialog,
-                    messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
-                )
+            is UIEvent.OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(
+                        isLoading = event.isLoading,
+                        openDialog = event.openDialog,
+                        messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
+                    )
             is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
-
         }
     }
 
     sealed class UIEvent {
         data class OnStart(
             val linkWhatsapp: String,
-            val userBlockedForMaxAttends: String,
+            val userBlockedForMaxAttends: String
         ) : UIEvent()
 
         object OnNavigateTLogOut : UIEvent()
@@ -445,11 +461,11 @@ class ValidateOTPViewModel @Inject constructor(
             val sendMethod: String,
             val pkUser: String,
             val idBrand: Int,
-            val user: String,
+            val user: String
         ) : UIEvent()
 
         data class OnCallMutationSendPinProcessSuccess(
-            val pinProcess: SendPinProcess?,
+            val pinProcess: SendPinProcess?
         ) : UIEvent()
 
         data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
@@ -461,7 +477,6 @@ class ValidateOTPViewModel @Inject constructor(
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnContinueButtonClicked : UIEvent()
-
     }
 
     companion object {

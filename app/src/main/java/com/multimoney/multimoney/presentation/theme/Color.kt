@@ -138,7 +138,6 @@ data class MultimoneyColors(
     val secondary: Color,
     val background: Color,
     val backgroundSplash: Color,
-    val backgroundBottomOptions: Color,
     val backgroundInformativeChip: Color,
     val text: Color,
     val onBoardingTitleText: Color,
@@ -176,6 +175,11 @@ data class MultimoneyColors(
     val iconTintVoucher: Color,
     val textAlertColor: Color,
     val homeCryptoNoticeSectionBackGround: Color,
+    val cryptoGainsColor: Color,
+    val cryptoLossesColor: Color,
+    val cryptoWalletGainsColor: Color,
+    val cryptoActionButtonEnable: Color,
+    val cryptoActionButtonDisable: Color,
     val fullTransparency: Color = Color.Transparent,
 )
 
@@ -184,7 +188,6 @@ val DarkColorPalette = MultimoneyColors(
     secondary = Secondary500,
     background = GrayScale800,
     backgroundSplash = GrayScale800,
-    backgroundBottomOptions = WhiteTransparency5,
     backgroundInformativeChip = WhiteTransparency10,
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
@@ -222,6 +225,11 @@ val DarkColorPalette = MultimoneyColors(
     iconTintVoucher = WhiteTransparency40,
     textAlertColor = SemanticNegative400,
     homeCryptoNoticeSectionBackGround = ComplementaryBlack2,
+    cryptoGainsColor = SemanticPositive300,
+    cryptoLossesColor = SemanticNegative400,
+    cryptoActionButtonEnable = Primary400,
+    cryptoActionButtonDisable = GrayScale400,
+    cryptoWalletGainsColor = Tertiary400,
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -229,7 +237,6 @@ val LightColorPalette = MultimoneyColors(
     secondary = Secondary500,
     background = GrayScale800,
     backgroundSplash = GrayScale800,
-    backgroundBottomOptions = WhiteTransparency5,
     backgroundInformativeChip = WhiteTransparency10,
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
@@ -267,6 +274,11 @@ val LightColorPalette = MultimoneyColors(
     iconTintVoucher = WhiteTransparency40,
     textAlertColor = SemanticNegative400,
     homeCryptoNoticeSectionBackGround = GrayScale300,
+    cryptoGainsColor = SemanticPositive600,
+    cryptoLossesColor = SemanticNegative500,
+    cryptoActionButtonEnable = Primary500,
+    cryptoActionButtonDisable = GrayScale500,
+    cryptoWalletGainsColor = Tertiary600,
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

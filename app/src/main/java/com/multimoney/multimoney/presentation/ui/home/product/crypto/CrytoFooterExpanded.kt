@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,8 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
@@ -41,6 +40,7 @@ import com.multimoney.multimoney.presentation.util.MAX_CRYPTO_ITEMS
 fun CryptoFooterExpanded(
     balance: Balance?,
     userStatus: ValidateUserStatus?,
+    idBrand: String,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
@@ -50,6 +50,7 @@ fun CryptoFooterExpanded(
         CryptoFooterExpandedContent(
             balance,
             userStatus.infoCrypto?.profileEnable,
+            idBrand,
             actionMarket,
             actionWallet,
             noBalanceAction,
@@ -62,6 +63,7 @@ fun CryptoFooterExpanded(
 fun CryptoFooterExpandedContent(
     balance: Balance?,
     profileEnable: Boolean?,
+    idBrand: String,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     noBalanceAction: () -> Unit,
@@ -71,30 +73,26 @@ fun CryptoFooterExpandedContent(
     val smartBalanceAvailable = verifyIfHasSmartBalance(balance?.balanceAccountSmart)
     val hasSmartBalance by remember { mutableStateOf(smartBalanceAvailable) }
 
-    ConstraintLayout(
-        Modifier.fillMaxSize()
-    ) {
-        val (content, buttons) = createRefs()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        backgroundColor = MultimoneyTheme.colors.background,
+        bottomBar = {
+            val enableSendAndGive = idBrand.toInt() == Brand.CostaRica.id
+
+            CryptoActionsSection(
+                hasSmartBalance = hasSmartBalance,
+                enableCryptoActions = profileEnable ?: false,
+                enableSendAndGive = enableSendAndGive,
+                noBalanceAction = noBalanceAction,
+                hasBalanceAction = hasBalanceAction
+            )
+        }
+    ) { paddingValues ->
 
         Column(
-            Modifier
-                .verticalScroll(rememberScrollState())
-                .constrainAs(content) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(buttons.top)
-                    height = Dimension.fillToConstraints
-                }
+            modifier = Modifier.padding(paddingValues),
+            verticalArrangement = Arrangement.Top
         ) {
-            CryptoCurrencies(balance?.balanceCryptoAccount?.items)
-        }
-
-        Column(modifier = Modifier.constrainAs(buttons) {
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            bottom.linkTo(parent.bottom)
-        }) {
             ButtonsSection(
                 walletEnable = profileEnable ?: false,
                 actionMarket = actionMarket,
@@ -103,18 +101,10 @@ fun CryptoFooterExpandedContent(
             profileEnable?.let {
                 if (!it) {
                     NoticeSection()
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MultimoneyTheme.colors.dividerDefaultColor
-                    )
+                } else {
+                    CryptoCurrencies(items = balance?.balanceCryptoAccount?.items)
                 }
             }
-            CryptoActionsSection(
-                hasSmartBalance = hasSmartBalance,
-                enableCryptoActions = profileEnable ?: false,
-                noBalanceAction = noBalanceAction,
-                hasBalanceAction = hasBalanceAction
-            )
         }
     }
 }
@@ -129,7 +119,7 @@ fun verifyIfHasSmartBalance(balanceAccountSmart: List<Account?>?): Boolean {
 
 @Composable
 fun CryptoCurrencies(items: List<BalanceCryptoAccountItems>?) {
-    Column {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 4.dp)

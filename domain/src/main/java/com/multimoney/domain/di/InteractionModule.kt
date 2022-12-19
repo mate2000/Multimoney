@@ -116,6 +116,8 @@ import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCaseImpl
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCaseImpl
+import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCase
+import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
@@ -605,4 +607,9 @@ class InteractionModule {
     @Singleton
     fun provideQuerySmartExchangeRateUseCase(smartAccountRepository: SmartAccountRepository): QuerySmartExchangeRateUseCase =
         QuerySmartExchangeRateUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryTermsAndConditionsSigned(profileRepository: ProfileRepository):QueryTermsAndConditionsSignedUseCase =
+        QueryTermsAndConditionsSignedUseCaseImpl(profileRepository)
 }

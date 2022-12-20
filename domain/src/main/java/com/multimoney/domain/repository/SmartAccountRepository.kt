@@ -15,6 +15,7 @@ import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
+import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -119,6 +120,18 @@ interface SmartAccountRepository {
         identificationNumber: String,
         idRequest: Long
     ): Flow<MultimoneyResult<SaveSmartAccount?>>
+
+    suspend fun mutationProcessTransferVisaToSmartVD(
+        idCard: Long,
+        tokenNumber: Long,
+        identification: String,
+        amount: String,
+        currency: Int,
+        description: String,
+        cardMasked: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<VisaSmartPayment?>>
 
     suspend fun queryGeneralEconomicActivity(
         user: String,

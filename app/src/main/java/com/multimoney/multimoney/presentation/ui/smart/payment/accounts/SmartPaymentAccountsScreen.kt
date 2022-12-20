@@ -96,7 +96,9 @@ fun PaymentOptions(
         },
         buttonType = PrimaryTertiary,
         trailingIcon = drawable.ic_plus,
-        enable = (viewModel.sinpeAccountList?.size
-            ?: 0) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
+        enable = (
+            viewModel.sinpeAccountList?.size
+                ?: 0
+            ) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
     )
 }

@@ -66,7 +66,7 @@ fun CurrencyItem(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "${item.descriptionCurrency} (${item.asset})",
+                            text = stringResource(id = R.string.currency_item_description,item.descriptionCurrency, item.asset),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
@@ -89,7 +89,7 @@ fun CurrencyItem(
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
-                                text = "${item.percentageInvestedCurrency}%",
+                                text = stringResource(id = R.string.currency_item_percent_invested, item.percentageInvestedCurrency),
                                 style = Typography.caption,
                                 color = SemanticPositive400
                             )

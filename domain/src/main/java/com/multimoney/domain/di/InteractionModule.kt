@@ -6,6 +6,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationInitialRequestUseC
 import com.multimoney.domain.interaction.accountsmart.MutationInitialUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSaveAutomatedSmartAccountUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelOneUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseCase
@@ -114,6 +116,8 @@ import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCaseImpl
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCaseImpl
+import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCase
+import com.multimoney.domain.interaction.profile.QueryTermsAndConditionsSignedUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCase
 import com.multimoney.domain.interaction.security.MutationChangeEmailUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationChangePhoneUseCase
@@ -509,6 +513,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationProcessTransferVisaToSmartVDUseCase(smartAccountRepository: SmartAccountRepository): MutationProcessTransferVisaToSmartVDUseCase =
+        MutationProcessTransferVisaToSmartVDUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
     fun provideQueryAddressLevelOneUseCase(smartAccountRepository: SmartAccountRepository): QueryAddressLevelOneUseCase =
         QueryAddressLevelOneUseCaseImpl(smartAccountRepository)
 
@@ -598,4 +607,9 @@ class InteractionModule {
     @Singleton
     fun provideQueryCountryContactUseCase(profileRepository: ProfileRepository): QueryCountryContactUseCase =
         QueryCountryContactUseCaseImpl(profileRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryTermsAndConditionsSigned(profileRepository: ProfileRepository):QueryTermsAndConditionsSignedUseCase =
+        QueryTermsAndConditionsSignedUseCaseImpl(profileRepository)
 }

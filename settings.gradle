@@ -17,8 +17,8 @@ dependencyResolutionManagement {
         maven {
             url "https://nexus-public.novopayment.net/repository/maven-public/"
             credentials {
-                username = dependencyUser
-                password = dependencyPassword
+                username = System.env.NOVO_DEPENDENCY_USER ? System.env.NOVO_DEPENDENCY_USER : dependencyUser
+                password = System.env.NOVO_DEPENDENCY_PASSWORD ? System.env.NOVO_DEPENDENCY_PASSWORD : dependencyPassword
             }
         }
     }

@@ -216,7 +216,7 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() =
-        navigateBack(popTo = Screen.SmartPaymentCardsScreen.route, isRestart = true)
+        navigateBack(popTo = Screen.SmartPaymentCardsScreenSV.route, isRestart = true)
 
     data class UIState(
         // Interactions

@@ -49,7 +49,7 @@ class SmartPaymentMethodViewModel @Inject constructor(
 
     private fun navigateToVisaScreen() {
         navigateTo(
-            "${Screen.SmartPaymentCardsScreen.baseRoute}/$accountToken/$currencyId"
+            "${Screen.SmartPaymentCardsScreenSV.baseRoute}/$accountToken/$currencyId"
         )
     }
 

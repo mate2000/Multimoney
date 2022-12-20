@@ -66,7 +66,7 @@ class AddIbanAccountViewModel @Inject constructor(
         uiState = uiState.copy(
             title = when (previousScreen) {
                 Screen.DisbursementAccountScreen.baseRoute -> R.string.add_iban_account_disbursement_tile
-                Screen.SmartPaymentAccountScreenCR.baseRoute -> R.string.payment_account_iban_title
+                Screen.SmartPaymentOptionsScreenCR.baseRoute -> R.string.payment_account_iban_title
                 else -> R.string.add_iban_account_payment_tile
             }
         )

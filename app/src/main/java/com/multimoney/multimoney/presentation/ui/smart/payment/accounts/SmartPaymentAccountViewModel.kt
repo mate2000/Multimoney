@@ -32,8 +32,8 @@ class SmartPaymentAccountViewModel @Inject constructor(savedStateHandle: SavedSt
 
     private fun onNavigateBack() {
         popAndNavigateTo(
-            route = Screen.SmartPaymentOptionsScreen.route,
-            popTo = Screen.SmartPaymentAccountScreen.route
+            route = Screen.SmartPaymentOptionsScreenCR.route,
+            popTo = Screen.SmartPaymentAccountScreenCR.route
         )
     }
 

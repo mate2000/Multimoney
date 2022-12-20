@@ -12,9 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.PAYMENT_SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
-import com.multimoney.multimoney.presentation.navigation.navtype.payment.SummaryListNavType
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountsScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen

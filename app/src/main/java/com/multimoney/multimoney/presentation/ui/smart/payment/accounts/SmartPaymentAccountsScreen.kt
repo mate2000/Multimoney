@@ -28,7 +28,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 
 @Composable
@@ -78,7 +78,7 @@ fun PaymentOptions(
                     .fillMaxWidth()
                     .padding(top = 12.dp),
                 endIcon = drawable.ic_right_chevron,
-                startIcon = account.currencyId.getCurrency().accountIcon,
+                startIcon = account.currencyId.getCurrencyFromId().accountIcon,
                 onClick = {
                     viewModel.onUIEvent(UIEvent.OnAccountClick(account))
                 }
@@ -96,7 +96,6 @@ fun PaymentOptions(
         },
         buttonType = PrimaryTertiary,
         trailingIcon = drawable.ic_plus,
-        enable = (viewModel.sinpeAccountList?.size
-            ?: 0) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
+        enable = (viewModel.sinpeAccountList?.size ?: 0) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
     )
 }

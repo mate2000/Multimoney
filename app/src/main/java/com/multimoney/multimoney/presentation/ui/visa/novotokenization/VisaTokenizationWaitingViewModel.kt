@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
@@ -39,6 +40,7 @@ import com.multimoney.multimoney.presentation.util.getDeviceManufacture
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -62,6 +64,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     // arguments
     var idBrand: Int = 0
     var pkUser: Long = 0
+    var identification: String = ""
     var phone = ""
     var novoDeviceId: String = ""
     var email: String = ""
@@ -69,6 +72,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
         pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
@@ -76,25 +80,30 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     }
 
     private fun startTokenizationProcess() {
-        mmCountDownTimer.stopTimer()
-        if (NovoVTS.isDeviceEnrolled().not()) {
-            novoHelper.novoEnrollDevice(
-                pkUser.toInt(),
-                phone,
-                onSuccessEnrollDevice = {
-                    mmCountDownTimer.resumeTimer()
-                    novoDeviceId = it.data
-                    callNovoEnrollPan(novoDeviceId)
-                },
-                onErrorEnrollDevice = {
-                    mmCountDownTimer.resumeTimer()
-                    // todo handle novo sdk error
-                    Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.message ?: "")
-                    Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.code.toString())
-                }
-            )
-        } else {
-            callNovoEnrollPan(novoDeviceId)
+        executeUseCase {
+            Log.d("NovoDiego", "${getCountryCode()}$phone")
+            Log.d("NovoDiego", identification)
+            delay(HALF_SECOND)
+            mmCountDownTimer.stopTimer()
+            if (NovoVTS.isDeviceEnrolled().not()) {
+                novoHelper.novoEnrollDevice(
+                    identification.toInt(),
+                    "+1",
+                    onSuccessEnrollDevice = {
+                        mmCountDownTimer.resumeTimer()
+                        novoDeviceId = it.data
+                        callNovoEnrollPan(novoDeviceId)
+                    },
+                    onErrorEnrollDevice = {
+                        mmCountDownTimer.resumeTimer()
+                        // todo handle novo sdk error
+                        Log.d("NovoDiego", it.message ?: "")
+                        Log.d("NovoDiego", it.code.toString())
+                    }
+                )
+            } else {
+                callNovoEnrollPan(novoDeviceId)
+            }
         }
     }
 
@@ -116,8 +125,8 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             onErrorEnrollDevice = {
                 // todo handle novo sdk error
                 mmCountDownTimer.resumeTimer()
-                Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.message ?: "")
-                Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.code.toString())
+                Log.d("NovoDiego", it.message ?: "")
+                Log.d("NovoDiego", it.code.toString())
             }
         )
     }
@@ -312,11 +321,20 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         object OnStartNovoTokenization : UIEvent()
     }
 
+    fun getCountryCode(): String {
+        return when (idBrand) {
+            Brand.ElSalvador.id -> "+503"
+            Brand.CostaRica.id -> "+506"
+            else -> "+502"
+        }
+    }
+
     companion object {
         const val MAX_STEPS = 3
         const val STEP_ONE = 1
         const val STEP_TWO = 2
         const val TIME_TO_WAITING_NOVO_STEP = 10000L
         const val EXPIRATION_DATE_CHUCKS_LIMIT = 2
+        const val HALF_SECOND = 500L
     }
 }

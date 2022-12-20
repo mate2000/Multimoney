@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnIssuanceClick
@@ -35,6 +36,7 @@ class VisaIssuanceViewModel @Inject constructor(
     // Stateless
     private var idBrand: Int = 0
     private var pkUser: Long = 0
+    var identification: String = ""
     private var email: String = ""
     private var phone: String = ""
     private var cardInformation: CardInformation? = null
@@ -42,6 +44,7 @@ class VisaIssuanceViewModel @Inject constructor(
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND) ?: 0
         pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
@@ -100,7 +103,7 @@ class VisaIssuanceViewModel @Inject constructor(
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is OnIssuanceClick -> popAndNavigateTo(
-                "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$email/$phone/${
+                "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
                 encodeData(
                     cardInformation
                 )

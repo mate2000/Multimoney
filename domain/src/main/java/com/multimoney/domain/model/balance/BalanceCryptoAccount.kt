@@ -4,5 +4,5 @@ data class BalanceCryptoAccount(
     val globalBalance: Double?,
     val investedBalance: String?,
     val percentageInvested: String?,
-    val items: List<BalanceCryptoAccountItems?>
+    val items: List<BalanceCryptoAccountItems>?
 )

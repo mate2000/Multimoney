@@ -1058,6 +1058,10 @@
     <string name="disbursement_bottom_sheet_quota_to_pay" translatable="false">Cuota mensual consolidada</string>
     <string name="disbursement_bottom_sheet_next_payment_date" translatable="false">Fecha del siguiente pago</string>
 
+    <!-- My crypto currencies -->
+    <string name="crypto_currencies" translatable="false">Mis monedas</string>
+    <string name="crypto_currencies_see_all" translatable="false">Ver todas</string>
+
     <!-- Disbursement Voucher -->
     <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
     <string name="disbursement_voucher_schedule_payment" translatable="false">Programar pago automático</string>
@@ -1105,5 +1109,8 @@
     <string name="profile_help_error_title" translatable="false">¡Oh no! hubo un error</string>
     <string name="profile_help_error_subtitle" translatable="false">Por favor intentá de nuevo</string>
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
-    
+
+    <!-- Currency Item -->
+    <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
+    <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 </resources>

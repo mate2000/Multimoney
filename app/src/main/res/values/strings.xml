@@ -655,6 +655,7 @@
     <string name="visa_issuance_gt_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
     <string name="visa_issuance_gt_no_nfc_title" translatable="false">¡Compra en línea con Multimoney Visa!</string>
     <string name="visa_issuance_gt_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
+    <string name="visa_issuance_button_label" translatable="false">Vincular tarjeta</string>
 
     <!-- Visa Card-->
     <string name="visa_card_sv_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>

@@ -10,6 +10,11 @@ import com.multimoney.multimoney.presentation.navigation.CRYPTO_ROUTE
 import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
+import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
+import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWallet
 
@@ -26,7 +31,12 @@ fun NavGraphBuilder.cryptoNavGraph(
             route = Screen.CryptoWalletScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(GLOBAL_CRYPTO_BALANCE) { type = NavType.FloatType },
+                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
+                navArgument(STATUS_CREDIT) { type = NavType.IntType },
+                navArgument(STATUS_SMART) { type = NavType.IntType },
+                navArgument(STATUS_CRYPTO) { type = NavType.IntType }
             ),
         ) {
             HomeWallet(

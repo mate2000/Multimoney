@@ -314,8 +314,14 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
 
     private fun onNavigateToCryptoWallet() {
+        val userStatus = uiState.userStatus
+        val globalBalance = balanceCredit?.balanceCryptoAccount?.globalBalance ?: 0.0
+        val statusCrypto = userStatus?.infoCrypto?.status
+        val statusSmart = userStatus?.infoBankAccount?.status
+        val statusCredit = userStatus?.infoCredit?.status
+        val idLoanClient = userStatus?.infoCredit?.idLoanClient
         navigateTo(
-            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${balanceCredit?.balanceCryptoAccount?.globalBalance ?: 0.0}"
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${globalBalance}/${idClient}/${idLoanClient}/${statusCredit}/${statusSmart}/${statusCrypto}"
         )
     }
 

@@ -12,10 +12,14 @@ import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.SMART_PAYMENT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.SummaryListNavType
+import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
 
 const val EXCHANGE_AMOUNT = "exchange_amount"
@@ -79,7 +83,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.SmartPaymentAccountScreenCR.route
         ) {
-            SmartPaymentAccountScreen(onNavigate = {
+            SmartPaymentOptionsScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
                     navController.navigate(it.route) {
@@ -105,6 +109,21 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 }
             )
         }
+        composable(
+            Screen.SmartPaymentAccountScreen.route,
+            arguments = listOf(navArgument(SMART_PAYMENT_ACCOUNTS) {
+                type = SinpeAccountNavType()
+            })
+        ) {
+            SmartPaymentAccountsScreen(onNavigate = {
+                navController.navigate(it.route)
+            }, onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
+        }
+
         composable(
             Screen.SmartPaymentSavingAmount.route,
             arguments = listOf(

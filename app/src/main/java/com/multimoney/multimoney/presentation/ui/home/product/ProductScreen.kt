@@ -379,10 +379,10 @@ fun ProductContent(
             count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
             modifier = Modifier.padding(top = 8.dp),
             state = state
-        ) {
-            when (viewModel.uiState.productPageList?.get(currentPage)?.product) {
+        ) { page ->
+            when (viewModel.uiState.productPageList?.get(page)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
-                ProductType.Smart.value -> SmartContent(viewModel = viewModel, currentPage)
+                ProductType.Smart.value -> SmartContent(viewModel = viewModel, page)
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,

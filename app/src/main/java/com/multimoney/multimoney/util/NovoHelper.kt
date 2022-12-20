@@ -35,8 +35,8 @@ class NovoHelper @Inject constructor() {
     ) {
         NovoVTS.enrollDevice(
             object : ResponseListener<String> {
-                override fun onError(error: NovoError) {
-                    onErrorEnrollDevice(error)
+                override fun onError(novoError: NovoError) {
+                    onErrorEnrollDevice(novoError)
                 }
 
                 override fun onFinish(response: NovoResponse<String>) {

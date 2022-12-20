@@ -14,6 +14,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -111,14 +112,22 @@ class SavingAmountViewModel @Inject constructor(
                 idBrand
             ).collectLatest { result ->
                 result.onSuccess {
-                    uiState = uiState.copy(
-                        showLoadingScreen = false,
-                        showErrorScreen = false,
-                        paymentSuccess = true,
-                        currentDate = getCurrentDate(Calendar.getInstance().time),
-                        currentTime = getCurrentTime(Calendar.getInstance().time),
-                        referenceNumber = it?.referenceNumber ?: ""
-                    )
+                    if (it?.referenceNumber.isNullOrBlank()) {
+                        uiState = uiState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = true,
+                            paymentSuccess = false
+                        )
+                    } else {
+                        uiState = uiState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = false,
+                            paymentSuccess = true,
+                            currentDate = getCurrentDate(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time),
+                            referenceNumber = it?.referenceNumber ?: ""
+                        )
+                    }
                 }
                 result.onFailure {
                     uiState = uiState.copy(

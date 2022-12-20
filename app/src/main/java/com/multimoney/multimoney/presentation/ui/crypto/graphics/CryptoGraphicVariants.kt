@@ -65,8 +65,8 @@ fun CryptoGraphic(
 ) {
 
     if (convertedBalances.isEmpty()
-        || convertedBalances.size == 1
-        || convertedBalances.all { convertedBalances[0] == it }
+        || convertedBalances.size == MINIMUM_GRAPHIC_POINTS
+        || convertedBalances.all { convertedBalances.firstOrNull() == it }
     ) {
 
         if (fromHome) {
@@ -184,3 +184,4 @@ fun LineGraphic(
 }
 
 const val MAXIMUM_GRAPHIC_POINTS = 120
+const val MINIMUM_GRAPHIC_POINTS = 1

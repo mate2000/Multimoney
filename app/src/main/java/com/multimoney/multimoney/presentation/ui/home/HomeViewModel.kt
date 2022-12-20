@@ -73,11 +73,11 @@ import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -375,7 +375,7 @@ class HomeViewModel @Inject constructor(
                     onUIEvent(
                         OnGetSmartMovements(
                             uiState.userName,
-                            uiState.idBrand.toInt(),
+                            uiState.idBrand.toIntOrNull() ?: 0,
                             uiState.identification,
                             account?.tokenNumber?.toLongOrNull() ?: 0
                         )
@@ -416,7 +416,7 @@ class HomeViewModel @Inject constructor(
 
         onUIEvent(
             OnGetCreditMovements(
-                uiState.idBrand.toInt(),
+                uiState.idBrand.toIntOrNull() ?: 0,
                 uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
             )
         )

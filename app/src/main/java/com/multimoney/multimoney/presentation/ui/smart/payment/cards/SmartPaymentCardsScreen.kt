@@ -18,13 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -32,7 +31,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getMaskedVisa
 
 @Composable
 fun SmartPaymentCardsScreen(
@@ -45,13 +43,14 @@ fun SmartPaymentCardsScreen(
     viewModel.apply {
         isOnRestart = isRestart
         LaunchedEffect(isOnRestart) {
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
             if (isOnRestart) {
-                executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-                onUIEvent(OnCallQueryGetClientCards)
+                viewModel.onUIEvent(OnStart)
                 isOnRestart = false
             }
         }
     }
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -121,9 +120,9 @@ fun PaymentCardList(
                     imageModifier = Modifier.size(48.dp),
                     startIcon = R.drawable.ic_visa_card_item,
                     title = card.detail ?: "",
-                    subtitle = getMaskedVisa(
-                        card.cardMaskedNumber.orEmpty(),
-                        stringResource(id = string.visa_card_masked_number)
+                    subtitle = stringResource(
+                        R.string.visa_card_masked_number,
+                        card.cardMaskedNumber.orEmpty().takeLast(4)
                     ),
                     onClick = { onCardSelected(card) }
                 )

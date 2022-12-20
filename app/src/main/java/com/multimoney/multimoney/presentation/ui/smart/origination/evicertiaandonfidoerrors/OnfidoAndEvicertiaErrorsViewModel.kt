@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -50,14 +50,14 @@ class OnfidoAndEvicertiaErrorsViewModel @Inject constructor(
     private fun onNavigateToHome() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
-            popTo = Screen.OnfidoAndEvicertiaErrorsScreen.route
+            popTo = Screen.SmartOnfidoAndEvicertiaErrorsScreen.route
         )
     }
 
     private fun onNavigateToOnfidoProcess() {
         popAndNavigateTo(
-            route = "${Screen.CreditOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$PRINT_EMPTY/$URL_EMPTY/${CreditOnFidoOrFirmStatus.FIRMED.status}",
-            popTo = Screen.OnfidoAndEvicertiaErrorsScreen.route
+            route = "${Screen.SmartOnfidoScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/$PRINT_EMPTY/$URL_EMPTY/${SmartOnFidoOrFirmStatus.FIRMED.status}",
+            popTo = Screen.SmartOnfidoAndEvicertiaErrorsScreen.route
         )
     }
 

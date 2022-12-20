@@ -60,6 +60,7 @@ import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToSmartVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
@@ -1083,6 +1084,31 @@ class GraphqlApi @Inject constructor(
                 idBrand,
                 identificationNumber,
                 idRequest
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationProcessTransferVisaToSmartVD(
+        idCard: Long,
+        tokenNumber: Long,
+        identification: String,
+        amount: String,
+        currency: Int,
+        description: String,
+        cardMasked: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ProcessTransferVisaToSmartVDMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ProcessTransferVisaToSmartVDMutation(
+                idCard,
+                tokenNumber,
+                identification,
+                amount,
+                currency,
+                description,
+                cardMasked,
+                user,
+                idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

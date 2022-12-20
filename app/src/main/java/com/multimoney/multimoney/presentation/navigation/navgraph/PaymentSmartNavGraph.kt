@@ -12,9 +12,7 @@ import com.multimoney.multimoney.presentation.navigation.PAYMENT_SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
-import com.multimoney.multimoney.presentation.navigation.navtype.payment.SummaryListNavType
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountsScreen
-import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodScreen
@@ -57,7 +55,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             SmartPaymentMethodScreen(
                 onNavigate = {
                     navController.navigate(it.route)
-                }, onPopBackStack = {
+                },
+                onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         PREVIOUS_IS_RESTART,
                         it.isRestart
@@ -67,7 +66,8 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                })
+                }
+            )
         }
         composable(
             route = Screen.SmartPaymentOptionsScreen.route
@@ -75,10 +75,10 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             SmartPaymentOptionsScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
-                }
-            })
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                })
         }
         composable(Screen.SavingMethodTransferScreen.route) {
             SavingMethodTransferScreen(
@@ -100,17 +100,19 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
         }
         composable(
             Screen.SmartPaymentAccountScreen.route,
-            arguments = listOf(navArgument(SMART_PAYMENT_ACCOUNTS) {
-                type = SinpeAccountNavType()
-            })
+            arguments = listOf(
+                navArgument(SMART_PAYMENT_ACCOUNTS) {
+                    type = SinpeAccountNavType()
+                }
+            )
         ) {
             SmartPaymentAccountsScreen(onNavigate = {
                 navController.navigate(it.route)
             }, onPopAndNavigate = {
-                navController.navigate(it.route) {
-                    popUpTo(it.popTo) { inclusive = true }
-                }
-            })
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                })
         }
 
         composable(

@@ -25,6 +25,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultRightButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAutomaticProgrammedPaymentCheckedChanged
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnHidePaymentBottomSheet
@@ -55,6 +56,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     private var creditNumber: String? = null
     private var idClient: Int? = null
     private var idLoanClient: Int? = null
+    private var alertResultTitle: String = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -66,7 +68,8 @@ class PaymentAmountCardViewModel @Inject constructor(
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
     }
 
-    private fun onStart() {
+    private fun onStart(alertResultTitle: String) {
+        this.alertResultTitle = alertResultTitle
         uiState = uiState.copy(
             card = savedStateHandle[CARD_SELECTED]
         )
@@ -99,6 +102,13 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onLoadingValueChange(loading: Boolean) {
         uiState = uiState.copy(isLoading = loading)
+    }
+
+    private fun onAlertResultRightButtonClick() {
+        uiState = uiState.copy(
+            bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded),
+            isAlertResultVisible = false
+        )
     }
 
     private fun onContinueClick() {
@@ -141,7 +151,8 @@ class PaymentAmountCardViewModel @Inject constructor(
                 onUIEvent(OnHidePaymentBottomSheet)
                 onLoadingValueChange(false)
                 uiState = uiState.copy(
-                    alertResultTitle = it.getError().orEmpty(),
+                    alertResultTitle = alertResultTitle,
+                    alertResultDescription = it.getError().orEmpty(),
                     isAlertResultVisible = true
                 )
             }.onLoading {
@@ -202,7 +213,7 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnStart -> onStart()
+            is OnStart -> onStart(uiEvent.alertResultTitle)
             is OnContinueClick -> onContinueClick()
             is OnPayClick -> onPayClick()
             is OnAutomaticProgrammedPaymentCheckedChanged -> onAutomaticProgrammedPaymentCheckedChanged(uiEvent.value)
@@ -211,11 +222,12 @@ class PaymentAmountCardViewModel @Inject constructor(
             is UIEvent.OnFinishVisaAnimation -> onFinishVisaAnimation()
             is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
             is OnAlertResultButtonClick -> onAlertResultButtonClick()
+            is OnAlertResultRightButtonClick -> onAlertResultRightButtonClick()
         }
     }
 
     sealed class UIEvent {
-        object OnStart : UIEvent()
+        class OnStart(val alertResultTitle: String) : UIEvent()
         object OnContinueClick : UIEvent()
         object OnPayClick : UIEvent()
         class OnAutomaticProgrammedPaymentCheckedChanged(val value: Boolean) : UIEvent()
@@ -223,6 +235,7 @@ class PaymentAmountCardViewModel @Inject constructor(
         object OnNavigateBackHome : UIEvent()
         object OnFinishVisaAnimation : UIEvent()
         object OnHidePaymentBottomSheet : UIEvent()
+        object OnAlertResultRightButtonClick : UIEvent()
         object OnAlertResultButtonClick : UIEvent()
     }
 

@@ -22,8 +22,8 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.Companion.TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.document
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -36,9 +37,9 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDayFromString
 import com.multimoney.multimoney.presentation.util.onBirthDateAgeValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import javax.inject.Inject
-import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartDocumentViewModel @Inject constructor(
@@ -173,6 +174,7 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     private fun onBirthDateValueChange(birthdate: String, pickedDate: LocalDate) {
+        Log.d("AAAAAAA", "birthdate: $birthdate")
         val dateValidation = onBirthDateAgeValidation(pickedDate)
         uiState = uiState.copy(
             birthdate = birthdate,
@@ -207,10 +209,10 @@ class SmartDocumentViewModel @Inject constructor(
         emitBaseEvent(
             BaseEvent.OnFormValidateCompleted(
                 isFormValid = uiState.gender.isNotBlank() &&
-                        uiState.birthdate.isNotBlank() &&
-                        uiState.civilState.isNotBlank() &&
-                        uiState.profession.isNotBlank() &&
-                        uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
+                    uiState.birthdate.isNotBlank() &&
+                    uiState.civilState.isNotBlank() &&
+                    uiState.profession.isNotBlank() &&
+                    uiState.expirationDate.isNotBlank() && !uiState.birthdateErrorStatus
             )
         )
     }
@@ -280,11 +282,6 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnStart(
-            val userCompletedDialogDescription: String,
-            val linkWhatsapp: String,
-            val blockedMessage: String
-        ) : UIEvent()
 
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnBirthDateValueChange(val date: String, val pickedDate: LocalDate) : UIEvent()
@@ -305,7 +302,9 @@ class SmartDocumentViewModel @Inject constructor(
 
         data class OnCallQueryCivilStatusUseCase(val user: String, val idBrand: Int) : UIEvent()
         data class OnCallQueryProfessionUseCase(val user: String, val idBrand: Int) : UIEvent()
-        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
+        data class OnLoadCurrentStepData(
+            val accountSmartData: AccountSmartData?
+        ) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 

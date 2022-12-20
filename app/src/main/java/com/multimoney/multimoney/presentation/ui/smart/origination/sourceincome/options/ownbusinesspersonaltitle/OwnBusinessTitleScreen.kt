@@ -37,7 +37,6 @@ fun OwnBusinessTitleScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
     }

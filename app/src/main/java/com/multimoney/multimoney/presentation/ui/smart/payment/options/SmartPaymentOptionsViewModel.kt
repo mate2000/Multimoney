@@ -91,11 +91,11 @@ class SmartPaymentOptionsViewModel @Inject constructor(
     private fun onNavigateBack() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
-            popTo = Screen.SmartPaymentOptionsScreen.route
+            popTo = Screen.SmartPaymentOptionsScreenCR.route
         )
     }
 
-    //TODO Implement Colon navigation
+    // TODO Implement Colon navigation
     private fun navigateToColonPaymentScreen() {
         callQueryBalanceUseCase()
     }
@@ -112,10 +112,10 @@ class SmartPaymentOptionsViewModel @Inject constructor(
 
     private fun navigateToSmartAccount(clientBankAccounts: List<SinpeAccount?>) {
         navigateTo(
-            route = "${Screen.SmartPaymentAccountScreen.baseRoute}/${
-                encodeData(
-                    clientBankAccounts
-                )
+            route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/${
+            encodeData(
+                clientBankAccounts
+            )
             }"
         )
     }

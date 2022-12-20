@@ -3,13 +3,14 @@ package com.multimoney.multimoney.presentation.navigation.navgraph
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.NavType.Companion
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
-import com.multimoney.multimoney.presentation.navigation.PAYMENT_SMART_ROUTE
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
+import com.multimoney.multimoney.presentation.navigation.SMART_PAYMENT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountsScreen
@@ -19,17 +20,43 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPayme
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsScreen
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferScreen
 
+const val MASKED_CARD = "masked_card"
+const val BANK_DETAIL = "bank_detail"
+
 fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
     navigation(
-        startDestination = Screen.PaymentSmartCardsScreen.route,
-        route = PAYMENT_SMART_ROUTE
+        startDestination = Screen.SmartPaymentMethodScreenSV.route,
+        route = SMART_PAYMENT_ROUTE
     ) {
         composable(
-            Screen.PaymentSmartCardsScreen.route,
+            Screen.SmartPaymentMethodScreenSV.route,
             arguments = listOf(
-                navArgument(ID_BRAND) {
-                    type = NavType.IntType
+                navArgument(ID_CURRENCY) { type = NavType.IntType },
+                navArgument(ACCOUNT_TOKEN) { type = Companion.LongType }
+            )
+        ) {
+            SmartPaymentMethodScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
                 }
+            )
+        }
+        composable(
+            Screen.SmartPaymentCardsScreenSV.route,
+            arguments = listOf(
+                navArgument(ACCOUNT_TOKEN) { type = NavType.LongType },
+                navArgument(ID_CURRENCY) { type = NavType.IntType }
             )
         ) {
             SmartPaymentCardsScreen(
@@ -50,27 +77,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.SmartPaymentScreen.route
-        ) {
-            SmartPaymentMethodScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopBackStack = {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        PREVIOUS_IS_RESTART,
-                        it.isRestart
-                    )
-                    navController.popBackStack(
-                        route = it.popTo,
-                        inclusive = false,
-                        saveState = false
-                    )
-                }
-            )
-        }
-        composable(
-            route = Screen.SmartPaymentOptionsScreen.route
+            route = Screen.SmartPaymentOptionsScreenCR.route
         ) {
             SmartPaymentOptionsScreen(onNavigate = {
                 navController.navigate(it.route)
@@ -99,7 +106,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             )
         }
         composable(
-            Screen.SmartPaymentAccountScreen.route,
+            Screen.SmartPaymentAccountScreenCR.route,
             arguments = listOf(
                 navArgument(SMART_PAYMENT_ACCOUNTS) {
                     type = SinpeAccountNavType()
@@ -116,24 +123,12 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
         }
 
         composable(
-            Screen.SmartSavingAmount.route,
+            Screen.SmartPaymentSavingAmount.route,
             arguments = listOf(
-                navArgument(ID_BRAND) {
-                    type = NavType.IntType
-                },
-                navArgument(ID_VISA_CARD) {
-                    type = NavType.IntType
-                },
-                navArgument(USER) {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                    nullable = true
-                    defaultValue = null
-                }
+                navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(ACCOUNT_TOKEN) { type = NavType.LongType },
+                navArgument(ID_CURRENCY) { type = NavType.IntType },
+                navArgument(ID_VISA_CARD) { type = NavType.LongType }
             )
         ) {
             SavingAmountScreen(

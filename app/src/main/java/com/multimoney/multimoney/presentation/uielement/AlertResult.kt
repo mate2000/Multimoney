@@ -3,8 +3,10 @@ package com.multimoney.multimoney.presentation.uielement
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Text
@@ -20,6 +22,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 
 /**
  * CustomDialog: This Dialog is used to match design system
@@ -38,9 +41,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
  * @param onLeftButtonClick: Action left button TopNavBar's
  * @param onRightButtonClick: Action right button TopNavBar's
  * @param onButtonClick: Action to execute when button is clicked
- * @param isBottomTextButtonVisible: Make text button on the bottom visible
- * @param bottomTextButtonString: Result button text resource
- * @param onTextButtonClick: Action to execute when text button is clicked
  */
 
 @Composable
@@ -52,16 +52,15 @@ fun AlertResult(
     titleString: String = "",
     descriptionString: String = "",
     buttonTextResource: Int = R.string.empty,
-    buttonTextString: Int = R.string.empty,
-    bottomTextButtonString: Int = R.string.empty,
     isTopNavBarVisible: Boolean = true,
     isLeftButtonVisible: Boolean = true,
     isRightButtonVisible: Boolean = true,
-    isBottomTextButtonVisible: Boolean = false,
     onLeftButtonClick: () -> Unit = {},
     onRightButtonClick: () -> Unit = {},
     onButtonClick: () -> Unit = {},
-    onTextButtonClick: () -> Unit = {}
+    isSecondaryButtonVisible: Boolean = false,
+    onSecondaryButtonClick: () -> Unit = {},
+    secondaryButtonTextResource: Int = R.string.empty
 ) {
     Column(
         modifier = Modifier
@@ -80,8 +79,7 @@ fun AlertResult(
 
         Column(
             modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth(),
+                .wrapContentHeight().fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -111,19 +109,24 @@ fun AlertResult(
                 textAlign = TextAlign.Center
             )
         }
-        CustomButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 40.dp),
-            onClick = { onButtonClick() },
-            text = stringResource(id = buttonTextResource),
-            buttonType = PrimaryPrimary
-        )
-        if (isBottomTextButtonVisible) {
-            CustomTextButton(
-                textResource = bottomTextButtonString,
-                onClick = onTextButtonClick
+        Column(Modifier.padding(horizontal = 16.dp)) {
+            CustomButton(
+                modifier = Modifier
+                    .fillMaxWidth().height(48.dp),
+                onClick = { onButtonClick() },
+                text = stringResource(id = buttonTextResource),
+                buttonType = PrimaryPrimary
             )
+            if (isSecondaryButtonVisible) {
+                CustomButton(
+                    modifier = Modifier
+                        .fillMaxWidth().height(48.dp).padding(top = 8.dp),
+                    onClick = { onSecondaryButtonClick() },
+                    text = stringResource(id = secondaryButtonTextResource),
+                    buttonType = PrimaryTertiary
+                )
+            }
+            Spacer(Modifier.fillMaxWidth().height(40.dp))
         }
     }
 }

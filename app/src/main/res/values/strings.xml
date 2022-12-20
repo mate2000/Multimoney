@@ -62,7 +62,11 @@
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
     <string name="error_no_internet_title" translatable="false">¡Oh no! Error de \nconexión</string>
+    <string name="error_occurred_title" translatable="false">"¡Oh no! hubo un error"</string>
+    <string name="error_please_try_again" translatable="false">"Por favor intentá de nuevo"</string>
     <string name="you_have_exceeded_the_max_characters_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
+    <string name="error_button_retry" translatable="false">Reintentar</string>
+    <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
@@ -734,6 +738,16 @@
     <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
     <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
 
+    <!-- Smart payment success -->
+    <string name="smart_payment_success" translatable="false">¡Transacción exitosa!</string>
+    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
+    <string name="smart_payment_from_label" translatable="false">Desde</string>
+    <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="smart_payment_reference_number_label" translatable="false">N° de referencia</string>
+    <string name="smart_payment_share_button" translatable="false">Compartir</string>
+    <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
+    <string name="smart_payment_card_bank_label" translatable="false">Tarjeta Banco</string>
+
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
     <string name="smart_card_smart_title" translatable="false">Smart</string>
@@ -875,6 +889,12 @@
     <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
+
+    <!-- Smart Payment Amount Bottom Sheet -->
+    <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
+    <string name="smart_payment_amount_bottom_sheet_title" translatable="false">Monto a ahorrar</string>
+    <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
+    <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
 
     <!-- Payment Amount Error -->
     <string name="payment_amount_error_button" translatable="false">Ir al inicio</string>
@@ -1038,6 +1058,10 @@
     <string name="disbursement_bottom_sheet_quota_to_pay" translatable="false">Cuota mensual consolidada</string>
     <string name="disbursement_bottom_sheet_next_payment_date" translatable="false">Fecha del siguiente pago</string>
 
+    <!-- My crypto currencies -->
+    <string name="crypto_currencies" translatable="false">Mis monedas</string>
+    <string name="crypto_currencies_see_all" translatable="false">Ver todas</string>
+
     <!-- Disbursement Voucher -->
     <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
     <string name="disbursement_voucher_schedule_payment" translatable="false">Programar pago automático</string>
@@ -1072,6 +1096,9 @@
 
     <!-- Smart Saving Amount -->
     <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
+    <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>
+    <string name="smart_saving_try_later_notification_body" translatable="false">Abrí la app y hacé tu primer ahorro para ganar más</string>
+    <string name="smart_processing_transaction" translatable="false">Procesando transacción...</string>
 
     <!-- Profile Help And Information Section -->
     <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>
@@ -1082,5 +1109,8 @@
     <string name="profile_help_error_title" translatable="false">¡Oh no! hubo un error</string>
     <string name="profile_help_error_subtitle" translatable="false">Por favor intentá de nuevo</string>
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
-    
+
+    <!-- Currency Item -->
+    <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
+    <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 </resources>

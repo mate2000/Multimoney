@@ -131,6 +131,15 @@ fun parseApiDateToTermsAndConditionsDateTime(date: String?): String {
     }
 }
 
+enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: String) {
+    YESTERDAY(1, "Dia", "D"),
+    LAST_7_DAYS(7, "Semana", "S"),
+    LAST_30_DAYS(30, "Mes", "M"),
+    LAST_90_DAYS(90, "3 Meses", "3M"),
+    LAST_180_DAYS(180, "6 Meses", "6M"),
+    LAST_365_DAYS(365, "Año", "A"),
+}
+
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT = "dd | MM | yyyy hh:mm a"

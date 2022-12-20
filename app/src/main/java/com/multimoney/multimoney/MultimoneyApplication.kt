@@ -2,7 +2,7 @@ package com.multimoney.multimoney
 
 import android.app.Application
 import androidx.work.Configuration
-import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.DownloadCreditMovementsWorkerProvider
+import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.WorkerProvider
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.util.AdjustHelper
 import com.multimoney.multimoney.util.CognitoHelper
@@ -27,7 +27,7 @@ open class MultimoneyApplication : Application(), Configuration.Provider {
     lateinit var nfcHelper: NfcHelper
 
     @Inject
-    lateinit var downloadCreditMovementsWorkerProvider: DownloadCreditMovementsWorkerProvider
+    lateinit var workerProvider: WorkerProvider
 
     override fun onCreate() {
         super.onCreate()
@@ -39,7 +39,7 @@ open class MultimoneyApplication : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
-            .setWorkerFactory(downloadCreditMovementsWorkerProvider)
+            .setWorkerFactory(workerProvider)
             .setMinimumLoggingLevel(android.util.Log.DEBUG)
             .build()
 

@@ -205,7 +205,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSmartSave() {
         val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo("${Screen.SmartPaymentOptionsScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -301,17 +301,23 @@ class ProductViewModel @Inject constructor(
         )
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${pkUser}/${uiState.userStatus?.infoUser?.userName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
     }
 
     private fun onNavigateToSmartPaymentAccountScreen() =
-        navigateTo(Screen.SmartPaymentOptionsScreen.route)
+        navigateTo(Screen.SmartPaymentOptionsScreenCR.route)
 
     private fun onNavigateToSmartPaymentMethodScreen() =
-        navigateTo(Screen.SmartPaymentScreen.route)
+        navigateTo(Screen.SmartPaymentMethodScreenSV.route)
 
     private fun onNavigateToSmartMovements(accountToken: String) =
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
+
+    private fun onNavigateToCryptoWallet() {
+        navigateTo(
+            "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/${identification}/${balanceCredit?.balanceCryptoAccount?.globalBalance ?: 0.0}"
+        )
+    }
 
     private fun openWhatsAppLink(context: Context, whatsAppLink: String) {
         context.openWhatsAppDeepLink(whatsAppLink)
@@ -329,7 +335,10 @@ class ProductViewModel @Inject constructor(
             (
                 balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
                     ?: DEFAULT_PROGRESS
-                ) / (balanceCredit?.getFirstCredit()?.creditLimit?.toFloat() ?: DEFAULT_PROGRESS)
+                ) / (
+                balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
+                    ?: DEFAULT_PROGRESS
+                )
         }
     }
 
@@ -545,12 +554,20 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPaymentSmartScreen(account: Account?) {
-        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
+        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
+            navigateTo(
+                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/${account?.accountNumber}/${
+                account?.tokenNumber?.toLongOrNull() ?: 0
+                }/${account?.idCurrencyAccount}"
+            )
+        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            val infoCredit = uiState.userStatus?.infoCredit
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        }
     }
 
     private fun onNavigateToSendMoneyScreen() {
-        // FIXME: Navigate to correct payment flow screen
-        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+        // todo add navigation to send money screen
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -697,6 +714,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
+            is UIEvent.OnNavigateToCryptoWallet -> onNavigateToCryptoWallet()
             is OnNavigateToGtSvNonPreApproved -> onNavigateToGtSvNonPreApproved()
             is OnSetUserData -> onSetUserData(
                 idBrand = uiEvent.idBrand,
@@ -782,6 +800,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
         object OnNavigateToSmartPaymentAccountScreen : UIEvent()
         object OnNavigateToSmartPaymentMethodScreen : UIEvent()
+        object OnNavigateToCryptoWallet : UIEvent()
         object OnGetSmartContent : UIEvent()
 
         data class OnSetUserData(

@@ -76,6 +76,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEven
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
+import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
@@ -1345,6 +1346,23 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<GetCountryContactQuery.Data> =
         apolloAuthorizedClient.query(
             GetCountryContactQuery(user, idBrand)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryTermsAndConditionsSigned(
+        styleDark: Boolean,
+        pkUser: Int,
+        identification: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<TermsAndConditionsSignedQuery.Data> =
+        apolloAuthorizedClient.query(
+            TermsAndConditionsSignedQuery(
+                styleDark = styleDark,
+                userId = pkUser,
+                identification = identification,
+                user = user,
+                idBrand = idBrand
+            )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditOffer(

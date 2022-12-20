@@ -115,7 +115,7 @@ class VerifyIdentityViewModel @Inject constructor(
         when (event) {
             is UIEvent.OnQuestionTwoSelected -> onQuestionTwoValueChange(event.value)
             is UIEvent.OnQuestionOneSelected -> onQuestionOneValueChange(event.value)
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfilePersonalInfoScreen.route, false)
             is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
         }
     }

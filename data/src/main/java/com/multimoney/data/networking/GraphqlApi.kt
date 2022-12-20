@@ -60,6 +60,7 @@ import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToSmartVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
@@ -76,6 +77,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEven
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
+import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
@@ -1085,6 +1087,31 @@ class GraphqlApi @Inject constructor(
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationProcessTransferVisaToSmartVD(
+        idCard: Long,
+        tokenNumber: Long,
+        identification: String,
+        amount: String,
+        currency: Int,
+        description: String,
+        cardMasked: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ProcessTransferVisaToSmartVDMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ProcessTransferVisaToSmartVDMutation(
+                idCard,
+                tokenNumber,
+                identification,
+                amount,
+                currency,
+                description,
+                cardMasked,
+                user,
+                idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun queryGeneralEconomicActivity(
         user: String,
         idBrand: Int
@@ -1345,6 +1372,23 @@ class GraphqlApi @Inject constructor(
     ): ApolloCall<GetCountryContactQuery.Data> =
         apolloAuthorizedClient.query(
             GetCountryContactQuery(user, idBrand)
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryTermsAndConditionsSigned(
+        styleDark: Boolean,
+        pkUser: Int,
+        identification: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<TermsAndConditionsSignedQuery.Data> =
+        apolloAuthorizedClient.query(
+            TermsAndConditionsSignedQuery(
+                styleDark = styleDark,
+                userId = pkUser,
+                identification = identification,
+                user = user,
+                idBrand = idBrand
+            )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
     fun mutationSaveCreditOffer(

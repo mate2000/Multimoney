@@ -89,7 +89,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 onErrorEnrollDevice = {
                     mmCountDownTimer.resumeTimer()
                     // todo handle novo sdk error
-                    Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.message?:"")
+                    Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.message ?: "")
                     Log.d("MM_NOVO_ENROLL_DEVICE_ERROR", it.code.toString())
                 }
             )
@@ -116,7 +116,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             onErrorEnrollDevice = {
                 // todo handle novo sdk error
                 mmCountDownTimer.resumeTimer()
-                Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.message?:"")
+                Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.message ?: "")
                 Log.d("MM_NOVO_ENROLL_PAN_ERROR", it.code.toString())
             }
         )
@@ -233,7 +233,9 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     withStyle(style = Typography.body1.toSpanStyle().copy(color = color)) {
                         append("${context.getString(R.string.visa_tokenization_waiting_description_two_first)} ")
                     }
-                    withStyle(style = Typography.body1.toSpanStyle().copy(fontWeight = FontWeight.SemiBold, color = color)) {
+                    withStyle(
+                        style = Typography.body1.toSpanStyle().copy(fontWeight = FontWeight.SemiBold, color = color)
+                    ) {
                         append(context.getString(R.string.visa_tokenization_waiting_description_two_bold))
                     }
                     withStyle(style = Typography.body1.toSpanStyle().copy(color = color)) {

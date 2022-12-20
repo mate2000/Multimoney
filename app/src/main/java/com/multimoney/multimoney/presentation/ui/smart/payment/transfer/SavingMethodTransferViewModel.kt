@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen.HomeScreen
-import com.multimoney.multimoney.presentation.navigation.Screen.SmartPaymentScreen
+import com.multimoney.multimoney.presentation.navigation.Screen.SmartPaymentMethodScreenSV
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferViewModel.BaseEvent.OnCopyTextToClipboardEvent
 import com.multimoney.multimoney.presentation.ui.smart.payment.transfer.SavingMethodTransferViewModel.UIEvent.OnCopyTextToClipboard
@@ -35,11 +35,12 @@ class SavingMethodTransferViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(
-                popTo = SmartPaymentScreen.route,
+                popTo = SmartPaymentMethodScreenSV.route,
                 isRestart = false
             )
             is OnNavigateBackHome -> navigateBack(
-                popTo = HomeScreen.route, isRestart = false
+                popTo = HomeScreen.route,
+                isRestart = false
             )
             is OnCopyTextToClipboard -> onCopyTextToClipboard(uiEvent.text)
         }
@@ -47,7 +48,7 @@ class SavingMethodTransferViewModel @Inject constructor(
 
     data class UIState(
         // Fields
-        var accountNumber: String = "",
+        var accountNumber: String = ""
     )
 
     sealed class UIEvent {

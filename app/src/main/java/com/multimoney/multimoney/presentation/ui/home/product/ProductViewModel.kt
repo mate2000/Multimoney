@@ -33,6 +33,7 @@ import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -76,7 +77,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
-import com.multimoney.multimoney.util.NovoHelper
+import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -86,8 +87,7 @@ class ProductViewModel @Inject constructor(
     private val helper: ShareHelper,
     private val nfcHelper: NfcHelper,
     private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
-    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
-    private val novoHelper: NovoHelper
+    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -205,7 +205,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToSmartSave() {
         val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo("${Screen.SmartPaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentAccountScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -301,14 +301,14 @@ class ProductViewModel @Inject constructor(
         )
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/${uiState.idBrand}/${uiState.userStatus?.infoUser?.userName}")
+        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
     }
 
     private fun onNavigateToSmartPaymentAccountScreen() =
-        navigateTo(Screen.SmartPaymentAccountScreen.route)
+        navigateTo(Screen.SmartPaymentOptionsScreenCR.route)
 
     private fun onNavigateToSmartPaymentMethodScreen() =
-        navigateTo(Screen.SmartPaymentScreen.route)
+        navigateTo(Screen.SmartPaymentMethodScreenSV.route)
 
     private fun onNavigateToSmartMovements(accountToken: String) =
         navigateTo("${Screen.SmartMovementsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification/$accountToken")
@@ -335,7 +335,10 @@ class ProductViewModel @Inject constructor(
             (
                 balanceCredit?.getFirstSummary()?.currentBalance?.toFloat()
                     ?: DEFAULT_PROGRESS
-                ) / (balanceCredit?.getFirstCredit()?.creditLimit?.toFloat() ?: DEFAULT_PROGRESS)
+                ) / (
+                balanceCredit?.getFirstCredit()?.creditLimit?.toFloat()
+                    ?: DEFAULT_PROGRESS
+                )
         }
     }
 
@@ -551,12 +554,20 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToPaymentSmartScreen(account: Account?) {
-        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/${account?.accountNumber}")
+        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
+            navigateTo(
+                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/${account?.accountNumber}/${
+                account?.tokenNumber?.toLongOrNull() ?: 0
+                }/${account?.idCurrencyAccount}"
+            )
+        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            val infoCredit = uiState.userStatus?.infoCredit
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        }
     }
 
     private fun onNavigateToSendMoneyScreen() {
-        // FIXME: Navigate to correct payment flow screen
-        navigateTo("${Screen.PaymentSmartCardsScreen.baseRoute}/$userName/${uiState.idBrand}/$identification")
+        // todo add navigation to send money screen
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -616,7 +627,15 @@ class ProductViewModel @Inject constructor(
 
     private fun onConfigNovoSdk() {
         if (nfcHelper.isNfcSupported()) {
-            novoHelper.configureNovoSdk()
+            if (NovoVTS.isConfiguredForVts().not()) {
+                NovoVTS.setConfigurations(
+                    BuildConfig.NOVO_CLIENT_ID,
+                    BuildConfig.NOVO_API_KEY,
+                    BuildConfig.NOVO_API_URL,
+                    BuildConfig.NOVO_VCEH_URL,
+                    BuildConfig.NOVO_SOCKET_URL
+                )
+            }
         }
     }
 

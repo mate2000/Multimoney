@@ -1,0 +1,28 @@
+mutation ProcessTransferVisaToSmartVD(
+    $idCard: Long!,
+    $tokenNumber: Long!,
+    $identification: String!,
+    $amount: String!,
+    $currency: Int!,
+    $description: String!,
+    $cardMasked: String!,
+    $user: String!,
+    $idBrand: Int!
+){
+    processTransferVisaToSmartVD(
+        processTransferVisaToSmartVDInput: {
+            idCard: $idCard
+            tokenNumber: $tokenNumber
+            identification: $identification
+            amount: $amount
+            currency: $currency
+            description: $description
+            cardMasked: $cardMasked
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        numeroReferencia
+        numeroReferenciaVisa
+    }
+}

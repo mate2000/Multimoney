@@ -236,7 +236,7 @@ fun WalletHeader() {
 
         Text(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-            text = "Mi portafolio",
+            text = stringResource(R.string.crypto_wallet_header_title),
             style = Typography.h5.copy(color = MultimoneyTheme.colors.text)
         )
     }
@@ -250,6 +250,8 @@ fun BalanceSection(
     gainsOrLosses: Double,
     percentage: Double,
 ) {
+    val gainsOrLossesSymbol =
+        if (isInGainOrLoss) stringResource(R.string.crypto_gains_symbol) else stringResource(R.string.crypto_losses_symbol)
 
     Column(
         modifier = Modifier
@@ -259,7 +261,7 @@ fun BalanceSection(
     ) {
         Text(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = "Balance",
+            text = stringResource(R.string.crypto_wallet_balance_section_label),
             style = Typography.subtitle1.copy(color = MultimoneyTheme.colors.quickActionLabelColor)
         )
         Text(
@@ -269,7 +271,7 @@ fun BalanceSection(
         )
         Text(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
-            text = "${if (isInGainOrLoss) "+" else "-"}\$${gainsOrLosses.roundToTwoDecimalPlacesWithoutNegatives()} (${percentage.roundToTwoDecimalPlaces()}%)",
+            text = "${gainsOrLossesSymbol}\$${gainsOrLosses.roundToTwoDecimalPlacesWithoutNegatives()} (${percentage.roundToTwoDecimalPlaces()}%)",
             style = Typography.body2.copy(color = graphicColor)
         )
     }

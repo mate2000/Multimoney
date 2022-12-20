@@ -129,6 +129,7 @@ class SmartSignViewModel @Inject constructor(
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
                     SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         handleOnfidoStatus(creditContractEvent)
                     }
                     SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
@@ -143,9 +144,18 @@ class SmartSignViewModel @Inject constructor(
             }
             VALIDATE_IDENTITY.value -> {
                 emitBaseEvent(SimulateUserInteraction)
-                handleOnfidoStatus(creditContractEvent)
+                if (creditContractEvent?.active == true) {
+                    navigateToApprovedByOnfido()
+                }
             }
         }
+    }
+
+    private fun navigateToApprovedByOnfido() {
+        popAndNavigateTo(
+            route = "${Screen.ApprovedByOnfidoScreen.baseRoute}/$pkUser/$identification/$email/$idBrand",
+            popTo = Screen.SmartSignScreen.route
+        )
     }
 
     private fun handleOnfidoStatus(
@@ -159,9 +169,8 @@ class SmartSignViewModel @Inject constructor(
                 )
             }
             SmartOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
-                popAndNavigateTo(
-                    route = "${Screen.ApprovedByOnfidoScreen.baseRoute}/$pkUser",
-                    popTo = Screen.SmartSignScreen.route
+                uiState = uiState.copy(
+                    signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
             SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
@@ -202,7 +211,7 @@ class SmartSignViewModel @Inject constructor(
         val signDocumentUrl: String = "",
         val loadingIcon: Int = drawable.ic_frame,
         val loadingTitle: Int = string.document_generation_title,
-        val loadingSubtitle: Int = string.document_generation_subtitle
+        val loadingSubtitle: Int = string.smart_other_generating_document_subtitle
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

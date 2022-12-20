@@ -219,7 +219,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ApprovedByOnfidoScreen : Screen(
-        "approved_by_onfido_screen/{$PK_USER}",
+        "approved_by_onfido_screen/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_BRAND}",
         "approved_by_onfido_screen"
     )
 

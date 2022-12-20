@@ -1,6 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.onfidoapproved
 
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
+import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
@@ -10,7 +12,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ApprovedByOnfidoViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val queryBalanceUseCase: QueryBalanceUseCase,
+    private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
 ) : BaseViewModel(true) {
 
     // stateLess

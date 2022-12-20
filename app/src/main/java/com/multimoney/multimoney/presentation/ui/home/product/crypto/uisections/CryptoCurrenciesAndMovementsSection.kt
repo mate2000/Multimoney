@@ -55,7 +55,15 @@ fun CryptoCurrencies(
         }
         items?.let {
             it.take(MAX_CRYPTO_ITEMS).forEach{ item ->
-                CurrencyItem(item = item)
+                CurrencyItem(
+                    url_image = item.url_image,
+                    descriptionCurrency = item.descriptionCurrency,
+                    asset = item.asset,
+                    balanceDollars = item.balanceDollars,
+                    priceOfTheDay = item.priceOfTheDay,
+                    percentageInvestedCurrency = item.percentageInvestedCurrency,
+                    available = item.available
+                )
             }
         }
     }

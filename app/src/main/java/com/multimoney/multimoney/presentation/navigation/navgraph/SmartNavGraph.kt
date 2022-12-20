@@ -104,7 +104,6 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
         composable(
             route = Screen.ApprovedByOnfidoScreen.route,
             arguments = listOf(
-                navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
             )
         ) {

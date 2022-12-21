@@ -37,7 +37,6 @@ fun CurrencyItem(
     percentageInvestedCurrency: String,
     available: Double
 ) {
-    val dollarSymbol = stringResource(id = R.string.dollar_symbol)
     Column {
         Box(
             modifier = modifier
@@ -72,12 +71,12 @@ fun CurrencyItem(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "$descriptionCurrency (${asset})",
+                            text = stringResource(id = R.string.currency_item_description, descriptionCurrency, asset),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
                         Text(
-                            text = "$dollarSymbol${balanceDollars}",
+                            text = stringResource(id = R.string.currency_item_dollar_symbol, balanceDollars),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
@@ -89,13 +88,13 @@ fun CurrencyItem(
                     ) {
                         Row {
                             Text(
-                                text = "$dollarSymbol${priceOfTheDay}",
+                                text = stringResource(id = R.string.currency_item_dollar_symbol, priceOfTheDay),
                                 style = Typography.caption,
                                 color = WhiteTransparency60
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
-                                text = "${percentageInvestedCurrency}%",
+                                text = stringResource(id = R.string.currency_item_percent_invested, percentageInvestedCurrency),
                                 style = Typography.caption,
                                 color = SemanticPositive400
                             )

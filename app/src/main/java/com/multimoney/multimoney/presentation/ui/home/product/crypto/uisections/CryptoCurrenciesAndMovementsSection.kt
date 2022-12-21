@@ -56,7 +56,7 @@ fun CryptoCurrencies(
         items?.let {
             it.take(MAX_CRYPTO_ITEMS).forEach{ item ->
                 CurrencyItem(
-                    url_image = item.url_image,
+                    imageUrl = item.url_image,
                     descriptionCurrency = item.descriptionCurrency,
                     asset = item.asset,
                     balanceDollars = item.balanceDollars,

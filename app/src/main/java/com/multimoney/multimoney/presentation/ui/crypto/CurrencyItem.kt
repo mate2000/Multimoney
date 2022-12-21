@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 @Composable
 fun CurrencyItem(
     modifier: Modifier = Modifier,
-    url_image: String,
+    imageUrl: String,
     descriptionCurrency: String,
     asset: String,
     balanceDollars: Double,
@@ -58,7 +58,7 @@ fun CurrencyItem(
                     modifier = Modifier
                         .size(40.dp)
                         .align(Alignment.CenterVertically),
-                    painter = rememberAsyncImagePainter(model = url_image),
+                    painter = rememberAsyncImagePainter(model = imageUrl),
                     contentDescription = null
                 )
                 Column(

@@ -61,7 +61,7 @@
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
-    <string name="error_no_internet_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="error_no_internet_title" translatable="false">¡Oh no! Error de \nconexión</string>
     <string name="error_occurred_title" translatable="false">"¡Oh no! hubo un error"</string>
     <string name="error_please_try_again" translatable="false">"Por favor intentá de nuevo"</string>
     <string name="you_have_exceeded_the_max_characters_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
@@ -982,6 +982,12 @@
         <item>No, no lo soy</item>
     </string-array>
 
+    <!--Crypto Wallet-->
+    <string name="crypto_wallet_header_title" translatable="false">Mi portafolio</string>
+    <string name="crypto_wallet_balance_section_label" translatable="false">Balance</string>
+    <string name="crypto_gains_symbol" translatable="false">+</string>
+    <string name="crypto_losses_symbol" translatable="false">-</string>
+
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
     <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
@@ -1111,6 +1117,7 @@
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
 
     <!-- Currency Item -->
+    <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 

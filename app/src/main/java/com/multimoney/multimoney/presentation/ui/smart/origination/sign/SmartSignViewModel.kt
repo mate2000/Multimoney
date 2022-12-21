@@ -4,8 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
+import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
@@ -15,7 +14,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.Screen.ContinueValidatingOnfidoScreen
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -24,16 +22,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnInitializeText
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
+import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_SECOND_TIME
@@ -42,8 +31,8 @@ import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaErr
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.VALIDATE_IDENTITY
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 class SmartSignViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -90,7 +79,7 @@ class SmartSignViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idRequestSys: Long, idBrand: Int) {
-        if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
+        if ( uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value) {
             uiState = uiState.copy(
                 loadingIcon = drawable.ic_multimoney_white_logo,
                 loadingTitle = string.smart_other_generating_document_title,
@@ -117,7 +106,7 @@ class SmartSignViewModel @Inject constructor(
                             )
                         )
                     }.onFailure {
-                        while (numAttemptsToStartSubscription < SignDocumentProcessViewModel.MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
+                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             onListenSmartContractEventSubscription(idBrand, idRequestSys)
                             numAttemptsToStartSubscription++
                         }
@@ -139,14 +128,15 @@ class SmartSignViewModel @Inject constructor(
             }
             SIGN_DOCUMENTS_STEP.value -> {
                 when (creditContractEvent?.statusEvicertia?.lowercase()) {
-                    CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
+                    SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() -> {
+                        emitBaseEvent(SimulateUserInteraction)
                         handleOnfidoStatus(creditContractEvent)
                     }
-                    CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+                    SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
                         emitBaseEvent(SimulateUserInteraction)
                         onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                     }
-                    CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+                    SmartOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
                         emitBaseEvent(SimulateUserInteraction)
                         onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                     }
@@ -154,9 +144,18 @@ class SmartSignViewModel @Inject constructor(
             }
             VALIDATE_IDENTITY.value -> {
                 emitBaseEvent(SimulateUserInteraction)
-                handleOnfidoStatus(creditContractEvent)
+                if (creditContractEvent?.active == true) {
+                    navigateToApprovedByOnfido()
+                }
             }
         }
+    }
+
+    private fun navigateToApprovedByOnfido() {
+        popAndNavigateTo(
+            route = "${Screen.ApprovedByOnfidoScreen.baseRoute}/$pkUser/$identification/$email/$idBrand",
+            popTo = Screen.SmartSignScreen.route
+        )
     }
 
     private fun handleOnfidoStatus(
@@ -164,21 +163,20 @@ class SmartSignViewModel @Inject constructor(
     ) {
         emitBaseEvent(SimulateUserInteraction)
         when (creditContractEvent?.statusOnfido?.lowercase()) {
-            CreditOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
+            SmartOnFidoOrFirmStatus.PENDING.status.lowercase() -> {
                 uiState = uiState.copy(
                     signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
-            CreditOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
-                popAndNavigateTo(
-                    route = Screen.ProcessingTransactionScreen.route,
-                    popTo = Screen.SmartSignScreen.route
+            SmartOnFidoOrFirmStatus.APPROVED.status.lowercase() -> {
+                uiState = uiState.copy(
+                    signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
-            CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
+            SmartOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
                 onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value)
             }
-            CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
+            SmartOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
                 onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value)
             }
         }
@@ -194,14 +192,14 @@ class SmartSignViewModel @Inject constructor(
 
     private fun onNavigateToOnfidoAndEvicertiaError(error: String) {
         popAndNavigateTo(
-            route = "${Screen.OnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
+            route = "${Screen.SmartOnfidoAndEvicertiaErrorsScreen.baseRoute}/$error/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
             popTo = Screen.SmartSignScreen.route
         )
     }
 
     private fun onNavigateToContinueValidatingIdentity() {
         popAndNavigateTo(
-            route = ContinueValidatingOnfidoScreen.route,
+            route = Screen.SmartContinueValidatingOnfidoScreen.route,
             popTo = Screen.SmartSignScreen.route
         )
     }
@@ -213,19 +211,39 @@ class SmartSignViewModel @Inject constructor(
         val signDocumentUrl: String = "",
         val loadingIcon: Int = drawable.ic_frame,
         val loadingTitle: Int = string.document_generation_title,
-        val loadingSubtitle: Int = string.document_generation_subtitle
+        val loadingSubtitle: Int = string.smart_other_generating_document_subtitle
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnCallSubscriptionCreditContractEvent -> onShouldCallSubscription(idPrint, idBrand)
-            is OnChangeScreen -> uiState =
+            is UIEvent.OnCallSubscriptionSmartContractEvent -> onShouldCallSubscription(idPrint, idBrand)
+            is UIEvent.OnChangeScreen -> uiState =
                 uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
-            is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
-            is OnCloseClick -> onNavigateToHome()
-            is OnShowDialogInformation -> createDialog()
-            is OnNavigateToHome -> onNavigateToHome()
-            is OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
+            is UIEvent.OnInitializeText -> dialogDescription = uiEvent.dialogDescription
+            is UIEvent.OnCloseClick -> onNavigateToHome()
+            is UIEvent.OnShowDialogInformation -> createDialog()
+            is UIEvent.OnNavigateToHome -> onNavigateToHome()
+            is UIEvent.OnNavigateToContinueValidatingIdentity -> onNavigateToContinueValidatingIdentity()
         }
+    }
+
+    sealed class UIEvent {
+        object OnCallSubscriptionSmartContractEvent : UIEvent()
+        data class OnInitializeText(val dialogDescription: String) : UIEvent()
+        object OnCloseClick : UIEvent()
+        object OnShowDialogInformation : UIEvent()
+        data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
+        object OnNavigateToHome : UIEvent()
+        object OnNavigateToContinueValidatingIdentity : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object SimulateUserInteraction : BaseEvent()
+    }
+
+    companion object {
+        const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 600000L
+        const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 30000L
     }
 }

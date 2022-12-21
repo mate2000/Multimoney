@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
 import com.multimoney.domain.model.util.error.HttpError
@@ -24,7 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ApprovedByOnfidoViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val queryBalanceUseCase: QueryBalanceUseCase,
     private val queryValidateUserStatusUseCase: QueryValidateUserStatusUseCase,
 ) : BaseViewModel(true) {
@@ -35,6 +36,10 @@ class ApprovedByOnfidoViewModel @Inject constructor(
 
     // stateLess
     var userSmartAccount: String = ""
+    var accountToken: String = ""
+    var idCurrency: Int = 0
+    var idClient: Int = 0
+    var idLoanClient: Int = 0
     var pkUser: String = ""
     var identification: String = ""
     var email: String = ""
@@ -115,13 +120,14 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { balance ->
                 balance?.let {
-                    userSmartAccount = balance.balanceAccountSmart?.firstOrNull()?.accountNumber ?: ""
-                    // TODO, test
+                    balance.balanceAccountSmart?.firstOrNull()?.let { account ->
+                        userSmartAccount = account.accountNumber.orEmpty()
+                        accountToken = account.tokenNumber.orEmpty()
+                        idCurrency = account.idCurrencyAccount ?: 0
+                    }
                 }
             }
-            result.onFailure {
-               onFailure(it)
-            }
+            result.onFailure { onFailure(it) }
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }
@@ -139,7 +145,11 @@ class ApprovedByOnfidoViewModel @Inject constructor(
     }
 
     private fun onMakeFirstSavingTransfer() {
-        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/$userSmartAccount")
+        if (idBrand == Brand.CostaRica.id) {
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/$idBrand/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$idClient/$idLoanClient")
+        } else {
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$userSmartAccount/$accountToken/$idCurrency")
+        }
     }
 
     data class UIState(

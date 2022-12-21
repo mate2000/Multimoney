@@ -116,6 +116,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
             result.onSuccess { balance ->
                 balance?.let {
                     userSmartAccount = balance.balanceAccountSmart?.firstOrNull()?.accountNumber ?: ""
+                    // TODO, test
                 }
             }
             result.onFailure {

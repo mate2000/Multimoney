@@ -399,7 +399,6 @@
     <string name="profile_terms_and_conditions_crypto_title" translatable="false">Cripto</string>
 
 
-
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
     <string name="sign_out_dialog_title_gt" translatable="false">¿Estás seguro que quieres cerrar sesión?</string>
@@ -1114,4 +1113,7 @@
     <!-- Currency Item -->
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
+
+    <!-- Smart Transfer Iban -->
+    <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
 </resources>

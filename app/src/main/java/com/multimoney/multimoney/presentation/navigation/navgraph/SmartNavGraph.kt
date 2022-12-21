@@ -13,6 +13,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.Sm
 import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanScreen
 
 const val ACCOUNT_TOKEN = "account_token"
 const val SMART_PAYMENT_ACCOUNTS = "smart_payment_accounts"
@@ -80,6 +81,32 @@ fun NavGraphBuilder.smartNavGraph(navController: NavHostController) {
                     popUpTo(it.popTo) { inclusive = true }
                 }
             })
+        }
+
+        composable(
+            route = Screen.TransferIbanAccountScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.StringType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.StringType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            SmartTransferIbanScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

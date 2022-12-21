@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -56,6 +57,9 @@ class SmartLivAddressViewModel @Inject constructor(
             } else {
                 getDivisionTwo(divisionTwo, divisionThree)
             }
+            uiState = uiState.copy(
+                address = it.addressDetail ?: ""
+            )
         }
     }
 
@@ -81,6 +85,7 @@ class SmartLivAddressViewModel @Inject constructor(
                                 address?.name == currentDivisionOne
                             }
                         )
+                        Log.d("AAAAAAA", "Division one: ${uiState.divisionOneSelected}")
                         getDivisionTwo(currentDivisionTwo, currentDivisionThree)
                     }
                 }
@@ -122,10 +127,11 @@ class SmartLivAddressViewModel @Inject constructor(
 
                         if (currentDivisionTwo.isNullOrBlank().not()) {
                             uiState = uiState.copy(
-                                divisionOneSelected = addressList?.addresses?.find { address ->
+                                divisionTwoSelected = addressList?.addresses?.find { address ->
                                     address?.name == currentDivisionTwo
                                 }
                             )
+                            Log.d("AAAAAAA", "Division one: ${uiState.divisionTwoSelected}")
                             getDivisionThree(currentDivisionThree)
                         }
                     }
@@ -167,10 +173,11 @@ class SmartLivAddressViewModel @Inject constructor(
 
                             if (currentDivisionThree.isNullOrBlank().not()) {
                                 uiState = uiState.copy(
-                                    divisionOneSelected = addressList?.addresses?.find { address ->
+                                    divisionThreeSelected = addressList?.addresses?.find { address ->
                                         address?.name == currentDivisionThree
                                     }
                                 )
+                                Log.d("AAAAAAA", "Division one: ${uiState.divisionThreeSelected}")
                                 validate()
                             }
                         }
@@ -216,7 +223,6 @@ class SmartLivAddressViewModel @Inject constructor(
     }
 
     private fun onDivisionThreeValueChange(divisionThree: String?) {
-        // reset selection of division two and three
         uiState = uiState.copy(
             divisionThreeSelected = uiState.divisionThreeList?.find { it?.name == divisionThree }
         )

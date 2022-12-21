@@ -61,6 +61,9 @@ fun SmartLivingAddressScreen(
                                     ?: 0,
                                 idAddressLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong()
                                     ?: 0,
+                                strAddressLevel1 = viewModel.uiState.divisionOneSelected?.name,
+                                strAddressLevel2 = viewModel.uiState.divisionTwoSelected?.name,
+                                strAddressLevel3 = viewModel.uiState.divisionThreeSelected?.name,
                                 addressDetail = viewModel.uiState.address,
                                 currentStep = SmartSteps.Search.getNameById(
                                     sharedViewModel.uiState.currentStep
@@ -107,8 +110,6 @@ fun SmartLivingAddressScreen(
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
-
-    LoadingIndicator(viewModel.uiState.isLoading)
 
     Column(
         modifier = Modifier

@@ -7,6 +7,7 @@ import com.multimoney.domain.interaction.security.QueryCompanyNameByIdentityUseC
 import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -18,8 +19,8 @@ import com.multimoney.multimoney.presentation.util.DESCRIPTION_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class OwnBusinessInPartnershipViewModel @Inject constructor(
@@ -65,7 +66,12 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
             if (identification.length == IDENTIFICATION_LENGTH) {
                 callQueryGetCompanyUseCase(identification, idBrand, user)
             } else if (identification.length > IDENTIFICATION_MIN_LENGTH) {
-                uiState = uiState.copy(identificationError = Pair(true, R.string.smart_business_personal_basis_identification_format_error))
+                uiState = uiState.copy(
+                    identificationError = Pair(
+                        true,
+                        R.string.smart_business_personal_basis_identification_format_error
+                    )
+                )
             }
         }
         onValidateForm()
@@ -89,7 +95,15 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
                             true,
                             R.string.smart_business_personal_basis_identification_success
                         ),
-                        companyName = it?.name
+                        companyName = it?.name,
+                        isLoading = false
+                    )
+                }.onMessage { errorMsg ->
+                    clearIdentificationStatus()
+                    uiState = uiState.copy(
+                        identificationError = Pair(true, R.string.empty),
+                        identificationValidationError = errorMsg?.name,
+                        isLoading = false
                     )
                 }
                 result.onLoading {
@@ -98,14 +112,16 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
                         identificationLoading = Pair(
                             true,
                             R.string.smart_business_personal_basis_identification_loading
-                        )
+                        ),
+                        isLoading = true
                     )
                 }
                 result.onFailure {
                     clearIdentificationStatus()
                     uiState = uiState.copy(
                         identificationError = Pair(true, R.string.empty),
-                        identificationValidationError = it.getError()
+                        identificationValidationError = it.getError(),
+                        isLoading = false
                     )
                 }
             }
@@ -147,15 +163,16 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
     }
 
     data class UIState(
-        var businessIncome: String = "",
-        var businessActivity: String = "",
-        var businessActivityError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var businessIdentification: String = "",
-        var identificationSuccess: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var identificationLoading: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var identificationError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        var identificationValidationError: String? = null,
-        var companyName: String? = null
+        val businessIncome: String = "",
+        val businessActivity: String = "",
+        val businessActivityError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val businessIdentification: String = "",
+        val identificationSuccess: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val identificationLoading: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val identificationError: Pair<Boolean, Int> = Pair(false, R.string.empty),
+        val identificationValidationError: String? = null,
+        val companyName: String? = null,
+        val isLoading: Boolean = false
     )
 
     sealed class UIEvent {
@@ -166,6 +183,7 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
             val idBrand: Int,
             val user: String
         ) : UIEvent()
+
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
         data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
     }

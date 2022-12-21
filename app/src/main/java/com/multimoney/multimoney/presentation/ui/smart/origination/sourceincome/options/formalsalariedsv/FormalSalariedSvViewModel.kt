@@ -16,6 +16,7 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionThreeValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionTwoValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnGetUserData
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnValidateForm
@@ -40,8 +41,6 @@ class FormalSalariedSvViewModel @Inject constructor(
     // Stateless
     private var user = ""
     private var idBrand = DEFAULT_ID_BRAND
-    // var divisionTwoId: Long? = null
-    // var divisionThreeId: Long? = null
 
     private fun getDivisionTwo(getId: Long? = null) {
         executeUseCase {
@@ -252,7 +251,7 @@ class FormalSalariedSvViewModel @Inject constructor(
             is OnWorkingAddressChange -> onWorkingAddressChange(event.address)
             is OnDivisionTwoValueChange -> onDivisionTwoValueChange(event.divisionTwo)
             is OnDivisionThreeValueChange -> onDivisionThreeValueChange(event.divisionThree)
-            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
+            is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
             is OnValidateForm -> onValidateForm()
         }
     }

@@ -48,12 +48,8 @@ fun OtherIncomeScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(true) {
-        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
-    }
-
     LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
 

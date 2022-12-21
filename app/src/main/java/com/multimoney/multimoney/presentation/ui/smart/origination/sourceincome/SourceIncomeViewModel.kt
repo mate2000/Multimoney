@@ -35,7 +35,7 @@ class SourceIncomeViewModel @Inject constructor() : BaseViewModel(false) {
      * Besides, this function will be shared across all the economical options screen.
      * @param idBrand to get the country id and handle the back step accordingly.
      */
-    fun getPreviousStep(idBrand: Int) : Int {
+    fun getPreviousStep(idBrand: Int): Int {
         return if (idBrand == Brand.ElSalvador.id) SmartSteps.Two.id else SmartSteps.One.id
     }
 

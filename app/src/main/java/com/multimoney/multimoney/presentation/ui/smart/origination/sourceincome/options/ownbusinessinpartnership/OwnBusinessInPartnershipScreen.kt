@@ -2,7 +2,10 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -29,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
@@ -50,12 +54,8 @@ fun OwnBusinessInPartnershipScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
-    }
-
-    LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueVisible(true))
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
 
@@ -89,6 +89,7 @@ fun OwnBusinessInPartnershipScreen(
         }
     }
 
+    sharedViewModel.onUIEvent(OnLoadingValueChange(viewModel.uiState.isLoading))
     OwnBusinessOnPersonalBasisContent(viewModel, sharedViewModel.idBrandAsInt, sharedViewModel.user)
 
     BackHandler {
@@ -127,9 +128,7 @@ fun OwnBusinessOnPersonalBasisContent(
             value = viewModel.uiState.businessActivity,
             onValueChange = {
                 viewModel.onUIEvent(
-                    OnBusinessActivityChange(
-                        it
-                    )
+                    OnBusinessActivityChange(it)
                 )
             },
             labelText = stringResource(R.string.smart_business_personal_basis_activity_label),
@@ -151,9 +150,7 @@ fun OwnBusinessOnPersonalBasisContent(
             value = viewModel.uiState.businessIncome,
             onValueChange = {
                 viewModel.onUIEvent(
-                    OnIncomeAmountChange(
-                        it
-                    )
+                    OnIncomeAmountChange(it)
                 )
             },
             labelText = stringResource(R.string.credit_monthly_income_income_label),
@@ -196,16 +193,20 @@ fun OwnBusinessOnPersonalBasisContent(
             placeHolder = stringResource(R.string.smart_business_personal_basis_identification_placeholder),
             customTransformation = formatBusinessIdentification(),
             isError = viewModel.uiState.identificationError.first,
-            errorMessage = viewModel.uiState.identificationValidationError ?: stringResource(viewModel.uiState.identificationError.second),
+            errorMessage = viewModel.uiState.identificationValidationError ?: stringResource(
+                viewModel.uiState.identificationError.second
+            ),
             showInfo = viewModel.uiState.identificationLoading.first,
             infoMessage = stringResource(viewModel.uiState.identificationLoading.second),
             isSuccess = viewModel.uiState.identificationSuccess.first,
             successMessage = stringResource(viewModel.uiState.identificationSuccess.second),
-            isRequiredMessage = stringResource(R.string.smart_business_personal_basis_identification_required_message)
+            isRequiredMessage = stringResource(R.string.smart_business_personal_basis_identification_required_message),
+            enabled = !viewModel.uiState.isLoading
         )
         if (viewModel.uiState.identificationSuccess.first) {
             Text(
-                text = viewModel.uiState.companyName ?: stringResource(R.string.smart_business_personal_basis_company_name_not_found),
+                text = viewModel.uiState.companyName
+                    ?: stringResource(R.string.smart_business_personal_basis_company_name_not_found),
                 color = MultimoneyTheme.colors.text,
                 modifier = Modifier
                     .padding(start = 5.dp)
@@ -213,5 +214,6 @@ fun OwnBusinessOnPersonalBasisContent(
                 style = Typography.caption
             )
         }
+        Spacer(Modifier.height(48.dp))
     }
 }

@@ -49,12 +49,8 @@ fun SmartOwnBusinessSvScreen(
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
-
-    LaunchedEffect(key1 = true) {
-        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
-    }
-
     LaunchedEffect(true) {
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(OnContinueVisible(true))
 

@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -58,9 +59,8 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDateString
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
+import javax.inject.Inject
 
 @OptIn(ExperimentalMaterialApi::class)
 @HiltViewModel
@@ -113,7 +113,7 @@ class SmartViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { stepByStep ->
                 stepByStep?.let {
-                    Timber.d( "callQueryStepByStepUseCase(): $it")
+                    Log.d("AAAAAAAA", "callQueryStepByStepUseCase(): $it")
                     navigateToScreenOnStepFetched(it)
                 }
                 onUIEvent(OnLoadingValueChange(false))
@@ -186,7 +186,10 @@ class SmartViewModel @Inject constructor(
         )
 
         // update the current step coming from the backend in order to navigate to the proper screen
-        uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
+        val currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep)
+        if (currentStep < getTotalStepperCounter()) {
+            uiState = uiState.copy(currentStep = currentStep.plus(1))
+        }
     }
 
     private fun callMutationInitialRequestUseCase() = executeUseCase(
@@ -423,7 +426,7 @@ class SmartViewModel @Inject constructor(
 
     private fun navigateToOnfido() {
         popAndNavigateTo(
-            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$globalRequestId/${URL_EMPTY}",
+            "${Screen.SmartOnfidoScreen.baseRoute}/$user/$idBrand/$pkUser/$identification/$email/$firstName/$lastName/$idSysRequest/$globalRequestId/$URL_EMPTY",
             Screen.SmartScreen.route
         )
     }

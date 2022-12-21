@@ -12,16 +12,18 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.BaseEvent
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.Companion
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.getDivision
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnBusinessNameValueChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnGetUserData
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnIncomeAmountChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnRequestError
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class OwnBusinessTitleViewModel @Inject constructor(
@@ -31,6 +33,26 @@ class OwnBusinessTitleViewModel @Inject constructor(
 ) : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
+
+    var user = ""
+    var idBrand = 0
+
+    /**
+     * this function is intended to load the form data on the UI, after getting the
+     * data coming from the current step (provided from the backend)
+     */
+    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
+        accountSmartData?.let {
+            incomeAmountChange(it.income.toString())
+            addressValueChanged(it.entrepreneurship)
+
+            val divisionOne = it.strAddressLevel1
+            val divisionTwo = it.strAddressLevel2
+            val divisionThree = it.strAddressLevel3
+
+            getDivisionOne(divisionOne, divisionTwo, divisionThree)
+        }
+    }
 
     private fun incomeAmountChange(income: String) {
         if (validateDecimalIncome(income)) {
@@ -44,7 +66,11 @@ class OwnBusinessTitleViewModel @Inject constructor(
         onValidateForm()
     }
 
-    private fun getDivisionOne(user: String, idBrand: Int) {
+    private fun getDivisionOne(
+        divisionOne: String? = null,
+        divisionTwo: String? = null,
+        divisionThree: String? = null
+    ) {
         executeUseCase {
             addressLevelOneUseCase(
                 user,
@@ -73,19 +99,7 @@ class OwnBusinessTitleViewModel @Inject constructor(
         }
     }
 
-
     private fun onRequestError() = emitBaseEvent(OnRequestError(uiState.dialogParameters))
-
-    /**
-     * this function is intended to load the form data on the UI, after getting the
-     * data coming from the current step (provided from the backend)
-     */
-    private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        accountSmartData?.let {
-            incomeAmountChange(it.income.toString())
-            addressValueChanged(it.entrepreneurship)
-        }
-    }
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
@@ -109,7 +123,12 @@ class OwnBusinessTitleViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnIncomeAmountChange(val income: String) : UIEvent()
         data class OnBusinessNameValueChange(val businessName: String) : UIEvent()
-        data class OnLoadCurrentStepData(val accountSmartData: AccountSmartData?) : UIEvent()
+        data class OnGetUserData(
+            val user: String,
+            val idBrand: Int,
+            val accountSmartData: AccountSmartData?
+        ) : UIEvent()
+
         data class OnRequestError(val dialogParameters: DialogParameters) : UIEvent()
         object OnValidateForm : UIEvent()
     }
@@ -120,10 +139,14 @@ class OwnBusinessTitleViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is UIEvent.OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
-            is UIEvent.OnBusinessNameValueChange -> addressValueChanged(uiEvent.businessName)
-            is UIEvent.OnValidateForm -> onValidateForm()
-            is UIEvent.OnLoadCurrentStepData -> onLoadCurrentStepData(uiEvent.accountSmartData)
+            is OnIncomeAmountChange -> incomeAmountChange(uiEvent.income)
+            is OnBusinessNameValueChange -> addressValueChanged(uiEvent.businessName)
+            is OnValidateForm -> onValidateForm()
+            is OnGetUserData -> {
+                user = uiEvent.user
+                idBrand = uiEvent.idBrand
+                onLoadCurrentStepData(uiEvent.accountSmartData)
+            }
         }
     }
 }

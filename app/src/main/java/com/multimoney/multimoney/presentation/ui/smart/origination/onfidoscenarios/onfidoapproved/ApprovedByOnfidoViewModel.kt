@@ -138,7 +138,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
     }
 
     private fun onMakeFirstSavingTransfer() {
-        navigateTo("${Screen.SmartPaymentScreen.baseRoute}/$userSmartAccount")
+        navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$userSmartAccount")
     }
 
     data class UIState(

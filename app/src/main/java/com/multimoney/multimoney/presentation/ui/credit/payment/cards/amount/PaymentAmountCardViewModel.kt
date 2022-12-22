@@ -74,6 +74,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     private var minimumPaymentLabel: String = ""
     private var maximumPayment: Float = 0.00F
     private var maximumPaymentLabel: String = ""
+    private var alertResultTitle: String = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -138,7 +139,8 @@ class PaymentAmountCardViewModel @Inject constructor(
         CreditAmountViewModel.CURRENCY_SEPARATOR
     ).filter(AnnotatedString(uiState.currentAmountValueString)).text
 
-    private fun onStart() {
+    private fun onStart(alertResultTitle: String) {
+        this.alertResultTitle = alertResultTitle
         uiState = uiState.copy(
             card = savedStateHandle[CARD_SELECTED]
         )
@@ -284,7 +286,7 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnStart -> onStart()
+            is OnStart -> onStart(uiEvent.alertResultTitle)
             is OnMinimumPaymentButtonClick -> onAmountButtonClick()
             is OnAmountValueChange -> onAmountValueChange(uiEvent.value)
             is OnContinueClick -> onContinueClick()
@@ -300,7 +302,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        object OnStart : UIEvent()
+        class OnStart(val alertResultTitle: String) : UIEvent()
         object OnMinimumPaymentButtonClick : UIEvent()
         data class OnAmountValueChange(val value: String) : UIEvent()
         object OnContinueClick : UIEvent()

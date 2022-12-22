@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
+import android.util.Log
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -11,36 +12,34 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.util.CognitoJWTPar
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
+import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignInOptions
+import com.amplifyframework.auth.cognito.options.AuthFlowType
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserPasswordValueChange
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.checkIfEmulator
+import com.multimoney.multimoney.presentation.util.getAppVersion
+import com.multimoney.multimoney.presentation.util.getDeviceBrand
+import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val biometricHelper: BiometricHelper,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
+
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -52,9 +51,25 @@ class SignInViewModel @Inject constructor(
     private var biometricPromptTitle = ""
     private var biometricPromptDescription = ""
     private var biometricPromptNegative = ""
+    private var deviceId = ""
+    private var uniqueId = ""
+    private var ipAddress = ""
+    private var deviceType = ""
+    private var deviceName = ""
+    private var appVersion = getAppVersion()
+    private var deviceBrand = getDeviceBrand()
+    private var deviceModel = getDeviceModel()
+    private var isEmulator = checkIfEmulator()
 
-    private fun onStart() {
+
+
+    private fun onStart(deviceId: String, ipAddress: String, deviceName : String, deviceType: String) {
+        this.deviceId = deviceId
+        this.ipAddress = ipAddress
+        this.deviceName = deviceName
+        this.deviceType = deviceType
         viewModelScope.launch {
+            uniqueId = dataStorePreferences.getUniqueId().first()
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
             biometricUserEmail = dataStorePreferences.getUserEmail().first()
             uiState = uiState.copy(
@@ -71,56 +86,73 @@ class SignInViewModel @Inject constructor(
         clearUserEmailError()
 
         // TODO: Implement logic to send metadata to cognito
-//        val attrs = mapOf(
-//            DEVICE_ID to "Android 1"
-//        )
-//
-//        val options = AWSCognitoAuthSignInOptions.builder()
-//            .metadata(attrs)
-//            .build()
+        val attrs = mapOf(
+            DEVICE_ID to deviceId,
+            BRAND to deviceBrand,
+            UNIQUE_ID to uniqueId,
+            MODEL to deviceModel,
+            APP_VERSION to appVersion,
+            IS_EMULATOR to isEmulator.toString(),
+            IP_ADDRESS to ipAddress
+        )
+
+        val options = AWSCognitoAuthSignInOptions.builder()
+            .metadata(attrs)
+            .build()
+
 
         Amplify.Auth.signOut({
             // TODO: This line must be uncommented when logic to send metadata to cognito is implemented
-//        Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, options, { authSignInResult ->
-            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
-                if (authSignInResult.isSignInComplete) {
-                    Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
-                        val session = authSessionSuccess as AWSCognitoAuthSession
-                        when (session.identityId.type) {
-                            AuthSessionResult.Type.SUCCESS -> {
-                                // Get user attributes in order to save user name for welcome message
-                                Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
-                                    viewModelScope.launch {
-                                        // If isBiometricActive false that means the userName has to be saved
-                                        saveUserData(session, authUserAttribute)
-                                        uiState = uiState.copy(isLoading = false)
-                                        if (uiState.isFingerprintChecked) {
-                                            uiState = uiState.copy(configureBiometric = true)
-                                        } else {
-                                            navigateToHome()
+            Amplify.Auth.signIn(
+                uiState.userEmail,
+                uiState.userPassword,
+                options,
+                { authSignInResult ->
+//            Amplify.Auth.signIn(uiState.userEmail, uiState.userPassword, { authSignInResult ->
+                    if (authSignInResult.isSignInComplete) {
+                        Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
+                            val session = authSessionSuccess as AWSCognitoAuthSession
+                            when (session.identityId.type) {
+                                AuthSessionResult.Type.SUCCESS -> {
+                                    // Get user attributes in order to save user name for welcome message
+                                    Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
+                                        viewModelScope.launch {
+                                            updateUser()
+                                            // If isBiometricActive false that means the userName has to be saved
+                                            saveUserData(session, authUserAttribute)
+                                            uiState = uiState.copy(isLoading = false)
+                                            if (uiState.isFingerprintChecked) {
+                                                uiState = uiState.copy(configureBiometric = true)
+                                            } else {
+                                                navigateToHome()
+                                            }
                                         }
-                                    }
-                                }, {
-                                    cognitoError()
-                                })
+                                    }, {
+                                        cognitoError()
+                                    })
+                                }
+                                AuthSessionResult.Type.FAILURE -> cognitoError()
                             }
-                            AuthSessionResult.Type.FAILURE -> cognitoError()
-                        }
-                    }, {
+                        }, {
+                            Log.e("HERE", it.toString())
+                            cognitoError()
+                        })
+                    } else {
                         cognitoError()
-                    })
-                } else {
+                    }
+                },
+                {
                     cognitoError()
-                }
-            }, {
-                cognitoError()
-            })
+                })
         }, {
             cognitoError()
         })
     }
 
-    private suspend fun saveUserData(session: AWSCognitoAuthSession, authUserAttribute: List<AuthUserAttribute>) {
+    private suspend fun saveUserData(
+        session: AWSCognitoAuthSession,
+        authUserAttribute: List<AuthUserAttribute>
+    ) {
         val payload = CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
         if (uiState.userEmail != biometricUserEmail) {
             dataStorePreferences.isBiometricsEnabled(false)
@@ -318,9 +350,28 @@ class SignInViewModel @Inject constructor(
         isForcePassword = value.not()
     }
 
-    fun isAccessWithBiometrics() = uiState.isBiometricActive && uiState.userEmail == biometricUserEmail
+    fun isAccessWithBiometrics() =
+        uiState.isBiometricActive && uiState.userEmail == biometricUserEmail
 
-    fun isWelcomeWithName() = uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
+    fun isWelcomeWithName() =
+        uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
+
+    private fun updateUser() {
+        Amplify.Auth.updateUserAttributes(
+            listOf(
+                AuthUserAttribute(AuthUserAttributeKey.custom(DEVICE_ID),deviceId),
+                AuthUserAttribute(AuthUserAttributeKey.custom(UNIQUE_ID),uniqueId),
+                AuthUserAttribute(AuthUserAttributeKey.custom(BRAND),deviceBrand),
+                AuthUserAttribute(AuthUserAttributeKey.custom(MODEL),deviceModel),
+                AuthUserAttribute(AuthUserAttributeKey.custom(APP_VERSION),appVersion),
+                AuthUserAttribute(AuthUserAttributeKey.custom(IS_EMULATOR),isEmulator.toString()),
+                AuthUserAttribute(AuthUserAttributeKey.custom(IP_ADDRESS),ipAddress),
+            ),
+            { Log.i("AuthDemo", "Updated user attributes = $it") },
+            { Log.e("AuthDemo", "Failed to update user attributes", it) }
+        )
+    }
+
 
     data class UIState(
         // Fields
@@ -362,7 +413,7 @@ class SignInViewModel @Inject constructor(
                 event.showDialog
             )
 
-            is OnStart -> onStart()
+            is OnStart -> onStart(event.deviceId,event.ipAddress,event.deviceName,event.deviceType)
             is OnValidateUserEmail -> isUserEmailValid()
             is OnCallCognitoSignIn -> callCognitoSignIn()
             is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
@@ -391,7 +442,7 @@ class SignInViewModel @Inject constructor(
         data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean) :
             UIEvent()
 
-        object OnStart : UIEvent()
+        data class OnStart(val deviceId : String, val ipAddress : String,val deviceName: String,val deviceType : String) : UIEvent()
         object OnValidateUserEmail : UIEvent()
         object OnCallCognitoSignIn : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
@@ -399,5 +450,13 @@ class SignInViewModel @Inject constructor(
 
     companion object {
         const val DEVICE_ID = "DeviceId"
+        const val UNIQUE_ID = "UniqueId"
+        const val BRAND = "Brand"
+        const val MODEL = "Model"
+        const val APP_VERSION = "AppVersion"
+        const val IS_EMULATOR = "IsEmulator"
+        const val IP_ADDRESS = "IpAddress"
+        const val FORCE = "Force"
     }
+
 }

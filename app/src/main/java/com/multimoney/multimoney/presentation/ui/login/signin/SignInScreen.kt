@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,15 +36,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnFingerprintCheckedChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnInitializeBiometricPrompt
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnNavigateToForgotPassword
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForDecryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricPromptForEncryption
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowBiometricSignInChanged
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnStart
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnUserEmailValueChange
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnValidateUserEmail
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -51,7 +44,16 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.checkIfEmulator
+import com.multimoney.multimoney.presentation.util.getAppVersion
+import com.multimoney.multimoney.presentation.util.getDeviceBrand
+import com.multimoney.multimoney.presentation.util.getDeviceId
+import com.multimoney.multimoney.presentation.util.getDeviceModel
+import com.multimoney.multimoney.presentation.util.getDeviceName
+import com.multimoney.multimoney.presentation.util.getDeviceType
+import com.multimoney.multimoney.presentation.util.getIpAddress
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
+
 
 @Composable
 @Preview
@@ -68,7 +70,14 @@ fun SignInScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(OnStart)
+            onUIEvent(
+                OnStart(
+                    getDeviceId(fragmentActivity),
+                    getIpAddress(fragmentActivity),
+                    getDeviceName(fragmentActivity) ?: "",
+                    getDeviceType(fragmentActivity).value ?: ""
+                )
+            )
         }
     }
 
@@ -199,6 +208,12 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .height(48.dp),
             onClick = {
+                Log.e("IP ADDRESS ", getIpAddress(fragmentActivity))
+                Log.e("DEVICEID", getDeviceId(fragmentActivity))
+                Log.e("PHONE_MODEL", getDeviceModel())
+                Log.e("PHONE_BRAND", getDeviceBrand())
+                Log.e("APP_VERSION", getAppVersion())
+                Log.e("IS_EMULATOR", checkIfEmulator().toString())
                 viewModel.navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
             },
             buttonType = PrimaryTertiaryUnderLined

@@ -675,8 +675,7 @@ class ProductViewModel @Inject constructor(
                             )
                         }
                         else -> {
-                            if (status == NO_EXIST.status || status == EXIST_IN_CORE.status
-                            ) {
+                            if (status == NO_EXIST.status || status == EXIST_IN_CORE.status) {
                                 Pair(status == NO_EXIST.status, status.toString())
                             } else {
                                 Pair(null, "")

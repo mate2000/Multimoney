@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
+import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
@@ -167,7 +168,10 @@ interface SmartAccountRepository {
     suspend fun querySmartExchangeRate(
         user: String,
         identification: String,
+        idBrand: Int,
+        abbreviation: String,
         idOriginCurrency: String,
-        idDestinationCurrency: String
-    ): Flow<MultimoneyResult<Double?>>
+        idDestinationCurrency: String,
+        amount: Double
+    ): Flow<MultimoneyResult<ExchangeRateResult?>>
 }

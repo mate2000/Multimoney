@@ -91,7 +91,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
     private fun onCardSelected(cardSelected: CardVisaDirect) {
         navigateTo(
             "${Screen.SmartPaymentSavingAmount.baseRoute}/$user/$idBrand/$identification/$tokenNumber/$idCurrency" +
-                "/${cardSelected.idCard}/${cardSelected.cardMaskedNumber}/${cardSelected.detail}"
+                "/${cardSelected.idCard}/${cardSelected.cardMaskedNumber}/${cardSelected.detail}/${Screen.SmartPaymentCardsScreenSV.baseRoute}"
         )
     }
 

@@ -4,14 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
-import com.multimoney.domain.model.accountsmart.SinpeAccount
-import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -21,14 +17,13 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnColonSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnDollarSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartPaymentOptionsViewModel @Inject constructor(
-    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -38,54 +33,19 @@ class SmartPaymentOptionsViewModel @Inject constructor(
 
     // Stateless
     private var user: String = ""
-    private var idBrand: String = ""
+    private var idBrand: Int = 0
     private var idClient: String = ""
     private var idLoanClient: String = ""
     private var identification: String? = ""
+    private var smartAccountIDs: List<SmartAccountID>? = listOf()
 
     init {
         user = savedStateHandle[USER] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
         idClient = savedStateHandle[ID_CLIENT] ?: ""
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-    }
-
-    private fun callQueryBalanceUseCase() = executeUseCase {
-        queryListSinpeAccountUseCaseImpl.invoke(
-            user = user,
-            identification = identification ?: "",
-            idBrand = idBrand.toInt(),
-            country = "",
-            idAccount = 0,
-            accountNumber = ""
-        ).collectLatest { result ->
-            result.onSuccess { accountList ->
-                if (accountList?.data?.isEmpty() == true) {
-                    navigateToAddIbanAccount()
-                } else {
-                    accountList?.data?.let {
-                        navigateToSmartAccount(it)
-                    }
-                }
-            }
-            result.onFailure {
-                onFailure(it)
-            }
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true)
-            }
-        }
-    }
-
-    private fun onFailure(error: HttpError) {
-        uiState = uiState.copy(
-            isLoading = false,
-            openDialog = DialogParameters(
-                description = error.getError() ?: "",
-                isActive = mutableStateOf(true)
-            )
-        )
+        smartAccountIDs = savedStateHandle.get<Array<SmartAccountID>>(SMART_IDS_LIST)?.toList()
     }
 
     private fun onNavigateBack() {
@@ -95,28 +55,13 @@ class SmartPaymentOptionsViewModel @Inject constructor(
         )
     }
 
-    // TODO Implement Colon navigation
-    private fun navigateToColonPaymentScreen() {
-        callQueryBalanceUseCase()
-    }
-
-    private fun navigateToDollarPaymentScreen() {
-        callQueryBalanceUseCase()
-    }
-
-    private fun navigateToAddIbanAccount() {
+    private fun navigateToPaymentAccountScreen(currencyType: CurrencyType) {
+        val account = when (currencyType) {
+            CurrencyType.Colon -> smartAccountIDs?.find { it.currencyID == CurrencyType.Colon.id }
+            else -> smartAccountIDs?.find { it.currencyID == CurrencyType.Dollar.id }
+        }
         navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/$idLoanClient"
-        )
-    }
-
-    private fun navigateToSmartAccount(clientBankAccounts: List<SinpeAccount?>) {
-        navigateTo(
-            route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/${
-            encodeData(
-                clientBankAccounts
-            )
-            }"
+            route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$user/$idBrand/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$idClient/$idLoanClient/${encodeData(account)}"
         )
     }
 
@@ -128,8 +73,8 @@ class SmartPaymentOptionsViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
-            is OnColonSelected -> navigateToColonPaymentScreen()
-            is OnDollarSelected -> navigateToDollarPaymentScreen()
+            is OnColonSelected -> navigateToPaymentAccountScreen(CurrencyType.Colon)
+            is OnDollarSelected -> navigateToPaymentAccountScreen(CurrencyType.Dollar)
         }
     }
 

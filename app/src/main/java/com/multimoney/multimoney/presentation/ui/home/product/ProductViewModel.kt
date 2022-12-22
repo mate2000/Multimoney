@@ -21,6 +21,7 @@ import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
@@ -203,9 +204,18 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    // This function opens the saving flow from the quick actions
     private fun onNavigateToSmartSave() {
+        // Maybe todo check country
         val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
+            SmartAccountID(
+                tokenAccount = it?.tokenNumber,
+                currencyID = it?.idCurrencyAccount,
+                accountNumber = it?.accountNumber ?: ""
+            )
+        })
+        navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -304,6 +314,7 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
     }
 
+    // Todo check if the navigation to this screen is suitable for the purchase crypto flow
     private fun onNavigateToSmartPaymentAccountScreen() =
         navigateTo(Screen.SmartPaymentOptionsScreenCR.route)
 
@@ -547,6 +558,7 @@ class ProductViewModel @Inject constructor(
         )
     }
 
+    // This function opens the flow from the smart card
     private fun onNavigateToPaymentSmartScreen(account: Account?) {
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
             navigateTo(
@@ -556,7 +568,8 @@ class ProductViewModel @Inject constructor(
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+            val smartIds = SmartAccountID(tokenAccount = account?.tokenNumber, currencyID = account?.idCurrencyAccount, accountNumber = account?.accountNumber)
+            navigateTo("${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeScreen}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${encodeData(smartIds)}")
         }
     }
 

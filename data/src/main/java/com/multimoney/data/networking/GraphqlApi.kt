@@ -1408,15 +1408,21 @@ class GraphqlApi @Inject constructor(
     fun querySmartExchangeRate(
         user: String,
         identification: String,
+        idBrand: Int,
+        abbreviation: String,
         idOriginCurrency: String,
-        idDestinationCurrency: String
+        idDestinationCurrency: String,
+        amount: Double
     ): ApolloCall<ExchangeRateQuery.Data> =
         apolloAuthorizedClient.query(
             ExchangeRateQuery(
                 user = user,
                 identification = identification,
                 idOriginCurrency = idOriginCurrency,
-                idDestinationCurrency = idDestinationCurrency
+                idDestinationCurrency = idDestinationCurrency,
+                idBrand = idBrand,
+                abbreviation = abbreviation,
+                amount = amount
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

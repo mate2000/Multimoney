@@ -17,6 +17,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnColonSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnDollarSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.options.SmartPaymentOptionsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
@@ -45,7 +46,7 @@ fun SmartPaymentOptionsScreen(
         )
         PaymentOptions(
             onColonClick = { viewModel.onUIEvent(OnColonSelected) },
-            onDollarClick = { viewModel.onUIEvent(OnColonSelected) }
+            onDollarClick = { viewModel.onUIEvent(OnDollarSelected) }
         )
     }
 

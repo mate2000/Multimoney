@@ -105,7 +105,7 @@ fun RoundedPaymentButton(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 20.dp),
+                .padding(horizontal = 12.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = textAlign
         ) {
@@ -113,7 +113,8 @@ fun RoundedPaymentButton(
                 text = mainText,
                 style = Typography.subtitle1.copy(fontWeight = FontWeight.W700),
                 color = mainTextColor,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                maxLines = 1
             )
             secondaryText?.let {
                 Text(

@@ -53,7 +53,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_UP_STEP
-import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
 import com.multimoney.multimoney.presentation.navigation.navgraph.TRANSFER_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -85,6 +84,9 @@ const val NEW_VALUE = "new_value"
 const val DATE_SIGNED = "date_signed"
 const val VERSION = "version"
 const val ID_VISA_CARD = "id_visa_card"
+const val SMART_IDS_LIST = "smart_id_list"
+const val SMART_IDS = "smart_ids"
+const val IBAN_ACCOUNT = "iban_account"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -345,12 +347,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Payment
 
     object SmartPaymentOptionsScreenCR : Screen(
-        "smart_payment_options_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "smart_payment_options_screen/{$SMART_IDS_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "smart_payment_options_screen"
     )
 
     object SmartPaymentAccountScreenCR : Screen(
-        "smart_payment_accounts_screen/{$SMART_PAYMENT_ACCOUNTS}",
+        "smart_payment_accounts_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SMART_IDS}",
         "smart_payment_accounts_screen"
     )
 
@@ -370,7 +372,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartPaymentSavingAmount : Screen(
-        "smart_payment_saving_amount_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}/{$ID_VISA_CARD}/{$MASKED_CARD}/{$BANK_DETAIL}",
+        "smart_payment_saving_amount_screen/{$SMART_IDS}?$IBAN_ACCOUNT={$IBAN_ACCOUNT}/{$ID_VISA_CARD}/{$PREVIOUS_SCREEN}/{$MASKED_CARD}/{$BANK_DETAIL}",
         "smart_payment_saving_amount_screen"
     )
 

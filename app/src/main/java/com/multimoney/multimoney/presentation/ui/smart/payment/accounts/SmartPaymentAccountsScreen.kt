@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -38,7 +37,10 @@ fun SmartPaymentAccountsScreen(
     viewModel: SmartPaymentAccountViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+            onUIEvent(UIEvent.OnGetSnipeAccounts)
+        }
     }
 
     Column(
@@ -67,18 +69,18 @@ fun PaymentOptions(
     viewModel: SmartPaymentAccountViewModel = hiltViewModel()
 ) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.sinpeAccountList ?: listOf()) { account ->
+        items(viewModel.uiState.sinpeAccountList) { account ->
             CustomInfoButton(
-                title = account.bank,
+                title = account?.bank ?: "",
                 subtitle = getMaskedAccountIban(
-                    account.sinpeAccount,
-                    stringResource(id = R.string.payment_account_masked_text)
+                    account?.sinpeAccount ?: "",
+                    stringResource(id = string.payment_account_masked_text)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
                 endIcon = drawable.ic_right_chevron,
-                startIcon = account.currencyId.getCurrencyFromId().accountIcon,
+                startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
                     viewModel.onUIEvent(UIEvent.OnAccountClick(account))
                 }
@@ -96,9 +98,6 @@ fun PaymentOptions(
         },
         buttonType = PrimaryTertiary,
         trailingIcon = drawable.ic_plus,
-        enable = (
-            viewModel.sinpeAccountList?.size
-                ?: 0
-            ) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
+        enable = (viewModel.uiState.sinpeAccountList.size) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
     )
 }

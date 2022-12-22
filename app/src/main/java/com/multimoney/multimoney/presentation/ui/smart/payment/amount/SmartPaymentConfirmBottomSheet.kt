@@ -12,6 +12,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,14 +51,18 @@ fun SmartPaymentConfirmBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString.collectAsState().value,
                 style = Typography.h4.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center
             )
             Text(
-                modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
                 text = stringResource(id = R.string.smart_payment_amount_bottom_sheet_from_card),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
@@ -89,7 +94,9 @@ fun SmartPaymentConfirmBottomSheet(
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start,
-                modifier = Modifier.padding(top = 8.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
             )
             CustomInfoButton(
                 modifier = Modifier
@@ -105,7 +112,9 @@ fun SmartPaymentConfirmBottomSheet(
             )
 
             Spacer(
-                Modifier.fillMaxWidth().height(40.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .height(40.dp)
             )
 
             CustomButton(

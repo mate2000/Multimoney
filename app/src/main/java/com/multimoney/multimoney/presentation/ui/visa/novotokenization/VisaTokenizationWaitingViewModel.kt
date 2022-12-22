@@ -89,7 +89,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             mmCountDownTimer.stopTimer()
             if (NovoVTS.isDeviceEnrolled().not()) {
                 novoHelper.novoEnrollDevice(
-                    identification.toInt(),
+                    identification,
                     "+1",
                     onSuccessEnrollDevice = {
                         mmCountDownTimer.resumeTimer()
@@ -113,7 +113,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         Log.d("NovoDiego", email)
         Log.d("NovoDiego", getExpirationYear(expirationDate?.last() ?: ""))
         novoHelper.novoEnrollPan(
-            pkUser = pkUser.toInt(),
+            identification = identification,
             email = email,
             accountNumber = cardInformation?.cardNumber ?: "",
             cardName = cardInformation?.holderName ?: "",

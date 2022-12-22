@@ -28,27 +28,27 @@ class NovoHelper @Inject constructor() {
     }
 
     fun novoEnrollDevice(
-        pkUser: Int,
+        identification: String,
         phone: String,
         onSuccessEnrollDevice: (response: NovoResponse<String>) -> Unit,
         onErrorEnrollDevice: (error: NovoError) -> Unit
     ) {
         NovoVTS.enrollDevice(
             object : ResponseListener<String> {
-                override fun onError(novoError: NovoError) {
-                    onErrorEnrollDevice(novoError)
+                override fun onError(error: NovoError) {
+                    onErrorEnrollDevice(error)
                 }
 
                 override fun onFinish(response: NovoResponse<String>) {
                     onSuccessEnrollDevice(response)
                 }
             },
-            DataEnrollDevice(pkUser.toString(), phone)
+            DataEnrollDevice(identification, phone)
         )
     }
 
     fun novoEnrollPan(
-        pkUser: Int,
+        identification: String,
         email: String,
         accountNumber: String,
         cardName: String,
@@ -68,7 +68,7 @@ class NovoHelper @Inject constructor() {
                     onSuccessEnrollPan(response)
                 }
             },
-            enrollPanUserInfo = EnrollPanUserInfo(pkUser.toString(), email),
+            enrollPanUserInfo = EnrollPanUserInfo(identification, email),
             enrollPanData = EnrollPanData(
                 accountNumber,
                 cardName,

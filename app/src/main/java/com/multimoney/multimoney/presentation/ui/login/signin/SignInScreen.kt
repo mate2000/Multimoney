@@ -53,6 +53,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalized
+import com.multimoney.multimoney.presentation.util.splitByWhiteSpace
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
@@ -115,7 +116,7 @@ fun SignInScreen(
                         append(
                             stringResource(
                                 id = R.string.sign_in_title_name,
-                                viewModel.uiState.userName.split(" ").first().capitalized()
+                                viewModel.uiState.userName.splitByWhiteSpace().first().capitalized()
                             )
                         )
                     }

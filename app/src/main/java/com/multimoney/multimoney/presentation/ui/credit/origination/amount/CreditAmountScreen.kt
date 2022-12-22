@@ -46,9 +46,11 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewMo
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_TOTAL
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.TERMS_AND_CONDITIONS_CURRENT_FLOW
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.skeleton.CreditAmountScreenSkeleton
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.termandcondition.CreditTermsAndCondition
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
@@ -84,12 +86,14 @@ fun CreditAmountScreen(
         sharedViewModel.onUIEvent(
             CreditViewModel.UIEvent.OnSetNavigation(nextAction = {
                 viewModel.onUIEvent(
-                    CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase(
-                        pkUser = sharedViewModel.pkUser,
-                        descPromotion = "",
-                        idPromotion = 1,
+                    OnCallMutationSaveTermsAndConditionsCreditUseCase(
                         user = sharedViewModel.email,
                         idBrand = sharedViewModel.idBrand.toInt(),
+                        pkUser = sharedViewModel.pkUser.toLong(),
+                        currentFlow = TERMS_AND_CONDITIONS_CURRENT_FLOW,
+                        identification = sharedViewModel.identification,
+                        descPromotion = "",
+                        idPromotion = 1,
                         onSuccess = { screenConfigData ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnUpdateScreenConfigData(screenConfigData))
                             sharedViewModel.onUIEvent(

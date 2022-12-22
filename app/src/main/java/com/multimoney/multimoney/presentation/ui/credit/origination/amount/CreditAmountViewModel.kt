@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
+import com.multimoney.domain.interaction.credit.MutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.domain.interaction.credit.QueryCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.QueryPaymentAmountUseCase
 import com.multimoney.domain.interaction.credit.QueryScreenConfigUseCase
@@ -23,6 +24,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.amount.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveCreditApplicationUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallQueryCreditOfferUseCase
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCallMutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnDisbursementValueChangeFinished
@@ -54,6 +56,7 @@ class CreditAmountViewModel @Inject constructor(
     private val queryCreditOfferUseCase: QueryCreditOfferUseCase,
     private val queryPaymentAmountUseCase: QueryPaymentAmountUseCase,
     private val mutationSaveCreditApplicationUseCase: MutationSaveCreditApplicationUseCase,
+    private val mutationSaveTermsAndConditionsCreditUseCase: MutationSaveTermsAndConditionsCreditUseCase,
     private val queryScreenConfigUseCase: QueryScreenConfigUseCase
 ) : BaseViewModel(true) {
 
@@ -171,6 +174,62 @@ class CreditAmountViewModel @Inject constructor(
                     feeLabel = it?.paymentAmountLabel ?: uiState.feeLabel
                 )
                 onLoadingValueChange(false)
+            }.onFailure {
+                onFailureWithDialog(
+                    false,
+                    DialogParameters(
+                        description = it.getError().toString(),
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                onLoadingValueChange(true)
+            }
+        }
+    }
+
+    private fun callMutationSaveTermsAndConditionsCreditUseCase(
+        user: String,
+        idBrand: Int,
+        pkUser: Long,
+        currentFlow: String,
+        identification: String,
+        descPromotion: String,
+        idPromotion: Int,
+        onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
+        onLoadingValueChange: (status: Boolean) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onCurrencySymbolValueChange: (currencySymbol: String) -> Unit
+    ) = executeUseCase {
+        mutationSaveTermsAndConditionsCreditUseCase.invoke(
+            user = user,
+            idBrand = idBrand,
+            pkUser = pkUser,
+            currentFlow = currentFlow,
+            identification = identification
+        ).collectLatest { result ->
+            result.onSuccess {
+                if (it?.status == 0) {
+                    callMutationSaveCreditApplicationUseCase(
+                        pkUser = pkUser.toString(),
+                        descPromotion = descPromotion,
+                        idPromotion = idPromotion,
+                        user = user,
+                        idBrand = idBrand,
+                        onSuccess = onSuccess,
+                        onLoadingValueChange = onLoadingValueChange,
+                        onFailureWithDialog = onFailureWithDialog,
+                        onCurrencySymbolValueChange = onCurrencySymbolValueChange
+                    )
+                } else {
+                    onFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it?.message ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
             }.onFailure {
                 onFailureWithDialog(
                     false,
@@ -482,6 +541,19 @@ class CreditAmountViewModel @Inject constructor(
                 uiEvent.onFailureWithDialog,
                 uiEvent.onCurrencySymbolValueChange
             )
+            is OnCallMutationSaveTermsAndConditionsCreditUseCase -> callMutationSaveTermsAndConditionsCreditUseCase(
+                user = uiEvent.user,
+                idBrand = uiEvent.idBrand,
+                pkUser = uiEvent.pkUser,
+                currentFlow = uiEvent.currentFlow,
+                identification = uiEvent.identification,
+                descPromotion = uiEvent.descPromotion,
+                idPromotion = uiEvent.idPromotion,
+                onSuccess = uiEvent.onSuccess,
+                onLoadingValueChange = uiEvent.onLoadingValueChange,
+                onFailureWithDialog = uiEvent.onFailureWithDialog,
+                onCurrencySymbolValueChange = uiEvent.onCurrencySymbolValueChange
+            )
             is OnTermAndConditionCheckedChange -> onTermAndConditionCheckedChange(uiEvent.isChecked)
             is OnOpenConditionCreditDialog -> onOpenConditionCreditDialog()
             is OnOpenTermAndCondition -> onOpenTermAndCondition()
@@ -523,6 +595,20 @@ class CreditAmountViewModel @Inject constructor(
             val idPromotion: Int,
             val user: String,
             val idBrand: Int,
+            val onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
+            val onLoadingValueChange: (status: Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
+            val onCurrencySymbolValueChange: (currencySymbol: String) -> Unit
+        ) : UIEvent()
+
+        data class OnCallMutationSaveTermsAndConditionsCreditUseCase(
+            val user: String,
+            val idBrand: Int,
+            val pkUser: Long,
+            val currentFlow: String,
+            val identification: String,
+            val descPromotion: String,
+            val idPromotion: Int,
             val onSuccess: (screenConfig: List<CreditCatalog?>?) -> Unit,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit,
@@ -572,5 +658,6 @@ class CreditAmountViewModel @Inject constructor(
         const val SLIDER_ANIMATION_VALUE = 0.05F
         const val TIMER_DURATION = 20L
         const val TIMER_DELAY = 1L
+        const val TERMS_AND_CONDITIONS_CURRENT_FLOW = "TC VENTAS"
     }
 }

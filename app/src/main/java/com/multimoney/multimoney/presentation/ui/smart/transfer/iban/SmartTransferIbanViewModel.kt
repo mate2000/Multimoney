@@ -61,6 +61,7 @@ class SmartTransferIbanViewModel @Inject constructor(
             accountNumber = ""
         ).collectLatest { result ->
             result.onSuccess { accountList ->
+                uiState = uiState.copy(isLoading = false)
                 if (accountList?.data?.isEmpty() == true) {
                     navigateToAddIbanAccount()
                 } else {
@@ -70,6 +71,7 @@ class SmartTransferIbanViewModel @Inject constructor(
                 }
             }
             result.onFailure {
+                uiState = uiState.copy(isLoading = false)
                 onFailure(it)
             }
             result.onLoading {

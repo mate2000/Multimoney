@@ -65,7 +65,14 @@ class PaymentPointsViewModel @Inject constructor(
         pointLongitude: String
     ) = navigateTo(
         route = Screen.PaymentLocationDetailsScreen.baseRoute
-            .plus(getNavParam(POINT_NAME, pointName))
+            .plus(
+                getNavParam(POINT_NAME,
+                    URLEncoder.encode(
+                        pointName,
+                        StandardCharsets.UTF_8.name()
+                    )
+                )
+            )
             .plus(
                 getNavParam(
                     POINT_ADDRESS,
@@ -75,7 +82,14 @@ class PaymentPointsViewModel @Inject constructor(
                     )
                 )
             )
-            .plus(getNavParam(POINT_ADDRESS_DESCRIPTION, pointAddressDescription))
+            .plus(
+                getNavParam(POINT_ADDRESS_DESCRIPTION,
+                    URLEncoder.encode(
+                        pointAddressDescription,
+                        StandardCharsets.UTF_8.name()
+                    )
+                )
+            )
             .plus(getNavParam(POINT_SCHEDULE, pointSchedule))
             .plus(getNavParam(POINT_LATITUDE, pointLatitude))
             .plus(getNavParam(POINT_LONGITUDE, pointLongitude))

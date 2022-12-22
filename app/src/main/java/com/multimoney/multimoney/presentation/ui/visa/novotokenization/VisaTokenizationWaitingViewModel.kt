@@ -35,15 +35,18 @@ import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaToken
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.YEAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getDateFormat
 import com.multimoney.multimoney.presentation.util.getDeviceManufacture
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Date
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
@@ -66,7 +69,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     var pkUser: Long = 0
     var identification: String = ""
     var phone = ""
-    var novoDeviceId: String = ""
     var email: String = ""
     var cardInformation: CardInformation? = null
 
@@ -91,8 +93,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     "+1",
                     onSuccessEnrollDevice = {
                         mmCountDownTimer.resumeTimer()
-                        novoDeviceId = it.data
-                        callNovoEnrollPan(novoDeviceId)
+                        callNovoEnrollPan(it.data)
                     },
                     onErrorEnrollDevice = {
                         mmCountDownTimer.resumeTimer()
@@ -102,13 +103,15 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     }
                 )
             } else {
-                callNovoEnrollPan(novoDeviceId)
+                callNovoEnrollPan(NovoVTS.getWalletAccountNumber())
             }
         }
     }
 
     private fun callNovoEnrollPan(walletId: String) {
         val expirationDate = cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
+        Log.d("NovoDiego", email)
+        Log.d("NovoDiego", getExpirationYear(expirationDate?.last() ?: ""))
         novoHelper.novoEnrollPan(
             pkUser = pkUser.toInt(),
             email = email,
@@ -116,19 +119,27 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             cardName = cardInformation?.holderName ?: "",
             cardCvv = cardInformation?.cValidation ?: "",
             cardExpirationMonth = expirationDate?.first() ?: "",
-            cardExpirationYear = expirationDate?.last() ?: "",
-            onSuccessEnrollDevice = {
-                mmCountDownTimer.resumeTimer()
-                NovoVTS.setFavoriteCard(it.data.vProvisionedToken)
-                createWallet(walletId = walletId)
-            },
-            onErrorEnrollDevice = {
+            cardExpirationYear = getExpirationYear(expirationDate?.last() ?: ""),
+            onErrorEnrollPan = {
                 // todo handle novo sdk error
+                Log.d("NovoDiego", it.message ?: "")
+                Log.d("NovoDiego", it.responseInfo.toString() ?: "")
+                Log.d("NovoDiego", it.code.toString())
+            },
+            onSuccessEnrollPan = {
                 mmCountDownTimer.resumeTimer()
                 Log.d("NovoDiego", it.message ?: "")
                 Log.d("NovoDiego", it.code.toString())
+                mmCountDownTimer.resumeTimer()
+                NovoVTS.setFavoriteCard(it.data.vProvisionedToken)
+                createWallet(walletId = walletId)
             }
         )
+    }
+
+    private fun getExpirationYear(yearChunked: String): String {
+        val currentYear = getDateFormat(Date(), YEAR_FORMAT)
+        return "${currentYear.substring(YEAR_START_INDEX, YEAR_END_INDEX)}$yearChunked"
     }
 
     /**
@@ -336,5 +347,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         const val TIME_TO_WAITING_NOVO_STEP = 10000L
         const val EXPIRATION_DATE_CHUCKS_LIMIT = 2
         const val HALF_SECOND = 500L
+        const val YEAR_START_INDEX = 0
+        const val YEAR_END_INDEX = 2
     }
 }

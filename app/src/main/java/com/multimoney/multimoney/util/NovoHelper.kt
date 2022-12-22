@@ -55,17 +55,17 @@ class NovoHelper @Inject constructor() {
         cardCvv: String,
         cardExpirationMonth: String,
         cardExpirationYear: String,
-        onSuccessEnrollDevice: (response: NovoResponse<VtsCard>) -> Unit,
-        onErrorEnrollDevice: (error: NovoError) -> Unit
+        onSuccessEnrollPan: (response: NovoResponse<VtsCard>) -> Unit,
+        onErrorEnrollPan: (error: NovoError) -> Unit
     ) {
         NovoVTS.enrollPan(
             object : ResponseListener<VtsCard> {
                 override fun onError(error: NovoError) {
-                    onErrorEnrollDevice(error)
+                    onErrorEnrollPan(error)
                 }
 
                 override fun onFinish(response: NovoResponse<VtsCard>) {
-                    onSuccessEnrollDevice(response)
+                    onSuccessEnrollPan(response)
                 }
             },
             enrollPanUserInfo = EnrollPanUserInfo(pkUser.toString(), email),

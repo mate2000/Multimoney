@@ -2,7 +2,6 @@ package com.multimoney.multimoney.presentation.ui.visa.novotokenization
 
 import android.content.Context
 import android.provider.Settings
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -83,14 +82,12 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
 
     private fun startTokenizationProcess() {
         executeUseCase {
-            Log.d("NovoDiego", "${getCountryCode()}$phone")
-            Log.d("NovoDiego", identification)
             delay(HALF_SECOND)
             mmCountDownTimer.stopTimer()
             if (NovoVTS.isDeviceEnrolled().not()) {
                 novoHelper.novoEnrollDevice(
                     identification,
-                    "+1",
+                    EMPTY_PHONE,
                     onSuccessEnrollDevice = {
                         mmCountDownTimer.resumeTimer()
                         callNovoEnrollPan(it.data)
@@ -98,8 +95,12 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     onErrorEnrollDevice = {
                         mmCountDownTimer.resumeTimer()
                         // todo handle novo sdk error
-                        Log.d("NovoDiego", it.message ?: "")
-                        Log.d("NovoDiego", it.code.toString())
+                        uiState = uiState.copy(
+                            openDialog = DialogParameters(
+                                isActive = mutableStateOf(true),
+                                description = "ED ${it.message} ${it.code?.toString()}"
+                            )
+                        )
                     }
                 )
             } else {
@@ -110,8 +111,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
 
     private fun callNovoEnrollPan(walletId: String) {
         val expirationDate = cardInformation?.expDate?.chunked(EXPIRATION_DATE_CHUCKS_LIMIT)
-        Log.d("NovoDiego", email)
-        Log.d("NovoDiego", getExpirationYear(expirationDate?.last() ?: ""))
         novoHelper.novoEnrollPan(
             identification = identification,
             email = email,
@@ -122,14 +121,14 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             cardExpirationYear = getExpirationYear(expirationDate?.last() ?: ""),
             onErrorEnrollPan = {
                 // todo handle novo sdk error
-                Log.d("NovoDiego", it.message ?: "")
-                Log.d("NovoDiego", it.responseInfo.toString() ?: "")
-                Log.d("NovoDiego", it.code.toString())
+                uiState = uiState.copy(
+                    openDialog = DialogParameters(
+                        isActive = mutableStateOf(true),
+                        description = "EP ${it.message} ${it.code?.toString()}"
+                    )
+                )
             },
             onSuccessEnrollPan = {
-                mmCountDownTimer.resumeTimer()
-                Log.d("NovoDiego", it.message ?: "")
-                Log.d("NovoDiego", it.code.toString())
                 mmCountDownTimer.resumeTimer()
                 NovoVTS.setFavoriteCard(it.data.vProvisionedToken)
                 createWallet(walletId = walletId)
@@ -332,14 +331,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         object OnStartNovoTokenization : UIEvent()
     }
 
-    fun getCountryCode(): String {
-        return when (idBrand) {
-            Brand.ElSalvador.id -> "+503"
-            Brand.CostaRica.id -> "+506"
-            else -> "+502"
-        }
-    }
-
     companion object {
         const val MAX_STEPS = 3
         const val STEP_ONE = 1
@@ -349,5 +340,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         const val HALF_SECOND = 500L
         const val YEAR_START_INDEX = 0
         const val YEAR_END_INDEX = 2
+        const val EMPTY_PHONE = "+1"
     }
 }

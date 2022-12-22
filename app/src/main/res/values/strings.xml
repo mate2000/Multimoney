@@ -1029,7 +1029,11 @@
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
-    <string name="payment_amount_card_title" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title_sv" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title_gt" translatable="false">¿Cuánto quieres abonar?</string>
+    <string name="payment_amount_card_min_amount" translatable="false">Abonar mínimo</string>
+    <string name="payment_amount_card_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
+    <string name="payment_amount_card_amount_max_error" translatable="false">El pago máximo es de %s</string>
 
     <!-- Payment Amount Card Bottom Sheet -->
     <string name="payment_amount_card_bottom_sheet_title" translatable="false">Monto a abonar</string>

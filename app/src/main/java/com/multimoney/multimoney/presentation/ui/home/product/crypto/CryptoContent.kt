@@ -41,7 +41,7 @@ fun CryptoContent(
                         ) {
                             CryptoCardWithBalance(
                                 cryptoBalance = 0.0,
-                                isEmptyStateEnable = cryptoEmptyState
+                                isEmptyStateDisable = cryptoEmptyState
                             )
                         }
                         return
@@ -56,7 +56,7 @@ fun CryptoContent(
                         CryptoCardWithBalance(
                             cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
                             clientCryptoBalanceHistory = clientBalanceHistory,
-                            isEmptyStateEnable = cryptoEmptyState
+                            isEmptyStateDisable = cryptoEmptyState
                         )
                     }
                 }

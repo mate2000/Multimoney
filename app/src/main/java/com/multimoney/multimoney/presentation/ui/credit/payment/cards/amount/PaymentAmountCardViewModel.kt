@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.amount.Credi
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultRightButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAutomaticProgrammedPaymentCheckedChanged
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnContinueClick
@@ -172,6 +173,13 @@ class PaymentAmountCardViewModel @Inject constructor(
         uiState = uiState.copy(isLoading = loading)
     }
 
+    private fun onAlertResultRightButtonClick() {
+        uiState = uiState.copy(
+            bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded),
+            isAlertResultVisible = false
+        )
+    }
+
     private fun onContinueClick() {
         onShowPaymentBottomSheet()
     }
@@ -212,7 +220,8 @@ class PaymentAmountCardViewModel @Inject constructor(
                 onUIEvent(OnHidePaymentBottomSheet)
                 onLoadingValueChange(false)
                 uiState = uiState.copy(
-                    alertResultTitle = it.getError().orEmpty(),
+                    alertResultTitle = alertResultTitle,
+                    alertResultDescription = it.getError().orEmpty(),
                     isAlertResultVisible = true
                 )
             }.onLoading {
@@ -286,6 +295,7 @@ class PaymentAmountCardViewModel @Inject constructor(
             is UIEvent.OnFinishVisaAnimation -> onFinishVisaAnimation()
             is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
             is OnAlertResultButtonClick -> onAlertResultButtonClick()
+            is OnAlertResultRightButtonClick -> onAlertResultRightButtonClick()
         }
     }
 
@@ -300,6 +310,7 @@ class PaymentAmountCardViewModel @Inject constructor(
         object OnNavigateBackHome : UIEvent()
         object OnFinishVisaAnimation : UIEvent()
         object OnHidePaymentBottomSheet : UIEvent()
+        object OnAlertResultRightButtonClick : UIEvent()
         object OnAlertResultButtonClick : UIEvent()
     }
 

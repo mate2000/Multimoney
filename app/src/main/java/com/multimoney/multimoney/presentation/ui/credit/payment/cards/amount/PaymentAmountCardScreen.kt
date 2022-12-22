@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.amount.Credi
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAmountValueChange
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultRightButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnHidePaymentBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnMinimumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnNavigateBack
@@ -62,10 +63,11 @@ fun PaymentAmountCardScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
+    viewModel.onUIEvent(OnStart(stringResource(id = R.string.error_no_internet_title)))
+
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
-            onUIEvent(OnStart)
         }
     }
     PaymentAmountCardContent(viewModel, coroutineScope)
@@ -85,7 +87,8 @@ fun PaymentAmountCardContent(
             descriptionString = viewModel.uiState.alertResultDescription,
             buttonTextResource = string.payment_amount_error_button,
             isLeftButtonVisible = false,
-            isRightButtonVisible = false,
+            isRightButtonVisible = true,
+            onRightButtonClick = { viewModel.onUIEvent(OnAlertResultRightButtonClick) },
             onButtonClick = { viewModel.onUIEvent(OnAlertResultButtonClick) }
         )
     } else {

@@ -232,11 +232,23 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_document_process_screen"
     )
 
+    object SmartOnfidoAndEvicertiaErrorsScreen : Screen(
+        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "smart_onfido_and_evicertia_errors_screen"
+    )
+
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
+
+    object SmartContinueValidatingOnfidoScreen : Screen("smart_continue_validating_onfido_screen")
 
     object ProcessingTransactionScreen : Screen(
         "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
         "processing_transaction_screen"
+    )
+
+    object ApprovedByOnfidoScreen : Screen(
+        "approved_by_onfido_screen/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_BRAND}",
+        "approved_by_onfido_screen"
     )
 
     object OnfidoAndEvicertiaErrorsScreen : Screen(
@@ -269,6 +281,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object AddIbanAccountScreen : Screen(
         "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "add_iban_account_screen"
+    )
+
+    // Transfer Iban Account
+    object TransferIbanAccountScreen : Screen(
+        "transfer_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "transfer_iban_account_screen"
     )
 
     // Payment Credit

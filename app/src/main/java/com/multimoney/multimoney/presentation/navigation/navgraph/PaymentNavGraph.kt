@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSe
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.PaymentLocationDetailsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountScreen
@@ -428,6 +429,33 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     )
                 }
             )
+        }
+
+        composable(
+            Screen.PaymentVoucherVDScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(CARD_SELECTED) {
+                    type = CardVDNavType()
+                },
+                navArgument(IS_AUTOMATIC_PAYMENT_CHECKED) {
+                    type = NavType.BoolType
+                }
+            )
+        ) {
+            PaymentVoucherVDScreen(onPopAndNavigate = {
+                navController.navigate(it.route) {
+                    popUpTo(it.popTo) { inclusive = true }
+                }
+            })
         }
     }
 }

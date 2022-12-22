@@ -340,6 +340,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_location_details_screen"
     )
 
+    object PaymentVoucherVDScreen : Screen(
+        "payment_voucher_vd_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CARD_SELECTED}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
+        "payment_voucher_vd_screen"
+    )
+
     // Smart
     object SmartScreen : Screen(
         "smart_screen/{$USER}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$CREDIT_STEP}/{$FIRST_NAME}/{$LAST_NAME}/{$ONFIDO_STATUS}/{$COMING_FROM_CRYPTO}",

@@ -1,0 +1,106 @@
+package com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd
+
+import android.view.View
+import androidx.compose.ui.geometry.Rect
+import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDViewModel.UIEvent.OnScheduleAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.util.ShareHelper
+import com.multimoney.multimoney.presentation.util.getCurrentDate
+import com.multimoney.multimoney.presentation.util.getCurrentTime
+import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
+import javax.inject.Inject
+
+@HiltViewModel
+class PaymentVoucherVDViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val shareHelper: ShareHelper
+) : BaseViewModel(true) {
+
+    var referenceNumber: String? = null
+    var currentAmountValueString: String? = null
+    var currency: String? = null
+    var currentDate: String = ""
+    var currentTime: String = ""
+    var paymentLabel: String? = null
+    var card: CardVisaDirect? = null
+    var isAutomaticProgrammedPaymentChecked: Boolean? = false
+    private var user: String = ""
+    private var idBrand: Int = 0
+    private var idClient: Int = 0
+    private var idLoanClient: Int = 0
+    private var identification: String? = null
+    private var userName: String? = null
+    private var paymentDate: String? = null
+
+    init {
+        referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
+        currentAmountValueString = savedStateHandle[CURRENT_AMOUNT_VALUE]
+        currency = savedStateHandle[PAYMENT_LABEL]
+        user = savedStateHandle[USER] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        idClient = savedStateHandle[ID_CLIENT] ?: 0
+        idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        userName = savedStateHandle[NAME_CLIENT] ?: ""
+        card = savedStateHandle[CARD_SELECTED]
+        paymentDate = savedStateHandle[PAYMENT_DATE]
+        paymentLabel = savedStateHandle[PAYMENT_LABEL]
+        isAutomaticProgrammedPaymentChecked = savedStateHandle[IS_AUTOMATIC_PAYMENT_CHECKED]
+        currentDate = getCurrentDate(Calendar.getInstance().time)
+        currentTime = getCurrentTime(Calendar.getInstance().time)
+    }
+
+    private fun onShareVoucherImage(
+        view: View,
+        capturingBounds: Rect
+    ) {
+        shareHelper.sharedScreenShot(view, capturingBounds)
+    }
+
+    private fun onNavigateToHome() {
+        popAndNavigateTo(
+            route = Screen.HomeScreen.route,
+            popTo = Screen.PaymentVoucherVDScreen.route
+        )
+    }
+
+    private fun onScheduleAutomaticPayment() {
+        // todo schedule payment.
+    }
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is OnScheduleAutomaticPayment -> onScheduleAutomaticPayment()
+            is OnCloseClick -> onNavigateToHome()
+            is OnSharedVoucherImage -> onShareVoucherImage(event.view, event.capturingBounds)
+        }
+    }
+
+    sealed class UIEvent {
+        object OnCloseClick : UIEvent()
+        data class OnSharedVoucherImage(
+            val view: View,
+            val capturingBounds: Rect
+        ) : UIEvent()
+
+        object OnScheduleAutomaticPayment : UIEvent()
+    }
+}

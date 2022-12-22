@@ -399,7 +399,6 @@
     <string name="profile_terms_and_conditions_crypto_title" translatable="false">Cripto</string>
 
 
-
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
     <string name="sign_out_dialog_title_gt" translatable="false">¿Estás seguro que quieres cerrar sesión?</string>
@@ -1043,6 +1042,13 @@
     <string name="payment_amount_card_bottom_sheet_amount_automatic_checkbox" translatable="false">Programar pago automático</string>
     <string name="payment_amount_card_bottom_sheet_button" translatable="false">Realizar abono</string>
     <string name="payment_amount_card_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
+
+    <!-- Payment Voucher Visa direct -->
+    <string name="payment_voucher_vd_success_label" translatable="false">¡Transacción exitosa!</string>
+    <string name="payment_voucher_vd_amount" translatable="false">Has abonado</string>
+    <string name="payment_voucher_vd_from_label" translatable="false">Desde</string>
+    <string name="payment_voucher_vd_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="payment_voucher_vd_origin_reference_number_label" translatable="false">N° de referencia</string>
 
     <!-- Payment method -->
     <string name="payment_method_title" translatable="false">Selecciona el método de ahorro</string>

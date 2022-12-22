@@ -41,11 +41,11 @@ import com.multimoney.multimoney.presentation.util.getDeviceManufacture
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Date
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(

@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -52,13 +53,20 @@ fun SendingTypeOptions(
             text = "Enviar dinero a"
         )
         CustomInfoButton(
-            title = ""
+            title = "Mis contactos",
+            endIcon = R.drawable.ic_right_chevron,
+            startIcon = R.drawable.ic_sending_contact
         )
         CustomInfoButton(
-            title = ""
+            title = "Mi cuenta Smart [dolares/colones]",
+            endIcon = R.drawable.ic_right_chevron,
+            startIcon = R.drawable.ic_sending_dollar
         )
         CustomInfoButton(
-            title = ""
+            title = "Cuentas IBAN",
+            endIcon = R.drawable.ic_right_chevron,
+            startIcon = R.drawable.ic_sending_iban_account,
+
         )
     }
 

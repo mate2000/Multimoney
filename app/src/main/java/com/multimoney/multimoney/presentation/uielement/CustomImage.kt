@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
  * @param contentDescription: Content description.
  * @param drawableResource: Drawable resource.
  * @param contentScale: Apply content scale type.
+ * @param alpha: Optional opacity, default 1f
  */
 
 @Composable
@@ -21,10 +22,12 @@ fun CustomImage(
     modifier: Modifier = Modifier,
     contentDescription: String = "",
     drawableResource: Int,
-    contentScale: ContentScale = ContentScale.Fit
+    contentScale: ContentScale = ContentScale.Fit,
+    alpha: Float = 1f,
 ) = Image(
     painter = painterResource(drawableResource),
     contentDescription = contentDescription,
     contentScale = contentScale,
-    modifier = modifier
+    modifier = modifier,
+    alpha = alpha
 )

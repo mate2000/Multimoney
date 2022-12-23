@@ -82,7 +82,7 @@ class PaymentScheduleViewModel @Inject constructor(
                     clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
                 )
         previousScreen == Screen.HomeScreen.route && isEditPaymentSchedule.not() -> onCallQueryGetClientBankAccountUseCase()
-        else -> onCallGetClientAutomaticDebitUseCase()
+        else -> onCallGetClientAutomaticDebitUseCase() // This is when user clicks Edit from Home
     }
 
     private fun onCallQueryGetClientBankAccountUseCase() = executeUseCase {

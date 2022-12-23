@@ -79,8 +79,7 @@
 
     <!-- Sign In -->
     <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
-    <string name="sign_in_title_name" translatable="false">Hola %s, \n</string>
-    <string name="sign_in_title_no_name" translatable="false">¡Que bueno tenerte por acá!</string>
+    <string name="sign_in_title_name" translatable="false">%s, ¡qué bueno verte de nuevo!</string>
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
     <string name="sign_in_access_with_biometrics" translatable="false">Ingresar con biométricos</string>
@@ -1034,7 +1033,11 @@
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
-    <string name="payment_amount_card_title" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title_sv" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title_gt" translatable="false">¿Cuánto quieres abonar?</string>
+    <string name="payment_amount_card_min_amount" translatable="false">Abonar mínimo</string>
+    <string name="payment_amount_card_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
+    <string name="payment_amount_card_amount_max_error" translatable="false">El pago máximo es de %s</string>
 
     <!-- Payment Amount Card Bottom Sheet -->
     <string name="payment_amount_card_bottom_sheet_title" translatable="false">Monto a abonar</string>

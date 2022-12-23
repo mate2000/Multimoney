@@ -16,6 +16,10 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnCallQueryGetClientCards
@@ -44,6 +48,10 @@ class PaymentCardListViewModel @Inject constructor(
     private var creditNumber: String? = null
     private var idClient: Int? = null
     private var idLoanClient: Int? = null
+    private var minimumPayment: Float? = null
+    private var minimumPaymentLabel: String? = null
+    private var maximumPayment: Float? = null
+    private var maximumPaymentLabel: String = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -52,6 +60,10 @@ class PaymentCardListViewModel @Inject constructor(
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        minimumPayment = savedStateHandle[MINIMUM_PAYMENT]
+        minimumPaymentLabel = savedStateHandle[MINIMUM_PAYMENT_LABEL]
+        maximumPayment = savedStateHandle[MAXIMUM_PAYMENT]
+        maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
     }
 
     private fun onCallQueryGetClientCardsUseCase() {
@@ -88,7 +100,7 @@ class PaymentCardListViewModel @Inject constructor(
         navigateTo(
             route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$idBrand/$identification/$user/${
             encodeData(cardSelected)
-            }/$creditNumber/$idClient/$idLoanClient"
+            }/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel"
         )
 
     private fun onNavigateBack() =

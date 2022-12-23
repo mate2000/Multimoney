@@ -659,5 +659,6 @@ class CreditAmountViewModel @Inject constructor(
         const val TIMER_DURATION = 20L
         const val TIMER_DELAY = 1L
         const val TERMS_AND_CONDITIONS_CURRENT_FLOW = "TC VENTAS"
+        const val ID_PROMOTION = 1
     }
 }

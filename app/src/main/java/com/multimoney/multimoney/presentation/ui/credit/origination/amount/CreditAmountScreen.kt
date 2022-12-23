@@ -45,6 +45,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.ID_PROMOTION
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.SLIDER_TOTAL
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.TERMS_AND_CONDITIONS_CURRENT_FLOW
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnCurrencyIndexChanged
@@ -93,7 +94,7 @@ fun CreditAmountScreen(
                         currentFlow = TERMS_AND_CONDITIONS_CURRENT_FLOW,
                         identification = sharedViewModel.identification,
                         descPromotion = "",
-                        idPromotion = 1,
+                        idPromotion = ID_PROMOTION,
                         onSuccess = { screenConfigData ->
                             sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnUpdateScreenConfigData(screenConfigData))
                             sharedViewModel.onUIEvent(

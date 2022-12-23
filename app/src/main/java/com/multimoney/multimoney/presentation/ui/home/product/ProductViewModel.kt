@@ -63,7 +63,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToVisaActivateScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnQuickActionClicked
@@ -763,7 +762,6 @@ class ProductViewModel @Inject constructor(
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
             is OnGetSmartContent -> getSmartContent()
-            OnNavigateToVisaActivateScreen -> TODO()
         }
     }
 
@@ -784,7 +782,6 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnNavigateToPaymentProcess : UIEvent()
-        object OnNavigateToVisaActivateScreen : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToDisbursement : UIEvent()

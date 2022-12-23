@@ -114,7 +114,7 @@ fun CryptoCardSmartInProcess(
 @Composable
 fun CryptoCardWithBalance(
     cryptoBalance: Double, clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),
-    isEmptyStateEnable: Boolean
+    isEmptyStateDisable: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -124,7 +124,7 @@ fun CryptoCardWithBalance(
                 top = 24.dp,
                 start = 16.dp,
                 end = 16.dp,
-                bottom = if (isEmptyStateEnable.not()) 136.dp else 0.dp
+                bottom = if (isEmptyStateDisable.not()) 136.dp else 0.dp
             )
     ) {
         Text(
@@ -135,13 +135,13 @@ fun CryptoCardWithBalance(
         )
         Text(
             modifier = Modifier.height(40.dp),
-            text = "\$${cryptoBalance}",
+            text = stringResource(id = R.string.currency_item_dollar_symbol, cryptoBalance),
             style = Typography.h4.copy(
                 fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             )
         )
 
-        if (isEmptyStateEnable) {
+        if (isEmptyStateDisable) {
             val isInGainOrLoss = calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory) >= 0
             val graphicColor = if (isInGainOrLoss)
                 MultimoneyTheme.colors.cryptoGainsColor else MultimoneyTheme.colors.cryptoLossesColor
@@ -158,7 +158,10 @@ fun CryptoCardWithBalance(
                 contentAlignment = Alignment.BottomEnd
             ) {
                 CustomInformativeChip(
-                    text = "\$${calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory).roundToTwoDecimalPlacesWithoutNegatives()}",
+                    text = stringResource(
+                        id = R.string.currency_item_dollar_symbol,
+                        calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory).roundToTwoDecimalPlacesWithoutNegatives()
+                    ),
                     textStyle = Typography.body2.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = MultimoneyTheme.colors.text

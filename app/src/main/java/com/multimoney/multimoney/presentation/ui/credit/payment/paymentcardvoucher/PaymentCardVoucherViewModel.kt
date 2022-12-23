@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd
+package com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher
 
 import android.view.View
 import androidx.compose.ui.geometry.Rect
@@ -13,14 +13,12 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
-import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
-import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDViewModel.UIEvent.OnScheduleAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
@@ -29,7 +27,7 @@ import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
-class PaymentVoucherVDViewModel @Inject constructor(
+class PaymentCardVoucherViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val shareHelper: ShareHelper
 ) : BaseViewModel(true) {
@@ -39,7 +37,6 @@ class PaymentVoucherVDViewModel @Inject constructor(
     var currency: String? = null
     var currentDate: String = ""
     var currentTime: String = ""
-    var paymentLabel: String? = null
     var card: CardVisaDirect? = null
     var isAutomaticProgrammedPaymentChecked: Boolean? = false
     private var user: String = ""
@@ -47,8 +44,6 @@ class PaymentVoucherVDViewModel @Inject constructor(
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
     private var identification: String? = null
-    private var userName: String? = null
-    private var paymentDate: String? = null
 
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
@@ -59,10 +54,7 @@ class PaymentVoucherVDViewModel @Inject constructor(
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        userName = savedStateHandle[NAME_CLIENT] ?: ""
         card = savedStateHandle[CARD_SELECTED]
-        paymentDate = savedStateHandle[PAYMENT_DATE]
-        paymentLabel = savedStateHandle[PAYMENT_LABEL]
         isAutomaticProgrammedPaymentChecked = savedStateHandle[IS_AUTOMATIC_PAYMENT_CHECKED]
         currentDate = getCurrentDate(Calendar.getInstance().time)
         currentTime = getCurrentTime(Calendar.getInstance().time)
@@ -78,7 +70,7 @@ class PaymentVoucherVDViewModel @Inject constructor(
     private fun onNavigateToHome() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
-            popTo = Screen.PaymentVoucherVDScreen.route
+            popTo = Screen.PaymentCardVoucherScreen.route
         )
     }
 

@@ -10,6 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_AC
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENCY_SYMBOL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.DISBURSEMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -340,8 +341,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_location_details_screen"
     )
 
-    object PaymentVoucherVDScreen : Screen(
-        "payment_voucher_vd_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CARD_SELECTED}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
+    object PaymentCardVoucherScreen : Screen(
+        "payment_voucher_vd_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CARD_SELECTED}/{$CURRENT_AMOUNT_VALUE}/{$CURRENCY_SYMBOL}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
         "payment_voucher_vd_screen"
     )
 

@@ -15,6 +15,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.PayCreditVisaDirect
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -34,8 +35,8 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.Pay
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -57,12 +58,12 @@ class PaymentAmountCardViewModel @Inject constructor(
     private var idClient: Int? = null
     private var idLoanClient: Int? = null
     private var alertResultTitle: String = ""
+    private var payCreditVisa: PayCreditVisaDirect? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
-        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
@@ -81,6 +82,14 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onFinishVisaAnimation() {
         uiState = uiState.copy(isVisaAnimationVisible = false)
+        onNavigateToPaymentCardVoucher()
+    }
+
+    private fun onNavigateToPaymentCardVoucher() {
+        popAndNavigateTo(
+            "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${uiState.card}/${uiState.paymentAmount}/${uiState.card?.currencyDescription?.getCurrencyFromValue()?.symbol}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}",
+            Screen.PaymentAmountCardsScreen.route
+        )
     }
 
     private fun onNavigateBack() =
@@ -132,6 +141,7 @@ class PaymentAmountCardViewModel @Inject constructor(
             idBrand = idBrand
         ).collectLatest { result ->
             result.onSuccess {
+                payCreditVisa = it
                 if (uiState.isAutomaticProgrammedPaymentChecked) {
                     onCallMutationActivatedCardAutomaticDebitUseCase()
                 } else {

@@ -22,8 +22,8 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.Pay
 import com.multimoney.multimoney.presentation.ui.credit.payment.fee.PaymentFeeSelectionScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.PaymentLocationDetailsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentVoucherVDScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.PaymentVoucherScreen
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountScreen
@@ -55,6 +55,7 @@ const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
 const val IS_EDIT_PAYMENT_SCHEDULE = "is_edit_payment_schedule"
 const val PREVIOUS_SCREEN = "previous_screen"
 const val USER_SMART_ACCOUNT = "user_smart_account"
+const val CURRENCY_SYMBOL = "currency_symbol"
 
 // Payment maps location parameters
 const val POINT_NAME = "point_name"
@@ -432,7 +433,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
         }
 
         composable(
-            Screen.PaymentVoucherVDScreen.route,
+            Screen.PaymentCardVoucherScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType

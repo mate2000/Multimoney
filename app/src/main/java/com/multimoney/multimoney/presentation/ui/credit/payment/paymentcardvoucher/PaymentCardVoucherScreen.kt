@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd
+package com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -41,8 +41,8 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDViewModel.UIEvent.OnCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvouchervd.PaymentVoucherVDViewModel.UIEvent.OnSharedVoucherImage
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -56,7 +56,7 @@ import com.multimoney.multimoney.presentation.util.shape.DottedShape
 @Composable
 fun PaymentVoucherVDScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: PaymentVoucherVDViewModel = hiltViewModel()
+    viewModel: PaymentCardVoucherViewModel = hiltViewModel()
 ) {
     val view = LocalView.current
     var capturingViewBounds by remember { mutableStateOf<Rect?>(null) }

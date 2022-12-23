@@ -23,7 +23,22 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
+            is UIEvent.OnMyContactsSelected -> onNavigateToMyContacts()
+            is UIEvent.OnSmartAccountSelected -> onNavigateToSmartAccount()
+            is UIEvent.OnIBANAccountSelected -> onNavigateToIBANAccount()
         }
+    }
+
+    private fun onNavigateToIBANAccount() {
+        // TODO navigate to HU REV-1423
+    }
+
+    private fun onNavigateToSmartAccount() {
+        // TODO navigate to HU REV-1431
+    }
+
+    private fun onNavigateToMyContacts() {
+        // TODO navigate to HU REV-1445
     }
 
     private fun onNavigateBack() {
@@ -35,6 +50,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
+        object OnMyContactsSelected : UIEvent()
+        object OnSmartAccountSelected : UIEvent()
+        object OnIBANAccountSelected : UIEvent()
     }
-
 }

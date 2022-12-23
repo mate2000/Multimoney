@@ -90,7 +90,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     identification,
                     EMPTY_PHONE,
                     onSuccessEnrollDevice = {
-                        mmCountDownTimer.resumeTimer()
                         callNovoEnrollPan(it.data)
                     },
                     onErrorEnrollDevice = {
@@ -122,6 +121,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             cardExpirationYear = getExpirationYear(expirationDate?.last() ?: ""),
             onErrorEnrollPan = {
                 // todo handle novo sdk error
+                mmCountDownTimer.resumeTimer()
                 uiState = uiState.copy(
                     openDialog = DialogParameters(
                         isActive = mutableStateOf(true),

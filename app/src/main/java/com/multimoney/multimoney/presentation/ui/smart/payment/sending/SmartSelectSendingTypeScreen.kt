@@ -9,10 +9,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -41,7 +44,7 @@ fun SmartSelectSendingTypeScreen(
         )
         SendingTypeOptions()
     }
-    BackHandler {}
+    BackHandler { viewModel.onUIEvent(OnNavigateBack) }
 }
 
 @Composable
@@ -55,10 +58,13 @@ fun SendingTypeOptions(
     Column {
         Text(
             modifier = Modifier.padding(top = 32.dp),
-            text = "Enviar dinero a"
+            text = stringResource(R.string.payment_select_sending_type_title),
+            style = Typography.h5.copy(
+                fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
+            )
         )
         CustomInfoButton(
-            title = "Mis contactos",
+            title = stringResource(R.string.payment_select_sending_type_my_contacts),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_sending_contact
         )
@@ -68,11 +74,9 @@ fun SendingTypeOptions(
             startIcon = smartAccountStartIcon
         )
         CustomInfoButton(
-            title = "Cuentas IBAN",
+            title = stringResource(R.string.payment_select_sending_type_iban_accounts),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_sending_iban_account,
-
-            )
+        )
     }
-
 }

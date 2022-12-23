@@ -9,6 +9,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
@@ -414,12 +415,14 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        onUIEvent(
-            OnGetCreditMovements(
-                uiState.idBrand.toIntOrNull() ?: 0,
-                uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+        if (uiState.validateUserStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
+            onUIEvent(
+                OnGetCreditMovements(
+                    uiState.idBrand.toIntOrNull() ?: 0,
+                    uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+                )
             )
-        )
+        }
 
         if (uiState.configurationVersion != null && uiState.quickActions != null) {
             uiState = uiState.copy(isLoading = false)
@@ -501,8 +504,8 @@ class HomeViewModel @Inject constructor(
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
                 if (uiState.idBrand != Brand.Guatemala.id.toString()) {
-                    if (validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status
-                        && validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
+                    if (validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status &&
+                        validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
                     ) {
                         callQueryGetHistoricalBalanceUseCase(
                             user = email,

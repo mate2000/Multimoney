@@ -91,6 +91,9 @@ const val NEW_VALUE = "new_value"
 const val DATE_SIGNED = "date_signed"
 const val VERSION = "version"
 const val ID_VISA_CARD = "id_visa_card"
+const val SMART_IDS_LIST = "smart_id_list"
+const val SMART_IDS = "smart_ids"
+const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 
 // Previous
@@ -370,22 +373,22 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Payment
 
     object SmartPaymentOptionsScreenCR : Screen(
-        "smart_payment_options_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "smart_payment_options_screen/{$SMART_IDS_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "smart_payment_options_screen"
     )
 
     object SmartPaymentAccountScreenCR : Screen(
-        "smart_payment_accounts_screen/{$SMART_PAYMENT_ACCOUNTS}",
+        "smart_payment_accounts_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SMART_PAYMENT_ACCOUNTS}/{$SMART_IDS}",
         "smart_payment_accounts_screen"
     )
 
     object SmartPaymentMethodScreenSV : Screen(
-        "smart_payment_method_screen/{$USER_SMART_ACCOUNT}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}",
+        "smart_payment_method_screen/{$SMART_IDS}",
         "smart_payment_method_screen"
     )
 
     object SmartPaymentCardsScreenSV : Screen(
-        "smart_payment_cards_screen/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}",
+        "smart_payment_cards_screen/{$SMART_IDS}",
         "smart_payment_cards_screen"
     )
 
@@ -395,7 +398,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartPaymentSavingAmount : Screen(
-        "smart_payment_saving_amount_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}/{$ID_VISA_CARD}/{$MASKED_CARD}/{$BANK_DETAIL}",
+        "smart_payment_saving_amount_screen/{$SMART_IDS}?$IBAN_ACCOUNT={$IBAN_ACCOUNT}/{$ID_VISA_CARD}/{$PREVIOUS_SCREEN}/{$MASKED_CARD}/{$BANK_DETAIL}",
         "smart_payment_saving_amount_screen"
     )
 

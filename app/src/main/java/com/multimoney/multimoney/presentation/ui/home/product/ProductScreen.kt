@@ -465,7 +465,9 @@ fun ProductFooterExpanded(
                 ProductType.Smart.value -> SmartFooterExpanded(
                     viewModel = viewModel,
                     currentPage
-                )
+                ) {
+                    sharedViewModel.onUIEvent(UIEvent.OnLoadingValueChanged(it))
+                }
                 ProductType.Crypto.value -> CryptoFooterExpanded(
                     userStatus = viewModel.uiState.userStatus,
                     balance = viewModel.balanceCredit,

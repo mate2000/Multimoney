@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransferVisaToSmart
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnContinueClick
@@ -96,6 +97,7 @@ class SavingAmountViewModel @Inject constructor(
             identification = dataStorePreferences.getIdentification().first()
             user = dataStorePreferences.getPkUser().first()
             idCard = savedStateHandle[ID_VISA_CARD] ?: 0
+            previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
             smartAccount = savedStateHandle[SMART_IDS]
             smartCurrency = smartAccount?.currencyID?.getCurrencyFromId()
             idCurrency = smartAccount?.currencyID ?: 0
@@ -107,12 +109,14 @@ class SavingAmountViewModel @Inject constructor(
                 ibanAccount = savedStateHandle[IBAN_ACCOUNT]
                 ibanCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
                 shouldDisplayExchange = smartCurrency != ibanCurrency
-                getSmartExchangeRate(
-                    user = user,
-                    identification = identification,
-                    idOriginCurrency = ibanCurrency?.currency ?: "",
-                    idDestinationCurrency = smartCurrency?.currency ?: ""
-                )
+                if (shouldDisplayExchange) {
+                    getSmartExchangeRate(
+                        user = user,
+                        identification = identification,
+                        idOriginCurrency = ibanCurrency?.currency ?: "",
+                        idDestinationCurrency = smartCurrency?.currency ?: ""
+                    )
+                }
             }
 
             uiState = uiState.copy(
@@ -306,8 +310,14 @@ class SavingAmountViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() =
-        navigateBack(popTo = previousScreen, isRestart = true)
+    private fun onNavigateBack() {
+        val screen = when (previousScreen) {
+            Screen.SmartPaymentAccountScreenCR.baseRoute -> Screen.SmartPaymentAccountScreenCR.route
+            Screen.SmartPaymentCardsScreenSV.baseRoute -> Screen.SmartPaymentCardsScreenSV.route
+            else -> Screen.HomeScreen.route
+        }
+        navigateBack(popTo = screen, isRestart = false)
+    }
 
     data class UIState(
         // Interactions

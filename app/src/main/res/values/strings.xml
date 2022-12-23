@@ -844,6 +844,7 @@
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+    <string name="payment_options_title_cr" translatable="false">¿En cuál cuenta querés ahorrar?</string>
 
     <!-- Smart Living Address -->
     <string name="smart_liv_address_title" translatable="false">¿Dónde vivís?</string>
@@ -1043,7 +1044,7 @@
     <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
 
     <!-- Payment Account -->
-    <string name="payment_account_title" translatable="false">¿A cuál Multimoney Smart querés abonar?</string>
+    <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
     <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
 

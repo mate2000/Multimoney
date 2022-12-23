@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.SMART_IDS_LIST
 import com.multimoney.multimoney.presentation.navigation.SMART_PAYMENT_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SinpeAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDListNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
@@ -93,13 +94,22 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 navArgument(ID_LOAN_CLIENT) { type = NavType.StringType }
             )
         ) {
-            SmartPaymentOptionsScreen(onNavigate = {
-                navController.navigate(it.route)
-            }, onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                })
+            SmartPaymentOptionsScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
         }
         composable(Screen.SavingMethodTransferScreen.route) {
             SavingMethodTransferScreen(
@@ -124,18 +134,30 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(USER) { type = NavType.StringType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(IDENTIFICATION) { type = NavType.StringType },
+                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
                 navArgument(ID_CLIENT) { type = NavType.StringType },
                 navArgument(ID_LOAN_CLIENT) { type = NavType.StringType },
+                navArgument(SMART_PAYMENT_ACCOUNTS) { type = SinpeAccountListNavType() },
                 navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
             )
         ) {
-            SmartPaymentAccountsScreen(onNavigate = {
-                navController.navigate(it.route)
-            }, onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                })
+            SmartPaymentAccountsScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
         }
         composable(
             Screen.SmartPaymentSavingAmount.route,
@@ -143,9 +165,9 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
                 navArgument(SMART_IDS) { type = SmartAccountIDNavType() },
                 navArgument(IBAN_ACCOUNT) { type = SinpeAccountNavType() },
                 navArgument(ID_VISA_CARD) { type = NavType.LongType },
-                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType},
-                navArgument(MASKED_CARD) { type = NavType.StringType},
-                navArgument(BANK_DETAIL) { type = NavType.StringType},
+                navArgument(PREVIOUS_SCREEN) { type = NavType.StringType },
+                navArgument(MASKED_CARD) { type = NavType.StringType },
+                navArgument(BANK_DETAIL) { type = NavType.StringType },
             )
         ) {
             SavingAmountScreen(

@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnProcessPayment
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.isValidAmount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -184,22 +185,24 @@ class PaymentAmountViewModel @Inject constructor(
     }
 
     private fun onAmountValueChange(value: String) {
-        uiState = uiState.copy(
-            currentAmountValueString = value,
-            isMinimumSelected = value.isNotEmpty() && value.toInt() == minimumPayment,
-            isMaximumSelected = value.isNotEmpty() && value.toInt() == maximumPayment,
-            enableButton = (
-                value.isNotEmpty() && value.toInt() <= maximumPayment &&
-                    value.isNotEmpty() && value.toInt() > PAYMENT_MUST_HIGHER_THAN_VALUE
-                ),
-            currentAmountError = if (value.isNotEmpty() && value.toInt() > maximumPayment) {
-                Pair(true, R.string.payment_amount_amount_max_error)
-            } else if (value.isNotEmpty() && value.toInt() <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
-                Pair(true, R.string.payment_amount_amount_min_error)
-            } else {
-                Pair(false, R.string.empty)
-            }
-        )
+        if (value.isValidAmount()) {
+            uiState = uiState.copy(
+                currentAmountValueString = value,
+                isMinimumSelected = value.isNotEmpty() && value.toInt() == minimumPayment,
+                isMaximumSelected = value.isNotEmpty() && value.toInt() == maximumPayment,
+                enableButton = (
+                    value.isNotEmpty() && value.toInt() <= maximumPayment &&
+                        value.isNotEmpty() && value.toInt() > PAYMENT_MUST_HIGHER_THAN_VALUE
+                    ),
+                currentAmountError = if (value.isNotEmpty() && value.toInt() > maximumPayment) {
+                    Pair(true, R.string.payment_amount_amount_max_error)
+                } else if (value.isNotEmpty() && value.toInt() <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
+                    Pair(true, R.string.payment_amount_amount_min_error)
+                } else {
+                    Pair(false, R.string.empty)
+                }
+            )
+        }
     }
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentAccountScreen.route, isRestart = false)

@@ -17,11 +17,13 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,6 +40,9 @@ class HelpScreenViewModel @Inject constructor(
     // stateless
     private var contactCountryInfo: CountryContact? = null
     private val idBrand = savedStateHandle[ID_BRAND] ?: 0
+    private val pkUser = savedStateHandle[PK_USER] ?: ""
+    private val identification = savedStateHandle[IDENTIFICATION] ?: ""
+    private val userName = savedStateHandle[USER_NAME] ?: ""
     val defaultDialogParameters =
         DialogParameters(descriptionResource = R.string.something_went_wrong)
 
@@ -122,6 +127,10 @@ class HelpScreenViewModel @Inject constructor(
         }
     }
 
+    private fun onNavigateToTermsAndConditions() {
+        navigateTo("${Screen.ProfileTermsAndConditionsScreen.baseRoute}/$idBrand/$identification/$pkUser/$userName")
+    }
+
     private fun onNavigateBack() =
         navigateBack(popTo = Screen.ProfileScreen.route, isRestart = false)
 
@@ -145,7 +154,7 @@ class HelpScreenViewModel @Inject constructor(
             )
             is UIEvent.OnFAQClick -> openFAQ(uiEvent.openFAQIntent, uiEvent.onFailureWithDialog)
             // Todo add terms and conditions action
-            is UIEvent.OnTermsAndConditionsClick -> Timber.d("Open Terms Website")
+            is UIEvent.OnTermsAndConditionsClick -> onNavigateToTermsAndConditions()
             is UIEvent.OnAlertResultButtonClick -> onNavigateBack()
             is UIEvent.OnFailureWithDialog ->
                 uiState =

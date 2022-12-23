@@ -7,7 +7,9 @@ import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationPayCreditVDUseCase
 import com.multimoney.domain.model.util.onFailure
@@ -15,6 +17,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -23,15 +26,27 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
+import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultRightButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAutomaticProgrammedPaymentCheckedChanged
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnHidePaymentBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnMinimumPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnPayClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromValue
+import com.multimoney.multimoney.presentation.util.isValidAmount
+import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -55,18 +70,77 @@ class PaymentAmountCardViewModel @Inject constructor(
     private var creditNumber: String? = null
     private var idClient: Int? = null
     private var idLoanClient: Int? = null
+    private var minimumPayment: Float = 0.00F
+    private var minimumPaymentLabel: String = ""
+    private var maximumPayment: Float = 0.00F
+    private var maximumPaymentLabel: String = ""
+    private var alertResultTitle: String = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
-        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        minimumPayment = savedStateHandle[MINIMUM_PAYMENT] ?: 0.00F
+        minimumPaymentLabel = savedStateHandle[MINIMUM_PAYMENT_LABEL] ?: ""
+        maximumPayment = savedStateHandle[MAXIMUM_PAYMENT] ?: 0.00F
+        maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
+        onInitializeInteractionValues()
     }
 
-    private fun onStart() {
+    private fun onInitializeInteractionValues() {
+        uiState = uiState.copy(
+            titleResource = if (idBrand == Brand.ElSalvador.id) {
+                R.string.payment_amount_card_title_sv
+            } else {
+                R.string.payment_amount_card_title_gt
+            },
+            minimumPaymentLabel = minimumPaymentLabel,
+            maximumPaymentLabel = maximumPaymentLabel,
+            currency = minimumPaymentLabel.first().toString()
+        )
+        onAmountValueChange(
+            minimumPaymentLabel.replace(minimumPaymentLabel.first().toString(), "")
+        )
+    }
+
+    private fun onAmountValueChange(value: String) {
+        if (value.isValidAmount()) {
+            uiState = uiState.copy(
+                currentAmountValueString = value,
+                enableButton =
+                value.isNotEmpty() && value.toFloat() <= maximumPayment &&
+                    value.isNotEmpty() && value.toFloat() > PAYMENT_MUST_HIGHER_THAN_VALUE,
+                currentAmountError = if (value.isNotEmpty() && value.toFloat() > maximumPayment) {
+                    Pair(true, R.string.payment_amount_card_amount_max_error)
+                } else if (value.isNotEmpty() && value.toFloat() <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
+                    Pair(true, R.string.payment_amount_card_amount_min_error)
+                } else {
+                    Pair(false, R.string.empty)
+                }
+            )
+        }
+    }
+
+    private fun onAmountButtonClick() =
+        onAmountValueChange(minimumPaymentLabel.replace(minimumPaymentLabel.first().toString(), ""))
+
+    fun getFormattedCurrency() =
+        if (uiState.currentAmountValueString.isNotEmpty() && uiState.currentAmountValueString.toFloat() > maximumPayment) {
+            uiState.maximumPaymentLabel
+        } else {
+            PaymentAmountViewModel.PAYMENT_MUST_HIGHER_THAN_VALUE
+        }
+
+    fun getCurrentAmountFormatted() = CurrencyDoubleTransformation(
+        uiState.currency,
+        CreditAmountViewModel.CURRENCY_SEPARATOR
+    ).filter(AnnotatedString(uiState.currentAmountValueString)).text
+
+    private fun onStart(alertResultTitle: String) {
+        this.alertResultTitle = alertResultTitle
         uiState = uiState.copy(
             card = savedStateHandle[CARD_SELECTED]
         )
@@ -101,6 +175,13 @@ class PaymentAmountCardViewModel @Inject constructor(
         uiState = uiState.copy(isLoading = loading)
     }
 
+    private fun onAlertResultRightButtonClick() {
+        uiState = uiState.copy(
+            bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded),
+            isAlertResultVisible = false
+        )
+    }
+
     private fun onContinueClick() {
         onShowPaymentBottomSheet()
     }
@@ -113,7 +194,7 @@ class PaymentAmountCardViewModel @Inject constructor(
         mutationPayCreditVDUseCase.invoke(
             identification = identification.orEmpty(),
             currency = uiState.card?.currencyDescription?.getCurrencyFromValue()?.id.toString(),
-            paymentAmount = uiState.paymentAmount,
+            paymentAmount = uiState.currentAmountValueString.toDouble(),
             operationNumber = creditNumber.orEmpty(),
             reference = REFERENCE_PREFIX.plus(creditNumber),
             comment = COMMENT,
@@ -141,7 +222,8 @@ class PaymentAmountCardViewModel @Inject constructor(
                 onUIEvent(OnHidePaymentBottomSheet)
                 onLoadingValueChange(false)
                 uiState = uiState.copy(
-                    alertResultTitle = it.getError().orEmpty(),
+                    alertResultTitle = alertResultTitle,
+                    alertResultDescription = it.getError().orEmpty(),
                     isAlertResultVisible = true
                 )
             }.onLoading {
@@ -180,19 +262,20 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onAlertResultButtonClick() = onNavigateBackHome()
 
-    // TODO: Value hardcoded. Must be replaced when user selects the value
-    fun getCurrentAmountFormatted() = "$10"
-
-    // TODO: PaymentAmount must be 0 now is 10 for testing
     data class UIState(
         // Interactions
-        val paymentAmount: Double = 10.0,
+        val titleResource: Int = R.string.empty,
+        val minimumPaymentLabel: String = "",
+        val maximumPaymentLabel: String = "",
+        val currency: String = "",
+        val currentAmountValueString: String = "0.0",
+        val currentAmountError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
         val cardVDList: List<CardVisaDirect?>? = null,
         val isCardListEmpty: Boolean = true,
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val isVisaAnimationVisible: Boolean = false,
-        val enableButton: Boolean = true,
+        val enableButton: Boolean = false,
         val card: CardVisaDirect? = null,
         val isAutomaticProgrammedPaymentChecked: Boolean = false,
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
@@ -203,7 +286,9 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnStart -> onStart()
+            is OnStart -> onStart(uiEvent.alertResultTitle)
+            is OnMinimumPaymentButtonClick -> onAmountButtonClick()
+            is OnAmountValueChange -> onAmountValueChange(uiEvent.value)
             is OnContinueClick -> onContinueClick()
             is OnPayClick -> onPayClick()
             is OnAutomaticProgrammedPaymentCheckedChanged -> onAutomaticProgrammedPaymentCheckedChanged(uiEvent.value)
@@ -212,11 +297,14 @@ class PaymentAmountCardViewModel @Inject constructor(
             is UIEvent.OnFinishVisaAnimation -> onFinishVisaAnimation()
             is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
             is OnAlertResultButtonClick -> onAlertResultButtonClick()
+            is OnAlertResultRightButtonClick -> onAlertResultRightButtonClick()
         }
     }
 
     sealed class UIEvent {
-        object OnStart : UIEvent()
+        class OnStart(val alertResultTitle: String) : UIEvent()
+        object OnMinimumPaymentButtonClick : UIEvent()
+        data class OnAmountValueChange(val value: String) : UIEvent()
         object OnContinueClick : UIEvent()
         object OnPayClick : UIEvent()
         class OnAutomaticProgrammedPaymentCheckedChanged(val value: Boolean) : UIEvent()
@@ -224,10 +312,12 @@ class PaymentAmountCardViewModel @Inject constructor(
         object OnNavigateBackHome : UIEvent()
         object OnFinishVisaAnimation : UIEvent()
         object OnHidePaymentBottomSheet : UIEvent()
+        object OnAlertResultRightButtonClick : UIEvent()
         object OnAlertResultButtonClick : UIEvent()
     }
 
     companion object {
+        const val PAYMENT_MUST_HIGHER_THAN_VALUE = 0.00F
         const val REFERENCE_PREFIX = "Pago - "
         const val COMMENT = "Pago"
     }

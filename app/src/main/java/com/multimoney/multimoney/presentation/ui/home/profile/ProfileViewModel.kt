@@ -19,12 +19,10 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,9 +45,9 @@ class ProfileViewModel @Inject constructor(
             phoneNumber = savedStateHandle[PHONE_NUMBER],
             identification = savedStateHandle[IDENTIFICATION],
             pkUser = savedStateHandle[PK_USER],
+            idClient = savedStateHandle[ID_CLIENT],
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
             firstName = savedStateHandle[FIRST_NAME],
-            idClient = savedStateHandle[ID_CLIENT]
         )
     }
 
@@ -62,7 +60,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun navigateToHelpAndInformation () {
-        navigateTo("${Screen.HelpScreen.baseRoute}/${uiState.idBrand}")
+        navigateTo("${Screen.ProfileHelpScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
     }
 
     private fun signOutDialogConfirmation() {

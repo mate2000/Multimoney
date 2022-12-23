@@ -60,6 +60,7 @@ import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToSmartVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
@@ -71,12 +72,15 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDet
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
+import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
 import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
+import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
 import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ValidateOTPMutation
@@ -891,6 +895,25 @@ class GraphqlApi @Inject constructor(
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun mutationUserPhoneMobileSave(
+        idBrand: Int,
+        idWalletCard: String,
+        manufacture: String,
+        pkUser: Long,
+        serialNumber: String,
+        user: String
+    ): ApolloCall<UserPhoneMobileSaveMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            UserPhoneMobileSaveMutation(
+                idBrand,
+                idWalletCard,
+                manufacture,
+                pkUser,
+                serialNumber,
+                user
+            )
+        )
+
     // SmartAccount
     fun queryGetCoreBankMovements(
         user: String,
@@ -1062,6 +1085,31 @@ class GraphqlApi @Inject constructor(
                 idBrand,
                 identificationNumber,
                 idRequest
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationProcessTransferVisaToSmartVD(
+        idCard: Long,
+        tokenNumber: Long,
+        identification: String,
+        amount: String,
+        currency: Int,
+        description: String,
+        cardMasked: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<ProcessTransferVisaToSmartVDMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ProcessTransferVisaToSmartVDMutation(
+                idCard,
+                tokenNumber,
+                identification,
+                amount,
+                currency,
+                description,
+                cardMasked,
+                user,
+                idBrand
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1327,6 +1375,23 @@ class GraphqlApi @Inject constructor(
             GetCountryContactQuery(user, idBrand)
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
+    fun queryTermsAndConditionsSigned(
+        styleDark: Boolean,
+        pkUser: Int,
+        identification: String,
+        user: String,
+        idBrand: Int
+    ): ApolloCall<TermsAndConditionsSignedQuery.Data> =
+        apolloAuthorizedClient.query(
+            TermsAndConditionsSignedQuery(
+                styleDark = styleDark,
+                userId = pkUser,
+                identification = identification,
+                user = user,
+                idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
     fun mutationSaveCreditOffer(
         pkUser: Long,
         idUserRequest: Long,
@@ -1337,6 +1402,23 @@ class GraphqlApi @Inject constructor(
                 pkUser = pkUser,
                 idUserRequest = idUserRequest,
                 idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveTermsAndConditionsCredit(
+        user: String,
+        idBrand: Int,
+        pkUser: Long,
+        currentFlow: String,
+        identification: String
+    ): ApolloCall<SaveTermsAndConditionsCreditMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveTermsAndConditionsCreditMutation(
+                user = user,
+                idBrand = idBrand,
+                pkUser = pkUser,
+                currentFlow = currentFlow,
+                identification = identification
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

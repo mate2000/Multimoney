@@ -117,14 +117,20 @@ class PaymentAmountViewModel @Inject constructor(
             minimumPaymentLabel = minimumPaymentLabel,
             maximumPaymentLabel = maximumPaymentLabel,
             isAmountVisible = isAmountVisible,
-            currency = minimumPaymentLabel.first().toString(),
+            currency = if (minimumPaymentLabel.isNotEmpty()) {
+                minimumPaymentLabel.first().toString()
+            } else {
+                uiState.currency
+            },
             clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
         )
         uiState = uiState.copy(
             accountCurrency = if (isMultiCurrency() || shouldDisplayExchangeRate()) {
                 uiState.clientBankAccount?.idCurrency?.getCurrencyFromId()?.symbol ?: ""
-            } else {
+            } else if (minimumPaymentLabel.isNotEmpty()) {
                 minimumPaymentLabel.first().toString()
+            } else {
+                uiState.accountCurrency
             }
         )
         onAmountValueChange(minimumPayment.toString())

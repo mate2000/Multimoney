@@ -178,7 +178,7 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                 ) {
                     RoundedPaymentButton(
                         modifier = Modifier
-                            .weight(0.30f),
+                            .weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.minSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
@@ -186,10 +186,9 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MIN),
                         textAlign = Alignment.CenterHorizontally
                     )
-                    Spacer(modifier = Modifier.weight(0.05f))
+                    Spacer(modifier = Modifier.weight(0.02f))
                     RoundedPaymentButton(
-                        modifier = Modifier
-                            .weight(0.30f),
+                        modifier = Modifier.weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.mediumSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
@@ -197,10 +196,9 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MEDIUM),
                         textAlign = Alignment.CenterHorizontally
                     )
-                    Spacer(modifier = Modifier.weight(0.05f))
+                    Spacer(modifier = Modifier.weight(0.02f))
                     RoundedPaymentButton(
-                        modifier = Modifier
-                            .weight(0.30f),
+                        modifier = Modifier.weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.maxSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,

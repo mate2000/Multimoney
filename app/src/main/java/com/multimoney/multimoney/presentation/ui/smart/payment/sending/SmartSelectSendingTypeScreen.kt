@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -55,7 +56,7 @@ fun SendingTypeOptions(
     smartAccountTitle: String,
     smartAccountStartIcon: Int?
 ) {
-    Column {
+    Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
             text = stringResource(R.string.payment_select_sending_type_title),
@@ -65,18 +66,33 @@ fun SendingTypeOptions(
         )
         CustomInfoButton(
             title = stringResource(R.string.payment_select_sending_type_my_contacts),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
-            startIcon = R.drawable.ic_sending_contact
+            startIcon = R.drawable.ic_sending_contact,
+            onEndIconClick = onMyContactsClick,
+            onClick = onMyContactsClick
         )
         CustomInfoButton(
             title = smartAccountTitle,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
-            startIcon = smartAccountStartIcon
+            startIcon = smartAccountStartIcon,
+            onEndIconClick = onMySmartAccountClick,
+            onClick = onMySmartAccountClick
         )
         CustomInfoButton(
             title = stringResource(R.string.payment_select_sending_type_iban_accounts),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_sending_iban_account,
+            onEndIconClick = onIBANAccountsClick,
+            onClick = onIBANAccountsClick
         )
     }
 }

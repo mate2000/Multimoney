@@ -308,7 +308,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToVisaActivateScreen() =
         navigateTo(
-            "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$email/${uiState.userStatus?.infoUser?.phone}/${
+            "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
                 balanceCredit?.balanceCardInformation?.cardInformation
             )
@@ -317,7 +317,7 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToHomeMultimoneyVisa() =
         navigateTo(
-            "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$email/${uiState.userStatus?.infoUser?.phone}/${
+            "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
                 balanceCredit?.balanceCardInformation?.cardInformation
             )

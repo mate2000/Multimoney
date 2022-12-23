@@ -261,17 +261,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen(
-        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
+        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
         "visa_issuance_screen"
     )
 
     object VisaCardScreen : Screen(
-        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
         "visa_card_screen"
     )
 
     object VisaTokenizationWaitingScreen : Screen(
-        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
+        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
         "visa_tokenization_screen"
     )
 

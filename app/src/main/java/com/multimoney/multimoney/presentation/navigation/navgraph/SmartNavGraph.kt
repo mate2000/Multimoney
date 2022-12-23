@@ -16,7 +16,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfido.SmartOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.onfidoapproved.ApprovedByOnfidoScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignScreen
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.SmartTransferIbanScreen
+import com.multimoney.multimoney.presentation.ui.smart.payment.iban.SmartTransferIbanScreen
 
 const val ACCOUNT_TOKEN = "account_token"
 const val SMART_PAYMENT_ACCOUNTS = "smart_payment_accounts"

@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -24,8 +25,8 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCar
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBackHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class PaymentCardListViewModel @Inject constructor(
@@ -44,6 +45,7 @@ class PaymentCardListViewModel @Inject constructor(
     private var creditNumber: String? = null
     private var idClient: Int? = null
     private var idLoanClient: Int? = null
+    private var idCurrency: Int? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -52,6 +54,7 @@ class PaymentCardListViewModel @Inject constructor(
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        idCurrency = savedStateHandle[ID_CURRENCY]
     }
 
     private fun onCallQueryGetClientCardsUseCase() {
@@ -88,7 +91,7 @@ class PaymentCardListViewModel @Inject constructor(
         navigateTo(
             route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$idBrand/$identification/$user/${
             encodeData(cardSelected)
-            }/$creditNumber/$idClient/$idLoanClient"
+            }/$creditNumber/$idClient/$idLoanClient/$idCurrency"
         )
 
     private fun onNavigateBack() =

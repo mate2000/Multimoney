@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnAlertResultButtonClick
@@ -33,7 +34,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.Pay
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnPayClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrencyFromValue
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
@@ -59,6 +60,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     private var idLoanClient: Int? = null
     private var alertResultTitle: String = ""
     private var payCreditVisa: PayCreditVisaDirect? = null
+    private var idCurrency: Int? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -67,6 +69,7 @@ class PaymentAmountCardViewModel @Inject constructor(
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        idCurrency = savedStateHandle[ID_CURRENCY]
     }
 
     private fun onStart(alertResultTitle: String) {
@@ -87,7 +90,7 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onNavigateToPaymentCardVoucher() {
         popAndNavigateTo(
-            "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${uiState.card}/${uiState.paymentAmount}/${uiState.card?.currencyDescription?.getCurrencyFromValue()?.symbol}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}",
+            "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${uiState.card}/${uiState.paymentAmount}/${idCurrency?.getCurrencyFromId()?.symbol}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}",
             Screen.PaymentAmountCardsScreen.route
         )
     }
@@ -131,7 +134,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     private fun onCallMutationPayCreditVDUseCase() = executeUseCase {
         mutationPayCreditVDUseCase.invoke(
             identification = identification.orEmpty(),
-            currency = uiState.card?.currencyDescription?.getCurrencyFromValue()?.id.toString(),
+            currency = idCurrency.toString(),
             paymentAmount = uiState.paymentAmount,
             operationNumber = creditNumber.orEmpty(),
             reference = REFERENCE_PREFIX.plus(creditNumber),

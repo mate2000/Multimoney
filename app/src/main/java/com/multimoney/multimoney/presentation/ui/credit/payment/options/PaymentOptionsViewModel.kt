@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_METHOD
@@ -44,6 +45,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
     private var paymentAmount: String? = ""
     private var idClient: Int? = null
     private var idLoanClient: Int? = null
+    private var idCurrency: Int? = null
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -54,6 +56,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
         paymentAmount = savedStateHandle[PAYMENT_AMOUNT]
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        idCurrency = savedStateHandle[ID_CURRENCY]
         uiState = uiState.copy(paymentMethodList = savedStateHandle.get<Array<PaymentMethod>>(PAYMENT_METHOD)?.toList())
     }
 
@@ -72,7 +75,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
             PaymentMethodType.TransferBank.value ->
                 "${Screen.PaymentOptionsTransferScreen.baseRoute}/$idBrand/$creditNumber/${encodeData(transferAccount)}"
             PaymentMethodType.VisaDirect.value -> {
-                "${Screen.PaymentCardsListScreen.baseRoute}/$idBrand/$identification/$user/$creditNumber/$idClient/$idLoanClient"
+                "${Screen.PaymentCardsListScreen.baseRoute}/$idBrand/$identification/$user/$creditNumber/$idClient/$idLoanClient/$idCurrency"
             }
             else -> {
                 "${Screen.PaymentPointsScreen.baseRoute}/$idBrand/$creditNumber/$paymentAmount"

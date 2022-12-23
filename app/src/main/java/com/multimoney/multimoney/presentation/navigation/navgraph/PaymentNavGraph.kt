@@ -291,6 +291,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(ID_LOAN_CLIENT) {
                     type = NavType.IntType
+                },
+                navArgument(ID_CURRENCY) {
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -381,6 +384,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(ID_LOAN_CLIENT) {
                     type = NavType.IntType
+                },
+                navArgument(ID_CURRENCY) {
+                    type = NavType.IntType
                 }
             )
         ) {
@@ -412,6 +418,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = NavType.IntType
                 },
                 navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CURRENCY) {
                     type = NavType.IntType
                 }
             )

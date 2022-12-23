@@ -8,6 +8,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENCY_SYMBOL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -48,7 +49,7 @@ class PaymentCardVoucherViewModel @Inject constructor(
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
         currentAmountValueString = savedStateHandle[CURRENT_AMOUNT_VALUE]
-        currency = savedStateHandle[PAYMENT_LABEL]
+        currency = savedStateHandle[CURRENCY_SYMBOL]
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         idClient = savedStateHandle[ID_CLIENT] ?: 0

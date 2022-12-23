@@ -155,7 +155,7 @@ fun PaymentVoucherVDScreen(
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = viewModel.currentAmountValueString ?: "",
+                            text = "${viewModel.currency} ${viewModel.currentAmountValueString}",
                             style = Typography.h4.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center

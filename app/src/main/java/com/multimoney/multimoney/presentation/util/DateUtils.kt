@@ -38,7 +38,11 @@ fun getCurrentDateString() = getPickedDateAsString(
 fun getCurrentDateTimeString(dateTimeFormatter: DateTimeFormatter) =
     LocalDateTime.now().format(dateTimeFormatter).toString()
 
-fun getCardDateFormat(date: String?, newFormat: SimpleDateFormat = BAR_DIVIDER_FORMAT, oldFormat: SimpleDateFormat = SHORT_DATE_FORMAT): String {
+fun getCardDateFormat(
+    date: String?,
+    newFormat: SimpleDateFormat = BAR_DIVIDER_FORMAT,
+    oldFormat: SimpleDateFormat = SHORT_DATE_FORMAT
+): String {
     return if (date.isNullOrEmpty().not()) {
         try {
             val dateFormatted = oldFormat.parse(date)
@@ -99,7 +103,7 @@ fun getCurrentTime(time: Date): String {
     return SHORT_TIME_FORMAT.format(time)
 }
 
-fun getCurrentDateMinusYears(years: Long): LocalDate{
+fun getCurrentDateMinusYears(years: Long): LocalDate {
     val today = LocalDate.now()
     return today.minusYears(years)
 }
@@ -116,7 +120,6 @@ fun parseApiDateToCardDate(date: String?): String {
         ""
     }
 }
-
 
 fun parseApiDateToTermsAndConditionsDateTime(date: String?): String {
     return if (date.isNullOrEmpty().not()) {
@@ -140,6 +143,7 @@ enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: Strin
     LAST_365_DAYS(365, "Año", "A"),
 }
 
+const val DAY_PATTERN = "d"
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT = "dd | MM | yyyy hh:mm a"
@@ -149,11 +153,11 @@ const val BIRTH_DATE_MIN_DAY = 1
 const val EIGHTEEN_YEARS_VALUE = 18
 const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
 
-val DAY_FORMAT = SimpleDateFormat(YEAR_MONTH_DAY_PATTERN, Locale.getDefault())
+val DAY_FORMAT = SimpleDateFormat(DAY_PATTERN, Locale.getDefault())
 val API_DATE_FORMAT = SimpleDateFormat(ISO_8601_API_FORMAT_PATTERN, Locale.getDefault())
 val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())
 val SHORT_TIME_FORMAT = SimpleDateFormat("hh:mm a", Locale.getDefault())
 val BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS = SimpleDateFormat("dd | MM | yy", Locale.getDefault())
 val DATE_TIME_DOCUMENTS_FORMAT = DateTimeFormatter.ofPattern("ddMMyyHHmmss")
-val API_DATE_AND_TIME_FORMAT = SimpleDateFormat(YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT,Locale.getDefault())
+val API_DATE_AND_TIME_FORMAT = SimpleDateFormat(YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT, Locale.getDefault())

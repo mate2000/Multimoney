@@ -394,6 +394,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "smart_payment_saving_amount_screen"
     )
 
+    object SmartSelectSendingTypeScreen : Screen(
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}/{$ID_VISA_CARD}/{$MASKED_CARD}/{$BANK_DETAIL}",
+        "smart_select_sending_type_screen"
+    )
+
     // TestNavGraph Screens
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")

@@ -162,7 +162,7 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onNavigateToPaymentCardVoucher() {
         popAndNavigateTo(
-            "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${uiState.card}/${uiState.paymentAmount}/${idCurrency?.getCurrencyFromId()?.symbol}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}",
+            "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${uiState.card}/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}",
             Screen.PaymentAmountCardsScreen.route
         )
     }

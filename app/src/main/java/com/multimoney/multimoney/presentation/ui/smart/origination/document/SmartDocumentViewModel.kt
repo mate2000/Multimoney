@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.document
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -174,7 +173,6 @@ class SmartDocumentViewModel @Inject constructor(
     }
 
     private fun onBirthDateValueChange(birthdate: String, pickedDate: LocalDate) {
-        Log.d("AAAAAAA", "birthdate: $birthdate")
         val dateValidation = onBirthDateAgeValidation(pickedDate)
         uiState = uiState.copy(
             birthdate = birthdate,
@@ -226,10 +224,16 @@ class SmartDocumentViewModel @Inject constructor(
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        uiState = uiState.copy(
-            birthdate = getDayFromString(accountSmartData?.birthday, API_DATE_FORMAT),
-            expirationDate = getDayFromString(accountSmartData?.expirationDate, API_DATE_FORMAT)
-        )
+        accountSmartData?.birthday?.let {
+            uiState = uiState.copy(
+                birthdate = getDayFromString(it, API_DATE_FORMAT)
+            )
+        }
+        accountSmartData?.expirationDate?.let {
+            uiState = uiState.copy(
+                expirationDate = getDayFromString(it, API_DATE_FORMAT)
+            )
+        }
         onGenderChange(accountSmartData?.strGenre.orEmpty())
         onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
         onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())
@@ -305,6 +309,7 @@ class SmartDocumentViewModel @Inject constructor(
         data class OnLoadCurrentStepData(
             val accountSmartData: AccountSmartData?
         ) : UIEvent()
+
         object OnValidateForm : UIEvent()
     }
 

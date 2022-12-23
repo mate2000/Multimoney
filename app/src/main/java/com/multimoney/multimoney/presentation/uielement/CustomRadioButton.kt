@@ -70,24 +70,26 @@ fun CustomRadioButton(
  * @param options: List of options to be displayed in the radio button
  * @param orientation: Orientation of the layout
  * @param onOptionSelected: Function that return the selected value
+ * @param indexSelected: Index of option to be chosen by default
  */
 @Composable
 fun CustomRadioButtonsLayout(
     modifier: Modifier = Modifier,
     options: List<String>,
     orientation: Orientation = Orientation.Vertical,
+    indexSelected: Int? = null,
     onOptionSelected: (String) -> Unit
 ) {
     val selectedOption = remember { mutableStateOf("") }
 
     if (orientation == Orientation.Vertical) {
         Column(modifier = modifier) {
-            options.forEach { text ->
+            options.forEachIndexed { index, text ->
                 CustomRadioButton(
                     modifier = Modifier,
                     radioModifier = Modifier,
                     text = text,
-                    selected = (text == selectedOption.value),
+                    selected = (text == selectedOption.value || index == indexSelected),
                     onOptionSelected = {
                         selectedOption.value = text
                         onOptionSelected(text)

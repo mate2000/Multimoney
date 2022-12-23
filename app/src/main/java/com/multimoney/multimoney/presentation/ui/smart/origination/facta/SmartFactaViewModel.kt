@@ -91,7 +91,7 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         accountSmartData?.let {
             onIsPEPChange(it.isPEP ?: false, it.idBrand)
-            onIsUSCitizenChange(it.isUSCitizen?: false, it.idBrand)
+            onIsUSCitizenChange(it.isUSCitizen ?: false, it.idBrand)
             onIsActivityOfArt15Change(it.isActivityOfArt15 ?: false, it.idBrand)
             onIsUSTaxPayerChange(it.isUSTaxPayer ?: false, it.idBrand)
             onIsTaxPayerChange(it.isTaxPayer ?: false, it.idBrand)

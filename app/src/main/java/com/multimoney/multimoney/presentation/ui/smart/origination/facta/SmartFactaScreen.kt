@@ -53,7 +53,6 @@ fun SmartFactaScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     viewModel: SmartFactaViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(true) {
         viewModel.onUiEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
     }
@@ -137,12 +136,10 @@ fun ContentSV(
             options = optionsCitizen,
             onOptionSelected = {
                 viewModel.onUiEvent(
-                    OnIsUSCitizenChange(
-                        it == optionsCitizen.first(),
-                        Brand.ElSalvador.id
-                    )
+                    OnIsUSCitizenChange(it == optionsCitizen.first(), Brand.ElSalvador.id)
                 )
-            }
+            },
+            indexSelected = if (viewModel.uiState.isUSCitizen == true) 0 else 1
         )
 
         Text(
@@ -154,8 +151,11 @@ fun ContentSV(
         CustomRadioButtonsLayout(
             options = optionsPep,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), Brand.ElSalvador.id))
-            }
+                viewModel.onUiEvent(
+                    OnIsPEPChange(it == optionsPep.first(), Brand.ElSalvador.id)
+                )
+            },
+            indexSelected = if (viewModel.uiState.isPEP == true) 0 else 1
         )
     }
 }
@@ -207,12 +207,10 @@ fun ContentOneCR(
                 options = optionsYesNo,
                 onOptionSelected = {
                     viewModel.onUiEvent(
-                        OnIsActivityOfArt15Change(
-                            it == optionsYesNo.first(),
-                            Brand.CostaRica.id
-                        )
+                        OnIsActivityOfArt15Change(it == optionsYesNo.first(), Brand.CostaRica.id)
                     )
-                }
+                },
+                indexSelected = if (viewModel.uiState.isActivityOfArt15 == true) 0 else 1
             )
 
             Text(
@@ -224,8 +222,11 @@ fun ContentOneCR(
             CustomRadioButtonsLayout(
                 options = optionsPep,
                 onOptionSelected = {
-                    viewModel.onUiEvent(OnIsPEPChange(it == optionsPep.first(), Brand.CostaRica.id))
-                }
+                    viewModel.onUiEvent(
+                        OnIsPEPChange(it == optionsPep.first(), Brand.CostaRica.id)
+                    )
+                },
+                indexSelected = if (viewModel.uiState.isPEP == true) 0 else 1
             )
         }
         CustomButton(
@@ -259,8 +260,11 @@ fun ContentTwoCR(
         CustomRadioButtonsLayout(
             options = options,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsUSTaxPayerChange(it == options.first(), Brand.CostaRica.id))
-            }
+                viewModel.onUiEvent(
+                    OnIsUSTaxPayerChange(it == options.first(), Brand.CostaRica.id)
+                )
+            },
+            indexSelected = if (viewModel.uiState.isUSTaxPayer == true) 0 else 1
         )
 
         Text(
@@ -272,12 +276,16 @@ fun ContentTwoCR(
         CustomRadioButtonsLayout(
             options = options,
             onOptionSelected = {
-                viewModel.onUiEvent(OnIsTaxPayerChange(it == options.first(), Brand.CostaRica.id))
-            }
+                viewModel.onUiEvent(
+                    OnIsTaxPayerChange(it == options.first(), Brand.CostaRica.id)
+                )
+            },
+            indexSelected = if (viewModel.uiState.isTaxPayer == true) 0 else 1
         )
     }
     BackHandler {
         viewModel.onUiEvent(OnCrGoPageOne)
     }
 }
+
 const val INFO_TAG = "info"

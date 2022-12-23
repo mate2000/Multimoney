@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart
 
-import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -101,6 +100,7 @@ class SmartViewModel @Inject constructor(
         accountSmartData = AccountSmartData(
             pkUser = pkUser,
             idBrand = idBrandAsInt,
+            status = 0,
             user = user
         )
     }
@@ -113,7 +113,6 @@ class SmartViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { stepByStep ->
                 stepByStep?.let {
-                    Log.d("AAAAAAAA", "callQueryStepByStepUseCase(): $it")
                     navigateToScreenOnStepFetched(it)
                 }
                 onUIEvent(OnLoadingValueChange(false))
@@ -187,9 +186,7 @@ class SmartViewModel @Inject constructor(
 
         // update the current step coming from the backend in order to navigate to the proper screen
         val currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep)
-        if (currentStep < getTotalStepperCounter()) {
-            uiState = uiState.copy(currentStep = currentStep.plus(1))
-        }
+        uiState = uiState.copy(currentStep = currentStep)
     }
 
     private fun callMutationInitialRequestUseCase() = executeUseCase(
@@ -221,50 +218,51 @@ class SmartViewModel @Inject constructor(
     private fun callMutationGlobalRequestUseCase(isLastStep: Boolean = false) = executeUseCase(
         action = {
             mutationGlobalRequestUseCase.invoke(
-                pkUser = accountSmartData?.pkUser?.toInt() ?: 0,
+                pkUser = accountSmartData?.pkUser?.toIntOrNull() ?: 0,
                 status = accountSmartData?.status ?: 0,
-                idProfessionType = accountSmartData?.idProfessionType ?: 0,
-                idAddressLevel1 = accountSmartData?.idAddressLevel1 ?: 0,
-                idAddressLevel2 = accountSmartData?.idAddressLevel2 ?: 0,
-                idAddressLevel3 = accountSmartData?.idAddressLevel3 ?: 0,
-                positionJob = accountSmartData?.positionJob ?: "",
-                idEconomicActivity = accountSmartData?.idEconomicActivity ?: 0,
-                income = accountSmartData?.income?.toDouble() ?: 0.0,
-                addressDetail = accountSmartData?.addressDetail ?: "",
                 user = accountSmartData?.user ?: "",
                 idBrand = accountSmartData?.idBrand ?: 0,
-                currentStep = accountSmartData?.currentStep ?: "",
-                idCivilStatusType = accountSmartData?.idCivilStatusType ?: 0,
-                birthday = accountSmartData?.birthday?.ifEmpty {
+                currentStep = accountSmartData?.currentStep,
+                birthday = accountSmartData?.birthday?.let {
                     getFormatDateByString(
                         getCurrentDateString(),
                         YEAR_MONTH_DAY_PATTERN,
                         ISO_8601_API_FORMAT_PATTERN
                     )
-                }.orEmpty(),
-                expirationDate = accountSmartData?.expirationDate?.ifEmpty {
+                },
+                idGender = accountSmartData?.idGender,
+                idCivilStatusType = accountSmartData?.idCivilStatusType,
+                idProfessionType = accountSmartData?.idProfessionType,
+                expirationDate = accountSmartData?.expirationDate?.let {
                     getFormatDateByString(
                         getCurrentDateString(),
                         YEAR_MONTH_DAY_PATTERN,
                         ISO_8601_API_FORMAT_PATTERN
                     )
-                }.orEmpty(),
-                idGender = accountSmartData?.idGender ?: 0,
-                companyName = accountSmartData?.companyName.orEmpty(),
-                fullJobAddress = accountSmartData?.fullJobAddress.orEmpty(),
-                aboutCompany = accountSmartData?.aboutCompany.orEmpty(),
-                institutionPension = accountSmartData?.institutionPension.orEmpty(),
-                specifiesIncomeSource = accountSmartData?.specifiesIncomeSource ?: "",
-                entrepreneurship = accountSmartData?.entrepreneurship ?: "",
-                legalID = accountSmartData?.legalID ?: "",
-                isActivityOfArt15 = accountSmartData?.isActivityOfArt15 ?: false,
-                isUSCitizen = accountSmartData?.isUSCitizen ?: false,
-                isPEP = accountSmartData?.isPEP ?: false,
-                isUSTaxPayer = accountSmartData?.isUSTaxPayer ?: false,
-                isTaxPayer = accountSmartData?.isTaxPayer ?: false,
-                beneficiaries = accountSmartData?.listBeneficiaries.orEmpty(),
-                idJobLevel2 = accountSmartData?.idJobLevel2 ?: 0,
-                idJobLevel3 = accountSmartData?.idJobLevel3 ?: 0
+                },
+                idAddressLevel1 = accountSmartData?.idAddressLevel1,
+                idAddressLevel2 = accountSmartData?.idAddressLevel2,
+                idAddressLevel3 = accountSmartData?.idAddressLevel3,
+                addressDetail = accountSmartData?.addressDetail,
+                idEconomicActivity = accountSmartData?.idEconomicActivity,
+                income = accountSmartData?.income?.toDouble(),
+                positionJob = accountSmartData?.positionJob,
+                companyName = accountSmartData?.companyName,
+                aboutCompany = accountSmartData?.aboutCompany,
+                institutionPension = accountSmartData?.institutionPension,
+                specifiesIncomeSource = accountSmartData?.specifiesIncomeSource,
+                entrepreneurship = accountSmartData?.entrepreneurship,
+                idJobLevel1 = accountSmartData?.idJobLevel1,
+                idJobLevel2 = accountSmartData?.idJobLevel2,
+                idJobLevel3 = accountSmartData?.idJobLevel3,
+                fullJobAddress = accountSmartData?.fullJobAddress,
+                beneficiaries = accountSmartData?.listBeneficiaries,
+                isActivityOfArt15 = accountSmartData?.isActivityOfArt15,
+                isUSCitizen = accountSmartData?.isUSCitizen,
+                isPEP = accountSmartData?.isPEP,
+                isUSTaxPayer = accountSmartData?.isUSTaxPayer,
+                isTaxPayer = accountSmartData?.isTaxPayer,
+                legalID = accountSmartData?.legalID
             ).collectLatest { result ->
                 result.onSuccess {
                     if (isLastStep) {
@@ -574,6 +572,5 @@ class SmartViewModel @Inject constructor(
         const val DEFAULT_ID_BRAND_ERROR = -1
         const val URL_EMPTY = "url"
         const val STEP_BY_STEP_EVENT_DELAY = 1500L
-        const val ONE_SEC_DELAY = 1000L
     }
 }

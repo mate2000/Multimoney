@@ -98,11 +98,12 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
                         companyName = it?.name,
                         isLoading = false
                     )
-                }.onMessage { errorMsg ->
+                }
+                result.onMessage { errorMsg ->
                     clearIdentificationStatus()
                     uiState = uiState.copy(
                         identificationError = Pair(true, R.string.empty),
-                        identificationValidationError = errorMsg?.name,
+                        identificationValidationError = errorMsg?.message,
                         isLoading = false
                     )
                 }
@@ -157,7 +158,7 @@ class OwnBusinessInPartnershipViewModel @Inject constructor(
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         accountSmartData?.let {
             incomeAmountChange(it.income.toString())
-            businessActivityChange(it.entrepreneurship)
+            businessActivityChange(it.entrepreneurship ?: "")
             identificationChange(it.legalID.orEmpty(), it.idBrand ?: 0, it.user.orEmpty())
         }
     }

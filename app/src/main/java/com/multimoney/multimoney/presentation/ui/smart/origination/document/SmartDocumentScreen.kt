@@ -53,10 +53,10 @@ import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.getPickedDateAsString
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
-import kotlinx.coroutines.delay
 
 @Composable
 fun SmartDocumentScreen(
@@ -99,6 +99,7 @@ fun SmartDocumentScreen(
                                         accountSmartData = sharedViewModel.accountSmartData?.copy(
                                             status = 1,
                                             idProfessionType = viewModel.uiState.professionId,
+                                            stringProfessionType = viewModel.uiState.profession,
                                             idGender = viewModel.uiState.genderId,
                                             strGenre = viewModel.uiState.gender,
                                             expirationDate = getFormatDateByString(
@@ -112,6 +113,7 @@ fun SmartDocumentScreen(
                                                 ISO_8601_API_FORMAT_PATTERN
                                             ),
                                             idCivilStatusType = viewModel.uiState.civilStateId,
+                                            strMaritalStatus = viewModel.uiState.civilState,
                                             currentStep = SmartSteps.Search.getNameById(
                                                 sharedViewModel.uiState.currentStep
                                             )

@@ -27,7 +27,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 
 @Composable
 fun SmartLivingAddressScreen(
@@ -122,7 +121,7 @@ fun SmartLivingAddressScreen(
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
         )
-        if (sharedViewModel.idBrand.toInt() != Brand.ElSalvador.id) {
+        if (sharedViewModel.idBrandAsInt != Brand.ElSalvador.id) {
             CustomDropdown(
                 modifier = Modifier
                     .fillMaxWidth()

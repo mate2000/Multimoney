@@ -24,7 +24,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
@@ -37,12 +40,23 @@ fun OwnBusinessTitleScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(key1 = true) {
-        viewModel.onUIEvent(OnGetUserData(sharedViewModel.accountSmartData))
+    LaunchedEffect(true) {
+        sourceIncomeSharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && viewModel.isFormValid())
+                )
+            }
+        }
     }
 
     LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(viewModel.isFormValid()))
+        viewModel.onUIEvent(OnGetUserData(sharedViewModel.accountSmartData))
+        sharedViewModel.onUIEvent(
+            OnContinueEnable(
+                viewModel.isFormValid() && sourceIncomeSharedViewModel.isFormValid()
+            )
+        )
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
 
         sharedViewModel.onUIEvent(
@@ -54,7 +68,11 @@ fun OwnBusinessTitleScreen(
                                 idEconomicActivity = SourceIncomeOptionType.OwnBusinessInPartnership.id.toLong(),
                                 currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep),
                                 income = viewModel.uiState.incomeAmount.toFloat(),
-                                entrepreneurship = viewModel.uiState.businessName
+                                entrepreneurship = viewModel.uiState.businessName,
+                                idJobLevel1 = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.id?.toLongOrNull(),
+                                idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
+                                idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
+                                fullJobAddress = sourceIncomeSharedViewModel.uiState.address
                             )
                         )
                     )
@@ -67,8 +85,8 @@ fun OwnBusinessTitleScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OwnBusinessTitleViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    SmartViewModel.UIEvent.OnContinueEnable(
-                        event.isFormValid
+                    OnContinueEnable(
+                        event.isFormValid && sourceIncomeSharedViewModel.isFormValid()
                     )
                 )
             }
@@ -86,17 +104,21 @@ fun OwnBusinessTitleScreen(
 
     OwnBusinessTitleScreenContent(
         viewModel,
-        sharedViewModel
+        sourceIncomeSharedViewModel,
+        sharedViewModel.user,
+        sharedViewModel.idBrandAsInt
     )
 }
 
 @Composable
 fun OwnBusinessTitleScreenContent(
     viewModel: OwnBusinessTitleViewModel,
-    sharedViewModel: SmartViewModel
+    sourceIncomeSharedViewModel: SourceIncomeViewModel,
+    user: String,
+    idBrand: Int
 ) {
     val focusManager = LocalFocusManager.current
-    val currencySymbol = stringResource(sharedViewModel.idBrandAsInt.getCurrencySymbol())
+    val currencySymbol = stringResource(idBrand.getCurrencySymbol())
 
     Column(
         modifier = Modifier
@@ -145,6 +167,12 @@ fun OwnBusinessTitleScreenContent(
             leadingIcon = R.drawable.ic_money_gray,
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_business_personal_income_label_required)
+        )
+        SmartAddressFields(
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            user = user,
+            idBrand = idBrand,
+            focusManager = focusManager
         )
     }
 }

@@ -30,6 +30,7 @@ import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionMessage
 import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
 import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
+import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
@@ -53,7 +54,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
-import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
@@ -70,8 +70,8 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountM
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
@@ -996,70 +996,71 @@ class GraphqlApi @Inject constructor(
     fun mutationGlobalRequest(
         pkUser: Int,
         status: Int,
-        idProfessionType: Int,
-        idCivilStatusType: Long,
-        birthday: String,
-        expirationDate: String,
-        idGender: Long,
-        companyName: String,
-        aboutCompany: String,
-        idAddressLevel1: Long,
-        idAddressLevel2: Long,
-        idAddressLevel3: Long,
-        positionJob: String,
-        idEconomicActivity: Long,
-        income: Double,
-        addressDetail: String,
-        fullJobAddress: String,
         user: String,
         idBrand: Int,
-        currentStep: String,
-        institutionPension: String,
-        specifiesIncomeSource: String,
-        entrepreneurship: String,
-        legalID: String,
-        isActivityOfArt15: Boolean,
-        isUsCitizen: Boolean,
-        isPEP: Boolean,
-        isUSTaxPayer: Boolean,
-        isTaxPayer: Boolean,
-        beneficiaries: List<Beneficiary>,
-        idJobLevel2: Long,
-        idJobLevel3: Long
+        idProfessionType: Int?,
+        idCivilStatusType: Long?,
+        birthday: String?,
+        expirationDate: String?,
+        idGender: Long?,
+        companyName: String?,
+        aboutCompany: String?,
+        idAddressLevel1: Long?,
+        idAddressLevel2: Long?,
+        idAddressLevel3: Long?,
+        positionJob: String?,
+        idEconomicActivity: Long?,
+        income: Double?,
+        addressDetail: String?,
+        fullJobAddress: String?,
+        currentStep: String?,
+        institutionPension: String?,
+        specifiesIncomeSource: String?,
+        entrepreneurship: String?,
+        legalID: String?,
+        isActivityOfArt15: Boolean?,
+        isUsCitizen: Boolean?,
+        isPEP: Boolean?,
+        isUSTaxPayer: Boolean?,
+        isTaxPayer: Boolean?,
+        beneficiaries: List<Beneficiary>?,
+        idJobLevel1: Long?,
+        idJobLevel2: Long?,
+        idJobLevel3: Long?
     ): ApolloCall<GlobalRequestMutation.Data> =
         apolloAuthorizedClient.mutation(
             GlobalRequestMutation(
                 pkUser,
                 status,
-                idProfessionType,
-                idAddressLevel1,
-                idAddressLevel2,
-                birthday,
-                expirationDate,
-                idGender,
-                idCivilStatusType,
-                Optional.Present(companyName),
-                aboutCompany,
-                institutionPension,
-                idAddressLevel3,
-                positionJob,
-                idEconomicActivity,
-                income,
-                addressDetail,
-                fullJobAddress,
                 user,
                 idBrand,
-                currentStep,
-                specifiesIncomeSource,
-                entrepreneurship,
-                legalID,
-                isActivityOfArt15,
-                isUsCitizen,
-                isPEP,
-                isUSTaxPayer,
-                isTaxPayer,
+                Optional.Present(idProfessionType),
+                Optional.Present(idAddressLevel1),
+                Optional.Present(idAddressLevel2),
+                Optional.Present(birthday),
+                Optional.Present(expirationDate),
+                Optional.Present(idGender),
+                Optional.Present(idCivilStatusType),
+                Optional.Present(companyName),
+                Optional.Present(aboutCompany),
+                Optional.Present(institutionPension),
+                Optional.Present(idAddressLevel3),
+                Optional.Present(positionJob),
+                Optional.Present(idEconomicActivity),
+                Optional.Present(income),
+                Optional.Present(addressDetail),
+                Optional.Present(fullJobAddress),
+                Optional.Present(currentStep),
+                Optional.Present(specifiesIncomeSource),
+                Optional.Present(entrepreneurship),
+                Optional.Present(legalID),
+                Optional.Present(isActivityOfArt15),
+                Optional.Present(isUsCitizen),
+                Optional.Present(isPEP),
+                Optional.Present(isUSTaxPayer),
+                Optional.Present(isTaxPayer),
                 Optional.Present(
-                    beneficiaries.map { beneficiary ->
+                    beneficiaries?.map { beneficiary ->
                         BeneficiaryRequestDtoInput(
                             fullName = Optional.presentIfNotNull(beneficiary.fullName),
                             relationship = Optional.presentIfNotNull(beneficiary.relationship.toString()),
@@ -1067,8 +1068,9 @@ class GraphqlApi @Inject constructor(
                         )
                     }
                 ),
-                idJobLevel2,
-                idJobLevel3
+                Optional.Present(idJobLevel1),
+                Optional.Present(idJobLevel2),
+                Optional.Present(idJobLevel3)
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1394,7 +1396,7 @@ class GraphqlApi @Inject constructor(
     fun mutationSaveCreditOffer(
         pkUser: Long,
         idUserRequest: Long,
-        idBrand: Int,
+        idBrand: Int
     ): ApolloCall<SaveCreditOfferMutation.Data> =
         apolloAuthorizedClient.mutation(
             SaveCreditOfferMutation(

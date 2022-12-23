@@ -30,18 +30,16 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.BaseEvent.OnRequestError
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnCompanyNameChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionThreeValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnDivisionTwoValueChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnGetUserData
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnProfessionChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnWorkingAddressChange
-import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
@@ -54,13 +52,25 @@ fun FormalSalariedSvScreen(
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
     viewModel: FormalSalariedSvViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(true) {
+        sourceIncomeSharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && viewModel.isFormValid())
+                )
+            }
+        }
+    }
+
     LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueVisible(true))
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
+        sharedViewModel.onUIEvent(
+            OnContinueEnable(
+                viewModel.isFormValid() && sourceIncomeSharedViewModel.isFormValid()
+            )
+        )
         viewModel.onUiEvent(
-            OnGetUserData(
-                sharedViewModel.user,
-                sharedViewModel.idBrandAsInt,
+            OnLoadCurrentStepData(
                 sharedViewModel.accountSmartData
             )
         )
@@ -75,11 +85,9 @@ fun FormalSalariedSvScreen(
                                 income = viewModel.uiState.salary.toFloat(),
                                 companyName = viewModel.uiState.companyName,
                                 positionJob = viewModel.uiState.profession,
-                                idJobLevel2 = viewModel.uiState.divisionTwoSelected?.id?.toLong()
-                                    ?: 0,
-                                idJobLevel3 = viewModel.uiState.divisionThreeSelected?.id?.toLong()
-                                    ?: 0,
-                                fullJobAddress = viewModel.uiState.workingAddress,
+                                idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
+                                idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
+                                fullJobAddress = sourceIncomeSharedViewModel.uiState.address,
                                 currentStep = Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
@@ -94,7 +102,7 @@ fun FormalSalariedSvScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    OnContinueEnable(event.isFormValid)
+                    OnContinueEnable(event.isFormValid && sourceIncomeSharedViewModel.isFormValid())
                 )
 
                 is OnRequestError -> sharedViewModel.onUIEvent(
@@ -107,7 +115,12 @@ fun FormalSalariedSvScreen(
         }
     }
 
-    FormalSalariedSvContent(viewModel, sharedViewModel.idBrandAsInt)
+    FormalSalariedSvContent(
+        viewModel,
+        sourceIncomeSharedViewModel,
+        sharedViewModel.idBrandAsInt,
+        sharedViewModel.user
+    )
     BackHandler {
         sourceIncomeSharedViewModel.onUIEvent(
             OnNavigateToSelectedSourceOfIncomeOption(
@@ -120,7 +133,9 @@ fun FormalSalariedSvScreen(
 @Composable
 fun FormalSalariedSvContent(
     viewModel: FormalSalariedSvViewModel,
-    idBrand: Int
+    sourceIncomeSharedViewModel: SourceIncomeViewModel,
+    idBrand: Int,
+    user: String
 ) {
     val focusManager = LocalFocusManager.current
     val currencySymbol = stringResource(idBrand.getCurrencySymbol())
@@ -190,48 +205,11 @@ fun FormalSalariedSvContent(
             modifier = Modifier.padding(top = 16.dp)
         )
 
-        CustomDropdown(
-            items = viewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() } ?: listOf(),
-            value = viewModel.uiState.divisionTwoSelected?.name ?: stringResource(R.string.empty),
-            onValueChange = {
-                viewModel.onUiEvent(
-                    OnDivisionTwoValueChange(divisionTwo = it)
-                )
-            },
-            labelText = stringResource(R.string.credit_address_state),
-            placeHolder = stringResource(id = R.string.select),
-            modifier = Modifier.padding(top = 16.dp)
-        )
-
-        CustomDropdown(
-            items = viewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() } ?: listOf(),
-            value = viewModel.uiState.divisionThreeSelected?.name ?: stringResource(R.string.empty),
-            onValueChange = {
-                viewModel.onUiEvent(
-                    OnDivisionThreeValueChange(divisionThree = it)
-                )
-            },
-            labelText = stringResource(R.string.credit_address_municipality),
-            placeHolder = stringResource(id = R.string.select),
-            modifier = Modifier.padding(top = 16.dp)
-        )
-
-        CustomOutlinedTextField(
-            value = viewModel.uiState.workingAddress,
-            onValueChange = { viewModel.onUiEvent(OnWorkingAddressChange(it)) },
-            labelText = stringResource(R.string.smart_salaried_working_address),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            }),
-            isTextArea = true,
-            isError = viewModel.uiState.workingAddressError.first,
-            errorMessage = stringResource(viewModel.uiState.workingAddressError.second),
-            isRequiredMessage = stringResource(R.string.smart_salaried_working_address_required),
-            modifier = Modifier.padding(top = 16.dp)
+        SmartAddressFields(
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            user = user,
+            idBrand = idBrand,
+            focusManager = focusManager
         )
     }
 }

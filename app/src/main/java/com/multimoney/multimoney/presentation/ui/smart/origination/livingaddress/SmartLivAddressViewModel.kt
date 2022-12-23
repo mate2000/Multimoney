@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination.livingaddress
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -85,7 +84,6 @@ class SmartLivAddressViewModel @Inject constructor(
                                 address?.name == currentDivisionOne
                             }
                         )
-                        Log.d("AAAAAAA", "Division one: ${uiState.divisionOneSelected}")
                         getDivisionTwo(currentDivisionTwo, currentDivisionThree)
                     }
                 }
@@ -131,7 +129,6 @@ class SmartLivAddressViewModel @Inject constructor(
                                     address?.name == currentDivisionTwo
                                 }
                             )
-                            Log.d("AAAAAAA", "Division one: ${uiState.divisionTwoSelected}")
                             getDivisionThree(currentDivisionThree)
                         }
                     }
@@ -177,7 +174,6 @@ class SmartLivAddressViewModel @Inject constructor(
                                         address?.name == currentDivisionThree
                                     }
                                 )
-                                Log.d("AAAAAAA", "Division one: ${uiState.divisionThreeSelected}")
                                 validate()
                             }
                         }

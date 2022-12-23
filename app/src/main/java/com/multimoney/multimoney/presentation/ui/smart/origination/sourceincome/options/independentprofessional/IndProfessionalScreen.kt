@@ -24,7 +24,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.independentprofessional.IndProfessionalViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
@@ -38,8 +41,22 @@ fun IndProfessionalScreen(
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
+        sourceIncomeSharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && viewModel.isFormValid())
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
         viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(viewModel.isFormValid()))
+        sharedViewModel.onUIEvent(
+            OnContinueEnable(
+                viewModel.isFormValid() && sourceIncomeSharedViewModel.isFormValid()
+            )
+        )
         sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
 
         sharedViewModel.onUIEvent(
@@ -51,7 +68,9 @@ fun IndProfessionalScreen(
                                 idEconomicActivity = SourceIncomeOptionType.FreeLancer.id.toLong(),
                                 currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep),
                                 income = viewModel.uiState.incomeAmount.toFloat(),
-                                fullJobAddress = viewModel.uiState.address
+                                idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
+                                idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
+                                fullJobAddress = sourceIncomeSharedViewModel.uiState.address
                             )
                         )
                     )
@@ -64,8 +83,8 @@ fun IndProfessionalScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is IndProfessionalViewModel.BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
-                    SmartViewModel.UIEvent.OnContinueEnable(
-                        event.isFormValid
+                    OnContinueEnable(
+                        event.isFormValid && sourceIncomeSharedViewModel.isFormValid()
                     )
                 )
             }
@@ -116,24 +135,12 @@ fun IndProfessionalScreen(
             customTransformation = formatDecimalMoney(currencySymbol),
             isRequiredMessage = stringResource(R.string.smart_own_business_monthly_income_required)
         )
-        CustomOutlinedTextField(
-            modifier = Modifier.padding(top = 16.dp),
-            value = viewModel.uiState.address,
-            onValueChange = {
-                viewModel.onUIEvent(IndProfessionalViewModel.UIEvent.OnJobAddressValueChange(it))
-            },
-            labelText = stringResource(R.string.smart_ind_professional_job_address),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(onDone = {
-                focusManager.clearFocus()
-            }),
-            isTextArea = true,
-            isError = viewModel.uiState.addressError.first,
-            errorMessage = stringResource(viewModel.uiState.addressError.second),
-            isRequiredMessage = stringResource(R.string.smart_ind_professional_address_required)
+
+        SmartAddressFields(
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            user = sharedViewModel.user,
+            idBrand = sharedViewModel.idBrandAsInt,
+            focusManager = focusManager
         )
     }
 }

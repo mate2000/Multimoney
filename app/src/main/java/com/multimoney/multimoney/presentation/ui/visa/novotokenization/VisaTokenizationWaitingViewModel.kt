@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.visa.novotokenization
 
 import android.content.Context
-import android.provider.Settings
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -30,6 +29,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATI
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGetAndroidId
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
@@ -70,6 +70,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     var phone = ""
     var email: String = ""
     var cardInformation: CardInformation? = null
+    var androidId: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -131,7 +132,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             onSuccessEnrollPan = {
                 mmCountDownTimer.resumeTimer()
                 NovoVTS.setFavoriteCard(it.data.vProvisionedToken)
-                createWallet(walletId = walletId)
+                createWallet(walletId)
             }
         )
     }
@@ -152,7 +153,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 "",
                 getDeviceManufacture(),
                 pkUser,
-                Settings.Secure.ANDROID_ID,
+                androidId,
                 email
             ).collectLatest { result ->
                 result.onSuccess {
@@ -167,7 +168,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 }.onMessage {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
-                            description = it?.message ?: "",
+                            descriptionResource = R.string.error,
                             isActive = mutableStateOf(true)
                         )
                     )
@@ -183,14 +184,14 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 walletId,
                 getDeviceManufacture(),
                 pkUser,
-                Settings.Secure.ANDROID_ID,
+                androidId,
                 email
             ).collectLatest { result ->
                 result.onSuccess {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
                             titleResource = R.string.success,
-                            description = "La tarjeta fue tokenizada exitosamente",
+                            descriptionResource = R.string.visa_card_success_message_label,
                             isActive = mutableStateOf(true)
                         )
                     )
@@ -204,7 +205,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 }.onMessage {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
-                            description = it?.message ?: "",
+                            descriptionResource = R.string.error,
                             isActive = mutableStateOf(true)
                         )
                     )
@@ -322,6 +323,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
             is OnGoToNextScreen -> goToNextScreen(event.context, event.color)
             is OnStartNovoTokenization -> startTokenizationProcess()
+            is OnGetAndroidId -> androidId = event.androidId
         }
     }
 
@@ -329,6 +331,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         data class OnNavigateToNextScreen(val screen: String) : UIEvent()
         data class OnGoToNextScreen(val context: Context, val color: Color) : UIEvent()
         object OnStartNovoTokenization : UIEvent()
+        data class OnGetAndroidId(val androidId: String) : UIEvent()
     }
 
     companion object {

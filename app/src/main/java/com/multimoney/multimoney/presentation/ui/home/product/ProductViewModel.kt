@@ -12,7 +12,8 @@ import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.OVER_COUNTER
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.PENDING
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus.REJECTED
 import com.multimoney.data.util.catalog.CreditStep
-import com.multimoney.data.util.catalog.SmartAccountStatus
+import com.multimoney.data.util.catalog.SmartAccountStatus.EXIST_IN_CORE
+import com.multimoney.data.util.catalog.SmartAccountStatus.NO_EXIST
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CANCELED
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
@@ -652,29 +653,34 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun getSmartContent() {
+        val statusRequest = uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest
+        val statusFirm = uiState.userStatus?.infoBankAccount?.statusFirm
+        val status = uiState.userStatus?.infoBankAccount?.status
         uiState = uiState.copy(
-            smartContent = when (uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest) {
+            smartContent = when (statusRequest) {
                 SmartAccountStatusRequest.PENDING.status, SENT.status, CANCELED.status, CREATED.status,
                 SMART_INITIAL_CARD, SMART_IDENTITY_INCOMPLETE, SMART_FIRMED_ONFIDO_PENDING, SMART_ONFIDO_REJECTED,
-                SMART_APPROVED_BY_ONFIDO, SMART_ONFIDO_MAX_ATTEMPTS -> Pair(
-                    true,
-                    uiState.userStatus?.infoBankAccount?.infoRequest?.statusRequest ?: ""
-                )
+                SMART_APPROVED_BY_ONFIDO, SMART_ONFIDO_MAX_ATTEMPTS -> {
+                    Pair(
+                        status?.equals(NO_EXIST.status) == true,
+                        statusRequest
+                    )
+                }
                 else -> {
-                    when (uiState.userStatus?.infoBankAccount?.statusFirm) {
-                        PENDING.status, APPROVED.status, FIRMED.status, REJECTED.status, OVER_COUNTER.status, FAILED.status -> Pair(
-                            true,
-                            uiState.userStatus?.infoBankAccount?.statusFirm ?: ""
-                        )
-                        else -> if (uiState.userStatus?.infoBankAccount?.status?.equals(
-                                SmartAccountStatus.NO_EXIST.status
-                            ) == true
-                        ) Pair(true, uiState.userStatus?.infoBankAccount?.status.toString())
-                        else if (uiState.userStatus?.infoBankAccount?.status?.equals(
-                                SmartAccountStatus.EXIST_IN_CORE.status
-                            ) == true
-                        ) Pair(false, "")
-                        else Pair(null, "") // no exist in core
+                    when (statusFirm) {
+                        PENDING.status, APPROVED.status, FIRMED.status, REJECTED.status, OVER_COUNTER.status, FAILED.status -> {
+                            Pair(
+                                status?.equals(NO_EXIST.status) == true,
+                                statusFirm
+                            )
+                        }
+                        else -> {
+                            if (status == NO_EXIST.status || status == EXIST_IN_CORE.status) {
+                                Pair(status == NO_EXIST.status, status.toString())
+                            } else {
+                                Pair(null, "")
+                            }
+                        }
                     }
                 }
             }

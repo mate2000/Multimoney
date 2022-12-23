@@ -151,6 +151,7 @@ enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: Strin
     LAST_365_DAYS(365, "Año", "A"),
 }
 
+const val DAY_PATTERN = "d"
 const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT = "dd | MM | yyyy hh:mm a"
@@ -161,8 +162,8 @@ const val BIRTH_DATE_MIN_DAY = 1
 const val EIGHTEEN_YEARS_VALUE = 18
 const val ONE_HUNDRED_TWENTY_YEARS_VALUE = 120
 
-val DAY_FORMAT = SimpleDateFormat(YEAR_MONTH_DAY_PATTERN, Locale.getDefault())
 val YEAR_FORMAT = SimpleDateFormat(YEAR_PATTER, Locale.getDefault())
+val DAY_FORMAT = SimpleDateFormat(DAY_PATTERN, Locale.getDefault())
 val API_DATE_FORMAT = SimpleDateFormat(ISO_8601_API_FORMAT_PATTERN, Locale.getDefault())
 val SHORT_DATE_FORMAT = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 val BAR_DIVIDER_FORMAT = SimpleDateFormat("dd | MM | yyyy", Locale.getDefault())

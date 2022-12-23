@@ -67,6 +67,7 @@ const val DISBURSEMENT_ROUTE = "disbursement_route"
 const val VISA_ROUTE = "visa_route"
 const val PAYMENT_CREDIT_ROUTE = "payment_route"
 const val SMART_ROUTE = "smart_route"
+const val CRYPTO_ROUTE = "crypto_route"
 const val PROFILE_ROUTE = "profile_route"
 const val TEST_ROUTE = "test_route"
 const val SMART_PAYMENT_ROUTE = "smart_payment_route"
@@ -88,6 +89,7 @@ const val ID_VISA_CARD = "id_visa_card"
 const val SMART_IDS_LIST = "smart_id_list"
 const val SMART_IDS = "smart_ids"
 const val IBAN_ACCOUNT = "iban_account"
+const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -228,11 +230,23 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_document_process_screen"
     )
 
+    object SmartOnfidoAndEvicertiaErrorsScreen : Screen(
+        "smart_onfido_and_evicertia_errors_screen/{$ONFIDO_AND_EVICERTIA_ERROR}/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_USER_REQUEST}/{$FIRST_NAME}/{$LAST_NAME}",
+        "smart_onfido_and_evicertia_errors_screen"
+    )
+
     object ContinueValidatingOnfidoScreen : Screen("continue_validating_onfido_screen")
+
+    object SmartContinueValidatingOnfidoScreen : Screen("smart_continue_validating_onfido_screen")
 
     object ProcessingTransactionScreen : Screen(
         "processing_transaction_screen/{$ID_BRAND}/{$SIGN_DOCUMENT_ID_PRINT}/{$USER}",
         "processing_transaction_screen"
+    )
+
+    object ApprovedByOnfidoScreen : Screen(
+        "approved_by_onfido_screen/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$ID_BRAND}",
+        "approved_by_onfido_screen"
     )
 
     object OnfidoAndEvicertiaErrorsScreen : Screen(
@@ -265,6 +279,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object AddIbanAccountScreen : Screen(
         "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "add_iban_account_screen"
+    )
+
+    // Transfer Iban Account
+    object TransferIbanAccountScreen : Screen(
+        "transfer_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "transfer_iban_account_screen"
     )
 
     // Payment Credit
@@ -381,4 +401,10 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object TestScreen : Screen("test_screen")
     object ChartScreen : Screen("chart_screen/{$}")
     object SubscriptionScreen : Screen("subscription_screen")
+
+    // Crypto
+    object CryptoWalletScreen : Screen(
+        "crypto_wallet_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$GLOBAL_CRYPTO_BALANCE}",
+        "crypto_wallet_screen"
+    )
 }

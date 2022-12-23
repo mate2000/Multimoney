@@ -18,8 +18,6 @@ import androidx.core.content.FileProvider
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
@@ -27,23 +25,21 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.movements.WorkManagerHelper
 import com.multimoney.multimoney.presentation.util.DATE_TIME_DOCUMENTS_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DownloadCreditMovementsStatus
 import com.multimoney.multimoney.presentation.util.getCurrentDateTimeString
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
+import javax.inject.Inject
 
 @HiltWorker
-class DownloadCreditMovementsWorker @AssistedInject constructor(
-    @Assisted val context: Context,
-    @Assisted workerParameters: WorkerParameters,
-    private val preferences: DataStorePreferences,
-    private val queryAccountStatementUseCase: QueryAccountStatementUseCase
+class DownloadCreditMovementsWorker @Inject constructor(
+    val context: Context,
+    workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
@@ -51,8 +47,8 @@ class DownloadCreditMovementsWorker @AssistedInject constructor(
         val user = inputData.getString(USER).orEmpty()
         val idBrand = inputData.getInt(ID_BRAND, 0)
         sendNotification(DownloadCreditMovementsStatus.Download)
-        return if (preferences.getAuthToken().first().isNotEmpty()) {
-            queryAccountStatementUseCase.invoke(
+        return if (WorkManagerHelper.preferences.getAuthToken().first().isNotEmpty()) {
+            WorkManagerHelper.queryAccountStatementUseCase.invoke(
                 creditNumber = creditNumber,
                 user = user,
                 idBrand = idBrand

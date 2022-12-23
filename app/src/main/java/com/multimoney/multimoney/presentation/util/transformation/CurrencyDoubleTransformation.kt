@@ -5,14 +5,33 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.multimoney.multimoney.presentation.util.isValidAmount
-import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
-import com.multimoney.multimoney.presentation.util.stringToIntegerFormat
+import java.text.DecimalFormat
 
 class CurrencyDoubleTransformation(val currency: String, val separator: Char) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val originalText = text.text
-        val formattedText = if (text.toString().isValidAmount()) {
-            "$currency${text.toString().stringToDoubleFormat(separator.toString())}"
+        val symbols = DecimalFormat().decimalFormatSymbols
+        val decimalSeparator = "."
+        val zero = symbols.zeroDigit
+        val formattedText = if (text.toString().isValidAmount() && text.toString().isNotEmpty()) {
+            val numberOfDecimals =
+                if (originalText.substringAfterLast(decimalSeparator).length == originalText.length) {
+                    0
+                } else {
+                    originalText.substringAfterLast(decimalSeparator).length + 1
+                }
+            val intPart = originalText
+                .dropLast(numberOfDecimals)
+                .reversed()
+                .chunked(3)
+                .joinToString(separator.toString())
+                .reversed()
+                .ifEmpty {
+                    zero.toString()
+                }
+
+            val fractionPart = originalText.takeLast(numberOfDecimals)
+            "$currency$intPart$fractionPart"
         } else {
             text.toString()
         }

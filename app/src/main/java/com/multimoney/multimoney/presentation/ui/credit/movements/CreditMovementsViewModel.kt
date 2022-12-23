@@ -13,6 +13,8 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.workDataOf
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPagedCreditMovementsUseCase
 import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -39,6 +41,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreditMovementsViewModel @Inject constructor(
     private val queryGetPagedCreditMovements: QueryGetPagedCreditMovementsUseCase,
+    val queryAccountStatementUseCase: QueryAccountStatementUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -96,6 +99,8 @@ class CreditMovementsViewModel @Inject constructor(
             .setInputData(myData)
             .build()
 
+        WorkManagerHelper.initDownloadPDFWorker(preferences, queryAccountStatementUseCase)
+
         emitBaseEvent(OnStartDownloadCreditMovementsWorker(oneTimeRequest))
     }
 
@@ -126,5 +131,19 @@ class CreditMovementsViewModel @Inject constructor(
 
     sealed class BaseEvent {
         data class OnStartDownloadCreditMovementsWorker(val oneTimeRequest: OneTimeWorkRequest) : BaseEvent()
+    }
+}
+
+class WorkManagerHelper {
+    companion object {
+        lateinit var preferences: DataStorePreferences
+        lateinit var queryAccountStatementUseCase: QueryAccountStatementUseCase
+        fun initDownloadPDFWorker(
+            preferences: DataStorePreferences,
+            queryAccountStatementUseCase: QueryAccountStatementUseCase
+        ) {
+            this.preferences = preferences
+            this.queryAccountStatementUseCase = queryAccountStatementUseCase
+        }
     }
 }

@@ -148,7 +148,10 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
         }
 
         composable(
-            route = Screen.SmartSelectSendingTypeScreen.route
+            route = Screen.SmartSelectSendingTypeScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType },
+            )
         ) {
             SmartSelectSendingTypeScreen(
                 onNavigate = {

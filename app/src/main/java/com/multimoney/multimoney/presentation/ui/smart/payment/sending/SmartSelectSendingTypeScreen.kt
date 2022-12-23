@@ -17,7 +17,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
+import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnMyContactsSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnSmartAccountSelected
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -43,7 +46,13 @@ fun SmartSelectSendingTypeScreen(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
             isRightButtonVisible = false
         )
-        SendingTypeOptions()
+        SendingTypeOptions(
+            onMyContactsClick = { viewModel.onUIEvent(OnMyContactsSelected)},
+            onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected)},
+            onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected)},
+            smartAccountTitle = viewModel.getTitleSmartAccountResource(),
+            smartAccountStartIcon = viewModel.getIconSmartAccountResource()
+        )
     }
     BackHandler { viewModel.onUIEvent(OnNavigateBack) }
 }
@@ -53,7 +62,7 @@ fun SendingTypeOptions(
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
-    smartAccountTitle: String,
+    smartAccountTitle: Int?,
     smartAccountStartIcon: Int?
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
@@ -74,16 +83,18 @@ fun SendingTypeOptions(
             onEndIconClick = onMyContactsClick,
             onClick = onMyContactsClick
         )
-        CustomInfoButton(
-            title = smartAccountTitle,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
-            endIcon = R.drawable.ic_right_chevron,
-            startIcon = smartAccountStartIcon,
-            onEndIconClick = onMySmartAccountClick,
-            onClick = onMySmartAccountClick
-        )
+        smartAccountTitle?.let {
+            CustomInfoButton(
+                title = stringResource(id = it),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                endIcon = R.drawable.ic_right_chevron,
+                startIcon = smartAccountStartIcon,
+                onEndIconClick = onMySmartAccountClick,
+                onClick = onMySmartAccountClick
+            )
+        }
         CustomInfoButton(
             title = stringResource(R.string.payment_select_sending_type_iban_accounts),
             modifier = Modifier

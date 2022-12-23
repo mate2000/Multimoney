@@ -79,8 +79,8 @@ import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -566,8 +566,12 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    private fun onNavigateToSendMoneyScreen() {
-        // todo add navigation to send money screen
+    private fun onNavigateToSendMoneyScreen(account: Account?) {
+        if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            navigateTo(
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${account?.tokenNumber}/${account?.currencyCode}/${account?.accountNumber}"
+            )
+        }
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
@@ -714,7 +718,7 @@ class ProductViewModel @Inject constructor(
                 onIntent = uiEvent.onIntent
             )
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
-            is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
+            is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen(uiEvent.account)
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
             is OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
@@ -791,7 +795,7 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
-        object OnNavigateToSendMoneyFlow : UIEvent()
+        data class OnNavigateToSendMoneyFlow(val account: Account?) : UIEvent()
         data class OnNavigateToPaymentSmartFlow(val account: Account?) : UIEvent()
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnNavigateToCreditMovementsScreen : UIEvent()

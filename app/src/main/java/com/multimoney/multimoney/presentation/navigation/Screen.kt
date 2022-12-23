@@ -10,6 +10,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_AC
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
+import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENCY_CODE
 import com.multimoney.multimoney.presentation.navigation.navgraph.CURRENT_AMOUNT_VALUE
 import com.multimoney.multimoney.presentation.navigation.navgraph.DISBURSEMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -400,7 +401,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}/{$ID_VISA_CARD}/{$MASKED_CARD}/{$BANK_DETAIL}",
+        "smart_select_sending_type_screen/{$PK_USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}/{$CURRENCY_CODE}/{$USER_SMART_ACCOUNT}",
         "smart_select_sending_type_screen"
     )
 

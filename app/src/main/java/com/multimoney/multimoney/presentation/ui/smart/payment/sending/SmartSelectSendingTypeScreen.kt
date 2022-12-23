@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.smart.payment.sending.SmartSelectSendingTypeViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -22,7 +23,7 @@ fun SmartSelectSendingTypeScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartSelectSendingTypeViewModel = hiltViewModel()
-){
+) {
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
@@ -35,7 +36,7 @@ fun SmartSelectSendingTypeScreen(
             .fillMaxSize()
     ) {
         TopNavBar(
-            onLeftButtonClick = {  },
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
             isRightButtonVisible = false
         )
         SendingTypeOptions()
@@ -45,8 +46,12 @@ fun SmartSelectSendingTypeScreen(
 
 @Composable
 fun SendingTypeOptions(
-
-){
+    onMyContactsClick: () -> Unit,
+    onMySmartAccountClick: () -> Unit,
+    onIBANAccountsClick: () -> Unit,
+    smartAccountTitle: String,
+    smartAccountStartIcon: Int?
+) {
     Column {
         Text(
             modifier = Modifier.padding(top = 32.dp),
@@ -58,16 +63,16 @@ fun SendingTypeOptions(
             startIcon = R.drawable.ic_sending_contact
         )
         CustomInfoButton(
-            title = "Mi cuenta Smart [dolares/colones]",
+            title = smartAccountTitle,
             endIcon = R.drawable.ic_right_chevron,
-            startIcon = R.drawable.ic_sending_dollar
+            startIcon = smartAccountStartIcon
         )
         CustomInfoButton(
             title = "Cuentas IBAN",
             endIcon = R.drawable.ic_right_chevron,
             startIcon = R.drawable.ic_sending_iban_account,
 
-        )
+            )
     }
 
 }

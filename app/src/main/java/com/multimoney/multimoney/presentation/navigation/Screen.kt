@@ -378,12 +378,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartPaymentMethodScreenSV : Screen(
-        "smart_payment_method_screen/{$USER_SMART_ACCOUNT}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}",
+        "smart_payment_method_screen/{$SMART_IDS}",
         "smart_payment_method_screen"
     )
 
     object SmartPaymentCardsScreenSV : Screen(
-        "smart_payment_cards_screen/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}",
+        "smart_payment_cards_screen/{$SMART_IDS}",
         "smart_payment_cards_screen"
     )
 

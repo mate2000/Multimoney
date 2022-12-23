@@ -7,14 +7,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.model.accountsmart.IbanAccountID
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
@@ -44,6 +49,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
     private var identification: String = ""
     private var idCurrency: Int = 0
     private var tokenNumber: Long = 0
+    private var smartAccount: SmartAccountID? = null
     var currency: String = ""
 
     private fun onStart() {
@@ -53,6 +59,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
             user = dataStorePreferences.getUserName().first()
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             identification = dataStorePreferences.getIdentification().first()
+            smartAccount = savedStateHandle[SMART_IDS]
             currency = if (idCurrency == Dollar.id) Dollar.symbol else Colon.symbol
             onCallQueryGetClientCardsUseCase()
         }
@@ -89,9 +96,10 @@ class SmartPaymentCardsViewModel @Inject constructor(
     }
 
     private fun onCardSelected(cardSelected: CardVisaDirect) {
+        val ibanAccount = encodeData(IbanAccountID())
         navigateTo(
-            "${Screen.SmartPaymentSavingAmount.baseRoute}/$user/$idBrand/$identification/$tokenNumber/$idCurrency" +
-                "/${cardSelected.idCard}/${cardSelected.cardMaskedNumber}/${cardSelected.detail}/${Screen.SmartPaymentCardsScreenSV.baseRoute}"
+            "${Screen.SmartPaymentSavingAmount.baseRoute}/${encodeData(smartAccount)}?$IBAN_ACCOUNT=$ibanAccount/${cardSelected.idCard}" +
+                    "/${Screen.SmartPaymentCardsScreenSV.baseRoute}/${cardSelected.cardMaskedNumber}/${cardSelected.detail}"
         )
     }
 

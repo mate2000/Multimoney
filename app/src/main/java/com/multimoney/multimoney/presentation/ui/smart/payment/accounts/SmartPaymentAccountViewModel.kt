@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -66,10 +67,18 @@ class SmartPaymentAccountViewModel @Inject constructor(
     }
 
     private fun onAccountClick(selectedSinpeAccount: SinpeAccount?) {
+        val ibanAccount = encodeData(
+            IbanAccountID(
+                bank = selectedSinpeAccount?.bank,
+                clientIdentification = selectedSinpeAccount?.clientIdentification,
+                sinpeAccount = selectedSinpeAccount?.sinpeAccount,
+                currencyId = selectedSinpeAccount?.currencyId,
+                nameAccount = selectedSinpeAccount?.nameAccount
+            )
+        )
         navigateTo(
             "${Screen.SmartPaymentSavingAmount.baseRoute}/${encodeData(smartAccount)}?$IBAN_ACCOUNT=" +
-                    "${encodeData(selectedSinpeAccount)}/$ID_NOT_APPLICABLE/" +
-                    "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$NOT_APPLICABLE/$NOT_APPLICABLE"
+                    "${ibanAccount}/$ID_NOT_APPLICABLE/${Screen.SmartPaymentAccountScreenCR.baseRoute}/$NOT_APPLICABLE/$NOT_APPLICABLE"
         )
     }
 

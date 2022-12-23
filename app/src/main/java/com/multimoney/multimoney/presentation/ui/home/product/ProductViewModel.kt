@@ -606,11 +606,14 @@ class ProductViewModel @Inject constructor(
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
         if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
-            navigateTo(
-                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/${account?.accountNumber}/${
-                    account?.tokenNumber?.toLongOrNull() ?: 0
-                }/${account?.idCurrencyAccount}"
+            val smartIds = encodeData(
+                SmartAccountID(
+                    tokenAccount = account?.tokenNumber,
+                    accountNumber = account?.accountNumber,
+                    currencyID = account?.idCurrencyAccount
+                )
             )
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             callQueryBalanceUseCase(account, onLoadingValueChange)
         }

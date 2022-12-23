@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.navigation.navgraph
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.NavType.Companion
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
@@ -37,8 +36,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartPaymentMethodScreenSV.route,
             arguments = listOf(
-                navArgument(ID_CURRENCY) { type = NavType.IntType },
-                navArgument(ACCOUNT_TOKEN) { type = Companion.LongType }
+                navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
             )
         ) {
             SmartPaymentMethodScreen(
@@ -61,8 +59,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
         composable(
             Screen.SmartPaymentCardsScreenSV.route,
             arguments = listOf(
-                navArgument(ACCOUNT_TOKEN) { type = NavType.LongType },
-                navArgument(ID_CURRENCY) { type = NavType.IntType }
+                navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
             )
         ) {
             SmartPaymentCardsScreen(

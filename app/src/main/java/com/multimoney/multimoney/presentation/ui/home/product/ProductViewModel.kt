@@ -208,16 +208,27 @@ class ProductViewModel @Inject constructor(
 
     // This function opens the saving flow from the quick actions
     private fun onNavigateToSmartSave() {
-        // Maybe todo check country
-        val infoCredit = uiState.userStatus?.infoCredit
-        val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
-            SmartAccountID(
-                tokenAccount = it?.tokenNumber,
-                currencyID = it?.idCurrencyAccount,
-                accountNumber = it?.accountNumber ?: ""
+        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
+            val account = balanceCredit?.balanceAccountSmart?.first()
+            val smartIds = encodeData(
+                SmartAccountID(
+                    tokenAccount = account?.tokenNumber,
+                    accountNumber = account?.accountNumber,
+                    currencyID = account?.idCurrencyAccount
+                )
             )
-        })
-        navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
+        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            val infoCredit = uiState.userStatus?.infoCredit
+            val smartIds = encodeData(balanceCredit?.balanceAccountSmart?.map {
+                SmartAccountID(
+                    tokenAccount = it?.tokenNumber,
+                    currencyID = it?.idCurrencyAccount,
+                    accountNumber = it?.accountNumber ?: ""
+                )
+            })
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        }
     }
 
     private fun onNavigateToPaymentScreen() {

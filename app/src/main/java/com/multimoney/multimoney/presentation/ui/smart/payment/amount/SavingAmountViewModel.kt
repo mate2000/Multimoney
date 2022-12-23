@@ -16,7 +16,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
-import com.multimoney.domain.model.accountsmart.SinpeAccount
+import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -83,7 +83,7 @@ class SavingAmountViewModel @Inject constructor(
     private var idCurrency: Int = 0
     private var tokenNumber: Long = 0
     private var smartAccount: SmartAccountID? = null
-    private var ibanAccount: SinpeAccount? = null
+    private var ibanAccount: IbanAccountID? = null
     var smartCurrency: CurrencyType? = Dollar
     var ibanCurrency: CurrencyType? = null
     var shouldDisplayExchange: Boolean = false
@@ -113,8 +113,8 @@ class SavingAmountViewModel @Inject constructor(
                     getSmartExchangeRate(
                         user = user,
                         identification = identification,
-                        idOriginCurrency = ibanCurrency?.currency ?: "",
-                        idDestinationCurrency = smartCurrency?.currency ?: ""
+                        idOriginCurrency = smartCurrency?.id.toString(),
+                        idDestinationCurrency = ibanCurrency?.id.toString()
                     )
                 }
             }
@@ -148,7 +148,7 @@ class SavingAmountViewModel @Inject constructor(
             querySmartExchangeRateUseCase.invoke(
                 user = user,
                 idBrand = idBrand,
-                abbreviation = smartCurrency?.disbursementValue ?: "",
+                abbreviation = ibanCurrency?.disbursementValue ?: "",
                 identification = identification,
                 idOriginCurrency = idOriginCurrency,
                 idDestinationCurrency = idDestinationCurrency,
@@ -256,9 +256,12 @@ class SavingAmountViewModel @Inject constructor(
         uiState.suggestedAmountSelected?.isSelected(order) == true
 
     private fun onContinueClick() {
-        uiState = uiState.copy(
-            bottomSheetState = ModalBottomSheetState(Expanded)
-        )
+        // Temporal check while send to iban account is implemented
+        if (idBrand == Brand.ElSalvador.id) {
+            uiState = uiState.copy(
+                bottomSheetState = ModalBottomSheetState(Expanded)
+            )
+        }
     }
 
     private fun onRetryTransfer() {

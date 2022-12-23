@@ -105,7 +105,8 @@ class DownloadCreditMovementsWorker @Inject constructor(
 
     private fun copyFileToDownloads(context: Context, downloadedFile: File): Uri? {
         val resolver = context.contentResolver
-        val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val downloadDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, downloadedFile.name)
@@ -121,7 +122,8 @@ class DownloadCreditMovementsWorker @Inject constructor(
             resolver.openOutputStream(downloadedUri).use { outputStream ->
                 val brr = ByteArray(BYTE_ARRAY_SIZE)
                 var len: Int
-                val bufferedInputStream = BufferedInputStream(FileInputStream(downloadedFile.absoluteFile))
+                val bufferedInputStream =
+                    BufferedInputStream(FileInputStream(downloadedFile.absoluteFile))
                 while ((bufferedInputStream.read(brr, 0, brr.size).also { len = it }) != -1) {
                     outputStream?.write(brr, 0, len)
                 }
@@ -138,11 +140,17 @@ class DownloadCreditMovementsWorker @Inject constructor(
      */
     private fun createNotificationChannel(notificationManager: NotificationManagerCompat) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = context.getString(R.string.download_credit_movements_worker_channel_name)
+            val channelName =
+                context.getString(R.string.download_credit_movements_worker_channel_name)
             val importance = IMPORTANCE_HIGH
 
-            val channel = NotificationChannel(DOWNLOAD_CREDIT_MOVEMENTS_CHANNEL_ID, channelName, importance).apply {
-                description = context.getString(R.string.download_credit_movements_worker_channel_description)
+            val channel = NotificationChannel(
+                DOWNLOAD_CREDIT_MOVEMENTS_CHANNEL_ID,
+                channelName,
+                importance
+            ).apply {
+                description =
+                    context.getString(R.string.download_credit_movements_worker_channel_description)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -179,17 +187,20 @@ class DownloadCreditMovementsWorker @Inject constructor(
         when (status) {
             DownloadCreditMovementsStatus.Download -> {
                 titleTextResource = R.string.download_credit_movements_worker_push_title_download
-                contentTextResource = R.string.download_credit_movements_worker_push_description_download
+                contentTextResource =
+                    R.string.download_credit_movements_worker_push_description_download
                 isAutoCancel = false
             }
             DownloadCreditMovementsStatus.Error -> {
                 titleTextResource = R.string.download_credit_movements_worker_push_title_error
-                contentTextResource = R.string.download_credit_movements_worker_push_description_error
+                contentTextResource =
+                    R.string.download_credit_movements_worker_push_description_error
                 isAutoCancel = true
             }
             DownloadCreditMovementsStatus.Success -> {
                 titleTextResource = R.string.download_credit_movements_worker_push_title_success
-                contentTextResource = R.string.download_credit_movements_worker_push_description_success
+                contentTextResource =
+                    R.string.download_credit_movements_worker_push_description_success
                 isAutoCancel = true
                 intent = getIntentByUri(uri)
             }
@@ -202,15 +213,16 @@ class DownloadCreditMovementsWorker @Inject constructor(
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notificationBuilder = NotificationCompat.Builder(context, DOWNLOAD_CREDIT_MOVEMENTS_CHANNEL_ID)
-            .apply {
-                setSmallIcon(R.drawable.ic_download)
-                setContentTitle(context.getString(titleTextResource))
-                setContentText(context.getString(contentTextResource))
-                priority = NotificationCompat.PRIORITY_HIGH
-                setContentIntent(pendingIntent)
-                setAutoCancel(isAutoCancel)
-            }.build()
+        val notificationBuilder =
+            NotificationCompat.Builder(context, DOWNLOAD_CREDIT_MOVEMENTS_CHANNEL_ID)
+                .apply {
+                    setSmallIcon(R.drawable.ic_download)
+                    setContentTitle(context.getString(titleTextResource))
+                    setContentText(context.getString(contentTextResource))
+                    priority = NotificationCompat.PRIORITY_HIGH
+                    setContentIntent(pendingIntent)
+                    setAutoCancel(isAutoCancel)
+                }.build()
 
         notificationManager.notify(DOWNLOAD_CREDIT_MOVEMENTS_NOTIFICATION_ID, notificationBuilder)
     }

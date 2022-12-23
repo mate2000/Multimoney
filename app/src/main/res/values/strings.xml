@@ -61,8 +61,12 @@
     <!-- Errors -->
     <string name="error_empty" translatable="false"></string>
     <string name="error_empty_field" translatable="false">Este campo no puede ser vacío</string>
-    <string name="error_no_internet_title" translatable="false">¡Oh no! Error de conexión</string>
+    <string name="error_no_internet_title" translatable="false">¡Oh no! Error de \nconexión</string>
+    <string name="error_occurred_title" translatable="false">"¡Oh no! hubo un error"</string>
+    <string name="error_please_try_again" translatable="false">"Por favor intentá de nuevo"</string>
     <string name="you_have_exceeded_the_max_characters_error" translatable="false">Has excedido el máximo de caracteres permitidos</string>
+    <string name="error_button_retry" translatable="false">Reintentar</string>
+    <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
 
     <!-- OnBoarding -->
     <string name="onboarding_step_one_title" translatable="false">Invertí de forma Smart</string>
@@ -75,8 +79,7 @@
 
     <!-- Sign In -->
     <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
-    <string name="sign_in_title_name" translatable="false">Hola %s, \n</string>
-    <string name="sign_in_title_no_name" translatable="false">¡Que bueno tenerte por acá!</string>
+    <string name="sign_in_title_name" translatable="false">%s, ¡qué bueno verte de nuevo!</string>
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
     <string name="sign_in_access_with_biometrics" translatable="false">Ingresar con biométricos</string>
@@ -395,7 +398,6 @@
     <string name="profile_terms_and_conditions_crypto_title" translatable="false">Cripto</string>
 
 
-
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
     <string name="sign_out_dialog_title_gt" translatable="false">¿Estás seguro que quieres cerrar sesión?</string>
@@ -651,6 +653,7 @@
     <string name="visa_issuance_gt_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
     <string name="visa_issuance_gt_no_nfc_title" translatable="false">¡Compra en línea con Multimoney Visa!</string>
     <string name="visa_issuance_gt_no_nfc_subtitle" translatable="false">La nueva Multimoney Visa y todos sus beneficios son para ti.</string>
+    <string name="visa_issuance_button_label" translatable="false">Vincular tarjeta</string>
 
     <!-- Visa Card-->
     <string name="visa_card_sv_dialog_description_available" translatable="false">Recordá que podés utilizar tu tarjeta digital solo con el monto de tu crédito disponible. Tus compras se sumarán a tu saldo del crédito.</string>
@@ -734,6 +737,16 @@
     <string name="payment_voucher_origin_account_label" translatable="false">Cuenta de origen</string>
     <string name="payment_voucher_you_have_paid" translatable="false">Has pagado</string>
     <string name="payment_voucher_transaction_success" translatable="false">¡Transacción exitosa!</string>
+
+    <!-- Smart payment success -->
+    <string name="smart_payment_success" translatable="false">¡Transacción exitosa!</string>
+    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Has ahorrado en tu cuenta Smart | %s</string>
+    <string name="smart_payment_from_label" translatable="false">Desde</string>
+    <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
+    <string name="smart_payment_reference_number_label" translatable="false">N° de referencia</string>
+    <string name="smart_payment_share_button" translatable="false">Compartir</string>
+    <string name="smart_payment_make_another_payment" translatable="false">Hacer otro ahorro</string>
+    <string name="smart_payment_card_bank_label" translatable="false">Tarjeta Banco</string>
 
     <!-- Smart Card -->
     <string name="smart_card_balance" translatable="false">Saldo</string>
@@ -831,6 +844,7 @@
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+    <string name="payment_options_title_cr" translatable="false">¿En cuál cuenta querés ahorrar?</string>
 
     <!-- Smart Living Address -->
     <string name="smart_liv_address_title" translatable="false">¿Dónde vivís?</string>
@@ -876,6 +890,12 @@
     <string name="payment_amount_bottom_sheet_button" translatable="false">Realizar pago</string>
     <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
+
+    <!-- Smart Payment Amount Bottom Sheet -->
+    <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
+    <string name="smart_payment_amount_bottom_sheet_title" translatable="false">Monto a ahorrar</string>
+    <string name="smart_payment_amount_bottom_sheet_from_card" translatable="false">Desde la tarjeta</string>
+    <string name="smart_payment_amount_bottom_sheet_to" translatable="false">Hacia</string>
 
     <!-- Payment Amount Error -->
     <string name="payment_amount_error_button" translatable="false">Ir al inicio</string>
@@ -963,6 +983,12 @@
         <item>No, no lo soy</item>
     </string-array>
 
+    <!--Crypto Wallet-->
+    <string name="crypto_wallet_header_title" translatable="false">Mi portafolio</string>
+    <string name="crypto_wallet_balance_section_label" translatable="false">Balance</string>
+    <string name="crypto_gains_symbol" translatable="false">+</string>
+    <string name="crypto_losses_symbol" translatable="false">-</string>
+
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
     <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>
@@ -1009,7 +1035,11 @@
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
-    <string name="payment_amount_card_title" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title_sv" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title_gt" translatable="false">¿Cuánto quieres abonar?</string>
+    <string name="payment_amount_card_min_amount" translatable="false">Abonar mínimo</string>
+    <string name="payment_amount_card_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
+    <string name="payment_amount_card_amount_max_error" translatable="false">El pago máximo es de %s</string>
 
     <!-- Payment Amount Card Bottom Sheet -->
     <string name="payment_amount_card_bottom_sheet_title" translatable="false">Monto a abonar</string>
@@ -1024,7 +1054,7 @@
     <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
 
     <!-- Payment Account -->
-    <string name="payment_account_title" translatable="false">¿A cuál Multimoney Smart querés abonar?</string>
+    <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
     <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
 
@@ -1038,6 +1068,10 @@
     <string name="disbursement_bottom_sheet_exchange_rate" translatable="false">Tipo de cambio</string>
     <string name="disbursement_bottom_sheet_quota_to_pay" translatable="false">Cuota mensual consolidada</string>
     <string name="disbursement_bottom_sheet_next_payment_date" translatable="false">Fecha del siguiente pago</string>
+
+    <!-- My crypto currencies -->
+    <string name="crypto_currencies" translatable="false">Mis monedas</string>
+    <string name="crypto_currencies_see_all" translatable="false">Ver todas</string>
 
     <!-- Disbursement Voucher -->
     <string name="disbursement_voucher_title_chooser" translatable="false">Voucher</string>
@@ -1073,6 +1107,12 @@
 
     <!-- Smart Saving Amount -->
     <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
+    <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>
+    <string name="smart_saving_try_later_notification_body" translatable="false">Abrí la app y hacé tu primer ahorro para ganar más</string>
+    <string name="smart_saving_total_to_deposit" translatable="false">Total a depositar</string>
+    <string name="smart_processing_transaction" translatable="false">Procesando transacción...</string>
+    <string name="smart_dollar_placeholder" translatable="false">$0</string>
+    <string name="smart_colon_placeholder" translatable="false">₡000</string>
 
     <!-- Profile Help And Information Section -->
     <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>
@@ -1083,5 +1123,12 @@
     <string name="profile_help_error_title" translatable="false">¡Oh no! hubo un error</string>
     <string name="profile_help_error_subtitle" translatable="false">Por favor intentá de nuevo</string>
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
-    
+
+    <!-- Currency Item -->
+    <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
+    <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
+    <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
+
+    <!-- Smart Transfer Iban -->
+    <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
 </resources>

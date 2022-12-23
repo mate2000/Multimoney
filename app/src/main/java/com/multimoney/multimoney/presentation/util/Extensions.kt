@@ -201,7 +201,17 @@ fun Char.isValidAmountCharacter() =
 
 fun String.filterInvalidAmountInput() = this.filter { it.isValidAmountCharacter() }
 
+fun Double.roundToTwoDecimalPlaces() = String.format("%.2f", this)
+
+fun Double.roundToTwoDecimalPlacesWithoutNegatives() = String.format("%.2f", this).replace("-", "")
+
+/**
+ * split a string by whitespace character ' '
+ */
+fun String.splitByWhiteSpace() = split(WHITE_SPACE_SEPARATOR)
+
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val SPECIAL_CHARACTER_REGEX = "[!\"#\$%&'()*+,-./:;\\\\<=>?@^_`{|}~]"
 private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
+private const val WHITE_SPACE_SEPARATOR = ' '

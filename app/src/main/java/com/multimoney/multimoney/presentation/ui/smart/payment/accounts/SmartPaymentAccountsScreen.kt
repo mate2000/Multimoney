@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -34,11 +33,11 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 @Composable
 fun SmartPaymentAccountsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartPaymentAccountViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
+        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
     }
 
     Column(
@@ -67,12 +66,12 @@ fun PaymentOptions(
     viewModel: SmartPaymentAccountViewModel = hiltViewModel()
 ) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.sinpeAccountList ?: listOf()) { account ->
+        items(viewModel.uiState.sinpeAccountList ?: listOf()) { account ->
             CustomInfoButton(
                 title = account.bank,
                 subtitle = getMaskedAccountIban(
                     account.sinpeAccount,
-                    stringResource(id = R.string.payment_account_masked_text)
+                    stringResource(id = string.payment_account_masked_text)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -96,6 +95,7 @@ fun PaymentOptions(
         },
         buttonType = PrimaryTertiary,
         trailingIcon = drawable.ic_plus,
-        enable = (viewModel.sinpeAccountList?.size ?: 0) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
+        enable = (viewModel.uiState.sinpeAccountList?.size
+            ?: 0) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
     )
 }

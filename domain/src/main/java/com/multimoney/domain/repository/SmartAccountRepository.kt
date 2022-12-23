@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
+import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
@@ -15,6 +16,7 @@ import com.multimoney.domain.model.accountsmart.SinpeAccountResult
 import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.accountsmart.StepByStep
+import com.multimoney.domain.model.accountsmart.VisaSmartPayment
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -120,6 +122,18 @@ interface SmartAccountRepository {
         idRequest: Long
     ): Flow<MultimoneyResult<SaveSmartAccount?>>
 
+    suspend fun mutationProcessTransferVisaToSmartVD(
+        idCard: Long,
+        tokenNumber: Long,
+        identification: String,
+        amount: String,
+        currency: Int,
+        description: String,
+        cardMasked: String,
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<VisaSmartPayment?>>
+
     suspend fun queryGeneralEconomicActivity(
         user: String,
         idBrand: Int
@@ -150,4 +164,14 @@ interface SmartAccountRepository {
         idAccount: Long,
         accountNumber: String
     ): Flow<MultimoneyResult<SinpeAccountResult?>>
+
+    suspend fun querySmartExchangeRate(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        abbreviation: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String,
+        amount: Double
+    ): Flow<MultimoneyResult<ExchangeRateResult?>>
 }

@@ -9,6 +9,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditStatus
+import com.multimoney.data.util.catalog.CryptoAccountStatus
+import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
@@ -57,6 +60,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSe
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowAutomaticPaymentEdit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnSignOut
+import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
 import com.multimoney.multimoney.presentation.util.LAST_THREE
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
@@ -70,11 +74,11 @@ import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
 import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -303,7 +307,7 @@ class HomeViewModel @Inject constructor(
             idBrand,
             identification,
             baseAsset = baseAsset,
-            startDate = getPreviousDate(1),
+            startDate = getPreviousDate(FilterDateByDays.YESTERDAY.days),
             endDate = getCurrentDateYMDPattern()
         ).collectLatest { result ->
             result.onSuccess { historicBalance ->
@@ -372,7 +376,7 @@ class HomeViewModel @Inject constructor(
                     onUIEvent(
                         OnGetSmartMovements(
                             uiState.userName,
-                            uiState.idBrand.toInt(),
+                            uiState.idBrand.toIntOrNull() ?: 0,
                             uiState.identification,
                             account?.tokenNumber?.toLongOrNull() ?: 0
                         )
@@ -411,12 +415,14 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        onUIEvent(
-            OnGetCreditMovements(
-                uiState.idBrand.toInt(),
-                uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+        if (uiState.validateUserStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
+            onUIEvent(
+                OnGetCreditMovements(
+                    uiState.idBrand.toIntOrNull() ?: 0,
+                    uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+                )
             )
-        )
+        }
 
         if (uiState.configurationVersion != null && uiState.quickActions != null) {
             uiState = uiState.copy(isLoading = false)
@@ -497,15 +503,17 @@ class HomeViewModel @Inject constructor(
                     infoCryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
-                if (uiState.configurationVersion?.configuration?.crypto?.active == true) {
-                    // todo change "BTC" when asset are ready in BE
-                    callQueryGetHistoricalBalanceUseCase(
-                        user = email,
-                        identification = identification,
-                        idBrand = idBrand,
-                        baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset
-                            ?: "BTC"
-                    )
+                if (uiState.idBrand != Brand.Guatemala.id.toString()) {
+                    if (validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status &&
+                        validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
+                    ) {
+                        callQueryGetHistoricalBalanceUseCase(
+                            user = email,
+                            identification = identification,
+                            idBrand = idBrand,
+                            baseAsset = uiState.balance?.balanceCryptoAccount?.items?.firstOrNull()?.asset ?: ""
+                        )
+                    }
                 }
             }
             result.onFailure {

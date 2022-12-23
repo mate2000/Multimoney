@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.payment.amount
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,11 +14,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,28 +36,36 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.Companion.SAVING_PLACEHOLDER
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.Companion.SAVING_PLACEHOLDER_DOLLAR
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnRetryTransfer
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSuggestedAmountClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnTryLater
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
 import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SavingAmountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SavingAmountViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopBackStack = onPopBackStack)
@@ -60,11 +73,53 @@ fun SavingAmountScreen(
         }
     }
 
-    SavingAmountContent(viewModel)
+    if (viewModel.uiState.showLoadingScreen) {
+        LoadingMultiMoney(R.string.smart_processing_transaction)
+    } else if (viewModel.uiState.showErrorScreen) {
+        val notificationTitle = stringResource(R.string.smart_saving_try_later_notification_title)
+        val notificationBody = stringResource(R.string.smart_saving_try_later_notification_body)
+        AlertResult(
+            isTopNavBarVisible = false,
+            titleResource = R.string.error_occurred_title,
+            descriptionResource = R.string.error_please_try_again,
+            buttonTextResource = R.string.error_button_retry,
+            onButtonClick = { viewModel.onUIEvent(OnRetryTransfer) },
+            isSecondaryButtonVisible = true,
+            secondaryButtonTextResource = R.string.error_button_try_later,
+            onSecondaryButtonClick = {
+                viewModel.onUIEvent(
+                    OnTryLater(
+                        notificationTitle,
+                        notificationBody,
+                        R.drawable.ic_logo_multimoney,
+                        context
+                    )
+                )
+            }
+        )
+        BackHandler {
+            viewModel.onUIEvent(OnNavigateHome)
+        }
+    } else if (viewModel.uiState.paymentSuccess) {
+        SmartPaymentSuccessScreen(
+            viewModel = viewModel
+        )
+        BackHandler {
+            viewModel.onUIEvent(OnNavigateHome)
+        }
+    } else {
+        SavingAmountContent(viewModel)
+        SmartPaymentConfirmBottomSheet(
+            rememberCoroutineScope(),
+            viewModel.uiState.bottomSheetState,
+            viewModel
+        )
+        BackHandler {
+            viewModel.onUIEvent(OnNavigateBack)
+        }
+    }
 
     LoadingIndicator(viewModel.uiState.isLoading)
-
-    // Todo Add Saving Bottom Sheet. ViewModel already handles the bottomSheetVisibleState on continue click
 }
 
 @Composable
@@ -76,7 +131,7 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
     ) {
         TopNavBar(
             isRightButtonVisible = false,
-            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+            onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
         )
         Column(
             modifier = Modifier
@@ -98,8 +153,8 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                 )
                 CurrencyAmountInput(
                     modifier = Modifier.padding(top = 24.dp),
-                    value = viewModel.uiState.currentAmountValueString,
-                    placeHolder = SAVING_PLACEHOLDER,
+                    value = viewModel.uiState.currentAmountValueString.collectAsState().value,
+                    placeHolder = stringResource(id = viewModel.uiState.placeholder),
                     onValueChange = {
                         viewModel.onUIEvent(OnAmountValueChange(it.filterInvalidAmountInput()))
                     },
@@ -123,7 +178,7 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                 ) {
                     RoundedPaymentButton(
                         modifier = Modifier
-                            .weight(0.30f),
+                            .weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.minSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
@@ -131,10 +186,9 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MIN),
                         textAlign = Alignment.CenterHorizontally
                     )
-                    Spacer(modifier = Modifier.weight(0.05f))
+                    Spacer(modifier = Modifier.weight(0.02f))
                     RoundedPaymentButton(
-                        modifier = Modifier
-                            .weight(0.30f),
+                        modifier = Modifier.weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.mediumSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
@@ -142,16 +196,27 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MEDIUM),
                         textAlign = Alignment.CenterHorizontally
                     )
-                    Spacer(modifier = Modifier.weight(0.05f))
+                    Spacer(modifier = Modifier.weight(0.02f))
                     RoundedPaymentButton(
-                        modifier = Modifier
-                            .weight(0.30f),
+                        modifier = Modifier.weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.maxSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
                         mainText = viewModel.uiState.maxSuggestion.display,
                         isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MAX),
                         textAlign = Alignment.CenterHorizontally
+                    )
+                }
+                if (viewModel.shouldDisplayExchange) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    VoucherCurrencyExchangeInfo(
+                        displayIcon = false,
+                        mainRowAlignment = Arrangement.SpaceAround,
+                        textColumnAlign = Alignment.CenterHorizontally,
+                        leftTitleResource = R.string.payment_amount_bottom_sheet_exchange_type,
+                        rightTitleResource = R.string.smart_saving_total_to_deposit,
+                        exchangeRateText = viewModel.uiState.exchangeRateLabel,
+                        convertedAmountText = viewModel.uiState.convertedAmountLabel
                     )
                 }
             }

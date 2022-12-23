@@ -60,6 +60,7 @@ val SemanticInformative700 = Color(0xFF003380)
 val SemanticInformative800 = Color(0xFF001433)
 
 // Semantic Negative
+val SemanticNegative300 = Color(0xFFF8B9B9)
 val SemanticNegative400 = Color(0xFFF37C7C)
 val SemanticNegative500 = Color(0xFFE91616)
 
@@ -142,6 +143,7 @@ data class MultimoneyColors(
     val text: Color,
     val onBoardingTitleText: Color,
     val onBoardingSubText: Color,
+    val loginTitleText: Color,
     val textLink: Color,
     val textInformation: Color,
     val textSubhead: Color,
@@ -175,7 +177,12 @@ data class MultimoneyColors(
     val iconTintVoucher: Color,
     val textAlertColor: Color,
     val homeCryptoNoticeSectionBackGround: Color,
-    val fullTransparency: Color = Color.Transparent
+    val cryptoGainsColor: Color,
+    val cryptoLossesColor: Color,
+    val cryptoWalletGainsColor: Color,
+    val cryptoActionButtonEnable: Color,
+    val cryptoActionButtonDisable: Color,
+    val fullTransparency: Color = Color.Transparent,
 )
 
 val DarkColorPalette = MultimoneyColors(
@@ -187,6 +194,7 @@ val DarkColorPalette = MultimoneyColors(
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency90,
+    loginTitleText = WhiteTransparency90,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
@@ -219,7 +227,12 @@ val DarkColorPalette = MultimoneyColors(
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40,
     textAlertColor = SemanticNegative400,
-    homeCryptoNoticeSectionBackGround = ComplementaryBlack2
+    homeCryptoNoticeSectionBackGround = ComplementaryBlack2,
+    cryptoGainsColor = SemanticPositive300,
+    cryptoLossesColor = SemanticNegative400,
+    cryptoActionButtonEnable = Primary400,
+    cryptoActionButtonDisable = GrayScale400,
+    cryptoWalletGainsColor = Tertiary400,
 )
 
 val LightColorPalette = MultimoneyColors(
@@ -231,6 +244,7 @@ val LightColorPalette = MultimoneyColors(
     text = DefaultWhite,
     onBoardingTitleText = WhiteTransparency90,
     onBoardingSubText = WhiteTransparency90,
+    loginTitleText = WhiteTransparency90,
     textLink = Primary400,
     textInformation = SemanticInformative400,
     textSubhead = GrayScale600,
@@ -263,7 +277,12 @@ val LightColorPalette = MultimoneyColors(
     gradientTwoVoucher = GradientGrey2,
     iconTintVoucher = WhiteTransparency40,
     textAlertColor = SemanticNegative400,
-    homeCryptoNoticeSectionBackGround = GrayScale300
+    homeCryptoNoticeSectionBackGround = GrayScale300,
+    cryptoGainsColor = SemanticPositive600,
+    cryptoLossesColor = SemanticNegative500,
+    cryptoActionButtonEnable = Primary500,
+    cryptoActionButtonDisable = GrayScale500,
+    cryptoWalletGainsColor = Tertiary600,
 )
 
 val LocalMultimoneyColors = staticCompositionLocalOf {

@@ -59,6 +59,7 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
     private fun onAvailableAmountClick() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
+                titleResource = string.empty,
                 descriptionResource = when (idBrand) {
                     ElSalvador.id -> string.visa_card_sv_dialog_description_available
                     CostaRica.id -> string.visa_card_cr_dialog_description_available

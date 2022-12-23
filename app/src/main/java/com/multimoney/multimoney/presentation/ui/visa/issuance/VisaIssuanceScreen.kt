@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -47,14 +48,14 @@ fun VisaIssuanceScreen(
     ) {
         Column(
             Modifier
-                .weight(0.34f)
+                .weight(0.31f)
         ) {
             TopNavBar(
-                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+                isLeftButtonVisible = false,
                 onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
             )
             Text(
-                modifier = Modifier.padding(top = 34.dp, start = 16.dp, end = 16.dp),
+                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
                 text = stringResource(id = viewModel.uiState.titleResource),
                 style = Typography.h5.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText,
@@ -70,28 +71,30 @@ fun VisaIssuanceScreen(
         }
         Column(
             Modifier
-                .weight(0.46f)
+                .fillMaxWidth()
+                .weight(0.31f)
         ) {
             CustomCardVisaVertical(
                 modifier = Modifier
-                    .padding(start = 68.dp, end = 68.dp)
+                    .padding(start = 16.dp, end = 16.dp)
                     .fillMaxSize(),
                 isTextVisible = viewModel.uiState.isTextVisible
             )
         }
         Column(
             Modifier
-                .weight(0.2f),
+                .weight(0.38f),
             verticalArrangement = Arrangement.Bottom
         ) {
             CustomButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
+                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
+                    .height(48.dp),
                 onClick = {
                     viewModel.onUIEvent(OnIssuanceClick)
                 },
-                text = stringResource(id = R.string.activate),
+                text = stringResource(id = R.string.visa_issuance_button_label),
                 buttonType = PrimaryPrimary
             )
         }

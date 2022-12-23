@@ -9,9 +9,8 @@ import com.multimoney.multimoney.presentation.util.stringToIntegerFormat
 
 class CurrencyIntegerTransformation(val currency: String, val separator: Char) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
-
         val originalText = text.text
-        val formattedText = if (text.toString().isValidAmount()) {
+        val formattedText = if (text.toString().isValidAmount() && text.toString().isNotEmpty()) {
             "$currency${text.toString().stringToIntegerFormat(separator.toString())}"
         } else {
             text.toString()

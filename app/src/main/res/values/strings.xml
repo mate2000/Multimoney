@@ -327,6 +327,9 @@
     <string name="profile_change_phone" translatable="false">Cambio de teléfono</string>
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_email_title" translatable="false">Cambiar correo electrónico</string>
+    <string name="profile_change_email_enter_new" translatable="false">Nuevo correo electrónico</string>
+    <string name="profile_change_email_enter_new_confirmation" translatable="false">Confirmar nuevo correo electrónico</string>
+
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
     <string name="profile_where_do_you_want_to_receive_the_code_gt" translatable="false">¿Dónde quieres recibir el código?</string>
     <string name="profile_where_do_you_want_to_receive_the_code" translatable="false">¿Dónde querés recibir el código?</string>

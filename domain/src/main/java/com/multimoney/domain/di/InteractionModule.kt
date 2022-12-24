@@ -62,12 +62,10 @@ import com.multimoney.domain.interaction.credit.MutationSaveCreditOfferUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOfferUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveCreditOperationUseCaseImpl
-import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCase
-import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCaseImpl
-import com.multimoney.domain.interaction.credit.MutationSaveCreditOfferUseCase
-import com.multimoney.domain.interaction.credit.MutationSaveCreditOfferUseCaseImpl
 import com.multimoney.domain.interaction.credit.MutationSaveTermsAndConditionsCreditUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveTermsAndConditionsCreditUseCaseImpl
+import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCase
+import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCase
 import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
@@ -120,8 +118,6 @@ import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventU
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCase
 import com.multimoney.domain.interaction.credit.TermsAndConditionsUseCaseImpl
-import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCase
-import com.multimoney.domain.interaction.credit.QueryEmploymentSituationUseCaseImpl
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCaseImpl
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase

@@ -32,6 +32,7 @@ import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQ
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedCardAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
 import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
+import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
 import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetCardAutomaticDebitQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
@@ -56,8 +57,6 @@ import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
-import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
-import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation

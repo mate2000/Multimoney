@@ -353,6 +353,7 @@
     <string name="profile_phone_number_changed_toast" translatable="false">Número de teléfono modificado</string>
     <string name="profile_email_changed_toast" translatable="false">Correo electrónico modificado</string>
     <string name="profile_otp_resend" translatable="false">Reenviar código</string>
+    <string name="profile_password_requirement_max_three_characters_or_number_consecutive" translatable="false">No más de tres caracteres iguales consecutivos ya sean numéricos o alfabéticos</string>
     <string name="profile_couldnt_verify_identity" translatable="false">No hemos podido verificar tu identidad</string>
     <string name="profile_error_phone_code_not_valid" translatable="false">Código de verificación inválido</string>
     <string name="profile_new_email" translatable="false">Nuevo correo electrónico</string>

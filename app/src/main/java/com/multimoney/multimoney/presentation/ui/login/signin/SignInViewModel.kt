@@ -9,19 +9,23 @@ import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.util.CognitoJWTParser
+import com.amplifyframework.auth.AuthChannelEventName
+import com.amplifyframework.auth.AuthException
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession
 import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignInOptions
-import com.amplifyframework.auth.cognito.options.AuthFlowType
 import com.amplifyframework.auth.result.AuthSessionResult
 import com.amplifyframework.core.Amplify
+import com.amplifyframework.core.InitializationStatus
+import com.amplifyframework.hub.HubChannel
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.*
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
@@ -60,14 +64,23 @@ class SignInViewModel @Inject constructor(
     private var deviceBrand = getDeviceBrand()
     private var deviceModel = getDeviceModel()
     private var isEmulator = checkIfEmulator()
+    private var forceDeviceChange = false
 
 
 
-    private fun onStart(deviceId: String, ipAddress: String, deviceName : String, deviceType: String) {
+
+    private fun onStart(
+        deviceId: String,
+        ipAddress: String,
+        deviceName: String,
+        deviceType: String,
+        forceDeviceChange : Boolean
+    ) {
         this.deviceId = deviceId
         this.ipAddress = ipAddress
         this.deviceName = deviceName
         this.deviceType = deviceType
+        this.forceDeviceChange = forceDeviceChange
         viewModelScope.launch {
             uniqueId = dataStorePreferences.getUniqueId().first()
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
@@ -93,7 +106,8 @@ class SignInViewModel @Inject constructor(
             MODEL to deviceModel,
             APP_VERSION to appVersion,
             IS_EMULATOR to isEmulator.toString(),
-            IP_ADDRESS to ipAddress
+            IP_ADDRESS to ipAddress,
+            FORCE to forceDeviceChange.toString()
         )
 
         val options = AWSCognitoAuthSignInOptions.builder()
@@ -117,7 +131,6 @@ class SignInViewModel @Inject constructor(
                                     // Get user attributes in order to save user name for welcome message
                                     Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
                                         viewModelScope.launch {
-                                            updateUser()
                                             // If isBiometricActive false that means the userName has to be saved
                                             saveUserData(session, authUserAttribute)
                                             uiState = uiState.copy(isLoading = false)
@@ -134,7 +147,6 @@ class SignInViewModel @Inject constructor(
                                 AuthSessionResult.Type.FAILURE -> cognitoError()
                             }
                         }, {
-                            Log.e("HERE", it.toString())
                             cognitoError()
                         })
                     } else {
@@ -142,11 +154,30 @@ class SignInViewModel @Inject constructor(
                     }
                 },
                 {
-                    cognitoError()
+                    if (isSessionActiveOnAnotherDevice(it)) {
+                        uiState = uiState.copy(
+                            openDialog = DialogParameters(
+                                isActive = mutableStateOf(true)
+                            )
+                        )
+                    } else {
+                        cognitoError()
+                    }
                 })
         }, {
             cognitoError()
         })
+    }
+
+    private fun isSessionActiveOnAnotherDevice(exception: AuthException): Boolean {
+        return exception.cause?.message?.contains(""""code":"$SESSION_ACTIVE_ERROR_CODE"""") == true
+    }
+
+    private fun onCloseDialog() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(isActive = mutableStateOf(false)),
+            isLoading = false
+        )
     }
 
     private suspend fun saveUserData(
@@ -356,22 +387,10 @@ class SignInViewModel @Inject constructor(
     fun isWelcomeWithName() =
         uiState.userName.isNotEmpty() && uiState.userEmail == biometricUserEmail
 
-    private fun updateUser() {
-        Amplify.Auth.updateUserAttributes(
-            listOf(
-                AuthUserAttribute(AuthUserAttributeKey.custom(DEVICE_ID),deviceId),
-                AuthUserAttribute(AuthUserAttributeKey.custom(UNIQUE_ID),uniqueId),
-                AuthUserAttribute(AuthUserAttributeKey.custom(BRAND),deviceBrand),
-                AuthUserAttribute(AuthUserAttributeKey.custom(MODEL),deviceModel),
-                AuthUserAttribute(AuthUserAttributeKey.custom(APP_VERSION),appVersion),
-                AuthUserAttribute(AuthUserAttributeKey.custom(IS_EMULATOR),isEmulator.toString()),
-                AuthUserAttribute(AuthUserAttributeKey.custom(IP_ADDRESS),ipAddress),
-            ),
-            { Log.i("AuthDemo", "Updated user attributes = $it") },
-            { Log.e("AuthDemo", "Failed to update user attributes", it) }
-        )
+    private fun onNavigateToOTPScreen(
+    ) {
+        popAndNavigateTo("${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",Screen.SignInOTPScreen.baseRoute)
     }
-
 
     data class UIState(
         // Fields
@@ -393,8 +412,10 @@ class SignInViewModel @Inject constructor(
         val openDialogCustom: MutableState<Boolean> = mutableStateOf(false),
         val isBiometricActive: Boolean = false,
         val showBiometricSignIn: Boolean = false,
-        val isLoading: Boolean = false
-    )
+        val isLoading: Boolean = false,
+        val openDialog: DialogParameters = DialogParameters(),
+
+        )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -413,14 +434,25 @@ class SignInViewModel @Inject constructor(
                 event.showDialog
             )
 
-            is OnStart -> onStart(event.deviceId,event.ipAddress,event.deviceName,event.deviceType)
+            is OnStart -> onStart(
+                event.deviceId,
+                event.ipAddress,
+                event.deviceName,
+                event.deviceType,
+                event.forceDeviceChange
+            )
             is OnValidateUserEmail -> isUserEmailValid()
             is OnCallCognitoSignIn -> callCognitoSignIn()
             is OnNavigateToForgotPassword -> onNavigateToForgotPassword()
+            is OnCloseDialog -> onCloseDialog()
+            is OnNavigateToOTPScreen -> onNavigateToOTPScreen()
         }
     }
 
     sealed class UIEvent {
+        object OnCloseDialog : UIEvent()
+
+        object OnNavigateToOTPScreen : UIEvent()
 
         data class OnUserPasswordValueChange(val value: String) : UIEvent()
         data class OnUserEmailValueChange(val value: String) : UIEvent()
@@ -442,7 +474,14 @@ class SignInViewModel @Inject constructor(
         data class OnFingerprintCheckedChanged(val value: Boolean, val showDialog: Boolean) :
             UIEvent()
 
-        data class OnStart(val deviceId : String, val ipAddress : String,val deviceName: String,val deviceType : String) : UIEvent()
+        data class OnStart(
+            val deviceId: String,
+            val ipAddress: String,
+            val deviceName: String,
+            val deviceType: String,
+            val forceDeviceChange: Boolean
+        ) : UIEvent()
+
         object OnValidateUserEmail : UIEvent()
         object OnCallCognitoSignIn : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
@@ -457,6 +496,7 @@ class SignInViewModel @Inject constructor(
         const val IS_EMULATOR = "IsEmulator"
         const val IP_ADDRESS = "IpAddress"
         const val FORCE = "Force"
+        const val SESSION_ACTIVE_ERROR_CODE = "2706"
     }
 
 }

@@ -1,6 +1,7 @@
 package com.multimoney.domain.repository
 
 import com.multimoney.domain.model.security.CatalogType
+import com.multimoney.domain.model.security.ChangeDevice
 import com.multimoney.domain.model.security.ChangeEmail
 import com.multimoney.domain.model.security.ChangePhone
 import com.multimoney.domain.model.security.ClientInfoCr
@@ -11,6 +12,7 @@ import com.multimoney.domain.model.security.MiniCards
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
+import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.UserPhoneMobileSave
@@ -169,7 +171,7 @@ interface SecurityRepository {
     ): Flow<MultimoneyResult<ChangePhone>>
 
     suspend fun mutationChangeEmail(
-        idClient : Int,
+        idClient: Int,
         pkUser: Int,
         identification: String,
         email: String,
@@ -196,4 +198,13 @@ interface SecurityRepository {
         serialNumber: String,
         user: String
     ): Flow<MultimoneyResult<UserPhoneMobileSave>>
+
+    suspend fun mutationRequestChangeDevice(
+        email: String
+    ): Flow<MultimoneyResult<RequestChangeDevice>>
+
+    suspend fun mutationChangeDevice(
+        email: String,
+        otp: String
+    ): Flow<MultimoneyResult<ChangeDevice>>
 }

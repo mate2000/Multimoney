@@ -6,9 +6,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.FORCE_CHANGE_DEVICE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
@@ -16,7 +18,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STE
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.SignUpSplashComeBack
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreen
-import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingScreen
 
 const val SIGN_UP_STEP = "sign_up_step"
 
@@ -43,7 +44,16 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SignInScreen.route) {
+        composable(route = Screen.SignInScreen.route,
+            arguments = listOf(
+                navArgument(FORCE_CHANGE_DEVICE) {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            )
+        ) {
+            val forceChangeDevice = it.arguments?.getBoolean(FORCE_CHANGE_DEVICE) ?: false
+
             SignInScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
@@ -52,14 +62,19 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 },
                 onNavigate = {
                     navController.navigate(it.route)
-                }
+                },
+                forceChangeDevice = forceChangeDevice
+
             )
         }
         composable(route = Screen.SignUpScreen.route) {
             SignUpScreen(
                 // Workaround to solve compose issue when launchSingleTop is combine with arguments
                 // (Use: navController.currentBackStackEntry ?: navBackStackEntry)
-                step = navController.currentBackStackEntry?.arguments?.getString(SIGN_UP_STEP, DEFAULT_STEP)
+                step = navController.currentBackStackEntry?.arguments?.getString(
+                    SIGN_UP_STEP,
+                    DEFAULT_STEP
+                )
                     ?: DEFAULT_STEP,
                 onNavigate = {
                     navController.navigate(it.route)
@@ -87,6 +102,15 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         launchSingleTop = true
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(route = Screen.SignInOTPScreen.route) {
+            SignInOTPScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
                 }

@@ -60,7 +60,8 @@ import com.multimoney.multimoney.util.firebase.FireBaseEvents
 fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SignInViewModel = hiltViewModel()
+    viewModel: SignInViewModel = hiltViewModel(),
+    forceChangeDevice : Boolean = false
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
@@ -75,7 +76,8 @@ fun SignInScreen(
                     getDeviceId(fragmentActivity),
                     getIpAddress(fragmentActivity),
                     getDeviceName(fragmentActivity) ?: "",
-                    getDeviceType(fragmentActivity).value ?: ""
+                    getDeviceType(fragmentActivity).value ?: "",
+                    forceChangeDevice
                 )
             )
         }
@@ -251,6 +253,25 @@ fun SignInScreen(
                         showDialog = false
                     )
                 )
+            },
+            openDialogCustom = viewModel.uiState.openDialogCustom
+        )
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = R.string.sign_in_session_active_on_another_device_title),
+            message = stringResource(id = R.string.sign_in_session_open_here_close_another),
+            positiveButtonText = stringResource(id = R.string.sign_in_dialog_sign_in_here_button),
+            negativeButtonText = stringResource(id = R.string.sign_in_dialog_exit_button),
+            onPositiveAction = {
+                viewModel.onUIEvent(SignInViewModel.UIEvent.OnNavigateToOTPScreen)
+            },
+            onNegativeAction = {
+                viewModel.onUIEvent(SignInViewModel.UIEvent.OnCloseDialog)
+            },
+            onDismissAction = {
+                viewModel.onUIEvent(SignInViewModel.UIEvent.OnCloseDialog)
             },
             openDialogCustom = viewModel.uiState.openDialogCustom
         )

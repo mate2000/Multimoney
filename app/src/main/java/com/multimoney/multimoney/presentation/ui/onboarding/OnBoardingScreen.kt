@@ -147,7 +147,7 @@ fun OnBoardingScreen(
                         .wrapContentSize()
                         .padding(start = 4.dp),
                     onClick = {
-                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.route))
+                        viewModel.onUIEvent(OnNavigateToNextScreen(Screen.SignInScreen.baseRoute))
                     }
                 )
             }

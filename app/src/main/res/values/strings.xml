@@ -93,12 +93,23 @@
     <string name="sign_in_biometric_title" translatable="false">Ingresar con biometrico</string>
     <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
     <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónica</string>
+    <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
+    <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
+    <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
+    <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
+
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nque regresés!</string>
     <string name="sign_up_close_dialog_description" translatable="false">Podrás retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
+    <string name="sign_in_error_alert_dialog" translatable="false">Parece que hubo un error</string>
+    <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
+
+
+
+
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>

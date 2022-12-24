@@ -1,0 +1,14 @@
+mutation UserPhoneMobileSave($idBrand:Int!, $idWalletCard:String!, $manufacture:String!, $pkUser:Long!, $serialNumber:String!, $user:String!){
+  userPhoneMobileSave(
+    userPhoneMobileSaveInput: {
+      idBrand: $idBrand
+      idWalletCard: $idWalletCard,
+      manufacture: $manufacture,
+      pkUser: $pkUser,
+      serialNumber: $serialNumber,
+      user: $user
+    }
+  ) {
+    status
+  }
+}

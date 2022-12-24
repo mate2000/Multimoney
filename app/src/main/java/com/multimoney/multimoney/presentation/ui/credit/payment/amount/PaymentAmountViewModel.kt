@@ -44,9 +44,9 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnNavigateToVoucher
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnProcessPayment
-import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnShowPaymentBottomSheet
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.isValidAmount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -117,14 +117,20 @@ class PaymentAmountViewModel @Inject constructor(
             minimumPaymentLabel = minimumPaymentLabel,
             maximumPaymentLabel = maximumPaymentLabel,
             isAmountVisible = isAmountVisible,
-            currency = minimumPaymentLabel.first().toString(),
+            currency = if (minimumPaymentLabel.isNotEmpty()) {
+                minimumPaymentLabel.first().toString()
+            } else {
+                uiState.currency
+            },
             clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
         )
         uiState = uiState.copy(
             accountCurrency = if (isMultiCurrency() || shouldDisplayExchangeRate()) {
-                uiState.clientBankAccount?.idCurrency?.getCurrency()?.symbol ?: ""
-            } else {
+                uiState.clientBankAccount?.idCurrency?.getCurrencyFromId()?.symbol ?: ""
+            } else if (minimumPaymentLabel.isNotEmpty()) {
                 minimumPaymentLabel.first().toString()
+            } else {
+                uiState.accountCurrency
             }
         )
         onAmountValueChange(minimumPayment.toString())
@@ -174,27 +180,29 @@ class PaymentAmountViewModel @Inject constructor(
         if (shouldDisplayExchangeRate()) {
             onUIEvent(OnCallQueryGetExchangeRateCredit)
         } else {
-            onUIEvent(OnShowPaymentBottomSheet)
+            onShowPaymentBottomSheet()
         }
     }
 
     private fun onAmountValueChange(value: String) {
-        uiState = uiState.copy(
-            currentAmountValueString = value,
-            isMinimumSelected = value.isNotEmpty() && value.toInt() == minimumPayment,
-            isMaximumSelected = value.isNotEmpty() && value.toInt() == maximumPayment,
-            enableButton = (
-                value.isNotEmpty() && value.toInt() <= maximumPayment &&
-                    value.isNotEmpty() && value.toInt() > PAYMENT_MUST_HIGHER_THAN_VALUE
-                ),
-            currentAmountError = if (value.isNotEmpty() && value.toInt() > maximumPayment) {
-                Pair(true, R.string.payment_amount_amount_max_error)
-            } else if (value.isNotEmpty() && value.toInt() <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
-                Pair(true, R.string.payment_amount_amount_min_error)
-            } else {
-                Pair(false, R.string.empty)
-            }
-        )
+        if (value.isValidAmount()) {
+            uiState = uiState.copy(
+                currentAmountValueString = value,
+                isMinimumSelected = value.isNotEmpty() && value.toInt() == minimumPayment,
+                isMaximumSelected = value.isNotEmpty() && value.toInt() == maximumPayment,
+                enableButton = (
+                    value.isNotEmpty() && value.toInt() <= maximumPayment &&
+                        value.isNotEmpty() && value.toInt() > PAYMENT_MUST_HIGHER_THAN_VALUE
+                    ),
+                currentAmountError = if (value.isNotEmpty() && value.toInt() > maximumPayment) {
+                    Pair(true, R.string.payment_amount_amount_max_error)
+                } else if (value.isNotEmpty() && value.toInt() <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
+                    Pair(true, R.string.payment_amount_amount_min_error)
+                } else {
+                    Pair(false, R.string.empty)
+                }
+            )
+        }
     }
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentAccountScreen.route, isRestart = false)
@@ -239,7 +247,7 @@ class PaymentAmountViewModel @Inject constructor(
                     exchangeConvertedAmount = it?.result?.convertedAmount ?: 0.0
                 )
                 onUIEvent(OnLoadingValueChange(false))
-                onUIEvent(OnShowPaymentBottomSheet)
+                onShowPaymentBottomSheet()
             }
             result.onLoading { onUIEvent(OnLoadingValueChange(true)) }
         }
@@ -435,7 +443,6 @@ class PaymentAmountViewModel @Inject constructor(
             is OnAlertResultButtonClick -> onAlertResultButtonClick()
             is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
             is OnCallQueryGetExchangeRateCredit -> onCallQueryGetExchangeRate()
-            is OnShowPaymentBottomSheet -> onShowPaymentBottomSheet()
             is OnHidePaymentBottomSheet -> onHidePaymentBottomSheet()
             is OnNavigateToVoucher -> onNavigateToVoucher()
         }
@@ -453,7 +460,6 @@ class PaymentAmountViewModel @Inject constructor(
         object OnAlertResultButtonClick : UIEvent()
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
         object OnCallQueryGetExchangeRateCredit : UIEvent()
-        object OnShowPaymentBottomSheet : UIEvent()
         object OnHidePaymentBottomSheet : UIEvent()
         object OnNavigateToVoucher : UIEvent()
     }

@@ -13,6 +13,7 @@ import com.multimoney.domain.model.security.OnfidoToken
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.security.UserPhoneMobileSave
 import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.security.ValidateOTP
 import com.multimoney.domain.model.security.ValidatePin
@@ -186,4 +187,13 @@ interface SecurityRepository {
         userEmail: String,
         idBrand: Int
     ): Flow<MultimoneyResult<MiniCards>>
+
+    suspend fun mutationUserPhoneMobileSave(
+        idBrand: Int,
+        idWalletCard: String,
+        manufacture: String,
+        pkUser: Long,
+        serialNumber: String,
+        user: String
+    ): Flow<MultimoneyResult<UserPhoneMobileSave>>
 }

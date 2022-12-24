@@ -7,17 +7,25 @@ import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.data.util.catalog.Brand.Guatemala
-import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnAvailableAmountClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNfcAvailable
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnOpenDialogConfirmToStartTokenizationProcess
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -30,16 +38,28 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
 
     // Stateless
     private var idBrand: Int = 0
-    private var balanceCardInformation: BalanceCardInformation? = null
+    private var pkUser: Long = 0
+    var identification: String = ""
+    private var email: String = ""
+    private var phone: String = ""
+    private var cardInformation: CardInformation? = null
+    var availableBalanceLabel: String? = null
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
-        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
+        pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        email = savedStateHandle.get<String>(EMAIL) ?: ""
+        phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
+        cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
+        availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
+        callNovoGetFavoriteCard()
     }
 
     private fun onAvailableAmountClick() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
+                titleResource = string.empty,
                 descriptionResource = when (idBrand) {
                     ElSalvador.id -> string.visa_card_sv_dialog_description_available
                     CostaRica.id -> string.visa_card_cr_dialog_description_available
@@ -52,11 +72,18 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
         )
     }
 
+    private fun callNovoGetFavoriteCard() {
+        uiState = uiState.copy(
+            isNfcAvailable = nfcHelper.isNfcSupported(),
+            isCardTokenize = NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY && NovoVTS.getFavoriteCard() != NOVO_CARD_TOKEN_EMPTY_TWO
+        )
+    }
+
     data class UIState(
         // Interactions
         val isTextVisible: Boolean = false,
-        val availableAmount: String = "$900",
         val isNfcAvailable: Boolean = false,
+        val isCardTokenize: Boolean = false,
         val dialogParameters: DialogParameters = DialogParameters()
     )
 
@@ -64,13 +91,37 @@ class VisaCardViewModel @Inject constructor(savedStateHandle: SavedStateHandle, 
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
             is OnAvailableAmountClick -> onAvailableAmountClick()
-            is OnNfcAvailable -> uiState = uiState.copy(isNfcAvailable = nfcHelper.isNfcSupported())
+            is OnNavigateToVisaTokenizationScreen -> navigateTo(
+                "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
+                encodeData(
+                    cardInformation
+                )
+                }"
+            )
+            is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
+                dialogParameters = DialogParameters(
+                    titleResource = string.visa_card_dialog_title,
+                    descriptionResource = string.visa_card_dialog_description,
+                    positiveResource = string.link,
+                    negativeResource = string.cancel,
+                    positiveAction = {
+                        onUIEvent(OnNavigateToVisaTokenizationScreen)
+                    },
+                    isActive = mutableStateOf(true)
+                )
+            )
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
         object OnAvailableAmountClick : UIEvent()
-        object OnNfcAvailable : UIEvent()
+        object OnNavigateToVisaTokenizationScreen : UIEvent()
+        object OnOpenDialogConfirmToStartTokenizationProcess : UIEvent()
+    }
+
+    companion object {
+        const val NOVO_CARD_TOKEN_EMPTY = ""
+        const val NOVO_CARD_TOKEN_EMPTY_TWO = "-1"
     }
 }

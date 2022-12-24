@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.google.i18n.phonenumbers.PhoneNumberUtil
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.multimoney.R
@@ -20,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
+import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -27,6 +27,7 @@ import javax.inject.Inject
 class ChangePhoneViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
+    var phoneNumberTransformation: PhoneNumberTransformation? = null
 
     var uiState by mutableStateOf(UIState())
         private set
@@ -42,6 +43,14 @@ class ChangePhoneViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             firstName = savedStateHandle[FIRST_NAME],
             idClient = savedStateHandle[ID_CLIENT]
+        )
+        phoneNumberTransformation =
+            PhoneNumberTransformation(uiState.countryCode?.uppercase().toString())
+        uiState = uiState.copy(
+            phoneNumberTemplateMinimalLength = phoneNumberTransformation?.mobileTextExample?.text?.replace(
+                "\\s".toRegex(),
+                ""
+            )?.length
         )
     }
 
@@ -62,11 +71,9 @@ class ChangePhoneViewModel @Inject constructor(
     )
 
     private fun onUserPhoneValueChanged(newPhoneNumber: String, countryCode: String) {
-        uiState =
-            uiState.copy(
-                newPhoneNumber = newPhoneNumber,
-                phoneNumberError = Pair(false, R.string.error_empty)
-            )
+        uiState = uiState.copy(
+            newPhoneNumber = newPhoneNumber, phoneNumberError = Pair(false, R.string.error_empty)
+        )
         isFormValid(countryCode)
     }
 
@@ -90,18 +97,44 @@ class ChangePhoneViewModel @Inject constructor(
             phoneNumberError = Pair(false, R.string.error_empty),
             countryCode = countryCode
         )
+        phoneNumberTransformation =
+            PhoneNumberTransformation(uiState.countryCode?.uppercase().toString())
+        uiState = uiState.copy(
+            phoneNumberTemplateMinimalLength = phoneNumberTransformation?.mobileTextExample?.text?.replace(
+                "\\s".toRegex(),
+                ""
+            )?.length
+        )
         isFormValid(countryCode)
     }
 
     private fun isPhoneValid(countryCode: String?) {
-        if (isPhoneNumberValid(
-                phone = uiState.newPhoneNumber.toString(),
-                fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",
-                countryCode = countryCode ?: "",
-                phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
-            ).not()
-        ) uiState = uiState.copy(phoneNumberError = Pair(true, R.string.sign_up_phone_not_valid))
-        else clearPhoneError()
+        uiState.phoneNumberTemplateMinimalLength?.let { templateLength ->
+            uiState.newPhoneNumber?.let { newPhoneNumber ->
+                if (newPhoneNumber.length < templateLength) {
+                    uiState = uiState.copy(
+                        phoneNumberError = Pair(
+                            true,
+                            R.string.profile_change_phone_check_format_template
+                        )
+                    )
+                } else {
+                    if (isPhoneNumberValid(
+                            phone = uiState.newPhoneNumber.toString(),
+                            fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",
+                            countryCode = countryCode ?: "",
+                            phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
+                        ).not()
+                    ) uiState = uiState.copy(
+                        phoneNumberError = Pair(
+                            true,
+                            R.string.sign_up_phone_not_valid
+                        )
+                    )
+                    else clearPhoneError()
+                }
+            }
+        }
     }
 
     private fun clearPhoneError() {
@@ -120,9 +153,10 @@ class ChangePhoneViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val newPhoneNumber: String? = null,
         val idBrand: Int? = null,
-        val idClient : Int? = null,
+        val idClient: Int? = null,
         val firstName: String? = null,
         val pkUser: String? = null,
+        val phoneNumberTemplateMinimalLength: Int? = 0,
         val phoneCode: String = "",
         val countryCode: String? = null,
         val phoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_phone_not_valid),
@@ -132,31 +166,30 @@ class ChangePhoneViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is UIEvent.OnUserPhoneValueChanged -> onUserPhoneValueChanged(
-                event.phoneNumber,
-                event.countryCode
+                event.phoneNumber, event.countryCode
             )
             is UIEvent.OnStart -> onStart(event.phoneCode)
             is UIEvent.OnValidatePhone -> isPhoneValid(event.countryCode)
             is UIEvent.OnCountryCodeValueChanged -> onCountryCodeValueChanged(
-                event.phoneCode,
-                event.countryCode
+                event.phoneCode, event.countryCode
             )
             is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
-            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.ProfilePersonalInfoScreen.route, false)
         }
     }
 
     sealed class UIEvent {
         data class OnUserPhoneValueChanged(val phoneNumber: String, val countryCode: String) :
             UIEvent()
+
         data class OnStart(val phoneCode: String) : UIEvent()
         data class OnValidatePhone(val countryCode: String?) : UIEvent()
         data class OnCountryCodeValueChanged(
             val phoneCode: String,
             val countryCode: String,
         ) : UIEvent()
+
         object OnContinueButtonClicked : UIEvent()
         object OnNavigateBack : UIEvent()
     }
 }
-

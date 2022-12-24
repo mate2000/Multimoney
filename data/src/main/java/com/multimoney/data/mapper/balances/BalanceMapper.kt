@@ -7,6 +7,7 @@ import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.domain.model.balance.BalanceCredit
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
+import com.multimoney.domain.model.balance.BlockType
 import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.domain.model.balance.Summary
 
@@ -53,7 +54,8 @@ private fun BalanceQuery.Account.mapToDomainModel() =
         accountNumber = accountNumber,
         ibanAccountNumber = ibanAccountNumber,
         totalInterest = totalInterest.toString(),
-        tokenNumber = tokenNumber
+        tokenNumber = tokenNumber,
+        idCurrencyAccount = idCurrencyAccount.toString().toIntOrNull()
     )
 
 private fun BalanceQuery.BalanceCryptoAccount.mapToDomainModel() =
@@ -83,7 +85,10 @@ private fun BalanceQuery.BalanceCardInformation.mapToDomainModel() = BalanceCard
         expDate = cardInfo?.expDate,
         holderName = cardInfo?.holderName,
         status = cardInfo?.status,
-        blockType = cardInfo?.blockType,
+        blockType = BlockType(
+            cardInfo?.blockType?.code,
+            cardInfo?.blockType?.msg
+        ),
         cValidation = cardInfo?.cvalidation,
         type = cardInfo?.type
     ),

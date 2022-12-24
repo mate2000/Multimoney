@@ -3,7 +3,7 @@ package com.multimoney.multimoney.presentation.navigation.navtype.payment
 import android.os.Bundle
 import androidx.navigation.NavType
 import com.google.gson.Gson
-import com.multimoney.domain.model.credit.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 
 class CardVDNavType : NavType<CardVisaDirect>(isNullableAllowed = false) {
     override fun get(bundle: Bundle, key: String): CardVisaDirect? {

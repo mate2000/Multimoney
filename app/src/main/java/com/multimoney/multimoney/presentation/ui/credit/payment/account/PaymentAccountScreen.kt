@@ -38,7 +38,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.getCurrency
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
@@ -154,7 +154,7 @@ fun PaymentAccountList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    startIcon = clientBankAccount?.idCurrency?.getCurrency()?.accountIcon ?: 0,
+                    startIcon = clientBankAccount?.idCurrency?.getCurrencyFromId()?.accountIcon ?: 0,
                     title = clientBankAccount?.bankDescription ?: "",
                     subtitle = getMaskedAccount(
                         clientBankAccount?.accountNumber ?: "",

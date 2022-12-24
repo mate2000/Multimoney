@@ -48,6 +48,11 @@ const val IS_AUTOMATIC_PAYMENT_CHECKED = "is_automated_payment_checked"
 const val IS_MULTI_CURRENCY = "is_multi_currency"
 const val EXCHANGE_RATE_LABEL = "exchange_rate_label"
 const val PAYMENT_AMOUNT = "payment_amount"
+const val PAYMENT_AMOUNT_LABEL = "payment_amount_label"
+const val MINIMUM_PAYMENT = "minimum_payment"
+const val MINIMUM_PAYMENT_LABEL = "minimum_payment_label"
+const val MAXIMUM_PAYMENT = "maximum_payment"
+const val MAXIMUM_PAYMENT_LABEL = "maximum_payment_label"
 const val PAYMENT_ID = "payment_id"
 const val PAYMENT_DATE = "payment_date"
 const val IS_EDIT_BANK_ACCOUNT = "is_edit_bank_account"
@@ -284,8 +289,17 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 navArgument(TRANSFER_ACCOUNT) {
                     type = TransferAccountNavType()
                 },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(MINIMUM_PAYMENT) {
+                    type = NavType.FloatType
+                },
+                navArgument(MAXIMUM_PAYMENT) {
+                    type = NavType.FloatType
                 }
             )
         ) {
@@ -370,6 +384,18 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(ID_BRAND) {
                     type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(MINIMUM_PAYMENT) {
+                    type = NavType.FloatType
+                },
+                navArgument(MAXIMUM_PAYMENT) {
+                    type = NavType.FloatType
                 }
             )
         ) {
@@ -396,11 +422,22 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(CARD_SELECTED) {
                     type = CardVDNavType()
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(MINIMUM_PAYMENT) {
+                    type = NavType.FloatType
+                },
+                navArgument(MAXIMUM_PAYMENT) {
+                    type = NavType.FloatType
                 }
             )
         ) {
             PaymentAmountCardScreen(
-                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
                 onNavigate = {
                     navController.navigate(it.route)
                 },

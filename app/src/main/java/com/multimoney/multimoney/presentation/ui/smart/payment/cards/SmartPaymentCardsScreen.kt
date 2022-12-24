@@ -16,14 +16,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.domain.model.credit.CardVisaDirect
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCallQueryGetClientCards
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -43,13 +43,14 @@ fun SmartPaymentCardsScreen(
     viewModel.apply {
         isOnRestart = isRestart
         LaunchedEffect(isOnRestart) {
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
             if (isOnRestart) {
-                executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-                onUIEvent(OnCallQueryGetClientCards)
+                viewModel.onUIEvent(OnStart)
                 isOnRestart = false
             }
         }
     }
+
     Column(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -121,7 +122,7 @@ fun PaymentCardList(
                     title = card.detail ?: "",
                     subtitle = stringResource(
                         R.string.visa_card_masked_number,
-                        card.cardMaskedNumber?.takeLast(4) ?: ""
+                        card.cardMaskedNumber.orEmpty().takeLast(4)
                     ),
                     onClick = { onCardSelected(card) }
                 )

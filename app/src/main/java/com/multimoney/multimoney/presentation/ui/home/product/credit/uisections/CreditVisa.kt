@@ -24,25 +24,29 @@ fun CreditVisa(
     onCreateMultimoneyVisa: () -> Unit = {},
     isExpanded: Boolean = false
 ) {
-    if (uiState.userStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status && balance?.getFirstSummary()?.applyCommerce == true && balance.getFirstSummary()?.applyCreateCard == true) {
+    if (uiState.userStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
         if (isExpanded) {
             Divider(color = MultimoneyTheme.colors.dividerWhite30)
             Spacer(modifier = Modifier.height(24.dp))
         }
-        balance.balanceCardInformation?.cardInformation?.let { cardInformation ->
+        balance?.balanceCardInformation?.cardInformation?.let { cardInformation ->
             CustomBoxVisaBackground(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 onClick = {
                     onNavigateToVisaActivateScreen()
                 },
-                type = CreditCard(cardInformation.cardNumber ?: "")
+                type = CreditCard(cardInformation.cardNumber ?: ""),
+                idBrand = uiState.idBrand.toInt()
             )
         } ?: run {
-            CustomBoxVisaBackground(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                onClick = { onCreateMultimoneyVisa() },
-                type = RequestCreditCard
-            )
+            if (balance?.getFirstSummary()?.applyCommerce == true && balance.getFirstSummary()?.applyCreateCard == true) {
+                CustomBoxVisaBackground(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    onClick = { onCreateMultimoneyVisa() },
+                    type = RequestCreditCard,
+                    idBrand = uiState.idBrand.toInt()
+                )
+            }
         }
     }
 }

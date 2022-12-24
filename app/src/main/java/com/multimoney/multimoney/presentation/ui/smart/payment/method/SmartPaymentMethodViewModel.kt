@@ -4,15 +4,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER_SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnTransferSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.method.SmartPaymentMethodViewModel.UIEvent.OnVisaSelected
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
+@HiltViewModel
 class SmartPaymentMethodViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
@@ -22,10 +26,10 @@ class SmartPaymentMethodViewModel @Inject constructor(
         private set
 
     // stateLess
-    var userSmartAccount : String = ""
+    private var smartAccount: SmartAccountID? = null
 
     init {
-        userSmartAccount = savedStateHandle[USER_SMART_ACCOUNT] ?: ""
+        smartAccount = savedStateHandle[SMART_IDS]
     }
 
     private fun onNavigateBack() {
@@ -36,12 +40,13 @@ class SmartPaymentMethodViewModel @Inject constructor(
     }
 
     private fun navigateToTransferScreen() {
-        navigateTo("${Screen.SavingMethodTransferScreen.baseRoute}/$userSmartAccount")
+        navigateTo("${Screen.SavingMethodTransferScreen.baseRoute}/${smartAccount?.accountNumber ?: ""}")
     }
 
-    //TODO Implement visa navigation
     private fun navigateToVisaScreen() {
-
+        navigateTo(
+            "${Screen.SmartPaymentCardsScreenSV.baseRoute}/${encodeData(smartAccount)}"
+        )
     }
 
     fun onUIEvent(uiEvent: UIEvent) {

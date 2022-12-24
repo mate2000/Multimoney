@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,7 +51,6 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import com.multimoney.multimoney.presentation.util.isValidAmountLength
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -129,7 +129,7 @@ fun CurrencyAmountInput(
 
     if (isSystemInDarkTheme()) {
         backgroundColor = WhiteTransparency10
-        placeholderColor = WhiteTransparency30
+        placeholderColor = WhiteTransparency60
         unfocusedIndicatorColor = DefaultBlack
         errorIndicatorColor = SemanticNegative400
         when {
@@ -191,18 +191,16 @@ fun CurrencyAmountInput(
             keyboardActions = keyboardActions,
             onValueChange = {
                 activity?.onUserInteraction()
-                if (it.isValidAmountLength()) {
-                    onValueChange(it)
-                    textDebounce.value = it
-                    if (isRequired) emptyError = it.isEmpty()
-                }
+                onValueChange(it)
+                textDebounce.value = it
+                if (isRequired) emptyError = it.isEmpty()
             },
             placeholder = {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = placeHolder,
                     color = placeholderColor,
-                    style = Typography.h4.copy(textAlign = TextAlign.Center)
+                    style = Typography.h4.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.W600)
                 )
             },
             isError = isError || emptyError,

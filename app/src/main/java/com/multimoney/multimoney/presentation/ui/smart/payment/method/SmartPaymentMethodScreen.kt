@@ -31,7 +31,9 @@ fun SmartPaymentMethodScreen(
     viewModel: SmartPaymentMethodViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
-        viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+        viewModel.apply {
+            executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+        }
     }
 
     Column(

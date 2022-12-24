@@ -4,7 +4,6 @@ import androidx.paging.PagingData
 import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
-import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -26,6 +25,8 @@ import com.multimoney.domain.model.credit.PromissoryNoteDetail
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
+import com.multimoney.domain.model.credit.SaveCreditOffer
+import com.multimoney.domain.model.credit.SaveTermsAndConditionsCredit
 import com.multimoney.domain.model.util.MultimoneyResult
 import kotlinx.coroutines.flow.Flow
 
@@ -148,6 +149,13 @@ interface CreditRepository {
         idUserRequest: Int
     ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
 
+    suspend fun queryEmploymentSituation(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>>
+
     suspend fun mutationSaveCreditFlowStep(
         user: String,
         idBrand: Int,
@@ -156,6 +164,20 @@ interface CreditRepository {
         idUser: Int,
         currentStep: String
     ): Flow<MultimoneyResult<SaveCreditFlowStep?>>
+
+    suspend fun mutationSaveCreditOffer(
+        pkUser: Long,
+        idUserRequest: Long,
+        idBrand: Int
+    ): Flow<MultimoneyResult<SaveCreditOffer>>
+
+    suspend fun mutationSaveTermsAndConditionsCredit(
+        user: String,
+        idBrand: Int,
+        pkUser: Long,
+        currentFlow: String,
+        identification: String
+    ): Flow<MultimoneyResult<SaveTermsAndConditionsCredit>>
 
     suspend fun mutationTermsAndConditions(
         user: String,
@@ -169,12 +191,6 @@ interface CreditRepository {
         idClient: Int,
         idLoanClient: Int
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
-
-    suspend fun queryListCardVD(
-        user: String,
-        idBrand: Int,
-        identification: String
-    ): Flow<MultimoneyResult<List<CardVisaDirect?>?>>
 
     suspend fun queryBanksAndRegularExpression(
         pkUser: Int,

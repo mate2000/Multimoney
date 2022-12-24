@@ -4,29 +4,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
-import com.multimoney.domain.model.util.error.HttpError
-import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.accountsmart.IbanAccountID
+import com.multimoney.domain.model.accountsmart.SinpeAccount
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnColonSelected
-import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnDollarSelected
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAccountClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPaymentAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.Companion.ID_NOT_APPLICABLE
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.Companion.NOT_APPLICABLE
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @HiltViewModel
 class SmartPaymentAccountViewModel @Inject constructor(
-    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -35,91 +38,75 @@ class SmartPaymentAccountViewModel @Inject constructor(
         private set
 
     // Stateless
+    private var smartAccount: SmartAccountID? = null
     private var user: String = ""
-    private var idBrand: String = ""
-    private var idClient: String = ""
-    private var idLoanClient: String = ""
+    private var idBrand: Int = 0
     private var identification: String? = ""
+    private var idClient: String? = ""
+    private var idLoanClient: String? = ""
+    private var previousScreen: String? = ""
 
     init {
         user = savedStateHandle[USER] ?: ""
-        idBrand = savedStateHandle[ID_BRAND] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
         idClient = savedStateHandle[ID_CLIENT] ?: ""
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: ""
-        identification = savedStateHandle[IDENTIFICATION] ?: ""
-    }
-
-    private fun callQueryBalanceUseCase() = executeUseCase {
-        queryListSinpeAccountUseCaseImpl.invoke(
-            user = user,
-            identification = identification ?: "",
-            idBrand = idBrand.toInt(),
-            country = "",
-            idAccount = 0,
-            accountNumber = ""
-        ).collectLatest { result ->
-            result.onSuccess { accountList ->
-                if (accountList?.data?.isEmpty() == true) {
-                    navigateToAddIbanAccount()
-                }
-            }
-            result.onFailure {
-                onFailure(it)
-            }
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true)
-            }
-        }
-    }
-
-    private fun onFailure(error: HttpError) {
+        smartAccount = savedStateHandle[SMART_IDS]
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         uiState = uiState.copy(
-            isLoading = false,
-            openDialog = DialogParameters(
-                description = error.getError() ?: "",
-                isActive = mutableStateOf(true)
-            )
+            sinpeAccountList = savedStateHandle.get<Array<SinpeAccount>>(SMART_PAYMENT_ACCOUNTS)
+                ?.toList()
         )
     }
 
-    private fun onNavigateBack() {
-        popAndNavigateTo(
-            route = Screen.HomeScreen.route,
-            popTo = Screen.SmartPaymentAccountScreen.route
-        )
-    }
-
-    //TODO Implement Colon navigation
-    private fun navigateToColonPaymentScreen() {
-        callQueryBalanceUseCase()
-    }
-
-    private fun navigateToDollarPaymentScreen() {
-        callQueryBalanceUseCase()
-    }
-
-    private fun navigateToAddIbanAccount() {
+    private fun onAddAccountClick() {
         navigateTo(
             route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/$idLoanClient"
         )
     }
 
+    private fun onAccountClick(selectedSinpeAccount: SinpeAccount?) {
+        val ibanAccount = encodeData(
+            IbanAccountID(
+                bank = selectedSinpeAccount?.bank,
+                clientIdentification = selectedSinpeAccount?.clientIdentification,
+                sinpeAccount = selectedSinpeAccount?.sinpeAccount,
+                currencyId = selectedSinpeAccount?.currencyId,
+                nameAccount = selectedSinpeAccount?.nameAccount
+            )
+        )
+        navigateTo(
+            "${Screen.SmartPaymentSavingAmount.baseRoute}/${encodeData(smartAccount)}?$IBAN_ACCOUNT=" +
+                    "${ibanAccount}/$ID_NOT_APPLICABLE/${Screen.SmartPaymentAccountScreenCR.baseRoute}/$NOT_APPLICABLE/$NOT_APPLICABLE"
+        )
+    }
+
+    private fun onNavigateBack() {
+        val screen = when (previousScreen) {
+            Screen.SmartPaymentOptionsScreenCR.baseRoute -> Screen.SmartPaymentOptionsScreenCR.route
+            else -> Screen.HomeScreen.route
+        }
+        navigateBack(popTo = screen, isRestart = false)
+    }
+
     data class UIState(
+        val sinpeAccountList: List<SinpeAccount>? = listOf(),
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
+            is OnAddAccountClick -> onAddAccountClick()
             is OnNavigateBack -> onNavigateBack()
-            is OnColonSelected -> navigateToColonPaymentScreen()
-            is OnDollarSelected -> navigateToDollarPaymentScreen()
+            is OnAccountClick -> onAccountClick(uiEvent.account)
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
-        object OnColonSelected : UIEvent()
-        object OnDollarSelected : UIEvent()
+        object OnAddAccountClick : UIEvent()
+        data class OnAccountClick(val account: SinpeAccount?) : UIEvent()
     }
 }

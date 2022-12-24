@@ -56,6 +56,8 @@ import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
 import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
 import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
+import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
+import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
@@ -74,6 +76,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDet
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
 import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
@@ -1436,6 +1439,44 @@ class GraphqlApi @Inject constructor(
                 pkUser = pkUser,
                 idUserRequest = idUserRequest,
                 idBrand = idBrand
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun querySmartExchangeRate(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        abbreviation: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String,
+        amount: Double
+    ): ApolloCall<ExchangeRateQuery.Data> =
+        apolloAuthorizedClient.query(
+            ExchangeRateQuery(
+                user = user,
+                identification = identification,
+                idOriginCurrency = idOriginCurrency,
+                idDestinationCurrency = idDestinationCurrency,
+                idBrand = idBrand,
+                abbreviation = abbreviation,
+                amount = amount
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveTermsAndConditionsCredit(
+        user: String,
+        idBrand: Int,
+        pkUser: Long,
+        currentFlow: String,
+        identification: String
+    ): ApolloCall<SaveTermsAndConditionsCreditMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveTermsAndConditionsCreditMutation(
+                user = user,
+                idBrand = idBrand,
+                pkUser = pkUser,
+                currentFlow = currentFlow,
+                identification = identification
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

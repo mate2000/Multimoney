@@ -12,6 +12,7 @@ import com.multimoney.data.paging.SmartMovementsPagingSource
 import com.multimoney.domain.model.accountsmart.AddressesLevel
 import com.multimoney.domain.model.accountsmart.Beneficiary
 import com.multimoney.domain.model.accountsmart.CivilStatusResult
+import com.multimoney.domain.model.accountsmart.ExchangeRateResult
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivityResult
 import com.multimoney.domain.model.accountsmart.GlobalRequest
 import com.multimoney.domain.model.accountsmart.Nationalities
@@ -349,6 +350,31 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 country,
                 idAccount,
                 accountNumber
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+    }
+
+    override suspend fun querySmartExchangeRate(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        abbreviation: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String,
+        amount: Double
+    ): Flow<MultimoneyResult<ExchangeRateResult?>> {
+        return fetchData(
+            apolloCall = graphqlApi.querySmartExchangeRate(
+                user = user,
+                identification = identification,
+                idBrand = idBrand,
+                abbreviation = abbreviation,
+                idOriginCurrency = idOriginCurrency,
+                idDestinationCurrency = idDestinationCurrency,
+                amount = amount
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

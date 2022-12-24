@@ -32,6 +32,7 @@ import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOffer
 import com.multimoney.domain.model.credit.SaveCreditOperation
+import com.multimoney.domain.model.credit.SaveTermsAndConditionsCredit
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -308,6 +309,25 @@ class CreditRepositoryImpl @Inject constructor(
             pkUser = pkUser,
             idUserRequest = idUserRequest,
             idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationSaveTermsAndConditionsCredit(
+        user: String,
+        idBrand: Int,
+        pkUser: Long,
+        currentFlow: String,
+        identification: String
+    ): Flow<MultimoneyResult<SaveTermsAndConditionsCredit>> = fetchData(
+        apolloCall = graphqlApi.mutationSaveTermsAndConditionsCredit(
+            user = user,
+            idBrand = idBrand,
+            pkUser = pkUser,
+            currentFlow = currentFlow,
+            identification = identification
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

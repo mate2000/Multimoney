@@ -33,6 +33,7 @@ import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -236,15 +237,25 @@ class ProductViewModel @Inject constructor(
         navigateTo(route)
     }
 
-    private fun onNavigateToAutomaticPaymentScheduleScreen() {
+    private fun onNavigateToAutomaticPaymentScheduleScreen(isEditSchedule: Boolean) {
         val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo(
-            route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(
-                ClientBankAccount()
+        if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+            navigateTo(
+                route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+                encodeData(
+                    ClientBankAccount()
+                )
+                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule"
             )
-            }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/${false}"
-        )
+        } else {
+            navigateTo(
+                route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+                encodeData(
+                    CardVisaDirect()
+                )
+                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification"
+            )
+        }
     }
 
     private fun onChipQuotaClick() {
@@ -736,7 +747,7 @@ class ProductViewModel @Inject constructor(
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
             is OnChipQuotaClick -> onChipQuotaClick()
-            is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
+            is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen(uiEvent.isEditSchedule)
             is OnQuickActionClicked -> onQuickActionClicked(
                 flow = uiEvent.flow,
                 onLoadingValueChange = uiEvent.onLoadingValueChange
@@ -790,7 +801,7 @@ class ProductViewModel @Inject constructor(
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
         object OnChipQuotaClick : UIEvent()
-        object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
+        data class OnNavigateToScheduleAutomaticPaymentScreen(val isEditSchedule: Boolean) : UIEvent()
         object OnNavigateToSmartPaymentAccountScreen : UIEvent()
         object OnNavigateToSmartPaymentMethodScreen : UIEvent()
         object OnGetSmartContent : UIEvent()

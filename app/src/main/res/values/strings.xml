@@ -926,6 +926,18 @@
     <!-- Payment Schedule Account-->
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
 
+    <!-- Payment Schedule Cards-->
+    <string name="payment_schedule_card_title" translatable="false">Configurá tu pago \nautomático</string>
+    <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
+    <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
+    <string name="payment_schedule_card_label_date_description" translatable="false">%s de cada mes</string>
+    <string name="payment_schedule_card_button" translatable="false">Programar</string>
+
+    <!-- Payment Schedule Card List-->
+    <string name="payment_schedule_card_list_title" translatable="false">Selecciona una tarjeta para programar tu pago</string>
+    <string name="payment_schedule_card_list_add_card" translatable="false">Agregar tarjeta</string>
+
     <!-- Disbursement Amount-->
     <string name="disbursement_amount_title" translatable="false">¿Cuánto \ndinero necesitás?</string>
     <string name="disbursement_amount_gt_title" translatable="false">¿Cuánto \ndinero necesitas?</string>

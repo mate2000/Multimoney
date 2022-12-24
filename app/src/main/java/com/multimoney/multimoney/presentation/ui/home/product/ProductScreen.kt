@@ -145,7 +145,7 @@ fun ProductScreen(
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnMiniCardsClicked(event.flow))
                 }
                 is HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent -> {
-                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen)
+                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen(true))
                 }
                 is HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent -> {
                     viewModel.onUIEvent(

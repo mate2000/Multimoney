@@ -24,9 +24,6 @@ data class Summary(
     val daysExpired: Int,
     val canExpandState: Boolean?,
     val isProductActive: Boolean?,
-    val applyAutomaticDebit: Boolean?,
-    val automaticDebitEnabled: Boolean?,
-    val visaAutomaticDebitEnabled: Boolean?,
     val applyCommerce: Boolean?,
     val applyCreateCard: Boolean?
 ) : Parcelable

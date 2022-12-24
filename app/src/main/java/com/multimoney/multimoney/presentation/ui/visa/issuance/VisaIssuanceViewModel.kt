@@ -1,18 +1,21 @@
 package com.multimoney.multimoney.presentation.ui.visa.issuance
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.domain.model.balance.BalanceCardInformation
+import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnIssuanceClick
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.NfcHelper
@@ -32,11 +35,19 @@ class VisaIssuanceViewModel @Inject constructor(
 
     // Stateless
     private var idBrand: Int = 0
-    private var balanceCardInformation: BalanceCardInformation? = null
+    private var pkUser: Long = 0
+    var identification: String = ""
+    private var email: String = ""
+    private var phone: String = ""
+    private var cardInformation: CardInformation? = null
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND) ?: 0
-        balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
+        pkUser = savedStateHandle.get<Long>(PK_USER) ?: 0
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        email = savedStateHandle.get<String>(EMAIL) ?: ""
+        phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
+        cardInformation = savedStateHandle.get<CardInformation>(CARD_INFORMATION)
         getTextResources()
     }
 
@@ -91,12 +102,19 @@ class VisaIssuanceViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
-            is OnIssuanceClick -> Toast.makeText(uiEvent.context, "Topkenizar tarjeta", Toast.LENGTH_SHORT).show()
+            is OnIssuanceClick -> popAndNavigateTo(
+                "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
+                encodeData(
+                    cardInformation
+                )
+                }",
+                Screen.VisaIssuanceScreen.route
+            )
         }
     }
 
     sealed class UIEvent {
         object OnNavigateBack : UIEvent()
-        data class OnIssuanceClick(val context: Context) : UIEvent()
+        object OnIssuanceClick : UIEvent()
     }
 }

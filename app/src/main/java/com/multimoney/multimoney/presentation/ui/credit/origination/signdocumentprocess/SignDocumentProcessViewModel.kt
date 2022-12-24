@@ -11,6 +11,7 @@ import com.multimoney.domain.model.credit.CreditContractEvent
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -20,12 +21,15 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_URL
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.SimulateUserInteraction
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCloseClick
@@ -33,8 +37,6 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.signdocument
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertCloseClick
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_FIRST_TIME
 import com.multimoney.multimoney.presentation.util.catalog.OnfidoAndEvicertiaError.EVICERTIA_REJECTED_SECOND_TIME
@@ -65,6 +67,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     var idUserRequest: Long = 0
     var firstName: String = ""
     var lastName: String = ""
+    var isSmart: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -75,6 +78,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         idUserRequest = savedStateHandle[ID_USER_REQUEST] ?: 0
         firstName = savedStateHandle[FIRST_NAME] ?: ""
         lastName = savedStateHandle[LAST_NAME] ?: ""
+        isSmart = savedStateHandle[IS_SMART_EVICERTIA] ?: false
         uiState = uiState.copy(
             signDocumentProcessStep = savedStateHandle[SIGN_DOCUMENT_STEP_ARG] ?: "",
             signDocumentUrl = savedStateHandle[SIGN_DOCUMENT_URL] ?: ""
@@ -93,23 +97,24 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun onShouldCallSubscription(idPrint: Long, idBrand: Int) {
-        if (idBrand != Brand.ElSalvador.id && idPrint != ID_PRINT_EMPTY) {
+        if (idBrand != Brand.ElSalvador.id && uiState.signDocumentProcessStep != VALIDATE_IDENTITY.value && idPrint != ID_PRINT_EMPTY) {
             onListenCreditContractEventSubscription(idPrint, idBrand)
         }
     }
 
     private fun onListenCreditContractEventSubscription(idPrint: Long, idBrand: Int) {
         executeUseCase {
-            subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand).collectLatest { result ->
-                result.onSuccess {
-                    handleEvents(creditContractEvent = it)
-                }.onFailure {
-                    while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
-                        onListenCreditContractEventSubscription(idPrint, idBrand)
-                        numAttemptsToStartSubscription++
+            subscriptionCreditContractEventUseCase.invoke(idPrint, idBrand)
+                .collectLatest { result ->
+                    result.onSuccess {
+                        handleEvents(creditContractEvent = it)
+                    }.onFailure {
+                        while (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
+                            onListenCreditContractEventSubscription(idPrint, idBrand)
+                            numAttemptsToStartSubscription++
+                        }
                     }
                 }
-            }
         }
     }
 
@@ -222,6 +227,9 @@ class SignDocumentProcessViewModel @Inject constructor(
         val signDocumentProcessStep: String = GENERATE_DOCUMENT_STEP.value,
         val dialogParameters: DialogParameters = DialogParameters(),
         val signDocumentUrl: String = "",
+        val loadingIcon: Int = drawable.ic_frame,
+        val loadingTitle: Int = string.document_generation_title,
+        val loadingSubtitle: Int = string.document_generation_subtitle,
         val isAlertResultSuccess: Boolean = true,
         val isAlertResultVisible: Boolean = false,
         val alertResultIconResource: Int = 0,
@@ -234,7 +242,8 @@ class SignDocumentProcessViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnCallSubscriptionCreditContractEvent -> onShouldCallSubscription(idPrint, idBrand)
-            is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
+            is OnChangeScreen -> uiState =
+                uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnInitializeText -> dialogDescription = uiEvent.dialogDescription
             is OnCloseClick -> onNavigateToHome()
             is OnShowDialogInformation -> createDialog()
@@ -262,10 +271,9 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     companion object {
-        private const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 40000L
+        const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 600000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
-        const val TIME_TO_WAIT_VALIDATE_SMART_IDENTITY_IN_MILLI_SECOND = 30000L
         const val ID_PRINT_EMPTY = 0L
     }
 }

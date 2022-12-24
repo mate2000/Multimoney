@@ -232,22 +232,19 @@ class SmartOnfidoViewModel @Inject constructor(
     }
 
     private fun navigateToCorrectScreen() {
-        val signDocumentStep = if (idBrand == Brand.ElSalvador.id) {
-            VALIDATE_IDENTITY.value
-        } else {
+        val signDocumentStep =
             if (evicertiaStatus.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase()) {
                 VALIDATE_IDENTITY.value
             } else {
                 GENERATE_DOCUMENT_STEP.value
             }
-        }
         onNavigateToSignDocumentScreen(signDocumentStep)
     }
 
     private fun onNavigateToSignDocumentScreen(signDocumentStep: String) {
         popAndNavigateTo(
-            "${Screen.SignDocumentProcessScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName",
-            Screen.CreditOnfidoScreen.route
+            route = "${Screen.SmartSignScreen.baseRoute}/$signDocumentStep/$evicertiaUrl/$idPrint/$idBrand/$pkUser/$identification/$email/$idUserRequest/$firstName/$lastName/${true}",
+            popTo = Screen.HomeScreen.route
         )
     }
 
@@ -282,7 +279,8 @@ class SmartOnfidoViewModel @Inject constructor(
             is OnContinueEnable -> uiState = uiState.copy(isContinueEnabled = event.isEnable)
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnNavigateToHome -> onNavigateToHome()
-            is OnFailureWithDialog -> uiState = uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState =
+                uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnOpenOnfidoSdk -> onOpenOnfidoSdk(event.onOpenOnfidoSdk)
         }
     }
@@ -321,7 +319,9 @@ class SmartOnfidoViewModel @Inject constructor(
         object OnCloseClick : UIEvent()
         object OnContinueClick : UIEvent()
         data class OnContinueEnable(val isEnable: Boolean) : UIEvent()
-        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
+        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
+            UIEvent()
+
         data class OnOpenOnfidoSdk(val onOpenOnfidoSdk: () -> Unit) : UIEvent()
     }
 

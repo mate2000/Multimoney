@@ -10,7 +10,6 @@ import com.multimoney.data.paging.CreditMovementsPagingSource
 import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
-import com.multimoney.domain.model.credit.CardVisaDirect
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
 import com.multimoney.domain.model.credit.CreditCatalog
@@ -32,6 +31,8 @@ import com.multimoney.domain.model.credit.PromissoryNoteDetail
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOperation
+import com.multimoney.domain.model.credit.SaveCreditOffer
+import com.multimoney.domain.model.credit.SaveTermsAndConditionsCredit
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
@@ -260,6 +261,23 @@ class CreditRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun queryEmploymentSituation(
+        pkUser: Int,
+        user: String,
+        idBrand: Int,
+        idUserRequest: Int
+    ): Flow<MultimoneyResult<List<CreditCatalog?>?>> = fetchData(
+        apolloCall = graphqlApi.queryEmploymentSituation(
+            pkUser = pkUser,
+            user = user,
+            idBrand = idBrand,
+            idUserRequest = idUserRequest
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
     override suspend fun mutationSaveCreditFlowStep(
         user: String,
         idBrand: Int,
@@ -275,6 +293,40 @@ class CreditRepositoryImpl @Inject constructor(
             idLogUserRequest,
             idUser,
             currentStep
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationSaveCreditOffer(
+        pkUser: Long,
+        idUserRequest: Long,
+        idBrand: Int,
+    ): Flow<MultimoneyResult<SaveCreditOffer>> = fetchData(
+        apolloCall = graphqlApi.mutationSaveCreditOffer(
+            pkUser = pkUser,
+            idUserRequest = idUserRequest,
+            idBrand = idBrand
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun mutationSaveTermsAndConditionsCredit(
+        user: String,
+        idBrand: Int,
+        pkUser: Long,
+        currentFlow: String,
+        identification: String
+    ): Flow<MultimoneyResult<SaveTermsAndConditionsCredit>> = fetchData(
+        apolloCall = graphqlApi.mutationSaveTermsAndConditionsCredit(
+            user = user,
+            idBrand = idBrand,
+            pkUser = pkUser,
+            currentFlow = currentFlow,
+            identification = identification
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
@@ -307,21 +359,6 @@ class CreditRepositoryImpl @Inject constructor(
             idBrand,
             idClient,
             idLoanClient
-        ),
-        apolloCallMapper = { data ->
-            Success(data.mapToDomainModel())
-        }
-    )
-
-    override suspend fun queryListCardVD(
-        user: String,
-        idBrand: Int,
-        identification: String
-    ): Flow<MultimoneyResult<List<CardVisaDirect?>?>> = fetchData(
-        apolloCall = graphqlApi.queryListCardsVD(
-            user,
-            idBrand,
-            identification
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

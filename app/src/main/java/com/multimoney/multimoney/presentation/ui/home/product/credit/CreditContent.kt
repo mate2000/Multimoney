@@ -12,7 +12,9 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCreditScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardCreditFirmedAndOnfidoPending
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGTWithoutCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditPreApproved
@@ -170,9 +172,9 @@ fun CreditContent(viewModel: ProductViewModel) {
                     }
                 }
             }
-            CreditStatus.CREDIT_REJECTED.status, CreditStatus.CREDIT_NOT_PRE_APPROVED.status -> {
+            CreditStatus.CREDIT_REJECTED.status -> {
                 when (viewModel.uiState.idBrand) {
-                    Brand.Guatemala.id.toString() -> {
+                    Brand.Guatemala.id.toString(), Brand.ElSalvador.id.toString() -> {
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
@@ -181,6 +183,24 @@ fun CreditContent(viewModel: ProductViewModel) {
                             CardGTWithoutCredit(action = {
                                 // todo define de flow to open
                             })
+                        }
+                    }
+                    else -> Unit
+                }
+            }
+            CreditStatus.CREDIT_NOT_PRE_APPROVED.status -> {
+                when (viewModel.uiState.idBrand) {
+                    Brand.Guatemala.id.toString(), Brand.ElSalvador.id.toString() -> {
+                        CustomProductBackground(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp),
+                            type = Primary
+                        ) {
+                            CardNonPreApprovedCredit(
+                                idBrand = viewModel.uiState.idBrand.toInt(),
+                                action = {
+                                    viewModel.onUIEvent(OnNavigateToGtSvNonPreApproved)
+                                })
                         }
                     }
                     else -> Unit

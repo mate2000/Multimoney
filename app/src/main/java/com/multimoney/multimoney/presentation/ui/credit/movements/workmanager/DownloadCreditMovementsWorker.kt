@@ -18,8 +18,6 @@ import androidx.core.content.FileProvider
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.multimoney.data.util.DataStorePreferences
-import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCase
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
@@ -27,23 +25,21 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.ui.credit.movements.WorkManagerHelper
 import com.multimoney.multimoney.presentation.util.DATE_TIME_DOCUMENTS_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DownloadCreditMovementsStatus
 import com.multimoney.multimoney.presentation.util.getCurrentDateTimeString
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
+import javax.inject.Inject
 
 @HiltWorker
-class DownloadCreditMovementsWorker @AssistedInject constructor(
-    @Assisted val context: Context,
-    @Assisted workerParameters: WorkerParameters,
-    private val preferences: DataStorePreferences,
-    private val queryAccountStatementUseCase: QueryAccountStatementUseCase
+class DownloadCreditMovementsWorker @Inject constructor(
+    val context: Context,
+    workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
@@ -51,8 +47,8 @@ class DownloadCreditMovementsWorker @AssistedInject constructor(
         val user = inputData.getString(USER).orEmpty()
         val idBrand = inputData.getInt(ID_BRAND, 0)
         sendNotification(DownloadCreditMovementsStatus.Download)
-        return if (preferences.getAuthToken().first().isNotEmpty()) {
-            queryAccountStatementUseCase.invoke(
+        return if (WorkManagerHelper.preferences.getAuthToken().first().isNotEmpty()) {
+            WorkManagerHelper.queryAccountStatementUseCase.invoke(
                 creditNumber = creditNumber,
                 user = user,
                 idBrand = idBrand
@@ -109,7 +105,8 @@ class DownloadCreditMovementsWorker @AssistedInject constructor(
 
     private fun copyFileToDownloads(context: Context, downloadedFile: File): Uri? {
         val resolver = context.contentResolver
-        val downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val downloadDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, downloadedFile.name)
@@ -125,7 +122,8 @@ class DownloadCreditMovementsWorker @AssistedInject constructor(
             resolver.openOutputStream(downloadedUri).use { outputStream ->
                 val brr = ByteArray(BYTE_ARRAY_SIZE)
                 var len: Int
-                val bufferedInputStream = BufferedInputStream(FileInputStream(downloadedFile.absoluteFile))
+                val bufferedInputStream =
+                    BufferedInputStream(FileInputStream(downloadedFile.absoluteFile))
                 while ((bufferedInputStream.read(brr, 0, brr.size).also { len = it }) != -1) {
                     outputStream?.write(brr, 0, len)
                 }
@@ -142,11 +140,17 @@ class DownloadCreditMovementsWorker @AssistedInject constructor(
      */
     private fun createNotificationChannel(notificationManager: NotificationManagerCompat) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = context.getString(R.string.download_credit_movements_worker_channel_name)
+            val channelName =
+                context.getString(R.string.download_credit_movements_worker_channel_name)
             val importance = IMPORTANCE_HIGH
 
-            val channel = NotificationChannel(DOWNLOAD_CREDIT_MOVEMENTS_CHANNEL_ID, channelName, importance).apply {
-                description = context.getString(R.string.download_credit_movements_worker_channel_description)
+            val channel = NotificationChannel(
+                DOWNLOAD_CREDIT_MOVEMENTS_CHANNEL_ID,
+                channelName,
+                importance
+            ).apply {
+                description =
+                    context.getString(R.string.download_credit_movements_worker_channel_description)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -183,17 +187,20 @@ class DownloadCreditMovementsWorker @AssistedInject constructor(
         when (status) {
             DownloadCreditMovementsStatus.Download -> {
                 titleTextResource = R.string.download_credit_movements_worker_push_title_download
-                contentTextResource = R.string.download_credit_movements_worker_push_description_download
+                contentTextResource =
+                    R.string.download_credit_movements_worker_push_description_download
                 isAutoCancel = false
             }
             DownloadCreditMovementsStatus.Error -> {
                 titleTextResource = R.string.download_credit_movements_worker_push_title_error
-                contentTextResource = R.string.download_credit_movements_worker_push_description_error
+                contentTextResource =
+                    R.string.download_credit_movements_worker_push_description_error
                 isAutoCancel = true
             }
             DownloadCreditMovementsStatus.Success -> {
                 titleTextResource = R.string.download_credit_movements_worker_push_title_success
-                contentTextResource = R.string.download_credit_movements_worker_push_description_success
+                contentTextResource =
+                    R.string.download_credit_movements_worker_push_description_success
                 isAutoCancel = true
                 intent = getIntentByUri(uri)
             }
@@ -206,15 +213,16 @@ class DownloadCreditMovementsWorker @AssistedInject constructor(
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notificationBuilder = NotificationCompat.Builder(context, DOWNLOAD_CREDIT_MOVEMENTS_CHANNEL_ID)
-            .apply {
-                setSmallIcon(R.drawable.ic_download)
-                setContentTitle(context.getString(titleTextResource))
-                setContentText(context.getString(contentTextResource))
-                priority = NotificationCompat.PRIORITY_HIGH
-                setContentIntent(pendingIntent)
-                setAutoCancel(isAutoCancel)
-            }.build()
+        val notificationBuilder =
+            NotificationCompat.Builder(context, DOWNLOAD_CREDIT_MOVEMENTS_CHANNEL_ID)
+                .apply {
+                    setSmallIcon(R.drawable.ic_download)
+                    setContentTitle(context.getString(titleTextResource))
+                    setContentText(context.getString(contentTextResource))
+                    priority = NotificationCompat.PRIORITY_HIGH
+                    setContentIntent(pendingIntent)
+                    setAutoCancel(isAutoCancel)
+                }.build()
 
         notificationManager.notify(DOWNLOAD_CREDIT_MOVEMENTS_NOTIFICATION_ID, notificationBuilder)
     }

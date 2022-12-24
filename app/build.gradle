@@ -43,6 +43,15 @@ android {
         buildConfigField "String", "APP_ENVIRONMENT", System.env.APP_ENVIRONMENT ? "\"${System.env.APP_ENVIRONMENT}\"" : appEnvironment
     }
 
+    signingConfigs {
+        production {
+            keyAlias System.env.KEYSTORE_ALIAS ? System.env.KEYSTORE_ALIAS : keystoreAliasMM
+            keyPassword System.env.KEY_PASSWORD ? System.env.KEY_PASSWORD : keyPasswordMM
+            storeFile rootProject.file(System.env.ANDROID_KEYSTORE_PATH ? System.env.ANDROID_KEYSTORE_PATH : keystorePathMM)
+            storePassword System.env.KEYSTORE_PASSWORD ? System.env.KEYSTORE_PASSWORD : keystorePasswordMM
+        }
+    }
+
     buildTypes {
         production {
             minifyEnabled false
@@ -50,24 +59,42 @@ android {
             applicationIdSuffix ".cr"
             buildConfigField "String", "SENTRY_DSN", System.env.PRODUCTION_SENTRY_DSN ? "\"${System.env.PRODUCTION_SENTRY_DSN}\"" : sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.PRODUCTION_ONFIDO_API_TOKEN ? "\"${System.env.PRODUCTION_ONFIDO_API_TOKEN}\"" : onfidoApiToken
+            buildConfigField "String", "ONFIDO_APPLICATION_ID", System.env.ONFIDO_APPLICATION_ID ? "\"${System.env.ONFIDO_APPLICATION_ID}\"" : onfidoApplicationId
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.PRODUCTION_ADJUST_APP_TOKEN ? "\"${System.env.PRODUCTION_ADJUST_APP_TOKEN}\"" : adjustAppToken
+            buildConfigField "String", "NOVO_CLIENT_ID", System.env.PRODUCTION_NOVO_CLIENT_ID ? "\"${System.env.PRODUCTION_NOVO_CLIENT_ID}\"" : novoClintId
+            buildConfigField "String", "NOVO_API_URL", System.env.PRODUCTION_NOVO_API_ULR ? "\"${System.env.PRODUCTION_NOVO_API_ULR}\"" : novoApiUrl
+            buildConfigField "String", "NOVO_SOCKET_URL", System.env.PRODUCTION_NOVO_SOCKET_URL ? "\"${System.env.PRODUCTION_NOVO_SOCKET_URL}\"" : novoSocketUrl
+            buildConfigField "String", "NOVO_API_KEY", System.env.PRODUCTION_NOVO_API_KEY ? "\"${System.env.PRODUCTION_NOVO_API_KEY}\"" : novoApiKey
+            buildConfigField "String", "NOVO_VCEH_URL", System.env.PRODUCTION_NOVO_VCEH_URL ? "\"${System.env.PRODUCTION_NOVO_VCEH_URL}\"" : novoVcehUrl
+            signingConfig signingConfigs.production
         }
         staging {
             applicationIdSuffix ".dev"
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.STAGING_SENTRY_DSN ? "\"${System.env.STAGING_SENTRY_DSN}\"" : sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.STAGING_ONFIDO_API_TOKEN ? "\"${System.env.STAGING_ONFIDO_API_TOKEN}\"" : onfidoApiToken
-            buildConfigField "String", "ONFIDO_APPLICATION_ID",  onfidoApplicationId
+            buildConfigField "String", "ONFIDO_APPLICATION_ID", System.env.ONFIDO_APPLICATION_ID ? "\"${System.env.ONFIDO_APPLICATION_ID}\"" : onfidoApplicationId
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.STAGING_ADJUST_APP_TOKEN ? "\"${System.env.STAGING_ADJUST_APP_TOKEN}\"" : adjustAppToken
-            signingConfig signingConfigs.debug
+            buildConfigField "String", "NOVO_CLIENT_ID", System.env.STAGING_NOVO_CLIENT_ID ? "\"${System.env.STAGING_NOVO_CLIENT_ID}\"" : novoClintId
+            buildConfigField "String", "NOVO_API_URL", System.env.STAGING_NOVO_API_ULR ? "\"${System.env.STAGING_NOVO_API_ULR}\"" : novoApiUrl
+            buildConfigField "String", "NOVO_SOCKET_URL", System.env.STAGING_NOVO_SOCKET_URL ? "\"${System.env.STAGING_NOVO_SOCKET_URL}\"" : novoSocketUrl
+            buildConfigField "String", "NOVO_API_KEY", System.env.STAGING_NOVO_API_KEY ? "\"${System.env.STAGING_NOVO_API_KEY}\"" : novoApiKey
+            buildConfigField "String", "NOVO_VCEH_URL", System.env.STAGING_NOVO_VCEH_URL ? "\"${System.env.STAGING_NOVO_VCEH_URL}\"" : novoVcehUrl
+            signingConfig signingConfigs.production
         }
         debug {
             applicationIdSuffix ".dev"
             testCoverageEnabled true
             buildConfigField "String", "SENTRY_DSN", System.env.DEVELOPMENT_SENTRY_DSN ? "\"${System.env.DEVELOPMENT_SENTRY_DSN}\"" : sentryDsn
             buildConfigField "String", "ONFIDO_API_TOKEN", System.env.DEVELOPMENT_ONFIDO_API_TOKEN ? "\"${System.env.DEVELOPMENT_ONFIDO_API_TOKEN}\"" : onfidoApiToken
-            buildConfigField "String", "ONFIDO_APPLICATION_ID",  onfidoApplicationId
+            buildConfigField "String", "ONFIDO_APPLICATION_ID", System.env.ONFIDO_APPLICATION_ID ? "\"${System.env.ONFIDO_APPLICATION_ID}\"" : onfidoApplicationId
             buildConfigField "String", "ADJUST_APP_TOKEN", System.env.DEVELOPMENT_ADJUST_APP_TOKEN ? "\"${System.env.DEVELOPMENT_ADJUST_APP_TOKEN}\"" : adjustAppToken
+            buildConfigField "String", "NOVO_CLIENT_ID", System.env.DEVELOPMENT_NOVO_CLIENT_ID ? "\"${System.env.DEVELOPMENT_NOVO_CLIENT_ID}\"" : novoClintId
+            buildConfigField "String", "NOVO_API_URL", System.env.DEVELOPMENT_NOVO_API_ULR ? "\"${System.env.DEVELOPMENT_NOVO_API_ULR}\"" : novoApiUrl
+            buildConfigField "String", "NOVO_SOCKET_URL", System.env.DEVELOPMENT_NOVO_SOCKET_URL ? "\"${System.env.DEVELOPMENT_NOVO_SOCKET_URL}\"" : novoSocketUrl
+            buildConfigField "String", "NOVO_API_KEY", System.env.DEVELOPMENT_NOVO_API_KEY ? "\"${System.env.DEVELOPMENT_NOVO_API_KEY}\"" : novoApiKey
+            buildConfigField "String", "NOVO_VCEH_URL", System.env.DEVELOPMENT_NOVO_VCEH_URL ? "\"${System.env.DEVELOPMENT_NOVO_VCEH_URL}\"" : novoVcehUrl
+            signingConfig signingConfigs.production
         }
     }
     compileOptions {
@@ -224,7 +251,12 @@ dependencies {
     debugImplementation(novo.novo_dev) {
         exclude group: "com.novopayment.sdk.android", module: "visa-sensory-branding"
     }
-    productionImplementation novo.novo_prod
+    stagingImplementation(novo.novo_staging) {
+        exclude group: "com.novopayment.sdk.android", module: "visa-sensory-branding"
+    }
+    productionImplementation(novo.novo_prod) {
+        exclude group: "com.novopayment.sdk.android", module: "visa-sensory-branding"
+    }
 }
 
 dexguard {

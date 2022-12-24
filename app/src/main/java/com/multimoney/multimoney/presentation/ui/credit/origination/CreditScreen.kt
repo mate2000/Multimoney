@@ -137,7 +137,7 @@ fun CreditScreen(
                     )
                     if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id) {
                         StepProgressBar(
-                            steps = if (viewModel.idBrand.toInt() == Brand.CostaRica.id) CREDIT_INDICATOR_TOTAL_STEPS - 1 else CREDIT_INDICATOR_TOTAL_STEPS,
+                            steps = if (viewModel.idBrand.toInt() == Brand.CostaRica.id || viewModel.idBrand.toInt() == Brand.Guatemala.id) CREDIT_INDICATOR_TOTAL_STEPS - 1 else CREDIT_INDICATOR_TOTAL_STEPS,
                             currentStep = if (viewModel.idBrand.toInt() == Brand.CostaRica.id && viewModel.uiState.currentStep > CreditStep.Four.id) viewModel.uiState.currentStep - 2 else viewModel.uiState.currentStep - 1,
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                         )

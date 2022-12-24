@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -23,7 +22,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangeEmailViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -52,7 +50,7 @@ class ChangeEmailViewModel @Inject constructor(
             uiState.newEmail?.isBlank() == true -> {
                 uiState.copy(isButtonEnabled = false)
             }
-            uiState . newEmailConfirmation ?. isBlank () == true -> {
+            uiState.newEmailConfirmation?.isBlank() == true -> {
                 uiState.copy(isButtonEnabled = false)
             }
             isEmailValid(uiState.newEmail).not() -> {
@@ -124,12 +122,12 @@ class ChangeEmailViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val newPhoneNumber: String? = null,
         val idBrand: Int? = null,
-        val idClient : Int? = null,
         val firstName: String? = null,
         val pkUser: String? = null,
+        val idClient: Int? = null,
         val phoneCode: String = "",
         val isButtonEnabled: Boolean = false,
-        val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_email_required),
+        val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_email_required)
     )
 
     fun onUIEvent(event: ChangeEmailViewModel.UIEvent) {
@@ -142,7 +140,7 @@ class ChangeEmailViewModel @Inject constructor(
             is ChangeEmailViewModel.UIEvent.OnValidateUserEmailConfirmation -> isUserEmailConfirmationValid()
             is ChangeEmailViewModel.UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
             is ChangeEmailViewModel.UIEvent.OnNavigateBack -> navigateBack(
-                Screen.HomeScreen.route,
+                Screen.ProfilePersonalInfoScreen.route,
                 false
             )
         }

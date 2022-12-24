@@ -1,0 +1,14 @@
+mutation ActivatedCardAutomaticDebit($user: String!, $idBrand: Int! $idClient: Long!, $idLoanClient: Long!, $idCard: Long!,$cardMasked: String!){
+    activatedCardAutomaticDebit(
+        cardAutomaticDebitInput: {
+            user: $user
+            idBrand: $idBrand
+            id_Cliente: $idClient
+            id_Prestamo: $idLoanClient
+            idCard: $idCard
+            cardMasked: $cardMasked
+        }
+    ) {
+        isUpdate
+    }
+}

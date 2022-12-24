@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesScreen
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnAddBeneficiaryOptionChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.beneficiaries.BeneficiariesViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.uielement.CustomRadioButtonsLayout
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 
@@ -38,11 +39,15 @@ fun SmartBeneficiaryScreen(
     viewModel: BeneficiariesViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    }
+
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(
             SmartViewModel.UIEvent.OnContinueVisible(true, R.string.save)
         )
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(false))
 
         sharedViewModel.onUIEvent(
             SmartViewModel.UIEvent.OnSetNavigation(

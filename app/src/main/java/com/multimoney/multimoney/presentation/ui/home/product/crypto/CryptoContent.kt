@@ -4,14 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.model.balance.BalanceCryptoAccount
 import com.multimoney.domain.model.crypto.HistoricalBalanceClient
 import com.multimoney.domain.model.security.ValidateUserStatus
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardDiscoverCrypto
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardSmartInProcess
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoCardWithBalance
@@ -23,6 +21,7 @@ fun CryptoContent(
     userStatus: ValidateUserStatus?,
     cryptoBalance: BalanceCryptoAccount?,
     clientBalanceHistory: List<HistoricalBalanceClient>,
+    cryptoEmptyState: Boolean,
     openActionEnable: Boolean = false,
     openCryptoHomeAction: () -> Unit = {},
     openSmartCryptoAction: () -> Unit = {}
@@ -41,7 +40,8 @@ fun CryptoContent(
                             type = ProductBackGroundType.ComplementaryTwo
                         ) {
                             CryptoCardWithBalance(
-                                cryptoBalance = stringResource(id = R.string.home_crypto_card_with_balance_zero_text),
+                                cryptoBalance = 0.0,
+                                isEmptyStateDisable = cryptoEmptyState
                             )
                         }
                         return
@@ -54,8 +54,9 @@ fun CryptoContent(
                         type = ProductBackGroundType.ComplementaryTwo
                     ) {
                         CryptoCardWithBalance(
-                            cryptoBalance = cryptoBalance.globalBalance.toString(),
-                            clientCryptoBalanceHistory = clientBalanceHistory
+                            cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
+                            clientCryptoBalanceHistory = clientBalanceHistory,
+                            isEmptyStateDisable = cryptoEmptyState
                         )
                     }
                 }
@@ -76,30 +77,28 @@ fun CryptoContent(
         }
         SmartAccountStatus.NO_EXIST.status -> {
             //show offer card with no action when smart is in process
-            val infoRequest = userStatus.infoBankAccount?.infoRequest
-            if (infoRequest?.statusRequest != ""
-                || infoRequest.idRequestGlobal != 0L
-                || infoRequest.currentStep != ""
-            ) {
+            userStatus.infoBankAccount?.infoRequest?.let {
+                if (it.idRequestSysde != 0L && it.statusRequest != "" && it.idRequestGlobal != 0L && it.currentStep != "") {
 
-                CustomProductBackground(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    type = ProductBackGroundType.ComplementaryTwo
-                ) {
-                    CryptoCardSmartInProcess(wording = userStatus.infoCrypto?.wording)
+                    CustomProductBackground(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        type = ProductBackGroundType.ComplementaryTwo
+                    ) {
+                        CryptoCardSmartInProcess(wording = userStatus.infoCrypto?.wording)
+                    }
+                } else {
+                    //show offer card with action
+                    CustomProductBackground(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .clickable { openSmartCryptoAction.invoke() },
+                        type = ProductBackGroundType.ComplementaryTwo
+                    ) {
+                        CryptoCardDiscoverCrypto(
+                            wording = userStatus.infoCrypto?.wording
+                        )
+                    }
                 }
-                return
-            }
-            //show offer card without action
-            CustomProductBackground(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .clickable { openSmartCryptoAction.invoke() },
-                type = ProductBackGroundType.ComplementaryTwo
-            ) {
-                CryptoCardDiscoverCrypto(
-                    wording = userStatus.infoCrypto?.wording
-                )
             }
         }
     }

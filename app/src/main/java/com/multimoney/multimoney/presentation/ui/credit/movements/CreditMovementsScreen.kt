@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,10 +24,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.multimoney.domain.model.credit.CreditMovement
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
-import com.multimoney.domain.model.accountsmart.SmartMovement
+import com.multimoney.domain.model.credit.CreditMovement
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -36,7 +36,6 @@ import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovement
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnIsLoadingChange
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsViewModel.UIEvent.OnNavigateBackToHome
 import com.multimoney.multimoney.presentation.ui.credit.movements.workmanager.DownloadCreditMovementsWorker
-import com.multimoney.multimoney.presentation.ui.home.product.smart.movements.SmartMovementDisplayer
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -63,18 +62,17 @@ fun CreditMovementsScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is CreditMovementsViewModel.BaseEvent.OnStartDownloadCreditMovementsWorker -> {
-                    WorkManager.getInstance(context)
-                        .enqueueUniqueWork(
-                            DownloadCreditMovementsWorker.DOWNLOAD_CREDIT_MOVEMENTS_WORKER_NAME,
-                            ExistingWorkPolicy.REPLACE,
-                            event.oneTimeRequest
-                        )
+                    WorkManager.getInstance(context).enqueueUniqueWork(
+                        DownloadCreditMovementsWorker.DOWNLOAD_CREDIT_MOVEMENTS_WORKER_NAME,
+                        ExistingWorkPolicy.REPLACE,
+                        event.oneTimeRequest
+                    )
                 }
             }
         }
     }
 
-    val smartMoves = viewModel.uiState.movementsPage.collectAsLazyPagingItems()
+    val creditMoves = viewModel.uiState.movementsPage.collectAsLazyPagingItems()
 
     Column(
         Modifier
@@ -93,7 +91,7 @@ fun CreditMovementsScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
+            Column(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.90f)) {
                 Text(
                     text = stringResource(R.string.home_product_movement_title),
                     style = Typography.h5.copy(
@@ -117,7 +115,7 @@ fun CreditMovementsScreen(
                     )
                 }
                 PagingLoadStateView(
-                    loadState = smartMoves.loadState,
+                    loadState = creditMoves.loadState,
                     onLoad = {
                         viewModel.onUIEvent(OnIsLoadingChange(it))
                     },
@@ -134,7 +132,7 @@ fun CreditMovementsScreen(
                     }
                 )
                 LoadingIndicator(viewModel.uiState.isLoading)
-                MovementsList(smartMoves)
+                MovementsList(creditMoves)
             }
             CustomButton(
                 modifier = Modifier

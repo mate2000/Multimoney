@@ -165,7 +165,11 @@ fun CustomButton(
                     disabledBackgroundColor = Transparent,
                     disabledContentColor = GrayScale400
                 )
-                textColor = Primary400
+                textColor = if (enable) {
+                    Primary400
+                } else {
+                    GrayScale400
+                }
                 arrowIconTint = if (enable) {
                     Primary400
                 } else {
@@ -260,6 +264,41 @@ fun CustomButton(
                 }
             }
         }
+        CustomButtonType.PrimaryQuinary -> {
+            if (isSystemInDarkTheme()) {
+                buttonColor = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isPressed) {
+                        WhiteTransparency12
+                    } else {
+                        GrayScale700
+                    },
+                    disabledBackgroundColor = Transparent,
+                    disabledContentColor = GrayScale700
+                )
+                textColor = Primary400
+                arrowIconTint = if (enable) {
+                    DefaultWhite
+                } else {
+                    GrayScale400
+                }
+            } else {
+                buttonColor = ButtonDefaults.buttonColors(
+                    backgroundColor = if (isPressed) {
+                        Primary200
+                    } else {
+                        DefaultWhite
+                    },
+                    disabledBackgroundColor = DefaultWhite,
+                    disabledContentColor = GrayScale400
+                )
+                textColor = Primary500
+                arrowIconTint = if (enable) {
+                    Primary500
+                } else {
+                    GrayScale400
+                }
+            }
+        }
         else -> {
             if (isSystemInDarkTheme()) {
                 buttonColor = ButtonDefaults.buttonColors(
@@ -344,4 +383,5 @@ sealed class CustomButtonType() {
     object PrimaryTertiary : CustomButtonType()
     object PrimaryTertiaryUnderLined : CustomButtonType()
     object PrimaryQuaternary : CustomButtonType()
+    object PrimaryQuinary : CustomButtonType()
 }

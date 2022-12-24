@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -37,6 +39,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
  * @param mainText: Is the main text that will display the amount.
  * @param secondaryText: Is the secondary text that will display the description.
  * @param isSelected: This variable will decide what color should be displayed in the stroke.
+ * @param textAlign: The alignment for main a secondary text.
  * **/
 
 @Composable
@@ -46,8 +49,10 @@ fun RoundedPaymentButton(
     strokeWidth: Dp,
     roundedShapeDp: Dp,
     mainText: String,
-    secondaryText: String,
-    isSelected: Boolean
+    secondaryText: String? = null,
+    isSelected: Boolean,
+    isSingleLine: Boolean = false,
+    textAlign: Alignment.Horizontal = Alignment.Start
 ) {
     // Set colors depending on system theme
     val selectedColors: List<Color>
@@ -100,25 +105,52 @@ fun RoundedPaymentButton(
         shape = RoundedCornerShape(roundedShapeDp),
         backgroundColor = backgroundColor
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 20.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = mainText,
-                style = Typography.subtitle1.copy(fontWeight = FontWeight.W700),
-                color = mainTextColor,
-                textAlign = TextAlign.Left
-            )
-            Text(
-                text = secondaryText,
-                style = Typography.caption,
-                color = secondaryTextColor,
-                textAlign = TextAlign.Left
-            )
+        if (isSingleLine) {
+            Row(
+                modifier = Modifier
+                    .wrapContentSize().padding(horizontal = 30.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = mainText,
+                    style = Typography.subtitle1.copy(fontWeight = FontWeight.W700),
+                    color = mainTextColor,
+                    textAlign = TextAlign.Center
+                )
+                secondaryText?.let {
+                    Text(
+                        modifier = Modifier.padding(6.dp),
+                        text = secondaryText,
+                        style = Typography.subtitle2,
+                        color = secondaryTextColor,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = textAlign
+            ) {
+                Text(
+                    text = mainText,
+                    style = Typography.subtitle1.copy(fontWeight = FontWeight.W700),
+                    color = mainTextColor,
+                    textAlign = TextAlign.Left
+                )
+                secondaryText?.let {
+                    Text(
+                        text = secondaryText,
+                        style = Typography.caption,
+                        color = secondaryTextColor,
+                        textAlign = TextAlign.Left
+                    )
+                }
+            }
         }
     }
 }

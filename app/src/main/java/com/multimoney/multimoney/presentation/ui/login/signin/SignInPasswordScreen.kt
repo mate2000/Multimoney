@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -65,8 +66,8 @@ fun SignInWithPassword(
             text = AnnotatedString(stringResource(id = R.string.sign_in_forgot_password)),
             modifier = Modifier
                 .align(Alignment.End)
-                .padding(top = 4.dp),
-            style = Typography.body2.copy(
+                .padding(top = 24.dp),
+            style = Typography.button.copy(
                 textDecoration = TextDecoration.Underline,
                 color = MultimoneyTheme.colors.textLink
             ),
@@ -90,7 +91,9 @@ fun SignInWithPassword(
                     checked = viewModel.uiState.isFingerprintChecked,
                     onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it)) },
                     text = stringResource(id = R.string.sign_in_activate_fingerprint),
-                    modifier = Modifier.padding(top = 51.dp)
+                    modifier = Modifier
+                        .padding(top = 51.dp)
+                        .absoluteOffset((-12).dp, 0.dp)
                 )
             }
         }
@@ -103,7 +106,7 @@ fun SignInWithPassword(
             modifier = Modifier
                 .padding(top = 24.dp)
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(56.dp),
             enable = viewModel.uiState.isSignInEnabled
         )
     }

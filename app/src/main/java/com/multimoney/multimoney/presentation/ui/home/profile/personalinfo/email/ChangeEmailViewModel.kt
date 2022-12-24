@@ -47,12 +47,18 @@ class ChangeEmailViewModel @Inject constructor(
         navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
+
+    private fun isNewEmailEqualTanPrevious(newEmail: String): Boolean {
+        return newEmail == uiState.email
+    }
+
+
     private fun isFormValid() {
         uiState = when {
             uiState.newEmail?.isBlank() == true -> {
                 uiState.copy(isButtonEnabled = false)
             }
-            uiState . newEmailConfirmation ?. isBlank () == true -> {
+            uiState.newEmailConfirmation ?. isBlank () == true -> {
                 uiState.copy(isButtonEnabled = false)
             }
             isEmailValid(uiState.newEmail).not() -> {
@@ -63,6 +69,9 @@ class ChangeEmailViewModel @Inject constructor(
             }
             uiState.newEmail.equals(uiState.newEmailConfirmation).not() -> {
                 uiState.copy(isButtonEnabled = false)
+            }
+            uiState.newEmail.equals(uiState.email) or uiState.newEmailConfirmation.equals(uiState.email)->{
+                uiState.copy(isButtonEnabled = false, userEmailError = Pair(true,R.string.profile_email_not_equal_than_previous_error))
             }
             else -> {
                 uiState.copy(isButtonEnabled = true)

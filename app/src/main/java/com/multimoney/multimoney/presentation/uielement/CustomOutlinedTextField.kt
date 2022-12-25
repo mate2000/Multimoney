@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -89,6 +90,8 @@ import kotlinx.coroutines.launch
  * @param value: Variable to store the input value.
  * @param leadingIcon: Landing icon to display, by default there is no icon.
  * @param trailingIcon: Trailing icon to display, by default there is no icon.
+ * @param trailingIconAction: Action to perform when the trailing icon is clicked.
+ * @param trailingIconActionEnabled: Enable or disable the trailing icon action.
  * @param placeHolder: Hint for the textField.
  * @param keyboardOptions: Settings for textField input.
  * @param keyboardActions: Actions to take when ime button is click.
@@ -122,6 +125,8 @@ fun CustomOutlinedTextField(
     leadingIcon: Int? = null,
     leadingIconComposable: @Composable ((Color) -> Unit)? = null,
     trailingIcon: Int? = null,
+    trailingIconAction: () -> Unit = {},
+    trailingIconActionEnabled: Boolean = false,
     placeHolder: String = "",
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
@@ -315,11 +320,13 @@ fun CustomOutlinedTextField(
             } else {
                 trailingIcon?.let {
                     {
-                        Icon(
-                            painter = painterResource(id = it),
-                            contentDescription = "",
-                            tint = iconTintColor
-                        )
+                        IconButton(enabled = trailingIconActionEnabled, onClick = trailingIconAction) {
+                            Icon(
+                                painter = painterResource(id = it),
+                                contentDescription = "",
+                                tint = iconTintColor
+                            )
+                        }
                     }
                 }
             },

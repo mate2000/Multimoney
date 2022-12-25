@@ -21,7 +21,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -84,37 +83,8 @@ fun HomeWallet(
 
     BackHandler { walletViewModel.onUIEvent(OnNavigateBack) }
     val isFocused = remember { mutableStateOf(false) }
-    /*ConstraintLayout(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize()
-    ) {
-        val enableSendAndGive = walletViewModel.uiState.idBrand == Brand.CostaRica.id
-        val (actionsButtons, content) = createRefs()
+    val searchQuery = remember { mutableStateOf("") }
 
-        CryptoActionsSection(
-            modifier = Modifier.constrainAs(actionsButtons) {
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            },
-            hasSmartBalance = true,
-            enableCryptoActions = true,
-            enableSendAndGive = enableSendAndGive,
-            hasBalanceAction = { /*todo go to buy crypto flow*/ },
-            sellAction = { /*todo go to sell crypto flow*/ },
-            sendAction = { /*todo go to send crypto flow*/ },
-            giveAction = { /*todo go to receive crypto flow*/ }
-        )
-        HomeWalletContent(
-            modifier = Modifier.constrainAs(content) {
-                top.linkTo(parent.top)
-                bottom.linkTo(actionsButtons.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            },
-        )
-    }*/
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -123,11 +93,20 @@ fun HomeWallet(
         topBar = {
             AnimatedVisibility(visible = isFocused.value) {
                 CustomOutlinedTextField(
-                    modifier = Modifier.padding(top = 8.dp, bottom = 24.dp, start = 16.dp, end = 16.dp),
-                    keyboardActions = KeyboardActions(onSearch = { isFocused.value = isFocused.value.not() }),
+                    modifier = Modifier.padding(
+                        top = 8.dp,
+                        bottom = 24.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    ),
+                    value = searchQuery.value,
+                    keyboardActions = KeyboardActions.Default,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    leadingIconComposable = { Icon(Icons.Filled.Search, contentDescription = null) },
-                    placeHolder = "Buscar criptomoneda",
+                    leadingIcon = R.drawable.ic_search,
+                    trailingIcon = R.drawable.ic_close,
+                    trailingIconAction = { searchQuery.value = "" },
+                    trailingIconActionEnabled = true,
+                    placeHolder = stringResource(id = R.string.crypto_wallet_search_crypto_currency),
                 )
             }
         },
@@ -153,6 +132,7 @@ fun HomeWallet(
                 .padding(paddingValues)
                 .imePadding(),
             isFocused = isFocused,
+            searchQuery = searchQuery,
         )
     }
 
@@ -163,6 +143,7 @@ fun HomeWalletContent(
     modifier: Modifier = Modifier,
     walletViewModel: HomeWalletViewModel = hiltViewModel(),
     isFocused: MutableState<Boolean>,
+    searchQuery: MutableState<String>,
 ) {
 
     val globalCryptoBalance = walletViewModel.uiState.globalCryptoBalance?.toDouble() ?: 0.0
@@ -185,10 +166,12 @@ fun HomeWalletContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        androidx.compose.animation.AnimatedVisibility(isFocused.value.not()) {
+        AnimatedVisibility(isFocused.value.not()) {
             Column {
                 TopNavBar(
-                    isRightButtonVisible = false,
+                    isRightButtonVisible = isFocused.value.not(),
+                    rightButtonIcon = R.drawable.ic_close_bottom_sheet,
+                    onRightButtonClick = { isFocused.value = isFocused.value.not() },
                     onLeftButtonClick = { walletViewModel.onUIEvent(OnNavigateBack) },
                 )
                 WalletHeader()
@@ -219,6 +202,7 @@ fun HomeWalletContent(
                 MyCoinsSection(
                     walletViewModel.uiState.balanceCryptoAccount,
                     isFocused = isFocused,
+                    searchQuery = searchQuery,
                 )
             }
         }
@@ -278,7 +262,15 @@ fun BalanceSection(
 }
 
 @Composable
-fun MyCoinsSection(balanceCryptoAccount: BalanceCryptoAccount?, isFocused: MutableState<Boolean>) {
+fun MyCoinsSection(
+    balanceCryptoAccount: BalanceCryptoAccount?,
+    isFocused: MutableState<Boolean>,
+    searchQuery: MutableState<String>
+) {
+
+    val filteredList = if (searchQuery.value.isNotEmpty()) balanceCryptoAccount?.items?.filter {
+        it.asset.contains(searchQuery.value) || it.descriptionCurrency.contains(searchQuery.value)
+    } ?: emptyList() else balanceCryptoAccount?.items ?: emptyList()
 
     Column(
         modifier = Modifier
@@ -298,19 +290,27 @@ fun MyCoinsSection(balanceCryptoAccount: BalanceCryptoAccount?, isFocused: Mutab
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText
             )
-            IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = null,
-                    tint = MultimoneyTheme.colors.labelText
-                )
+            if (isFocused.value.not()) {
+                IconButton(onClick = { isFocused.value = isFocused.value.not() }) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = null,
+                        tint = MultimoneyTheme.colors.labelText
+                    )
+                }
             }
         }
 
-        balanceCryptoAccount?.items?.let {
-            it.forEach { item ->
-                CurrencyItem(item = item)
-            }
+        filteredList.forEach { item ->
+            CurrencyItem(
+                imageUrl = item.url_image,
+                descriptionCurrency = item.descriptionCurrency,
+                asset = item.asset,
+                balanceDollars = item.balanceDollars,
+                priceOfTheDay = item.priceOfTheDay,
+                percentageInvestedCurrency = item.percentageInvestedCurrency,
+                available = item.available
+            )
         }
     }
 }

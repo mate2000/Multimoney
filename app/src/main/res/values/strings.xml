@@ -79,8 +79,7 @@
 
     <!-- Sign In -->
     <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
-    <string name="sign_in_title_name" translatable="false">Hola %s, \n</string>
-    <string name="sign_in_title_no_name" translatable="false">¡Que bueno tenerte por acá!</string>
+    <string name="sign_in_title_name" translatable="false">%s, ¡qué bueno verte de nuevo!</string>
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
     <string name="sign_in_access_with_biometrics" translatable="false">Ingresar con biométricos</string>
@@ -399,7 +398,6 @@
     <string name="profile_terms_and_conditions_crypto_title" translatable="false">Cripto</string>
 
 
-
     <!-- Sign Out -->
     <string name="sign_out_dialog_title" translatable="false">¿Estás seguro que querés cerrar sesión?</string>
     <string name="sign_out_dialog_title_gt" translatable="false">¿Estás seguro que quieres cerrar sesión?</string>
@@ -665,6 +663,7 @@
     <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
     <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
     <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
+    <string name="visa_card_success_message_label" translatable="false">La tarjeta fue tokenizada exitosamente</string>
 
     <!-- visa tokenization waiting -->
     <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
@@ -845,6 +844,7 @@
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+    <string name="payment_options_title_cr" translatable="false">¿En cuál cuenta querés ahorrar?</string>
 
     <!-- Smart Living Address -->
     <string name="smart_liv_address_title" translatable="false">¿Dónde vivís?</string>
@@ -1035,7 +1035,11 @@
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
 
     <!-- Payment Amount Card -->
-    <string name="payment_amount_card_title" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title_sv" translatable="false">¿Cuánto querés abonar?</string>
+    <string name="payment_amount_card_title_gt" translatable="false">¿Cuánto quieres abonar?</string>
+    <string name="payment_amount_card_min_amount" translatable="false">Abonar mínimo</string>
+    <string name="payment_amount_card_amount_min_error" translatable="false">Ingresar un monto mayor a %s</string>
+    <string name="payment_amount_card_amount_max_error" translatable="false">El pago máximo es de %s</string>
 
     <!-- Payment Amount Card Bottom Sheet -->
     <string name="payment_amount_card_bottom_sheet_title" translatable="false">Monto a abonar</string>
@@ -1050,7 +1054,7 @@
     <string name="payment_method_visa" translatable="false">Tarjeta Visa</string>
 
     <!-- Payment Account -->
-    <string name="payment_account_title" translatable="false">¿A cuál Multimoney Smart querés abonar?</string>
+    <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
     <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
 
@@ -1105,7 +1109,10 @@
     <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
     <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>
     <string name="smart_saving_try_later_notification_body" translatable="false">Abrí la app y hacé tu primer ahorro para ganar más</string>
+    <string name="smart_saving_total_to_deposit" translatable="false">Total a depositar</string>
     <string name="smart_processing_transaction" translatable="false">Procesando transacción...</string>
+    <string name="smart_dollar_placeholder" translatable="false">$0</string>
+    <string name="smart_colon_placeholder" translatable="false">₡000</string>
 
     <!-- Profile Help And Information Section -->
     <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>
@@ -1118,7 +1125,10 @@
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
 
     <!-- Currency Item -->
+    <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
     <string name="currency_item_percent_invested" translatable="false">%1$s\%%</string>
 
+    <!-- Smart Transfer Iban -->
+    <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
 </resources>

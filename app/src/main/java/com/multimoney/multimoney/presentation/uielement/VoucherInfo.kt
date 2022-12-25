@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.uielement
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.DefaultWhite
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency40
@@ -57,7 +59,10 @@ fun VoucherAccountInfo(
                 painter = painterResource(id = it),
                 contentDescription = "",
                 tint = tintIconColor,
-                modifier = Modifier.height(24.dp).width(24.dp).alpha(0.4f)
+                modifier = Modifier
+                    .height(24.dp)
+                    .width(24.dp)
+                    .alpha(0.4f)
             )
         }
         Column(modifier = Modifier.padding(start = 13.5.dp)) {
@@ -120,7 +125,10 @@ fun VoucherCurrencyExchangeInfo(
     leftTitleResource: Int = R.string.empty,
     rightTitleResource: Int = R.string.empty,
     exchangeRateText: String = "",
-    convertedAmountText: String = ""
+    convertedAmountText: String = "",
+    displayIcon: Boolean = true,
+    textColumnAlign: Alignment.Horizontal = Alignment.Start,
+    mainRowAlignment: Arrangement.Horizontal = Arrangement.Start
 ) {
     val titleColor: Color
     val subtitleColor: Color
@@ -128,25 +136,34 @@ fun VoucherCurrencyExchangeInfo(
 
     if (isSystemInDarkTheme()) {
         titleColor = WhiteTransparency90
-        subtitleColor = WhiteTransparency90
+        subtitleColor = DefaultWhite
         tintIconColor = WhiteTransparency40
     } else {
         titleColor = WhiteTransparency90
-        subtitleColor = WhiteTransparency90
+        subtitleColor = DefaultWhite
         tintIconColor = WhiteTransparency40
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(start = 27.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 27.dp),
+        horizontalArrangement = mainRowAlignment
     ) {
-        Icon(
-
-            painter = painterResource(id = R.drawable.ic_money_gray),
-            tint = tintIconColor,
-            contentDescription = "",
-            modifier = Modifier.height(24.dp).width(24.dp)
-        )
-        Column(modifier = Modifier.padding(start = 13.5.dp)) {
+        if (displayIcon) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_money_gray),
+                tint = tintIconColor,
+                contentDescription = "",
+                modifier = Modifier
+                    .padding(end = 13.5.dp)
+                    .height(24.dp)
+                    .width(24.dp)
+            )
+        }
+        Column(
+            horizontalAlignment = textColumnAlign
+        ) {
             Text(
                 text = stringResource(id = leftTitleResource),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
@@ -168,7 +185,10 @@ fun VoucherCurrencyExchangeInfo(
             color = MultimoneyTheme.colors.bottomNavigationDividerColor
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Column(modifier = Modifier.padding(start = 13.5.dp)) {
+        Column(
+            modifier = Modifier.padding(start = 13.5.dp),
+            horizontalAlignment = textColumnAlign
+        ) {
             Text(
                 text = stringResource(id = rightTitleResource),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),

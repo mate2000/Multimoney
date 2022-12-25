@@ -135,7 +135,7 @@ fun CryptoCardWithBalance(
         )
         Text(
             modifier = Modifier.height(40.dp),
-            text = "\$${cryptoBalance}",
+            text = stringResource(id = R.string.currency_item_dollar_symbol, cryptoBalance),
             style = Typography.h4.copy(
                 fontWeight = FontWeight.SemiBold, color = MultimoneyTheme.colors.text
             )
@@ -158,7 +158,10 @@ fun CryptoCardWithBalance(
                 contentAlignment = Alignment.BottomEnd
             ) {
                 CustomInformativeChip(
-                    text = "\$${calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory).roundToTwoDecimalPlacesWithoutNegatives()}",
+                    text = stringResource(
+                        id = R.string.currency_item_dollar_symbol,
+                        calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory).roundToTwoDecimalPlacesWithoutNegatives()
+                    ),
                     textStyle = Typography.body2.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = MultimoneyTheme.colors.text

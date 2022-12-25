@@ -11,24 +11,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
+import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
+import com.multimoney.domain.model.accountsmart.IbanAccountID
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
-import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.IBAN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.ID_VISA_CARD
+import com.multimoney.multimoney.presentation.navigation.SMART_IDS
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.navgraph.ACCOUNT_TOKEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
-import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
-import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
-import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransferVisaToSmart
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnFailureWithDialog
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateHome
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnRetryTransfer
@@ -37,24 +42,34 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmou
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnSuggestedAmountClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnTryLater
 import com.multimoney.multimoney.presentation.util.ShareHelper
-import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Colon
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SuggestedAmount
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import java.util.Calendar
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, FlowPreview::class)
 class SavingAmountViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val processTransferVisaToSmart: MutationProcessTransferVisaToSmartVDUseCase,
-    private val shareHelper: ShareHelper
+    private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,
+    private val shareHelper: ShareHelper,
+    private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -67,35 +82,98 @@ class SavingAmountViewModel @Inject constructor(
     private var user: String = ""
     private var idCurrency: Int = 0
     private var tokenNumber: Long = 0
+    private var smartAccount: SmartAccountID? = null
+    private var ibanAccount: IbanAccountID? = null
+    var smartCurrency: CurrencyType? = Dollar
+    var ibanCurrency: CurrencyType? = null
+    var shouldDisplayExchange: Boolean = false
     var maskedCardNumber: String = ""
     var bankDetail: String = ""
+    var previousScreen: String = ""
 
     private fun onStart() {
-        idBrand = savedStateHandle[ID_BRAND] ?: 0
-        idCard = savedStateHandle[ID_VISA_CARD] ?: 0
-        identification = savedStateHandle[IDENTIFICATION] ?: ""
-        user = savedStateHandle[USER] ?: ""
-        idCurrency = savedStateHandle[ID_CURRENCY] ?: 0
-        tokenNumber = savedStateHandle[ACCOUNT_TOKEN] ?: 0
-        maskedCardNumber = savedStateHandle[MASKED_CARD] ?: ""
-        bankDetail = savedStateHandle[BANK_DETAIL] ?: ""
+        viewModelScope.launch {
+            idBrand = dataStorePreferences.getIdBrand().first().toInt()
+            identification = dataStorePreferences.getIdentification().first()
+            user = dataStorePreferences.getPkUser().first()
+            idCard = savedStateHandle[ID_VISA_CARD] ?: 0
+            previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
+            smartAccount = savedStateHandle[SMART_IDS]
+            smartCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+            idCurrency = smartAccount?.currencyID ?: 0
+            tokenNumber = smartAccount?.tokenAccount?.toLongOrNull() ?: 0
+            maskedCardNumber = savedStateHandle[MASKED_CARD] ?: ""
+            bankDetail = savedStateHandle[BANK_DETAIL] ?: ""
 
-        // Todo get if the account is using dollars
-        uiState = uiState.copy(
-            currency = if (idCurrency == Dollar.id) Dollar.symbol else Colon.symbol,
-            minSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == Dollar.id,
-                SuggestionOrder.MIN
-            ),
-            mediumSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == Dollar.id,
-                SuggestionOrder.MEDIUM
-            ),
-            maxSuggestion = SuggestedAmount.createSuggestion(
-                idCurrency == Dollar.id,
-                SuggestionOrder.MAX
+            if (idBrand == Brand.CostaRica.id) {
+                ibanAccount = savedStateHandle[IBAN_ACCOUNT]
+                ibanCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
+                shouldDisplayExchange = smartCurrency != ibanCurrency
+                if (shouldDisplayExchange) {
+                    getSmartExchangeRate(
+                        user = user,
+                        identification = identification,
+                        idOriginCurrency = smartCurrency?.id.toString(),
+                        idDestinationCurrency = ibanCurrency?.id.toString()
+                    )
+                }
+            }
+
+            uiState = uiState.copy(
+                currency = smartCurrency?.symbol ?: Dollar.symbol,
+                placeholder = if (smartCurrency == Dollar) R.string.smart_dollar_placeholder else R.string.smart_colon_placeholder,
+                minSuggestion = SuggestedAmount.createSuggestion(
+                    smartCurrency == Dollar,
+                    SuggestionOrder.MIN
+                ),
+                mediumSuggestion = SuggestedAmount.createSuggestion(
+                    smartCurrency == Dollar,
+                    SuggestionOrder.MEDIUM
+                ),
+                maxSuggestion = SuggestedAmount.createSuggestion(
+                    smartCurrency == Dollar,
+                    SuggestionOrder.MAX
+                )
             )
-        )
+        }
+    }
+
+    private fun getSmartExchangeRate(
+        user: String,
+        identification: String,
+        idOriginCurrency: String,
+        idDestinationCurrency: String
+    ) = executeUseCase {
+        uiState.currentAmountValueString.debounce(TWO_SECONDS).collectLatest {
+            querySmartExchangeRateUseCase.invoke(
+                user = user,
+                idBrand = idBrand,
+                abbreviation = ibanCurrency?.disbursementValue ?: "",
+                identification = identification,
+                idOriginCurrency = idOriginCurrency,
+                idDestinationCurrency = idDestinationCurrency,
+                amount = it?.toDoubleOrNull() ?: 0.0
+            ).collectLatest { result ->
+                result.onSuccess { rate ->
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        exchangeRate = rate?.exchangeRate ?: 0.0,
+                        exchangeConvertedAmount = rate?.amount ?: 0.0,
+                        exchangeRateLabel = rate?.exchangeRateLabel ?: "0.0",
+                        convertedAmountLabel = rate?.convertedAmountLabel ?: "0.0"
+                    )
+                }
+                result.onFailure {
+                    onUIEvent(
+                        OnFailureWithDialog(
+                            isLoading = false,
+                            dialogParameters = DialogParameters(isActive = mutableStateOf(true))
+                        )
+                    )
+                }
+                result.onLoading { uiState = uiState.copy(isLoading = true) }
+            }
+        }
     }
 
     private fun onCallProcessTransferVisaToSmart() {
@@ -104,7 +182,7 @@ class SavingAmountViewModel @Inject constructor(
                 idCard,
                 tokenNumber,
                 identification,
-                uiState.currentAmountValueString ?: "",
+                uiState.currentAmountValueString.firstOrNull() ?: "",
                 idCurrency,
                 DEFAULT_DESCRIPTION,
                 maskedCardNumber,
@@ -152,14 +230,14 @@ class SavingAmountViewModel @Inject constructor(
             listOf(uiState.minSuggestion, uiState.mediumSuggestion, uiState.maxSuggestion)
         val possibleSuggestion = suggestions.find { suggestion -> suggestion.value == newAmount }
         uiState = if (possibleSuggestion != null) {
+            uiState.currentAmountValueString.value = newAmount
             uiState.copy(
-                currentAmountValueString = newAmount,
                 suggestedAmountSelected = possibleSuggestion,
                 enableButton = newAmount.toDouble() > 0
             )
         } else {
+            uiState.currentAmountValueString.value = newAmount
             uiState.copy(
-                currentAmountValueString = newAmount,
                 suggestedAmountSelected = null,
                 enableButton = newAmount.isNotEmpty() && newAmount.toDouble() > 0
             )
@@ -167,9 +245,9 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     private fun selectSuggestion(amount: SuggestedAmount) {
+        uiState.currentAmountValueString.value = amount.value
         uiState = uiState.copy(
             enableButton = amount.value.isNotEmpty() && amount.value.toDouble() > 0,
-            currentAmountValueString = amount.value,
             suggestedAmountSelected = amount
         )
     }
@@ -178,9 +256,12 @@ class SavingAmountViewModel @Inject constructor(
         uiState.suggestedAmountSelected?.isSelected(order) == true
 
     private fun onContinueClick() {
-        uiState = uiState.copy(
-            bottomSheetState = ModalBottomSheetState(Expanded)
-        )
+        // Temporal check while send to iban account is implemented
+        if (idBrand == Brand.ElSalvador.id) {
+            uiState = uiState.copy(
+                bottomSheetState = ModalBottomSheetState(Expanded)
+            )
+        }
     }
 
     private fun onRetryTransfer() {
@@ -217,6 +298,14 @@ class SavingAmountViewModel @Inject constructor(
         shareHelper.sharedScreenShot(view, capturingBounds)
     }
 
+    private fun onFailureWithDialog(isLoading: Boolean, dialogParameters: DialogParameters) {
+        uiState =
+            uiState.copy(
+                isLoading = isLoading,
+                openDialog = dialogParameters
+            )
+    }
+
     private fun onNavigateToHome() {
         navigateBack(
             popTo = Screen.HomeScreen.route,
@@ -224,8 +313,14 @@ class SavingAmountViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateBack() =
-        navigateBack(popTo = Screen.SmartPaymentCardsScreenSV.route, isRestart = true)
+    private fun onNavigateBack() {
+        val screen = when (previousScreen) {
+            Screen.SmartPaymentAccountScreenCR.baseRoute -> Screen.SmartPaymentAccountScreenCR.route
+            Screen.SmartPaymentCardsScreenSV.baseRoute -> Screen.SmartPaymentCardsScreenSV.route
+            else -> Screen.HomeScreen.route
+        }
+        navigateBack(popTo = screen, isRestart = false)
+    }
 
     data class UIState(
         // Interactions
@@ -234,9 +329,15 @@ class SavingAmountViewModel @Inject constructor(
         val mediumSuggestion: SuggestedAmount = SuggestedAmount(),
         val maxSuggestion: SuggestedAmount = SuggestedAmount(),
         val currency: String = "",
-        val currentAmountValueString: String? = null,
+        val currentAmountValueString: MutableStateFlow<String?> = MutableStateFlow(null),
         val enableButton: Boolean = false,
         val isLoading: Boolean = false,
+        val exchangeRate: Double = 0.0,
+        val exchangeConvertedAmount: Double = 0.0,
+        val exchangeRateLabel: String = "0.0",
+        val convertedAmountLabel: String = "0.0",
+        val placeholder: Int = R.string.smart_dollar_placeholder,
+        val openDialog: DialogParameters = DialogParameters(),
         val idCard: Long = 0,
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
         val cardBankName: String = "",
@@ -256,6 +357,10 @@ class SavingAmountViewModel @Inject constructor(
             is OnContinueClick -> onContinueClick()
             is OnSuggestedAmountClick -> selectSuggestion(uiEvent.suggestion)
             is OnCallProcessTransferVisaToSmart -> onCallProcessTransferVisaToSmart()
+            is OnFailureWithDialog -> onFailureWithDialog(
+                uiEvent.isLoading,
+                uiEvent.dialogParameters
+            )
             is OnRetryTransfer -> onRetryTransfer()
             is OnTryLater -> onTryLater(
                 uiEvent.notificationTitle,
@@ -276,6 +381,11 @@ class SavingAmountViewModel @Inject constructor(
         object OnContinueClick : UIEvent()
         object OnCallProcessTransferVisaToSmart : UIEvent()
         object OnRetryTransfer : UIEvent()
+        data class OnFailureWithDialog(
+            val isLoading: Boolean,
+            val dialogParameters: DialogParameters
+        ) : UIEvent()
+
         data class OnTryLater(
             val notificationTitle: String,
             val notificationBody: String,
@@ -291,7 +401,11 @@ class SavingAmountViewModel @Inject constructor(
     }
 
     companion object {
-        const val SAVING_PLACEHOLDER = "$0"
+        const val SAVING_PLACEHOLDER_DOLLAR = "$0"
+        const val SAVING_PLACEHOLDER_COLON = "₡000"
         const val DEFAULT_DESCRIPTION = "Smart account deposit"
+        const val ID_NOT_APPLICABLE = -1
+        const val NOT_APPLICABLE = "NA"
+        const val TWO_SECONDS = 2000L
     }
 }

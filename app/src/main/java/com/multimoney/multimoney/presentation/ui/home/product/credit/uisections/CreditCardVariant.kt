@@ -382,15 +382,17 @@ fun OngoingCredit(
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
-            Text(
-                text = stringResource(
-                    id = R.string.home_product_amount,
-                    viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()
-                ),
-                modifier = Modifier.padding(top = 4.dp, start = 3.dp),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.textSubhead
-            )
+            if (viewModel.uiState.isCreditAvailable) {
+                Text(
+                    text = stringResource(
+                        id = R.string.home_product_amount,
+                        viewModel.balanceCredit?.getFirstCredit()?.creditLimitLabel.toString()
+                    ),
+                    modifier = Modifier.padding(top = 4.dp, start = 3.dp),
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                    color = MultimoneyTheme.colors.textSubhead
+                )
+            }
         }
         Row(
             modifier = Modifier
@@ -441,9 +443,9 @@ fun OngoingCredit(
                                 .clip(CircleShape)
                                 .background(
                                     if ((
-                                                viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                    ?: 0
-                                                ) > 0
+                                        viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                            ?: 0
+                                        ) > 0
                                     ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                 )
                         )

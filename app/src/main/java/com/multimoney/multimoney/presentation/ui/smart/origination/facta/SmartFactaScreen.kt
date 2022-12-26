@@ -32,8 +32,8 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.Companion.CR_PAGE_ONE
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.Companion.CR_PAGE_TWO
@@ -74,13 +74,6 @@ fun SmartFactaScreen(
                         )
                     )
                 },
-                overridePreviousAction = {
-                    if (viewModel.uiState.crPage == CR_PAGE_TWO) {
-                        viewModel.onUiEvent(OnCrGoPageOne)
-                    } else {
-                        sharedViewModel.onUIEvent(OnPreviousStep)
-                    }
-                },
                 nextStep = if (sharedViewModel.idBrandAsInt == Brand.ElSalvador.id) SmartSteps.Six.id else SmartSteps.Four.id,
                 previousStep = if (sharedViewModel.idBrandAsInt == Brand.ElSalvador.id) SmartSteps.Four.id else SmartSteps.Two.id
             )
@@ -110,7 +103,7 @@ fun SmartFactaScreen(
                         }
                     }
                     CR_PAGE_TWO -> {
-                        ContentTwoCR(viewModel)
+                        ContentTwoCR(viewModel, sharedViewModel)
                         sharedViewModel.onUIEvent(OnContinueVisible(true))
                     }
                 }
@@ -246,11 +239,15 @@ fun ContentOneCR(
             enable = viewModel.uiState.isActivityOfArt15 != null && viewModel.uiState.isPEP != null
         )
     }
+    sharedViewModel.onUIEvent(
+        OverridePreviousAction(null)
+    )
 }
 
 @Composable
 fun ContentTwoCR(
     viewModel: SmartFactaViewModel,
+    sharedViewModel: SmartViewModel,
     modifier: Modifier = Modifier
 ) {
     val options = stringArrayResource(R.array.options_yes_no).toList()
@@ -289,9 +286,10 @@ fun ContentTwoCR(
             optionSelected = if (viewModel.uiState.isTaxPayer == true) options[0] else options[1]
         )
     }
-    BackHandler {
-        viewModel.onUiEvent(OnCrGoPageOne)
-    }
+    sharedViewModel.onUIEvent(
+        OverridePreviousAction { viewModel.onUiEvent(OnCrGoPageOne) }
+    )
+    BackHandler { viewModel.onUiEvent(OnCrGoPageOne) }
 }
 
 const val INFO_TAG = "info"

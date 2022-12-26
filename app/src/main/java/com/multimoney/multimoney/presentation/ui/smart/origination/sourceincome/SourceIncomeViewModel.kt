@@ -256,6 +256,7 @@ class SourceIncomeViewModel @Inject constructor(
             divisionThreeList = listOf()
         )
         getDivisionTwo(user, idBrand)
+        onValidateForm()
     }
 
     private fun onDivisionTwoValueChange(
@@ -270,6 +271,7 @@ class SourceIncomeViewModel @Inject constructor(
             divisionThreeList = listOf()
         )
         getDivisionThree(user, idBrand)
+        onValidateForm()
     }
 
     private fun onDivisionThreeValueChange(divisionThree: String?) {

@@ -52,6 +52,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnOpenDialogValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
 import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
 import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -403,6 +404,10 @@ class SmartViewModel @Inject constructor(
         }
     }
 
+    private fun overridePreviousAction(overridePreviousAction: (() -> Unit)?) {
+        this.overridePreviousAction = overridePreviousAction
+    }
+
     private fun navigateBackToHome() {
         popAndNavigateTo(
             route = Screen.HomeScreen.route,
@@ -522,6 +527,7 @@ class SmartViewModel @Inject constructor(
             is OnCallMutationInitialRequest -> callMutationInitialRequestUseCase()
             is OnOnFidoVerifiedChanged -> isOnFidoVerified = event.isOnFidoVerified
             is OnCallSaveAutomatedSmartAccount -> onCallMutationSaveSmartAccount(event.accountSmartData)
+            is OverridePreviousAction -> overridePreviousAction(event.action)
         }
     }
 
@@ -563,6 +569,8 @@ class SmartViewModel @Inject constructor(
         object OnClickBottomSheet : UIEvent()
 
         object OnCallMutationInitialRequest : UIEvent()
+
+        data class OverridePreviousAction(val action: (() -> Unit)?) : UIEvent()
     }
 
     companion object {

@@ -36,10 +36,7 @@ fun SmartLivingAddressScreen(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(true) {
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
-        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(viewModel.isFormValid()))
-
+    LaunchedEffect(key1 = sharedViewModel.accountSmartData) {
         viewModel.onUIEvent(
             SmartLivAddressViewModel.UIEvent.OnGetUserData(
                 accountSmartData = sharedViewModel.accountSmartData,
@@ -47,6 +44,11 @@ fun SmartLivingAddressScreen(
                 idBrand = sharedViewModel.idBrandAsInt
             )
         )
+    }
+
+    LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueVisible(true))
+        sharedViewModel.onUIEvent(SmartViewModel.UIEvent.OnContinueEnable(viewModel.isFormValid()))
 
         sharedViewModel.onUIEvent(
             SmartViewModel.UIEvent.OnSetNavigation(

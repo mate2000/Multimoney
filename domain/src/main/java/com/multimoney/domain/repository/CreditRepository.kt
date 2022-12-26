@@ -24,10 +24,11 @@ import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.PromissoryNoteDetail
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
-import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.credit.SaveCreditOffer
+import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.credit.SaveTermsAndConditionsCredit
 import com.multimoney.domain.model.util.MultimoneyResult
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import kotlinx.coroutines.flow.Flow
 
 interface CreditRepository {
@@ -257,12 +258,28 @@ interface CreditRepository {
         idAccount: Long
     ): Flow<MultimoneyResult<AutomaticDebit?>>
 
+    suspend fun mutationDeactivateCardAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        idCard: Long
+    ): Flow<MultimoneyResult<AutomaticDebit?>>
+
     suspend fun queryGetClientAutomaticDebit(
         user: String,
         idBrand: Int,
         idClient: Int,
         idLoanClient: Int
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>>
+
+    suspend fun queryGetCardAutomaticDebit(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long
+    ): Flow<MultimoneyResult<List<CardVisaDirect?>?>>
 
     suspend fun queryCreditExtensionAmount(
         idClient: Long,

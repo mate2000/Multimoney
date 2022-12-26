@@ -19,8 +19,9 @@ import com.multimoney.multimoney.presentation.util.getCardDateFormat
 
 @Composable
 fun ScheduleAutomaticPayment(viewModel: ProductViewModel, sharedViewModel: HomeViewModel) {
-    viewModel.balanceCredit?.balanceCredit?.firstOrNull()?.summary?.firstOrNull()?.let { summary ->
-        if (summary.automaticDebitEnabled == true) {
+    viewModel.balanceCredit?.balanceCredit?.firstOrNull()?.let { balance ->
+        if (balance.automaticDebitEnabled == true) {
+            Spacer(modifier = Modifier.height(8.dp))
             ScheduleAutomaticPaymentTextInfo(
                 dateText = getCardDateFormat(
                     viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel,
@@ -33,14 +34,14 @@ fun ScheduleAutomaticPayment(viewModel: ProductViewModel, sharedViewModel: HomeV
                     sharedViewModel.onUIEvent(OnShowAutomaticPaymentEdit)
                 }
             )
-        } else if (summary.applyAutomaticDebit == true) {
+        } else if (balance.applyAutomaticDebit == true) {
             Spacer(modifier = Modifier.height(24.dp))
             CustomTextButton(
                 string.schedule_automatic_payment_credit_button,
                 drawable.ic_calendar_schedule_automatic_payment
             ) {
                 viewModel.onUIEvent(
-                    OnNavigateToScheduleAutomaticPaymentScreen
+                    OnNavigateToScheduleAutomaticPaymentScreen(false)
                 )
             }
         }

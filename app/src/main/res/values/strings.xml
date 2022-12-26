@@ -663,6 +663,7 @@
     <string name="visa_card_masked_number" translatable="false">Visa ••••%s</string>
     <string name="visa_card_dialog_title" translatable="false">Vincular tarjeta</string>
     <string name="visa_card_dialog_description" translatable="false">¿Estás seguro que deseas vincular tu tarjeta a este dispositivo?</string>
+    <string name="visa_card_success_message_label" translatable="false">La tarjeta fue tokenizada exitosamente</string>
 
     <!-- visa tokenization waiting -->
     <string name="visa_tokenization_waiting_description_one_bold" translatable="false">100% libre de plástico.</string>
@@ -843,6 +844,7 @@
     <!-- Payment Options -->
     <string name="payment_options_title_sv" translatable="false">¿Con cuál método querés pagar tu cuota?</string>
     <string name="payment_options_title_gt" translatable="false">¿Con cuál método quieres pagar tu cuota?</string>
+    <string name="payment_options_title_cr" translatable="false">¿En cuál cuenta querés ahorrar?</string>
 
     <!-- Smart Living Address -->
     <string name="smart_liv_address_title" translatable="false">¿Dónde vivís?</string>
@@ -924,6 +926,18 @@
 
     <!-- Payment Schedule Account-->
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
+
+    <!-- Payment Schedule Cards-->
+    <string name="payment_schedule_card_title" translatable="false">Configurá tu pago \nautomático</string>
+    <string name="payment_schedule_card_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_card_label_date" translatable="false">Día del mes que se hará el pago</string>
+    <string name="payment_schedule_card_label_origin" translatable="false">Desde tu tarjeta</string>
+    <string name="payment_schedule_card_label_date_description" translatable="false">%s de cada mes</string>
+    <string name="payment_schedule_card_button" translatable="false">Programar</string>
+
+    <!-- Payment Schedule Card List-->
+    <string name="payment_schedule_card_list_title" translatable="false">Selecciona una tarjeta para programar tu pago</string>
+    <string name="payment_schedule_card_list_add_card" translatable="false">Agregar tarjeta</string>
 
     <!-- Disbursement Amount-->
     <string name="disbursement_amount_title" translatable="false">¿Cuánto \ndinero necesitás?</string>
@@ -1059,7 +1073,7 @@
     <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi cuenta Smart Colones</string>
 
     <!-- Payment Account -->
-    <string name="payment_account_title" translatable="false">¿A cuál Multimoney Smart querés abonar?</string>
+    <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
     <string name="payment_account_colon" translatable="false">Multimoney Smart | Colones</string>
     <string name="payment_account_dollar" translatable="false">Multimoney Smart | Dólares</string>
 
@@ -1114,7 +1128,10 @@
     <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
     <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>
     <string name="smart_saving_try_later_notification_body" translatable="false">Abrí la app y hacé tu primer ahorro para ganar más</string>
+    <string name="smart_saving_total_to_deposit" translatable="false">Total a depositar</string>
     <string name="smart_processing_transaction" translatable="false">Procesando transacción...</string>
+    <string name="smart_dollar_placeholder" translatable="false">$0</string>
+    <string name="smart_colon_placeholder" translatable="false">₡000</string>
 
     <!-- Profile Help And Information Section -->
     <string name="profile_help_and_info_title" translatable="false">Ayuda e infomación</string>

@@ -62,12 +62,11 @@ fun CreditMovementsScreen(
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is CreditMovementsViewModel.BaseEvent.OnStartDownloadCreditMovementsWorker -> {
-                    WorkManager.getInstance(context)
-                        .enqueueUniqueWork(
-                            DownloadCreditMovementsWorker.DOWNLOAD_CREDIT_MOVEMENTS_WORKER_NAME,
-                            ExistingWorkPolicy.REPLACE,
-                            event.oneTimeRequest
-                        )
+                    WorkManager.getInstance(context).enqueueUniqueWork(
+                        DownloadCreditMovementsWorker.DOWNLOAD_CREDIT_MOVEMENTS_WORKER_NAME,
+                        ExistingWorkPolicy.REPLACE,
+                        event.oneTimeRequest
+                    )
                 }
             }
         }

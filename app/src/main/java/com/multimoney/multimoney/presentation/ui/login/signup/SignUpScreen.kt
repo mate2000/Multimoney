@@ -99,7 +99,7 @@ fun SignUpScreen(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .height(56.dp),
                 buttonType = CustomButtonType.PrimaryPrimary,
                 enable = viewModel.uiState.isContinueEnabled
             )

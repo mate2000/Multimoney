@@ -1002,6 +1002,11 @@
     <string name="crypto_gains_symbol" translatable="false">+</string>
     <string name="crypto_losses_symbol" translatable="false">-</string>
 
+    <!--Crypto Market-->
+    <string name="market_header_title" translatable="false">Mercado</string>
+    <string name="market_filter_crypto_az_label" translatable="false">A-Z</string>
+    <string name="market_filter_crypto_price_label" translatable="false">Precio</string>
+
     <!-- Evicertia screen -->
     <string name="smart_evicertia_missing_signature_title_card" translatable="false">¡Solo falta tu firma!</string>
     <string name="smart_evicertia_missing_signature_subtitle_card" translatable="false">Firmá el contrato para que podás empezar a invertir de forma Smart</string>

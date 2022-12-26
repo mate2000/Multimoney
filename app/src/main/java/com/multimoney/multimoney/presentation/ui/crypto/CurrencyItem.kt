@@ -111,3 +111,87 @@ fun CurrencyItem(
         Spacer(modifier = Modifier.size(16.dp))
     }
 }
+
+@Composable
+fun MarketCurrencyItem(
+    modifier: Modifier = Modifier,
+    imageUrl: String,
+    descriptionCurrency: String,
+    asset: String,
+    percentChange: Double,
+    currentPrice: Double
+) {
+    Column {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(72.dp)
+        ) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(id = R.drawable.bg_cryptocurrency_enabled),
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically),
+                    painter = rememberAsyncImagePainter(model = imageUrl),
+                    contentDescription = null
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = descriptionCurrency,
+                            style = Typography.body2,
+                            color = MultimoneyTheme.colors.labelText
+                        )
+                        Text(
+                            text = asset,
+                            style = Typography.body2,
+                            color = MultimoneyTheme.colors.labelText
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 2.dp)
+                            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row {
+                            Text(
+                                text = stringResource(id = R.string.currency_item_dollar_symbol, currentPrice),
+                                style = Typography.caption,
+                                color = WhiteTransparency60
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 8.dp),
+                                text = stringResource(id = R.string.currency_item_percent_invested, percentChange),
+                                style = Typography.caption,
+                                color = SemanticPositive400
+                            )
+                        }
+                        /*Text(
+                            text = "$available $asset",
+                            style = Typography.caption,
+                            color = WhiteTransparency60
+                        )*/
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.size(16.dp))
+    }
+}

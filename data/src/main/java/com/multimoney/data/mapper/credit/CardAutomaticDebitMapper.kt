@@ -6,7 +6,8 @@ import com.multimoney.domain.model.virtualcard.CardVisaDirect
 private fun GetCardAutomaticDebitQuery.GetCardAutomaticDebit.mapToDomainModel() = CardVisaDirect(
     idCard = idCard?.toString()?.toInt() ?: 0,
     cardMaskedNumber = cardMasked,
-    debitDate = fechaDebito
+    debitDate = fechaDebito,
+    detail = detail
 )
 
 fun GetCardAutomaticDebitQuery.Data.mapToDomainModel() = getCardAutomaticDebit?.map { it?.mapToDomainModel() }

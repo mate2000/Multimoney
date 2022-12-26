@@ -48,7 +48,6 @@ class PaymentCardVoucherViewModel @Inject constructor(
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
         currentAmountValueString = savedStateHandle[CURRENT_AMOUNT_VALUE]
-        currency = savedStateHandle[CURRENCY_SYMBOL]
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         idClient = savedStateHandle[ID_CLIENT] ?: 0

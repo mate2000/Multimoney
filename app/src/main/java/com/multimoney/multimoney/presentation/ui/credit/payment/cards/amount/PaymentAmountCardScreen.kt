@@ -57,6 +57,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun PaymentAmountCardScreen(
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: PaymentAmountCardViewModel = hiltViewModel()
@@ -67,7 +68,7 @@ fun PaymentAmountCardScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+            executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
         }
     }
     PaymentAmountCardContent(viewModel, coroutineScope)

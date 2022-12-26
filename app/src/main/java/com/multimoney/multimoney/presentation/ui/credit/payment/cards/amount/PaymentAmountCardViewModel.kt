@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent
@@ -46,12 +47,11 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.Pay
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnPayClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.cards.amount.PaymentAmountCardViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isValidAmount
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -162,7 +162,11 @@ class PaymentAmountCardViewModel @Inject constructor(
 
     private fun onNavigateToPaymentCardVoucher() {
         popAndNavigateTo(
-            "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${uiState.card}/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}",
+            "${Screen.PaymentCardVoucherScreen.baseRoute}/$user/$idBrand/$identification/$idClient/$idLoanClient/${
+            encodeData(
+                uiState.card
+            )
+            }/${getCurrentAmountFormatted()}/${uiState.isAutomaticProgrammedPaymentChecked}/${payCreditVisa?.referenceAuthorization}",
             Screen.PaymentAmountCardsScreen.route
         )
     }

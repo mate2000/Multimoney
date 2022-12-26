@@ -351,7 +351,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentCardsListScreen : Screen(
-        "payment_cards_list_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}//{$ID_CURRENCY}",
+        "payment_cards_list_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$ID_CURRENCY}",
         "payment_cards_list_screen"
     )
 

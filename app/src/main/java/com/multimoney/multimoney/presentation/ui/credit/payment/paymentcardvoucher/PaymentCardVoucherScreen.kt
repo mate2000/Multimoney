@@ -42,8 +42,10 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnScheduleAutomaticPayment
 import com.multimoney.multimoney.presentation.ui.credit.payment.paymentcardvoucher.PaymentCardVoucherViewModel.UIEvent.OnSharedVoucherImage
 import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
@@ -68,16 +70,17 @@ fun PaymentVoucherVDScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
+            .background(MultimoneyTheme.colors.background),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
-            viewModel.onUIEvent(OnCloseClick)
-        })
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
+            TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
+                viewModel.onUIEvent(OnCloseClick)
+            })
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -155,7 +158,7 @@ fun PaymentVoucherVDScreen(
                         )
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "${viewModel.currency} ${viewModel.currentAmountValueString}",
+                            text = viewModel.currentAmountValueString ?: "",
                             style = Typography.h4.copy(fontWeight = FontWeight.W600),
                             color = MultimoneyTheme.colors.text,
                             textAlign = TextAlign.Center
@@ -219,6 +222,23 @@ fun PaymentVoucherVDScreen(
                     }
                 }
             }
+        }
+
+        if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
+            CustomButton(
+                onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
+                text = stringResource(string.payment_voucher_schedule_payment),
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 32.dp,
+                        top = 16.dp
+                    )
+                    .fillMaxWidth()
+                    .height(48.dp),
+                buttonType = PrimaryPrimary
+            )
         }
     }
 

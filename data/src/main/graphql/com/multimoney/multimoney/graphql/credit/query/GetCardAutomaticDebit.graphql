@@ -11,5 +11,6 @@ query GetCardAutomaticDebit($user: String!,$identification: String!, $idBrand: I
         idCard
         cardMasked
         fechaDebito
+        detail
     }
 }

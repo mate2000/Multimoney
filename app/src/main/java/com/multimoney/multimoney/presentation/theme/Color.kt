@@ -93,6 +93,7 @@ val ComplementaryGray2 = Color(0x99FFFFFF)
 val ComplementaryGray5 = Color(0x0DFFFFFF)
 val ComplementaryBlack = Color(0xFF212121)
 val ComplementaryBlack2 = Color(0xFF161616)
+val ComplementaryBlack3 = Color(0xFF1B1B1B)
 
 // WhiteTransparency
 val WhiteTransparency5 = Color(0xFFFFFFFF).copy(alpha = 0.05f)

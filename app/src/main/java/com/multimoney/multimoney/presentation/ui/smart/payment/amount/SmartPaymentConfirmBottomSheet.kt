@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -29,6 +31,10 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
+import com.multimoney.multimoney.presentation.uielement.ExchangeTotalLabel
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
+import com.multimoney.multimoney.presentation.util.getMaskedVisa
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -48,7 +54,7 @@ fun SmartPaymentConfirmBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = CenterHorizontally
         ) {
             Text(
                 modifier = Modifier
@@ -59,11 +65,23 @@ fun SmartPaymentConfirmBottomSheet(
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center
             )
+            if (viewModel.shouldDisplayExchange) {
+                Spacer(modifier = Modifier.height(8.dp))
+                ExchangeTotalLabel(
+                    totalConverted = viewModel.uiState.convertedAmountLabel
+                )
+            }
             Text(
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .fillMaxWidth(),
-                text = stringResource(id = R.string.smart_payment_amount_bottom_sheet_from_card),
+                text = stringResource(
+                    id = if (viewModel.idBrand == Brand.CostaRica.id) {
+                        R.string.smart_payment_amount_bottom_sheet_from_card_CR
+                    } else {
+                        R.string.smart_payment_amount_bottom_sheet_from_card
+                    }
+                ),
                 style = Typography.body2.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Start
@@ -72,12 +90,23 @@ fun SmartPaymentConfirmBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(78.dp),
-                startIcon = R.drawable.ic_visa_card_item,
+                startIcon = if (viewModel.idBrand == Brand.CostaRica.id) {
+                    viewModel.ibanCurrency?.id?.getCurrencyFromId()?.accountIcon
+                } else {
+                    R.drawable.ic_visa_card_item
+                },
                 title = viewModel.bankDetail,
-                subtitle = stringResource(
-                    R.string.visa_card_masked_number,
-                    viewModel.maskedCardNumber.takeLast(4)
-                ),
+                subtitle = if (viewModel.idBrand == Brand.CostaRica.id) {
+                    getMaskedAccountIban(
+                        viewModel.maskedCardNumber,
+                        stringResource(id = R.string.payment_account_masked_text)
+                    )
+                } else {
+                    getMaskedVisa(
+                        cardNumber = viewModel.maskedCardNumber,
+                        maskedText = stringResource(R.string.visa_card_masked_number)
+                    )
+                },
                 endIcon = null,
                 enable = false
             )

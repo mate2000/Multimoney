@@ -76,7 +76,6 @@ class SavingAmountViewModel @Inject constructor(
         private set
 
     // stateless
-    private var idBrand: Int = 0
     private var idCard: Long = 0
     private var identification: String = ""
     private var user: String = ""
@@ -84,6 +83,7 @@ class SavingAmountViewModel @Inject constructor(
     private var tokenNumber: Long = 0
     private var smartAccount: SmartAccountID? = null
     private var ibanAccount: IbanAccountID? = null
+    var idBrand: Int = 0
     var smartCurrency: CurrencyType? = Dollar
     var ibanCurrency: CurrencyType? = null
     var shouldDisplayExchange: Boolean = false
@@ -96,27 +96,16 @@ class SavingAmountViewModel @Inject constructor(
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             identification = dataStorePreferences.getIdentification().first()
             user = dataStorePreferences.getPkUser().first()
-            idCard = savedStateHandle[ID_VISA_CARD] ?: 0
-            previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
             smartAccount = savedStateHandle[SMART_IDS]
             smartCurrency = smartAccount?.currencyID?.getCurrencyFromId()
-            idCurrency = smartAccount?.currencyID ?: 0
             tokenNumber = smartAccount?.tokenAccount?.toLongOrNull() ?: 0
-            maskedCardNumber = savedStateHandle[MASKED_CARD] ?: ""
-            bankDetail = savedStateHandle[BANK_DETAIL] ?: ""
+            idCurrency = smartAccount?.currencyID ?: 0
+            previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
 
             if (idBrand == Brand.CostaRica.id) {
-                ibanAccount = savedStateHandle[IBAN_ACCOUNT]
-                ibanCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
-                shouldDisplayExchange = smartCurrency != ibanCurrency
-                if (shouldDisplayExchange) {
-                    getSmartExchangeRate(
-                        user = user,
-                        identification = identification,
-                        idOriginCurrency = smartCurrency?.id.toString(),
-                        idDestinationCurrency = ibanCurrency?.id.toString()
-                    )
-                }
+                initializeCRValues()
+            } else {
+                initializeSVValues()
             }
 
             uiState = uiState.copy(
@@ -136,6 +125,28 @@ class SavingAmountViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun initializeCRValues() {
+        ibanAccount = savedStateHandle[IBAN_ACCOUNT]
+        ibanCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
+        shouldDisplayExchange = smartCurrency != ibanCurrency
+        bankDetail = ibanAccount?.bank ?: ""
+        maskedCardNumber = ibanAccount?.sinpeAccount ?: ""
+        if (shouldDisplayExchange) {
+            getSmartExchangeRate(
+                user = user,
+                identification = identification,
+                idOriginCurrency = smartCurrency?.id.toString(),
+                idDestinationCurrency = ibanCurrency?.id.toString()
+            )
+        }
+    }
+
+    private fun initializeSVValues() {
+        idCard = savedStateHandle[ID_VISA_CARD] ?: 0
+        maskedCardNumber = savedStateHandle[MASKED_CARD] ?: ""
+        bankDetail = savedStateHandle[BANK_DETAIL] ?: ""
     }
 
     private fun getSmartExchangeRate(
@@ -256,12 +267,9 @@ class SavingAmountViewModel @Inject constructor(
         uiState.suggestedAmountSelected?.isSelected(order) == true
 
     private fun onContinueClick() {
-        // Temporal check while send to iban account is implemented
-        if (idBrand == Brand.ElSalvador.id) {
-            uiState = uiState.copy(
-                bottomSheetState = ModalBottomSheetState(Expanded)
-            )
-        }
+        uiState = uiState.copy(
+            bottomSheetState = ModalBottomSheetState(Expanded)
+        )
     }
 
     private fun onRetryTransfer() {
@@ -338,7 +346,6 @@ class SavingAmountViewModel @Inject constructor(
         val convertedAmountLabel: String = "0.0",
         val placeholder: Int = R.string.smart_dollar_placeholder,
         val openDialog: DialogParameters = DialogParameters(),
-        val idCard: Long = 0,
         val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
         val cardBankName: String = "",
         var showErrorScreen: Boolean = false,

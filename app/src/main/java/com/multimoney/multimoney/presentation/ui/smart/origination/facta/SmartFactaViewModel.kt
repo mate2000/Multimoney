@@ -25,50 +25,46 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onIsPEPChange(condition: Boolean, idBrand: Int?) {
+    private fun onIsPEPChange(condition: Boolean) {
         uiState = uiState.copy(isPEP = condition)
-        onValidateForm(idBrand)
+        onValidateForm()
     }
 
-    private fun onIsUSCitizenChange(condition: Boolean, idBrand: Int?) {
+    private fun onIsUSCitizenChange(condition: Boolean) {
         uiState = uiState.copy(isUSCitizen = condition)
-        onValidateForm(idBrand)
+        onValidateForm()
     }
 
-    private fun onIsActivityOfArt15Change(condition: Boolean, idBrand: Int?) {
+    private fun onIsActivityOfArt15Change(condition: Boolean) {
         uiState = uiState.copy(isActivityOfArt15 = condition)
-        onValidateForm(idBrand)
+        onValidateForm()
     }
 
-    private fun onIsUSTaxPayerChange(condition: Boolean, idBrand: Int?) {
+    private fun onIsUSTaxPayerChange(condition: Boolean) {
         uiState = uiState.copy(isUSTaxPayer = condition)
-        onValidateForm(idBrand)
+        onValidateForm()
     }
 
-    private fun onIsTaxPayerChange(condition: Boolean, idBrand: Int?) {
+    private fun onIsTaxPayerChange(condition: Boolean) {
         uiState = uiState.copy(isTaxPayer = condition)
-        onValidateForm(idBrand)
+        onValidateForm()
     }
 
     private fun onCrGoPageTwo() {
         uiState = uiState.copy(
-            crPage = CR_PAGE_TWO,
-            isUSTaxPayer = null,
-            isTaxPayer = null
+            crPage = CR_PAGE_TWO
         )
-        onValidateForm(Brand.CostaRica.id)
+        onValidateForm()
     }
 
     private fun onCrGoPageOne() {
         uiState = uiState.copy(
-            crPage = CR_PAGE_ONE,
-            isActivityOfArt15 = null,
-            isPEP = null
+            crPage = CR_PAGE_ONE
         )
     }
 
-    fun isFormValid(idBrand: Int): Boolean {
-        return when (idBrand) {
+    fun isFormValid(): Boolean {
+        return when (uiState.idBrand) {
             Brand.CostaRica.id -> {
                 uiState.isPEP != null &&
                     uiState.isUSTaxPayer != null &&
@@ -91,27 +87,28 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         accountSmartData?.let {
             uiState = uiState.copy(
+                idBrand = it.idBrand ?: 0,
                 isPEP = it.isPEP,
                 isUSCitizen = it.isUSCitizen,
                 isActivityOfArt15 = it.isActivityOfArt15,
                 isUSTaxPayer = it.isUSTaxPayer,
                 isTaxPayer = it.isTaxPayer
             )
-            isFormValid(idBrand = it.idBrand ?: 0)
+            onValidateForm()
         }
     }
 
-    private fun onValidateForm(idBrand: Int?) = idBrand?.let {
-        emitBaseEvent(OnFormValidateCompleted(isFormValid(idBrand)))
-    }
+    private fun onValidateForm() =
+        emitBaseEvent(OnFormValidateCompleted(isFormValid()))
 
     data class UIState(
-        var isPEP: Boolean? = null,
-        var isUSCitizen: Boolean? = null,
-        var isActivityOfArt15: Boolean? = null,
-        var isUSTaxPayer: Boolean? = null,
-        var isTaxPayer: Boolean? = null,
-        var crPage: Int = CR_PAGE_ONE
+        val idBrand: Int = 0,
+        val isPEP: Boolean? = null,
+        val isUSCitizen: Boolean? = null,
+        val isActivityOfArt15: Boolean? = null,
+        val isUSTaxPayer: Boolean? = null,
+        val isTaxPayer: Boolean? = null,
+        val crPage: Int = CR_PAGE_ONE
     )
 
     sealed class UIEvent {
@@ -128,17 +125,16 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun onUiEvent(event: UIEvent) {
         when (event) {
-            is OnIsPEPChange -> onIsPEPChange(event.condition, event.idBrand)
-            is OnIsUSCitizenChange -> onIsUSCitizenChange(event.condition, event.idBrand)
+            is OnIsPEPChange -> onIsPEPChange(event.condition)
+            is OnIsUSCitizenChange -> onIsUSCitizenChange(event.condition)
             is OnIsActivityOfArt15Change -> onIsActivityOfArt15Change(
-                event.condition,
-                event.idBrand
+                event.condition
             )
-            is OnIsTaxPayerChange -> onIsTaxPayerChange(event.condition, event.idBrand)
-            is OnIsUSTaxPayerChange -> onIsUSTaxPayerChange(event.condition, event.idBrand)
+            is OnIsTaxPayerChange -> onIsTaxPayerChange(event.condition)
+            is OnIsUSTaxPayerChange -> onIsUSTaxPayerChange(event.condition)
             is OnCrGoPageOne -> onCrGoPageOne()
             is OnCrGoPageTwo -> onCrGoPageTwo()
-            is OnValidateForm -> onValidateForm(event.idBrand)
+            is OnValidateForm -> onValidateForm()
             is OnLoadCurrentStepData -> onLoadCurrentStepData(event.accountSmartData)
         }
     }

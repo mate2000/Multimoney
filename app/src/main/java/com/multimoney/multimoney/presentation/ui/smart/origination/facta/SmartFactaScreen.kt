@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnClickBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.facta.SmartFactaViewModel.Companion.CR_PAGE_ONE
@@ -53,12 +54,10 @@ fun SmartFactaScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     viewModel: SmartFactaViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(true) {
-        viewModel.onUiEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
-    }
-
     LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid(sharedViewModel.idBrandAsInt)))
+        viewModel.onUiEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+
+        sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(
             OnSetNavigation(
                 nextAction = {
@@ -74,6 +73,13 @@ fun SmartFactaScreen(
                             )
                         )
                     )
+                },
+                overridePreviousAction = {
+                    if (viewModel.uiState.crPage == CR_PAGE_TWO) {
+                        viewModel.onUiEvent(OnCrGoPageOne)
+                    } else {
+                        sharedViewModel.onUIEvent(OnPreviousStep)
+                    }
                 },
                 nextStep = if (sharedViewModel.idBrandAsInt == Brand.ElSalvador.id) SmartSteps.Six.id else SmartSteps.Four.id,
                 previousStep = if (sharedViewModel.idBrandAsInt == Brand.ElSalvador.id) SmartSteps.Four.id else SmartSteps.Two.id
@@ -233,7 +239,7 @@ fun ContentOneCR(
             onClick = { viewModel.onUiEvent(OnCrGoPageTwo) },
             text = stringResource(id = R.string.button_continue),
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .padding(bottom = 32.dp, top = 16.dp)
                 .fillMaxWidth()
                 .height(48.dp),
             buttonType = PrimaryPrimary,

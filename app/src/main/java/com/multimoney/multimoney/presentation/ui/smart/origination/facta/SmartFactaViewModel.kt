@@ -90,11 +90,14 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
         accountSmartData?.let {
-            onIsPEPChange(it.isPEP ?: false, it.idBrand)
-            onIsUSCitizenChange(it.isUSCitizen ?: false, it.idBrand)
-            onIsActivityOfArt15Change(it.isActivityOfArt15 ?: false, it.idBrand)
-            onIsUSTaxPayerChange(it.isUSTaxPayer ?: false, it.idBrand)
-            onIsTaxPayerChange(it.isTaxPayer ?: false, it.idBrand)
+            uiState = uiState.copy(
+                isPEP = it.isPEP,
+                isUSCitizen = it.isUSCitizen,
+                isActivityOfArt15 = it.isActivityOfArt15,
+                isUSTaxPayer = it.isUSTaxPayer,
+                isTaxPayer = it.isTaxPayer
+            )
+            isFormValid(idBrand = it.idBrand ?: 0)
         }
     }
 
@@ -127,7 +130,10 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
         when (event) {
             is OnIsPEPChange -> onIsPEPChange(event.condition, event.idBrand)
             is OnIsUSCitizenChange -> onIsUSCitizenChange(event.condition, event.idBrand)
-            is OnIsActivityOfArt15Change -> onIsActivityOfArt15Change(event.condition, event.idBrand)
+            is OnIsActivityOfArt15Change -> onIsActivityOfArt15Change(
+                event.condition,
+                event.idBrand
+            )
             is OnIsTaxPayerChange -> onIsTaxPayerChange(event.condition, event.idBrand)
             is OnIsUSTaxPayerChange -> onIsUSTaxPayerChange(event.condition, event.idBrand)
             is OnCrGoPageOne -> onCrGoPageOne()

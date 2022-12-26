@@ -224,16 +224,10 @@ class SmartDocumentViewModel @Inject constructor(
      * data coming from the current step (provided from the backend)
      */
     private fun onLoadCurrentStepData(accountSmartData: AccountSmartData?) {
-        accountSmartData?.birthday?.let {
-            uiState = uiState.copy(
-                birthdate = getDayFromString(it, API_DATE_FORMAT)
-            )
-        }
-        accountSmartData?.expirationDate?.let {
-            uiState = uiState.copy(
-                expirationDate = getDayFromString(it, API_DATE_FORMAT)
-            )
-        }
+        uiState = uiState.copy(
+            birthdate = getDayFromString(accountSmartData?.birthday, API_DATE_FORMAT),
+            expirationDate = getDayFromString(accountSmartData?.expirationDate, API_DATE_FORMAT)
+        )
         onGenderChange(accountSmartData?.strGenre.orEmpty())
         onCivilStateChange(accountSmartData?.strMaritalStatus.orEmpty())
         onProfessionChange(accountSmartData?.stringProfessionType.orEmpty())

@@ -139,7 +139,7 @@ fun ContentSV(
                     OnIsUSCitizenChange(it == optionsCitizen.first(), Brand.ElSalvador.id)
                 )
             },
-            indexSelected = if (viewModel.uiState.isUSCitizen == true) 0 else 1
+            optionSelected = if (viewModel.uiState.isUSCitizen == true) optionsCitizen[0] else optionsCitizen[1]
         )
 
         Text(
@@ -155,7 +155,7 @@ fun ContentSV(
                     OnIsPEPChange(it == optionsPep.first(), Brand.ElSalvador.id)
                 )
             },
-            indexSelected = if (viewModel.uiState.isPEP == true) 0 else 1
+            optionSelected = if (viewModel.uiState.isPEP == true) optionsPep[0] else optionsPep[1]
         )
     }
 }
@@ -210,7 +210,7 @@ fun ContentOneCR(
                         OnIsActivityOfArt15Change(it == optionsYesNo.first(), Brand.CostaRica.id)
                     )
                 },
-                indexSelected = if (viewModel.uiState.isActivityOfArt15 == true) 0 else 1
+                optionSelected = if (viewModel.uiState.isActivityOfArt15 == true) optionsYesNo[0] else optionsYesNo[1]
             )
 
             Text(
@@ -226,7 +226,7 @@ fun ContentOneCR(
                         OnIsPEPChange(it == optionsPep.first(), Brand.CostaRica.id)
                     )
                 },
-                indexSelected = if (viewModel.uiState.isPEP == true) 0 else 1
+                optionSelected = if (viewModel.uiState.isPEP == true) optionsPep[0] else optionsPep[1]
             )
         }
         CustomButton(
@@ -264,7 +264,7 @@ fun ContentTwoCR(
                     OnIsUSTaxPayerChange(it == options.first(), Brand.CostaRica.id)
                 )
             },
-            indexSelected = if (viewModel.uiState.isUSTaxPayer == true) 0 else 1
+            optionSelected = if (viewModel.uiState.isUSTaxPayer == true) options[0] else options[1]
         )
 
         Text(
@@ -280,7 +280,7 @@ fun ContentTwoCR(
                     OnIsTaxPayerChange(it == options.first(), Brand.CostaRica.id)
                 )
             },
-            indexSelected = if (viewModel.uiState.isTaxPayer == true) 0 else 1
+            optionSelected = if (viewModel.uiState.isTaxPayer == true) options[0] else options[1]
         )
     }
     BackHandler {

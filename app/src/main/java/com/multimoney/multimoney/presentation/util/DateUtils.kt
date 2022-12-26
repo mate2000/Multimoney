@@ -60,7 +60,7 @@ fun getCardDateFormat(
 }
 
 fun getDayFromString(date: String?, format: SimpleDateFormat): String {
-    return if (date.isNullOrEmpty().not()) {
+    return if (date.isNullOrBlank().not()) {
         val dateFormatted = format.parse(date)
         dateFormatted?.let {
             DAY_FORMAT.format(dateFormatted)

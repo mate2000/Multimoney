@@ -185,8 +185,7 @@ class SmartViewModel @Inject constructor(
         )
 
         // update the current step coming from the backend in order to navigate to the proper screen
-        val currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep)
-        uiState = uiState.copy(currentStep = currentStep)
+        uiState = uiState.copy(currentStep = SmartSteps.Search.getIdByName(stepByStep.currentStep))
     }
 
     private fun callMutationInitialRequestUseCase() = executeUseCase(

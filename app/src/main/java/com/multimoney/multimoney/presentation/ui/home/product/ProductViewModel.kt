@@ -22,6 +22,7 @@ import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
@@ -108,6 +109,7 @@ class ProductViewModel @Inject constructor(
     var isExpiredTitle = R.string.home_product_expiration
     var smartMovementsList: List<SmartMovementsResult> = emptyList()
     var creditMovements: List<CreditMovementsResult> = emptyList()
+    var smartAccount : SmartAccountID? = null
 
     private fun onSetUserData(
         idBrand: String,
@@ -567,9 +569,14 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToSendMoneyScreen(account: Account?) {
+      smartAccount = SmartAccountID(
+          account?.tokenNumber,
+          account?.idCurrencyAccount,
+          account?.accountNumber
+      )
         if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             navigateTo(
-                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${account?.tokenNumber}/${account?.currencyCode}/${account?.accountNumber}"
+                "${Screen.SmartSelectSendingTypeScreen.baseRoute}/${pkUser}/${uiState.idBrand}/${identification}/${encodeData(smartAccount)}"
             )
         }
     }

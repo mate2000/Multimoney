@@ -187,6 +187,7 @@ fun NavGraphBuilder.paymentSmartNavGraph(navController: NavHostController) {
             route = Screen.SmartSelectSendingTypeScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType },
+                navArgument(SMART_IDS) { type = SmartAccountIDNavType() }
             )
         ) {
             SmartSelectSendingTypeScreen(

@@ -53,11 +53,7 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnPreviousStep
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OverridePreviousAction
-import com.multimoney.multimoney.presentation.util.ISO_8601_API_FORMAT_PATTERN
-import com.multimoney.multimoney.presentation.util.YEAR_MONTH_DAY_PATTERN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.getCurrentDateString
-import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -223,23 +219,11 @@ class SmartViewModel @Inject constructor(
                 user = accountSmartData?.user ?: "",
                 idBrand = accountSmartData?.idBrand ?: 0,
                 currentStep = accountSmartData?.currentStep,
-                birthday = accountSmartData?.birthday?.let {
-                    getFormatDateByString(
-                        getCurrentDateString(),
-                        YEAR_MONTH_DAY_PATTERN,
-                        ISO_8601_API_FORMAT_PATTERN
-                    )
-                },
+                birthday = accountSmartData?.birthday,
                 idGender = accountSmartData?.idGender,
                 idCivilStatusType = accountSmartData?.idCivilStatusType,
                 idProfessionType = accountSmartData?.idProfessionType,
-                expirationDate = accountSmartData?.expirationDate?.let {
-                    getFormatDateByString(
-                        getCurrentDateString(),
-                        YEAR_MONTH_DAY_PATTERN,
-                        ISO_8601_API_FORMAT_PATTERN
-                    )
-                },
+                expirationDate = accountSmartData?.expirationDate,
                 idAddressLevel1 = accountSmartData?.idAddressLevel1,
                 idAddressLevel2 = accountSmartData?.idAddressLevel2,
                 idAddressLevel3 = accountSmartData?.idAddressLevel3,

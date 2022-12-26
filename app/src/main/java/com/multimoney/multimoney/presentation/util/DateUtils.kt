@@ -18,11 +18,13 @@ fun getPickedDateAsString(year: Int, month: Int, day: Int, dateFormat: String): 
 }
 
 fun getFormatDateByString(date: String, formatOne: String, formatTwo: String): String {
+    if (date.isBlank()) return ""
+
     val simpleDateFormat = SimpleDateFormat(formatOne, Locale.getDefault())
     val formattedDate = simpleDateFormat.parse(date)
-    val simpleDateFormatTow = SimpleDateFormat(formatTwo, Locale.getDefault())
+    val simpleDateFormatTwo = SimpleDateFormat(formatTwo, Locale.getDefault())
     return formattedDate?.let {
-        simpleDateFormatTow.format(formattedDate)
+        simpleDateFormatTwo.format(formattedDate)
     } ?: run {
         ""
     }
@@ -152,7 +154,7 @@ enum class FilterDateByDays(val days: Long, val time: String, val timeAbv: Strin
 }
 
 const val DAY_PATTERN = "d"
-const val YEAR_MONTH_DAY_PATTERN = "yyyy-mm-dd"
+const val YEAR_MONTH_DAY_PATTERN = "yyyy-MM-dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT = "dd | MM | yyyy hh:mm a"
 const val YEAR_PATTER = "yyyy"

@@ -26,6 +26,8 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.paymentvoucher.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListScreen
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardScreen
 import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.PaymentOptionsTransferScreen
 
 // payment process parameters
@@ -36,6 +38,7 @@ const val ID_LOAN_CLIENT = "id_loan_client"
 const val SUMMARY_LIST = "summary_list"
 const val CARD_SELECTED = "summary_list"
 const val CLIENT_BANK_ACCOUNT = "client_bank_account"
+const val CLIENT_CARD_VISA_DIRECT = "client_card_visa_direct"
 const val PAYMENT_METHOD = "payment_method"
 const val TRANSFER_ACCOUNT = "transfer_account"
 const val CREDIT_NUMBER = "credit_number"
@@ -222,6 +225,73 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         ) {
             PaymentScheduleAccountScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.PaymentScheduleCardScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(CLIENT_CARD_VISA_DIRECT) {
+                    type = ClientBankAccountNavType()
+                },
+                navArgument(IS_EDIT_BANK_ACCOUNT) {
+                    type = NavType.BoolType
+                },
+                navArgument(IS_EDIT_PAYMENT_SCHEDULE) {
+                    type = NavType.BoolType
+                }
+            )
+        ) {
+            PaymentScheduleCardScreen(
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopBackStack = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screen.PaymentScheduleCardListScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_LOAN_CLIENT) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            PaymentScheduleCardListScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

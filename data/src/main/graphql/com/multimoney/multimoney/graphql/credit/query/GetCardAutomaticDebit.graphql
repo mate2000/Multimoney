@@ -1,0 +1,15 @@
+query GetCardAutomaticDebit($user: String!,$identification: String!, $idBrand: Int!, $idClient: Long!, $idLoanClient: Long! ){
+    getCardAutomaticDebit(
+        getCardAutomaticDebitInput: {
+            user: $user
+            identification: $identification
+            idBrand: $idBrand
+            id_Cliente: $idClient
+            id_Prestamo: $idLoanClient
+        }
+    ) {
+        idCard
+        cardMasked
+        fechaDebito
+    }
+}

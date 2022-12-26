@@ -4,17 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsLatest
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -50,10 +51,12 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
                     height = Dimension.fillToConstraints
                 }
         ) {
-            if (viewModel.uiState.idBrand.toInt() == Brand.CostaRica.id) {
-                ScheduleAutomaticPayment(viewModel, sharedViewModel)
-                Spacer(modifier = Modifier.height(24.dp))
-            }
+            ScheduleAutomaticPayment(viewModel, sharedViewModel)
+            Spacer(modifier = Modifier.height(24.dp))
+            Divider(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(1.dp),
+                color = MultimoneyTheme.colors.dividerWhite16
+            )
             CreditVisa(
                 uiState = viewModel.uiState,
                 balance = viewModel.balanceCredit,

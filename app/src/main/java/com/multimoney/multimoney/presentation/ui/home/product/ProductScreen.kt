@@ -406,7 +406,7 @@ fun ProductContent(
                 selectedIndex = state.currentPage,
                 selectedColor = GrayScale200,
                 unSelectedColor = GrayScale600,
-                modifier = Modifier.size(10.dp)
+                dotSize = 10.dp
             )
         }
     }

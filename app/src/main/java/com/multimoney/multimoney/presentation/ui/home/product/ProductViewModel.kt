@@ -226,7 +226,8 @@ class ProductViewModel @Inject constructor(
                 SmartAccountID(
                     tokenAccount = it?.tokenNumber,
                     currencyID = it?.idCurrencyAccount,
-                    accountNumber = it?.accountNumber ?: ""
+                    accountNumber = it?.accountNumber ?: "",
+                    ibanAccountNumber = it?.ibanAccountNumber
                 )
             })
             navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${smartIds}/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
@@ -648,7 +649,8 @@ class ProductViewModel @Inject constructor(
         val smartIds = SmartAccountID(
             tokenAccount = account?.tokenNumber,
             currencyID = account?.idCurrencyAccount,
-            accountNumber = account?.accountNumber
+            accountNumber = account?.accountNumber,
+            ibanAccountNumber = account?.ibanAccountNumber
         )
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeScreen.route}/$idClient/" +

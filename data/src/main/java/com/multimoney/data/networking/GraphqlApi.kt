@@ -63,6 +63,7 @@ import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
+import com.multimoney.data.networking.graphql.apollomodel.ProcessSinpeTransferMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToSmartVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
 import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
@@ -1476,6 +1477,45 @@ class GraphqlApi @Inject constructor(
                 pkUser = pkUser,
                 currentFlow = currentFlow,
                 identification = identification
+            )
+        ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationProcessSinpeTransfer(
+        pkUser: Int,
+        identification: String,
+        originCustomerIdentification: String,
+        ibanAccountOrigin: String,
+        originCustomerName: String,
+        idCurrencyOrigin: String,
+        ibanAccountDestination: String,
+        destinationCustomerIdentification: String,
+        destinationCustomerName: String,
+        idCurrencyDestination: String,
+        reasonOfTransfer: String,
+        type: String,
+        amountToTransfer: Double,
+        exchangeRate: Double,
+        idBrand: Int,
+        user: String
+    ): ApolloCall<ProcessSinpeTransferMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            ProcessSinpeTransferMutation(
+                pkUser = pkUser,
+                identification = identification,
+                originCustomerIdentification = originCustomerIdentification,
+                ibanAccountOrigin = ibanAccountOrigin,
+                originCustomerName = originCustomerName,
+                idCurrencyOrigin = idCurrencyOrigin,
+                ibanAccountDestination = ibanAccountDestination,
+                destinationCustomerIdentification = destinationCustomerIdentification,
+                destinationCustomerName = destinationCustomerName,
+                idCurrencyDestination = idCurrencyDestination,
+                reasonOfTransfer = reasonOfTransfer,
+                type = type,
+                amountToTransfer = amountToTransfer,
+                exchangeRate = exchangeRate,
+                idBrand = idBrand,
+                user = user
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

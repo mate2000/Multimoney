@@ -13,7 +13,6 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +25,8 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.Companion.CURRENCY_SEPARATOR
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessSinpeTransfer
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransferVisaToSmart
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
@@ -35,6 +36,7 @@ import com.multimoney.multimoney.presentation.uielement.ExchangeTotalLabel
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.getMaskedVisa
+import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -60,7 +62,9 @@ fun SmartPaymentConfirmBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp),
-                text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString.collectAsState().value,
+                text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString.collectAsState().value?.stringToDoubleFormat(
+                    CURRENCY_SEPARATOR.toString()
+                ),
                 style = Typography.h4.copy(fontWeight = FontWeight.W600),
                 color = MultimoneyTheme.colors.text,
                 textAlign = TextAlign.Center
@@ -151,7 +155,11 @@ fun SmartPaymentConfirmBottomSheet(
                     .fillMaxWidth()
                     .height(48.dp),
                 onClick = {
-                    viewModel.onUIEvent(OnCallProcessTransferVisaToSmart)
+                    if (viewModel.idBrand == Brand.CostaRica.id) {
+                        viewModel.onUIEvent(OnCallProcessSinpeTransfer)
+                    } else {
+                        viewModel.onUIEvent(OnCallProcessTransferVisaToSmart)
+                    }
                 },
                 text = stringResource(id = R.string.button_continue),
                 buttonType = PrimaryPrimary,

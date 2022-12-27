@@ -14,10 +14,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.MutationProcessSinpeTransferUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationProcessTransferVisaToSmartVDUseCase
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.util.catalog.SmartSinpeTransferType
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -31,6 +33,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MASKED_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountValueChange
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessSinpeTransfer
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnCallProcessTransferVisaToSmart
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnFailureWithDialog
@@ -68,6 +71,7 @@ class SavingAmountViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val processTransferVisaToSmart: MutationProcessTransferVisaToSmartVDUseCase,
     private val querySmartExchangeRateUseCase: QuerySmartExchangeRateUseCase,
+    private val processSinpeTransferUseCase: MutationProcessSinpeTransferUseCase,
     private val shareHelper: ShareHelper,
     private val dataStorePreferences: DataStorePreferences,
 ) : BaseViewModel(true) {
@@ -78,14 +82,15 @@ class SavingAmountViewModel @Inject constructor(
     // stateless
     private var idCard: Long = 0
     private var identification: String = ""
-    private var user: String = ""
+    private var pkUser: String = ""
+    private var userName: String = ""
     private var idCurrency: Int = 0
     private var tokenNumber: Long = 0
     private var smartAccount: SmartAccountID? = null
     private var ibanAccount: IbanAccountID? = null
-    var idBrand: Int = 0
     var smartCurrency: CurrencyType? = Dollar
     var ibanCurrency: CurrencyType? = null
+    var idBrand: Int = 0
     var shouldDisplayExchange: Boolean = false
     var maskedCardNumber: String = ""
     var bankDetail: String = ""
@@ -95,7 +100,8 @@ class SavingAmountViewModel @Inject constructor(
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             identification = dataStorePreferences.getIdentification().first()
-            user = dataStorePreferences.getPkUser().first()
+            pkUser = dataStorePreferences.getPkUser().first()
+            userName = dataStorePreferences.getUserName().first()
             smartAccount = savedStateHandle[SMART_IDS]
             smartCurrency = smartAccount?.currencyID?.getCurrencyFromId()
             tokenNumber = smartAccount?.tokenAccount?.toLongOrNull() ?: 0
@@ -135,7 +141,7 @@ class SavingAmountViewModel @Inject constructor(
         maskedCardNumber = ibanAccount?.sinpeAccount ?: ""
         if (shouldDisplayExchange) {
             getSmartExchangeRate(
-                user = user,
+                user = pkUser,
                 identification = identification,
                 idOriginCurrency = smartCurrency?.id.toString(),
                 idDestinationCurrency = ibanCurrency?.id.toString()
@@ -155,7 +161,7 @@ class SavingAmountViewModel @Inject constructor(
         idOriginCurrency: String,
         idDestinationCurrency: String
     ) = executeUseCase {
-        uiState.currentAmountValueString.debounce(TWO_SECONDS).collectLatest {
+        uiState.currentAmountValueString.debounce(ONE_SECOND).collectLatest {
             querySmartExchangeRateUseCase.invoke(
                 user = user,
                 idBrand = idBrand,
@@ -197,8 +203,64 @@ class SavingAmountViewModel @Inject constructor(
                 idCurrency,
                 DEFAULT_DESCRIPTION,
                 maskedCardNumber,
-                user,
+                pkUser,
                 idBrand
+            ).collectLatest { result ->
+                result.onSuccess {
+                    if (it?.referenceNumber.isNullOrBlank()) {
+                        uiState = uiState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = true,
+                            paymentSuccess = false
+                        )
+                    } else {
+                        uiState = uiState.copy(
+                            showLoadingScreen = false,
+                            showErrorScreen = false,
+                            paymentSuccess = true,
+                            currentDate = getCurrentDate(Calendar.getInstance().time),
+                            currentTime = getCurrentTime(Calendar.getInstance().time),
+                            referenceNumber = it?.referenceNumber ?: ""
+                        )
+                    }
+                }
+                result.onFailure {
+                    uiState = uiState.copy(
+                        showLoadingScreen = false,
+                        showErrorScreen = true,
+                        paymentSuccess = false
+                    )
+                }
+                result.onLoading {
+                    uiState = uiState.copy(
+                        showLoadingScreen = true,
+                        showErrorScreen = false,
+                        paymentSuccess = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun onCallProcessSinpeTransfer() {
+        executeUseCase {
+            processSinpeTransferUseCase.invoke(
+                pkUser = pkUser.toIntOrNull() ?: 0,
+                identification = identification,
+                originCustomerIdentification = ibanAccount?.clientIdentification ?: "",
+                ibanAccountOrigin = ibanAccount?.sinpeAccount ?: "",
+                originCustomerName = userName,
+                idCurrencyOrigin = ibanCurrency?.id.toString(),
+                ibanAccountDestination = smartAccount?.ibanAccountNumber ?: "",
+                destinationCustomerIdentification = identification,
+                destinationCustomerName = userName,
+                idCurrencyDestination = smartCurrency?.id.toString(),
+                reasonOfTransfer = DEFAULT_DESCRIPTION,
+                transferType = SmartSinpeTransferType.SEND,
+                amountToTransfer = uiState.currentAmountValueString.value?.toDoubleOrNull() ?: 0.0,
+                exchangeRate = uiState.exchangeRate,
+                idBrand = idBrand,
+                user = userName
             ).collectLatest { result ->
                 result.onSuccess {
                     if (it?.referenceNumber.isNullOrBlank()) {
@@ -278,7 +340,11 @@ class SavingAmountViewModel @Inject constructor(
             showLoadingScreen = true,
             paymentSuccess = false
         )
-        onCallProcessTransferVisaToSmart()
+        if (idBrand == Brand.CostaRica.id) {
+            onCallProcessSinpeTransfer()
+        } else {
+            onCallProcessTransferVisaToSmart()
+        }
     }
 
     private fun onTryLater(
@@ -364,6 +430,7 @@ class SavingAmountViewModel @Inject constructor(
             is OnContinueClick -> onContinueClick()
             is OnSuggestedAmountClick -> selectSuggestion(uiEvent.suggestion)
             is OnCallProcessTransferVisaToSmart -> onCallProcessTransferVisaToSmart()
+            is OnCallProcessSinpeTransfer -> onCallProcessSinpeTransfer()
             is OnFailureWithDialog -> onFailureWithDialog(
                 uiEvent.isLoading,
                 uiEvent.dialogParameters
@@ -387,6 +454,7 @@ class SavingAmountViewModel @Inject constructor(
         data class OnSuggestedAmountClick(val suggestion: SuggestedAmount) : UIEvent()
         object OnContinueClick : UIEvent()
         object OnCallProcessTransferVisaToSmart : UIEvent()
+        object OnCallProcessSinpeTransfer : UIEvent()
         object OnRetryTransfer : UIEvent()
         data class OnFailureWithDialog(
             val isLoading: Boolean,
@@ -413,6 +481,6 @@ class SavingAmountViewModel @Inject constructor(
         const val DEFAULT_DESCRIPTION = "Smart account deposit"
         const val ID_NOT_APPLICABLE = -1
         const val NOT_APPLICABLE = "NA"
-        const val TWO_SECONDS = 2000L
+        const val ONE_SECOND = 1000L
     }
 }

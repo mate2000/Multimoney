@@ -101,7 +101,7 @@
 
     <!-- Sign Up Email -->
     <string name="sign_up_email_header" translatable="false">Ingresá tu correo electrónico</string>
-    <string name="sign_up_email_title" translatable="false">¡Nos alegra \ntenerte aquí!</string>
+    <string name="sign_up_email_title" translatable="false">¡Nos emociona \nque estés acá!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>

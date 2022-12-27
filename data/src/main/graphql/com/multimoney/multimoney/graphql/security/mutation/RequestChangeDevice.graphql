@@ -4,6 +4,7 @@ mutation RequestChangeDevice($email : String!) {
         email: $email,
         }
     ){
-        status
+        status,
+        phoneNumber
     }
 }

@@ -142,7 +142,6 @@ class SignInOTPViewModel @Inject constructor(
             phaseCount = uiState.phaseCount.plus(1)
 
         )
-        updateMessageStatus()
     }
 
     private fun resend() {
@@ -158,25 +157,12 @@ class SignInOTPViewModel @Inject constructor(
         }
     }
 
-
     fun getPhaseResourceString() = when (uiState.phaseCount) {
         PHASE_ONE -> R.string.sign_up_otp_expiration_time_phase_one
         PHASE_THREE -> R.string.sign_up_otp_expiration_time_phase_three
         PHASE_TWO, PHASE_FOUR -> R.string.profile_otp_resend
         PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_three
         else -> R.string.profile_couldnt_verify_identity
-    }
-
-    private fun updateMessageStatus() {
-        when (uiState.phaseCount) {
-            PHASE_ONE -> uiState =
-                uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP)
-            PHASE_TWO -> uiState =
-                uiState.copy(messageStatus = OTPMessageStatus.RESEND_OTP_AGAIN)
-            PHASE_THREE ->
-                uiState =
-                    uiState.copy(messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID)
-        }
     }
 
     private fun onExecuteTimer() {
@@ -202,7 +188,11 @@ class SignInOTPViewModel @Inject constructor(
             result.onSuccess {
                 getPhaseAction()
                 onExecuteTimer()
-                uiState = uiState.copy(isLoading = false)
+                uiState = uiState.copy(
+                    isLoading = false,
+                    weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template,
+                    phoneNumber = it.phoneNumber ?: ""
+                )
             }.onFailure {
                 uiState = uiState.copy(isAlertResultVisible = false, isLoading = false)
             }.onMessage {
@@ -236,7 +226,7 @@ class SignInOTPViewModel @Inject constructor(
                 uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
 
             }.onMessage {
-                uiState = uiState.copy(isLoading = false)
+                uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
 
             }.onLoading {
                 uiState = uiState.copy(isLoading = true)
@@ -279,8 +269,9 @@ class SignInOTPViewModel @Inject constructor(
         val openDialog: DialogParameters = DialogParameters(),
         val dialogTextResource: Int = R.string.empty,
         val alertTextResource: Int = R.string.empty,
-        val enterTheCodeTextResource: Int = R.string.empty,
+        val weSentYouACodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
+        val phoneNumber: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -291,17 +282,18 @@ class SignInOTPViewModel @Inject constructor(
             is UIEvent.OnOTPValueChange -> onOtpValueChange(event.otp)
             is UIEvent.OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
             is UIEvent.OnResendOTP -> onResendOTP()
+            is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(event.message)
 
         }
     }
 
     sealed class UIEvent {
-
         object OnCallMutationRequestChangeDevice : UIEvent()
         object OnNavigateBack : UIEvent()
         object OnValidateOTP : UIEvent()
         data class OnOTPValueChange(val otp: String) : UIEvent()
         data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()
+        data class OnGetOtpFromMessage(val message: String) : UIEvent()
         object OnResendOTP : UIEvent()
     }
 
@@ -310,7 +302,7 @@ class SignInOTPViewModel @Inject constructor(
         const val WRONG_CODE = 2887
         const val EXPIRED_CODE = 2886
         const val TOTAL_DIGITS = 6
-        const val TIMER_DURATION = 3L
+        const val TIMER_DURATION = 30L
         const val PHASE_ONE = 1
         const val PHASE_TWO = 2
         const val PHASE_THREE = 3

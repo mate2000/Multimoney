@@ -64,7 +64,7 @@ fun SignInOTPScreen(
                 Activity.RESULT_OK -> {
                     data?.apply {
                         getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)?.let {
-                            //  viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnGetOtpFromMessage(it))
+                            viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnGetOtpFromMessage(it))
                         }
                     }
                 }
@@ -116,44 +116,7 @@ fun SignInOTPScreen(
                 SignInOTPViewModel.TIMER_DURATION
             )
         )
-
-//        viewModel.onCallMutationSendPinProcessEvent.collect { event ->
-//            event.onSuccess {
-//                viewModel.apply {
-//                    onUIEvent(ValidateOTPViewModel.UIEvent.OnLoadingValueChange(false))
-//                    onUIEvent(ValidateOTPViewModel.UIEvent.OnCallMutationSendPinProcessSuccess(it))
-//                }
-//            }.onMessage {
-//                viewModel.onUIEvent(
-//                    ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false,
-//                        DialogParameters(
-//                            titleResource = R.string.sign_up_email_blocked_dialog_title,
-//                            description = viewModel.userBlockedForMaxAttend,
-//                            isActive = mutableStateOf(true),
-//                            positiveResource = R.string.contact,
-//                            negativeResource = R.string.cancel,
-//                            negativeAction = {
-//                                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnNavigateTLogOut)
-//                            },
-//                            positiveAction = {
-//                                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(context,whatsAppLink))
-//                            }
-//                        )))
-//            }.onFailure {
-//                ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false,
-//                    DialogParameters(
-//                        titleResource = R.string.something_went_wrong,
-//                        description = it.getError() ?: "",
-//                        isActive = mutableStateOf(true),
-//                        positiveResource = R.string.button_continue,
-//                    ))
-//
-//            }.onLoading {
-//                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnLoadingValueChange(true))
-//            }
-//        }
     }
-
 
     //full screen dialog
     if (viewModel.uiState.isAlertResultVisible) {
@@ -170,7 +133,7 @@ fun SignInOTPScreen(
     }
 
     // Start SMS Retriever client
-    SmsRetriever.getClient(LocalContext.current).startSmsUserConsent(null)
+    SmsRetriever.getClient(context).startSmsUserConsent(null)
 
     SystemBroadcastReceiver(SmsRetriever.SMS_RETRIEVED_ACTION) { intent ->
         val extras = intent?.extras
@@ -221,10 +184,9 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                 .constrainAs(headerText) {
                     top.linkTo(titleText.bottom)
                 },
-            text = stringResource(id = viewModel.uiState.enterTheCodeTextResource),
+            text = stringResource(id = viewModel.uiState.weSentYouACodeTextResource,viewModel.uiState.phoneNumber),
             style = Typography.body2
         )
-
 
         OtpTextField(
             value = viewModel.uiState.otp,
@@ -245,7 +207,6 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
             isError = viewModel.uiState.otpError.first,
             errorMessage = stringResource(id = viewModel.uiState.otpError.second)
         )
-
 
         when (viewModel.uiState.phaseCount) {
             SignUpOtpViewModel.PHASE_ONE, SignUpOtpViewModel.PHASE_THREE, SignUpOtpViewModel.PHASE_FIVE -> {
@@ -320,7 +281,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                     bottom.linkTo(parent.bottom, margin = 40.dp)
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
-            text = stringResource(id = R.string.profile_send_code),
+            text = stringResource(id = R.string.sign_in_verify_otp_button),
             enable = viewModel.isFormValid(),
             onClick = {
                 viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnValidateOTP)

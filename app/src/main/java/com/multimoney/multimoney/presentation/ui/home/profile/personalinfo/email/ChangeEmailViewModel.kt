@@ -68,8 +68,14 @@ class ChangeEmailViewModel @Inject constructor(
             uiState.newEmail.equals(uiState.newEmailConfirmation).not() -> {
                 uiState.copy(isButtonEnabled = false)
             }
-            uiState.newEmail.equals(uiState.email) or uiState.newEmailConfirmation.equals(uiState.email)->{
-                uiState.copy(isButtonEnabled = false, userEmailError = Pair(true,R.string.profile_email_not_equal_than_previous_error))
+            uiState.newEmail.equals(uiState.email) or uiState.newEmailConfirmation.equals(uiState.email) -> {
+                uiState.copy(
+                    isButtonEnabled = false,
+                    userEmailError = Pair(
+                        true,
+                        R.string.profile_email_not_equal_than_previous_error
+                    )
+                )
             }
             else -> {
                 uiState.copy(isButtonEnabled = true)

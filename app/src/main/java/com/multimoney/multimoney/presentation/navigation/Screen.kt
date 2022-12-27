@@ -7,6 +7,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.BANK_DETAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.CARD_SELECTED
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_CARD_VISA_DIRECT
 import com.multimoney.multimoney.presentation.navigation.navgraph.COMING_FROM_CRYPTO
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
@@ -91,6 +92,9 @@ const val NEW_VALUE = "new_value"
 const val DATE_SIGNED = "date_signed"
 const val VERSION = "version"
 const val ID_VISA_CARD = "id_visa_card"
+const val SMART_IDS_LIST = "smart_id_list"
+const val SMART_IDS = "smart_ids"
+const val IBAN_ACCOUNT = "iban_account"
 const val GLOBAL_CRYPTO_BALANCE = "global_crypto_balance"
 
 // Previous
@@ -258,17 +262,17 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // VisaNavGraph
     object VisaIssuanceScreen : Screen(
-        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
+        "visa_issuance_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
         "visa_issuance_screen"
     )
 
     object VisaCardScreen : Screen(
-        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
+        "visa_card_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
         "visa_card_screen"
     )
 
     object VisaTokenizationWaitingScreen : Screen(
-        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}",
+        "visa_tokenization_screen/{$ID_BRAND}/{$PK_USER}/{$IDENTIFICATION}/{$EMAIL}/{$PHONE_NUMBER}/{$CARD_INFORMATION}/{$AVAILABLE_BALANCE_LABEL}",
         "visa_tokenization_screen"
     )
 
@@ -321,8 +325,18 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "payment_schedule_account_screen"
     )
 
+    object PaymentScheduleCardScreen : Screen(
+        "payment_schedule_card_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_CARD_VISA_DIRECT}/{$PAYMENT_DATE}/{$IS_EDIT_BANK_ACCOUNT}/{$PREVIOUS_SCREEN}/{$IS_EDIT_PAYMENT_SCHEDULE}/{$IDENTIFICATION}",
+        "payment_schedule_card_screen"
+    )
+
+    object PaymentScheduleCardListScreen : Screen(
+        "payment_schedule_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}/{$IDENTIFICATION}",
+        "payment_schedule_account_screen"
+    )
+
     object PaymentOptionsScreen : Screen(
-        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$IDENTIFICATION}/{$USER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "payment_options_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$IDENTIFICATION}/{$USER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}/{$PAYMENT_DATE}",
         "payment_options_screen"
     )
 
@@ -337,18 +351,23 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentCardsListScreen : Screen(
-        "payment_cards_list_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}",
+        "payment_cards_list_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$ID_CURRENCY}/{$PAYMENT_DATE}",
         "payment_cards_list_screen"
     )
 
     object PaymentAmountCardsScreen : Screen(
-        "payment_amount_card_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$CARD_SELECTED}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}",
+        "payment_amount_card_screen/{$ID_BRAND}/{$IDENTIFICATION}/{$USER}/{$CARD_SELECTED}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$ID_CURRENCY}/{$PAYMENT_DATE}",
         "payment_amount_card_screen"
     )
 
     object PaymentLocationDetailsScreen : Screen(
         "payment_location_details_screen?$POINT_NAME={$POINT_NAME}?$POINT_ADDRESS={$POINT_ADDRESS}?$POINT_ADDRESS_DESCRIPTION={$POINT_ADDRESS_DESCRIPTION}?$POINT_SCHEDULE={$POINT_SCHEDULE}?$POINT_LATITUDE={$POINT_LATITUDE}?$POINT_LONGITUDE={$POINT_LONGITUDE}?$PAYMENT_AMOUNT={$PAYMENT_AMOUNT}?$CREDIT_NUMBER={$CREDIT_NUMBER}?$ID_BRAND={$ID_BRAND}",
         "payment_location_details_screen"
+    )
+
+    object PaymentCardVoucherScreen : Screen(
+        "payment_voucher_vd_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CARD_SELECTED}/{$CURRENT_AMOUNT_VALUE}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}/{$PAYMENT_DATE}",
+        "payment_voucher_vd_screen"
     )
 
     // Smart
@@ -370,22 +389,22 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Payment
 
     object SmartPaymentOptionsScreenCR : Screen(
-        "smart_payment_options_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "smart_payment_options_screen/{$SMART_IDS_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
         "smart_payment_options_screen"
     )
 
     object SmartPaymentAccountScreenCR : Screen(
-        "smart_payment_accounts_screen/{$SMART_PAYMENT_ACCOUNTS}",
+        "smart_payment_accounts_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SMART_PAYMENT_ACCOUNTS}/{$SMART_IDS}",
         "smart_payment_accounts_screen"
     )
 
     object SmartPaymentMethodScreenSV : Screen(
-        "smart_payment_method_screen/{$USER_SMART_ACCOUNT}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}",
+        "smart_payment_method_screen/{$SMART_IDS}",
         "smart_payment_method_screen"
     )
 
     object SmartPaymentCardsScreenSV : Screen(
-        "smart_payment_cards_screen/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}",
+        "smart_payment_cards_screen/{$SMART_IDS}",
         "smart_payment_cards_screen"
     )
 
@@ -395,7 +414,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartPaymentSavingAmount : Screen(
-        "smart_payment_saving_amount_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_TOKEN}/{$ID_CURRENCY}/{$ID_VISA_CARD}/{$MASKED_CARD}/{$BANK_DETAIL}",
+        "smart_payment_saving_amount_screen/{$SMART_IDS}?$IBAN_ACCOUNT={$IBAN_ACCOUNT}/{$ID_VISA_CARD}/{$PREVIOUS_SCREEN}/{$MASKED_CARD}/{$BANK_DETAIL}",
         "smart_payment_saving_amount_screen"
     )
 

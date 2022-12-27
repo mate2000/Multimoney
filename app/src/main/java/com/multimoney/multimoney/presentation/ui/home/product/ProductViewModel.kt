@@ -20,8 +20,11 @@ import com.multimoney.data.util.catalog.SmartAccountStatusRequest.CREATED
 import com.multimoney.data.util.catalog.SmartAccountStatusRequest.SENT
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
 import com.multimoney.domain.interaction.mmvisa.QueryCardIssuanceNVUseCase
+import com.multimoney.domain.model.accountsmart.SinpeAccount
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.accountsmart.SmartMovementsResult
 import com.multimoney.domain.model.balance.Account
 import com.multimoney.domain.model.balance.Balance
@@ -34,6 +37,7 @@ import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -87,7 +91,8 @@ class ProductViewModel @Inject constructor(
     private val helper: ShareHelper,
     private val nfcHelper: NfcHelper,
     private val cardIssuanceNVUseCase: QueryCardIssuanceNVUseCase,
-    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase
+    private val balanceCardInformationUseCase: QueryBalanceCardInformationUseCase,
+    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -203,9 +208,31 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    // This function opens the saving flow from the quick actions
     private fun onNavigateToSmartSave() {
-        val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
+            val account = balanceCredit?.balanceAccountSmart?.first()
+            val smartIds = encodeData(
+                SmartAccountID(
+                    tokenAccount = account?.tokenNumber,
+                    accountNumber = account?.accountNumber,
+                    currencyID = account?.idCurrencyAccount
+                )
+            )
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
+        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            val infoCredit = uiState.userStatus?.infoCredit
+            val smartIds = encodeData(
+                balanceCredit?.balanceAccountSmart?.map {
+                    SmartAccountID(
+                        tokenAccount = it?.tokenNumber,
+                        currencyID = it?.idCurrencyAccount,
+                        accountNumber = it?.accountNumber ?: ""
+                    )
+                }
+            )
+            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$smartIds/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+        }
     }
 
     private fun onNavigateToPaymentScreen() {
@@ -230,21 +257,34 @@ class ProductViewModel @Inject constructor(
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
             encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
-            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}" +
-                "/${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/$identification/$email/$idClient/${infoCredit?.idLoanClient}"
+            }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
+                "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
+                "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
+                "$identification/$email/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                "${balanceCredit?.getFirstSummary()?.paymentDate}"
         }
         navigateTo(route)
     }
 
-    private fun onNavigateToAutomaticPaymentScheduleScreen() {
+    private fun onNavigateToAutomaticPaymentScheduleScreen(isEditSchedule: Boolean) {
         val infoCredit = uiState.userStatus?.infoCredit
-        navigateTo(
-            route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(
-                ClientBankAccount()
+        if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+            navigateTo(
+                route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+                encodeData(
+                    ClientBankAccount()
+                )
+                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule"
             )
-            }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/${false}"
-        )
+        } else {
+            navigateTo(
+                route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
+                encodeData(
+                    CardVisaDirect()
+                )
+                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification"
+            )
+        }
     }
 
     private fun onChipQuotaClick() {
@@ -284,16 +324,16 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToVisaActivateScreen() =
         navigateTo(
-            "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$email/${uiState.userStatus?.infoUser?.phone}/${
+            "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
                 balanceCredit?.balanceCardInformation?.cardInformation
             )
-            }"
+            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}"
         )
 
     private fun onNavigateToHomeMultimoneyVisa() =
         navigateTo(
-            "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$email/${uiState.userStatus?.infoUser?.phone}/${
+            "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
             encodeData(
                 balanceCredit?.balanceCardInformation?.cardInformation
             )
@@ -304,6 +344,7 @@ class ProductViewModel @Inject constructor(
         navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/${uiState.userStatus?.infoUser?.userName}")
     }
 
+    // Todo check if the navigation to this screen is suitable for the purchase crypto flow
     private fun onNavigateToSmartPaymentAccountScreen() =
         navigateTo(Screen.SmartPaymentOptionsScreenCR.route)
 
@@ -553,17 +594,79 @@ class ProductViewModel @Inject constructor(
         )
     }
 
-    private fun onNavigateToPaymentSmartScreen(account: Account?) {
-        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
-            navigateTo(
-                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/${account?.accountNumber}/${
-                account?.tokenNumber?.toLongOrNull() ?: 0
-                }/${account?.idCurrencyAccount}"
-            )
-        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-            val infoCredit = uiState.userStatus?.infoCredit
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}")
+    private fun callQueryBalanceUseCase(account: Account?, onLoadingValueChange: (isLoading: Boolean) -> Unit) =
+        executeUseCase {
+            queryListSinpeAccountUseCaseImpl.invoke(
+                user = email,
+                identification = identification ?: "",
+                idBrand = uiState.idBrand.toInt(),
+                country = "",
+                idAccount = 0,
+                accountNumber = ""
+            ).collectLatest { result ->
+                result.onSuccess { accountList ->
+                    onLoadingValueChange(false)
+                    if (accountList?.data?.isEmpty() == true) {
+                        navigateToAddIbanAccount()
+                    } else {
+                        accountList?.data?.let {
+                            navigateToSmartAccount(account = account, clientBankAccounts = it)
+                        }
+                    }
+                }
+                result.onFailure {
+                    onLoadingValueChange(false)
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError().toString(),
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }
+                result.onLoading {
+                    onLoadingValueChange(true)
+                }
+            }
         }
+
+    // This function opens the flow from the smart card
+    private fun onSmartAccountCardClick(
+        account: Account?,
+        onLoadingValueChange: (isLoading: Boolean) -> Unit
+    ) {
+        if (uiState.idBrand == Brand.ElSalvador.id.toString()) {
+            val smartIds = encodeData(
+                SmartAccountID(
+                    tokenAccount = account?.tokenNumber,
+                    accountNumber = account?.accountNumber,
+                    currencyID = account?.idCurrencyAccount
+                )
+            )
+            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds")
+        } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
+            callQueryBalanceUseCase(account, onLoadingValueChange)
+        }
+    }
+
+    // This function opens the iban accounts list to choose to make the deposit
+    private fun navigateToSmartAccount(account: Account?, clientBankAccounts: List<SinpeAccount?>) {
+        val infoCredit = uiState.userStatus?.infoCredit
+        val smartIds = SmartAccountID(
+            tokenAccount = account?.tokenNumber,
+            currencyID = account?.idCurrencyAccount,
+            accountNumber = account?.accountNumber
+        )
+        navigateTo(
+            route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.HomeScreen.route}/$idClient/" +
+                "${infoCredit?.idLoanClient}/${encodeData(clientBankAccounts)}/${encodeData(smartIds)}"
+        )
+    }
+
+    private fun navigateToAddIbanAccount() {
+        val infoCredit = uiState.userStatus?.infoCredit
+        navigateTo(
+            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand}/$identification/${Screen.PaymentAccountScreen.baseRoute}/$idClient/${infoCredit?.idLoanClient}"
+        )
     }
 
     private fun onNavigateToSendMoneyScreen() {
@@ -716,7 +819,7 @@ class ProductViewModel @Inject constructor(
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
             is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen()
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
-            is OnNavigateToPaymentSmartFlow -> onNavigateToPaymentSmartScreen(uiEvent.account)
+            is OnNavigateToPaymentSmartFlow -> onSmartAccountCardClick(uiEvent.account, uiEvent.onLoadingValueChange)
             is OnNavigateToProfileScreen -> onNavigateToProfileScreen()
             is OnNavigateToDisbursement -> onNavigateToDisbursement()
             is UIEvent.OnNavigateToCryptoWallet -> onNavigateToCryptoWallet()
@@ -748,7 +851,7 @@ class ProductViewModel @Inject constructor(
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
             is OnChipQuotaClick -> onChipQuotaClick()
-            is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen()
+            is OnNavigateToScheduleAutomaticPaymentScreen -> onNavigateToAutomaticPaymentScheduleScreen(uiEvent.isEditSchedule)
             is OnQuickActionClicked -> onQuickActionClicked(
                 flow = uiEvent.flow,
                 onLoadingValueChange = uiEvent.onLoadingValueChange
@@ -792,7 +895,11 @@ class ProductViewModel @Inject constructor(
         object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
         object OnNavigateToSendMoneyFlow : UIEvent()
-        data class OnNavigateToPaymentSmartFlow(val account: Account?) : UIEvent()
+        data class OnNavigateToPaymentSmartFlow(
+            val account: Account?,
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit
+        ) : UIEvent()
+
         data class OnNavigateToSmartMovements(val accountToken: String) : UIEvent()
         object OnNavigateToCreditMovementsScreen : UIEvent()
         object OnNavigateToGtSvNonPreApproved : UIEvent()
@@ -800,7 +907,7 @@ class ProductViewModel @Inject constructor(
         object IsPaymentExpired : UIEvent()
         data class OnNavigateToCreditScreen(val creditStep: String) : UIEvent()
         object OnChipQuotaClick : UIEvent()
-        object OnNavigateToScheduleAutomaticPaymentScreen : UIEvent()
+        data class OnNavigateToScheduleAutomaticPaymentScreen(val isEditSchedule: Boolean) : UIEvent()
         object OnNavigateToSmartPaymentAccountScreen : UIEvent()
         object OnNavigateToSmartPaymentMethodScreen : UIEvent()
         object OnNavigateToCryptoWallet : UIEvent()

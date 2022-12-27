@@ -30,12 +30,13 @@ import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.PromissoryNoteDetail
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
-import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.credit.SaveCreditOffer
+import com.multimoney.domain.model.credit.SaveCreditOperation
 import com.multimoney.domain.model.credit.SaveTermsAndConditionsCredit
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.repository.CreditRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -302,7 +303,7 @@ class CreditRepositoryImpl @Inject constructor(
     override suspend fun mutationSaveCreditOffer(
         pkUser: Long,
         idUserRequest: Long,
-        idBrand: Int,
+        idBrand: Int
     ): Flow<MultimoneyResult<SaveCreditOffer>> = fetchData(
         apolloCall = graphqlApi.mutationSaveCreditOffer(
             pkUser = pkUser,
@@ -528,6 +529,25 @@ class CreditRepositoryImpl @Inject constructor(
         }
     )
 
+    override suspend fun mutationDeactivateCardAutomaticDebit(
+        user: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long,
+        idCard: Long
+    ): Flow<MultimoneyResult<AutomaticDebit?>> = fetchData(
+        apolloCall = graphqlApi.mutationDeactivatedCardAutomaticDebit(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            idCard = idCard
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
     override suspend fun queryGetClientAutomaticDebit(
         user: String,
         idBrand: Int,
@@ -536,6 +556,25 @@ class CreditRepositoryImpl @Inject constructor(
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>> = fetchData(
         apolloCall = graphqlApi.queryGetClientAutomaticDebit(
             user,
+            idBrand,
+            idClient,
+            idLoanClient
+        ),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
+        }
+    )
+
+    override suspend fun queryGetCardAutomaticDebit(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        idClient: Long,
+        idLoanClient: Long
+    ): Flow<MultimoneyResult<List<CardVisaDirect?>?>> = fetchData(
+        apolloCall = graphqlApi.queryGetCardAutomaticDebit(
+            user,
+            identification,
             idBrand,
             idClient,
             idLoanClient

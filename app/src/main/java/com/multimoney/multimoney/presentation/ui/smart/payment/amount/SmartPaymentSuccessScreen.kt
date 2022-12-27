@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,7 +77,8 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                 .onGloballyPositioned {
                     capturingViewBounds = it.boundsInRoot()
@@ -139,7 +141,8 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     )
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = viewModel.uiState.currency + viewModel.uiState.currentAmountValueString,
+                        text = viewModel.uiState.currency +
+                                viewModel.uiState.currentAmountValueString.collectAsState().value,
                         style = Typography.h4.copy(fontWeight = FontWeight.W600),
                         color = MultimoneyTheme.colors.text,
                         textAlign = TextAlign.Center
@@ -166,7 +169,9 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     modifier = Modifier.padding(start = 21.dp, top = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     icon = drawable.ic_visa_card_item,
-                    iconModifier = Modifier.height(24.dp).width(24.dp),
+                    iconModifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp),
                     title = stringResource(string.smart_payment_card_bank_label),
                     subtitle = stringResource(
                         string.visa_card_masked_number,
@@ -178,7 +183,9 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                     modifier = Modifier.padding(start = 21.dp, top = 32.dp),
                     verticalAlignment = Alignment.Top,
                     icon = drawable.ic_receipt,
-                    iconModifier = Modifier.height(24.dp).width(24.dp),
+                    iconModifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp),
                     title = stringResource(string.smart_payment_reference_number_label),
                     subtitle = viewModel.uiState.referenceNumber
                 )
@@ -189,7 +196,9 @@ fun PaymentSuccessContent(viewModel: SavingAmountViewModel) {
                         .padding(start = 21.dp, top = 32.dp, end = 32.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     icon = drawable.ic_calendar,
-                    iconModifier = Modifier.height(24.dp).width(24.dp),
+                    iconModifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp),
                     title = viewModel.uiState.currentDate,
                     rightSubtitle = viewModel.uiState.currentTime
                 )

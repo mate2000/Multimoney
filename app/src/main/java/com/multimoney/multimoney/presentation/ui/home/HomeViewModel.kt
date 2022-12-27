@@ -9,11 +9,14 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.data.util.catalog.SmartAccountStatus
 import com.multimoney.domain.interaction.accountsmart.QueryGetCoreBankMovementsUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
+import com.multimoney.domain.interaction.credit.MutationDeactivateCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.MutationDeactivateClientAutomaticDebitUseCase
+import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientAutomaticDebitUseCase
 import com.multimoney.domain.interaction.credit.QueryGetPromissoryNoteDetail
 import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
@@ -91,7 +94,9 @@ class HomeViewModel @Inject constructor(
     private val queryMiniCardsUseCase: QueryMiniCardsUseCase,
     private val queryGetQuickActionsUseCase: QueryGetQuickActionsUseCase,
     private val getClientAutomaticDebitUseCase: QueryGetClientAutomaticDebitUseCase,
+    private val getCardAutomaticDebitUseCase: QueryGetCardAutomaticDebitUseCase,
     private val mutationDeactivateClientAutomaticDebitUseCase: MutationDeactivateClientAutomaticDebitUseCase,
+    private val mutationDeactivateCardAutomaticDebitUseCase: MutationDeactivateCardAutomaticDebitUseCase,
     private val queryGetCoreBankMovements: QueryGetCoreBankMovementsUseCase,
     private val queryGetPromissoryNoteDetail: QueryGetPromissoryNoteDetail,
     private val cognitoHelper: CognitoHelper
@@ -413,12 +418,14 @@ class HomeViewModel @Inject constructor(
             }
         }
 
-        onUIEvent(
-            OnGetCreditMovements(
-                uiState.idBrand.toIntOrNull() ?: 0,
-                uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+        if (uiState.validateUserStatus?.infoCredit?.status == CreditStatus.EXIST_IN_CORE.status) {
+            onUIEvent(
+                OnGetCreditMovements(
+                    uiState.idBrand.toIntOrNull() ?: 0,
+                    uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+                )
             )
-        )
+        }
 
         if (uiState.configurationVersion != null && uiState.quickActions != null) {
             uiState = uiState.copy(isLoading = false)
@@ -500,8 +507,8 @@ class HomeViewModel @Inject constructor(
                     infoBankAccountStatus = validateUserStatus?.infoBankAccount?.status ?: 0
                 )
                 if (uiState.idBrand != Brand.Guatemala.id.toString()) {
-                    if (validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status
-                        && validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
+                    if (validateUserStatus?.infoBankAccount?.status == SmartAccountStatus.EXIST_IN_CORE.status &&
+                        validateUserStatus.infoCrypto?.status == CryptoAccountStatus.ACTIVE.status
                     ) {
                         callQueryGetHistoricalBalanceUseCase(
                             user = email,
@@ -522,25 +529,78 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun onCallGetClientAutomaticDebitUseCase() = executeUseCase {
-        getClientAutomaticDebitUseCase.invoke(
-            user = uiState.email,
-            idBrand = uiState.idBrand.toInt(),
-            idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
-            idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
-        ).collectLatest { result ->
-            result.onSuccess {
-                val clientBankAccount = it?.firstOrNull()
-                callMutationDeactivateClientAutomaticDebitUseCase(
-                    clientBankAccount?.origin.orEmpty(),
-                    clientBankAccount?.id?.toLong() ?: 0
-                )
-            }.onFailure {
-                onFailure(it)
-            }.onLoading {
-                uiState = uiState.copy(isLoading = true)
+        if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+            getClientAutomaticDebitUseCase.invoke(
+                user = uiState.email,
+                idBrand = uiState.idBrand.toInt(),
+                idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
+                idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
+            ).collectLatest { result ->
+                result.onSuccess {
+                    val clientBankAccount = it?.firstOrNull()
+                    callMutationDeactivateClientAutomaticDebitUseCase(
+                        clientBankAccount?.origin.orEmpty(),
+                        clientBankAccount?.id?.toLong() ?: 0
+                    )
+                }.onFailure {
+                    onFailure(it)
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        } else {
+            getCardAutomaticDebitUseCase.invoke(
+                user = uiState.email,
+                identification = uiState.identification,
+                idBrand = uiState.idBrand.toInt(),
+                idClient = uiState.validateUserStatus?.infoUser?.idClient?.toLong() ?: 0L,
+                idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient?.toLong() ?: 0L
+            ).collectLatest { result ->
+                result.onSuccess {
+                    val cardVisaDirect = it?.firstOrNull()
+                    callMutationDeactivateCardAutomaticDebitUseCase(
+                        cardVisaDirect?.idCard
+                    )
+                }.onFailure {
+                    onFailure(it)
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
             }
         }
     }
+
+    private fun callMutationDeactivateCardAutomaticDebitUseCase(idCard: Int?) =
+        executeUseCase {
+            mutationDeactivateCardAutomaticDebitUseCase.invoke(
+                user = uiState.email,
+                idBrand = uiState.idBrand.toInt(),
+                idClient = uiState.validateUserStatus?.infoUser?.idClient?.toLong() ?: 0,
+                idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient?.toLong() ?: 0,
+                idCard = idCard?.toLong() ?: 0L
+            ).collectLatest { result ->
+                result.onSuccess {
+                    callQueryBalanceUseCase(
+                        user = uiState.email,
+                        identification = uiState.identification,
+                        idBrand = uiState.idBrand.toInt(),
+                        idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
+                        idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0,
+                        creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
+                        accountStatus = uiState.validateUserStatus?.infoBankAccount?.status ?: 0,
+                        cryptoStatus = uiState.validateUserStatus?.infoCrypto?.status ?: 0,
+                        cardStatus = uiState.validateUserStatus?.infoVirtualCard?.status ?: 0
+                    )
+                    emitBaseEvent(OnDeleteAutomaticPaymentToastEvent)
+                }
+                result.onFailure {
+                    onFailure(it)
+                }
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
 
     private fun callMutationDeactivateClientAutomaticDebitUseCase(origin: String, idAccount: Long) =
         executeUseCase {

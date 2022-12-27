@@ -29,9 +29,9 @@ data class StepByStep(
     val positionJob: String?,
     val specifiesIncomeSource: String?,
     val institutionalPesion: String?,
-    val idJobLevel1 : Long?,
-    val idJobLevel2 : Long?,
-    val idJobLevel3 : Long?,
+    val idJobLevel1: Long?,
+    val idJobLevel2: Long?,
+    val idJobLevel3: Long?,
     val aboutCompany: String?,
     val income: Float?,
     val fullJobAddress: String?,
@@ -51,5 +51,5 @@ data class StepByStep(
     val statusRequest: String?,
     val statusFirm: String?,
     val statusOnfido: String?,
-    val idRequestSys: Int?,
+    val idRequestSys: Int?
 )

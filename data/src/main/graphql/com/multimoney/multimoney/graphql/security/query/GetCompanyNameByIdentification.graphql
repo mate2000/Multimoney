@@ -11,5 +11,7 @@ query GetCompanyNameByIdentification (
         }
     ) {
         nombre
+        message
+        status
     }
 }

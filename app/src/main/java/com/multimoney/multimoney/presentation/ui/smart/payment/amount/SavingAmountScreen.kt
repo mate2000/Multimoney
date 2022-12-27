@@ -18,6 +18,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +36,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
-import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.Companion.SAVING_PLACEHOLDER
+import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.Companion.SAVING_PLACEHOLDER_DOLLAR
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnAmountValueChange
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.smart.payment.amount.SavingAmountViewModel.UIEvent.OnNavigateBack
@@ -48,9 +49,11 @@ import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.VoucherCurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.SuggestionOrder
 import com.multimoney.multimoney.presentation.util.filterInvalidAmountInput
@@ -115,6 +118,8 @@ fun SavingAmountScreen(
             viewModel.onUIEvent(OnNavigateBack)
         }
     }
+
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable
@@ -148,8 +153,8 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                 )
                 CurrencyAmountInput(
                     modifier = Modifier.padding(top = 24.dp),
-                    value = viewModel.uiState.currentAmountValueString,
-                    placeHolder = SAVING_PLACEHOLDER,
+                    value = viewModel.uiState.currentAmountValueString.collectAsState().value,
+                    placeHolder = stringResource(id = viewModel.uiState.placeholder),
                     onValueChange = {
                         viewModel.onUIEvent(OnAmountValueChange(it.filterInvalidAmountInput()))
                     },
@@ -173,7 +178,7 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                 ) {
                     RoundedPaymentButton(
                         modifier = Modifier
-                            .weight(0.30f),
+                            .weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.minSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
@@ -181,10 +186,9 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MIN),
                         textAlign = Alignment.CenterHorizontally
                     )
-                    Spacer(modifier = Modifier.weight(0.05f))
+                    Spacer(modifier = Modifier.weight(0.02f))
                     RoundedPaymentButton(
-                        modifier = Modifier
-                            .weight(0.30f),
+                        modifier = Modifier.weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.mediumSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
@@ -192,16 +196,27 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
                         isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MEDIUM),
                         textAlign = Alignment.CenterHorizontally
                     )
-                    Spacer(modifier = Modifier.weight(0.05f))
+                    Spacer(modifier = Modifier.weight(0.02f))
                     RoundedPaymentButton(
-                        modifier = Modifier
-                            .weight(0.30f),
+                        modifier = Modifier.weight(0.32f),
                         onClick = { viewModel.onUIEvent(OnSuggestedAmountClick(viewModel.uiState.maxSuggestion)) },
                         strokeWidth = 1.dp,
                         roundedShapeDp = 24.dp,
                         mainText = viewModel.uiState.maxSuggestion.display,
                         isSelected = viewModel.verifySuggestionSelected(SuggestionOrder.MAX),
                         textAlign = Alignment.CenterHorizontally
+                    )
+                }
+                if (viewModel.shouldDisplayExchange) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    VoucherCurrencyExchangeInfo(
+                        displayIcon = false,
+                        mainRowAlignment = Arrangement.SpaceAround,
+                        textColumnAlign = Alignment.CenterHorizontally,
+                        leftTitleResource = R.string.payment_amount_bottom_sheet_exchange_type,
+                        rightTitleResource = R.string.smart_saving_total_to_deposit,
+                        exchangeRateText = viewModel.uiState.exchangeRateLabel,
+                        convertedAmountText = viewModel.uiState.convertedAmountLabel
                     )
                 }
             }

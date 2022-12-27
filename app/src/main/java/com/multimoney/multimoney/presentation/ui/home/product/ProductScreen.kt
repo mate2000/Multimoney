@@ -146,7 +146,7 @@ fun ProductScreen(
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnMiniCardsClicked(event.flow))
                 }
                 is HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent -> {
-                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen)
+                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen(true))
                 }
                 is HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent -> {
                     viewModel.onUIEvent(
@@ -467,7 +467,9 @@ fun ProductFooterExpanded(
                 ProductType.Smart.value -> SmartFooterExpanded(
                     viewModel = viewModel,
                     currentPage
-                )
+                ) {
+                    sharedViewModel.onUIEvent(UIEvent.OnLoadingValueChanged(it))
+                }
                 ProductType.Crypto.value -> CryptoFooterExpanded(
                     userStatus = viewModel.uiState.userStatus,
                     balance = viewModel.balanceCredit,

@@ -10,7 +10,8 @@ class QueryGetClientBankAccountUseCaseImpl(val creditRepository: CreditRepositor
         user: String,
         idBrand: Int,
         idClient: Int,
-        idLoan: Int
+        idLoan: Int,
+        process: String
     ): Flow<MultimoneyResult<List<ClientBankAccount?>?>> =
-        creditRepository.queryGetClientBankAccount(user, idBrand, idClient, idLoan)
+        creditRepository.queryGetClientBankAccount(user, idBrand, idClient, idLoan, process)
 }

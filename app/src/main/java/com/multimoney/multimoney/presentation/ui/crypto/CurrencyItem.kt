@@ -20,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticPositive400
@@ -29,12 +28,18 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 
 @Composable
 fun CurrencyItem(
-    item: BalanceCryptoAccountItems
+    modifier: Modifier = Modifier,
+    imageUrl: String,
+    descriptionCurrency: String,
+    asset: String,
+    balanceDollars: Double,
+    priceOfTheDay: Double,
+    percentageInvestedCurrency: String,
+    available: Double
 ) {
-    val dollarSymbol = stringResource(id = R.string.dollar_symbol)
     Column {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(72.dp)
         ) {
@@ -53,7 +58,7 @@ fun CurrencyItem(
                     modifier = Modifier
                         .size(40.dp)
                         .align(Alignment.CenterVertically),
-                    painter = rememberAsyncImagePainter(model = item.url_image),
+                    painter = rememberAsyncImagePainter(model = imageUrl),
                     contentDescription = null
                 )
                 Column(
@@ -66,12 +71,12 @@ fun CurrencyItem(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = stringResource(id = R.string.currency_item_description,item.descriptionCurrency, item.asset),
+                            text = stringResource(id = R.string.currency_item_description, descriptionCurrency, asset),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
                         Text(
-                            text = "$dollarSymbol${item.balanceDollars}",
+                            text = stringResource(id = R.string.currency_item_dollar_symbol, balanceDollars),
                             style = Typography.body2,
                             color = MultimoneyTheme.colors.labelText
                         )
@@ -83,19 +88,19 @@ fun CurrencyItem(
                     ) {
                         Row {
                             Text(
-                                text = "$dollarSymbol${item.priceOfTheDay}",
+                                text = stringResource(id = R.string.currency_item_dollar_symbol, priceOfTheDay),
                                 style = Typography.caption,
                                 color = WhiteTransparency60
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
-                                text = stringResource(id = R.string.currency_item_percent_invested, item.percentageInvestedCurrency),
+                                text = stringResource(id = R.string.currency_item_percent_invested, percentageInvestedCurrency),
                                 style = Typography.caption,
                                 color = SemanticPositive400
                             )
                         }
                         Text(
-                            text = "${item.available} ${item.asset}",
+                            text = "$available $asset",
                             style = Typography.caption,
                             color = WhiteTransparency60
                         )

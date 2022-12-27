@@ -47,7 +47,14 @@ class SecurityRepositoryImpl @Inject constructor(
                 user
             ),
             apolloCallMapper = { data ->
-                Success(data.mapToDomainModel())
+                if (
+                    data.getCompanyNameByIdentification.status == null ||
+                    data.getCompanyNameByIdentification.status == 0
+                ) {
+                    Success(data.mapToDomainModel())
+                } else {
+                    Message(data.mapToDomainModel())
+                }
             }
         )
 

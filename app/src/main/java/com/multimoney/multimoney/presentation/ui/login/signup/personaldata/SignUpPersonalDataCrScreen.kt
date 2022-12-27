@@ -45,7 +45,6 @@ fun SignUpPersonalDataCrScreen(
     Column(
         Modifier
             .wrapContentSize()
-            .padding(top = 16.dp)
     ) {
         CustomDropdown(
             modifier = Modifier
@@ -84,7 +83,7 @@ fun SignUpPersonalDataCrScreen(
                 focusManager.clearFocus()
             }),
             labelText = stringResource(id = R.string.sign_up_personal_data_document_number_label),
-            modifier = Modifier.padding(top = 44.dp),
+            modifier = Modifier.padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(
                 id = R.string.sign_up_personal_data_id_required,
@@ -112,7 +111,7 @@ fun SignUpPersonalDataCrScreen(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(top = 44.dp)
+                    .padding(top = 16.dp)
             ) {
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_first_name_hint),
@@ -178,7 +177,7 @@ fun SignUpPersonalDataCrScreen(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(top = 44.dp)
+                    .padding(top = 16.dp)
             ) {
                 CustomOutlinedTextField(
                     placeHolder = stringResource(id = R.string.sign_up_personal_data_first_lastname_hint),

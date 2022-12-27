@@ -716,6 +716,7 @@ type Mutation {
   """
   Security
   """
+
   requestchangeDevice(requestChangeDeviceInputType: ChangeDeviceDtoInput!): UserValidation!
 
   """

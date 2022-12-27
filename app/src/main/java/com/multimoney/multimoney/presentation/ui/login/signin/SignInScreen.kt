@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
@@ -44,6 +45,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
@@ -52,6 +54,7 @@ import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getDeviceName
 import com.multimoney.multimoney.presentation.util.getDeviceType
 import com.multimoney.multimoney.presentation.util.getIpAddress
+import com.multimoney.multimoney.presentation.util.splitByWhiteSpace
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 
@@ -106,7 +109,8 @@ fun SignInScreen(
                 .wrapContentSize()
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 40.dp)
-                .size(64.dp, 67.dp)
+                .size(64.dp, 67.dp),
+            alpha = 0.9f
         )
 
         Text(
@@ -115,22 +119,17 @@ fun SignInScreen(
                     withStyle(
                         style = Typography.h5.toSpanStyle()
                             .copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold
+                                color = MultimoneyTheme.colors.loginTitleText,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 28.sp
                             )
                     ) {
                         append(
                             stringResource(
                                 id = R.string.sign_in_title_name,
-                                viewModel.uiState.userName
+                                viewModel.uiState.userName.splitByWhiteSpace().first().capitalized()
                             )
                         )
-                    }
-                    withStyle(
-                        style = Typography.subtitle1.toSpanStyle()
-                            .copy(color = MultimoneyTheme.colors.text)
-                    ) {
-                        append(stringResource(id = R.string.sign_in_title_no_name))
                     }
                 }
             } else {
@@ -138,8 +137,9 @@ fun SignInScreen(
                     withStyle(
                         style = Typography.h5.toSpanStyle()
                             .copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold
+                                color = MultimoneyTheme.colors.loginTitleText,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 28.sp
                             )
                     ) {
                         append(stringResource(id = R.string.sign_in_title))
@@ -149,7 +149,7 @@ fun SignInScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 24.dp)
+                .padding(top = 24.dp, start = 24.dp, end = 24.dp)
         )
 
         // Fields
@@ -173,8 +173,7 @@ fun SignInScreen(
                     id = R.string.label_email
                 )
             },
-            modifier = Modifier
-                .padding(top = 44.dp),
+            modifier = Modifier.padding(top = 51.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_in_email_required),
             isError = viewModel.uiState.userEmailError.first,

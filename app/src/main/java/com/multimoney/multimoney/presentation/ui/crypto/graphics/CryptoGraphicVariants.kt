@@ -42,7 +42,8 @@ fun WalletCryptoGraphic(
     graphicColor: Color
 ) {
 
-    val convertedBalances = clientCryptoBalanceHistory.map { it.convertedBalance }.takeLast(120)
+    val convertedBalances = clientCryptoBalanceHistory
+        .map { it.convertedBalance }.takeLast(MAXIMUM_GRAPHIC_POINTS)
 
     CryptoGraphic(
         modifier = Modifier
@@ -64,8 +65,8 @@ fun CryptoGraphic(
 ) {
 
     if (convertedBalances.isEmpty()
-        || convertedBalances.size == 1
-        || convertedBalances.all { convertedBalances[0] == it }
+        || convertedBalances.size == MINIMUM_GRAPHIC_POINTS
+        || convertedBalances.all { convertedBalances.firstOrNull() == it }
     ) {
 
         if (fromHome) {
@@ -147,7 +148,6 @@ fun LineGraphic(
         val spacePerHour = (size.width - spacing) / lineGraphicEntries.size
 
         var lastX: Float
-        var firstY = 0f
         val strokePath = Path().apply {
             val height = size.height
             lineGraphicEntries.indices.forEach { i ->
@@ -158,10 +158,6 @@ fun LineGraphic(
 
                 val x1 = spacing + i * spacePerHour
                 val y1 = height - spacing - (leftRatio * height).toFloat()
-
-                if (i == 0) {
-                    firstY = y1
-                }
 
                 val x2 = spacing + (i + 1) * spacePerHour
                 val y2 = height - spacing - (rightRatio * height).toFloat()
@@ -186,3 +182,6 @@ fun LineGraphic(
         )
     }
 }
+
+const val MAXIMUM_GRAPHIC_POINTS = 120
+const val MINIMUM_GRAPHIC_POINTS = 1

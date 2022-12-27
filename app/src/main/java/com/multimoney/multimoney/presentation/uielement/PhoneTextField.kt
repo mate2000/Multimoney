@@ -141,6 +141,7 @@ fun PhoneTextField(
     val focusedIndicatorColor: Color
     val unfocusedIndicatorColor: Color
     val errorIndicatorColor: Color
+    val dropdownArrowColor: Color
 
     if (isSystemInDarkTheme()) {
         labelColor = GrayScale300
@@ -152,15 +153,18 @@ fun PhoneTextField(
             isError -> {
                 focusedIndicatorColor = SemanticNegative400
                 textColor = DefaultWhite
+                dropdownArrowColor = Color.White.copy(0.6f)
             }
             enabled -> {
                 focusedIndicatorColor = WhiteTransparency60
                 textColor = DefaultWhite
+                dropdownArrowColor = Color.White.copy(0.9f)
             }
             else -> {
                 focusedIndicatorColor = DefaultBlack
                 backgroundColor = GrayScale500
                 textColor = GrayScale400
+                dropdownArrowColor = Color.White.copy(0.6f)
             }
         }
     } else {
@@ -173,15 +177,18 @@ fun PhoneTextField(
             isError -> {
                 focusedIndicatorColor = SemanticNegative500
                 textColor = GrayScale800
+                dropdownArrowColor = Color.White.copy(0.6f)
             }
             enabled -> {
                 focusedIndicatorColor = Primary500
                 textColor = GrayScale800
+                dropdownArrowColor = Color.White.copy(0.9f)
             }
             else -> {
                 focusedIndicatorColor = GrayScale400
                 backgroundColor = GrayScale300
                 textColor = GrayScale500
+                dropdownArrowColor = Color.White.copy(0.6f)
             }
         }
     }
@@ -247,7 +254,8 @@ fun PhoneTextField(
                     dialogFocusedBorderColorSearch = dialogFocusedBorderColorSearch,
                     dialogUnFocusedBorderColorSearch = dialogUnFocusedBorderColorSearch,
                     dialogCursorColorSearch = dialogCursorColorSearch,
-                    countryCodeTextColor = textColor
+                    countryCodeTextColor = textColor,
+                    dropdownArrowColor = dropdownArrowColor
                 )
             },
             singleLine = true,

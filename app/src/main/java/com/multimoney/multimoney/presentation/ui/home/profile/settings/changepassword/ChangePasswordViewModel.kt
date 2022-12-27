@@ -73,19 +73,19 @@ class ChangePasswordViewModel @Inject constructor(
             noMoreThanThreeEqualConsecutiveLetterOrNumber(uiState.newPassword) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    R.string.profile_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeConsecutiveLetterOrNumber(uiState.newPassword) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    R.string.profile_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             noMoreThanThreeLettersOrNumbers(uiState.newPassword) -> {
                 Pair(
                     true,
-                    R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
+                    R.string.profile_password_requirement_max_three_characters_or_number_consecutive
                 )
             }
             (uiState.newPassword.isNotEmpty() && uiState.newPasswordConfirmation.isNotEmpty() && uiState.newPasswordConfirmation != uiState.newPassword) -> {

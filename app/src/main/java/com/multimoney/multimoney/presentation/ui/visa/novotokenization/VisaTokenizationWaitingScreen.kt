@@ -36,6 +36,9 @@ import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaToken
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGetAndroidId
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertCloseClick
+import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertButtonClick
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
@@ -73,45 +76,60 @@ fun VisaTokenizationWaitingScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = CenterHorizontally
-        ) {
-            CustomImage(
-                drawableResource = viewModel.uiState.icon
-            )
-            Text(
-                text = viewModel.uiState.description,
-                modifier = Modifier.padding(all = 24.dp),
-                textAlign = TextAlign.Center
+    if (viewModel.uiState.isAlertResultVisible) {
+        viewModel.uiState.apply {
+            AlertResult(
+                iconResource = alertResultIconResource,
+                titleResource = alertResultTitleResource,
+                descriptionResource = alertResultDescriptionResource,
+                buttonTextResource = alertResultButtonResource,
+                isLeftButtonVisible = false,
+                isRightButtonVisible = true,
+                onRightButtonClick = { viewModel.onUIEvent(OnAlertCloseClick) },
+                onButtonClick = { viewModel.onUIEvent(OnAlertButtonClick) }
             )
         }
-        Row(
+    } else {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 40.dp)
-                .align(BottomCenter),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(MultimoneyTheme.colors.background)
         ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(32.dp, 32.dp),
-                color = MultimoneyTheme.colors.circularProgressIndicator
-            )
-            Text(
-                text = stringResource(id = R.string.visa_tokenization_waiting_loading_label),
-                modifier = Modifier.padding(start = 12.dp),
-                color = MultimoneyTheme.colors.text,
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold)
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = CenterHorizontally
+            ) {
+                CustomImage(
+                    drawableResource = viewModel.uiState.icon
+                )
+                Text(
+                    text = viewModel.uiState.description,
+                    modifier = Modifier.padding(all = 24.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 40.dp)
+                    .align(BottomCenter),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(32.dp, 32.dp),
+                    color = MultimoneyTheme.colors.circularProgressIndicator
+                )
+                Text(
+                    text = stringResource(id = R.string.visa_tokenization_waiting_loading_label),
+                    modifier = Modifier.padding(start = 12.dp),
+                    color = MultimoneyTheme.colors.text,
+                    style = Typography.body1.copy(fontWeight = FontWeight.SemiBold)
+                )
+            }
         }
     }
 

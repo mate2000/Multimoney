@@ -165,7 +165,7 @@ fun SignUpPersonalDataScreen(
                 .padding(end = 40.dp),
             text = stringResource(id = R.string.sign_up_personal_data_nationality_header),
             style = Typography.h6.copy(
-                color = MultimoneyTheme.colors.text,
+                color = MultimoneyTheme.colors.titleText,
                 fontWeight = FontWeight.SemiBold
             )
         )

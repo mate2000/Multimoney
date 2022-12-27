@@ -1143,4 +1143,14 @@
 
     <!-- Smart Transfer Iban -->
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+
+    <!-- Smart IBAN Register -->
+    <string name="smart_iban_register_title" translatable="false">Registro de cuenta</string>
+    <string name="smart_iban_register_account_label" translatable="false">Número de cuenta IBAN</string>
+    <string name="smart_iban_register_document_label" translatable="false">Documento</string>
+    <string name="smart_iban_register_mail_label" translatable="false">Correo electrónico para notificar</string>
+    <string name="smart_iban_register_favorite_checkbox" translatable="false">Agregar a favoritos</string>
+    <string name="smart_iban_register_account_placeholder" translatable="false">CR 00000 00000 00000 00000</string>
+    <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
+    <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
 </resources>

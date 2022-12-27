@@ -221,7 +221,7 @@ fun OtpTextField(
             (0 until digits).map { index ->
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 0.dp)
                         .size(56.dp)
                         .bringIntoViewRequester(bringIntoViewRequester)
                         .onFocusChanged {

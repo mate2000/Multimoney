@@ -104,6 +104,7 @@ class SignInViewModel @Inject constructor(
             BRAND to deviceBrand,
             UNIQUE_ID to uniqueId,
             MODEL to deviceModel,
+            DEVICE_NAME to deviceName,
             APP_VERSION to appVersion,
             IS_EMULATOR to isEmulator.toString(),
             IP_ADDRESS to ipAddress,
@@ -494,6 +495,7 @@ class SignInViewModel @Inject constructor(
         const val MODEL = "Model"
         const val APP_VERSION = "AppVersion"
         const val IS_EMULATOR = "IsEmulator"
+        const val DEVICE_NAME = "DeviceName"
         const val IP_ADDRESS = "IpAddress"
         const val FORCE = "Force"
         const val SESSION_ACTIVE_ERROR_CODE = "2706"

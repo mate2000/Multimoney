@@ -269,11 +269,11 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                 viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnOTPValueChange(it))
             },
             isValueFromSms = viewModel.uiState.isOtpFromSms,
-            digits = TOTAL_DIGITS,
+            digits = SignInOTPViewModel.TOTAL_DIGITS,
             placeHolder = stringResource(id = R.string.sign_up_otp_code_placeholder),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 32.dp, start = 32.dp, end = 32.dp)
+                .padding(top = 32.dp)
                 .constrainAs(otpField) {
                     top.linkTo(statusText.bottom)
                 },

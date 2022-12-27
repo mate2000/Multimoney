@@ -128,7 +128,7 @@ class SignInOTPViewModel @Inject constructor(
 
     fun isFormValid() =
         uiState.otp.trim()
-            .isNotEmpty() && uiState.otp.trim().length == ValidateOTPViewModel.TOTAL_DIGITS
+            .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS
 
     private fun onOtpValueChange(value: String) {
         uiState = uiState.copy(
@@ -234,6 +234,8 @@ class SignInOTPViewModel @Inject constructor(
                     Log.e("success ", it.toString())
                 }
             }.onFailure {
+                onNavigateToLogin()
+
                 uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
                 Log.e("failure ", it.toString())
 
@@ -327,5 +329,8 @@ class SignInOTPViewModel @Inject constructor(
 
     companion object {
         const val SUCCESS_STATUS = 0
+        const val WRONG_CODE = "2708"
+        const val TOTAL_DIGITS = 6
+
     }
 }

@@ -119,7 +119,6 @@ class HomeViewModel @Inject constructor(
             callQueryGetConfigurationVersion(uiState.idBrand.toInt())
         }
     }
-
     private fun onGetSmartMovements(
         user: String,
         idBrand: Int,

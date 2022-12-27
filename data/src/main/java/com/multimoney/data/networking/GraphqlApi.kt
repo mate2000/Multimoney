@@ -360,13 +360,15 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int,
         idClient: Int,
-        idLoanClient: Int
+        idLoanClient: Int,
+        process: String
     ): ApolloCall<GetClientBankAccountQuery.Data> = apolloAuthorizedClient.query(
         GetClientBankAccountQuery(
             user,
             idBrand,
             idClient,
-            idLoanClient
+            idLoanClient,
+            process
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

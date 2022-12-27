@@ -54,9 +54,11 @@ fun SmartFactaScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     viewModel: SmartFactaViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(sharedViewModel.accountSmartData) {
         viewModel.onUiEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+    }
 
+    LaunchedEffect(key1 = true) {
         sharedViewModel.onUIEvent(OnContinueEnable(viewModel.isFormValid()))
         sharedViewModel.onUIEvent(
             OnSetNavigation(

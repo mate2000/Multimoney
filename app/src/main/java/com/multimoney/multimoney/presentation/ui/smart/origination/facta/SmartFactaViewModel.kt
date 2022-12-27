@@ -127,9 +127,7 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
         when (event) {
             is OnIsPEPChange -> onIsPEPChange(event.condition)
             is OnIsUSCitizenChange -> onIsUSCitizenChange(event.condition)
-            is OnIsActivityOfArt15Change -> onIsActivityOfArt15Change(
-                event.condition
-            )
+            is OnIsActivityOfArt15Change -> onIsActivityOfArt15Change(event.condition)
             is OnIsTaxPayerChange -> onIsTaxPayerChange(event.condition)
             is OnIsUSTaxPayerChange -> onIsUSTaxPayerChange(event.condition)
             is OnCrGoPageOne -> onCrGoPageOne()

@@ -116,6 +116,15 @@ fun ShowSelectedSourceIncomeOption(
     }
 }
 
+/**
+ * SmartAddressFields: This address fields are common across source income options screens of Smart Origination
+ *
+ * Parameters:
+ * @param sourceIncomeSharedViewModel: ViewModel who will control the fields and make the api calls necessary
+ * @param user: String of username
+ * @param idBrand: Integer of id brand
+ * @param focusManager: Focus manager of the screen where this is called
+ */
 @Composable
 fun SmartAddressFields(
     sourceIncomeSharedViewModel: SourceIncomeViewModel,

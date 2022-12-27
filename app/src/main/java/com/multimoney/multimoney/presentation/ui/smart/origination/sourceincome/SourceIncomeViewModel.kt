@@ -157,7 +157,7 @@ class SourceIncomeViewModel @Inject constructor(
                 addressLevelTwoUseCase(
                     user,
                     idBrand,
-                    if (idBrand == Brand.CostaRica.id) it else NOT_APPLICABLE
+                    if (idBrand == Brand.ElSalvador.id) it else NOT_APPLICABLE
                 ).collectLatest { result ->
                     result.onSuccess { addressList ->
                         uiState = uiState.copy(

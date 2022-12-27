@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
-import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
@@ -105,7 +104,6 @@ fun OwnBusinessInPartnershipScreen(
         }
     }
 
-    sharedViewModel.onUIEvent(OnLoadingValueChange(viewModel.uiState.isLoading))
     OwnBusinessOnPersonalBasisContent(
         viewModel,
         sourceIncomeSharedViewModel,

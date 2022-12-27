@@ -52,7 +52,6 @@ class FormalSalariedSvViewModel @Inject constructor() : BaseViewModel(true) {
     }
 
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
-    private fun onRequestError() = emitBaseEvent(BaseEvent.OnRequestError(uiState.dialogParameters))
 
     fun isFormValid(): Boolean =
         uiState.profession.isNotBlank() &&
@@ -88,6 +87,5 @@ class FormalSalariedSvViewModel @Inject constructor() : BaseViewModel(true) {
 
     sealed class BaseEvent {
         data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
-        data class OnRequestError(val dialogParameters: DialogParameters) : BaseEvent()
     }
 }

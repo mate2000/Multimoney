@@ -8,7 +8,6 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnBusinessNameValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnIncomeAmountChange
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnRequestError
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.MIN_INCOME
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -44,8 +43,6 @@ class OwnBusinessTitleViewModel @Inject constructor() : BaseViewModel(true) {
         onValidateForm()
     }
 
-    private fun onRequestError() = emitBaseEvent(OnRequestError(uiState.dialogParameters))
-
     private fun onValidateForm() = emitBaseEvent(BaseEvent.OnFormValidateCompleted(isFormValid()))
 
     fun isFormValid() = uiState.incomeAmount.isNotBlank() &&
@@ -65,7 +62,6 @@ class OwnBusinessTitleViewModel @Inject constructor() : BaseViewModel(true) {
             val accountSmartData: AccountSmartData?
         ) : UIEvent()
 
-        data class OnRequestError(val dialogParameters: DialogParameters) : UIEvent()
         object OnValidateForm : UIEvent()
     }
 
